@@ -1,5 +1,10 @@
 # What architects actually complain about
 
+> **Folded into the master plan.** [`docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md`](product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md)
+> §4 converts the same class of complaints directly into testable requirements. Kept
+> here as background/citations for the pricing, no-Mac-support, and LiDAR-capture
+> points not repeated verbatim there.
+
 Before locking in features, this is a survey of recurring complaints about the
 incumbent tools (Revit, AutoCAD, ArchiCAD, SketchUp) — pulled from Capterra/G2 review
 themes, Autodesk's own community forums, AEC trade press, and small-firm/student

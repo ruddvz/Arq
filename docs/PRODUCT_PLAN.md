@@ -1,5 +1,11 @@
 # Product plan
 
+> **Superseded.** The platform recommendation in this doc (iOS/iPadOS-native first)
+> has been replaced by [`docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md`](product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md),
+> which makes the opposite call — **web-first**, with native iPad, macOS, and Windows
+> shells layered on afterward. Kept here as an earlier draft for history; the master
+> plan is the current source of truth.
+
 This builds on `PAIN_POINTS.md` (what's wrong with the incumbents) and
 `ARCHITECTURE.md` (the technical foundation: OpenCASCADE kernel, BIM object model,
 AI operation layer, DXF/IFC interop). This doc answers: who we build for first, which

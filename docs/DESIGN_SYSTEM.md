@@ -1,5 +1,10 @@
 # Design system direction
 
+> **Superseded.** [`docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md`](product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md)
+> §12 defines the current design tokens, type scale, and icon system (Lucide-based
+> rather than Phosphor-based, plus JetBrains Mono for numerics). Kept here as an
+> earlier draft for history.
+
 Answers the brief directly: monochrome, "perfect looking," Plus Jakarta Sans, and a
 pre-decided icon system. This is a starting system to build against and refine on real
 screens — treat exact values as a first pass, not final tokens.

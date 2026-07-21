@@ -1,5 +1,10 @@
 # Reference project research
 
+> **Superseded.** [`docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md`](product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md)
+> §17–18 reviews the same repos plus several more (OpenCascade.js, web-ifc, Speckle,
+> Yjs, IfcOpenShell, and others), with explicit license classification per repo (§19.2)
+> that this draft didn't do. Kept here as an earlier draft for history.
+
 Six open-source projects were surveyed as inputs for Arq. They cluster into three
 groups: **general CAD kernels/apps** (FreeCAD, OpenSCAD, LibreCAD), **AI-assisted CAD
 generation** (GenCAD, CAD Skills / text-to-cad), and **BIM tooling** (RevitLookup). None

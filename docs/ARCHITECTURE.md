@@ -1,5 +1,11 @@
 # Proposed architecture direction
 
+> **Superseded.** [`docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md`](product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md)
+> §16 defines the current technical architecture (TypeScript/React/web-first with
+> OpenCascade.js in a Worker, rather than the Python/pythonocc-core direction below)
+> and §19 adds a licensing policy this draft didn't cover. Kept here as an earlier
+> draft for history.
+
 This is a starting recommendation, not a locked decision — the point is to give the
 next round of work a concrete thing to react to instead of a blank page. See
 [`RESEARCH.md`](RESEARCH.md) for the source material behind each choice.
