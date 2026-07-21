@@ -63,14 +63,14 @@ real Revit has and a v1 doesn't need).
 
 ## Suggested phased build-out
 
-| Phase | Deliverable |
-|---|---|
-| 0 (this PR) | Research + architecture direction (done) |
-| 1 | Kernel + BIM object model: define `Wall`/`Slab`/`Opening` as Python classes over `build123d`/OpenCASCADE; script-only, no UI |
-| 2 | IFC export of a hand-scripted simple building; validate in an existing IFC viewer |
-| 3 | AI operations layer: natural-language → operation sequence → geometry, for a constrained vocabulary (walls + openings only) |
-| 4 | Minimal viewer (web or desktop — decide in phase 1) to visualize output without leaving the terminal/agent loop |
-| 5+ | DXF/DWG import, rooms/spaces, roofs, more element types, multi-user/versioning — deferred until 1-4 prove the core loop works |
+| Phase       | Deliverable                                                                                                                   |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 0 (this PR) | Research + architecture direction (done)                                                                                      |
+| 1           | Kernel + BIM object model: define `Wall`/`Slab`/`Opening` as Python classes over `build123d`/OpenCASCADE; script-only, no UI  |
+| 2           | IFC export of a hand-scripted simple building; validate in an existing IFC viewer                                             |
+| 3           | AI operations layer: natural-language → operation sequence → geometry, for a constrained vocabulary (walls + openings only)   |
+| 4           | Minimal viewer (web or desktop — decide in phase 1) to visualize output without leaving the terminal/agent loop               |
+| 5+          | DXF/DWG import, rooms/spaces, roofs, more element types, multi-user/versioning — deferred until 1-4 prove the core loop works |
 
 ## Open questions for the next decision point
 

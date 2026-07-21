@@ -1,0 +1,11 @@
+{
+  "name": "@arq/desktop",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Tauri macOS and Windows shell (Milestone 7) wrapping the shared editor.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

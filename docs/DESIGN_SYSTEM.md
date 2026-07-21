@@ -28,16 +28,16 @@ Avoid pure `#000000`/`#FFFFFF` — harsh full-contrast black-on-white causes eye
 over long sessions, which matters for a tool people use for hours. Use near-black and
 near-white anchors with a gray scale between them:
 
-| Token | Light mode | Dark mode | Use |
-|---|---|---|---|
-| `bg.canvas` | `#FAFAFA` | `#0A0A0A` | App background |
-| `bg.surface` | `#FFFFFF` | `#141414` | Cards, panels |
-| `border.subtle` | `#E5E5E5` | `#262626` | Dividers, hairlines |
-| `border.default` | `#D4D4D4` | `#333333` | Input/control borders |
-| `text.primary` | `#171717` | `#F5F5F5` | Primary text |
-| `text.secondary` | `#666666` | `#A3A3A3` | Secondary/meta text |
-| `text.disabled` | `#A3A3A3` | `#525252` | Disabled state |
-| `accent.critical` | `#D32F2F` | `#F87171` | Destructive/error only — never decorative |
+| Token             | Light mode | Dark mode | Use                                       |
+| ----------------- | ---------- | --------- | ----------------------------------------- |
+| `bg.canvas`       | `#FAFAFA`  | `#0A0A0A` | App background                            |
+| `bg.surface`      | `#FFFFFF`  | `#141414` | Cards, panels                             |
+| `border.subtle`   | `#E5E5E5`  | `#262626` | Dividers, hairlines                       |
+| `border.default`  | `#D4D4D4`  | `#333333` | Input/control borders                     |
+| `text.primary`    | `#171717`  | `#F5F5F5` | Primary text                              |
+| `text.secondary`  | `#666666`  | `#A3A3A3` | Secondary/meta text                       |
+| `text.disabled`   | `#A3A3A3`  | `#525252` | Disabled state                            |
+| `accent.critical` | `#D32F2F`  | `#F87171` | Destructive/error only — never decorative |
 
 That critical-red is the **only** non-gray color in the entire system, and it's
 reserved exclusively for errors and destructive confirmations (e.g. "delete this
@@ -61,14 +61,14 @@ cold, which suits "precise but not sterile."
 
 Suggested type scale (adjust once tested on-device):
 
-| Token | Size / weight | Use |
-|---|---|---|
-| `display` | 32 / Bold | Marketing, empty states |
-| `title` | 22 / SemiBold | Screen/panel titles |
-| `heading` | 17 / SemiBold | Section headers |
-| `body` | 15 / Regular | Default UI text |
-| `caption` | 13 / Regular | Meta, secondary labels |
-| `label` | 12 / Medium, uppercase, tracked | Field labels, tags |
+| Token     | Size / weight                   | Use                     |
+| --------- | ------------------------------- | ----------------------- |
+| `display` | 32 / Bold                       | Marketing, empty states |
+| `title`   | 22 / SemiBold                   | Screen/panel titles     |
+| `heading` | 17 / SemiBold                   | Section headers         |
+| `body`    | 15 / Regular                    | Default UI text         |
+| `caption` | 13 / Regular                    | Meta, secondary labels  |
+| `label`   | 12 / Medium, uppercase, tracked | Field labels, tags      |
 
 **Numbers need their own treatment.** Dimensions, coordinates, and schedules are a huge
 part of this product, and proportional numerals in a humanist sans don't read as

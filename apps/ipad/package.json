@@ -1,0 +1,11 @@
+{
+  "name": "@arq/ipad",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Native iPadOS app (Milestone 6) — not started until the web editor core is proven.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

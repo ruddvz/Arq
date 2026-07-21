@@ -1,0 +1,11 @@
+{
+  "name": "@arq/geometry-occt",
+  "private": true,
+  "version": "0.0.0",
+  "description": "OpenCascade.js adapter behind geometry-core's interface. LGPL-2.1 — keep this boundary isolated per docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md §19.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

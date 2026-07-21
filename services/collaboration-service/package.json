@@ -1,0 +1,11 @@
+{
+  "name": "@arq/collaboration-service",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Presence and sync backend.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

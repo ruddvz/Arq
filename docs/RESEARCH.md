@@ -36,11 +36,11 @@ of them is "Revit for the open web," but each covers a piece of the problem.
   (rendering), Boost/GMP/MPFR (math).
 - **Architecture:** "Script, don't drag" — a small declarative language compiles to a
   CSG tree (union/difference/intersection of primitives and extrusions), which is
-  evaluated into a mesh. No interactive dragging of geometry; the script *is* the
+  evaluated into a mesh. No interactive dragging of geometry; the script _is_ the
   parametric model.
 - **Relevance to Arq:** This is the strongest existing proof that a declarative,
   code-like description of geometry is both usable and precise — which matters a lot
-  if Arq wants AI models to *generate* building geometry, because generating a script
+  if Arq wants AI models to _generate_ building geometry, because generating a script
   or IR is far more tractable for an LLM than generating raw mesh/B-rep data directly.
   OpenSCAD's language design (and its limitations — no undo-friendly interactive
   editing, steep learning curve for non-programmers) is a useful case study for
@@ -83,7 +83,7 @@ of them is "Revit for the open web," but each covers a piece of the problem.
   list; one project)
 - **License:** MIT
 - **Stack:** JS (62%) + Python (37%), **Build123d** + OpenCASCADE as the CAD engine.
-- **Architecture:** Not a standalone app — a *skills library* for AI coding agents
+- **Architecture:** Not a standalone app — a _skills library_ for AI coding agents
   (Claude, Codex, etc.) that exposes CAD, DXF, URDF/SRDF/SDF (robot + simulation
   description), G-code, and fabrication-vendor (SendCutSend, Bambu Labs) skills, so an
   agent can go from a text prompt to a STEP/STL/GLB file and, for robotics, all the way
@@ -92,7 +92,7 @@ of them is "Revit for the open web," but each covers a piece of the problem.
   building geometry" half of Arq's thesis, and it's the freshest/most active of the
   six (9k★, active Discord). It demonstrates the pattern Arq should likely copy for
   its own AI layer: don't have the AI model emit raw geometry — have it call a small
-  set of well-defined CAD *operations* (build a wall, cut an opening, extrude a
+  set of well-defined CAD _operations_ (build a wall, cut an opening, extrude a
   footprint) against a kernel, mirroring how build123d wraps OpenCASCADE. Note it's
   general fabrication/robotics-focused, not architecture-specific — Arq would need its
   own "skill set" for building elements (walls, floors, roofs, IFC-style entities)
@@ -123,8 +123,8 @@ of them is "Revit for the open web," but each covers a piece of the problem.
    C++ integration or `pythonocc-core`/build123d's Python bindings) is the pragmatic
    starting point for real 3D geometry.
 2. **AI-to-CAD generation works best through an operation/skill layer, not raw
-   geometry.** Both GenCAD and CAD Skills generate a *sequence of parametric
-   operations* rather than raw meshes or point clouds. Arq's AI input path should
+   geometry.** Both GenCAD and CAD Skills generate a _sequence of parametric
+   operations_ rather than raw meshes or point clouds. Arq's AI input path should
    follow the same pattern: define a small "building operations" vocabulary (walls,
    openings, slabs, roofs) and have AI models target that, not raw B-rep.
 3. **File format interop is a hard requirement, not a feature.** DXF/DWG (LibreCAD) and

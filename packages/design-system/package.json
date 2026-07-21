@@ -1,0 +1,11 @@
+{
+  "name": "@arq/design-system",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Design tokens, shared UI components, and the icon system (§12).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@arq/renderer",
+  "private": true,
+  "version": "0.0.0",
+  "description": "2D and 3D rendering (Three.js/WebGPU with WebGL fallback, plus a separate 2D plan renderer).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

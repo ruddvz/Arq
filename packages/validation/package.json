@@ -1,0 +1,11 @@
+{
+  "name": "@arq/validation",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Geometry and model validation rules — what a failed operation must report (§4.3).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

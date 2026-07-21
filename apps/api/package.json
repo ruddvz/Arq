@@ -1,0 +1,11 @@
+{
+  "name": "@arq/api",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Public API gateway.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -42,7 +42,7 @@ Reasoning:
 
 1. **LiDAR is the wedge, and it's hardware-gated.** The single clearest differentiator
    in `PAIN_POINTS.md` (#7 — capture-to-BIM with no export/re-import round trip) only
-   exists as a *native app* with camera/LiDAR access. A website cannot do this. This
+   exists as a _native app_ with camera/LiDAR access. A website cannot do this. This
    alone settles "app first."
 2. **The underserved audience is already on Apple hardware.** Mac has zero Revit
    support (`PAIN_POINTS.md` #2) — the people most annoyed by that are, by definition,
@@ -69,14 +69,14 @@ Reasoning:
 
 ### Recommended platform order
 
-| Order | Platform | Role |
-|---|---|---|
-| 1 | **iOS / iPadOS** (universal app) | Primary authoring surface: capture, sketch, model, collaborate |
-| 1 (parallel, thin) | **Website** | Marketing, account/billing, read-only model viewer + share links — not authoring |
-| 2 | **macOS** | Native port (Catalyst or SwiftUI multiplatform) once iOS core is proven — desktop-scale authoring for heavier project work |
-| 3 | **Windows** | Biggest lift (no Swift/SwiftUI story) — evaluate web-based authoring (reuse the viewer, extend to editing) vs. a native rewrite once there's revenue to justify it |
-| 4 (maybe) | **Android** | Only if field-capture demand justifies it — LiDAR hardware parity across Android devices is inconsistent, so the wedge feature is weaker there |
-| — | **Apple Vision Pro** | Not a platform to ship on its own — a later mode of the iOS/macOS app (walk a model at full scale). Flagged in Tier 3 below. |
+| Order              | Platform                         | Role                                                                                                                                                               |
+| ------------------ | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1                  | **iOS / iPadOS** (universal app) | Primary authoring surface: capture, sketch, model, collaborate                                                                                                     |
+| 1 (parallel, thin) | **Website**                      | Marketing, account/billing, read-only model viewer + share links — not authoring                                                                                   |
+| 2                  | **macOS**                        | Native port (Catalyst or SwiftUI multiplatform) once iOS core is proven — desktop-scale authoring for heavier project work                                         |
+| 3                  | **Windows**                      | Biggest lift (no Swift/SwiftUI story) — evaluate web-based authoring (reuse the viewer, extend to editing) vs. a native rewrite once there's revenue to justify it |
+| 4 (maybe)          | **Android**                      | Only if field-capture demand justifies it — LiDAR hardware parity across Android devices is inconsistent, so the wedge feature is weaker there                     |
+| —                  | **Apple Vision Pro**             | Not a platform to ship on its own — a later mode of the iOS/macOS app (walk a model at full scale). Flagged in Tier 3 below.                                       |
 
 ## Feature plan, by tier
 
@@ -137,16 +137,16 @@ The smallest version that is genuinely useful and does something no incumbent do
 
 ## Roadmap (maps onto `ARCHITECTURE.md`'s phases 0–5)
 
-| Phase | Deliverable |
-|---|---|
-| 0 | Research + architecture direction (done — `RESEARCH.md`, `ARCHITECTURE.md`) |
-| 0.5 (this doc) | Product plan, pain-point grounding, design system direction |
-| 1 | Kernel + BIM object model, scripted only, validated against Tier 0 feature list |
-| 2 | iOS app skeleton: capture → geometry pipeline proven end-to-end for a single room |
-| 3 | Core drafting + AI operation layer on iOS; DXF/IFC export validated in an external viewer |
-| 4 | Companion website (viewer/share/account) live in parallel |
-| 5 | Real-time multiplayer (Tier 1) on iOS |
-| 6+ | macOS port; Tier 2 depth; Windows platform decision |
+| Phase          | Deliverable                                                                               |
+| -------------- | ----------------------------------------------------------------------------------------- |
+| 0              | Research + architecture direction (done — `RESEARCH.md`, `ARCHITECTURE.md`)               |
+| 0.5 (this doc) | Product plan, pain-point grounding, design system direction                               |
+| 1              | Kernel + BIM object model, scripted only, validated against Tier 0 feature list           |
+| 2              | iOS app skeleton: capture → geometry pipeline proven end-to-end for a single room         |
+| 3              | Core drafting + AI operation layer on iOS; DXF/IFC export validated in an external viewer |
+| 4              | Companion website (viewer/share/account) live in parallel                                 |
+| 5              | Real-time multiplayer (Tier 1) on iOS                                                     |
+| 6+             | macOS port; Tier 2 depth; Windows platform decision                                       |
 
 ## Business model (flagged, not decided here)
 

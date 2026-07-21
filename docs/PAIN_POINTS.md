@@ -14,8 +14,8 @@ representative, not exact quotes. Each item ends with the Arq opportunity it imp
 
 ## 1. Price is the #1 barrier for solo architects and small firms
 
-Revit runs ~$365/month or ~$2,910–8,730/year depending on term; AutoCAD is
-similarly priced (~$250/month). These are subscription-only — no perpetual license
+Revit runs ~~$365/month or ~$2,910–8,730/year depending on term; AutoCAD is
+similarly priced (~~$250/month). These are subscription-only — no perpetual license
 option anymore. This pushes students, solo practitioners, and small firms toward free
 tools (FreeCAD, LibreCAD, QCAD, BricsCAD) that are functional but clearly "the budget
 option," not tools people choose because they're better.
@@ -59,7 +59,7 @@ Family/component behavior can be inconsistent across views (e.g. contradicts its
 breaks something else elsewhere in the model.
 
 → **Opportunity:** parametric relationships need to be inspectable and overridable —
-a user should always be able to see *why* the software did something and pin an
+a user should always be able to see _why_ the software did something and pin an
 explicit override, rather than fight the automation.
 
 ## 5. Performance and stability degrade as models grow
@@ -90,7 +90,7 @@ On-site capture (measuring existing conditions, as-built documentation) increasi
 happens on iPhone/iPad via LiDAR-based apps like SiteScape or Metaroom — accurate to
 roughly 1–2 cm per wall, a 500 m² floor scannable in minutes. But that data then has to
 be exported and re-imported into Revit/AutoCAD/ArchiCAD/SketchUp as a separate step,
-losing fidelity and adding friction. No mainstream authoring tool does capture *and*
+losing fidelity and adding friction. No mainstream authoring tool does capture _and_
 authoring in one app.
 
 → **Opportunity:** this is the single clearest wedge feature available. An iOS/iPadOS
@@ -134,15 +134,15 @@ into a third piece of paid software just to show a client what a space looks lik
 
 ## Summary table
 
-| Pain point | Root cause | Arq response |
-|---|---|---|
-| Cost | Subscription pricing, no perpetual option | Accessible pricing as a design constraint |
-| No Mac/mobile | Windows-only native code | Apple-native from day one |
-| Learning curve | Accumulated UI complexity | Single-panel "why" inspection, restrained UI |
-| Brittle parametrics | Opaque automatic behavior | Inspectable, overridable relationships |
-| Performance | Legacy architecture at scale | Modern kernel, incremental recompute |
-| Collaboration friction | File-locking worksharing model | Real-time multiplayer from v1 |
-| Field/office gap | No capture-to-BIM tool exists | Native LiDAR capture → editable model |
-| Interop loss | DWG/IFC treated as an afterthought | First-class, tested import/export |
-| Dated UI | Decades of convention | Deliberate monochrome design system |
-| Weak built-in rendering | Visualization is out of scope for BIM tools | Good-enough built-in visualization |
+| Pain point              | Root cause                                  | Arq response                                 |
+| ----------------------- | ------------------------------------------- | -------------------------------------------- |
+| Cost                    | Subscription pricing, no perpetual option   | Accessible pricing as a design constraint    |
+| No Mac/mobile           | Windows-only native code                    | Apple-native from day one                    |
+| Learning curve          | Accumulated UI complexity                   | Single-panel "why" inspection, restrained UI |
+| Brittle parametrics     | Opaque automatic behavior                   | Inspectable, overridable relationships       |
+| Performance             | Legacy architecture at scale                | Modern kernel, incremental recompute         |
+| Collaboration friction  | File-locking worksharing model              | Real-time multiplayer from v1                |
+| Field/office gap        | No capture-to-BIM tool exists               | Native LiDAR capture → editable model        |
+| Interop loss            | DWG/IFC treated as an afterthought          | First-class, tested import/export            |
+| Dated UI                | Decades of convention                       | Deliberate monochrome design system          |
+| Weak built-in rendering | Visualization is out of scope for BIM tools | Good-enough built-in visualization           |

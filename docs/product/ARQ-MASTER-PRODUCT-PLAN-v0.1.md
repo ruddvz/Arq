@@ -4,7 +4,7 @@
 **Status:** Foundational planning document  
 **Date:** 21 July 2026  
 **Product working name:** Arq  
-**Decision level:** Product direction, platform strategy, design system, technical architecture, repository strategy and execution roadmap  
+**Decision level:** Product direction, platform strategy, design system, technical architecture, repository strategy and execution roadmap
 
 ---
 
@@ -1548,18 +1548,18 @@ This project needs a formal policy before meaningful implementation begins.
 
 ### 19.2 Preliminary classification
 
-| Repository or component | Licence observed | Preliminary treatment |
-|---|---:|---|
-| text-to-cad | MIT | Patterns and compatible code may be reused with notice |
-| FreeCAD | LGPL 2.1 | Reference or carefully bounded integration after legal review |
-| OpenSCAD | GPL 2 | Avoid direct integration into proprietary core |
-| LibreCAD | GPL 2 | Behavioural reference; avoid direct core reuse |
-| GenCAD | Unclear during inspection | No code, data or weight reuse until confirmed |
-| RevitLookup | MIT | Inspectability patterns and suitable code may be reused with notice |
-| OpenCascade.js | LGPL 2.1 | Isolated adapter and compliance review |
-| web-ifc | MPL 2.0 | Isolated adapter; publish required modifications |
-| Yjs | MIT | Suitable for collaboration features |
-| Speckle | Mixed | Review component by component |
+| Repository or component |          Licence observed | Preliminary treatment                                               |
+| ----------------------- | ------------------------: | ------------------------------------------------------------------- |
+| text-to-cad             |                       MIT | Patterns and compatible code may be reused with notice              |
+| FreeCAD                 |                  LGPL 2.1 | Reference or carefully bounded integration after legal review       |
+| OpenSCAD                |                     GPL 2 | Avoid direct integration into proprietary core                      |
+| LibreCAD                |                     GPL 2 | Behavioural reference; avoid direct core reuse                      |
+| GenCAD                  | Unclear during inspection | No code, data or weight reuse until confirmed                       |
+| RevitLookup             |                       MIT | Inspectability patterns and suitable code may be reused with notice |
+| OpenCascade.js          |                  LGPL 2.1 | Isolated adapter and compliance review                              |
+| web-ifc                 |                   MPL 2.0 | Isolated adapter; publish required modifications                    |
+| Yjs                     |                       MIT | Suitable for collaboration features                                 |
+| Speckle                 |                     Mixed | Review component by component                                       |
 
 This is a planning assessment, not legal advice.
 

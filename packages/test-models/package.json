@@ -1,0 +1,11 @@
+{
+  "name": "@arq/test-models",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Golden and interoperability reference project files (§23.3).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

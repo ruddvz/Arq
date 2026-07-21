@@ -1,0 +1,11 @@
+{
+  "name": "@arq/thumbnail-service",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Project/view thumbnail generation.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

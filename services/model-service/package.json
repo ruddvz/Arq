@@ -1,0 +1,11 @@
+{
+  "name": "@arq/model-service",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Authoritative project/model persistence and the operation log.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

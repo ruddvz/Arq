@@ -1,0 +1,11 @@
+{
+  "name": "@arq/arqscript",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Parser, schema, and executor for the ArqScript DSL (§14.2).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

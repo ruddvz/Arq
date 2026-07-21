@@ -1,0 +1,11 @@
+{
+  "name": "@arq/telemetry",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Privacy-conscious product analytics (§24) — no raw geometry, project names, or prompt text by default.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}
