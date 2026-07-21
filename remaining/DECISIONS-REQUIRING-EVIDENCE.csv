@@ -1,0 +1,25 @@
+id,item,owner,reason
+R-001,Create actual GitHub repository,Owner action,Repository owner and visibility required
+R-002,Select source licence strategy,Legal and owner,Commercial and contributor strategy unresolved
+R-003,Name and trademark clearance,Legal research,Arq remains a working name
+R-004,Conduct architect interviews,User research,Requires real participants
+R-005,Approve target user and workflow,Product decision,Must follow interview evidence
+R-006,Select benchmark devices,Engineering,Requires available hardware and market evidence
+R-007,Run 2D renderer spike,Code and benchmark,Canvas 2D versus PixiJS versus fallback
+R-008,Approve numeric unit representation,ADR and tests,Precision and IFC effects
+R-009,Build local journal spike,Code,IndexedDB and recovery behaviour
+R-010,Build wall-room-3D vertical slice,Code,Core technical proof
+R-011,Run OpenCascade.js spike,Code and licence,Only for exact-solid needs
+R-012,Approve authentication provider,Security spike,Operational capacity required
+R-013,Complete dependency legal review,Legal,Required before distribution
+R-014,Design actual icons,Visual design,"Manifest is included, artwork is not"
+R-015,Create clickable prototypes,Product design,Desktop and iPad
+R-016,Usability test benchmark workflow,Research,Requires participants and prototype
+R-017,Set pricing,Business,Not enough evidence
+R-018,Choose hosting and regions,Operations,Privacy and market requirements
+R-019,Create production threat model,Security,Depends on actual implementation
+R-020,Implement software,Engineering,"This ZIP contains specifications, not production code"
+R-021,Validate IFC and DXF with real files,Interoperability,Requires implementation and test corpus
+R-022,Test RoomPlan and LiDAR,Native research,Requires supported Apple hardware
+R-023,Choose desktop shell,Later ADR,Requires browser performance evidence
+R-024,Decide public contribution policy,Governance,Depends on source licence

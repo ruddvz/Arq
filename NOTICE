@@ -13,3 +13,6 @@ maintain the table below rather than hand-editing it.
 | Component | License | Used for |
 |---|---|---|
 | _(none yet)_ | | |
+
+Do not assume the Arq repository license covers model weights, datasets, fonts,
+icons, or downloaded sample files — check each of those independently.

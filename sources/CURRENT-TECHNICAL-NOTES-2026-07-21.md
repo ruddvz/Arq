@@ -1,0 +1,3 @@
+# Current technical notes
+
+Research date: 21 July 2026. Three.js documents a WebGPU renderer with a WebGL 2 backend while noting experimental limitations. PixiJS 8 documents WebGL as the stable production renderer and WebGPU as maturing. React Aria provides unstyled accessible React interactions. Dexie wraps IndexedDB and supports versioned upgrades. web-ifc reads and writes IFC through JavaScript and WebAssembly under MPL-2.0. Apple RoomPlan identifies walls, windows, openings and doors, but Arq still requires uncertainty, correction and semantic conversion. Tauri 2 is a later cross-platform shell option. See `sources/SOURCES.md`.

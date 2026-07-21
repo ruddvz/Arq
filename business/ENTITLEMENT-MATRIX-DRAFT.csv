@@ -1,0 +1,11 @@
+capability,free,professional,team,enterprise
+View and comment,yes,yes,yes,yes
+Personal authoring,limited,yes,yes,yes
+Arq archive download,yes,yes,yes,yes
+PDF export,basic,yes,yes,yes
+DXF export,to research,yes,yes,yes
+IFC export,no,subset,subset,custom
+Offline access,to research,yes,yes,yes
+AI allowance,small,standard,shared,custom
+Roles and approvals,no,no,yes,yes
+SSO,no,no,no,yes

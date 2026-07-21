@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.local/schemas/point2.schema.json",
+  "title": "Point2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["x", "y"],
+  "properties": {
+    "x": {
+      "type": "number"
+    },
+    "y": {
+      "type": "number"
+    }
+  }
+}

@@ -1,0 +1,3642 @@
+[
+  {
+    "id": "ARQ-001",
+    "number": 1,
+    "title": "docs: add complete blueprint v1.0",
+    "area": "docs",
+    "phase": "Phase 0",
+    "epic": "Documentation",
+    "priority": "critical",
+    "labels": "type: feature;area: docs;priority: critical;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/001-docs-add-complete-blueprint-v1-0.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-002",
+    "number": 2,
+    "title": "docs: add ADR template",
+    "area": "docs",
+    "phase": "Phase 0",
+    "epic": "Documentation",
+    "priority": "critical",
+    "labels": "type: feature;area: docs;priority: critical;state: ready",
+    "dependencies": "ARQ-001",
+    "file": "backlog/issues/002-docs-add-adr-template.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-003",
+    "number": 3,
+    "title": "docs: add dependency and licence policy",
+    "area": "docs",
+    "phase": "Phase 0",
+    "epic": "Documentation",
+    "priority": "critical",
+    "labels": "type: feature;area: docs;priority: critical;state: ready",
+    "dependencies": "ARQ-002",
+    "file": "backlog/issues/003-docs-add-dependency-and-licence-policy.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-004",
+    "number": 4,
+    "title": "research: create architect interview guide",
+    "area": "research",
+    "phase": "Phase 0",
+    "epic": "Research",
+    "priority": "critical",
+    "labels": "type: research;area: research;priority: critical;state: ready",
+    "dependencies": "ARQ-003",
+    "file": "backlog/issues/004-research-create-architect-interview-guide.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-005",
+    "number": 5,
+    "title": "research: create workflow synthesis template",
+    "area": "research",
+    "phase": "Phase 0",
+    "epic": "Research",
+    "priority": "critical",
+    "labels": "type: research;area: research;priority: critical;state: ready",
+    "dependencies": "ARQ-004",
+    "file": "backlog/issues/005-research-create-workflow-synthesis-template.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-006",
+    "number": 6,
+    "title": "research: conduct first six architect interviews",
+    "area": "research",
+    "phase": "Phase 0",
+    "epic": "Research",
+    "priority": "critical",
+    "labels": "type: research;area: research;priority: critical;state: ready",
+    "dependencies": "ARQ-005",
+    "file": "backlog/issues/006-research-conduct-first-six-architect-interviews.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-007",
+    "number": 7,
+    "title": "research: conduct second six architect interviews",
+    "area": "research",
+    "phase": "Phase 0",
+    "epic": "Research",
+    "priority": "critical",
+    "labels": "type: research;area: research;priority: critical;state: ready",
+    "dependencies": "ARQ-006",
+    "file": "backlog/issues/007-research-conduct-second-six-architect-interviews.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-008",
+    "number": 8,
+    "title": "research: map competitor residential plan workflow",
+    "area": "research",
+    "phase": "Phase 0",
+    "epic": "Research",
+    "priority": "critical",
+    "labels": "type: research;area: research;priority: critical;state: ready",
+    "dependencies": "ARQ-007",
+    "file": "backlog/issues/008-research-map-competitor-residential-plan-workflow.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-009",
+    "number": 9,
+    "title": "research: document browser and iPad support matrix",
+    "area": "research",
+    "phase": "Phase 0",
+    "epic": "Research",
+    "priority": "critical",
+    "labels": "type: research;area: research;priority: critical;state: ready",
+    "dependencies": "ARQ-008",
+    "file": "backlog/issues/009-research-document-browser-and-ipad-support-matrix.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-010",
+    "number": 10,
+    "title": "legal: complete Arq working-name clearance",
+    "area": "legal",
+    "phase": "Phase 0",
+    "epic": "Legal and governance",
+    "priority": "critical",
+    "labels": "type: feature;area: legal;priority: critical;state: ready",
+    "dependencies": "ARQ-009",
+    "file": "backlog/issues/010-legal-complete-arq-working-name-clearance.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-011",
+    "number": 11,
+    "title": "chore: initialise pnpm monorepo",
+    "area": "chore",
+    "phase": "Phase 0",
+    "epic": "Repository foundation",
+    "priority": "critical",
+    "labels": "type: feature;area: chore;priority: critical;state: ready",
+    "dependencies": "ARQ-010",
+    "file": "backlog/issues/011-chore-initialise-pnpm-monorepo.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-012",
+    "number": 12,
+    "title": "chore: enable TypeScript strict mode",
+    "area": "chore",
+    "phase": "Phase 0",
+    "epic": "Repository foundation",
+    "priority": "critical",
+    "labels": "type: feature;area: chore;priority: critical;state: ready",
+    "dependencies": "ARQ-011",
+    "file": "backlog/issues/012-chore-enable-typescript-strict-mode.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-013",
+    "number": 13,
+    "title": "chore: configure formatting and linting",
+    "area": "chore",
+    "phase": "Phase 0",
+    "epic": "Repository foundation",
+    "priority": "critical",
+    "labels": "type: feature;area: chore;priority: critical;state: ready",
+    "dependencies": "ARQ-012",
+    "file": "backlog/issues/013-chore-configure-formatting-and-linting.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-014",
+    "number": 14,
+    "title": "chore: configure unit and property test runners",
+    "area": "chore",
+    "phase": "Phase 0",
+    "epic": "Repository foundation",
+    "priority": "critical",
+    "labels": "type: feature;area: chore;priority: critical;state: ready",
+    "dependencies": "ARQ-013",
+    "file": "backlog/issues/014-chore-configure-unit-and-property-test-runners.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-015",
+    "number": 15,
+    "title": "chore: add pull request and issue templates",
+    "area": "chore",
+    "phase": "Phase 0",
+    "epic": "Repository foundation",
+    "priority": "critical",
+    "labels": "type: feature;area: chore;priority: critical;state: ready",
+    "dependencies": "ARQ-014",
+    "file": "backlog/issues/015-chore-add-pull-request-and-issue-templates.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-016",
+    "number": 16,
+    "title": "chore: add SBOM and licence scan",
+    "area": "chore",
+    "phase": "Phase 0",
+    "epic": "Repository foundation",
+    "priority": "critical",
+    "labels": "type: feature;area: chore;priority: critical;state: ready",
+    "dependencies": "ARQ-015",
+    "file": "backlog/issues/016-chore-add-sbom-and-licence-scan.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-017",
+    "number": 17,
+    "title": "chore: add dependency update automation",
+    "area": "chore",
+    "phase": "Phase 0",
+    "epic": "Repository foundation",
+    "priority": "critical",
+    "labels": "type: feature;area: chore;priority: critical;state: ready",
+    "dependencies": "ARQ-016",
+    "file": "backlog/issues/017-chore-add-dependency-update-automation.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-018",
+    "number": 18,
+    "title": "design: create monochrome tokens",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-017",
+    "file": "backlog/issues/018-design-create-monochrome-tokens.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-019",
+    "number": 19,
+    "title": "design: create typography tokens",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-018",
+    "file": "backlog/issues/019-design-create-typography-tokens.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-020",
+    "number": 20,
+    "title": "design: create icon package",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-019",
+    "file": "backlog/issues/020-design-create-icon-package.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-021",
+    "number": 21,
+    "title": "design: draw first 20 technical icons",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-020",
+    "file": "backlog/issues/021-design-draw-first-20-technical-icons.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-022",
+    "number": 22,
+    "title": "design: draw remaining first 40 technical icons",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-021",
+    "file": "backlog/issues/022-design-draw-remaining-first-40-technical-icons.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-023",
+    "number": 23,
+    "title": "design: build top bar",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-022",
+    "file": "backlog/issues/023-design-build-top-bar.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-024",
+    "number": 24,
+    "title": "design: build tool rail",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-023",
+    "file": "backlog/issues/024-design-build-tool-rail.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-025",
+    "number": 25,
+    "title": "design: build model panel",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-024",
+    "file": "backlog/issues/025-design-build-model-panel.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-026",
+    "number": 26,
+    "title": "design: build inspector shell",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-025",
+    "file": "backlog/issues/026-design-build-inspector-shell.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-027",
+    "number": 27,
+    "title": "design: build status bar",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-026",
+    "file": "backlog/issues/027-design-build-status-bar.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-028",
+    "number": 28,
+    "title": "design: build context bar",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-027",
+    "file": "backlog/issues/028-design-build-context-bar.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-029",
+    "number": 29,
+    "title": "design: build command palette shell",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-028",
+    "file": "backlog/issues/029-design-build-command-palette-shell.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-030",
+    "number": 30,
+    "title": "design: prototype iPad landscape shell",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-029",
+    "file": "backlog/issues/030-design-prototype-ipad-landscape-shell.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-031",
+    "number": 31,
+    "title": "design: prototype iPad portrait shell",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "critical",
+    "labels": "type: feature;area: design;priority: critical;state: ready",
+    "dependencies": "ARQ-030",
+    "file": "backlog/issues/031-design-prototype-ipad-portrait-shell.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Default, hover, active, disabled and error states are covered.",
+      "Keyboard focus and iPad touch behaviour are specified."
+    ]
+  },
+  {
+    "id": "ARQ-032",
+    "number": 32,
+    "title": "editor: define coordinate systems",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "critical",
+    "labels": "type: feature;area: editor;priority: critical;state: ready",
+    "dependencies": "ARQ-031",
+    "file": "backlog/issues/032-editor-define-coordinate-systems.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-033",
+    "number": 33,
+    "title": "editor: implement pan and zoom",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "critical",
+    "labels": "type: feature;area: editor;priority: critical;state: ready",
+    "dependencies": "ARQ-032",
+    "file": "backlog/issues/033-editor-implement-pan-and-zoom.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-034",
+    "number": 34,
+    "title": "editor: implement fit view",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "critical",
+    "labels": "type: feature;area: editor;priority: critical;state: ready",
+    "dependencies": "ARQ-033",
+    "file": "backlog/issues/034-editor-implement-fit-view.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-035",
+    "number": 35,
+    "title": "editor: implement pointer input abstraction",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "critical",
+    "labels": "type: feature;area: editor;priority: critical;state: ready",
+    "dependencies": "ARQ-034",
+    "file": "backlog/issues/035-editor-implement-pointer-input-abstraction.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-036",
+    "number": 36,
+    "title": "editor: implement touch input abstraction",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "critical",
+    "labels": "type: feature;area: editor;priority: critical;state: ready",
+    "dependencies": "ARQ-035",
+    "file": "backlog/issues/036-editor-implement-touch-input-abstraction.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-037",
+    "number": 37,
+    "title": "editor: implement keyboard input abstraction",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "critical",
+    "labels": "type: feature;area: editor;priority: critical;state: ready",
+    "dependencies": "ARQ-036",
+    "file": "backlog/issues/037-editor-implement-keyboard-input-abstraction.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-038",
+    "number": 38,
+    "title": "editor: define command lifecycle state machine",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "critical",
+    "labels": "type: feature;area: editor;priority: critical;state: ready",
+    "dependencies": "ARQ-037",
+    "file": "backlog/issues/038-editor-define-command-lifecycle-state-machine.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-039",
+    "number": 39,
+    "title": "editor: implement selection hit-test interface",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "critical",
+    "labels": "type: feature;area: editor;priority: critical;state: ready",
+    "dependencies": "ARQ-038",
+    "file": "backlog/issues/039-editor-implement-selection-hit-test-interface.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-040",
+    "number": 40,
+    "title": "editor: implement point selection",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "critical",
+    "labels": "type: feature;area: editor;priority: critical;state: ready",
+    "dependencies": "ARQ-039",
+    "file": "backlog/issues/040-editor-implement-point-selection.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-041",
+    "number": 41,
+    "title": "editor: implement window selection",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-040",
+    "file": "backlog/issues/041-editor-implement-window-selection.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-042",
+    "number": 42,
+    "title": "editor: implement crossing selection",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-041",
+    "file": "backlog/issues/042-editor-implement-crossing-selection.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-043",
+    "number": 43,
+    "title": "editor: implement candidate cycling",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-042",
+    "file": "backlog/issues/043-editor-implement-candidate-cycling.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-044",
+    "number": 44,
+    "title": "editor: implement selection filters",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-043",
+    "file": "backlog/issues/044-editor-implement-selection-filters.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-045",
+    "number": 45,
+    "title": "editor: define snap result contract",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-044",
+    "file": "backlog/issues/045-editor-define-snap-result-contract.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-046",
+    "number": 46,
+    "title": "editor: implement endpoint snap",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-045",
+    "file": "backlog/issues/046-editor-implement-endpoint-snap.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-047",
+    "number": 47,
+    "title": "editor: implement midpoint snap",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-046",
+    "file": "backlog/issues/047-editor-implement-midpoint-snap.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-048",
+    "number": 48,
+    "title": "editor: implement intersection snap",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-047",
+    "file": "backlog/issues/048-editor-implement-intersection-snap.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-049",
+    "number": 49,
+    "title": "editor: implement perpendicular snap",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-048",
+    "file": "backlog/issues/049-editor-implement-perpendicular-snap.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-050",
+    "number": 50,
+    "title": "editor: implement grid snap",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-049",
+    "file": "backlog/issues/050-editor-implement-grid-snap.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-051",
+    "number": 51,
+    "title": "editor: implement extension snap",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-050",
+    "file": "backlog/issues/051-editor-implement-extension-snap.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-052",
+    "number": 52,
+    "title": "editor: implement snap tie-break",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-051",
+    "file": "backlog/issues/052-editor-implement-snap-tie-break.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-053",
+    "number": 53,
+    "title": "editor: implement numeric overlay",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-052",
+    "file": "backlog/issues/053-editor-implement-numeric-overlay.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-054",
+    "number": 54,
+    "title": "editor: support metric numeric input",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-053",
+    "file": "backlog/issues/054-editor-support-metric-numeric-input.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-055",
+    "number": 55,
+    "title": "editor: support imperial numeric input",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-054",
+    "file": "backlog/issues/055-editor-support-imperial-numeric-input.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-056",
+    "number": 56,
+    "title": "editor: implement undo command stack",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-055",
+    "file": "backlog/issues/056-editor-implement-undo-command-stack.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-057",
+    "number": 57,
+    "title": "editor: implement redo",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-056",
+    "file": "backlog/issues/057-editor-implement-redo.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-058",
+    "number": 58,
+    "title": "core: select canonical unit representation",
+    "area": "core",
+    "phase": "Phase 1",
+    "epic": "Core model",
+    "priority": "high",
+    "labels": "type: feature;area: core;priority: high;state: blocked",
+    "dependencies": "ARQ-057",
+    "file": "backlog/issues/058-core-select-canonical-unit-representation.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-059",
+    "number": 59,
+    "title": "core: define typed unit library",
+    "area": "core",
+    "phase": "Phase 1",
+    "epic": "Core model",
+    "priority": "high",
+    "labels": "type: feature;area: core;priority: high;state: blocked",
+    "dependencies": "ARQ-058",
+    "file": "backlog/issues/059-core-define-typed-unit-library.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-060",
+    "number": 60,
+    "title": "core: define ID types",
+    "area": "core",
+    "phase": "Phase 1",
+    "epic": "Core model",
+    "priority": "high",
+    "labels": "type: feature;area: core;priority: high;state: blocked",
+    "dependencies": "ARQ-059",
+    "file": "backlog/issues/060-core-define-id-types.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-061",
+    "number": 61,
+    "title": "core: define project schema v0",
+    "area": "core",
+    "phase": "Phase 1",
+    "epic": "Core model",
+    "priority": "high",
+    "labels": "type: feature;area: core;priority: high;state: blocked",
+    "dependencies": "ARQ-060",
+    "file": "backlog/issues/061-core-define-project-schema-v0.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-062",
+    "number": 62,
+    "title": "core: define level schema",
+    "area": "core",
+    "phase": "Phase 1",
+    "epic": "Core model",
+    "priority": "high",
+    "labels": "type: feature;area: core;priority: high;state: blocked",
+    "dependencies": "ARQ-061",
+    "file": "backlog/issues/062-core-define-level-schema.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-063",
+    "number": 63,
+    "title": "core: define element base schema",
+    "area": "core",
+    "phase": "Phase 1",
+    "epic": "Core model",
+    "priority": "high",
+    "labels": "type: feature;area: core;priority: high;state: blocked",
+    "dependencies": "ARQ-062",
+    "file": "backlog/issues/063-core-define-element-base-schema.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-064",
+    "number": 64,
+    "title": "core: define type and instance property states",
+    "area": "core",
+    "phase": "Phase 1",
+    "epic": "Core model",
+    "priority": "high",
+    "labels": "type: feature;area: core;priority: high;state: blocked",
+    "dependencies": "ARQ-063",
+    "file": "backlog/issues/064-core-define-type-and-instance-property-states.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-065",
+    "number": 65,
+    "title": "operations: define operation contract",
+    "area": "operations",
+    "phase": "Phase 1",
+    "epic": "Operations and undo",
+    "priority": "high",
+    "labels": "type: feature;area: operations;priority: high;state: blocked",
+    "dependencies": "ARQ-064",
+    "file": "backlog/issues/065-operations-define-operation-contract.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-066",
+    "number": 66,
+    "title": "operations: define validation result contract",
+    "area": "operations",
+    "phase": "Phase 1",
+    "epic": "Operations and undo",
+    "priority": "high",
+    "labels": "type: feature;area: operations;priority: high;state: blocked",
+    "dependencies": "ARQ-065",
+    "file": "backlog/issues/066-operations-define-validation-result-contract.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-067",
+    "number": 67,
+    "title": "operations: implement create element operation",
+    "area": "operations",
+    "phase": "Phase 1",
+    "epic": "Operations and undo",
+    "priority": "high",
+    "labels": "type: feature;area: operations;priority: high;state: blocked",
+    "dependencies": "ARQ-066",
+    "file": "backlog/issues/067-operations-implement-create-element-operation.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-068",
+    "number": 68,
+    "title": "operations: implement update property operation",
+    "area": "operations",
+    "phase": "Phase 1",
+    "epic": "Operations and undo",
+    "priority": "high",
+    "labels": "type: feature;area: operations;priority: high;state: blocked",
+    "dependencies": "ARQ-067",
+    "file": "backlog/issues/068-operations-implement-update-property-operation.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-069",
+    "number": 69,
+    "title": "operations: implement delete element operation",
+    "area": "operations",
+    "phase": "Phase 1",
+    "epic": "Operations and undo",
+    "priority": "high",
+    "labels": "type: feature;area: operations;priority: high;state: blocked",
+    "dependencies": "ARQ-068",
+    "file": "backlog/issues/069-operations-implement-delete-element-operation.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-070",
+    "number": 70,
+    "title": "operations: implement inverse operation tests",
+    "area": "operations",
+    "phase": "Phase 1",
+    "epic": "Operations and undo",
+    "priority": "high",
+    "labels": "type: feature;area: operations;priority: high;state: blocked",
+    "dependencies": "ARQ-069",
+    "file": "backlog/issues/070-operations-implement-inverse-operation-tests.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-071",
+    "number": 71,
+    "title": "storage: add Dexie project database",
+    "area": "storage",
+    "phase": "Phase 1",
+    "epic": "Local storage",
+    "priority": "high",
+    "labels": "type: feature;area: storage;priority: high;state: blocked",
+    "dependencies": "ARQ-070",
+    "file": "backlog/issues/071-storage-add-dexie-project-database.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Abnormal closure and quota failure are tested.",
+      "The user can export a local archive."
+    ]
+  },
+  {
+    "id": "ARQ-072",
+    "number": 72,
+    "title": "storage: implement local journal",
+    "area": "storage",
+    "phase": "Phase 1",
+    "epic": "Local storage",
+    "priority": "high",
+    "labels": "type: feature;area: storage;priority: high;state: blocked",
+    "dependencies": "ARQ-071",
+    "file": "backlog/issues/072-storage-implement-local-journal.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Abnormal closure and quota failure are tested.",
+      "The user can export a local archive."
+    ]
+  },
+  {
+    "id": "ARQ-073",
+    "number": 73,
+    "title": "storage: implement snapshots",
+    "area": "storage",
+    "phase": "Phase 1",
+    "epic": "Local storage",
+    "priority": "high",
+    "labels": "type: feature;area: storage;priority: high;state: blocked",
+    "dependencies": "ARQ-072",
+    "file": "backlog/issues/073-storage-implement-snapshots.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Abnormal closure and quota failure are tested.",
+      "The user can export a local archive."
+    ]
+  },
+  {
+    "id": "ARQ-074",
+    "number": 74,
+    "title": "storage: implement quota handling",
+    "area": "storage",
+    "phase": "Phase 1",
+    "epic": "Local storage",
+    "priority": "high",
+    "labels": "type: feature;area: storage;priority: high;state: blocked",
+    "dependencies": "ARQ-073",
+    "file": "backlog/issues/074-storage-implement-quota-handling.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Abnormal closure and quota failure are tested.",
+      "The user can export a local archive."
+    ]
+  },
+  {
+    "id": "ARQ-075",
+    "number": 75,
+    "title": "storage: implement abnormal-exit recovery",
+    "area": "storage",
+    "phase": "Phase 1",
+    "epic": "Local storage",
+    "priority": "high",
+    "labels": "type: feature;area: storage;priority: high;state: blocked",
+    "dependencies": "ARQ-074",
+    "file": "backlog/issues/075-storage-implement-abnormal-exit-recovery.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Abnormal closure and quota failure are tested.",
+      "The user can export a local archive."
+    ]
+  },
+  {
+    "id": "ARQ-076",
+    "number": 76,
+    "title": "format: define arq manifest",
+    "area": "format",
+    "phase": "Phase 1",
+    "epic": "Project format",
+    "priority": "high",
+    "labels": "type: feature;area: format;priority: high;state: blocked",
+    "dependencies": "ARQ-075",
+    "file": "backlog/issues/076-format-define-arq-manifest.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Schema version and migration effect are documented.",
+      "Corrupt optional data fails safely."
+    ]
+  },
+  {
+    "id": "ARQ-077",
+    "number": 77,
+    "title": "format: implement archive checksums",
+    "area": "format",
+    "phase": "Phase 1",
+    "epic": "Project format",
+    "priority": "high",
+    "labels": "type: feature;area: format;priority: high;state: blocked",
+    "dependencies": "ARQ-076",
+    "file": "backlog/issues/077-format-implement-archive-checksums.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Schema version and migration effect are documented.",
+      "Corrupt optional data fails safely."
+    ]
+  },
+  {
+    "id": "ARQ-078",
+    "number": 78,
+    "title": "format: implement arq export",
+    "area": "format",
+    "phase": "Phase 1",
+    "epic": "Project format",
+    "priority": "high",
+    "labels": "type: feature;area: format;priority: high;state: blocked",
+    "dependencies": "ARQ-077",
+    "file": "backlog/issues/078-format-implement-arq-export.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Schema version and migration effect are documented.",
+      "Corrupt optional data fails safely."
+    ]
+  },
+  {
+    "id": "ARQ-079",
+    "number": 79,
+    "title": "format: implement arq import",
+    "area": "format",
+    "phase": "Phase 1",
+    "epic": "Project format",
+    "priority": "high",
+    "labels": "type: feature;area: format;priority: high;state: blocked",
+    "dependencies": "ARQ-078",
+    "file": "backlog/issues/079-format-implement-arq-import.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Schema version and migration effect are documented.",
+      "Corrupt optional data fails safely."
+    ]
+  },
+  {
+    "id": "ARQ-080",
+    "number": 80,
+    "title": "format: implement migration framework",
+    "area": "format",
+    "phase": "Phase 1",
+    "epic": "Project format",
+    "priority": "high",
+    "labels": "type: feature;area: format;priority: high;state: blocked",
+    "dependencies": "ARQ-079",
+    "file": "backlog/issues/080-format-implement-migration-framework.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Schema version and migration effect are documented.",
+      "Corrupt optional data fails safely."
+    ]
+  },
+  {
+    "id": "ARQ-081",
+    "number": 81,
+    "title": "geometry: define tolerance policy",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-080",
+    "file": "backlog/issues/081-geometry-define-tolerance-policy.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-082",
+    "number": 82,
+    "title": "geometry: implement point and vector primitives",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-081",
+    "file": "backlog/issues/082-geometry-implement-point-and-vector-primitives.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-083",
+    "number": 83,
+    "title": "geometry: implement segment intersections",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-082",
+    "file": "backlog/issues/083-geometry-implement-segment-intersections.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-084",
+    "number": 84,
+    "title": "geometry: implement nearest point",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-083",
+    "file": "backlog/issues/084-geometry-implement-nearest-point.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-085",
+    "number": 85,
+    "title": "geometry: implement polygon area and winding",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-084",
+    "file": "backlog/issues/085-geometry-implement-polygon-area-and-winding.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-086",
+    "number": 86,
+    "title": "geometry: evaluate robust predicates",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-085",
+    "file": "backlog/issues/086-geometry-evaluate-robust-predicates.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-087",
+    "number": 87,
+    "title": "geometry: evaluate polygon clipping",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-086",
+    "file": "backlog/issues/087-geometry-evaluate-polygon-clipping.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-088",
+    "number": 88,
+    "title": "geometry: evaluate RBush",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-087",
+    "file": "backlog/issues/088-geometry-evaluate-rbush.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-089",
+    "number": 89,
+    "title": "geometry: evaluate earcut",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-088",
+    "file": "backlog/issues/089-geometry-evaluate-earcut.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-090",
+    "number": 90,
+    "title": "geometry: build geometry adversarial fixtures",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-089",
+    "file": "backlog/issues/090-geometry-build-geometry-adversarial-fixtures.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-091",
+    "number": 91,
+    "title": "bim: define wall type",
+    "area": "bim",
+    "phase": "Phase 2",
+    "epic": "Building model",
+    "priority": "high",
+    "labels": "type: feature;area: bim;priority: high;state: blocked",
+    "dependencies": "ARQ-090",
+    "file": "backlog/issues/091-bim-define-wall-type.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Stable IDs and type-instance behaviour are preserved.",
+      "Derived invalidations are declared."
+    ]
+  },
+  {
+    "id": "ARQ-092",
+    "number": 92,
+    "title": "bim: define wall instance",
+    "area": "bim",
+    "phase": "Phase 2",
+    "epic": "Building model",
+    "priority": "high",
+    "labels": "type: feature;area: bim;priority: high;state: blocked",
+    "dependencies": "ARQ-091",
+    "file": "backlog/issues/092-bim-define-wall-instance.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Stable IDs and type-instance behaviour are preserved.",
+      "Derived invalidations are declared."
+    ]
+  },
+  {
+    "id": "ARQ-093",
+    "number": 93,
+    "title": "geometry: implement wall outline",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-092",
+    "file": "backlog/issues/093-geometry-implement-wall-outline.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-094",
+    "number": 94,
+    "title": "editor: implement wall drawing tool",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-093",
+    "file": "backlog/issues/094-editor-implement-wall-drawing-tool.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-095",
+    "number": 95,
+    "title": "geometry: implement butt join",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-094",
+    "file": "backlog/issues/095-geometry-implement-butt-join.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-096",
+    "number": 96,
+    "title": "geometry: implement mitre join",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-095",
+    "file": "backlog/issues/096-geometry-implement-mitre-join.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-097",
+    "number": 97,
+    "title": "geometry: implement T join",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-096",
+    "file": "backlog/issues/097-geometry-implement-t-join.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-098",
+    "number": 98,
+    "title": "geometry: implement cross join",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-097",
+    "file": "backlog/issues/098-geometry-implement-cross-join.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-099",
+    "number": 99,
+    "title": "editor: implement trim wall",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-098",
+    "file": "backlog/issues/099-editor-implement-trim-wall.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-100",
+    "number": 100,
+    "title": "editor: implement extend wall",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-099",
+    "file": "backlog/issues/100-editor-implement-extend-wall.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-101",
+    "number": 101,
+    "title": "editor: implement split wall",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-100",
+    "file": "backlog/issues/101-editor-implement-split-wall.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-102",
+    "number": 102,
+    "title": "editor: implement offset wall",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-101",
+    "file": "backlog/issues/102-editor-implement-offset-wall.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-103",
+    "number": 103,
+    "title": "bim: define hosted opening",
+    "area": "bim",
+    "phase": "Phase 2",
+    "epic": "Building model",
+    "priority": "high",
+    "labels": "type: feature;area: bim;priority: high;state: blocked",
+    "dependencies": "ARQ-102",
+    "file": "backlog/issues/103-bim-define-hosted-opening.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Stable IDs and type-instance behaviour are preserved.",
+      "Derived invalidations are declared."
+    ]
+  },
+  {
+    "id": "ARQ-104",
+    "number": 104,
+    "title": "bim: define door type and instance",
+    "area": "bim",
+    "phase": "Phase 2",
+    "epic": "Building model",
+    "priority": "high",
+    "labels": "type: feature;area: bim;priority: high;state: blocked",
+    "dependencies": "ARQ-103",
+    "file": "backlog/issues/104-bim-define-door-type-and-instance.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Stable IDs and type-instance behaviour are preserved.",
+      "Derived invalidations are declared."
+    ]
+  },
+  {
+    "id": "ARQ-105",
+    "number": 105,
+    "title": "editor: implement door placement",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-104",
+    "file": "backlog/issues/105-editor-implement-door-placement.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-106",
+    "number": 106,
+    "title": "editor: implement door flip controls",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-105",
+    "file": "backlog/issues/106-editor-implement-door-flip-controls.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-107",
+    "number": 107,
+    "title": "bim: define window type and instance",
+    "area": "bim",
+    "phase": "Phase 2",
+    "epic": "Building model",
+    "priority": "high",
+    "labels": "type: feature;area: bim;priority: high;state: blocked",
+    "dependencies": "ARQ-106",
+    "file": "backlog/issues/107-bim-define-window-type-and-instance.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Stable IDs and type-instance behaviour are preserved.",
+      "Derived invalidations are declared."
+    ]
+  },
+  {
+    "id": "ARQ-108",
+    "number": 108,
+    "title": "editor: implement window placement",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-107",
+    "file": "backlog/issues/108-editor-implement-window-placement.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-109",
+    "number": 109,
+    "title": "editor: implement opening overlap validation",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-108",
+    "file": "backlog/issues/109-editor-implement-opening-overlap-validation.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-110",
+    "number": 110,
+    "title": "bim: define room schema",
+    "area": "bim",
+    "phase": "Phase 2",
+    "epic": "Building model",
+    "priority": "high",
+    "labels": "type: feature;area: bim;priority: high;state: blocked",
+    "dependencies": "ARQ-109",
+    "file": "backlog/issues/110-bim-define-room-schema.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Stable IDs and type-instance behaviour are preserved.",
+      "Derived invalidations are declared."
+    ]
+  },
+  {
+    "id": "ARQ-111",
+    "number": 111,
+    "title": "geometry: implement room boundary graph",
+    "area": "geometry",
+    "phase": "Phase 1",
+    "epic": "Geometry",
+    "priority": "high",
+    "labels": "type: feature;area: geometry;priority: high;state: blocked",
+    "dependencies": "ARQ-110",
+    "file": "backlog/issues/111-geometry-implement-room-boundary-graph.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Tolerance behaviour is explicit.",
+      "Adversarial and near-degenerate fixtures are included."
+    ]
+  },
+  {
+    "id": "ARQ-112",
+    "number": 112,
+    "title": "editor: implement room placement",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-111",
+    "file": "backlog/issues/112-editor-implement-room-placement.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-113",
+    "number": 113,
+    "title": "editor: implement zoom to room gap",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: blocked",
+    "dependencies": "ARQ-112",
+    "file": "backlog/issues/113-editor-implement-zoom-to-room-gap.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Escape and Enter behaviour is defined.",
+      "Invalid input leaves committed project state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-114",
+    "number": 114,
+    "title": "bim: implement room area",
+    "area": "bim",
+    "phase": "Phase 2",
+    "epic": "Building model",
+    "priority": "high",
+    "labels": "type: feature;area: bim;priority: high;state: blocked",
+    "dependencies": "ARQ-113",
+    "file": "backlog/issues/114-bim-implement-room-area.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Stable IDs and type-instance behaviour are preserved.",
+      "Derived invalidations are declared."
+    ]
+  },
+  {
+    "id": "ARQ-115",
+    "number": 115,
+    "title": "renderer: benchmark Canvas 2D",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "high",
+    "labels": "type: feature;area: renderer;priority: high;state: blocked",
+    "dependencies": "ARQ-114",
+    "file": "backlog/issues/115-renderer-benchmark-canvas-2d.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-116",
+    "number": 116,
+    "title": "renderer: benchmark PixiJS WebGL",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "high",
+    "labels": "type: feature;area: renderer;priority: high;state: blocked",
+    "dependencies": "ARQ-115",
+    "file": "backlog/issues/116-renderer-benchmark-pixijs-webgl.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-117",
+    "number": 117,
+    "title": "renderer: evaluate CanvasKit fallback",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "high",
+    "labels": "type: feature;area: renderer;priority: high;state: blocked",
+    "dependencies": "ARQ-116",
+    "file": "backlog/issues/117-renderer-evaluate-canvaskit-fallback.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-118",
+    "number": 118,
+    "title": "renderer: select 2D renderer through ADR",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "high",
+    "labels": "type: feature;area: renderer;priority: high;state: blocked",
+    "dependencies": "ARQ-117",
+    "file": "backlog/issues/118-renderer-select-2d-renderer-through-adr.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-119",
+    "number": 119,
+    "title": "renderer: implement plan scene abstraction",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "high",
+    "labels": "type: feature;area: renderer;priority: high;state: blocked",
+    "dependencies": "ARQ-118",
+    "file": "backlog/issues/119-renderer-implement-plan-scene-abstraction.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-120",
+    "number": 120,
+    "title": "renderer: implement stable line weights",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "high",
+    "labels": "type: feature;area: renderer;priority: high;state: blocked",
+    "dependencies": "ARQ-119",
+    "file": "backlog/issues/120-renderer-implement-stable-line-weights.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-121",
+    "number": 121,
+    "title": "renderer: implement selection rendering",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "normal",
+    "labels": "type: feature;area: renderer;priority: normal;state: blocked",
+    "dependencies": "ARQ-120",
+    "file": "backlog/issues/121-renderer-implement-selection-rendering.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-122",
+    "number": 122,
+    "title": "renderer: implement snap glyph rendering",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "normal",
+    "labels": "type: feature;area: renderer;priority: normal;state: blocked",
+    "dependencies": "ARQ-121",
+    "file": "backlog/issues/122-renderer-implement-snap-glyph-rendering.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-123",
+    "number": 123,
+    "title": "renderer: add Three.js WebGL scene",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "normal",
+    "labels": "type: feature;area: renderer;priority: normal;state: blocked",
+    "dependencies": "ARQ-122",
+    "file": "backlog/issues/123-renderer-add-three-js-webgl-scene.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-124",
+    "number": 124,
+    "title": "renderer: generate wall meshes",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "normal",
+    "labels": "type: feature;area: renderer;priority: normal;state: blocked",
+    "dependencies": "ARQ-123",
+    "file": "backlog/issues/124-renderer-generate-wall-meshes.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-125",
+    "number": 125,
+    "title": "renderer: generate opening meshes",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "normal",
+    "labels": "type: feature;area: renderer;priority: normal;state: blocked",
+    "dependencies": "ARQ-124",
+    "file": "backlog/issues/125-renderer-generate-opening-meshes.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-126",
+    "number": 126,
+    "title": "renderer: implement orthographic camera",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "normal",
+    "labels": "type: feature;area: renderer;priority: normal;state: blocked",
+    "dependencies": "ARQ-125",
+    "file": "backlog/issues/126-renderer-implement-orthographic-camera.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-127",
+    "number": 127,
+    "title": "renderer: implement orbit and fit",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "normal",
+    "labels": "type: feature;area: renderer;priority: normal;state: blocked",
+    "dependencies": "ARQ-126",
+    "file": "backlog/issues/127-renderer-implement-orbit-and-fit.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-128",
+    "number": 128,
+    "title": "renderer: implement 2D and 3D shared selection",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "normal",
+    "labels": "type: feature;area: renderer;priority: normal;state: blocked",
+    "dependencies": "ARQ-127",
+    "file": "backlog/issues/128-renderer-implement-2d-and-3d-shared-selection.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-129",
+    "number": 129,
+    "title": "renderer: implement hide and isolate",
+    "area": "renderer",
+    "phase": "Phase 2",
+    "epic": "Rendering",
+    "priority": "normal",
+    "labels": "type: feature;area: renderer;priority: normal;state: blocked",
+    "dependencies": "ARQ-128",
+    "file": "backlog/issues/129-renderer-implement-hide-and-isolate.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Project semantics remain renderer-independent.",
+      "Performance is measured on the protected benchmark."
+    ]
+  },
+  {
+    "id": "ARQ-130",
+    "number": 130,
+    "title": "inspect: build identity property group",
+    "area": "inspect",
+    "phase": "Phase 2",
+    "epic": "Inspection",
+    "priority": "normal",
+    "labels": "type: feature;area: inspect;priority: normal;state: blocked",
+    "dependencies": "ARQ-129",
+    "file": "backlog/issues/130-inspect-build-identity-property-group.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-131",
+    "number": 131,
+    "title": "inspect: build geometry property group",
+    "area": "inspect",
+    "phase": "Phase 2",
+    "epic": "Inspection",
+    "priority": "normal",
+    "labels": "type: feature;area: inspect;priority: normal;state: blocked",
+    "dependencies": "ARQ-130",
+    "file": "backlog/issues/131-inspect-build-geometry-property-group.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-132",
+    "number": 132,
+    "title": "inspect: build type and instance group",
+    "area": "inspect",
+    "phase": "Phase 2",
+    "epic": "Inspection",
+    "priority": "normal",
+    "labels": "type: feature;area: inspect;priority: normal;state: blocked",
+    "dependencies": "ARQ-131",
+    "file": "backlog/issues/132-inspect-build-type-and-instance-group.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-133",
+    "number": 133,
+    "title": "inspect: build relationships group",
+    "area": "inspect",
+    "phase": "Phase 2",
+    "epic": "Inspection",
+    "priority": "normal",
+    "labels": "type: feature;area: inspect;priority: normal;state: blocked",
+    "dependencies": "ARQ-132",
+    "file": "backlog/issues/133-inspect-build-relationships-group.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-134",
+    "number": 134,
+    "title": "inspect: build warnings group",
+    "area": "inspect",
+    "phase": "Phase 2",
+    "epic": "Inspection",
+    "priority": "normal",
+    "labels": "type: feature;area: inspect;priority: normal;state: blocked",
+    "dependencies": "ARQ-133",
+    "file": "backlog/issues/134-inspect-build-warnings-group.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-135",
+    "number": 135,
+    "title": "inspect: build history group",
+    "area": "inspect",
+    "phase": "Phase 2",
+    "epic": "Inspection",
+    "priority": "normal",
+    "labels": "type: feature;area: inspect;priority: normal;state: blocked",
+    "dependencies": "ARQ-134",
+    "file": "backlog/issues/135-inspect-build-history-group.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-136",
+    "number": 136,
+    "title": "docs: define dimension reference model",
+    "area": "docs",
+    "phase": "Phase 0",
+    "epic": "Documentation",
+    "priority": "normal",
+    "labels": "type: feature;area: docs;priority: normal;state: blocked",
+    "dependencies": "ARQ-135",
+    "file": "backlog/issues/136-docs-define-dimension-reference-model.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-137",
+    "number": 137,
+    "title": "docs: implement linear dimension",
+    "area": "docs",
+    "phase": "Phase 0",
+    "epic": "Documentation",
+    "priority": "normal",
+    "labels": "type: feature;area: docs;priority: normal;state: blocked",
+    "dependencies": "ARQ-136",
+    "file": "backlog/issues/137-docs-implement-linear-dimension.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-138",
+    "number": 138,
+    "title": "docs: implement room label",
+    "area": "docs",
+    "phase": "Phase 0",
+    "epic": "Documentation",
+    "priority": "normal",
+    "labels": "type: feature;area: docs;priority: normal;state: blocked",
+    "dependencies": "ARQ-137",
+    "file": "backlog/issues/138-docs-implement-room-label.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-139",
+    "number": 139,
+    "title": "docs: implement text note",
+    "area": "docs",
+    "phase": "Phase 0",
+    "epic": "Documentation",
+    "priority": "normal",
+    "labels": "type: feature;area: docs;priority: normal;state: blocked",
+    "dependencies": "ARQ-138",
+    "file": "backlog/issues/139-docs-implement-text-note.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-140",
+    "number": 140,
+    "title": "docs: define sheet schema",
+    "area": "docs",
+    "phase": "Phase 0",
+    "epic": "Documentation",
+    "priority": "normal",
+    "labels": "type: feature;area: docs;priority: normal;state: blocked",
+    "dependencies": "ARQ-139",
+    "file": "backlog/issues/140-docs-define-sheet-schema.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-141",
+    "number": 141,
+    "title": "docs: build one plan viewport",
+    "area": "docs",
+    "phase": "Phase 0",
+    "epic": "Documentation",
+    "priority": "normal",
+    "labels": "type: feature;area: docs;priority: normal;state: blocked",
+    "dependencies": "ARQ-140",
+    "file": "backlog/issues/141-docs-build-one-plan-viewport.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-142",
+    "number": 142,
+    "title": "pdf: prototype pdf-lib vector export",
+    "area": "pdf",
+    "phase": "Phase 3",
+    "epic": "Documentation and PDF",
+    "priority": "normal",
+    "labels": "type: feature;area: pdf;priority: normal;state: blocked",
+    "dependencies": "ARQ-141",
+    "file": "backlog/issues/142-pdf-prototype-pdf-lib-vector-export.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-143",
+    "number": 143,
+    "title": "pdf: implement font embedding tests",
+    "area": "pdf",
+    "phase": "Phase 3",
+    "epic": "Documentation and PDF",
+    "priority": "normal",
+    "labels": "type: feature;area: pdf;priority: normal;state: blocked",
+    "dependencies": "ARQ-142",
+    "file": "backlog/issues/143-pdf-implement-font-embedding-tests.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-144",
+    "number": 144,
+    "title": "pdf: implement scale validation",
+    "area": "pdf",
+    "phase": "Phase 3",
+    "epic": "Documentation and PDF",
+    "priority": "normal",
+    "labels": "type: feature;area: pdf;priority: normal;state: blocked",
+    "dependencies": "ARQ-143",
+    "file": "backlog/issues/144-pdf-implement-scale-validation.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-145",
+    "number": 145,
+    "title": "pdf: add export metadata",
+    "area": "pdf",
+    "phase": "Phase 3",
+    "epic": "Documentation and PDF",
+    "priority": "normal",
+    "labels": "type: feature;area: pdf;priority: normal;state: blocked",
+    "dependencies": "ARQ-144",
+    "file": "backlog/issues/145-pdf-add-export-metadata.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-146",
+    "number": 146,
+    "title": "reliability: implement corrupt cache recovery",
+    "area": "reliability",
+    "phase": "Phase 4",
+    "epic": "Reliability",
+    "priority": "normal",
+    "labels": "type: feature;area: reliability;priority: normal;state: blocked",
+    "dependencies": "ARQ-145",
+    "file": "backlog/issues/146-reliability-implement-corrupt-cache-recovery.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Recovery behaviour is tested.",
+      "No committed work is discarded silently."
+    ]
+  },
+  {
+    "id": "ARQ-147",
+    "number": 147,
+    "title": "reliability: implement safe mode",
+    "area": "reliability",
+    "phase": "Phase 4",
+    "epic": "Reliability",
+    "priority": "normal",
+    "labels": "type: feature;area: reliability;priority: normal;state: blocked",
+    "dependencies": "ARQ-146",
+    "file": "backlog/issues/147-reliability-implement-safe-mode.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Recovery behaviour is tested.",
+      "No committed work is discarded silently."
+    ]
+  },
+  {
+    "id": "ARQ-148",
+    "number": 148,
+    "title": "performance: define benchmark hardware",
+    "area": "performance",
+    "phase": "Phase 4",
+    "epic": "Performance",
+    "priority": "normal",
+    "labels": "type: feature;area: performance;priority: normal;state: blocked",
+    "dependencies": "ARQ-147",
+    "file": "backlog/issues/148-performance-define-benchmark-hardware.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Baseline and regression threshold are recorded.",
+      "The benchmark device is named."
+    ]
+  },
+  {
+    "id": "ARQ-149",
+    "number": 149,
+    "title": "performance: add selection benchmark",
+    "area": "performance",
+    "phase": "Phase 4",
+    "epic": "Performance",
+    "priority": "normal",
+    "labels": "type: feature;area: performance;priority: normal;state: blocked",
+    "dependencies": "ARQ-148",
+    "file": "backlog/issues/149-performance-add-selection-benchmark.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Baseline and regression threshold are recorded.",
+      "The benchmark device is named."
+    ]
+  },
+  {
+    "id": "ARQ-150",
+    "number": 150,
+    "title": "performance: add room rebuild benchmark",
+    "area": "performance",
+    "phase": "Phase 4",
+    "epic": "Performance",
+    "priority": "normal",
+    "labels": "type: feature;area: performance;priority: normal;state: blocked",
+    "dependencies": "ARQ-149",
+    "file": "backlog/issues/150-performance-add-room-rebuild-benchmark.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Baseline and regression threshold are recorded.",
+      "The benchmark device is named."
+    ]
+  },
+  {
+    "id": "ARQ-151",
+    "number": 151,
+    "title": "performance: add render frame benchmark",
+    "area": "performance",
+    "phase": "Phase 4",
+    "epic": "Performance",
+    "priority": "normal",
+    "labels": "type: feature;area: performance;priority: normal;state: blocked",
+    "dependencies": "ARQ-150",
+    "file": "backlog/issues/151-performance-add-render-frame-benchmark.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Baseline and regression threshold are recorded.",
+      "The benchmark device is named."
+    ]
+  },
+  {
+    "id": "ARQ-152",
+    "number": 152,
+    "title": "accessibility: complete keyboard-only workflow",
+    "area": "accessibility",
+    "phase": "Phase 4",
+    "epic": "Accessibility",
+    "priority": "normal",
+    "labels": "type: feature;area: accessibility;priority: normal;state: blocked",
+    "dependencies": "ARQ-151",
+    "file": "backlog/issues/152-accessibility-complete-keyboard-only-workflow.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Keyboard and assistive-technology behaviour is tested.",
+      "Status is not communicated by colour alone."
+    ]
+  },
+  {
+    "id": "ARQ-153",
+    "number": 153,
+    "title": "accessibility: add VoiceOver labels",
+    "area": "accessibility",
+    "phase": "Phase 4",
+    "epic": "Accessibility",
+    "priority": "normal",
+    "labels": "type: feature;area: accessibility;priority: normal;state: blocked",
+    "dependencies": "ARQ-152",
+    "file": "backlog/issues/153-accessibility-add-voiceover-labels.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Keyboard and assistive-technology behaviour is tested.",
+      "Status is not communicated by colour alone."
+    ]
+  },
+  {
+    "id": "ARQ-154",
+    "number": 154,
+    "title": "accessibility: test 200 percent zoom",
+    "area": "accessibility",
+    "phase": "Phase 4",
+    "epic": "Accessibility",
+    "priority": "normal",
+    "labels": "type: feature;area: accessibility;priority: normal;state: blocked",
+    "dependencies": "ARQ-153",
+    "file": "backlog/issues/154-accessibility-test-200-percent-zoom.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Keyboard and assistive-technology behaviour is tested.",
+      "Status is not communicated by colour alone."
+    ]
+  },
+  {
+    "id": "ARQ-155",
+    "number": 155,
+    "title": "security: create threat model",
+    "area": "security",
+    "phase": "Phase 4",
+    "epic": "Security",
+    "priority": "normal",
+    "labels": "type: feature;area: security;priority: normal;state: blocked",
+    "dependencies": "ARQ-154",
+    "file": "backlog/issues/155-security-create-threat-model.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Threats, permission checks and safe failure are documented.",
+      "No sensitive project content is logged by default."
+    ]
+  },
+  {
+    "id": "ARQ-156",
+    "number": 156,
+    "title": "security: fuzz arq archive",
+    "area": "security",
+    "phase": "Phase 4",
+    "epic": "Security",
+    "priority": "normal",
+    "labels": "type: feature;area: security;priority: normal;state: blocked",
+    "dependencies": "ARQ-155",
+    "file": "backlog/issues/156-security-fuzz-arq-archive.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Threats, permission checks and safe failure are documented.",
+      "No sensitive project content is logged by default."
+    ]
+  },
+  {
+    "id": "ARQ-157",
+    "number": 157,
+    "title": "security: add file size and complexity limits",
+    "area": "security",
+    "phase": "Phase 4",
+    "epic": "Security",
+    "priority": "normal",
+    "labels": "type: feature;area: security;priority: normal;state: blocked",
+    "dependencies": "ARQ-156",
+    "file": "backlog/issues/157-security-add-file-size-and-complexity-limits.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Threats, permission checks and safe failure are documented.",
+      "No sensitive project content is logged by default."
+    ]
+  },
+  {
+    "id": "ARQ-158",
+    "number": 158,
+    "title": "exchange: prototype DXF parser",
+    "area": "exchange",
+    "phase": "Phase 5",
+    "epic": "Interoperability",
+    "priority": "normal",
+    "labels": "type: feature;area: exchange;priority: normal;state: blocked",
+    "dependencies": "ARQ-157",
+    "file": "backlog/issues/158-exchange-prototype-dxf-parser.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "A support report identifies preserved and unsupported content.",
+      "Failure cannot partially mutate the project."
+    ]
+  },
+  {
+    "id": "ARQ-159",
+    "number": 159,
+    "title": "exchange: define DXF support matrix",
+    "area": "exchange",
+    "phase": "Phase 5",
+    "epic": "Interoperability",
+    "priority": "normal",
+    "labels": "type: feature;area: exchange;priority: normal;state: blocked",
+    "dependencies": "ARQ-158",
+    "file": "backlog/issues/159-exchange-define-dxf-support-matrix.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "A support report identifies preserved and unsupported content.",
+      "Failure cannot partially mutate the project."
+    ]
+  },
+  {
+    "id": "ARQ-160",
+    "number": 160,
+    "title": "exchange: prototype web-ifc viewer",
+    "area": "exchange",
+    "phase": "Phase 5",
+    "epic": "Interoperability",
+    "priority": "normal",
+    "labels": "type: feature;area: exchange;priority: normal;state: blocked",
+    "dependencies": "ARQ-159",
+    "file": "backlog/issues/160-exchange-prototype-web-ifc-viewer.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "A support report identifies preserved and unsupported content.",
+      "Failure cannot partially mutate the project."
+    ]
+  },
+  {
+    "id": "ARQ-161",
+    "number": 161,
+    "title": "exchange: define IFC mapping report",
+    "area": "exchange",
+    "phase": "Phase 5",
+    "epic": "Interoperability",
+    "priority": "normal",
+    "labels": "type: feature;area: exchange;priority: normal;state: blocked",
+    "dependencies": "ARQ-160",
+    "file": "backlog/issues/161-exchange-define-ifc-mapping-report.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "A support report identifies preserved and unsupported content.",
+      "Failure cannot partially mutate the project."
+    ]
+  },
+  {
+    "id": "ARQ-162",
+    "number": 162,
+    "title": "collaboration: prototype presence only",
+    "area": "collaboration",
+    "phase": "Phase 6",
+    "epic": "Collaboration",
+    "priority": "normal",
+    "labels": "type: feature;area: collaboration;priority: normal;state: blocked",
+    "dependencies": "ARQ-161",
+    "file": "backlog/issues/162-collaboration-prototype-presence-only.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Server-side permissions are enforced.",
+      "Destructive conflicts are not silently merged."
+    ]
+  },
+  {
+    "id": "ARQ-163",
+    "number": 163,
+    "title": "collaboration: implement comments",
+    "area": "collaboration",
+    "phase": "Phase 6",
+    "epic": "Collaboration",
+    "priority": "normal",
+    "labels": "type: feature;area: collaboration;priority: normal;state: blocked",
+    "dependencies": "ARQ-162",
+    "file": "backlog/issues/163-collaboration-implement-comments.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Server-side permissions are enforced.",
+      "Destructive conflicts are not silently merged."
+    ]
+  },
+  {
+    "id": "ARQ-164",
+    "number": 164,
+    "title": "collaboration: implement issues",
+    "area": "collaboration",
+    "phase": "Phase 6",
+    "epic": "Collaboration",
+    "priority": "normal",
+    "labels": "type: feature;area: collaboration;priority: normal;state: blocked",
+    "dependencies": "ARQ-163",
+    "file": "backlog/issues/164-collaboration-implement-issues.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Server-side permissions are enforced.",
+      "Destructive conflicts are not silently merged."
+    ]
+  },
+  {
+    "id": "ARQ-165",
+    "number": 165,
+    "title": "collaboration: implement revision snapshots",
+    "area": "collaboration",
+    "phase": "Phase 6",
+    "epic": "Collaboration",
+    "priority": "normal",
+    "labels": "type: feature;area: collaboration;priority: normal;state: blocked",
+    "dependencies": "ARQ-164",
+    "file": "backlog/issues/165-collaboration-implement-revision-snapshots.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Server-side permissions are enforced.",
+      "Destructive conflicts are not silently merged."
+    ]
+  },
+  {
+    "id": "ARQ-166",
+    "number": 166,
+    "title": "ai: define ArqScript grammar v0",
+    "area": "ai",
+    "phase": "Phase 7",
+    "epic": "AI and ArqScript",
+    "priority": "normal",
+    "labels": "type: feature;area: ai;priority: normal;state: blocked",
+    "dependencies": "ARQ-165",
+    "file": "backlog/issues/166-ai-define-arqscript-grammar-v0.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "The output is a previewable typed operation.",
+      "Assumptions, validation and grouped undo are visible."
+    ]
+  },
+  {
+    "id": "ARQ-167",
+    "number": 167,
+    "title": "ai: implement ArqScript parser",
+    "area": "ai",
+    "phase": "Phase 7",
+    "epic": "AI and ArqScript",
+    "priority": "normal",
+    "labels": "type: feature;area: ai;priority: normal;state: blocked",
+    "dependencies": "ARQ-166",
+    "file": "backlog/issues/167-ai-implement-arqscript-parser.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "The output is a previewable typed operation.",
+      "Assumptions, validation and grouped undo are visible."
+    ]
+  },
+  {
+    "id": "ARQ-168",
+    "number": 168,
+    "title": "ai: add ten deterministic benchmarks",
+    "area": "ai",
+    "phase": "Phase 7",
+    "epic": "AI and ArqScript",
+    "priority": "normal",
+    "labels": "type: feature;area: ai;priority: normal;state: blocked",
+    "dependencies": "ARQ-167",
+    "file": "backlog/issues/168-ai-add-ten-deterministic-benchmarks.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "The output is a previewable typed operation.",
+      "Assumptions, validation and grouped undo are visible."
+    ]
+  },
+  {
+    "id": "ARQ-169",
+    "number": 169,
+    "title": "ai: prototype explain selection",
+    "area": "ai",
+    "phase": "Phase 7",
+    "epic": "AI and ArqScript",
+    "priority": "normal",
+    "labels": "type: feature;area: ai;priority: normal;state: blocked",
+    "dependencies": "ARQ-168",
+    "file": "backlog/issues/169-ai-prototype-explain-selection.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "The output is a previewable typed operation.",
+      "Assumptions, validation and grouped undo are visible."
+    ]
+  },
+  {
+    "id": "ARQ-170",
+    "number": 170,
+    "title": "ai: prototype one-step wall edit proposal",
+    "area": "ai",
+    "phase": "Phase 7",
+    "epic": "AI and ArqScript",
+    "priority": "normal",
+    "labels": "type: feature;area: ai;priority: normal;state: blocked",
+    "dependencies": "ARQ-169",
+    "file": "backlog/issues/170-ai-prototype-one-step-wall-edit-proposal.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "The output is a previewable typed operation.",
+      "Assumptions, validation and grouped undo are visible."
+    ]
+  },
+  {
+    "id": "ARQ-171",
+    "number": 171,
+    "title": "ipad: test Pencil web input",
+    "area": "ipad",
+    "phase": "Phase 8",
+    "epic": "Native iPad",
+    "priority": "normal",
+    "labels": "type: feature;area: ipad;priority: normal;state: blocked",
+    "dependencies": "ARQ-170",
+    "file": "backlog/issues/171-ipad-test-pencil-web-input.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Pencil, finger and keyboard roles are separated.",
+      "Native value is compared with browser behaviour."
+    ]
+  },
+  {
+    "id": "ARQ-172",
+    "number": 172,
+    "title": "ipad: prototype native hover",
+    "area": "ipad",
+    "phase": "Phase 8",
+    "epic": "Native iPad",
+    "priority": "normal",
+    "labels": "type: feature;area: ipad;priority: normal;state: blocked",
+    "dependencies": "ARQ-171",
+    "file": "backlog/issues/172-ipad-prototype-native-hover.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Pencil, finger and keyboard roles are separated.",
+      "Native value is compared with browser behaviour."
+    ]
+  },
+  {
+    "id": "ARQ-173",
+    "number": 173,
+    "title": "ipad: prototype RoomPlan conversion",
+    "area": "ipad",
+    "phase": "Phase 8",
+    "epic": "Native iPad",
+    "priority": "normal",
+    "labels": "type: feature;area: ipad;priority: normal;state: blocked",
+    "dependencies": "ARQ-172",
+    "file": "backlog/issues/173-ipad-prototype-roomplan-conversion.md",
+    "acceptanceCriteria": [
+      "The scope and non-goals are documented.",
+      "The result is reviewed against the complete blueprint.",
+      "Tests or evidence appropriate to the task are included.",
+      "New dependencies and licence effects are recorded.",
+      "Pencil, finger and keyboard roles are separated.",
+      "Native value is compared with browser behaviour."
+    ]
+  },
+  {
+    "id": "ARQ-174",
+    "number": 174,
+    "title": "product: approve complete route map and page ownership",
+    "area": "product",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: product;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/174-product-approve-complete-route-map-and-page-ownership.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-175",
+    "number": 175,
+    "title": "design: design all public and application page states",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: design;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/175-design-design-all-public-and-application-page-states.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-176",
+    "number": 176,
+    "title": "design: review and refine draft SVG technical icons",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: design;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/176-design-review-and-refine-draft-svg-technical-icons.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-177",
+    "number": 177,
+    "title": "design: build component test harness",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: design;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/177-design-build-component-test-harness.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-178",
+    "number": 178,
+    "title": "api: review and approve OpenAPI draft",
+    "area": "api",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: api;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/178-api-review-and-approve-openapi-draft.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-179",
+    "number": 179,
+    "title": "database: review PostgreSQL schema and tenancy model",
+    "area": "database",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: database;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/179-database-review-postgresql-schema-and-tenancy-model.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-180",
+    "number": 180,
+    "title": "architecture: approve TypeScript public contracts",
+    "area": "architecture",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: architecture;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/180-architecture-approve-typescript-public-contracts.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-181",
+    "number": 181,
+    "title": "prototype: usability test static product shell",
+    "area": "prototype",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: prototype;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/181-prototype-usability-test-static-product-shell.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-182",
+    "number": 182,
+    "title": "quality: triage anticipated bug catalogue into release gates",
+    "area": "quality",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: quality;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/182-quality-triage-anticipated-bug-catalogue-into-release-gates.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-183",
+    "number": 183,
+    "title": "quality: import QA test catalogue into test management",
+    "area": "quality",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: quality;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/183-quality-import-qa-test-catalogue-into-test-management.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-184",
+    "number": 184,
+    "title": "security: approve RBAC matrix and authorisation tests",
+    "area": "security",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: security;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/184-security-approve-rbac-matrix-and-authorisation-tests.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-185",
+    "number": 185,
+    "title": "analytics: approve event dictionary and privacy properties",
+    "area": "analytics",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: analytics;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/185-analytics-approve-event-dictionary-and-privacy-properties.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-186",
+    "number": 186,
+    "title": "legal: complete privacy terms acceptable use and AI review",
+    "area": "legal",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: legal;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/186-legal-complete-privacy-terms-acceptable-use-and-ai-review.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-187",
+    "number": 187,
+    "title": "business: conduct pricing and entitlement research",
+    "area": "business",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: business;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/187-business-conduct-pricing-and-entitlement-research.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-188",
+    "number": 188,
+    "title": "operations: approve backup retention support and incident plans",
+    "area": "operations",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: operations;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/188-operations-approve-backup-retention-support-and-incident-plans.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  },
+  {
+    "id": "ARQ-189",
+    "number": 189,
+    "title": "platform: complete browser and device validation matrix",
+    "area": "platform",
+    "phase": "Phase 0",
+    "epic": "All-in-one completion",
+    "priority": "high",
+    "labels": "type: research;area: platform;priority: high;state: ready",
+    "dependencies": "",
+    "file": "backlog/issues/189-platform-complete-browser-and-device-validation-matrix.md",
+    "acceptanceCriteria": [
+      "Relevant files are reviewed.",
+      "Contradictions are resolved.",
+      "Owners and evidence are recorded."
+    ]
+  }
+]

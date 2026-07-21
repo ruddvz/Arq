@@ -1,0 +1,7 @@
+platform,versionPolicy,input,status
+Chrome desktop,current and previous major after testing,"mouse, keyboard, touch where hardware",required
+Edge desktop,current and previous major after testing,"mouse, keyboard, touch",required
+Safari macOS,supported OS versions after benchmark,"mouse, keyboard, trackpad",required
+Safari iPadOS,selected iPadOS and devices,"touch, Pencil, keyboard, trackpad",required
+Firefox desktop,research and test,"mouse, keyboard",decision required
+iPhone Safari,viewer and review only,touch,later

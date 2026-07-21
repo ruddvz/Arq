@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.local/schemas/level.schema.json",
+  "title": "Level",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "elevation"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "elevation": {
+      "type": "number"
+    },
+    "storeyHeight": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    }
+  }
+}

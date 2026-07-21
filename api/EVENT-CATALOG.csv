@@ -1,0 +1,14 @@
+event,description,containsProjectContent
+project.created,Project Created,no by default
+project.archived,Project Archived,no by default
+snapshot.created,Snapshot Created,no by default
+operations.applied,Operations Applied,no by default
+operations.rejected,Operations Rejected,no by default
+import.started,Import Started,no by default
+import.completed,Import Completed,no by default
+export.started,Export Started,no by default
+export.completed,Export Completed,no by default
+comment.created,Comment Created,no by default
+issue.updated,Issue Updated,no by default
+share_link.created,Share_Link Created,no by default
+share_link.revoked,Share_Link Revoked,no by default

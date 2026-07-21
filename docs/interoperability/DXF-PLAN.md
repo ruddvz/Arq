@@ -1,0 +1,20 @@
+# DXF plan
+
+Stage 1 entities:
+
+- LINE
+- LWPOLYLINE
+- ARC
+- CIRCLE
+- TEXT
+- layers
+- units
+- simple blocks as groups where practical
+
+Candidates:
+
+- dxfjs/parser
+- dxf-parser-writer
+- ezdxf server-side
+
+Report unsupported entities. DXF support does not imply DWG support.

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.local/schemas/validation-message.schema.json",
+  "title": "ValidationMessage",
+  "type": "object",
+  "required": [
+    "id",
+    "severity",
+    "code",
+    "title",
+    "explanation",
+    "affectedElementIds",
+    "suggestedActions"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "severity": {
+      "enum": ["info", "warning", "error"]
+    },
+    "code": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "explanation": {
+      "type": "string"
+    },
+    "affectedElementIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "suggestedActions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "technicalDetails": {
+      "type": "string"
+    }
+  }
+}

@@ -1,5 +1,14 @@
 # Benchmarks
 
-Deterministic AI and geometry/performance benchmarks (§14.4, §20). Not yet
-populated — see issues "ai: build one text-to-wall benchmark" and
-"performance: define supported benchmark devices".
+The benchmark suite protects:
+
+- interaction latency;
+- geometry validity;
+- room boundaries;
+- operation inversion;
+- recovery;
+- PDF output;
+- import and export;
+- visual states.
+
+Performance targets are planning targets until measured on approved hardware.

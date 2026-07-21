@@ -1,0 +1,233 @@
+[
+  {
+    "project": "Three.js",
+    "role": "3D renderer",
+    "licence": "MIT",
+    "treatment": "adopt",
+    "notes": "WebGL first, WebGPU optional"
+  },
+  {
+    "project": "PixiJS",
+    "role": "2D GPU renderer",
+    "licence": "MIT",
+    "treatment": "spike",
+    "notes": "Test technical line quality"
+  },
+  {
+    "project": "CanvasKit",
+    "role": "2D WASM renderer",
+    "licence": "Skia terms",
+    "treatment": "spike",
+    "notes": "Heavier integration"
+  },
+  {
+    "project": "React Aria Components",
+    "role": "Accessible UI",
+    "licence": "Apache-2.0",
+    "treatment": "spike to adopt",
+    "notes": "Do not mix full primitive systems"
+  },
+  {
+    "project": "Radix Primitives",
+    "role": "Accessible UI alternative",
+    "licence": "MIT",
+    "treatment": "alternative",
+    "notes": "Choose one primary system"
+  },
+  {
+    "project": "Floating UI",
+    "role": "Overlay positioning",
+    "licence": "MIT",
+    "treatment": "adopt",
+    "notes": "Menus and popovers"
+  },
+  {
+    "project": "Dexie",
+    "role": "IndexedDB",
+    "licence": "Apache-2.0",
+    "treatment": "adopt",
+    "notes": "First local store"
+  },
+  {
+    "project": "SQLite WASM",
+    "role": "Local SQL",
+    "licence": "Apache-2.0",
+    "treatment": "later spike",
+    "notes": "OPFS and Worker constraints"
+  },
+  {
+    "project": "Yjs",
+    "role": "CRDT",
+    "licence": "MIT",
+    "treatment": "spike",
+    "notes": "Presence and comments"
+  },
+  {
+    "project": "Automerge",
+    "role": "CRDT alternative",
+    "licence": "MIT",
+    "treatment": "alternative",
+    "notes": "Choose one"
+  },
+  {
+    "project": "OpenCascade.js",
+    "role": "Exact solids",
+    "licence": "LGPL-2.1",
+    "treatment": "isolate and spike",
+    "notes": "No core coupling"
+  },
+  {
+    "project": "RepliCAD",
+    "role": "Browser CAD abstraction",
+    "licence": "MIT",
+    "treatment": "reference or spike",
+    "notes": "OpenCascade abstraction"
+  },
+  {
+    "project": "FreeCAD",
+    "role": "Parametric CAD",
+    "licence": "LGPL-2.1",
+    "treatment": "reference",
+    "notes": "Object and transaction lessons"
+  },
+  {
+    "project": "OpenSCAD",
+    "role": "Script CAD",
+    "licence": "GPL-2.0",
+    "treatment": "reference",
+    "notes": "ArqScript lessons"
+  },
+  {
+    "project": "LibreCAD",
+    "role": "2D CAD",
+    "licence": "GPL-2.0",
+    "treatment": "reference",
+    "notes": "Drafting behaviour"
+  },
+  {
+    "project": "KittyCAD ezpz",
+    "role": "Constraint solver",
+    "licence": "MIT",
+    "treatment": "spike",
+    "notes": "Early Rust and WASM project"
+  },
+  {
+    "project": "text-to-cad",
+    "role": "Agent CAD workflows",
+    "licence": "MIT",
+    "treatment": "reference",
+    "notes": "Skills and benchmarks"
+  },
+  {
+    "project": "GenCAD",
+    "role": "Image-conditioned CAD",
+    "licence": "unclear",
+    "treatment": "avoid reuse",
+    "notes": "Read paper only"
+  },
+  {
+    "project": "RevitLookup",
+    "role": "BIM inspection",
+    "licence": "MIT",
+    "treatment": "reference",
+    "notes": "Inspector patterns"
+  },
+  {
+    "project": "web-ifc",
+    "role": "IFC",
+    "licence": "MPL-2.0",
+    "treatment": "isolate and spike",
+    "notes": "Adapter boundary"
+  },
+  {
+    "project": "That Open Components",
+    "role": "BIM viewer components",
+    "licence": "verify current",
+    "treatment": "spike",
+    "notes": "Use current stack"
+  },
+  {
+    "project": "web-ifc-viewer",
+    "role": "Old BIM viewer",
+    "licence": "deprecated",
+    "treatment": "avoid",
+    "notes": "Do not start new work"
+  },
+  {
+    "project": "IfcOpenShell",
+    "role": "IFC toolkit",
+    "licence": "LGPL-3.0",
+    "treatment": "isolate server-side",
+    "notes": "Legal review"
+  },
+  {
+    "project": "Bonsai",
+    "role": "BIM authoring reference",
+    "licence": "GPL-3.0",
+    "treatment": "reference",
+    "notes": "Native IFC workflow"
+  },
+  {
+    "project": "xeokit-sdk",
+    "role": "BIM viewer",
+    "licence": "AGPL-3.0 or commercial",
+    "treatment": "avoid unless licensed",
+    "notes": "Commercial option"
+  },
+  {
+    "project": "dxfjs/parser",
+    "role": "DXF parse",
+    "licence": "MIT",
+    "treatment": "spike",
+    "notes": "Browser import"
+  },
+  {
+    "project": "dxf-parser-writer",
+    "role": "DXF read/write",
+    "licence": "MIT",
+    "treatment": "spike",
+    "notes": "Exchange prototype"
+  },
+  {
+    "project": "ezdxf",
+    "role": "DXF server toolkit",
+    "licence": "MIT",
+    "treatment": "spike",
+    "notes": "Rich support"
+  },
+  {
+    "project": "LibreDWG",
+    "role": "DWG",
+    "licence": "GPL-3.0",
+    "treatment": "avoid core",
+    "notes": "Modern write limitations"
+  },
+  {
+    "project": "libdxfrw",
+    "role": "DXF and DWG",
+    "licence": "GPL-2.0",
+    "treatment": "reference",
+    "notes": "Avoid proprietary core"
+  },
+  {
+    "project": "pdf-lib",
+    "role": "PDF",
+    "licence": "MIT",
+    "treatment": "adopt with tests",
+    "notes": "Vector output"
+  },
+  {
+    "project": "Keycloak",
+    "role": "IAM",
+    "licence": "Apache-2.0",
+    "treatment": "later enterprise",
+    "notes": "Operationally heavy"
+  },
+  {
+    "project": "OpenTelemetry JS",
+    "role": "Observability",
+    "licence": "Apache-2.0",
+    "treatment": "adopt carefully",
+    "notes": "No raw project content"
+  }
+]

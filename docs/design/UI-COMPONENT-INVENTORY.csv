@@ -1,0 +1,12 @@
+component,states,platform,accessibility
+Top bar,"default, offline, syncing, conflict",desktop/iPad,keyboard labelled
+Tool rail,"default, hover, active, disabled",desktop/iPad,roving focus
+Model panel,"empty, loading, populated, filtered",desktop/iPad,tree semantics
+Inspector,"none selected, single, multi, invalid",desktop/iPad,headings and fields
+Status bar,"saved, saving, offline, conflict",desktop,live region
+Context bar,"tool, selection, validation",desktop/iPad,keyboard reachable
+Command palette,"open, searching, empty, disabled result",desktop/iPad,combobox
+Numeric overlay,"valid, invalid, unit menu",desktop/iPad,focus preserved
+Dialog,"normal, destructive, long-running",desktop/iPad,focus trap
+Toast,"success, warning, error",desktop/iPad,announced
+Recovery screen,"recoverable, partial, corrupt cache",all,fully keyboard

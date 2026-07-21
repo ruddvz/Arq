@@ -1,0 +1,9 @@
+{
+  "id": "validation-001",
+  "severity": "error",
+  "code": "OPENING_OVERLAPS_WALL_END",
+  "title": "Door overlaps wall end",
+  "explanation": "The door overlaps the end of the wall by 74 mm. No change was applied.",
+  "affectedElementIds": ["door-1", "wall-8"],
+  "suggestedActions": ["Move the door inward", "Reduce the door width", "Extend the wall"]
+}

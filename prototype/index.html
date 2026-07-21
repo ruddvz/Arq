@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Arq prototype</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <aside class="nav">
+        <strong>Arq</strong><button data-page="dashboard">Projects</button
+        ><button data-page="editor">Plan editor</button><button data-page="sheet">Sheet</button
+        ><button data-page="review">Review</button><button data-page="recovery">Recovery</button
+        ><small>Static planning prototype</small>
+      </aside>
+      <main>
+        <section id="dashboard" class="page active">
+          <header>
+            <div>
+              <small>Workspace</small>
+              <h1>Recent projects</h1>
+            </div>
+            <button class="primary" data-page="editor">New project</button>
+          </header>
+          <div class="grid">
+            <article>
+              <div class="thumb"></div>
+              <h2>Courtyard House</h2>
+              <p>Saved locally · Synced</p>
+            </article>
+            <article>
+              <div class="thumb alt"></div>
+              <h2>Apartment Renovation</h2>
+              <p>Saved locally · Offline</p>
+            </article>
+            <article>
+              <h2>Create a project</h2>
+              <p>Start blank or from a controlled template.</p>
+            </article>
+          </div>
+        </section>
+        <section id="editor" class="page editor">
+          <div class="appbar">
+            <button data-page="dashboard">←</button><strong>Courtyard House</strong
+            ><span>Saved locally · Syncing</span><i></i><button id="cmd">Command search</button
+            ><button>Share</button>
+          </div>
+          <div class="shell">
+            <nav class="tools">
+              <button class="active">↖</button><button>▥</button><button>◱</button><button>▤</button
+              ><button>□</button><button>↔</button>
+            </nav>
+            <aside class="tree">
+              <h2>Project</h2>
+              <b>Levels</b><button>Ground Floor</button><button>First Floor</button><b>Views</b
+              ><button>Ground Floor Plan</button><button>3D</button>
+            </aside>
+            <div class="canvas">
+              <div class="context">Select · Filter All · Isolate · Hide</div>
+              <svg viewBox="0 0 900 600">
+                <defs>
+                  <pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M20 0H0V20" fill="none" stroke="#ececec" />
+                  </pattern>
+                </defs>
+                <rect width="900" height="600" fill="url(#g)" />
+                <g class="walls">
+                  <path d="M160 120H700V470H160Z" />
+                  <path d="M430 120V470M160 300H430M430 340H700" />
+                </g>
+                <g class="open">
+                  <path d="M250 120v45m0-45a45 45 0 0145 45" />
+                  <path d="M430 210h45m-45 0a45 45 0 0045 45" />
+                </g>
+                <g class="rooms">
+                  <text x="260" y="220">Living</text>
+                  <text x="540" y="220">Kitchen</text>
+                  <text x="250" y="390">Bedroom</text>
+                  <text x="540" y="405">Study</text>
+                </g>
+                <rect class="sel" x="424" y="116" width="12" height="358" />
+              </svg>
+              <footer>
+                Metric · X 4.30 m · Y 3.40 m · Endpoint snap
+                <span>1 selected · Model health 1 warning</span>
+              </footer>
+            </div>
+            <aside class="inspector">
+              <h2>Wall</h2>
+              <label
+                >Type<select>
+                  <option>Interior 150</option>
+                </select></label
+              ><label>Length<input value="3500 mm" /></label
+              ><label>Height<input value="3000 mm" /></label>
+              <div class="warn">
+                <b>Room update required</b>
+                <p>Changing thickness affects two room areas.</p>
+              </div>
+            </aside>
+          </div>
+        </section>
+        <section id="sheet" class="page">
+          <header>
+            <div>
+              <small>A-101</small>
+              <h1>Ground Floor Plan</h1>
+            </div>
+            <button class="primary">Export PDF</button>
+          </header>
+          <div class="paper">
+            <div class="thumb"></div>
+            <div><b>Courtyard House</b><span>A-101</span></div>
+          </div>
+        </section>
+        <section id="review" class="page">
+          <header>
+            <h1>Comments and issues</h1>
+            <button>Compare revisions</button>
+          </header>
+          <div class="grid">
+            <article>
+              <b>Open issue</b>
+              <h2>Check door clearance</h2>
+              <p>The door is 74 mm from the wall end.</p>
+            </article>
+            <article>
+              <b>Comment</b>
+              <h2>Kitchen layout</h2>
+              <p>Move the opening 300 mm left?</p>
+            </article>
+            <article>
+              <b>Resolved</b>
+              <h2>Room name</h2>
+              <p>Updated in P01.</p>
+            </article>
+          </div>
+        </section>
+        <section id="recovery" class="page">
+          <article class="recovery">
+            <small>Local recovery</small>
+            <h1>Your project was recovered</h1>
+            <p>42 committed operations were restored. One incomplete wall preview was discarded.</p>
+            <button class="primary" data-page="editor">Open recovered project</button>
+          </article>
+        </section>
+      </main>
+    </div>
+    <dialog id="dialog">
+      <input autofocus placeholder="Search commands, views and objects" /><button>Wall · W</button
+      ><button>Fit selection · F</button><button id="close">Close</button>
+    </dialog>
+    <script src="app.js"></script>
+  </body>
+</html>

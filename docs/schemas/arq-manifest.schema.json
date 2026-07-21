@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.local/schemas/arq-manifest.schema.json",
+  "title": "ArqArchiveManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["archiveVersion", "projectId", "projectName", "schemaVersion", "createdAt", "files"],
+  "properties": {
+    "archiveVersion": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "projectId": {
+      "type": "string"
+    },
+    "projectName": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "applicationVersion": {
+      "type": "string"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

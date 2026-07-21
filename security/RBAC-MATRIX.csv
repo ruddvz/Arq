@@ -1,0 +1,13 @@
+action,owner,administrator,editor,commenter,viewer
+view_project,yes,yes,yes,yes,yes
+download_archive,yes,yes,yes,no,no
+edit_model,yes,yes,yes,no,no
+comment,yes,yes,yes,yes,no
+create_issue,yes,yes,yes,yes,no
+invite_member,yes,yes,no,no,no
+change_role,yes,yes,no,no,no
+create_share_link,yes,yes,no,no,no
+export_pdf,yes,yes,yes,no,no
+archive_project,yes,yes,no,no,no
+delete_project,yes,no,no,no,no
+view_audit,yes,yes,no,no,no

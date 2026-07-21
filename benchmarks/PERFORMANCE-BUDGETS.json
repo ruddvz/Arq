@@ -1,0 +1,25 @@
+{
+  "benchmarkModel": {
+    "levels": 2,
+    "walls": 150,
+    "doorsAndWindows": 80,
+    "rooms": 60,
+    "annotations": 200,
+    "underlays": 1,
+    "semanticObjectsApprox": 1000
+  },
+  "targets": {
+    "localInteractiveSeconds": 2,
+    "selectionMedianMs": 50,
+    "hoverMedianMs": 32,
+    "wallCommitMedianMs": 100,
+    "roomRecalculateMedianMs": 150,
+    "undoMedianMs": 150,
+    "journalWriteMs": 100,
+    "commandPaletteOpenMs": 100,
+    "pdfExportSeconds": 5,
+    "panZoomFpsTarget": 60,
+    "orbitFpsTarget": 60
+  },
+  "note": "Planning targets. Do not publish as achieved until measured."
+}

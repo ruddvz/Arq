@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.local/schemas/opening.schema.json",
+  "title": "Opening",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "hostWallId", "kind", "offsetFromWallStart", "width", "sillHeight", "height"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "hostWallId": {
+      "type": "string"
+    },
+    "kind": {
+      "enum": ["door", "window", "void"]
+    },
+    "offsetFromWallStart": {
+      "type": "number",
+      "minimum": 0
+    },
+    "width": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "sillHeight": {
+      "type": "number",
+      "minimum": 0
+    },
+    "height": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    }
+  }
+}

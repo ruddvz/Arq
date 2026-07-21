@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.local/schemas/room.schema.json",
+  "title": "Room",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "levelId",
+    "seedPoint",
+    "name",
+    "boundaryElementIds",
+    "calculatedBoundary",
+    "calculatedArea",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "levelId": {
+      "type": "string"
+    },
+    "seedPoint": {
+      "$ref": "point2.schema.json"
+    },
+    "name": {
+      "type": "string"
+    },
+    "number": {
+      "type": "string"
+    },
+    "boundaryElementIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "calculatedBoundary": {
+      "type": "array",
+      "items": {
+        "$ref": "point2.schema.json"
+      },
+      "minItems": 3
+    },
+    "calculatedArea": {
+      "type": "number",
+      "minimum": 0
+    },
+    "status": {
+      "enum": ["valid", "not-enclosed", "overlapping", "invalid"]
+    }
+  }
+}

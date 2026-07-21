@@ -1,0 +1,452 @@
+[
+  {
+    "id": "IMP-001",
+    "domain": "Product",
+    "recommendation": "Keep one protected residential workflow until reliability passes",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-002",
+    "domain": "Product",
+    "recommendation": "Publish a capability matrix instead of broad compatibility claims",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-003",
+    "domain": "Product",
+    "recommendation": "Measure time saved per workflow rather than feature count",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-004",
+    "domain": "Product",
+    "recommendation": "Keep archive download available on every plan",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-005",
+    "domain": "Product",
+    "recommendation": "Separate review collaboration from co-authoring",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-006",
+    "domain": "UX",
+    "recommendation": "Use one command lifecycle across all tools",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-007",
+    "domain": "UX",
+    "recommendation": "Make every failed operation highlight affected geometry",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-008",
+    "domain": "UX",
+    "recommendation": "Show local save and cloud sync separately",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-009",
+    "domain": "UX",
+    "recommendation": "Keep numeric entry non-modal",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-010",
+    "domain": "UX",
+    "recommendation": "Add Zoom to problem actions for model warnings",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-011",
+    "domain": "Geometry",
+    "recommendation": "Centralise tolerances",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-012",
+    "domain": "Geometry",
+    "recommendation": "Use semantic references for dimensions",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-013",
+    "domain": "Geometry",
+    "recommendation": "Avoid exact-solid coupling in the first wall engine",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-014",
+    "domain": "Geometry",
+    "recommendation": "Build adversarial fixtures before complex tools",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-015",
+    "domain": "Geometry",
+    "recommendation": "Invalidate derived systems through a dependency graph",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-016",
+    "domain": "Performance",
+    "recommendation": "Benchmark the protected model in CI",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-017",
+    "domain": "Performance",
+    "recommendation": "Throttle inactive split views",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-018",
+    "domain": "Performance",
+    "recommendation": "Use transferable buffers for Worker geometry",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-019",
+    "domain": "Performance",
+    "recommendation": "Keep model state outside React",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-020",
+    "domain": "Performance",
+    "recommendation": "Use spatial indexing for selection and snaps",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-021",
+    "domain": "Reliability",
+    "recommendation": "Journal before reporting a local commit",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-022",
+    "domain": "Reliability",
+    "recommendation": "Retain original archives during migration",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-023",
+    "domain": "Reliability",
+    "recommendation": "Treat imports as temporary transactions",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-024",
+    "domain": "Reliability",
+    "recommendation": "Make exports read-only snapshots",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-025",
+    "domain": "Reliability",
+    "recommendation": "Provide safe mode that ignores optional caches",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-026",
+    "domain": "Interoperability",
+    "recommendation": "Start IFC with viewing and reports",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-027",
+    "domain": "Interoperability",
+    "recommendation": "Treat DXF and DWG as separate commitments",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-028",
+    "domain": "Interoperability",
+    "recommendation": "Preserve source identifiers",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-029",
+    "domain": "Interoperability",
+    "recommendation": "Validate in independent applications",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-030",
+    "domain": "Interoperability",
+    "recommendation": "Publish preserved, converted and unsupported categories",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-031",
+    "domain": "AI",
+    "recommendation": "Begin with explain selection",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-032",
+    "domain": "AI",
+    "recommendation": "Require typed operations",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-033",
+    "domain": "AI",
+    "recommendation": "Show assumptions and affected IDs",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-034",
+    "domain": "AI",
+    "recommendation": "Group AI changes into one undoable action",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-035",
+    "domain": "AI",
+    "recommendation": "Benchmark ambiguity rejection",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-036",
+    "domain": "iPad",
+    "recommendation": "Separate Pencil and finger roles",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-037",
+    "domain": "iPad",
+    "recommendation": "Design portrait independently",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-038",
+    "domain": "iPad",
+    "recommendation": "Use native only for measurable additional value",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-039",
+    "domain": "iPad",
+    "recommendation": "Treat RoomPlan as uncertain source data",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-040",
+    "domain": "iPad",
+    "recommendation": "Keep keyboard and trackpad parity",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-041",
+    "domain": "Security",
+    "recommendation": "Authorise every API action server-side",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-042",
+    "domain": "Security",
+    "recommendation": "Hash share tokens",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-043",
+    "domain": "Security",
+    "recommendation": "Keep project content out of default telemetry",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-044",
+    "domain": "Security",
+    "recommendation": "Fuzz every file parser",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-045",
+    "domain": "Security",
+    "recommendation": "Apply complexity limits before parsing",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-046",
+    "domain": "Accessibility",
+    "recommendation": "Expose model structure through tree and inspector",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-047",
+    "domain": "Accessibility",
+    "recommendation": "Never use colour as the only status signal",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-048",
+    "domain": "Accessibility",
+    "recommendation": "Return focus after dialogs",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-049",
+    "domain": "Accessibility",
+    "recommendation": "Test 200 percent browser zoom",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  },
+  {
+    "id": "IMP-050",
+    "domain": "Accessibility",
+    "recommendation": "Use accessible primitives for standard controls",
+    "impact": "high",
+    "effort": "varies",
+    "status": "planned",
+    "evidenceNeeded": "ADR, benchmark, usability test or security review as applicable"
+  }
+]

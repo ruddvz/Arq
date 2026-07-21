@@ -1,0 +1,11 @@
+{
+  "name": "@arq/plan-renderer",
+  "private": true,
+  "version": "0.0.0",
+  "description": "2D plan/section/elevation renderer producing crisp technical linework.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -1,0 +1,15 @@
+table,purpose,classification
+app_user,Account identity,private
+workspace,Tenant or team,private
+workspace_membership,Role assignment,restricted
+project,Project metadata,private
+file_object,Object metadata,restricted
+project_snapshot,Immutable snapshot,restricted
+project_operation,Typed operations,restricted
+import_record,Import report,restricted
+export_record,Export report,restricted
+project_comment,Review comment,private
+project_issue,Review issue,private
+share_link,Hashed token,secret
+background_job,Task state,restricted
+audit_event,Security history,restricted

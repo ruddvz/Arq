@@ -1,0 +1,9 @@
+{
+  "error": {
+    "code": "MODEL_VALIDATION.OPENING_OVERLAPS_WALL_END",
+    "title": "Door overlaps wall end",
+    "explanation": "The requested operation would place part of the door outside its host wall.",
+    "requestId": "00000000-0000-0000-0000-000000000000",
+    "safeActions": ["Move the door inward", "Reduce its width", "Extend the wall"]
+  }
+}

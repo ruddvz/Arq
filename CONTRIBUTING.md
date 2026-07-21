@@ -1,40 +1,30 @@
 # Contributing
 
-Arq is a proprietary project (see `LICENSE`). This file documents the working
-conventions for whoever is contributing, per
-`docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md` §29.
+Arq is in planning and technical-validation stage.
 
-## Branches
+## Before work starts
 
-- `main` is protected and releasable.
-- Use short-lived feature branches; avoid a permanent development branch unless
-  release operations require one.
+1. Select an issue from the ordered backlog.
+2. Confirm its phase and dependencies.
+3. Read the relevant ADR and package specification.
+4. State the problem and non-goals.
+5. Add tests and performance measurement where relevant.
+6. Record any new dependency and its licence.
 
 ## Pull requests
 
-Every pull request should include:
+Every pull request must include:
 
-- the problem being solved;
-- the proposed solution;
-- screenshots or recordings for UI changes;
+- problem;
+- proposed solution;
+- non-goals;
+- screenshots or recording for interface changes;
 - tests;
-- performance impact;
-- accessibility impact;
-- file-format impact (if it touches import/export);
-- migration impact (if it touches stored data/schemas);
-- license impact for any new dependency (see §19's licensing policy).
+- performance effect;
+- accessibility effect;
+- project-format effect;
+- migration effect;
+- dependency and licence effect;
+- rollback plan.
 
-## Required checks
-
-Once CI exists, pull requests should pass: formatting, linting, type checking, unit
-tests, geometry tests, visual regression (where relevant), license scan, dependency
-vulnerability scan, bundle-size budget, and performance benchmarks for
-performance-sensitive packages.
-
-## Architecture decision records
-
-Significant, hard-to-reverse decisions get an ADR under `docs/adr/` — see
-`docs/adr/0000-template.md`. Per §29, this includes decisions like platform choice,
-renderer choice, geometry kernel boundary, the semantic data model, project file
-format, collaboration model, IFC strategy, AI operation model, native app strategy,
-desktop packaging, and licensing.
+See `.github/PULL_REQUEST_TEMPLATE.md`.

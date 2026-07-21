@@ -1,0 +1,506 @@
+[
+  {
+    "id": "CMP-001",
+    "name": "Button",
+    "purpose": "Trigger a labelled action",
+    "file": "docs/components/CMP-001-button.md"
+  },
+  {
+    "id": "CMP-002",
+    "name": "Icon button",
+    "purpose": "Trigger a compact action with an accessible name",
+    "file": "docs/components/CMP-002-icon-button.md"
+  },
+  {
+    "id": "CMP-003",
+    "name": "Split button",
+    "purpose": "Offer a primary action and related menu",
+    "file": "docs/components/CMP-003-split-button.md"
+  },
+  {
+    "id": "CMP-004",
+    "name": "Top application bar",
+    "purpose": "Show project identity and global actions",
+    "file": "docs/components/CMP-004-top-application-bar.md"
+  },
+  {
+    "id": "CMP-005",
+    "name": "Tool rail",
+    "purpose": "Expose stable tool categories and active tool",
+    "file": "docs/components/CMP-005-tool-rail.md"
+  },
+  {
+    "id": "CMP-006",
+    "name": "Context bar",
+    "purpose": "Expose immediate controls for the active tool or selection",
+    "file": "docs/components/CMP-006-context-bar.md"
+  },
+  {
+    "id": "CMP-007",
+    "name": "Status bar",
+    "purpose": "Show units, snap, selection, save, sync and model health",
+    "file": "docs/components/CMP-007-status-bar.md"
+  },
+  {
+    "id": "CMP-008",
+    "name": "Model tree",
+    "purpose": "Navigate levels, views, sheets, imports and elements",
+    "file": "docs/components/CMP-008-model-tree.md"
+  },
+  {
+    "id": "CMP-009",
+    "name": "Inspector",
+    "purpose": "Edit and inspect selected object properties",
+    "file": "docs/components/CMP-009-inspector.md"
+  },
+  {
+    "id": "CMP-010",
+    "name": "Property row",
+    "purpose": "Show label, value, inheritance and validation",
+    "file": "docs/components/CMP-010-property-row.md"
+  },
+  {
+    "id": "CMP-011",
+    "name": "Text field",
+    "purpose": "Enter text",
+    "file": "docs/components/CMP-011-text-field.md"
+  },
+  {
+    "id": "CMP-012",
+    "name": "Numeric field",
+    "purpose": "Enter unit-aware numeric values",
+    "file": "docs/components/CMP-012-numeric-field.md"
+  },
+  {
+    "id": "CMP-013",
+    "name": "Search field",
+    "purpose": "Search pages, objects or commands",
+    "file": "docs/components/CMP-013-search-field.md"
+  },
+  {
+    "id": "CMP-014",
+    "name": "Select",
+    "purpose": "Choose one option",
+    "file": "docs/components/CMP-014-select.md"
+  },
+  {
+    "id": "CMP-015",
+    "name": "Combobox",
+    "purpose": "Search and choose an option",
+    "file": "docs/components/CMP-015-combobox.md"
+  },
+  {
+    "id": "CMP-016",
+    "name": "Checkbox",
+    "purpose": "Toggle independent selection",
+    "file": "docs/components/CMP-016-checkbox.md"
+  },
+  {
+    "id": "CMP-017",
+    "name": "Radio group",
+    "purpose": "Choose one exclusive option",
+    "file": "docs/components/CMP-017-radio-group.md"
+  },
+  {
+    "id": "CMP-018",
+    "name": "Switch",
+    "purpose": "Toggle an immediate setting",
+    "file": "docs/components/CMP-018-switch.md"
+  },
+  {
+    "id": "CMP-019",
+    "name": "Slider",
+    "purpose": "Adjust a bounded continuous value",
+    "file": "docs/components/CMP-019-slider.md"
+  },
+  {
+    "id": "CMP-020",
+    "name": "Segmented control",
+    "purpose": "Choose a compact mode",
+    "file": "docs/components/CMP-020-segmented-control.md"
+  },
+  {
+    "id": "CMP-021",
+    "name": "Tabs",
+    "purpose": "Navigate peer sections",
+    "file": "docs/components/CMP-021-tabs.md"
+  },
+  {
+    "id": "CMP-022",
+    "name": "Menu",
+    "purpose": "Show contextual actions",
+    "file": "docs/components/CMP-022-menu.md"
+  },
+  {
+    "id": "CMP-023",
+    "name": "Context menu",
+    "purpose": "Show pointer-context actions",
+    "file": "docs/components/CMP-023-context-menu.md"
+  },
+  {
+    "id": "CMP-024",
+    "name": "Popover",
+    "purpose": "Show non-modal contextual content",
+    "file": "docs/components/CMP-024-popover.md"
+  },
+  {
+    "id": "CMP-025",
+    "name": "Tooltip",
+    "purpose": "Explain a control or shortcut",
+    "file": "docs/components/CMP-025-tooltip.md"
+  },
+  {
+    "id": "CMP-026",
+    "name": "Dialog",
+    "purpose": "Require focused confirmation or input",
+    "file": "docs/components/CMP-026-dialog.md"
+  },
+  {
+    "id": "CMP-027",
+    "name": "Drawer",
+    "purpose": "Show secondary desktop content",
+    "file": "docs/components/CMP-027-drawer.md"
+  },
+  {
+    "id": "CMP-028",
+    "name": "Bottom sheet",
+    "purpose": "Show secondary iPad portrait content",
+    "file": "docs/components/CMP-028-bottom-sheet.md"
+  },
+  {
+    "id": "CMP-029",
+    "name": "Toast",
+    "purpose": "Announce transient result",
+    "file": "docs/components/CMP-029-toast.md"
+  },
+  {
+    "id": "CMP-030",
+    "name": "Banner",
+    "purpose": "Show persistent page-level status",
+    "file": "docs/components/CMP-030-banner.md"
+  },
+  {
+    "id": "CMP-031",
+    "name": "Inline validation",
+    "purpose": "Explain a field or object problem",
+    "file": "docs/components/CMP-031-inline-validation.md"
+  },
+  {
+    "id": "CMP-032",
+    "name": "Validation summary",
+    "purpose": "List blocking problems",
+    "file": "docs/components/CMP-032-validation-summary.md"
+  },
+  {
+    "id": "CMP-033",
+    "name": "Progress indicator",
+    "purpose": "Show determinate or indeterminate work",
+    "file": "docs/components/CMP-033-progress-indicator.md"
+  },
+  {
+    "id": "CMP-034",
+    "name": "Skeleton",
+    "purpose": "Reserve loading layout",
+    "file": "docs/components/CMP-034-skeleton.md"
+  },
+  {
+    "id": "CMP-035",
+    "name": "Empty state",
+    "purpose": "Explain absence and next action",
+    "file": "docs/components/CMP-035-empty-state.md"
+  },
+  {
+    "id": "CMP-036",
+    "name": "Data table",
+    "purpose": "Display sortable structured rows",
+    "file": "docs/components/CMP-036-data-table.md"
+  },
+  {
+    "id": "CMP-037",
+    "name": "List",
+    "purpose": "Display ordered or filtered items",
+    "file": "docs/components/CMP-037-list.md"
+  },
+  {
+    "id": "CMP-038",
+    "name": "Tree item",
+    "purpose": "Represent hierarchical content",
+    "file": "docs/components/CMP-038-tree-item.md"
+  },
+  {
+    "id": "CMP-039",
+    "name": "Card",
+    "purpose": "Summarise a project or template",
+    "file": "docs/components/CMP-039-card.md"
+  },
+  {
+    "id": "CMP-040",
+    "name": "Breadcrumb",
+    "purpose": "Show hierarchical location",
+    "file": "docs/components/CMP-040-breadcrumb.md"
+  },
+  {
+    "id": "CMP-041",
+    "name": "Project switcher",
+    "purpose": "Change active project",
+    "file": "docs/components/CMP-041-project-switcher.md"
+  },
+  {
+    "id": "CMP-042",
+    "name": "Workspace switcher",
+    "purpose": "Change active workspace",
+    "file": "docs/components/CMP-042-workspace-switcher.md"
+  },
+  {
+    "id": "CMP-043",
+    "name": "User menu",
+    "purpose": "Access account and sign-out actions",
+    "file": "docs/components/CMP-043-user-menu.md"
+  },
+  {
+    "id": "CMP-044",
+    "name": "Presence avatar",
+    "purpose": "Show collaborator identity and state",
+    "file": "docs/components/CMP-044-presence-avatar.md"
+  },
+  {
+    "id": "CMP-045",
+    "name": "Permission selector",
+    "purpose": "Assign a role",
+    "file": "docs/components/CMP-045-permission-selector.md"
+  },
+  {
+    "id": "CMP-046",
+    "name": "Share link control",
+    "purpose": "Create and revoke controlled links",
+    "file": "docs/components/CMP-046-share-link-control.md"
+  },
+  {
+    "id": "CMP-047",
+    "name": "Command palette",
+    "purpose": "Search actions and objects",
+    "file": "docs/components/CMP-047-command-palette.md"
+  },
+  {
+    "id": "CMP-048",
+    "name": "Shortcut hint",
+    "purpose": "Display a platform-aware shortcut",
+    "file": "docs/components/CMP-048-shortcut-hint.md"
+  },
+  {
+    "id": "CMP-049",
+    "name": "Canvas",
+    "purpose": "Render and interact with plan, model or sheet",
+    "file": "docs/components/CMP-049-canvas.md"
+  },
+  {
+    "id": "CMP-050",
+    "name": "Canvas overlay",
+    "purpose": "Host transient controls and warnings",
+    "file": "docs/components/CMP-050-canvas-overlay.md"
+  },
+  {
+    "id": "CMP-051",
+    "name": "Selection handle",
+    "purpose": "Manipulate selected geometry",
+    "file": "docs/components/CMP-051-selection-handle.md"
+  },
+  {
+    "id": "CMP-052",
+    "name": "Selection outline",
+    "purpose": "Show primary and secondary selection",
+    "file": "docs/components/CMP-052-selection-outline.md"
+  },
+  {
+    "id": "CMP-053",
+    "name": "Snap glyph",
+    "purpose": "Show active snap type and source",
+    "file": "docs/components/CMP-053-snap-glyph.md"
+  },
+  {
+    "id": "CMP-054",
+    "name": "Numeric overlay",
+    "purpose": "Enter distance and angle during a command",
+    "file": "docs/components/CMP-054-numeric-overlay.md"
+  },
+  {
+    "id": "CMP-055",
+    "name": "View cube",
+    "purpose": "Change 3D orientation",
+    "file": "docs/components/CMP-055-view-cube.md"
+  },
+  {
+    "id": "CMP-056",
+    "name": "Zoom control",
+    "purpose": "Fit and change view scale",
+    "file": "docs/components/CMP-056-zoom-control.md"
+  },
+  {
+    "id": "CMP-057",
+    "name": "Scale control",
+    "purpose": "Show or select drawing scale",
+    "file": "docs/components/CMP-057-scale-control.md"
+  },
+  {
+    "id": "CMP-058",
+    "name": "Minimap",
+    "purpose": "Navigate a large plan later",
+    "file": "docs/components/CMP-058-minimap.md"
+  },
+  {
+    "id": "CMP-059",
+    "name": "Underlay control",
+    "purpose": "Calibrate, lock and change opacity",
+    "file": "docs/components/CMP-059-underlay-control.md"
+  },
+  {
+    "id": "CMP-060",
+    "name": "Import dropzone",
+    "purpose": "Accept supported files",
+    "file": "docs/components/CMP-060-import-dropzone.md"
+  },
+  {
+    "id": "CMP-061",
+    "name": "Import summary",
+    "purpose": "Report preserved and unsupported content",
+    "file": "docs/components/CMP-061-import-summary.md"
+  },
+  {
+    "id": "CMP-062",
+    "name": "Export options",
+    "purpose": "Select format, scope and validation",
+    "file": "docs/components/CMP-062-export-options.md"
+  },
+  {
+    "id": "CMP-063",
+    "name": "Export summary",
+    "purpose": "Report output and warnings",
+    "file": "docs/components/CMP-063-export-summary.md"
+  },
+  {
+    "id": "CMP-064",
+    "name": "Comment pin",
+    "purpose": "Anchor a comment to model or sheet",
+    "file": "docs/components/CMP-064-comment-pin.md"
+  },
+  {
+    "id": "CMP-065",
+    "name": "Comment thread",
+    "purpose": "Discuss and resolve feedback",
+    "file": "docs/components/CMP-065-comment-thread.md"
+  },
+  {
+    "id": "CMP-066",
+    "name": "Issue card",
+    "purpose": "Track an actionable issue",
+    "file": "docs/components/CMP-066-issue-card.md"
+  },
+  {
+    "id": "CMP-067",
+    "name": "History timeline",
+    "purpose": "Show revisions and operations",
+    "file": "docs/components/CMP-067-history-timeline.md"
+  },
+  {
+    "id": "CMP-068",
+    "name": "Revision badge",
+    "purpose": "Show draft, review or issued state",
+    "file": "docs/components/CMP-068-revision-badge.md"
+  },
+  {
+    "id": "CMP-069",
+    "name": "Compare legend",
+    "purpose": "Explain added, modified and deleted objects",
+    "file": "docs/components/CMP-069-compare-legend.md"
+  },
+  {
+    "id": "CMP-070",
+    "name": "Model health indicator",
+    "purpose": "Summarise warnings and errors",
+    "file": "docs/components/CMP-070-model-health-indicator.md"
+  },
+  {
+    "id": "CMP-071",
+    "name": "Recovery panel",
+    "purpose": "Explain recovered and incomplete work",
+    "file": "docs/components/CMP-071-recovery-panel.md"
+  },
+  {
+    "id": "CMP-072",
+    "name": "Sync state",
+    "purpose": "Distinguish local save from cloud sync",
+    "file": "docs/components/CMP-072-sync-state.md"
+  },
+  {
+    "id": "CMP-073",
+    "name": "Offline indicator",
+    "purpose": "Show network-independent status",
+    "file": "docs/components/CMP-073-offline-indicator.md"
+  },
+  {
+    "id": "CMP-074",
+    "name": "Conflict resolver",
+    "purpose": "Resolve incompatible operations",
+    "file": "docs/components/CMP-074-conflict-resolver.md"
+  },
+  {
+    "id": "CMP-075",
+    "name": "AI request field",
+    "purpose": "Enter a bounded natural-language request",
+    "file": "docs/components/CMP-075-ai-request-field.md"
+  },
+  {
+    "id": "CMP-076",
+    "name": "AI proposal panel",
+    "purpose": "Preview intent, assumptions and operations",
+    "file": "docs/components/CMP-076-ai-proposal-panel.md"
+  },
+  {
+    "id": "CMP-077",
+    "name": "AI operation row",
+    "purpose": "Show one proposed typed change",
+    "file": "docs/components/CMP-077-ai-operation-row.md"
+  },
+  {
+    "id": "CMP-078",
+    "name": "Filter bar",
+    "purpose": "Filter lists, warnings or issues",
+    "file": "docs/components/CMP-078-filter-bar.md"
+  },
+  {
+    "id": "CMP-079",
+    "name": "Tag or status badge",
+    "purpose": "Show compact labelled status",
+    "file": "docs/components/CMP-079-tag-or-status-badge.md"
+  },
+  {
+    "id": "CMP-080",
+    "name": "Pattern swatch",
+    "purpose": "Select a monochrome pattern",
+    "file": "docs/components/CMP-080-pattern-swatch.md"
+  },
+  {
+    "id": "CMP-081",
+    "name": "File row",
+    "purpose": "Show file name, status, size and actions",
+    "file": "docs/components/CMP-081-file-row.md"
+  },
+  {
+    "id": "CMP-082",
+    "name": "Job progress",
+    "purpose": "Show import or export stage and cancellation",
+    "file": "docs/components/CMP-082-job-progress.md"
+  },
+  {
+    "id": "CMP-083",
+    "name": "Support bundle control",
+    "purpose": "Create diagnostics with explicit consent",
+    "file": "docs/components/CMP-083-support-bundle-control.md"
+  },
+  {
+    "id": "CMP-084",
+    "name": "Coachmark",
+    "purpose": "Teach a contextual onboarding step",
+    "file": "docs/components/CMP-084-coachmark.md"
+  }
+]

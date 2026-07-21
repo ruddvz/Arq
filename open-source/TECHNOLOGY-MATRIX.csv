@@ -1,0 +1,34 @@
+project,role,licence,treatment,notes
+Three.js,3D renderer,MIT,adopt,"WebGL first, WebGPU optional"
+PixiJS,2D GPU renderer,MIT,spike,Test technical line quality
+CanvasKit,2D WASM renderer,Skia terms,spike,Heavier integration
+React Aria Components,Accessible UI,Apache-2.0,spike to adopt,Do not mix full primitive systems
+Radix Primitives,Accessible UI alternative,MIT,alternative,Choose one primary system
+Floating UI,Overlay positioning,MIT,adopt,Menus and popovers
+Dexie,IndexedDB,Apache-2.0,adopt,First local store
+SQLite WASM,Local SQL,Apache-2.0,later spike,OPFS and Worker constraints
+Yjs,CRDT,MIT,spike,Presence and comments
+Automerge,CRDT alternative,MIT,alternative,Choose one
+OpenCascade.js,Exact solids,LGPL-2.1,isolate and spike,No core coupling
+RepliCAD,Browser CAD abstraction,MIT,reference or spike,OpenCascade abstraction
+FreeCAD,Parametric CAD,LGPL-2.1,reference,Object and transaction lessons
+OpenSCAD,Script CAD,GPL-2.0,reference,ArqScript lessons
+LibreCAD,2D CAD,GPL-2.0,reference,Drafting behaviour
+KittyCAD ezpz,Constraint solver,MIT,spike,Early Rust and WASM project
+text-to-cad,Agent CAD workflows,MIT,reference,Skills and benchmarks
+GenCAD,Image-conditioned CAD,unclear,avoid reuse,Read paper only
+RevitLookup,BIM inspection,MIT,reference,Inspector patterns
+web-ifc,IFC,MPL-2.0,isolate and spike,Adapter boundary
+That Open Components,BIM viewer components,verify current,spike,Use current stack
+web-ifc-viewer,Old BIM viewer,deprecated,avoid,Do not start new work
+IfcOpenShell,IFC toolkit,LGPL-3.0,isolate server-side,Legal review
+Bonsai,BIM authoring reference,GPL-3.0,reference,Native IFC workflow
+xeokit-sdk,BIM viewer,AGPL-3.0 or commercial,avoid unless licensed,Commercial option
+dxfjs/parser,DXF parse,MIT,spike,Browser import
+dxf-parser-writer,DXF read/write,MIT,spike,Exchange prototype
+ezdxf,DXF server toolkit,MIT,spike,Rich support
+LibreDWG,DWG,GPL-3.0,avoid core,Modern write limitations
+libdxfrw,DXF and DWG,GPL-2.0,reference,Avoid proprietary core
+pdf-lib,PDF,MIT,adopt with tests,Vector output
+Keycloak,IAM,Apache-2.0,later enterprise,Operationally heavy
+OpenTelemetry JS,Observability,Apache-2.0,adopt carefully,No raw project content

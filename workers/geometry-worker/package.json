@@ -1,0 +1,11 @@
+{
+  "name": "@arq/geometry-worker",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Off-main-thread geometry processing (2D/3D + the OpenCascade boundary where used).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

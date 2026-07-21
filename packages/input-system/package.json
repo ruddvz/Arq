@@ -1,0 +1,11 @@
+{
+  "name": "@arq/input-system",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Input abstraction distinguishing Pencil, touch, mouse, and keyboard as explicit input types.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

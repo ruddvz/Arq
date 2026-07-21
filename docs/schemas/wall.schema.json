@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.local/schemas/wall.schema.json",
+  "title": "Wall",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "typeId",
+    "levelId",
+    "start",
+    "end",
+    "alignment",
+    "joinStart",
+    "joinEnd",
+    "hostedOpeningIds"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "typeId": {
+      "type": "string"
+    },
+    "levelId": {
+      "type": "string"
+    },
+    "start": {
+      "$ref": "point2.schema.json"
+    },
+    "end": {
+      "$ref": "point2.schema.json"
+    },
+    "alignment": {
+      "enum": ["centre", "interior", "exterior"]
+    },
+    "heightOverride": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "joinStart": {
+      "enum": ["auto", "butt", "mitre", "disallow"]
+    },
+    "joinEnd": {
+      "enum": ["auto", "butt", "mitre", "disallow"]
+    },
+    "hostedOpeningIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    }
+  }
+}

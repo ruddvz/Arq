@@ -1,0 +1,40 @@
+# editor: support metric numeric input
+
+**Issue ID:** ARQ-054
+**Phase:** Phase 1
+**Epic:** Editor interaction
+**Priority:** high
+**Suggested labels:** type: feature, area: editor, priority: high, state: blocked
+**Dependencies:** ARQ-053
+
+## Problem
+
+Complete this task as part of the ordered Arq implementation plan. The implementation
+must follow the complete blueprint and approved ADRs.
+
+## Scope
+
+Support metric numeric input.
+
+## Non-goals
+
+- Do not expand into later release scope.
+- Do not introduce unreviewed dependencies.
+- Do not couple project semantics to renderer or external-format classes.
+
+## Acceptance criteria
+
+- [ ] The scope and non-goals are documented.
+- [ ] The result is reviewed against the complete blueprint.
+- [ ] Tests or evidence appropriate to the task are included.
+- [ ] New dependencies and licence effects are recorded.
+- [ ] Escape and Enter behaviour is defined.
+- [ ] Invalid input leaves committed project state unchanged.
+
+## Evidence
+
+Attach tests, screenshots, recordings, benchmark output or research notes as relevant.
+
+## Documentation
+
+Update the appropriate package specification and ADR if the task changes a decision.

@@ -1,0 +1,85 @@
+id,name,purpose,file
+CMP-001,Button,Trigger a labelled action,docs/components/CMP-001-button.md
+CMP-002,Icon button,Trigger a compact action with an accessible name,docs/components/CMP-002-icon-button.md
+CMP-003,Split button,Offer a primary action and related menu,docs/components/CMP-003-split-button.md
+CMP-004,Top application bar,Show project identity and global actions,docs/components/CMP-004-top-application-bar.md
+CMP-005,Tool rail,Expose stable tool categories and active tool,docs/components/CMP-005-tool-rail.md
+CMP-006,Context bar,Expose immediate controls for the active tool or selection,docs/components/CMP-006-context-bar.md
+CMP-007,Status bar,"Show units, snap, selection, save, sync and model health",docs/components/CMP-007-status-bar.md
+CMP-008,Model tree,"Navigate levels, views, sheets, imports and elements",docs/components/CMP-008-model-tree.md
+CMP-009,Inspector,Edit and inspect selected object properties,docs/components/CMP-009-inspector.md
+CMP-010,Property row,"Show label, value, inheritance and validation",docs/components/CMP-010-property-row.md
+CMP-011,Text field,Enter text,docs/components/CMP-011-text-field.md
+CMP-012,Numeric field,Enter unit-aware numeric values,docs/components/CMP-012-numeric-field.md
+CMP-013,Search field,"Search pages, objects or commands",docs/components/CMP-013-search-field.md
+CMP-014,Select,Choose one option,docs/components/CMP-014-select.md
+CMP-015,Combobox,Search and choose an option,docs/components/CMP-015-combobox.md
+CMP-016,Checkbox,Toggle independent selection,docs/components/CMP-016-checkbox.md
+CMP-017,Radio group,Choose one exclusive option,docs/components/CMP-017-radio-group.md
+CMP-018,Switch,Toggle an immediate setting,docs/components/CMP-018-switch.md
+CMP-019,Slider,Adjust a bounded continuous value,docs/components/CMP-019-slider.md
+CMP-020,Segmented control,Choose a compact mode,docs/components/CMP-020-segmented-control.md
+CMP-021,Tabs,Navigate peer sections,docs/components/CMP-021-tabs.md
+CMP-022,Menu,Show contextual actions,docs/components/CMP-022-menu.md
+CMP-023,Context menu,Show pointer-context actions,docs/components/CMP-023-context-menu.md
+CMP-024,Popover,Show non-modal contextual content,docs/components/CMP-024-popover.md
+CMP-025,Tooltip,Explain a control or shortcut,docs/components/CMP-025-tooltip.md
+CMP-026,Dialog,Require focused confirmation or input,docs/components/CMP-026-dialog.md
+CMP-027,Drawer,Show secondary desktop content,docs/components/CMP-027-drawer.md
+CMP-028,Bottom sheet,Show secondary iPad portrait content,docs/components/CMP-028-bottom-sheet.md
+CMP-029,Toast,Announce transient result,docs/components/CMP-029-toast.md
+CMP-030,Banner,Show persistent page-level status,docs/components/CMP-030-banner.md
+CMP-031,Inline validation,Explain a field or object problem,docs/components/CMP-031-inline-validation.md
+CMP-032,Validation summary,List blocking problems,docs/components/CMP-032-validation-summary.md
+CMP-033,Progress indicator,Show determinate or indeterminate work,docs/components/CMP-033-progress-indicator.md
+CMP-034,Skeleton,Reserve loading layout,docs/components/CMP-034-skeleton.md
+CMP-035,Empty state,Explain absence and next action,docs/components/CMP-035-empty-state.md
+CMP-036,Data table,Display sortable structured rows,docs/components/CMP-036-data-table.md
+CMP-037,List,Display ordered or filtered items,docs/components/CMP-037-list.md
+CMP-038,Tree item,Represent hierarchical content,docs/components/CMP-038-tree-item.md
+CMP-039,Card,Summarise a project or template,docs/components/CMP-039-card.md
+CMP-040,Breadcrumb,Show hierarchical location,docs/components/CMP-040-breadcrumb.md
+CMP-041,Project switcher,Change active project,docs/components/CMP-041-project-switcher.md
+CMP-042,Workspace switcher,Change active workspace,docs/components/CMP-042-workspace-switcher.md
+CMP-043,User menu,Access account and sign-out actions,docs/components/CMP-043-user-menu.md
+CMP-044,Presence avatar,Show collaborator identity and state,docs/components/CMP-044-presence-avatar.md
+CMP-045,Permission selector,Assign a role,docs/components/CMP-045-permission-selector.md
+CMP-046,Share link control,Create and revoke controlled links,docs/components/CMP-046-share-link-control.md
+CMP-047,Command palette,Search actions and objects,docs/components/CMP-047-command-palette.md
+CMP-048,Shortcut hint,Display a platform-aware shortcut,docs/components/CMP-048-shortcut-hint.md
+CMP-049,Canvas,"Render and interact with plan, model or sheet",docs/components/CMP-049-canvas.md
+CMP-050,Canvas overlay,Host transient controls and warnings,docs/components/CMP-050-canvas-overlay.md
+CMP-051,Selection handle,Manipulate selected geometry,docs/components/CMP-051-selection-handle.md
+CMP-052,Selection outline,Show primary and secondary selection,docs/components/CMP-052-selection-outline.md
+CMP-053,Snap glyph,Show active snap type and source,docs/components/CMP-053-snap-glyph.md
+CMP-054,Numeric overlay,Enter distance and angle during a command,docs/components/CMP-054-numeric-overlay.md
+CMP-055,View cube,Change 3D orientation,docs/components/CMP-055-view-cube.md
+CMP-056,Zoom control,Fit and change view scale,docs/components/CMP-056-zoom-control.md
+CMP-057,Scale control,Show or select drawing scale,docs/components/CMP-057-scale-control.md
+CMP-058,Minimap,Navigate a large plan later,docs/components/CMP-058-minimap.md
+CMP-059,Underlay control,"Calibrate, lock and change opacity",docs/components/CMP-059-underlay-control.md
+CMP-060,Import dropzone,Accept supported files,docs/components/CMP-060-import-dropzone.md
+CMP-061,Import summary,Report preserved and unsupported content,docs/components/CMP-061-import-summary.md
+CMP-062,Export options,"Select format, scope and validation",docs/components/CMP-062-export-options.md
+CMP-063,Export summary,Report output and warnings,docs/components/CMP-063-export-summary.md
+CMP-064,Comment pin,Anchor a comment to model or sheet,docs/components/CMP-064-comment-pin.md
+CMP-065,Comment thread,Discuss and resolve feedback,docs/components/CMP-065-comment-thread.md
+CMP-066,Issue card,Track an actionable issue,docs/components/CMP-066-issue-card.md
+CMP-067,History timeline,Show revisions and operations,docs/components/CMP-067-history-timeline.md
+CMP-068,Revision badge,"Show draft, review or issued state",docs/components/CMP-068-revision-badge.md
+CMP-069,Compare legend,"Explain added, modified and deleted objects",docs/components/CMP-069-compare-legend.md
+CMP-070,Model health indicator,Summarise warnings and errors,docs/components/CMP-070-model-health-indicator.md
+CMP-071,Recovery panel,Explain recovered and incomplete work,docs/components/CMP-071-recovery-panel.md
+CMP-072,Sync state,Distinguish local save from cloud sync,docs/components/CMP-072-sync-state.md
+CMP-073,Offline indicator,Show network-independent status,docs/components/CMP-073-offline-indicator.md
+CMP-074,Conflict resolver,Resolve incompatible operations,docs/components/CMP-074-conflict-resolver.md
+CMP-075,AI request field,Enter a bounded natural-language request,docs/components/CMP-075-ai-request-field.md
+CMP-076,AI proposal panel,"Preview intent, assumptions and operations",docs/components/CMP-076-ai-proposal-panel.md
+CMP-077,AI operation row,Show one proposed typed change,docs/components/CMP-077-ai-operation-row.md
+CMP-078,Filter bar,"Filter lists, warnings or issues",docs/components/CMP-078-filter-bar.md
+CMP-079,Tag or status badge,Show compact labelled status,docs/components/CMP-079-tag-or-status-badge.md
+CMP-080,Pattern swatch,Select a monochrome pattern,docs/components/CMP-080-pattern-swatch.md
+CMP-081,File row,"Show file name, status, size and actions",docs/components/CMP-081-file-row.md
+CMP-082,Job progress,Show import or export stage and cancellation,docs/components/CMP-082-job-progress.md
+CMP-083,Support bundle control,Create diagnostics with explicit consent,docs/components/CMP-083-support-bundle-control.md
+CMP-084,Coachmark,Teach a contextual onboarding step,docs/components/CMP-084-coachmark.md

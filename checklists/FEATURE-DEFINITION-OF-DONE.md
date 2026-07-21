@@ -1,0 +1,21 @@
+# Feature definition of done
+
+- User problem stated
+- Non-goals stated
+- Normal flow
+- Empty state
+- Loading state
+- Invalid state
+- Failure state
+- Keyboard behaviour
+- iPad behaviour
+- Typed operation
+- Undo
+- Persistence
+- Validation copy
+- Unit tests
+- Visual tests
+- Performance measurement
+- Accessibility review
+- Documentation
+- Licence review

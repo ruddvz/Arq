@@ -1,0 +1,20 @@
+document      = version_decl, { statement } ;
+version_decl  = "version", string ;
+statement     = units_decl | level_decl | wall_decl | door_decl |
+                window_decl | room_decl | dimension_decl ;
+units_decl    = "units", ("metric" | "imperial") ;
+level_decl    = "level", string, "elevation", length ;
+wall_decl     = "wall", string, "{", { property }, "}" ;
+door_decl     = "door", string, "{", { property }, "}" ;
+window_decl   = "window", string, "{", { property }, "}" ;
+room_decl     = "room", string, "{", { property }, "}" ;
+dimension_decl = "dimension", string, "{", { property }, "}" ;
+property      = identifier, ":", value ;
+value         = string | number | length | point | array ;
+point         = "point", "(", length, ",", length, ")" ;
+array         = "[", [ value, { ",", value } ], "]" ;
+length        = number, unit ;
+unit          = "mm" | "cm" | "m" | "in" | "ft" ;
+identifier    = letter, { letter | digit | "_" } ;
+string        = '"', { character }, '"' ;
+number        = [ "-" ], digit, { digit | "." } ;

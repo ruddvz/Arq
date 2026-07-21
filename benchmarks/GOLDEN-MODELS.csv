@@ -1,0 +1,13 @@
+id,name,purpose
+G-001,Rectangular room,basic closure
+G-002,L-shaped room,concave boundary
+G-003,Shared rooms,shared wall
+G-004,Corridor,repeated openings
+G-005,T junction,wall join
+G-006,Cross junction,wall join
+G-007,Door near end,clearance validation
+G-008,Overlapping openings,blocking error
+G-009,Two-level house,coordination
+G-010,Underlay,calibration
+G-011,Tiny gap,room diagnostics
+G-012,Large coordinates,precision

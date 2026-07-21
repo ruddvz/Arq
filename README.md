@@ -1,42 +1,72 @@
 # Arq
 
-Arq is an early-stage effort to build a modern architectural design and BIM
-authoring platform — the ground AutoCAD (2D/3D drafting) and Revit (BIM) cover today,
-rethought around a semantic building model, transparent AI-assisted authoring, and
-real-time collaboration.
+Arq is a precise, open, and approachable architectural workspace: a browser-based
+plan and lightweight BIM editor for independent architects and small practices,
+built around a real semantic building model rather than disconnected lines.
 
-**Status: planning phase.** Nothing is built yet.
+**Status: planning and technical-validation phase.** No product code has shipped
+yet — this repo currently holds the complete plan, the design system, schemas, a
+starter monorepo, and a static prototype.
 
 ## Start here
 
-**[`docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md`](docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md)**
-is the current source of truth: product vision and principles, research-backed
-requirements, target users, full MVP scope and non-goals, platform strategy
-(**web-first**, with native iPad/macOS/Windows shells layered on afterward), visual
-design system, AI architecture (`ArqScript`), data model, technical architecture,
-open-source licensing policy, performance/reliability/security plans, testing
-strategy, milestone roadmap, initial epics and issues, governance, risks, go/no-go
-gates, and immediate next actions.
+**[`docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md`](docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md)**
+is the current source of truth. Source-of-truth order when documents disagree:
 
-## Earlier drafts
+1. Approved ADRs (`docs/adr/`)
+2. The complete blueprint (above)
+3. Page, component, API, schema, and package specifications (`docs/pages/`,
+   `docs/components/`, `api/`, `database/`, `contracts/`)
+4. Machine-readable registers (`backlog/`, `quality/`, `validation/`)
+5. Historical planning documents (`docs/history/`)
 
-The docs below were the first pass at this planning work and are kept for history.
-Each has been superseded by a section of the master plan above (see the banner at the
-top of each file for exactly where):
+## First product
 
-- [`docs/RESEARCH.md`](docs/RESEARCH.md) — initial notes on six open-source projects
-  (FreeCAD, OpenSCAD, LibreCAD, GenCAD, CAD Skills/text-to-cad, RevitLookup).
-- [`docs/PAIN_POINTS.md`](docs/PAIN_POINTS.md) — initial survey of architect
-  complaints about Revit/AutoCAD/ArchiCAD/SketchUp.
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — initial technical direction
-  (Python/OpenCASCADE-based, since revised to TypeScript/web/OpenCascade.js).
-- [`docs/PRODUCT_PLAN.md`](docs/PRODUCT_PLAN.md) — initial product/platform plan
-  (recommended iOS-native first, since revised to web-first).
-- [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) — initial visual direction
-  (Phosphor-based icons, since revised to Lucide-based).
+A desktop-class browser editor where an architect can create or trace a small
+residential floor plan, author semantic walls/doors/windows/rooms, inspect and edit
+their properties, see coordinated 2D and 3D, add dimensions, recover after an
+interruption, download an Arq project archive, and export a scaled vector PDF.
 
-## Next steps
+## Begin in this order
 
-See the master plan's own §32 "Immediate next actions" and §33 "Questions to resolve
-through research, not guesswork" — those are the next decisions and work items, not
-duplicated here.
+1. Repository ownership, visibility, and licence decision — **resolved**: proprietary
+   / all rights reserved, see `LICENSE`.
+2. ADR review (`docs/adr/`)
+3. Architect interviews (`docs/research/`)
+4. Clickable prototype tests (`prototype/`)
+5. 2D renderer benchmark
+6. Local journal and recovery spike
+7. Wall-room-plan-3D vertical slice
+8. Documentation and PDF export
+9. Reliability gate
+10. Exchange, review collaboration, AI, and native iPad later
+
+## Key directories
+
+- `docs/product/` — the blueprint, requirements, release scope, feature matrix
+- `docs/adr/` — 18 accepted architecture decisions + template
+- `docs/architecture/`, `docs/schemas/` — technical architecture and data schemas
+- `docs/pages/`, `docs/components/`, `docs/flows/` — every currently specified page,
+  interface component, and end-to-end flow
+- `docs/research/`, `docs/history/` — interview materials and superseded earlier drafts
+- `design/` — design tokens (CSS/JSON/TS) and 40 draft technical SVG icons
+- `api/` — OpenAPI spec and event catalogue drafts
+- `database/` — PostgreSQL schema, ERD, data dictionary
+- `contracts/` — shared TypeScript type contracts (model, operations, renderer, storage)
+- `prototype/` — an openable static product-shell prototype (`prototype/index.html`)
+- `apps/`, `packages/`, `workers/` — the pnpm/turborepo workspace (see
+  `docs/architecture/REPOSITORY-STRUCTURE.md`)
+- `backlog/` — ordered issue backlog, epics, milestones
+- `quality/` — anticipated bugs, edge cases, QA test cases, improvement register
+- `validation/` — decisions that still require real evidence (not guessed)
+- `legal/`, `business/`, `operations/`, `security/` — supporting non-engineering work
+
+## Workspace
+
+```
+pnpm install
+pnpm typecheck   # runs via turbo across every package/app/worker
+pnpm format:check
+```
+
+See `CONTRIBUTING.md` for the backlog-driven pull request workflow.

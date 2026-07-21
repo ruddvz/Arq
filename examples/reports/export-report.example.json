@@ -1,0 +1,8 @@
+{
+  "format": "PDF",
+  "projectRevision": 42,
+  "included": ["plan", "dimensions", "room labels", "revision metadata"],
+  "omitted": [],
+  "warnings": [],
+  "validation": "passed"
+}

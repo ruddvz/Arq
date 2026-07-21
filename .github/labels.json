@@ -1,0 +1,154 @@
+[
+  {
+    "name": "type: feature",
+    "description": "New product capability"
+  },
+  {
+    "name": "type: bug",
+    "description": "Defect"
+  },
+  {
+    "name": "type: research",
+    "description": "Evidence or spike"
+  },
+  {
+    "name": "type: docs",
+    "description": "Documentation"
+  },
+  {
+    "name": "type: performance",
+    "description": "Performance"
+  },
+  {
+    "name": "type: security",
+    "description": "Security"
+  },
+  {
+    "name": "area: accessibility",
+    "description": "accessibility area"
+  },
+  {
+    "name": "area: ai",
+    "description": "ai area"
+  },
+  {
+    "name": "area: bim",
+    "description": "bim area"
+  },
+  {
+    "name": "area: chore",
+    "description": "chore area"
+  },
+  {
+    "name": "area: collaboration",
+    "description": "collaboration area"
+  },
+  {
+    "name": "area: core",
+    "description": "core area"
+  },
+  {
+    "name": "area: design",
+    "description": "design area"
+  },
+  {
+    "name": "area: docs",
+    "description": "docs area"
+  },
+  {
+    "name": "area: editor",
+    "description": "editor area"
+  },
+  {
+    "name": "area: exchange",
+    "description": "exchange area"
+  },
+  {
+    "name": "area: format",
+    "description": "format area"
+  },
+  {
+    "name": "area: geometry",
+    "description": "geometry area"
+  },
+  {
+    "name": "area: inspect",
+    "description": "inspect area"
+  },
+  {
+    "name": "area: ipad",
+    "description": "ipad area"
+  },
+  {
+    "name": "area: legal",
+    "description": "legal area"
+  },
+  {
+    "name": "area: operations",
+    "description": "operations area"
+  },
+  {
+    "name": "area: pdf",
+    "description": "pdf area"
+  },
+  {
+    "name": "area: performance",
+    "description": "performance area"
+  },
+  {
+    "name": "area: reliability",
+    "description": "reliability area"
+  },
+  {
+    "name": "area: renderer",
+    "description": "renderer area"
+  },
+  {
+    "name": "area: research",
+    "description": "research area"
+  },
+  {
+    "name": "area: security",
+    "description": "security area"
+  },
+  {
+    "name": "area: storage",
+    "description": "storage area"
+  },
+  {
+    "name": "priority: critical",
+    "description": "critical priority"
+  },
+  {
+    "name": "priority: high",
+    "description": "high priority"
+  },
+  {
+    "name": "priority: normal",
+    "description": "normal priority"
+  },
+  {
+    "name": "priority: later",
+    "description": "later priority"
+  },
+  {
+    "name": "state: needs-research",
+    "description": "needs research"
+  },
+  {
+    "name": "state: ready",
+    "description": "ready"
+  },
+  {
+    "name": "state: blocked",
+    "description": "blocked"
+  },
+  {
+    "name": "state: in-progress",
+    "description": "in progress"
+  },
+  {
+    "name": "state: needs-review",
+    "description": "needs review"
+  }
+]

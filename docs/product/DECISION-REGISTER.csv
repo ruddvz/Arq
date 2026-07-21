@@ -1,0 +1,11 @@
+id,decision,status,evidence
+D-001,Web-first editor,proposed,ADR-001
+D-002,Plan-first semantic model,proposed,ADR-002
+D-003,Modular monolith,proposed,ADR-003
+D-004,Light appearance first,proposed,Blueprint
+D-005,"WebGL first, WebGPU optional",proposed,ADR-008
+D-006,Purpose-built planar geometry first,proposed,ADR-007
+D-007,Dexie and IndexedDB first,proposed,ADR-006
+D-008,Review collaboration before co-authoring,proposed,ADR-013
+D-009,Bounded AI after manual command stability,proposed,ADR-014
+D-010,No DWG promise in early releases,proposed,ADR-012

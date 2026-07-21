@@ -1,0 +1,11 @@
+{
+  "name": "@arq/import-export-worker",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Off-main-thread IFC/DXF import and PDF/glTF export processing.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

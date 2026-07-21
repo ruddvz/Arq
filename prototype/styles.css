@@ -1,0 +1,252 @@
+:root {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  color: #151515;
+  background: #fafafa;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+input,
+select {
+  border: 1px solid #c7c7c7;
+  background: #fff;
+  border-radius: 4px;
+  padding: 8px;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+.primary,
+.tools .active {
+  background: #000;
+  color: #fff;
+}
+.nav {
+  padding: 18px;
+  border-right: 1px solid #e2e2e2;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.nav strong {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+.nav small {
+  margin-top: auto;
+  color: #737373;
+}
+#app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 190px 1fr;
+}
+.page {
+  display: none;
+  padding: 28px;
+}
+.page.active {
+  display: block;
+}
+.editor.active {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+.page header,
+.appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 22px;
+}
+.grid article,
+.recovery {
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 8px;
+  padding: 16px;
+}
+.thumb {
+  height: 150px;
+  border: 1px solid #c7c7c7;
+  background:
+    linear-gradient(90deg, transparent 49%, #555 50%, transparent 51%),
+    linear-gradient(0deg, transparent 49%, #555 50%, transparent 51%);
+  background-size: 70px 55px;
+}
+.alt {
+  background-size: 90px 60px;
+}
+.appbar {
+  height: 52px;
+  padding: 0 10px;
+  border-bottom: 1px solid #e2e2e2;
+  background: #fff;
+}
+.appbar i {
+  flex: 1;
+}
+.shell {
+  display: grid;
+  grid-template-columns: 48px 180px 1fr 240px;
+  min-height: calc(100vh - 52px);
+}
+.tools,
+.tree,
+.inspector {
+  background: #fff;
+  border-right: 1px solid #e2e2e2;
+  padding: 10px;
+}
+.tools {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tree button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+}
+.tree b {
+  display: block;
+  margin: 14px 0 6px;
+}
+.canvas {
+  display: grid;
+  grid-template-rows: 40px 1fr 30px;
+  min-width: 0;
+}
+.context,
+footer {
+  padding: 10px;
+  background: #fff;
+  border-bottom: 1px solid #e2e2e2;
+}
+footer {
+  font-size: 11px;
+  border-top: 1px solid #e2e2e2;
+}
+footer span {
+  float: right;
+}
+.canvas svg {
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+}
+.walls path {
+  fill: none;
+  stroke: #252525;
+  stroke-width: 12;
+}
+.open path {
+  fill: none;
+  stroke: #555;
+  stroke-width: 2;
+}
+.rooms text {
+  font: 14px monospace;
+  fill: #555;
+}
+.sel {
+  fill: #ececec;
+  stroke: #000;
+  stroke-width: 2;
+}
+.inspector label {
+  display: grid;
+  gap: 5px;
+  font-size: 12px;
+  margin: 12px 0;
+}
+.warn {
+  border: 1px dashed #555;
+  background: #f4f4f4;
+  padding: 10px;
+  font-size: 12px;
+}
+.paper {
+  max-width: 900px;
+  aspect-ratio: 1.414;
+  background: #fff;
+  border: 1px solid #c7c7c7;
+  padding: 40px;
+  display: grid;
+  grid-template-rows: 1fr 50px;
+}
+.paper > div:last-child {
+  border: 1px solid #c7c7c7;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+.recovery {
+  max-width: 650px;
+  margin: 15vh auto;
+}
+dialog {
+  border: 1px solid #c7c7c7;
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 440px;
+}
+dialog::backdrop {
+  background: #0005;
+}
+@media (max-width: 900px) {
+  #app {
+    grid-template-columns: 1fr;
+  }
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    flex-direction: row;
+    border-right: 0;
+    border-bottom: 1px solid #e2e2e2;
+    padding: 8px;
+    overflow: auto;
+  }
+  .nav strong {
+    font-size: 18px;
+    margin: 0;
+  }
+  .nav small {
+    display: none;
+  }
+  .shell {
+    grid-template-columns: 48px 1fr;
+  }
+  .tree,
+  .inspector {
+    display: none;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .page {
+    padding: 18px;
+  }
+}

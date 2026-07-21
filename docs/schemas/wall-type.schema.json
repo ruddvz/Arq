@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.local/schemas/wall-type.schema.json",
+  "title": "WallType",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "thickness", "defaultHeight", "function"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "thickness": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "defaultHeight": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "function": {
+      "enum": ["exterior", "interior", "unknown"]
+    }
+  }
+}

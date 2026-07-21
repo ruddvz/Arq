@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.local/schemas/project.schema.json",
+  "title": "Project",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "schemaVersion",
+    "name",
+    "units",
+    "precision",
+    "levels",
+    "walls",
+    "openings",
+    "rooms",
+    "revision"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "units": {
+      "enum": ["metric", "imperial"]
+    },
+    "precision": {
+      "type": "object"
+    },
+    "levels": {
+      "type": "array",
+      "items": {
+        "$ref": "level.schema.json"
+      }
+    },
+    "wallTypes": {
+      "type": "array",
+      "items": {
+        "$ref": "wall-type.schema.json"
+      }
+    },
+    "walls": {
+      "type": "array",
+      "items": {
+        "$ref": "wall.schema.json"
+      }
+    },
+    "openings": {
+      "type": "array",
+      "items": {
+        "$ref": "opening.schema.json"
+      }
+    },
+    "rooms": {
+      "type": "array",
+      "items": {
+        "$ref": "room.schema.json"
+      }
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

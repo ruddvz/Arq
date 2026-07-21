@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.local/schemas/operation.schema.json",
+  "title": "ModelOperation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "type",
+    "actorId",
+    "projectId",
+    "baseRevision",
+    "timestamp",
+    "payload",
+    "preconditions"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "actorId": {
+      "type": "string"
+    },
+    "projectId": {
+      "type": "string"
+    },
+    "baseRevision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "preconditions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+id,title,route,access,goal,file
+PUB-001,Marketing home,/,public,"Explain the product and route users to product, security, pricing and sign-up.",docs/pages/PUB-001-marketing-home.md
+PUB-002,Product overview,/product,public,Describe the complete product direction without unsupported compatibility claims.,docs/pages/PUB-002-product-overview.md
+PUB-003,For architects,/architects,public,Explain the residential and small-practice workflow.,docs/pages/PUB-003-for-architects.md
+PUB-004,For students,/students,public,Explain learning use without weakening professional positioning.,docs/pages/PUB-004-for-students.md
+PUB-005,Collaboration,/collaboration,public,"Explain viewing, comments, issues and later co-authoring.",docs/pages/PUB-005-collaboration.md
+PUB-006,AI,/ai,public,"Explain previewable, validated and undoable AI operations.",docs/pages/PUB-006-ai.md
+PUB-007,Interoperability,/interoperability,public,Publish format support accurately.,docs/pages/PUB-007-interoperability.md
+PUB-008,iPad,/ipad,public,Describe browser and future native iPad value.,docs/pages/PUB-008-ipad.md
+PUB-009,Pricing,/pricing,public,Present approved plans and limits after research.,docs/pages/PUB-009-pricing.md
+PUB-010,Security,/security,public,Explain security and privacy without overclaiming certification.,docs/pages/PUB-010-security.md
+PUB-011,Documentation index,/docs,public,Route users to learning and technical documentation.,docs/pages/PUB-011-documentation-index.md
+PUB-012,Changelog,/changelog,public,Publish release changes and migrations.,docs/pages/PUB-012-changelog.md
+PUB-013,Status,/status,public,Show service health and incidents.,docs/pages/PUB-013-status.md
+PUB-014,Contact and support,/contact,public,"Route sales, support, security and press enquiries.",docs/pages/PUB-014-contact-and-support.md
+PUB-015,Privacy notice,/legal/privacy,public,Publish lawyer-approved privacy notice.,docs/pages/PUB-015-privacy-notice.md
+PUB-016,Terms,/legal/terms,public,Publish lawyer-approved product terms.,docs/pages/PUB-016-terms.md
+PUB-017,Open-source notices,/legal/open-source,public,Publish generated third-party notices.,docs/pages/PUB-017-open-source-notices.md
+AUTH-001,Sign in,/sign-in,anonymous,Authenticate a user securely.,docs/pages/AUTH-001-sign-in.md
+AUTH-002,Sign up,/sign-up,anonymous,Create an account and accept current terms.,docs/pages/AUTH-002-sign-up.md
+AUTH-003,Verify email,/verify-email,anonymous,Verify email ownership.,docs/pages/AUTH-003-verify-email.md
+AUTH-004,Forgot password,/forgot-password,anonymous,Request account recovery.,docs/pages/AUTH-004-forgot-password.md
+AUTH-005,Reset password,/reset-password,anonymous,Set a new password from a valid token.,docs/pages/AUTH-005-reset-password.md
+APP-001,Recent projects,/app,signed-in,Show recent and owned projects.,docs/pages/APP-001-recent-projects.md
+APP-002,Shared with me,/app/shared,signed-in,Show projects shared with the user.,docs/pages/APP-002-shared-with-me.md
+APP-003,Templates,/app/templates,signed-in,Create a project from controlled templates.,docs/pages/APP-003-templates.md
+APP-004,Archived projects,/app/archived,signed-in,Restore or permanently delete archived projects.,docs/pages/APP-004-archived-projects.md
+APP-005,New project,/app/new,signed-in,Create a project with units and initial level.,docs/pages/APP-005-new-project.md
+APP-006,Import project,/app/import,signed-in,Import an Arq archive or supported reference format.,docs/pages/APP-006-import-project.md
+APP-007,Workspace members,/app/workspace/members,administrator,Manage membership and roles.,docs/pages/APP-007-workspace-members.md
+APP-008,Workspace settings,/app/workspace/settings,administrator,Manage workspace identity and defaults.,docs/pages/APP-008-workspace-settings.md
+APP-009,Account settings,/app/account,signed-in,"Manage profile, authentication and privacy.",docs/pages/APP-009-account-settings.md
+APP-010,Billing,/app/billing,owner,"Manage approved subscription, invoices and entitlements.",docs/pages/APP-010-billing.md
+PROJ-001,Plan editor,/app/projects/:id/plan/:viewId,editor,Primary plan authoring surface.,docs/pages/PROJ-001-plan-editor.md
+PROJ-002,3D editor,/app/projects/:id/3d/:viewId,editor,Coordinated model view and selected editing.,docs/pages/PROJ-002-3d-editor.md
+PROJ-003,Split view,/app/projects/:id/split,editor,Display coordinated plan and 3D.,docs/pages/PROJ-003-split-view.md
+PROJ-004,Sheet editor,/app/projects/:id/sheets/:sheetId,editor,Lay out a plan viewport and export a sheet.,docs/pages/PROJ-004-sheet-editor.md
+PROJ-005,Inspect mode,/app/projects/:id/inspect,editor,"Inspect identity, properties, relationships and warnings.",docs/pages/PROJ-005-inspect-mode.md
+PROJ-006,Document mode,/app/projects/:id/document,editor,"Manage views, annotations, schedules and sheets.",docs/pages/PROJ-006-document-mode.md
+PROJ-007,Review mode,/app/projects/:id/review,commenter,"Review comments, issues and revisions.",docs/pages/PROJ-007-review-mode.md
+PROJ-008,Present mode,/app/projects/:id/present,viewer,Navigate saved views without accidental edits.,docs/pages/PROJ-008-present-mode.md
+PROJ-009,Comments,/app/projects/:id/comments,commenter,List and resolve model and sheet comments.,docs/pages/PROJ-009-comments.md
+PROJ-010,Issues,/app/projects/:id/issues,commenter,Track actionable design issues.,docs/pages/PROJ-010-issues.md
+PROJ-011,Version history,/app/projects/:id/history,viewer,Show snapshots and operations.,docs/pages/PROJ-011-version-history.md
+PROJ-012,Revision compare,/app/projects/:id/compare/:a/:b,viewer,Compare two revisions.,docs/pages/PROJ-012-revision-compare.md
+PROJ-013,Import report,/app/projects/:id/imports/:importId,editor,"Explain imported, converted and unsupported content.",docs/pages/PROJ-013-import-report.md
+PROJ-014,Export dialog,/app/projects/:id/export,editor,"Choose format, scope and validation.",docs/pages/PROJ-014-export-dialog.md
+PROJ-015,Export report,/app/projects/:id/exports/:exportId,viewer,"Show included, omitted and failed content.",docs/pages/PROJ-015-export-report.md
+PROJ-016,Project settings,/app/projects/:id/settings,administrator,"Manage units, precision, permissions and archive.",docs/pages/PROJ-016-project-settings.md
+PROJ-017,Share project,/app/projects/:id/share,administrator,Invite users and create controlled share links.,docs/pages/PROJ-017-share-project.md
+PROJ-018,Recovery,/app/recovery/:projectId,editor,Restore locally journalled work safely.,docs/pages/PROJ-018-recovery.md
+PROJ-019,Sync conflict,/app/projects/:id/conflict,editor,Resolve rejected or conflicting operations.,docs/pages/PROJ-019-sync-conflict.md
+PROJ-020,Diagnostics,/app/projects/:id/diagnostics,administrator,"Inspect performance, memory, errors and support bundle.",docs/pages/PROJ-020-diagnostics.md
+PROJ-021,Command palette,overlay,editor,"Search commands, views, objects, settings and help.",docs/pages/PROJ-021-command-palette.md
+PROJ-022,Keyboard shortcuts,overlay,signed-in,Show and search active shortcuts.,docs/pages/PROJ-022-keyboard-shortcuts.md
+PROJ-023,Onboarding project,/app/onboarding,signed-in,Teach the benchmark workflow inside a real project.,docs/pages/PROJ-023-onboarding-project.md
+PROJ-024,Model health,panel,editor,Summarise blocking errors and warnings.,docs/pages/PROJ-024-model-health.md
+PROJ-025,AI proposal,panel,editor,"Show intent, assumptions, operations, preview and validation.",docs/pages/PROJ-025-ai-proposal.md

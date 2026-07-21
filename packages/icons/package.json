@@ -1,0 +1,11 @@
+{
+  "name": "@arq/icons",
+  "private": true,
+  "version": "0.0.0",
+  "description": "The Arq icon system — 40 draft SVG icons (see design/icons/) wrapped as importable components.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

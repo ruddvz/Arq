@@ -18,6 +18,13 @@ node_modules/
 # Build artifacts
 dist/
 build/
+coverage/
 *.log
 *.tsbuildinfo
 .turbo/
+.vite/
+
+# Environment
+.env
+.env.*
+!.env.example

@@ -1,0 +1,11 @@
+{
+  "name": "@arq/geometry-2d",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Purpose-built 2D planar geometry (the authoritative first layer — see docs/adr/0007-purpose-built-planar-geometry.md).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "sourceFile": "reference.ifc",
+  "format": "IFC",
+  "version": "IFC4",
+  "units": "metres",
+  "preserved": 84,
+  "converted": 12,
+  "simplified": 4,
+  "unsupported": 7,
+  "failed": 1,
+  "warnings": ["One unsupported proxy object was retained as reference geometry."]
+}

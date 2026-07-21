@@ -1,0 +1,3092 @@
+[
+  {
+    "id": "QA-0001",
+    "type": "regression",
+    "area": "Selection",
+    "title": "Hidden object receives pointer hit",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Hidden object receives pointer hit.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0002",
+    "type": "regression",
+    "area": "Selection",
+    "title": "Inspector displays a different element than the canvas highlight",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Inspector displays a different element than the canvas highlight.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0003",
+    "type": "regression",
+    "area": "Selection",
+    "title": "Candidate cycling order changes without pointer movement",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Candidate cycling order changes without pointer movement.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0004",
+    "type": "regression",
+    "area": "Selection",
+    "title": "Selection is lost while editing a property",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Selection is lost while editing a property.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0005",
+    "type": "regression",
+    "area": "Selection",
+    "title": "Deleted object remains selected",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Deleted object remains selected.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0006",
+    "type": "regression",
+    "area": "Selection",
+    "title": "Tiny object cannot be selected at normal zoom",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Tiny object cannot be selected at normal zoom.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0007",
+    "type": "regression",
+    "area": "Selection",
+    "title": "Window selection includes an object outside the boundary",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Window selection includes an object outside the boundary.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0008",
+    "type": "regression",
+    "area": "Selection",
+    "title": "Crossing selection behaves like window selection",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Crossing selection behaves like window selection.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0009",
+    "type": "regression",
+    "area": "Snapping",
+    "title": "Snap jitters between equal candidates",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Snap jitters between equal candidates.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0010",
+    "type": "regression",
+    "area": "Snapping",
+    "title": "Snap uses stale derived geometry",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Snap uses stale derived geometry.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0011",
+    "type": "regression",
+    "area": "Snapping",
+    "title": "Snap tolerance changes incorrectly with zoom",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Snap tolerance changes incorrectly with zoom.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0012",
+    "type": "regression",
+    "area": "Snapping",
+    "title": "Perpendicular snap appears on an invalid extension",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Perpendicular snap appears on an invalid extension.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0013",
+    "type": "regression",
+    "area": "Snapping",
+    "title": "Endpoint snap selects a hidden element",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Endpoint snap selects a hidden element.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0014",
+    "type": "regression",
+    "area": "Snapping",
+    "title": "Pencil hover preview differs from contact result",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Pencil hover preview differs from contact result.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0015",
+    "type": "regression",
+    "area": "Snapping",
+    "title": "Grid snap overrides a closer endpoint",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Grid snap overrides a closer endpoint.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0016",
+    "type": "regression",
+    "area": "Snapping",
+    "title": "Temporary snap override remains active",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Temporary snap override remains active.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0017",
+    "type": "regression",
+    "area": "Numeric input",
+    "title": "Rounded display value is stored as authoritative",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Rounded display value is stored as authoritative.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0018",
+    "type": "regression",
+    "area": "Numeric input",
+    "title": "Imperial fraction parses incorrectly",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Imperial fraction parses incorrectly.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0019",
+    "type": "regression",
+    "area": "Numeric input",
+    "title": "Locale comma is interpreted as coordinate separator",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Locale comma is interpreted as coordinate separator.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0020",
+    "type": "regression",
+    "area": "Numeric input",
+    "title": "Negative length commits where prohibited",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Negative length commits where prohibited.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0021",
+    "type": "regression",
+    "area": "Numeric input",
+    "title": "Unit suffix changes value unexpectedly",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Unit suffix changes value unexpectedly.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0022",
+    "type": "regression",
+    "area": "Numeric input",
+    "title": "Tab leaves the command instead of moving fields",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Tab leaves the command instead of moving fields.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0023",
+    "type": "regression",
+    "area": "Numeric input",
+    "title": "Numeric overlay covers the cursor",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Numeric overlay covers the cursor.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0024",
+    "type": "regression",
+    "area": "Numeric input",
+    "title": "Invalid number clears the previous valid preview",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Invalid number clears the previous valid preview.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0025",
+    "type": "regression",
+    "area": "Walls and joins",
+    "title": "Reversing endpoints flips interior and exterior unexpectedly",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Reversing endpoints flips interior and exterior unexpectedly.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0026",
+    "type": "regression",
+    "area": "Walls and joins",
+    "title": "Mitre join creates a sliver",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Mitre join creates a sliver.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0027",
+    "type": "regression",
+    "area": "Walls and joins",
+    "title": "T junction disconnects after reopen",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: T junction disconnects after reopen.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0028",
+    "type": "regression",
+    "area": "Walls and joins",
+    "title": "Collinear walls overlap instead of merge warning",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Collinear walls overlap instead of merge warning.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0029",
+    "type": "regression",
+    "area": "Walls and joins",
+    "title": "Join changes after wall thickness edit",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Join changes after wall thickness edit.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0030",
+    "type": "regression",
+    "area": "Walls and joins",
+    "title": "Wall below minimum length commits",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Wall below minimum length commits.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0031",
+    "type": "regression",
+    "area": "Walls and joins",
+    "title": "Wall move detaches room boundary",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Wall move detaches room boundary.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0032",
+    "type": "regression",
+    "area": "Walls and joins",
+    "title": "Wall reference line and 3D mesh disagree",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Wall reference line and 3D mesh disagree.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0033",
+    "type": "regression",
+    "area": "Openings",
+    "title": "Door extends beyond host",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Door extends beyond host.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0034",
+    "type": "regression",
+    "area": "Openings",
+    "title": "Overlapping openings commit",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Overlapping openings commit.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0035",
+    "type": "regression",
+    "area": "Openings",
+    "title": "Door moves to wrong wall end after endpoint reversal",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Door moves to wrong wall end after endpoint reversal.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0036",
+    "type": "regression",
+    "area": "Openings",
+    "title": "Window sill exceeds wall height",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Window sill exceeds wall height.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0037",
+    "type": "regression",
+    "area": "Openings",
+    "title": "Host split assigns opening unpredictably",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Host split assigns opening unpredictably.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0038",
+    "type": "regression",
+    "area": "Openings",
+    "title": "Deleting host silently deletes openings",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Deleting host silently deletes openings.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0039",
+    "type": "regression",
+    "area": "Openings",
+    "title": "Door swing flips after reopen",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Door swing flips after reopen.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0040",
+    "type": "regression",
+    "area": "Openings",
+    "title": "Opening void differs between plan and 3D",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Opening void differs between plan and 3D.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0041",
+    "type": "regression",
+    "area": "Rooms",
+    "title": "Tiny gap is silently closed",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Tiny gap is silently closed.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0042",
+    "type": "regression",
+    "area": "Rooms",
+    "title": "Room area remains stale after wall move",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Room area remains stale after wall move.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0043",
+    "type": "regression",
+    "area": "Rooms",
+    "title": "Seed point selects adjacent room",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Seed point selects adjacent room.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0044",
+    "type": "regression",
+    "area": "Rooms",
+    "title": "Concave boundary self-intersects",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Concave boundary self-intersects.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0045",
+    "type": "regression",
+    "area": "Rooms",
+    "title": "Room identity changes after repair",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Room identity changes after repair.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0046",
+    "type": "regression",
+    "area": "Rooms",
+    "title": "Room overlaps another room",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Room overlaps another room.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0047",
+    "type": "regression",
+    "area": "Rooms",
+    "title": "Opening unexpectedly breaks room boundary",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Opening unexpectedly breaks room boundary.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0048",
+    "type": "regression",
+    "area": "Rooms",
+    "title": "Room label remains after room deletion",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Room label remains after room deletion.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0049",
+    "type": "regression",
+    "area": "Dimensions",
+    "title": "Dimension references a disposable mesh edge",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Dimension references a disposable mesh edge.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0050",
+    "type": "regression",
+    "area": "Dimensions",
+    "title": "Detached reference shows old value",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Detached reference shows old value.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0051",
+    "type": "regression",
+    "area": "Dimensions",
+    "title": "Text override changes measured value",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Text override changes measured value.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0052",
+    "type": "regression",
+    "area": "Dimensions",
+    "title": "Witness line moves to wrong face",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Witness line moves to wrong face.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0053",
+    "type": "regression",
+    "area": "Dimensions",
+    "title": "Unit precision differs between canvas and PDF",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Unit precision differs between canvas and PDF.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0054",
+    "type": "regression",
+    "area": "Dimensions",
+    "title": "Dimension is clipped at sheet edge",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Dimension is clipped at sheet edge.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0055",
+    "type": "regression",
+    "area": "Dimensions",
+    "title": "Dimension fails after wall split",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Dimension fails after wall split.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0056",
+    "type": "regression",
+    "area": "Dimensions",
+    "title": "Dimension text overlaps without warning",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Dimension text overlaps without warning.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0057",
+    "type": "regression",
+    "area": "2D rendering",
+    "title": "Line weight changes with zoom",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Line weight changes with zoom.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0058",
+    "type": "regression",
+    "area": "2D rendering",
+    "title": "Selection halo obscures geometry",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Selection halo obscures geometry.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0059",
+    "type": "regression",
+    "area": "2D rendering",
+    "title": "Text blurs on high-density display",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Text blurs on high-density display.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0060",
+    "type": "regression",
+    "area": "2D rendering",
+    "title": "Canvas loses GPU context",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Canvas loses GPU context.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "critical"
+  },
+  {
+    "id": "QA-0061",
+    "type": "regression",
+    "area": "2D rendering",
+    "title": "Culling removes visible geometry",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Culling removes visible geometry.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0062",
+    "type": "regression",
+    "area": "2D rendering",
+    "title": "Underlay draws above authored geometry",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Underlay draws above authored geometry.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0063",
+    "type": "regression",
+    "area": "2D rendering",
+    "title": "Print line style differs from editor",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Print line style differs from editor.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0064",
+    "type": "regression",
+    "area": "2D rendering",
+    "title": "Pattern aliasing makes warning invisible",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Pattern aliasing makes warning invisible.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0065",
+    "type": "regression",
+    "area": "3D rendering",
+    "title": "Mesh remains after element deletion",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Mesh remains after element deletion.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0066",
+    "type": "regression",
+    "area": "3D rendering",
+    "title": "Selection outline uses wrong element ID",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Selection outline uses wrong element ID.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0067",
+    "type": "regression",
+    "area": "3D rendering",
+    "title": "Opening mesh has inverted normals",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Opening mesh has inverted normals.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0068",
+    "type": "regression",
+    "area": "3D rendering",
+    "title": "Orthographic fit clips model",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Orthographic fit clips model.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0069",
+    "type": "regression",
+    "area": "3D rendering",
+    "title": "Low-memory mode does not recover",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Low-memory mode does not recover.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0070",
+    "type": "regression",
+    "area": "3D rendering",
+    "title": "Inactive split view consumes full frame budget",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Inactive split view consumes full frame budget.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0071",
+    "type": "regression",
+    "area": "3D rendering",
+    "title": "WebGPU and WebGL render materially different geometry",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: WebGPU and WebGL render materially different geometry.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0072",
+    "type": "regression",
+    "area": "3D rendering",
+    "title": "Context loss discards committed state",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Context loss discards committed state.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0073",
+    "type": "regression",
+    "area": "Storage and recovery",
+    "title": "UI reports saved before journal write",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: UI reports saved before journal write.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0074",
+    "type": "regression",
+    "area": "Storage and recovery",
+    "title": "Quota failure is presented as network failure",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Quota failure is presented as network failure.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0075",
+    "type": "regression",
+    "area": "Storage and recovery",
+    "title": "Snapshot compaction loses operations",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Snapshot compaction loses operations.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "critical"
+  },
+  {
+    "id": "QA-0076",
+    "type": "regression",
+    "area": "Storage and recovery",
+    "title": "Two tabs corrupt local journal",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Two tabs corrupt local journal.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "critical"
+  },
+  {
+    "id": "QA-0077",
+    "type": "regression",
+    "area": "Storage and recovery",
+    "title": "Recovery replays an incomplete preview",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Recovery replays an incomplete preview.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0078",
+    "type": "regression",
+    "area": "Storage and recovery",
+    "title": "Corrupt cache prevents project opening",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Corrupt cache prevents project opening.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "critical"
+  },
+  {
+    "id": "QA-0079",
+    "type": "regression",
+    "area": "Storage and recovery",
+    "title": "Browser eviction has no warning",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Browser eviction has no warning.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0080",
+    "type": "regression",
+    "area": "Storage and recovery",
+    "title": "Migration overwrites the only archive",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Migration overwrites the only archive.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "critical"
+  },
+  {
+    "id": "QA-0081",
+    "type": "regression",
+    "area": "Archive and migration",
+    "title": "Archive accepts path traversal",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Archive accepts path traversal.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0082",
+    "type": "regression",
+    "area": "Archive and migration",
+    "title": "Checksum is not verified",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Checksum is not verified.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0083",
+    "type": "regression",
+    "area": "Archive and migration",
+    "title": "Unknown optional section blocks opening",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Unknown optional section blocks opening.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0084",
+    "type": "regression",
+    "area": "Archive and migration",
+    "title": "Schema migration changes IDs",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Schema migration changes IDs.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0085",
+    "type": "regression",
+    "area": "Archive and migration",
+    "title": "Archive order is nondeterministic without reason",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Archive order is nondeterministic without reason.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0086",
+    "type": "regression",
+    "area": "Archive and migration",
+    "title": "Zip bomb exhausts memory",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Zip bomb exhausts memory.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0087",
+    "type": "regression",
+    "area": "Archive and migration",
+    "title": "Partial archive opens as complete",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Partial archive opens as complete.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0088",
+    "type": "regression",
+    "area": "Archive and migration",
+    "title": "Migration cannot retain original copy",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Migration cannot retain original copy.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0089",
+    "type": "regression",
+    "area": "Import",
+    "title": "Wrong units scale imported drawing",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Wrong units scale imported drawing.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0090",
+    "type": "regression",
+    "area": "Import",
+    "title": "Unsupported object disappears without report",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Unsupported object disappears without report.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0091",
+    "type": "regression",
+    "area": "Import",
+    "title": "Partial import mutates project after failure",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Partial import mutates project after failure.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0092",
+    "type": "regression",
+    "area": "Import",
+    "title": "Malicious text becomes executable markup",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Malicious text becomes executable markup.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0093",
+    "type": "regression",
+    "area": "Import",
+    "title": "Large IFC exhausts browser memory",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Large IFC exhausts browser memory.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0094",
+    "type": "regression",
+    "area": "Import",
+    "title": "DXF block transforms are applied twice",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: DXF block transforms are applied twice.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0095",
+    "type": "regression",
+    "area": "Import",
+    "title": "Source identifiers are lost",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Source identifiers are lost.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0096",
+    "type": "regression",
+    "area": "Import",
+    "title": "Cancel leaves temporary objects",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Cancel leaves temporary objects.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0097",
+    "type": "regression",
+    "area": "Export",
+    "title": "PDF is a raster screenshot",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: PDF is a raster screenshot.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0098",
+    "type": "regression",
+    "area": "Export",
+    "title": "Export changes project revision",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Export changes project revision.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0099",
+    "type": "regression",
+    "area": "Export",
+    "title": "Font is missing or substituted silently",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Font is missing or substituted silently.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0100",
+    "type": "regression",
+    "area": "Export",
+    "title": "Physical print scale is wrong",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Physical print scale is wrong.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0101",
+    "type": "regression",
+    "area": "Export",
+    "title": "Clipped content is omitted without warning",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Clipped content is omitted without warning.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0102",
+    "type": "regression",
+    "area": "Export",
+    "title": "Expired download is presented as failed export",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Expired download is presented as failed export.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0103",
+    "type": "regression",
+    "area": "Export",
+    "title": "IFC support report overstates preserved data",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: IFC support report overstates preserved data.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "critical"
+  },
+  {
+    "id": "QA-0104",
+    "type": "regression",
+    "area": "Export",
+    "title": "Concurrent edit changes export mid-generation",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Concurrent edit changes export mid-generation.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0105",
+    "type": "regression",
+    "area": "Collaboration and sync",
+    "title": "Last write wins on delete versus modify",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Last write wins on delete versus modify.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0106",
+    "type": "regression",
+    "area": "Collaboration and sync",
+    "title": "Offline operation applies twice",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Offline operation applies twice.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0107",
+    "type": "regression",
+    "area": "Collaboration and sync",
+    "title": "User undoes another user work",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: User undoes another user work.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0108",
+    "type": "regression",
+    "area": "Collaboration and sync",
+    "title": "Presence remains after disconnect",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Presence remains after disconnect.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0109",
+    "type": "regression",
+    "area": "Collaboration and sync",
+    "title": "Comment target points to replaced element",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Comment target points to replaced element.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0110",
+    "type": "regression",
+    "area": "Collaboration and sync",
+    "title": "Share link retains access after revocation",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Share link retains access after revocation.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0111",
+    "type": "regression",
+    "area": "Collaboration and sync",
+    "title": "Role downgrade is cached too long",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Role downgrade is cached too long.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0112",
+    "type": "regression",
+    "area": "Collaboration and sync",
+    "title": "Conflict resolver loses local copy",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Conflict resolver loses local copy.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "critical"
+  },
+  {
+    "id": "QA-0113",
+    "type": "regression",
+    "area": "Security and permissions",
+    "title": "Viewer can call edit API directly",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Viewer can call edit API directly.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0114",
+    "type": "regression",
+    "area": "Security and permissions",
+    "title": "Project existence leaks through error difference",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Project existence leaks through error difference.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0115",
+    "type": "regression",
+    "area": "Security and permissions",
+    "title": "Signed URL lasts too long",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Signed URL lasts too long.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0116",
+    "type": "regression",
+    "area": "Security and permissions",
+    "title": "Cross-tenant object-storage key accepted",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Cross-tenant object-storage key accepted.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "critical"
+  },
+  {
+    "id": "QA-0117",
+    "type": "regression",
+    "area": "Security and permissions",
+    "title": "Audit log stores sensitive project content",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Audit log stores sensitive project content.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0118",
+    "type": "regression",
+    "area": "Security and permissions",
+    "title": "Imported SVG executes script",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Imported SVG executes script.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0119",
+    "type": "regression",
+    "area": "Security and permissions",
+    "title": "Share token is stored in plaintext",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Share token is stored in plaintext.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "critical"
+  },
+  {
+    "id": "QA-0120",
+    "type": "regression",
+    "area": "Security and permissions",
+    "title": "Account deletion leaves active sessions",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Account deletion leaves active sessions.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0121",
+    "type": "regression",
+    "area": "AI",
+    "title": "AI applies without preview",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: AI applies without preview.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0122",
+    "type": "regression",
+    "area": "AI",
+    "title": "AI hides dimensional assumption",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: AI hides dimensional assumption.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0123",
+    "type": "regression",
+    "area": "AI",
+    "title": "AI deletes geometry to satisfy request",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: AI deletes geometry to satisfy request.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0124",
+    "type": "regression",
+    "area": "AI",
+    "title": "Prompt injection in imported metadata changes behaviour",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Prompt injection in imported metadata changes behaviour.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "critical"
+  },
+  {
+    "id": "QA-0125",
+    "type": "regression",
+    "area": "AI",
+    "title": "AI proposal references stale revision",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: AI proposal references stale revision.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0126",
+    "type": "regression",
+    "area": "AI",
+    "title": "Undo does not reverse whole proposal",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Undo does not reverse whole proposal.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0127",
+    "type": "regression",
+    "area": "AI",
+    "title": "AI claims code compliance",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: AI claims code compliance.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0128",
+    "type": "regression",
+    "area": "AI",
+    "title": "Private project content is retained unexpectedly",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Private project content is retained unexpectedly.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0129",
+    "type": "regression",
+    "area": "iPad and input",
+    "title": "Pencil stroke orbits camera",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Pencil stroke orbits camera.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0130",
+    "type": "regression",
+    "area": "iPad and input",
+    "title": "Finger touch creates geometry during Pencil use",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Finger touch creates geometry during Pencil use.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0131",
+    "type": "regression",
+    "area": "iPad and input",
+    "title": "Software keyboard covers numeric input",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Software keyboard covers numeric input.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0132",
+    "type": "regression",
+    "area": "iPad and input",
+    "title": "Hover snap differs from tap snap",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Hover snap differs from tap snap.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0133",
+    "type": "regression",
+    "area": "iPad and input",
+    "title": "Trackpad shortcut conflicts with browser",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Trackpad shortcut conflicts with browser.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0134",
+    "type": "regression",
+    "area": "iPad and input",
+    "title": "Portrait inspector hides commit action",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Portrait inspector hides commit action.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0135",
+    "type": "regression",
+    "area": "iPad and input",
+    "title": "Squeeze action triggers unsupported command",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Squeeze action triggers unsupported command.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0136",
+    "type": "regression",
+    "area": "iPad and input",
+    "title": "Palm rejection fails near canvas edge",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Palm rejection fails near canvas edge.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0137",
+    "type": "regression",
+    "area": "Accessibility",
+    "title": "Active tool is indicated only by colour",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Active tool is indicated only by colour.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0138",
+    "type": "regression",
+    "area": "Accessibility",
+    "title": "Command palette focus is lost after results update",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Command palette focus is lost after results update.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0139",
+    "type": "regression",
+    "area": "Accessibility",
+    "title": "Canvas selection has no textual equivalent",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Canvas selection has no textual equivalent.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0140",
+    "type": "regression",
+    "area": "Accessibility",
+    "title": "Dialog closes without returning focus",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Dialog closes without returning focus.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "critical"
+  },
+  {
+    "id": "QA-0141",
+    "type": "regression",
+    "area": "Accessibility",
+    "title": "Error is not associated with numeric field",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Error is not associated with numeric field.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0142",
+    "type": "regression",
+    "area": "Accessibility",
+    "title": "Model tree cannot be navigated by keyboard",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Model tree cannot be navigated by keyboard.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0143",
+    "type": "regression",
+    "area": "Accessibility",
+    "title": "Reduced motion still animates camera",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Reduced motion still animates camera.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0144",
+    "type": "regression",
+    "area": "Accessibility",
+    "title": "Touch target is below 44 points",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Touch target is below 44 points.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0145",
+    "type": "regression",
+    "area": "Performance",
+    "title": "Room rebuild recalculates whole project",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Room rebuild recalculates whole project.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0146",
+    "type": "regression",
+    "area": "Performance",
+    "title": "Hover performs exact geometry on every frame",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Hover performs exact geometry on every frame.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0147",
+    "type": "regression",
+    "area": "Performance",
+    "title": "React rerenders full model on pointer move",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: React rerenders full model on pointer move.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0148",
+    "type": "regression",
+    "area": "Performance",
+    "title": "Worker messages copy large buffers unnecessarily",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Worker messages copy large buffers unnecessarily.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0149",
+    "type": "regression",
+    "area": "Performance",
+    "title": "Inactive levels remain fully loaded",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Inactive levels remain fully loaded.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0150",
+    "type": "regression",
+    "area": "Performance",
+    "title": "Selection index rebuilds after camera-only change",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Selection index rebuilds after camera-only change.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0151",
+    "type": "regression",
+    "area": "Performance",
+    "title": "Import progress blocks main thread",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Import progress blocks main thread.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0152",
+    "type": "regression",
+    "area": "Performance",
+    "title": "Diagnostics themselves reduce frame rate",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Diagnostics themselves reduce frame rate.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0153",
+    "type": "regression",
+    "area": "Browser and platform",
+    "title": "Safari storage is evicted without recovery path",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Safari storage is evicted without recovery path.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0154",
+    "type": "regression",
+    "area": "Browser and platform",
+    "title": "Browser shortcut prevents Arq command",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Browser shortcut prevents Arq command.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0155",
+    "type": "regression",
+    "area": "Browser and platform",
+    "title": "WebGL context limit is exceeded",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: WebGL context limit is exceeded.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0156",
+    "type": "regression",
+    "area": "Browser and platform",
+    "title": "File System Access API is assumed everywhere",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: File System Access API is assumed everywhere.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0157",
+    "type": "regression",
+    "area": "Browser and platform",
+    "title": "WebGPU capability detection is inaccurate",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: WebGPU capability detection is inaccurate.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0158",
+    "type": "regression",
+    "area": "Browser and platform",
+    "title": "iPad backgrounding interrupts export",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: iPad backgrounding interrupts export.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0159",
+    "type": "regression",
+    "area": "Browser and platform",
+    "title": "High-DPI scaling changes hit testing",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: High-DPI scaling changes hit testing.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0160",
+    "type": "regression",
+    "area": "Browser and platform",
+    "title": "Browser zoom breaks panel layout",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Browser zoom breaks panel layout.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0161",
+    "type": "regression",
+    "area": "UI state and copy",
+    "title": "Saved label hides unsynced state",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Saved label hides unsynced state.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0162",
+    "type": "regression",
+    "area": "UI state and copy",
+    "title": "Disabled action has no explanation",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Disabled action has no explanation.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0163",
+    "type": "regression",
+    "area": "UI state and copy",
+    "title": "Modal opens behind canvas overlay",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Modal opens behind canvas overlay.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0164",
+    "type": "regression",
+    "area": "UI state and copy",
+    "title": "Panel opening shifts canvas coordinates",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Panel opening shifts canvas coordinates.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0165",
+    "type": "regression",
+    "area": "UI state and copy",
+    "title": "Error message uses internal exception only",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Error message uses internal exception only.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0166",
+    "type": "regression",
+    "area": "UI state and copy",
+    "title": "Loading state looks like an empty project",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Loading state looks like an empty project.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0167",
+    "type": "regression",
+    "area": "UI state and copy",
+    "title": "Destructive default action is focused",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Destructive default action is focused.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0168",
+    "type": "regression",
+    "area": "UI state and copy",
+    "title": "Coming-later feature appears available",
+    "precondition": "Open the smallest deterministic fixture that exposes the risk.",
+    "steps": "Create a deterministic regression test for: Coming-later feature appears available.",
+    "expected": "The risk is prevented or fails safely with unchanged committed project state.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0169",
+    "type": "page smoke",
+    "area": "PUB-001",
+    "title": "Marketing home required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0170",
+    "type": "page smoke",
+    "area": "PUB-002",
+    "title": "Product overview required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0171",
+    "type": "page smoke",
+    "area": "PUB-003",
+    "title": "For architects required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0172",
+    "type": "page smoke",
+    "area": "PUB-004",
+    "title": "For students required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0173",
+    "type": "page smoke",
+    "area": "PUB-005",
+    "title": "Collaboration required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0174",
+    "type": "page smoke",
+    "area": "PUB-006",
+    "title": "AI required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0175",
+    "type": "page smoke",
+    "area": "PUB-007",
+    "title": "Interoperability required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0176",
+    "type": "page smoke",
+    "area": "PUB-008",
+    "title": "iPad required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0177",
+    "type": "page smoke",
+    "area": "PUB-009",
+    "title": "Pricing required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0178",
+    "type": "page smoke",
+    "area": "PUB-010",
+    "title": "Security required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0179",
+    "type": "page smoke",
+    "area": "PUB-011",
+    "title": "Documentation index required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0180",
+    "type": "page smoke",
+    "area": "PUB-012",
+    "title": "Changelog required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0181",
+    "type": "page smoke",
+    "area": "PUB-013",
+    "title": "Status required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0182",
+    "type": "page smoke",
+    "area": "PUB-014",
+    "title": "Contact and support required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0183",
+    "type": "page smoke",
+    "area": "PUB-015",
+    "title": "Privacy notice required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0184",
+    "type": "page smoke",
+    "area": "PUB-016",
+    "title": "Terms required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0185",
+    "type": "page smoke",
+    "area": "PUB-017",
+    "title": "Open-source notices required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0186",
+    "type": "page smoke",
+    "area": "AUTH-001",
+    "title": "Sign in required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0187",
+    "type": "page smoke",
+    "area": "AUTH-002",
+    "title": "Sign up required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0188",
+    "type": "page smoke",
+    "area": "AUTH-003",
+    "title": "Verify email required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0189",
+    "type": "page smoke",
+    "area": "AUTH-004",
+    "title": "Forgot password required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0190",
+    "type": "page smoke",
+    "area": "AUTH-005",
+    "title": "Reset password required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0191",
+    "type": "page smoke",
+    "area": "APP-001",
+    "title": "Recent projects required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0192",
+    "type": "page smoke",
+    "area": "APP-002",
+    "title": "Shared with me required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0193",
+    "type": "page smoke",
+    "area": "APP-003",
+    "title": "Templates required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0194",
+    "type": "page smoke",
+    "area": "APP-004",
+    "title": "Archived projects required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0195",
+    "type": "page smoke",
+    "area": "APP-005",
+    "title": "New project required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0196",
+    "type": "page smoke",
+    "area": "APP-006",
+    "title": "Import project required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0197",
+    "type": "page smoke",
+    "area": "APP-007",
+    "title": "Workspace members required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0198",
+    "type": "page smoke",
+    "area": "APP-008",
+    "title": "Workspace settings required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0199",
+    "type": "page smoke",
+    "area": "APP-009",
+    "title": "Account settings required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0200",
+    "type": "page smoke",
+    "area": "APP-010",
+    "title": "Billing required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0201",
+    "type": "page smoke",
+    "area": "PROJ-001",
+    "title": "Plan editor required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0202",
+    "type": "page smoke",
+    "area": "PROJ-002",
+    "title": "3D editor required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0203",
+    "type": "page smoke",
+    "area": "PROJ-003",
+    "title": "Split view required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0204",
+    "type": "page smoke",
+    "area": "PROJ-004",
+    "title": "Sheet editor required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0205",
+    "type": "page smoke",
+    "area": "PROJ-005",
+    "title": "Inspect mode required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0206",
+    "type": "page smoke",
+    "area": "PROJ-006",
+    "title": "Document mode required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0207",
+    "type": "page smoke",
+    "area": "PROJ-007",
+    "title": "Review mode required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0208",
+    "type": "page smoke",
+    "area": "PROJ-008",
+    "title": "Present mode required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0209",
+    "type": "page smoke",
+    "area": "PROJ-009",
+    "title": "Comments required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0210",
+    "type": "page smoke",
+    "area": "PROJ-010",
+    "title": "Issues required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0211",
+    "type": "page smoke",
+    "area": "PROJ-011",
+    "title": "Version history required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0212",
+    "type": "page smoke",
+    "area": "PROJ-012",
+    "title": "Revision compare required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0213",
+    "type": "page smoke",
+    "area": "PROJ-013",
+    "title": "Import report required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0214",
+    "type": "page smoke",
+    "area": "PROJ-014",
+    "title": "Export dialog required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0215",
+    "type": "page smoke",
+    "area": "PROJ-015",
+    "title": "Export report required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0216",
+    "type": "page smoke",
+    "area": "PROJ-016",
+    "title": "Project settings required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0217",
+    "type": "page smoke",
+    "area": "PROJ-017",
+    "title": "Share project required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0218",
+    "type": "page smoke",
+    "area": "PROJ-018",
+    "title": "Recovery required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0219",
+    "type": "page smoke",
+    "area": "PROJ-019",
+    "title": "Sync conflict required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0220",
+    "type": "page smoke",
+    "area": "PROJ-020",
+    "title": "Diagnostics required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0221",
+    "type": "page smoke",
+    "area": "PROJ-021",
+    "title": "Command palette required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0222",
+    "type": "page smoke",
+    "area": "PROJ-022",
+    "title": "Keyboard shortcuts required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0223",
+    "type": "page smoke",
+    "area": "PROJ-023",
+    "title": "Onboarding project required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0224",
+    "type": "page smoke",
+    "area": "PROJ-024",
+    "title": "Model health required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0225",
+    "type": "page smoke",
+    "area": "PROJ-025",
+    "title": "AI proposal required states",
+    "precondition": "Use representative permissions and network conditions.",
+    "steps": "Exercise default, loading, empty, invalid, offline and permission paths where applicable.",
+    "expected": "The primary goal remains clear and every failure explains a safe action.",
+    "priority": "high"
+  },
+  {
+    "id": "QA-0226",
+    "type": "component",
+    "area": "CMP-001",
+    "title": "Button states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0227",
+    "type": "component",
+    "area": "CMP-002",
+    "title": "Icon button states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0228",
+    "type": "component",
+    "area": "CMP-003",
+    "title": "Split button states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0229",
+    "type": "component",
+    "area": "CMP-004",
+    "title": "Top application bar states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0230",
+    "type": "component",
+    "area": "CMP-005",
+    "title": "Tool rail states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0231",
+    "type": "component",
+    "area": "CMP-006",
+    "title": "Context bar states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0232",
+    "type": "component",
+    "area": "CMP-007",
+    "title": "Status bar states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0233",
+    "type": "component",
+    "area": "CMP-008",
+    "title": "Model tree states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0234",
+    "type": "component",
+    "area": "CMP-009",
+    "title": "Inspector states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0235",
+    "type": "component",
+    "area": "CMP-010",
+    "title": "Property row states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0236",
+    "type": "component",
+    "area": "CMP-011",
+    "title": "Text field states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0237",
+    "type": "component",
+    "area": "CMP-012",
+    "title": "Numeric field states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0238",
+    "type": "component",
+    "area": "CMP-013",
+    "title": "Search field states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0239",
+    "type": "component",
+    "area": "CMP-014",
+    "title": "Select states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0240",
+    "type": "component",
+    "area": "CMP-015",
+    "title": "Combobox states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0241",
+    "type": "component",
+    "area": "CMP-016",
+    "title": "Checkbox states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0242",
+    "type": "component",
+    "area": "CMP-017",
+    "title": "Radio group states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0243",
+    "type": "component",
+    "area": "CMP-018",
+    "title": "Switch states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0244",
+    "type": "component",
+    "area": "CMP-019",
+    "title": "Slider states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0245",
+    "type": "component",
+    "area": "CMP-020",
+    "title": "Segmented control states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0246",
+    "type": "component",
+    "area": "CMP-021",
+    "title": "Tabs states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0247",
+    "type": "component",
+    "area": "CMP-022",
+    "title": "Menu states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0248",
+    "type": "component",
+    "area": "CMP-023",
+    "title": "Context menu states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0249",
+    "type": "component",
+    "area": "CMP-024",
+    "title": "Popover states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0250",
+    "type": "component",
+    "area": "CMP-025",
+    "title": "Tooltip states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0251",
+    "type": "component",
+    "area": "CMP-026",
+    "title": "Dialog states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0252",
+    "type": "component",
+    "area": "CMP-027",
+    "title": "Drawer states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0253",
+    "type": "component",
+    "area": "CMP-028",
+    "title": "Bottom sheet states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0254",
+    "type": "component",
+    "area": "CMP-029",
+    "title": "Toast states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0255",
+    "type": "component",
+    "area": "CMP-030",
+    "title": "Banner states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0256",
+    "type": "component",
+    "area": "CMP-031",
+    "title": "Inline validation states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0257",
+    "type": "component",
+    "area": "CMP-032",
+    "title": "Validation summary states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0258",
+    "type": "component",
+    "area": "CMP-033",
+    "title": "Progress indicator states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0259",
+    "type": "component",
+    "area": "CMP-034",
+    "title": "Skeleton states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0260",
+    "type": "component",
+    "area": "CMP-035",
+    "title": "Empty state states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0261",
+    "type": "component",
+    "area": "CMP-036",
+    "title": "Data table states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0262",
+    "type": "component",
+    "area": "CMP-037",
+    "title": "List states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0263",
+    "type": "component",
+    "area": "CMP-038",
+    "title": "Tree item states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0264",
+    "type": "component",
+    "area": "CMP-039",
+    "title": "Card states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0265",
+    "type": "component",
+    "area": "CMP-040",
+    "title": "Breadcrumb states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0266",
+    "type": "component",
+    "area": "CMP-041",
+    "title": "Project switcher states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0267",
+    "type": "component",
+    "area": "CMP-042",
+    "title": "Workspace switcher states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0268",
+    "type": "component",
+    "area": "CMP-043",
+    "title": "User menu states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0269",
+    "type": "component",
+    "area": "CMP-044",
+    "title": "Presence avatar states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0270",
+    "type": "component",
+    "area": "CMP-045",
+    "title": "Permission selector states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0271",
+    "type": "component",
+    "area": "CMP-046",
+    "title": "Share link control states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0272",
+    "type": "component",
+    "area": "CMP-047",
+    "title": "Command palette states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0273",
+    "type": "component",
+    "area": "CMP-048",
+    "title": "Shortcut hint states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0274",
+    "type": "component",
+    "area": "CMP-049",
+    "title": "Canvas states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0275",
+    "type": "component",
+    "area": "CMP-050",
+    "title": "Canvas overlay states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0276",
+    "type": "component",
+    "area": "CMP-051",
+    "title": "Selection handle states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0277",
+    "type": "component",
+    "area": "CMP-052",
+    "title": "Selection outline states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0278",
+    "type": "component",
+    "area": "CMP-053",
+    "title": "Snap glyph states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0279",
+    "type": "component",
+    "area": "CMP-054",
+    "title": "Numeric overlay states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0280",
+    "type": "component",
+    "area": "CMP-055",
+    "title": "View cube states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0281",
+    "type": "component",
+    "area": "CMP-056",
+    "title": "Zoom control states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0282",
+    "type": "component",
+    "area": "CMP-057",
+    "title": "Scale control states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0283",
+    "type": "component",
+    "area": "CMP-058",
+    "title": "Minimap states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0284",
+    "type": "component",
+    "area": "CMP-059",
+    "title": "Underlay control states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0285",
+    "type": "component",
+    "area": "CMP-060",
+    "title": "Import dropzone states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0286",
+    "type": "component",
+    "area": "CMP-061",
+    "title": "Import summary states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0287",
+    "type": "component",
+    "area": "CMP-062",
+    "title": "Export options states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0288",
+    "type": "component",
+    "area": "CMP-063",
+    "title": "Export summary states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0289",
+    "type": "component",
+    "area": "CMP-064",
+    "title": "Comment pin states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0290",
+    "type": "component",
+    "area": "CMP-065",
+    "title": "Comment thread states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0291",
+    "type": "component",
+    "area": "CMP-066",
+    "title": "Issue card states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0292",
+    "type": "component",
+    "area": "CMP-067",
+    "title": "History timeline states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0293",
+    "type": "component",
+    "area": "CMP-068",
+    "title": "Revision badge states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0294",
+    "type": "component",
+    "area": "CMP-069",
+    "title": "Compare legend states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0295",
+    "type": "component",
+    "area": "CMP-070",
+    "title": "Model health indicator states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0296",
+    "type": "component",
+    "area": "CMP-071",
+    "title": "Recovery panel states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0297",
+    "type": "component",
+    "area": "CMP-072",
+    "title": "Sync state states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0298",
+    "type": "component",
+    "area": "CMP-073",
+    "title": "Offline indicator states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0299",
+    "type": "component",
+    "area": "CMP-074",
+    "title": "Conflict resolver states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0300",
+    "type": "component",
+    "area": "CMP-075",
+    "title": "AI request field states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0301",
+    "type": "component",
+    "area": "CMP-076",
+    "title": "AI proposal panel states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0302",
+    "type": "component",
+    "area": "CMP-077",
+    "title": "AI operation row states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0303",
+    "type": "component",
+    "area": "CMP-078",
+    "title": "Filter bar states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0304",
+    "type": "component",
+    "area": "CMP-079",
+    "title": "Tag or status badge states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0305",
+    "type": "component",
+    "area": "CMP-080",
+    "title": "Pattern swatch states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0306",
+    "type": "component",
+    "area": "CMP-081",
+    "title": "File row states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0307",
+    "type": "component",
+    "area": "CMP-082",
+    "title": "Job progress states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0308",
+    "type": "component",
+    "area": "CMP-083",
+    "title": "Support bundle control states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  },
+  {
+    "id": "QA-0309",
+    "type": "component",
+    "area": "CMP-084",
+    "title": "Coachmark states",
+    "precondition": "Render in the component test harness.",
+    "steps": "Test default, focus, hover, active, disabled, loading, invalid and selected states where applicable.",
+    "expected": "Keyboard, touch, screen-reader and visual state remain consistent.",
+    "priority": "normal"
+  }
+]

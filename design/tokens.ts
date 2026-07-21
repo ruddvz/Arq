@@ -1,0 +1,83 @@
+export const tokens = {
+  meta: {
+    name: 'Arq design tokens',
+    version: '1.0',
+    appearance: 'light',
+  },
+  color: {
+    paper: '#FFFFFF',
+    surface1: '#FAFAFA',
+    surface2: '#F4F4F4',
+    surface3: '#ECECEC',
+    lineSubtle: '#E2E2E2',
+    lineDefault: '#C7C7C7',
+    lineStrong: '#737373',
+    textMuted: '#737373',
+    textSecondary: '#555555',
+    textPrimary: '#151515',
+    ink: '#000000',
+  },
+  font: {
+    interface: 'Plus Jakarta Sans',
+    technical: 'JetBrains Mono',
+  },
+  type: {
+    meta: {
+      size: 11,
+      lineHeight: 16,
+      weight: 500,
+    },
+    caption: {
+      size: 12,
+      lineHeight: 16,
+      weight: 400,
+    },
+    body: {
+      size: 13,
+      lineHeight: 18,
+      weight: 400,
+    },
+    control: {
+      size: 14,
+      lineHeight: 20,
+      weight: 500,
+    },
+    panelTitle: {
+      size: 16,
+      lineHeight: 22,
+      weight: 600,
+    },
+    dialogTitle: {
+      size: 20,
+      lineHeight: 28,
+      weight: 600,
+    },
+    pageTitle: {
+      size: 28,
+      lineHeight: 36,
+      weight: 600,
+    },
+    numericSmall: {
+      size: 12,
+      lineHeight: 16,
+      weight: 500,
+    },
+    numeric: {
+      size: 14,
+      lineHeight: 20,
+      weight: 500,
+    },
+  },
+  spacing: [4, 8, 12, 16, 24, 32, 48],
+  radius: {
+    control: 4,
+    menu: 6,
+    dialog: 8,
+    floatingPalette: 10,
+  },
+  icon: {
+    grid: 24,
+    compactGrid: 20,
+    stroke: 1.75,
+  },
+} as const;

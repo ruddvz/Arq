@@ -1,0 +1,25 @@
+version "0.1"
+units metric
+
+level "Ground Floor" elevation 0mm
+
+wall "W1" {
+  from: point(0mm, 0mm)
+  to: point(6000mm, 0mm)
+  type: "Exterior 230"
+  height: 3000mm
+}
+
+wall "W2" {
+  from: point(6000mm, 0mm)
+  to: point(6000mm, 4000mm)
+  type: "Exterior 230"
+  height: 3000mm
+}
+
+door "D1" {
+  host: "W1"
+  width: 900mm
+  height: 2100mm
+  offset: 1200mm
+}

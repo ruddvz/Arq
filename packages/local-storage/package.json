@@ -1,0 +1,11 @@
+{
+  "name": "@arq/local-storage",
+  "private": true,
+  "version": "0.0.0",
+  "description": "IndexedDB-backed local project cache and operation journal for offline-first autosave and crash recovery.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -1,0 +1,85 @@
+id,area,scenario,expectedSafeBehaviour,fixtureRequired
+EDGE-001,Selection,Hidden object receives pointer hit,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-002,Selection,Inspector displays a different element than the canvas highlight,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-003,Selection,Candidate cycling order changes without pointer movement,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-004,Selection,Selection is lost while editing a property,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-005,Snapping,Snap jitters between equal candidates,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-006,Snapping,Snap uses stale derived geometry,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-007,Snapping,Snap tolerance changes incorrectly with zoom,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-008,Snapping,Perpendicular snap appears on an invalid extension,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-009,Numeric input,Rounded display value is stored as authoritative,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-010,Numeric input,Imperial fraction parses incorrectly,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-011,Numeric input,Locale comma is interpreted as coordinate separator,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-012,Numeric input,Negative length commits where prohibited,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-013,Walls and joins,Reversing endpoints flips interior and exterior unexpectedly,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-014,Walls and joins,Mitre join creates a sliver,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-015,Walls and joins,T junction disconnects after reopen,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-016,Walls and joins,Collinear walls overlap instead of merge warning,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-017,Openings,Door extends beyond host,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-018,Openings,Overlapping openings commit,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-019,Openings,Door moves to wrong wall end after endpoint reversal,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-020,Openings,Window sill exceeds wall height,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-021,Rooms,Tiny gap is silently closed,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-022,Rooms,Room area remains stale after wall move,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-023,Rooms,Seed point selects adjacent room,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-024,Rooms,Concave boundary self-intersects,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-025,Dimensions,Dimension references a disposable mesh edge,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-026,Dimensions,Detached reference shows old value,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-027,Dimensions,Text override changes measured value,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-028,Dimensions,Witness line moves to wrong face,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-029,2D rendering,Line weight changes with zoom,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-030,2D rendering,Selection halo obscures geometry,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-031,2D rendering,Text blurs on high-density display,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-032,2D rendering,Canvas loses GPU context,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-033,3D rendering,Mesh remains after element deletion,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-034,3D rendering,Selection outline uses wrong element ID,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-035,3D rendering,Opening mesh has inverted normals,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-036,3D rendering,Orthographic fit clips model,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-037,Storage and recovery,UI reports saved before journal write,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-038,Storage and recovery,Quota failure is presented as network failure,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-039,Storage and recovery,Snapshot compaction loses operations,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-040,Storage and recovery,Two tabs corrupt local journal,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-041,Archive and migration,Archive accepts path traversal,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-042,Archive and migration,Checksum is not verified,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-043,Archive and migration,Unknown optional section blocks opening,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-044,Archive and migration,Schema migration changes IDs,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-045,Import,Wrong units scale imported drawing,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-046,Import,Unsupported object disappears without report,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-047,Import,Partial import mutates project after failure,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-048,Import,Malicious text becomes executable markup,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-049,Export,PDF is a raster screenshot,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-050,Export,Export changes project revision,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-051,Export,Font is missing or substituted silently,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-052,Export,Physical print scale is wrong,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-053,Collaboration and sync,Last write wins on delete versus modify,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-054,Collaboration and sync,Offline operation applies twice,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-055,Collaboration and sync,User undoes another user work,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-056,Collaboration and sync,Presence remains after disconnect,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-057,Security and permissions,Viewer can call edit API directly,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-058,Security and permissions,Project existence leaks through error difference,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-059,Security and permissions,Signed URL lasts too long,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-060,Security and permissions,Cross-tenant object-storage key accepted,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-061,AI,AI applies without preview,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-062,AI,AI hides dimensional assumption,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-063,AI,AI deletes geometry to satisfy request,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-064,AI,Prompt injection in imported metadata changes behaviour,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-065,iPad and input,Pencil stroke orbits camera,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-066,iPad and input,Finger touch creates geometry during Pencil use,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-067,iPad and input,Software keyboard covers numeric input,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-068,iPad and input,Hover snap differs from tap snap,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-069,Accessibility,Active tool is indicated only by colour,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-070,Accessibility,Command palette focus is lost after results update,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-071,Accessibility,Canvas selection has no textual equivalent,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-072,Accessibility,Dialog closes without returning focus,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-073,Performance,Room rebuild recalculates whole project,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-074,Performance,Hover performs exact geometry on every frame,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-075,Performance,React rerenders full model on pointer move,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-076,Performance,Worker messages copy large buffers unnecessarily,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-077,Browser and platform,Safari storage is evicted without recovery path,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-078,Browser and platform,Browser shortcut prevents Arq command,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-079,Browser and platform,WebGL context limit is exceeded,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-080,Browser and platform,File System Access API is assumed everywhere,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-081,UI state and copy,Saved label hides unsynced state,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-082,UI state and copy,Disabled action has no explanation,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-083,UI state and copy,Modal opens behind canvas overlay,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes
+EDGE-084,UI state and copy,Panel opening shifts canvas coordinates,No silent project mutation or data loss. Explain the state and provide a safe next action.,yes

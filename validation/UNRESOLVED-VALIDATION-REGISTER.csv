@@ -1,0 +1,19 @@
+id,decision,method,requiredBy,includedInThisPack
+VAL-001,Repository source licence,owner and legal,before public source,yes as specification and task
+VAL-002,Arq name clearance,legal,before brand launch,yes as specification and task
+VAL-003,Primary paying user,user research,Phase 0,yes as specification and task
+VAL-004,First commercially valuable workflow,user research,Phase 0,yes as specification and task
+VAL-005,Canonical numeric representation,geometry spike,before model implementation,yes as specification and task
+VAL-006,2D renderer,benchmark,Phase 0,yes as specification and task
+VAL-007,Minimum supported devices,device benchmark,Phase 0,yes as specification and task
+VAL-008,IndexedDB quota and recovery,browser spike,Phase 0,yes as specification and task
+VAL-009,OpenCascade requirement,technical spike,before exact-solid dependency,yes as specification and task
+VAL-010,Authentication provider,security and operations,before account implementation,yes as specification and task
+VAL-011,Hosting regions,privacy and market research,before beta,yes as specification and task
+VAL-012,DXF subset,customer and file research,before Release 2,yes as specification and task
+VAL-013,IFC subset,customer and interoperability research,before Release 2,yes as specification and task
+VAL-014,Pricing,business research,before paid launch,yes as specification and task
+VAL-015,RoomPlan accuracy and correction,hardware test,before capture claims,yes as specification and task
+VAL-016,Dark mode,design and accessibility test,later,yes as specification and task
+VAL-017,Concurrent geometry collaboration,operation conflict prototype,later,yes as specification and task
+VAL-018,Desktop shell,browser performance evidence,later,yes as specification and task

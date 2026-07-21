@@ -1,0 +1,458 @@
+[
+  {
+    "id": "PUB-001",
+    "title": "Marketing home",
+    "route": "/",
+    "access": "public",
+    "goal": "Explain the product and route users to product, security, pricing and sign-up.",
+    "file": "docs/pages/PUB-001-marketing-home.md"
+  },
+  {
+    "id": "PUB-002",
+    "title": "Product overview",
+    "route": "/product",
+    "access": "public",
+    "goal": "Describe the complete product direction without unsupported compatibility claims.",
+    "file": "docs/pages/PUB-002-product-overview.md"
+  },
+  {
+    "id": "PUB-003",
+    "title": "For architects",
+    "route": "/architects",
+    "access": "public",
+    "goal": "Explain the residential and small-practice workflow.",
+    "file": "docs/pages/PUB-003-for-architects.md"
+  },
+  {
+    "id": "PUB-004",
+    "title": "For students",
+    "route": "/students",
+    "access": "public",
+    "goal": "Explain learning use without weakening professional positioning.",
+    "file": "docs/pages/PUB-004-for-students.md"
+  },
+  {
+    "id": "PUB-005",
+    "title": "Collaboration",
+    "route": "/collaboration",
+    "access": "public",
+    "goal": "Explain viewing, comments, issues and later co-authoring.",
+    "file": "docs/pages/PUB-005-collaboration.md"
+  },
+  {
+    "id": "PUB-006",
+    "title": "AI",
+    "route": "/ai",
+    "access": "public",
+    "goal": "Explain previewable, validated and undoable AI operations.",
+    "file": "docs/pages/PUB-006-ai.md"
+  },
+  {
+    "id": "PUB-007",
+    "title": "Interoperability",
+    "route": "/interoperability",
+    "access": "public",
+    "goal": "Publish format support accurately.",
+    "file": "docs/pages/PUB-007-interoperability.md"
+  },
+  {
+    "id": "PUB-008",
+    "title": "iPad",
+    "route": "/ipad",
+    "access": "public",
+    "goal": "Describe browser and future native iPad value.",
+    "file": "docs/pages/PUB-008-ipad.md"
+  },
+  {
+    "id": "PUB-009",
+    "title": "Pricing",
+    "route": "/pricing",
+    "access": "public",
+    "goal": "Present approved plans and limits after research.",
+    "file": "docs/pages/PUB-009-pricing.md"
+  },
+  {
+    "id": "PUB-010",
+    "title": "Security",
+    "route": "/security",
+    "access": "public",
+    "goal": "Explain security and privacy without overclaiming certification.",
+    "file": "docs/pages/PUB-010-security.md"
+  },
+  {
+    "id": "PUB-011",
+    "title": "Documentation index",
+    "route": "/docs",
+    "access": "public",
+    "goal": "Route users to learning and technical documentation.",
+    "file": "docs/pages/PUB-011-documentation-index.md"
+  },
+  {
+    "id": "PUB-012",
+    "title": "Changelog",
+    "route": "/changelog",
+    "access": "public",
+    "goal": "Publish release changes and migrations.",
+    "file": "docs/pages/PUB-012-changelog.md"
+  },
+  {
+    "id": "PUB-013",
+    "title": "Status",
+    "route": "/status",
+    "access": "public",
+    "goal": "Show service health and incidents.",
+    "file": "docs/pages/PUB-013-status.md"
+  },
+  {
+    "id": "PUB-014",
+    "title": "Contact and support",
+    "route": "/contact",
+    "access": "public",
+    "goal": "Route sales, support, security and press enquiries.",
+    "file": "docs/pages/PUB-014-contact-and-support.md"
+  },
+  {
+    "id": "PUB-015",
+    "title": "Privacy notice",
+    "route": "/legal/privacy",
+    "access": "public",
+    "goal": "Publish lawyer-approved privacy notice.",
+    "file": "docs/pages/PUB-015-privacy-notice.md"
+  },
+  {
+    "id": "PUB-016",
+    "title": "Terms",
+    "route": "/legal/terms",
+    "access": "public",
+    "goal": "Publish lawyer-approved product terms.",
+    "file": "docs/pages/PUB-016-terms.md"
+  },
+  {
+    "id": "PUB-017",
+    "title": "Open-source notices",
+    "route": "/legal/open-source",
+    "access": "public",
+    "goal": "Publish generated third-party notices.",
+    "file": "docs/pages/PUB-017-open-source-notices.md"
+  },
+  {
+    "id": "AUTH-001",
+    "title": "Sign in",
+    "route": "/sign-in",
+    "access": "anonymous",
+    "goal": "Authenticate a user securely.",
+    "file": "docs/pages/AUTH-001-sign-in.md"
+  },
+  {
+    "id": "AUTH-002",
+    "title": "Sign up",
+    "route": "/sign-up",
+    "access": "anonymous",
+    "goal": "Create an account and accept current terms.",
+    "file": "docs/pages/AUTH-002-sign-up.md"
+  },
+  {
+    "id": "AUTH-003",
+    "title": "Verify email",
+    "route": "/verify-email",
+    "access": "anonymous",
+    "goal": "Verify email ownership.",
+    "file": "docs/pages/AUTH-003-verify-email.md"
+  },
+  {
+    "id": "AUTH-004",
+    "title": "Forgot password",
+    "route": "/forgot-password",
+    "access": "anonymous",
+    "goal": "Request account recovery.",
+    "file": "docs/pages/AUTH-004-forgot-password.md"
+  },
+  {
+    "id": "AUTH-005",
+    "title": "Reset password",
+    "route": "/reset-password",
+    "access": "anonymous",
+    "goal": "Set a new password from a valid token.",
+    "file": "docs/pages/AUTH-005-reset-password.md"
+  },
+  {
+    "id": "APP-001",
+    "title": "Recent projects",
+    "route": "/app",
+    "access": "signed-in",
+    "goal": "Show recent and owned projects.",
+    "file": "docs/pages/APP-001-recent-projects.md"
+  },
+  {
+    "id": "APP-002",
+    "title": "Shared with me",
+    "route": "/app/shared",
+    "access": "signed-in",
+    "goal": "Show projects shared with the user.",
+    "file": "docs/pages/APP-002-shared-with-me.md"
+  },
+  {
+    "id": "APP-003",
+    "title": "Templates",
+    "route": "/app/templates",
+    "access": "signed-in",
+    "goal": "Create a project from controlled templates.",
+    "file": "docs/pages/APP-003-templates.md"
+  },
+  {
+    "id": "APP-004",
+    "title": "Archived projects",
+    "route": "/app/archived",
+    "access": "signed-in",
+    "goal": "Restore or permanently delete archived projects.",
+    "file": "docs/pages/APP-004-archived-projects.md"
+  },
+  {
+    "id": "APP-005",
+    "title": "New project",
+    "route": "/app/new",
+    "access": "signed-in",
+    "goal": "Create a project with units and initial level.",
+    "file": "docs/pages/APP-005-new-project.md"
+  },
+  {
+    "id": "APP-006",
+    "title": "Import project",
+    "route": "/app/import",
+    "access": "signed-in",
+    "goal": "Import an Arq archive or supported reference format.",
+    "file": "docs/pages/APP-006-import-project.md"
+  },
+  {
+    "id": "APP-007",
+    "title": "Workspace members",
+    "route": "/app/workspace/members",
+    "access": "administrator",
+    "goal": "Manage membership and roles.",
+    "file": "docs/pages/APP-007-workspace-members.md"
+  },
+  {
+    "id": "APP-008",
+    "title": "Workspace settings",
+    "route": "/app/workspace/settings",
+    "access": "administrator",
+    "goal": "Manage workspace identity and defaults.",
+    "file": "docs/pages/APP-008-workspace-settings.md"
+  },
+  {
+    "id": "APP-009",
+    "title": "Account settings",
+    "route": "/app/account",
+    "access": "signed-in",
+    "goal": "Manage profile, authentication and privacy.",
+    "file": "docs/pages/APP-009-account-settings.md"
+  },
+  {
+    "id": "APP-010",
+    "title": "Billing",
+    "route": "/app/billing",
+    "access": "owner",
+    "goal": "Manage approved subscription, invoices and entitlements.",
+    "file": "docs/pages/APP-010-billing.md"
+  },
+  {
+    "id": "PROJ-001",
+    "title": "Plan editor",
+    "route": "/app/projects/:id/plan/:viewId",
+    "access": "editor",
+    "goal": "Primary plan authoring surface.",
+    "file": "docs/pages/PROJ-001-plan-editor.md"
+  },
+  {
+    "id": "PROJ-002",
+    "title": "3D editor",
+    "route": "/app/projects/:id/3d/:viewId",
+    "access": "editor",
+    "goal": "Coordinated model view and selected editing.",
+    "file": "docs/pages/PROJ-002-3d-editor.md"
+  },
+  {
+    "id": "PROJ-003",
+    "title": "Split view",
+    "route": "/app/projects/:id/split",
+    "access": "editor",
+    "goal": "Display coordinated plan and 3D.",
+    "file": "docs/pages/PROJ-003-split-view.md"
+  },
+  {
+    "id": "PROJ-004",
+    "title": "Sheet editor",
+    "route": "/app/projects/:id/sheets/:sheetId",
+    "access": "editor",
+    "goal": "Lay out a plan viewport and export a sheet.",
+    "file": "docs/pages/PROJ-004-sheet-editor.md"
+  },
+  {
+    "id": "PROJ-005",
+    "title": "Inspect mode",
+    "route": "/app/projects/:id/inspect",
+    "access": "editor",
+    "goal": "Inspect identity, properties, relationships and warnings.",
+    "file": "docs/pages/PROJ-005-inspect-mode.md"
+  },
+  {
+    "id": "PROJ-006",
+    "title": "Document mode",
+    "route": "/app/projects/:id/document",
+    "access": "editor",
+    "goal": "Manage views, annotations, schedules and sheets.",
+    "file": "docs/pages/PROJ-006-document-mode.md"
+  },
+  {
+    "id": "PROJ-007",
+    "title": "Review mode",
+    "route": "/app/projects/:id/review",
+    "access": "commenter",
+    "goal": "Review comments, issues and revisions.",
+    "file": "docs/pages/PROJ-007-review-mode.md"
+  },
+  {
+    "id": "PROJ-008",
+    "title": "Present mode",
+    "route": "/app/projects/:id/present",
+    "access": "viewer",
+    "goal": "Navigate saved views without accidental edits.",
+    "file": "docs/pages/PROJ-008-present-mode.md"
+  },
+  {
+    "id": "PROJ-009",
+    "title": "Comments",
+    "route": "/app/projects/:id/comments",
+    "access": "commenter",
+    "goal": "List and resolve model and sheet comments.",
+    "file": "docs/pages/PROJ-009-comments.md"
+  },
+  {
+    "id": "PROJ-010",
+    "title": "Issues",
+    "route": "/app/projects/:id/issues",
+    "access": "commenter",
+    "goal": "Track actionable design issues.",
+    "file": "docs/pages/PROJ-010-issues.md"
+  },
+  {
+    "id": "PROJ-011",
+    "title": "Version history",
+    "route": "/app/projects/:id/history",
+    "access": "viewer",
+    "goal": "Show snapshots and operations.",
+    "file": "docs/pages/PROJ-011-version-history.md"
+  },
+  {
+    "id": "PROJ-012",
+    "title": "Revision compare",
+    "route": "/app/projects/:id/compare/:a/:b",
+    "access": "viewer",
+    "goal": "Compare two revisions.",
+    "file": "docs/pages/PROJ-012-revision-compare.md"
+  },
+  {
+    "id": "PROJ-013",
+    "title": "Import report",
+    "route": "/app/projects/:id/imports/:importId",
+    "access": "editor",
+    "goal": "Explain imported, converted and unsupported content.",
+    "file": "docs/pages/PROJ-013-import-report.md"
+  },
+  {
+    "id": "PROJ-014",
+    "title": "Export dialog",
+    "route": "/app/projects/:id/export",
+    "access": "editor",
+    "goal": "Choose format, scope and validation.",
+    "file": "docs/pages/PROJ-014-export-dialog.md"
+  },
+  {
+    "id": "PROJ-015",
+    "title": "Export report",
+    "route": "/app/projects/:id/exports/:exportId",
+    "access": "viewer",
+    "goal": "Show included, omitted and failed content.",
+    "file": "docs/pages/PROJ-015-export-report.md"
+  },
+  {
+    "id": "PROJ-016",
+    "title": "Project settings",
+    "route": "/app/projects/:id/settings",
+    "access": "administrator",
+    "goal": "Manage units, precision, permissions and archive.",
+    "file": "docs/pages/PROJ-016-project-settings.md"
+  },
+  {
+    "id": "PROJ-017",
+    "title": "Share project",
+    "route": "/app/projects/:id/share",
+    "access": "administrator",
+    "goal": "Invite users and create controlled share links.",
+    "file": "docs/pages/PROJ-017-share-project.md"
+  },
+  {
+    "id": "PROJ-018",
+    "title": "Recovery",
+    "route": "/app/recovery/:projectId",
+    "access": "editor",
+    "goal": "Restore locally journalled work safely.",
+    "file": "docs/pages/PROJ-018-recovery.md"
+  },
+  {
+    "id": "PROJ-019",
+    "title": "Sync conflict",
+    "route": "/app/projects/:id/conflict",
+    "access": "editor",
+    "goal": "Resolve rejected or conflicting operations.",
+    "file": "docs/pages/PROJ-019-sync-conflict.md"
+  },
+  {
+    "id": "PROJ-020",
+    "title": "Diagnostics",
+    "route": "/app/projects/:id/diagnostics",
+    "access": "administrator",
+    "goal": "Inspect performance, memory, errors and support bundle.",
+    "file": "docs/pages/PROJ-020-diagnostics.md"
+  },
+  {
+    "id": "PROJ-021",
+    "title": "Command palette",
+    "route": "overlay",
+    "access": "editor",
+    "goal": "Search commands, views, objects, settings and help.",
+    "file": "docs/pages/PROJ-021-command-palette.md"
+  },
+  {
+    "id": "PROJ-022",
+    "title": "Keyboard shortcuts",
+    "route": "overlay",
+    "access": "signed-in",
+    "goal": "Show and search active shortcuts.",
+    "file": "docs/pages/PROJ-022-keyboard-shortcuts.md"
+  },
+  {
+    "id": "PROJ-023",
+    "title": "Onboarding project",
+    "route": "/app/onboarding",
+    "access": "signed-in",
+    "goal": "Teach the benchmark workflow inside a real project.",
+    "file": "docs/pages/PROJ-023-onboarding-project.md"
+  },
+  {
+    "id": "PROJ-024",
+    "title": "Model health",
+    "route": "panel",
+    "access": "editor",
+    "goal": "Summarise blocking errors and warnings.",
+    "file": "docs/pages/PROJ-024-model-health.md"
+  },
+  {
+    "id": "PROJ-025",
+    "title": "AI proposal",
+    "route": "panel",
+    "access": "editor",
+    "goal": "Show intent, assumptions, operations, preview and validation.",
+    "file": "docs/pages/PROJ-025-ai-proposal.md"
+  }
+]

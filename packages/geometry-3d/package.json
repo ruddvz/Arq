@@ -1,0 +1,11 @@
+{
+  "name": "@arq/geometry-3d",
+  "private": true,
+  "version": "0.0.0",
+  "description": "3D geometry derived from the 2D semantic model.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

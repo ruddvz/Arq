@@ -1,0 +1,13 @@
+screen,purpose,states
+Home,recent projects,"empty, loading, populated, offline"
+New project,create project,"metric, imperial, validation"
+Editor plan,primary authoring,"empty, tool active, selection, error"
+Editor 3D,coordinated view,"loading mesh, selected, hidden"
+Split view,plan and 3D,"active left, active right, throttled"
+Sheet,document output,"empty, viewport, export warning"
+Import report,show conversion,"success, partial, failed"
+Export report,show output,"valid, warning, failed"
+Recovery,restore work,"clean, recovered, migration problem"
+Share,permissions,"private, link, invited"
+Comments,review,"empty, open, resolved"
+Settings,preferences,"units, input, privacy"

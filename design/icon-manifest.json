@@ -1,0 +1,362 @@
+[
+  {
+    "id": "icon-01",
+    "name": "select",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-02",
+    "name": "window-select",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-03",
+    "name": "crossing-select",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-04",
+    "name": "wall",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-05",
+    "name": "door",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-06",
+    "name": "window",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-07",
+    "name": "room",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-08",
+    "name": "level",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-09",
+    "name": "grid",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-10",
+    "name": "dimension",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-11",
+    "name": "text-note",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-12",
+    "name": "move",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-13",
+    "name": "rotate",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-14",
+    "name": "copy",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-15",
+    "name": "mirror",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-16",
+    "name": "offset",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-17",
+    "name": "trim",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-18",
+    "name": "extend",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-19",
+    "name": "split",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-20",
+    "name": "align",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-21",
+    "name": "join",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-22",
+    "name": "plan",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-23",
+    "name": "model-3d",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-24",
+    "name": "orthographic",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-25",
+    "name": "perspective",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-26",
+    "name": "pan",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-27",
+    "name": "orbit",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-28",
+    "name": "fit",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-29",
+    "name": "section",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-30",
+    "name": "elevation",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-31",
+    "name": "sheet",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-32",
+    "name": "inspect",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-33",
+    "name": "relationships",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-34",
+    "name": "warning",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-35",
+    "name": "model-health",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-36",
+    "name": "revision",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-37",
+    "name": "history",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-38",
+    "name": "comment",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-39",
+    "name": "export",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  },
+  {
+    "id": "icon-40",
+    "name": "arq-archive",
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "states": ["default", "hover", "active", "disabled", "selected"],
+    "status": "to-design",
+    "accessibilityNameRequired": true
+  }
+]

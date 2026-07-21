@@ -1,0 +1,13 @@
+:root {
+  --arq-color-paper: #ffffff;
+  --arq-color-surface1: #fafafa;
+  --arq-color-surface2: #f4f4f4;
+  --arq-color-surface3: #ececec;
+  --arq-color-line-subtle: #e2e2e2;
+  --arq-color-line-default: #c7c7c7;
+  --arq-color-line-strong: #737373;
+  --arq-color-text-muted: #737373;
+  --arq-color-text-secondary: #555555;
+  --arq-color-text-primary: #151515;
+  --arq-color-ink: #000000;
+}

@@ -1,0 +1,8 @@
+name: Benchmark template
+on: [pull_request]
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Run deterministic geometry benchmarks; use controlled hardware for GPU benchmarks"

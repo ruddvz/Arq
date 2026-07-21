@@ -1,0 +1,315 @@
+openapi: 3.1.0
+info:
+  title: Arq API
+  version: 0.1.0-draft
+  description: Draft application API. Authentication may be provided by an approved identity system.
+servers:
+  - url: https://api.example.invalid/v1
+tags:
+  - name: Account
+  - name: Workspaces
+  - name: Projects
+  - name: Snapshots
+  - name: Operations
+  - name: Imports
+  - name: Exports
+  - name: Comments
+  - name: Issues
+  - name: Sharing
+  - name: Jobs
+paths:
+  /me:
+    get:
+      tags: [Account]
+      operationId: getMe
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+  /workspaces:
+    get:
+      tags: [Workspaces]
+      operationId: listWorkspaces
+      responses: { '200': { description: Workspaces } }
+    post:
+      tags: [Workspaces]
+      operationId: createWorkspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties: { name: { type: string, minLength: 1, maxLength: 120 } }
+      responses: { '201': { description: Created } }
+  /workspaces/{workspaceId}/projects:
+    parameters:
+      - { $ref: '#/components/parameters/WorkspaceId' }
+    get:
+      tags: [Projects]
+      operationId: listProjects
+      responses: { '200': { description: Projects } }
+    post:
+      tags: [Projects]
+      operationId: createProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateProjectRequest' }
+      responses: { '201': { description: Created } }
+  /projects/{projectId}:
+    parameters:
+      - { $ref: '#/components/parameters/ProjectId' }
+    get:
+      tags: [Projects]
+      operationId: getProjectMetadata
+      responses:
+        '200':
+          description: Project metadata
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProjectMetadata' }
+        '404': { description: Not found or not visible }
+    patch:
+      tags: [Projects]
+      operationId: updateProjectMetadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, minLength: 1, maxLength: 200 }
+                archived: { type: boolean }
+      responses: { '200': { description: Updated } }
+    delete:
+      tags: [Projects]
+      operationId: deleteProject
+      responses: { '204': { description: Deleted } }
+  /projects/{projectId}/snapshots:
+    parameters:
+      - { $ref: '#/components/parameters/ProjectId' }
+    get:
+      tags: [Snapshots]
+      operationId: listSnapshots
+      responses: { '200': { description: Snapshots } }
+    post:
+      tags: [Snapshots]
+      operationId: createSnapshotUpload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateSnapshotRequest' }
+      responses:
+        '201':
+          description: Upload allocated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SignedUpload' }
+  /projects/{projectId}/operations:
+    parameters:
+      - { $ref: '#/components/parameters/ProjectId' }
+    get:
+      tags: [Operations]
+      operationId: listOperations
+      parameters:
+        - name: afterRevision
+          in: query
+          schema: { type: integer, minimum: 0 }
+      responses: { '200': { description: Operations } }
+    post:
+      tags: [Operations]
+      operationId: appendOperations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [baseRevision, operations]
+              properties:
+                baseRevision: { type: integer, minimum: 0 }
+                operations:
+                  type: array
+                  maxItems: 500
+                  items: { $ref: '#/components/schemas/ModelOperation' }
+      responses:
+        '200': { description: Applied }
+        '409':
+          description: Operation conflict
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Conflict' }
+  /projects/{projectId}/imports:
+    parameters:
+      - { $ref: '#/components/parameters/ProjectId' }
+    post:
+      tags: [Imports]
+      operationId: createImport
+      responses: { '202': { description: Import job created } }
+  /projects/{projectId}/exports:
+    parameters:
+      - { $ref: '#/components/parameters/ProjectId' }
+    post:
+      tags: [Exports]
+      operationId: createExport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [format, revision]
+              properties:
+                format: { enum: [pdf, arq, dxf, ifc, glb] }
+                revision: { type: integer, minimum: 0 }
+                scope: { type: object }
+      responses: { '202': { description: Export job created } }
+  /projects/{projectId}/comments:
+    parameters:
+      - { $ref: '#/components/parameters/ProjectId' }
+    get:
+      tags: [Comments]
+      operationId: listComments
+      responses: { '200': { description: Comments } }
+    post:
+      tags: [Comments]
+      operationId: createComment
+      responses: { '201': { description: Created } }
+  /projects/{projectId}/issues:
+    parameters:
+      - { $ref: '#/components/parameters/ProjectId' }
+    get:
+      tags: [Issues]
+      operationId: listIssues
+      responses: { '200': { description: Issues } }
+    post:
+      tags: [Issues]
+      operationId: createIssue
+      responses: { '201': { description: Created } }
+  /projects/{projectId}/share-links:
+    parameters:
+      - { $ref: '#/components/parameters/ProjectId' }
+    post:
+      tags: [Sharing]
+      operationId: createShareLink
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role: { enum: [viewer, commenter] }
+                expiresAt: { type: string, format: date-time }
+                allowDownload: { type: boolean, default: false }
+      responses: { '201': { description: Created } }
+  /jobs/{jobId}:
+    get:
+      tags: [Jobs]
+      operationId: getJob
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Job
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Job' }
+components:
+  parameters:
+    WorkspaceId:
+      name: workspaceId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+  schemas:
+    User:
+      type: object
+      required: [id, email, displayName]
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        displayName: { type: string }
+    Workspace:
+      type: object
+      required: [id, name, role]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        role: { enum: [owner, administrator, editor, commenter, viewer] }
+    CreateProjectRequest:
+      type: object
+      required: [name, units]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 200 }
+        units: { enum: [metric, imperial] }
+        templateId: { type: string, format: uuid }
+    ProjectMetadata:
+      type: object
+      required: [id, workspaceId, name, revision, archived]
+      properties:
+        id: { type: string, format: uuid }
+        workspaceId: { type: string, format: uuid }
+        name: { type: string }
+        revision: { type: integer, minimum: 0 }
+        archived: { type: boolean }
+    CreateSnapshotRequest:
+      type: object
+      required: [revision, sha256, bytes]
+      properties:
+        revision: { type: integer, minimum: 0 }
+        sha256: { type: string, pattern: '^[a-f0-9]{64}$' }
+        bytes: { type: integer, minimum: 1 }
+    SignedUpload:
+      type: object
+      required: [objectId, uploadUrl, expiresAt]
+      properties:
+        objectId: { type: string, format: uuid }
+        uploadUrl: { type: string, format: uri }
+        expiresAt: { type: string, format: date-time }
+    ModelOperation:
+      type: object
+      required: [id, type, actorId, projectId, baseRevision, timestamp, payload, preconditions]
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string }
+        actorId: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        baseRevision: { type: integer, minimum: 0 }
+        timestamp: { type: string, format: date-time }
+        payload: { type: object }
+        preconditions: { type: array, items: { type: object } }
+    Conflict:
+      type: object
+      required: [code, serverRevision, conflictingElementIds]
+      properties:
+        code: { type: string }
+        serverRevision: { type: integer }
+        conflictingElementIds: { type: array, items: { type: string } }
+        safeActions: { type: array, items: { type: string } }
+    Job:
+      type: object
+      required: [id, kind, status, progress]
+      properties:
+        id: { type: string, format: uuid }
+        kind: { enum: [import, export, thumbnail, validation] }
+        status: { enum: [queued, running, succeeded, failed, cancelled] }
+        progress: { type: number, minimum: 0, maximum: 1 }
+        stage: { type: string }
+        errorCode: { type: string }

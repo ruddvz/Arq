@@ -1,0 +1,21 @@
+# Security review checklist
+
+- Server-side permission check
+- Tenant-scoped database query
+- Signed URL expiry
+- File type and size check
+- Complexity limit
+- Archive path validation
+- Parser isolation
+- Input sanitisation
+- CSP review
+- CSRF review
+- Cookie settings
+- Rate limit
+- Audit event
+- Secret scan
+- Dependency scan
+- Fuzz fixture
+- Data-retention effect
+- AI data flow
+- Error content review

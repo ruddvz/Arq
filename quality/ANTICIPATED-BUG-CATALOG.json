@@ -1,0 +1,1682 @@
+[
+  {
+    "id": "BUG-RISK-001",
+    "category": "Selection",
+    "title": "Hidden object receives pointer hit",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Hidden object receives pointer hit.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-002",
+    "category": "Selection",
+    "title": "Inspector displays a different element than the canvas highlight",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Inspector displays a different element than the canvas highlight.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-003",
+    "category": "Selection",
+    "title": "Candidate cycling order changes without pointer movement",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Candidate cycling order changes without pointer movement.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-004",
+    "category": "Selection",
+    "title": "Selection is lost while editing a property",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Selection is lost while editing a property.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-005",
+    "category": "Selection",
+    "title": "Deleted object remains selected",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Deleted object remains selected.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-006",
+    "category": "Selection",
+    "title": "Tiny object cannot be selected at normal zoom",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Tiny object cannot be selected at normal zoom.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-007",
+    "category": "Selection",
+    "title": "Window selection includes an object outside the boundary",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Window selection includes an object outside the boundary.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-008",
+    "category": "Selection",
+    "title": "Crossing selection behaves like window selection",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Crossing selection behaves like window selection.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-009",
+    "category": "Snapping",
+    "title": "Snap jitters between equal candidates",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Snap jitters between equal candidates.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-010",
+    "category": "Snapping",
+    "title": "Snap uses stale derived geometry",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Snap uses stale derived geometry.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-011",
+    "category": "Snapping",
+    "title": "Snap tolerance changes incorrectly with zoom",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Snap tolerance changes incorrectly with zoom.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-012",
+    "category": "Snapping",
+    "title": "Perpendicular snap appears on an invalid extension",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Perpendicular snap appears on an invalid extension.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-013",
+    "category": "Snapping",
+    "title": "Endpoint snap selects a hidden element",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Endpoint snap selects a hidden element.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-014",
+    "category": "Snapping",
+    "title": "Pencil hover preview differs from contact result",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Pencil hover preview differs from contact result.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-015",
+    "category": "Snapping",
+    "title": "Grid snap overrides a closer endpoint",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Grid snap overrides a closer endpoint.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-016",
+    "category": "Snapping",
+    "title": "Temporary snap override remains active",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Temporary snap override remains active.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-017",
+    "category": "Numeric input",
+    "title": "Rounded display value is stored as authoritative",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Rounded display value is stored as authoritative.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-018",
+    "category": "Numeric input",
+    "title": "Imperial fraction parses incorrectly",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Imperial fraction parses incorrectly.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-019",
+    "category": "Numeric input",
+    "title": "Locale comma is interpreted as coordinate separator",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Locale comma is interpreted as coordinate separator.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-020",
+    "category": "Numeric input",
+    "title": "Negative length commits where prohibited",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Negative length commits where prohibited.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-021",
+    "category": "Numeric input",
+    "title": "Unit suffix changes value unexpectedly",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Unit suffix changes value unexpectedly.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-022",
+    "category": "Numeric input",
+    "title": "Tab leaves the command instead of moving fields",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Tab leaves the command instead of moving fields.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-023",
+    "category": "Numeric input",
+    "title": "Numeric overlay covers the cursor",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Numeric overlay covers the cursor.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-024",
+    "category": "Numeric input",
+    "title": "Invalid number clears the previous valid preview",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Invalid number clears the previous valid preview.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-025",
+    "category": "Walls and joins",
+    "title": "Reversing endpoints flips interior and exterior unexpectedly",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Reversing endpoints flips interior and exterior unexpectedly.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-026",
+    "category": "Walls and joins",
+    "title": "Mitre join creates a sliver",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Mitre join creates a sliver.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-027",
+    "category": "Walls and joins",
+    "title": "T junction disconnects after reopen",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: T junction disconnects after reopen.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-028",
+    "category": "Walls and joins",
+    "title": "Collinear walls overlap instead of merge warning",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Collinear walls overlap instead of merge warning.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-029",
+    "category": "Walls and joins",
+    "title": "Join changes after wall thickness edit",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Join changes after wall thickness edit.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-030",
+    "category": "Walls and joins",
+    "title": "Wall below minimum length commits",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Wall below minimum length commits.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-031",
+    "category": "Walls and joins",
+    "title": "Wall move detaches room boundary",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Wall move detaches room boundary.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-032",
+    "category": "Walls and joins",
+    "title": "Wall reference line and 3D mesh disagree",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Wall reference line and 3D mesh disagree.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-033",
+    "category": "Openings",
+    "title": "Door extends beyond host",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Door extends beyond host.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-034",
+    "category": "Openings",
+    "title": "Overlapping openings commit",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Overlapping openings commit.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-035",
+    "category": "Openings",
+    "title": "Door moves to wrong wall end after endpoint reversal",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Door moves to wrong wall end after endpoint reversal.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-036",
+    "category": "Openings",
+    "title": "Window sill exceeds wall height",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Window sill exceeds wall height.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-037",
+    "category": "Openings",
+    "title": "Host split assigns opening unpredictably",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Host split assigns opening unpredictably.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-038",
+    "category": "Openings",
+    "title": "Deleting host silently deletes openings",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Deleting host silently deletes openings.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-039",
+    "category": "Openings",
+    "title": "Door swing flips after reopen",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Door swing flips after reopen.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-040",
+    "category": "Openings",
+    "title": "Opening void differs between plan and 3D",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Opening void differs between plan and 3D.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-041",
+    "category": "Rooms",
+    "title": "Tiny gap is silently closed",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Tiny gap is silently closed.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-042",
+    "category": "Rooms",
+    "title": "Room area remains stale after wall move",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Room area remains stale after wall move.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-043",
+    "category": "Rooms",
+    "title": "Seed point selects adjacent room",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Seed point selects adjacent room.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-044",
+    "category": "Rooms",
+    "title": "Concave boundary self-intersects",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Concave boundary self-intersects.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-045",
+    "category": "Rooms",
+    "title": "Room identity changes after repair",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Room identity changes after repair.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-046",
+    "category": "Rooms",
+    "title": "Room overlaps another room",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Room overlaps another room.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-047",
+    "category": "Rooms",
+    "title": "Opening unexpectedly breaks room boundary",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Opening unexpectedly breaks room boundary.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-048",
+    "category": "Rooms",
+    "title": "Room label remains after room deletion",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Room label remains after room deletion.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-049",
+    "category": "Dimensions",
+    "title": "Dimension references a disposable mesh edge",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Dimension references a disposable mesh edge.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-050",
+    "category": "Dimensions",
+    "title": "Detached reference shows old value",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Detached reference shows old value.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-051",
+    "category": "Dimensions",
+    "title": "Text override changes measured value",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Text override changes measured value.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-052",
+    "category": "Dimensions",
+    "title": "Witness line moves to wrong face",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Witness line moves to wrong face.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-053",
+    "category": "Dimensions",
+    "title": "Unit precision differs between canvas and PDF",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Unit precision differs between canvas and PDF.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-054",
+    "category": "Dimensions",
+    "title": "Dimension is clipped at sheet edge",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Dimension is clipped at sheet edge.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-055",
+    "category": "Dimensions",
+    "title": "Dimension fails after wall split",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Dimension fails after wall split.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-056",
+    "category": "Dimensions",
+    "title": "Dimension text overlaps without warning",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Dimension text overlaps without warning.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-057",
+    "category": "2D rendering",
+    "title": "Line weight changes with zoom",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Line weight changes with zoom.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-058",
+    "category": "2D rendering",
+    "title": "Selection halo obscures geometry",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Selection halo obscures geometry.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-059",
+    "category": "2D rendering",
+    "title": "Text blurs on high-density display",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Text blurs on high-density display.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-060",
+    "category": "2D rendering",
+    "title": "Canvas loses GPU context",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "critical",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Canvas loses GPU context.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-061",
+    "category": "2D rendering",
+    "title": "Culling removes visible geometry",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Culling removes visible geometry.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-062",
+    "category": "2D rendering",
+    "title": "Underlay draws above authored geometry",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Underlay draws above authored geometry.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-063",
+    "category": "2D rendering",
+    "title": "Print line style differs from editor",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Print line style differs from editor.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-064",
+    "category": "2D rendering",
+    "title": "Pattern aliasing makes warning invisible",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Pattern aliasing makes warning invisible.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-065",
+    "category": "3D rendering",
+    "title": "Mesh remains after element deletion",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Mesh remains after element deletion.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-066",
+    "category": "3D rendering",
+    "title": "Selection outline uses wrong element ID",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Selection outline uses wrong element ID.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-067",
+    "category": "3D rendering",
+    "title": "Opening mesh has inverted normals",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Opening mesh has inverted normals.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-068",
+    "category": "3D rendering",
+    "title": "Orthographic fit clips model",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Orthographic fit clips model.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-069",
+    "category": "3D rendering",
+    "title": "Low-memory mode does not recover",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Low-memory mode does not recover.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-070",
+    "category": "3D rendering",
+    "title": "Inactive split view consumes full frame budget",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Inactive split view consumes full frame budget.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-071",
+    "category": "3D rendering",
+    "title": "WebGPU and WebGL render materially different geometry",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: WebGPU and WebGL render materially different geometry.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-072",
+    "category": "3D rendering",
+    "title": "Context loss discards committed state",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Context loss discards committed state.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-073",
+    "category": "Storage and recovery",
+    "title": "UI reports saved before journal write",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: UI reports saved before journal write.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-074",
+    "category": "Storage and recovery",
+    "title": "Quota failure is presented as network failure",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Quota failure is presented as network failure.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-075",
+    "category": "Storage and recovery",
+    "title": "Snapshot compaction loses operations",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "critical",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Snapshot compaction loses operations.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-076",
+    "category": "Storage and recovery",
+    "title": "Two tabs corrupt local journal",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "critical",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Two tabs corrupt local journal.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-077",
+    "category": "Storage and recovery",
+    "title": "Recovery replays an incomplete preview",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Recovery replays an incomplete preview.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-078",
+    "category": "Storage and recovery",
+    "title": "Corrupt cache prevents project opening",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "critical",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Corrupt cache prevents project opening.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-079",
+    "category": "Storage and recovery",
+    "title": "Browser eviction has no warning",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Browser eviction has no warning.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-080",
+    "category": "Storage and recovery",
+    "title": "Migration overwrites the only archive",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "critical",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Migration overwrites the only archive.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-081",
+    "category": "Archive and migration",
+    "title": "Archive accepts path traversal",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Archive accepts path traversal.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-082",
+    "category": "Archive and migration",
+    "title": "Checksum is not verified",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Checksum is not verified.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-083",
+    "category": "Archive and migration",
+    "title": "Unknown optional section blocks opening",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Unknown optional section blocks opening.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-084",
+    "category": "Archive and migration",
+    "title": "Schema migration changes IDs",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Schema migration changes IDs.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-085",
+    "category": "Archive and migration",
+    "title": "Archive order is nondeterministic without reason",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Archive order is nondeterministic without reason.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-086",
+    "category": "Archive and migration",
+    "title": "Zip bomb exhausts memory",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Zip bomb exhausts memory.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-087",
+    "category": "Archive and migration",
+    "title": "Partial archive opens as complete",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Partial archive opens as complete.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-088",
+    "category": "Archive and migration",
+    "title": "Migration cannot retain original copy",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Migration cannot retain original copy.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-089",
+    "category": "Import",
+    "title": "Wrong units scale imported drawing",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Wrong units scale imported drawing.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-090",
+    "category": "Import",
+    "title": "Unsupported object disappears without report",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Unsupported object disappears without report.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-091",
+    "category": "Import",
+    "title": "Partial import mutates project after failure",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Partial import mutates project after failure.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-092",
+    "category": "Import",
+    "title": "Malicious text becomes executable markup",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Malicious text becomes executable markup.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-093",
+    "category": "Import",
+    "title": "Large IFC exhausts browser memory",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Large IFC exhausts browser memory.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-094",
+    "category": "Import",
+    "title": "DXF block transforms are applied twice",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: DXF block transforms are applied twice.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-095",
+    "category": "Import",
+    "title": "Source identifiers are lost",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Source identifiers are lost.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-096",
+    "category": "Import",
+    "title": "Cancel leaves temporary objects",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Cancel leaves temporary objects.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-097",
+    "category": "Export",
+    "title": "PDF is a raster screenshot",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: PDF is a raster screenshot.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-098",
+    "category": "Export",
+    "title": "Export changes project revision",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Export changes project revision.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-099",
+    "category": "Export",
+    "title": "Font is missing or substituted silently",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Font is missing or substituted silently.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-100",
+    "category": "Export",
+    "title": "Physical print scale is wrong",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Physical print scale is wrong.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-101",
+    "category": "Export",
+    "title": "Clipped content is omitted without warning",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Clipped content is omitted without warning.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-102",
+    "category": "Export",
+    "title": "Expired download is presented as failed export",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Expired download is presented as failed export.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-103",
+    "category": "Export",
+    "title": "IFC support report overstates preserved data",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "critical",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: IFC support report overstates preserved data.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-104",
+    "category": "Export",
+    "title": "Concurrent edit changes export mid-generation",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Concurrent edit changes export mid-generation.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-105",
+    "category": "Collaboration and sync",
+    "title": "Last write wins on delete versus modify",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Last write wins on delete versus modify.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-106",
+    "category": "Collaboration and sync",
+    "title": "Offline operation applies twice",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Offline operation applies twice.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-107",
+    "category": "Collaboration and sync",
+    "title": "User undoes another user work",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: User undoes another user work.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-108",
+    "category": "Collaboration and sync",
+    "title": "Presence remains after disconnect",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Presence remains after disconnect.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-109",
+    "category": "Collaboration and sync",
+    "title": "Comment target points to replaced element",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Comment target points to replaced element.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-110",
+    "category": "Collaboration and sync",
+    "title": "Share link retains access after revocation",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Share link retains access after revocation.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-111",
+    "category": "Collaboration and sync",
+    "title": "Role downgrade is cached too long",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Role downgrade is cached too long.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-112",
+    "category": "Collaboration and sync",
+    "title": "Conflict resolver loses local copy",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "critical",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Conflict resolver loses local copy.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-113",
+    "category": "Security and permissions",
+    "title": "Viewer can call edit API directly",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Viewer can call edit API directly.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-114",
+    "category": "Security and permissions",
+    "title": "Project existence leaks through error difference",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Project existence leaks through error difference.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-115",
+    "category": "Security and permissions",
+    "title": "Signed URL lasts too long",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Signed URL lasts too long.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-116",
+    "category": "Security and permissions",
+    "title": "Cross-tenant object-storage key accepted",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "critical",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Cross-tenant object-storage key accepted.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-117",
+    "category": "Security and permissions",
+    "title": "Audit log stores sensitive project content",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Audit log stores sensitive project content.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-118",
+    "category": "Security and permissions",
+    "title": "Imported SVG executes script",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Imported SVG executes script.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-119",
+    "category": "Security and permissions",
+    "title": "Share token is stored in plaintext",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "critical",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Share token is stored in plaintext.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-120",
+    "category": "Security and permissions",
+    "title": "Account deletion leaves active sessions",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Account deletion leaves active sessions.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-121",
+    "category": "AI",
+    "title": "AI applies without preview",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: AI applies without preview.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-122",
+    "category": "AI",
+    "title": "AI hides dimensional assumption",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: AI hides dimensional assumption.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-123",
+    "category": "AI",
+    "title": "AI deletes geometry to satisfy request",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: AI deletes geometry to satisfy request.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-124",
+    "category": "AI",
+    "title": "Prompt injection in imported metadata changes behaviour",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "critical",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Prompt injection in imported metadata changes behaviour.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-125",
+    "category": "AI",
+    "title": "AI proposal references stale revision",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: AI proposal references stale revision.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-126",
+    "category": "AI",
+    "title": "Undo does not reverse whole proposal",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Undo does not reverse whole proposal.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-127",
+    "category": "AI",
+    "title": "AI claims code compliance",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: AI claims code compliance.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-128",
+    "category": "AI",
+    "title": "Private project content is retained unexpectedly",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Private project content is retained unexpectedly.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-129",
+    "category": "iPad and input",
+    "title": "Pencil stroke orbits camera",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Pencil stroke orbits camera.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-130",
+    "category": "iPad and input",
+    "title": "Finger touch creates geometry during Pencil use",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Finger touch creates geometry during Pencil use.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-131",
+    "category": "iPad and input",
+    "title": "Software keyboard covers numeric input",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Software keyboard covers numeric input.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-132",
+    "category": "iPad and input",
+    "title": "Hover snap differs from tap snap",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Hover snap differs from tap snap.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-133",
+    "category": "iPad and input",
+    "title": "Trackpad shortcut conflicts with browser",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Trackpad shortcut conflicts with browser.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-134",
+    "category": "iPad and input",
+    "title": "Portrait inspector hides commit action",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Portrait inspector hides commit action.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-135",
+    "category": "iPad and input",
+    "title": "Squeeze action triggers unsupported command",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Squeeze action triggers unsupported command.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-136",
+    "category": "iPad and input",
+    "title": "Palm rejection fails near canvas edge",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Palm rejection fails near canvas edge.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-137",
+    "category": "Accessibility",
+    "title": "Active tool is indicated only by colour",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Active tool is indicated only by colour.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-138",
+    "category": "Accessibility",
+    "title": "Command palette focus is lost after results update",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Command palette focus is lost after results update.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-139",
+    "category": "Accessibility",
+    "title": "Canvas selection has no textual equivalent",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Canvas selection has no textual equivalent.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-140",
+    "category": "Accessibility",
+    "title": "Dialog closes without returning focus",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "critical",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Dialog closes without returning focus.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-141",
+    "category": "Accessibility",
+    "title": "Error is not associated with numeric field",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Error is not associated with numeric field.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-142",
+    "category": "Accessibility",
+    "title": "Model tree cannot be navigated by keyboard",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Model tree cannot be navigated by keyboard.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-143",
+    "category": "Accessibility",
+    "title": "Reduced motion still animates camera",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Reduced motion still animates camera.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-144",
+    "category": "Accessibility",
+    "title": "Touch target is below 44 points",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Touch target is below 44 points.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-145",
+    "category": "Performance",
+    "title": "Room rebuild recalculates whole project",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Room rebuild recalculates whole project.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-146",
+    "category": "Performance",
+    "title": "Hover performs exact geometry on every frame",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Hover performs exact geometry on every frame.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-147",
+    "category": "Performance",
+    "title": "React rerenders full model on pointer move",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: React rerenders full model on pointer move.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-148",
+    "category": "Performance",
+    "title": "Worker messages copy large buffers unnecessarily",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Worker messages copy large buffers unnecessarily.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-149",
+    "category": "Performance",
+    "title": "Inactive levels remain fully loaded",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Inactive levels remain fully loaded.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-150",
+    "category": "Performance",
+    "title": "Selection index rebuilds after camera-only change",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Selection index rebuilds after camera-only change.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-151",
+    "category": "Performance",
+    "title": "Import progress blocks main thread",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Import progress blocks main thread.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-152",
+    "category": "Performance",
+    "title": "Diagnostics themselves reduce frame rate",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Diagnostics themselves reduce frame rate.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-153",
+    "category": "Browser and platform",
+    "title": "Safari storage is evicted without recovery path",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Safari storage is evicted without recovery path.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-154",
+    "category": "Browser and platform",
+    "title": "Browser shortcut prevents Arq command",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Browser shortcut prevents Arq command.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-155",
+    "category": "Browser and platform",
+    "title": "WebGL context limit is exceeded",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: WebGL context limit is exceeded.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-156",
+    "category": "Browser and platform",
+    "title": "File System Access API is assumed everywhere",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: File System Access API is assumed everywhere.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-157",
+    "category": "Browser and platform",
+    "title": "WebGPU capability detection is inaccurate",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: WebGPU capability detection is inaccurate.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-158",
+    "category": "Browser and platform",
+    "title": "iPad backgrounding interrupts export",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: iPad backgrounding interrupts export.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-159",
+    "category": "Browser and platform",
+    "title": "High-DPI scaling changes hit testing",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: High-DPI scaling changes hit testing.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-160",
+    "category": "Browser and platform",
+    "title": "Browser zoom breaks panel layout",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Browser zoom breaks panel layout.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-161",
+    "category": "UI state and copy",
+    "title": "Saved label hides unsynced state",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Saved label hides unsynced state.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-162",
+    "category": "UI state and copy",
+    "title": "Disabled action has no explanation",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Disabled action has no explanation.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-163",
+    "category": "UI state and copy",
+    "title": "Modal opens behind canvas overlay",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Modal opens behind canvas overlay.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-164",
+    "category": "UI state and copy",
+    "title": "Panel opening shifts canvas coordinates",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Panel opening shifts canvas coordinates.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-165",
+    "category": "UI state and copy",
+    "title": "Error message uses internal exception only",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Error message uses internal exception only.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-166",
+    "category": "UI state and copy",
+    "title": "Loading state looks like an empty project",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Loading state looks like an empty project.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-167",
+    "category": "UI state and copy",
+    "title": "Destructive default action is focused",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Destructive default action is focused.",
+    "releaseGate": "Address before the affected feature is released."
+  },
+  {
+    "id": "BUG-RISK-168",
+    "category": "UI state and copy",
+    "title": "Coming-later feature appears available",
+    "classification": "anticipated risk, not confirmed defect",
+    "severity": "high",
+    "prevention": "Enforce the relevant architecture contract, safe failure and explicit validation.",
+    "test": "Create a deterministic regression test for: Coming-later feature appears available.",
+    "releaseGate": "Address before the affected feature is released."
+  }
+]

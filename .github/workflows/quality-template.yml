@@ -1,0 +1,8 @@
+name: Quality template
+on: [pull_request]
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Add approved Node and pnpm setup, then format, lint, typecheck and test"

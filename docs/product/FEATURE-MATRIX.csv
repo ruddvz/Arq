@@ -1,0 +1,18 @@
+feature,release,priority,status
+Project creation,1,critical,planned
+Straight walls,1,critical,planned
+Doors and windows,1,critical,planned
+Rooms and areas,1,critical,planned
+Linear dimensions,1,critical,planned
+Basic 3D,1,high,planned
+Vector PDF,1,critical,planned
+Crash recovery,1,critical,planned
+DXF,2,high,deferred
+IFC viewer,2,high,deferred
+Comments and issues,2,normal,deferred
+ArqScript,3,normal,research
+AI bounded edits,3,normal,research
+Native iPad,4,normal,deferred
+LiDAR and RoomPlan,4,normal,research
+DWG,later,later,not committed
+RVT,later,later,not committed

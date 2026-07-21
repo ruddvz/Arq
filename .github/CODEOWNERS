@@ -1,0 +1,6 @@
+# Replace placeholders after team assignment.
+/docs/ @REPLACE
+/packages/geometry-2d/ @REPLACE
+/packages/bim-core/ @REPLACE
+/packages/project-format/ @REPLACE
+/packages/security/ @REPLACE

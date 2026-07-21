@@ -1,0 +1,38 @@
+# Repository structure
+
+```text
+arq/
+  apps/
+    web/
+    marketing/
+    api/
+  packages/
+    design-system/
+    icons/
+    editor-shell/
+    command-system/
+    input-system/
+    plan-renderer/
+    model-renderer/
+    geometry-2d/
+    geometry-3d/
+    geometry-occt/
+    bim-core/
+    operations/
+    project-format/
+    local-storage/
+    validation/
+    pdf-export/
+    dxf-adapter/
+    ifc-adapter/
+    collaboration/
+    telemetry/
+    test-models/
+  workers/
+    geometry-worker/
+    import-export-worker/
+  docs/
+  benchmarks/
+  scripts/
+  .github/
+```

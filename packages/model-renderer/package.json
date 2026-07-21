@@ -1,0 +1,11 @@
+{
+  "name": "@arq/model-renderer",
+  "private": true,
+  "version": "0.0.0",
+  "description": "3D model renderer (Three.js/WebGPU with WebGL fallback).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}
