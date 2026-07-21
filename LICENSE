@@ -1,0 +1,18 @@
+Copyright (c) 2026 the Arq project. All rights reserved.
+
+This repository and its contents — including source code, documentation, designs,
+data models, and all other materials — are proprietary and confidential. No part of
+this repository may be used, copied, modified, merged, published, distributed,
+sublicensed, and/or sold without the prior written permission of the copyright
+holder.
+
+No license, express or implied, to any patent, trademark, copyright, or other
+intellectual property right is granted by this document.
+
+Third-party open-source components used by Arq remain governed by their own
+licenses; see NOTICE for attribution and docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md
+§19 for the dependency licensing policy.
+
+---
+Note: replace "the Arq project" above with the actual legal entity or individual
+copyright holder once that's determined.

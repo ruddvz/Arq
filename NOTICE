@@ -1,0 +1,15 @@
+Arq — third-party notices
+
+Arq itself is proprietary (see LICENSE). It may incorporate or link against
+third-party open-source components, each governed by its own license. This file
+will be kept up to date as dependencies are added, per the licensing policy in
+docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md §19.
+
+No third-party code has been incorporated into this repository yet — it currently
+contains planning documentation only. Once implementation begins, an automated
+software bill of materials (SBOM) and license scan (per §19.1) should populate and
+maintain the table below rather than hand-editing it.
+
+| Component | License | Used for |
+|---|---|---|
+| _(none yet)_ | | |
