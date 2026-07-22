@@ -15,3 +15,5 @@ export * from './t-join';
 export * from './cross-join';
 export * from './wall-trim-extend';
 export * from './offset-segment';
+export * from './point-in-polygon';
+export * from './room-boundary-graph';
