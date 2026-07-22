@@ -16,13 +16,11 @@
  */
 
 import type { Viewport, WorldPoint } from '@arq/geometry-2d';
-import { SNAP_SOURCE_PRIORITY, type SnapResult } from './snap-result';
+import { DEFAULT_SNAP_TOLERANCE_PX, SNAP_SOURCE_PRIORITY, type SnapResult } from './snap-result';
 
 export interface EndpointCandidate {
   readonly point: WorldPoint;
 }
-
-export const DEFAULT_SNAP_TOLERANCE_PX = 10;
 
 export function findEndpointSnaps(
   candidates: readonly EndpointCandidate[],

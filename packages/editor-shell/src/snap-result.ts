@@ -44,6 +44,9 @@ export interface SnapResult {
   readonly suggestedConstraint?: SnapConstraint;
 }
 
+/** Shared default hit-tolerance (screen pixels) for every snap source, unless a caller overrides it. */
+export const DEFAULT_SNAP_TOLERANCE_PX = 10;
+
 /**
  * Canonical priority ranking (lower number wins ties). This is the order
  * SELECTION-AND-SNAPPING.md lists the eight sources in - read literally as
