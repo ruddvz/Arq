@@ -3,10 +3,9 @@
 ## Purpose
 
 Blueprint section 61 ("2D renderer decision") recommends spiking Canvas 2D,
-PixiJS WebGL, and (if needed) CanvasKit against the protected benchmark
-before selecting a 2D renderer via ADR (ARQ-118). This is the Canvas 2D
-half of that spike. PixiJS (ARQ-116) and CanvasKit (ARQ-117) are separate,
-later issues.
+PixiJS WebGL (ARQ-116), and CanvasKit (ARQ-117, if needed) against the
+protected benchmark before selecting a 2D renderer via ADR (ARQ-118). This
+is the Canvas 2D half.
 
 ## Method
 
@@ -15,15 +14,19 @@ later issues.
   exactly - 150 walls, 80 doors/windows, 60 rooms, 200 annotations (a
   10x6 grid of 4m x 3m rooms, not a real floor plan; the object *count*
   is what stresses per-frame draw-call volume, not the layout's realism).
-  Generator: `packages/plan-renderer/benchmarks/canvas-2d/scene.js`.
+  Generator: `packages/plan-renderer/benchmarks/canvas-2d/scene.js`
+  (shared unchanged with the PixiJS spike, ARQ-116).
 - Renderer: plain Canvas 2D (`CanvasRenderingContext2D`), no library -
   fills for rooms, `fillRect` for walls/openings, `fillText` for
   annotations and room labels. `packages/plan-renderer/benchmarks/canvas-2d/canvas-2d-benchmark.html`.
 - Workload: a full-scene redraw every animation frame while panning (the
-  viewport offset increments each frame) for 180 frames - full redraw
-  with no dirty-rect optimisation is the worst case a Canvas 2D renderer
-  faces, and is exactly section 120's "pan and zoom 60 fps target"
-  scenario.
+  viewport offset increments each frame) - full redraw with no
+  dirty-rect optimisation is the worst case a Canvas 2D renderer faces,
+  and is exactly section 120's "pan and zoom 60 fps target" scenario.
+  The first 30 frames render but are excluded from the timing stats
+  (JIT/first-paint warm-up is a one-time cost, covered by section 120's
+  separate "local project interactive under 2 seconds" budget, not
+  ongoing pan/zoom frame rate); the next 180 frames are measured.
 - Driver: `scripts/run-canvas-2d-benchmark.mjs`, using Playwright to run
   the page in real headless Chromium (`/opt/pw-browsers/chromium`) and
   read back `window.__ARQ_BENCHMARK_RESULT__` - actual measured frame
@@ -35,20 +38,20 @@ Three consecutive runs (2026-07-22), full JSON in `benchmarks/results/`:
 
 | Run | avg fps | avg frame (ms) | p95 frame (ms) | max frame (ms) |
 |---|---|---|---|---|
-| 1 | 57.76 | 17.31 | 16.80 | 83.30 |
-| 2 | 58.70 | 17.04 | n/a | 50.00 |
-| 3 | 59.67 | 16.76 | n/a | 33.30 |
+| 1 | 60.00 | 16.67 | 16.80 | 16.80 |
+| 2 | 60.00 | 16.67 | 16.70 | 16.80 |
+| 3 | 59.35 | 16.85 | 16.80 | 33.40 |
 
 Object counts produced by the generator matched the benchmark model
 exactly in every run (150 walls, 60 rooms, 80 openings, 200 annotations).
 
 Target (`benchmarks/PERFORMANCE-BUDGETS.json`, `panZoomFpsTarget`): 60 fps.
 
-**Verdict: marginal / just under target in this environment** (57.8-59.7
-fps average across three runs, i.e. within about 1-4% of 60 fps) - close
-enough that a real GPU-accelerated device (section 121's supported
-device matrix) plausibly clears 60 fps for this object count, but not
-proven here.
+**Verdict: meets target in this environment.** All three runs land at or
+within 1.1% of 60 fps, with per-frame time consistently around the
+16.7 ms budget one frame needs for 60 fps - Canvas 2D comfortably keeps
+up with this object count doing a full immediate-mode redraw every
+frame, in this environment.
 
 ## Important caveat
 
@@ -56,12 +59,21 @@ This ran in a headless, sandboxed container with software (CPU)
 rendering, not on any device from section 121's supported device matrix.
 `benchmarks/PERFORMANCE-BUDGETS.json` itself says targets are "planning
 targets until measured" - this spike does not change that: it is a
-same-order-of-magnitude signal (Canvas 2D redraw of this object count is
-in the tens-of-milliseconds-per-frame range, near the 16.7 ms/frame
-budget for 60 fps) collected honestly in this environment, not a
+real, reproducible signal collected honestly in this environment, not a
 certified pass/fail result on approved hardware. ARQ-116/117 need the
-same caveat, and ARQ-118's ADR should weigh all three spikes' numbers
-as comparative signal, not as final performance claims.
+same caveat, and ARQ-118's ADR should weigh all spikes' numbers as
+comparative signal, not as final performance claims. See
+`docs/research/RENDERER-BENCHMARK-PIXIJS-WEBGL.md` (ARQ-116) for the
+comparison point and why raw fps numbers between the two spikes should
+not be read as "Canvas 2D beats WebGL in general."
+
+## Revision note
+
+An earlier version of this benchmark did not exclude a warm-up period,
+which let first-paint cost skew the average on some runs. The
+methodology above (30 warm-up frames excluded, 180 measured) was
+adopted for both this spike and ARQ-116's, and this document's numbers
+reflect the corrected methodology.
 
 ## Reproducing
 

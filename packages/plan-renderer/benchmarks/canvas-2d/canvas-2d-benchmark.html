@@ -22,6 +22,13 @@
    * shifting viewport offset - full-scene redraw is the worst case a
    * Canvas 2D renderer faces (no incremental/dirty-rect update), and is
    * exactly the section 120 "pan and zoom 60 fps target" scenario.
+   *
+   * The first WARMUP_FRAMES frames are rendered but excluded from the
+   * timing stats - JIT warm-up/first-paint cost is a one-time,
+   * cold-start expense (covered by section 120's separate "local
+   * project interactive under 2 seconds" budget), not part of ongoing
+   * pan/zoom frame rate. Applied identically in
+   * pixijs-webgl-benchmark.html (ARQ-116) for a fair comparison.
    */
   const canvas = document.getElementById('stage');
   const ctx = canvas.getContext('2d');
@@ -73,16 +80,19 @@
     ctx.restore();
   }
 
-  const TARGET_FRAMES = 180; // ~3 seconds at a healthy 60fps
+  const WARMUP_FRAMES = 30;
+  const TARGET_FRAMES = 180; // ~3 seconds at a healthy 60fps, after warm-up
   const frameTimes = [];
+  let framesRendered = 0;
   let lastTime = null;
   let panX = 40;
 
   function frame(now) {
-    if (lastTime !== null) {
+    if (lastTime !== null && framesRendered >= WARMUP_FRAMES) {
       frameTimes.push(now - lastTime);
     }
     lastTime = now;
+    framesRendered += 1;
     panX += 4;
     render(panX, 40);
 

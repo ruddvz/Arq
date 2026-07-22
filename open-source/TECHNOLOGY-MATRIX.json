@@ -11,7 +11,7 @@
     "role": "2D GPU renderer",
     "licence": "MIT",
     "treatment": "spike",
-    "notes": "Test technical line quality"
+    "notes": "Test technical line quality; benchmarked ARQ-116 - software WebGL only in CI/dev container, needs a real-GPU device run before ADR-118"
   },
   {
     "project": "CanvasKit",

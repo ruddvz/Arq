@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-07-22T17:02:33.240Z",
-  "environment": "headless Chromium, sandboxed container (not a certified benchmark device - see docs/research/RENDERER-BENCHMARK-CANVAS-2D.md)",
+  "timestamp": "2026-07-22T20:54:49.398Z",
+  "environment": "headless Chromium, software WebGL (SwiftShader) in a sandboxed container (not a certified benchmark device - see docs/research/RENDERER-BENCHMARK-PIXIJS-WEBGL.md)",
   "benchmarkModel": {
     "levels": 2,
     "walls": 150,
@@ -17,10 +17,10 @@
     "annotations": 200
   },
   "frameCount": 180,
-  "avgFrameMs": 17.036111111111108,
-  "avgFps": 58.69884232838742,
-  "p95FrameMs": 16.799999999999955,
-  "maxFrameMs": 50.000000000000014,
+  "avgFrameMs": 61.01611111111112,
+  "avgFps": 16.38911398628777,
+  "p95FrameMs": 83.30000000000291,
+  "maxFrameMs": 83.40000000000146,
   "panZoomFpsTarget": 60,
   "meetsTarget": false
 }
