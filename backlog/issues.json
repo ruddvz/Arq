@@ -3638,5 +3638,22 @@
       "Contradictions are resolved.",
       "Owners and evidence are recorded."
     ]
+  },
+  {
+    "id": "ARQ-190",
+    "number": 190,
+    "title": "design: differentiate component doc content per component",
+    "area": "design",
+    "phase": "Phase 0",
+    "epic": "Design system",
+    "priority": "high",
+    "labels": "type: docs;area: design;priority: high;state: ready",
+    "dependencies": "ARQ-177",
+    "file": "backlog/issues/190-design-differentiate-component-doc-content-per-component.md",
+    "acceptanceCriteria": [
+      "No two component docs are byte-identical after Purpose unless genuinely identical controls.",
+      "Required states reflect what actually applies to each component.",
+      "component-harness/components.js is regenerated from the corrected docs and still renders without errors."
+    ]
   }
 ]
