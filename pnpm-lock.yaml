@@ -62,7 +62,11 @@ importers:
 
   packages/model-renderer: {}
 
-  packages/operations: {}
+  packages/operations:
+    dependencies:
+      '@arq/bim-core':
+        specifier: workspace:*
+        version: link:../bim-core
 
   packages/pdf-export: {}
 
