@@ -4,7 +4,7 @@
     "role": "3D renderer",
     "licence": "MIT",
     "treatment": "adopt",
-    "notes": "WebGL first, WebGPU optional"
+    "notes": "WebGL first, WebGPU optional; wired in ARQ-123 (three 0.185.1, @arq/model-renderer)"
   },
   {
     "project": "PixiJS",
