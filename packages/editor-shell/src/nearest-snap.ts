@@ -12,30 +12,18 @@
  * Centre snap (the other half of ARQ-191) is not implemented here: it
  * needs a closed-shape candidate type (circle/arc) that doesn't exist in
  * this codebase yet - see ARQ-191's non-goals.
+ *
+ * The closest-point math itself now lives in @arq/geometry-2d's
+ * closestPointOnSegment (ARQ-084); this module re-exports it under the
+ * same name it already had here, so no caller-facing signature changes.
  */
 
 import type { Viewport, WorldPoint } from '@arq/geometry-2d';
-import { worldPoint } from '@arq/geometry-2d';
+import { closestPointOnSegment } from '@arq/geometry-2d';
 import type { SegmentCandidate } from './segment-candidate';
 import { DEFAULT_SNAP_TOLERANCE_PX, SNAP_SOURCE_PRIORITY, type SnapResult } from './snap-result';
 
-/** Returns the closest point on `segment` to `point`, clamped to the segment's own bounds. */
-export function closestPointOnSegment(segment: SegmentCandidate, point: WorldPoint): WorldPoint {
-  const dx = segment.end.x - segment.start.x;
-  const dy = segment.end.y - segment.start.y;
-  const lengthSquared = dx * dx + dy * dy;
-  if (lengthSquared === 0) {
-    return segment.start;
-  }
-  const t = Math.min(
-    1,
-    Math.max(
-      0,
-      ((point.x - segment.start.x) * dx + (point.y - segment.start.y) * dy) / lengthSquared,
-    ),
-  );
-  return worldPoint(segment.start.x + t * dx, segment.start.y + t * dy);
-}
+export { closestPointOnSegment };
 
 export function findNearestSnaps(
   candidates: readonly SegmentCandidate[],
