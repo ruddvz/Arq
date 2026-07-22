@@ -4,7 +4,10 @@ import csv,json,sys
 root=Path(__file__).resolve().parents[1]
 errors=[]
 text_suffixes={".md",".json",".csv",".ebnf",".arq",".yml",".yaml",".sql",".ts",".tsx",".css",".html",".js",".svg"}
+excluded_dirs={"node_modules",".git",".turbo",".vite","dist","build","coverage"}
 for p in root.rglob("*"):
+    if excluded_dirs & set(p.relative_to(root).parts):
+        continue
     if not p.is_file():
         continue
     if p.suffix in text_suffixes:

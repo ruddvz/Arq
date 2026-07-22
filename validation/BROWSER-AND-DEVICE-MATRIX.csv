@@ -1,7 +1,7 @@
-platform,versionPolicy,input,status
-Chrome desktop,current and previous major after testing,"mouse, keyboard, touch where hardware",required
-Edge desktop,current and previous major after testing,"mouse, keyboard, touch",required
-Safari macOS,supported OS versions after benchmark,"mouse, keyboard, trackpad",required
-Safari iPadOS,selected iPadOS and devices,"touch, Pencil, keyboard, trackpad",required
-Firefox desktop,research and test,"mouse, keyboard",decision required
-iPhone Safari,viewer and review only,touch,later
+platform,versionPolicy,input,status,webgpuSupport,notes
+Chrome desktop,current and previous major after testing,"mouse, keyboard, touch where hardware",required,"Yes, since Chrome 113 (2023)","WebGPU shipping by default; safe rendering-path baseline."
+Edge desktop,current and previous major after testing,"mouse, keyboard, touch",required,"Yes, since Edge 113 (2023)","Chromium-based, tracks Chrome's WebGPU timeline."
+Safari macOS,supported OS versions after benchmark,"mouse, keyboard, trackpad",required,"Yes, since Safari 26 / macOS Tahoe 26 (Sep 2025)","Pre-Safari 26 macOS falls back to WebGL; confirm real-device benchmark before treating WebGPU as the default path here."
+Safari iPadOS,selected iPadOS and devices,"touch, Pencil, keyboard, trackpad",required,"Yes, since Safari 26 / iPadOS 26 (Sep 2025, current 26.5 as of May 2026)","Apple Pencil Pro hover/barrel-roll/squeeze needs iPadOS 17.5+ on an M-series or A15+ device; iPadOS 26 needed for the hover gesture set referenced in the design system. Devices: iPad Pro 11-/13-inch (M4/M5), iPad Air (M2/M3/M4)."
+Firefox desktop,research and test,"mouse, keyboard",decision required,"Partial: Windows since Firefox 141 (2025); macOS Apple Silicon since Firefox 145 (2025); Android targeted late 2026","No Intel-Mac or Linux WebGPU yet as of this research pass; decide whether Firefox gets full support now (WebGL fallback) or is deferred until WebGPU lands everywhere it needs to."
+iPhone Safari,viewer and review only,touch,later,"Yes, since Safari 26 / iOS 26 (Sep 2025)","WebGPU capability exists but iPhone stays viewer/review-only per the product decision (ARQ-171 through ARQ-173 scope authoring to iPad, not iPhone)."

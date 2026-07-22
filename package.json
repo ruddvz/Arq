@@ -2,7 +2,7 @@
   "name": "arq",
   "private": true,
   "version": "0.0.0",
-  "description": "Arq monorepo — apps, packages, and workers. See docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md and docs/architecture/REPOSITORY-STRUCTURE.md.",
+  "description": "Arq monorepo - apps, packages, and workers. See docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md and docs/architecture/REPOSITORY-STRUCTURE.md.",
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=20"

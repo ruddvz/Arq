@@ -1,7 +1,7 @@
 # Repository licence decision required
 
 > **Resolved 2026-07-21.** The owner chose **private and proprietary / all rights
-> reserved** — see `LICENSE`. The considerations below remain useful background (e.g.
+> reserved** - see `LICENSE`. The considerations below remain useful background (e.g.
 > if a future plugin SDK or open-core split is considered), but the top-level
 > repository licence question is no longer open.
 

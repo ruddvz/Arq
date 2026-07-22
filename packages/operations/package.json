@@ -2,7 +2,7 @@
   "name": "@arq/operations",
   "private": true,
   "version": "0.0.0",
-  "description": "The typed operation log — CreateElement/UpdateProperty/MoveElement/etc — and the undo/redo contract.",
+  "description": "The typed operation log - CreateElement/UpdateProperty/MoveElement/etc - and the undo/redo contract.",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {

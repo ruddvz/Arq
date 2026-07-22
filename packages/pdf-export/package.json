@@ -2,7 +2,7 @@
   "name": "@arq/pdf-export",
   "private": true,
   "version": "0.0.0",
-  "description": "Vector-accurate PDF sheet export — not a screenshot pipeline.",
+  "description": "Vector-accurate PDF sheet export - not a screenshot pipeline.",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {

@@ -2,7 +2,7 @@
   "name": "@arq/bim-core",
   "private": true,
   "version": "0.0.0",
-  "description": "The semantic building model — entities, types/instances, relationships, operations (see §15).",
+  "description": "The semantic building model - entities, types/instances, relationships, operations (see §15).",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {

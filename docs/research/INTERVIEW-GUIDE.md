@@ -15,11 +15,17 @@ Understand actual recent work, not an abstract feature wish list.
 
 - How did you capture or receive existing conditions?
 - What was the first drawing or model you created?
+- Roughly how many walls, doors, windows, and rooms did this project end up
+  with? How many sheets did you issue?
 - Which actions did you repeat most?
 - What did you have to redraw?
 - Where did you leave the main application?
 - Which files did you import and export?
 - What did clients and consultants receive?
+- How many rounds of review did this project go through, and with whom
+  (client, consultant, contractor)? Walk me through one round.
+- What did a consultant ask you to change, and how did that change ripple
+  back through your drawings?
 - Where did errors appear?
 - What took longer than expected?
 
