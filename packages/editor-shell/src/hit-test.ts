@@ -42,3 +42,20 @@ export function pickAt<TId>(
   const toleranceWorld = toleranceScreenPx / viewport.pixelsPerUnit;
   return candidates.find((candidate) => candidate.hitTest(point, toleranceWorld));
 }
+
+/**
+ * Like pickAt, but returns every matching candidate's id in priority
+ * order rather than just the first - the input candidate-cycling.ts
+ * needs to know the full stack under the pointer, not just the winner.
+ */
+export function pickAllAt<TId>(
+  candidates: readonly HitCandidate<TId>[],
+  point: WorldPoint,
+  viewport: Viewport,
+  toleranceScreenPx: number = DEFAULT_HIT_TEST_TOLERANCE_PX,
+): readonly TId[] {
+  const toleranceWorld = toleranceScreenPx / viewport.pixelsPerUnit;
+  return candidates
+    .filter((candidate) => candidate.hitTest(point, toleranceWorld))
+    .map((candidate) => candidate.id);
+}
