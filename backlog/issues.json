@@ -3655,5 +3655,22 @@
       "Required states reflect what actually applies to each component.",
       "component-harness/components.js is regenerated from the corrected docs and still renders without errors."
     ]
+  },
+  {
+    "id": "ARQ-191",
+    "number": 191,
+    "title": "editor: implement centre and nearest snap",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: ready",
+    "dependencies": "ARQ-052",
+    "file": "backlog/issues/191-editor-implement-centre-and-nearest-snap.md",
+    "acceptanceCriteria": [
+      "Nearest snap is implemented against SegmentCandidate with tests.",
+      "Centre snap either ships against an existing closed-shape candidate type or is explicitly re-scoped/split if none exists yet.",
+      "Escape and Enter behaviour is defined, matching the other six snap sources."
+    ]
   }
 ]

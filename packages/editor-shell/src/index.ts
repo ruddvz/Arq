@@ -13,3 +13,4 @@ export * from './perpendicular-snap';
 export * from './grid-snap';
 export * from './extension-snap';
 export * from './snap-tie-break';
+export * from './nearest-snap';
