@@ -20,3 +20,4 @@ export * from './window-instance';
 export * from './room';
 export * from './room-area';
 export * from './dimension-reference';
+export * from './linear-dimension';
