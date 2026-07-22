@@ -6,3 +6,4 @@ export * from './update-property-operation';
 export * from './door-flip-operation';
 export * from './opening-overlap-validation';
 export * from './warnings-property-group';
+export * from './history-property-group';
