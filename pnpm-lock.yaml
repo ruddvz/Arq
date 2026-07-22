@@ -64,7 +64,11 @@ importers:
 
   packages/geometry-2d: {}
 
-  packages/geometry-3d: {}
+  packages/geometry-3d:
+    dependencies:
+      '@arq/geometry-2d':
+        specifier: workspace:*
+        version: link:../geometry-2d
 
   packages/geometry-occt: {}
 
