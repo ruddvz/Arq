@@ -94,7 +94,11 @@ importers:
 
   packages/pdf-export: {}
 
-  packages/plan-renderer: {}
+  packages/plan-renderer:
+    dependencies:
+      '@arq/geometry-2d':
+        specifier: workspace:*
+        version: link:../geometry-2d
 
   packages/project-format: {}
 
