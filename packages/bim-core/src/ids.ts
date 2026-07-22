@@ -17,11 +17,12 @@
  * duplication can be replaced with a single source of truth - is a
  * separate structural decision, not a side effect of this issue.
  *
- * DoorId/DoorTypeId (ARQ-104) are new additions with no contracts/
- * model.ts counterpart - that file predates the door type/instance
- * split (blueprint section 46) - so they follow the same brand
- * convention (WallId/WallTypeId's split, ARQ-060) by extension rather
- * than by mirroring an existing declaration.
+ * DoorId/DoorTypeId (ARQ-104) and WindowId/WindowTypeId (ARQ-107) are
+ * new additions with no contracts/model.ts counterpart - that file
+ * predates the door/window type/instance splits (blueprint sections
+ * 46/47) - so they follow the same brand convention (WallId/WallTypeId's
+ * split, ARQ-060) by extension rather than by mirroring an existing
+ * declaration.
  */
 
 export type Brand<T, N extends string> = T & { readonly __brand: N };
@@ -35,6 +36,8 @@ export type LevelId = Brand<string, 'LevelId'>;
 export type WallTypeId = Brand<string, 'WallTypeId'>;
 export type DoorId = Brand<ElementId, 'DoorId'>;
 export type DoorTypeId = Brand<string, 'DoorTypeId'>;
+export type WindowId = Brand<ElementId, 'WindowId'>;
+export type WindowTypeId = Brand<string, 'WindowTypeId'>;
 
 export function projectId(value: string): ProjectId {
   return value as ProjectId;
@@ -62,4 +65,10 @@ export function doorId(value: string): DoorId {
 }
 export function doorTypeId(value: string): DoorTypeId {
   return value as DoorTypeId;
+}
+export function windowId(value: string): WindowId {
+  return value as WindowId;
+}
+export function windowTypeId(value: string): WindowTypeId {
+  return value as WindowTypeId;
 }

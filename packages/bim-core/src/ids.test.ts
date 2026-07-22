@@ -9,6 +9,8 @@ import {
   roomId,
   wallId,
   wallTypeId,
+  windowId,
+  windowTypeId,
   type ProjectId,
   type WallId,
 } from './ids';
@@ -24,6 +26,8 @@ describe('id constructors', () => {
     expect(wallTypeId('t1')).toBe('t1');
     expect(doorId('d1')).toBe('d1');
     expect(doorTypeId('dt1')).toBe('dt1');
+    expect(windowId('win1')).toBe('win1');
+    expect(windowTypeId('wint1')).toBe('wint1');
   });
 });
 

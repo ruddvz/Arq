@@ -11,3 +11,5 @@ export * from './offset-wall';
 export * from './opening';
 export * from './door-type';
 export * from './door-instance';
+export * from './window-type';
+export * from './window-instance';
