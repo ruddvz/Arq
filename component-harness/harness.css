@@ -1,0 +1,250 @@
+@import '../design/tokens.css';
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  color: var(--arq-color-text-primary);
+  background: var(--arq-color-surface1);
+}
+#app {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+}
+nav {
+  border-right: 1px solid var(--arq-color-line-subtle);
+  background: var(--arq-color-paper);
+  padding: 16px;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+nav h1 {
+  font-size: 16px;
+  margin: 0 0 4px;
+}
+nav p {
+  font-size: 12px;
+  color: var(--arq-color-text-muted);
+  margin: 0 0 16px;
+}
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+nav li button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: none;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--arq-color-text-primary);
+}
+nav li button:hover {
+  background: var(--arq-color-surface2);
+}
+nav li button.current {
+  background: var(--arq-color-ink);
+  color: #fff;
+}
+nav li button .badge {
+  float: right;
+  font-size: 10px;
+  color: var(--arq-color-text-muted);
+}
+nav li button.current .badge {
+  color: #ccc;
+}
+main {
+  padding: 32px;
+  max-width: 900px;
+}
+main h1 {
+  margin: 0 0 4px;
+  font-size: 22px;
+}
+main .purpose {
+  color: var(--arq-color-text-secondary);
+  margin: 0 0 24px;
+}
+.state-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+.state-cell {
+  border: 1px solid var(--arq-color-line-subtle);
+  border-radius: 8px;
+  padding: 16px 12px;
+  background: var(--arq-color-paper);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 110px;
+  gap: 10px;
+}
+.state-cell span.label {
+  font-size: 11px;
+  color: var(--arq-color-text-muted);
+  text-align: center;
+}
+.placeholder-notice {
+  border: 1px dashed var(--arq-color-line-strong);
+  background: var(--arq-color-surface2);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+.placeholder-notice strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.spec-states {
+  columns: 2;
+  font-size: 13px;
+}
+
+/* --- generic component renderers --- */
+button.hs,
+input.hs,
+select.hs {
+  font: inherit;
+  border: 1px solid var(--arq-color-line-default);
+  border-radius: 6px;
+  background: var(--arq-color-paper);
+  padding: 8px 12px;
+  color: var(--arq-color-text-primary);
+}
+button.hs.primary {
+  background: var(--arq-color-ink);
+  color: #fff;
+  border-color: var(--arq-color-ink);
+}
+.hs-icon-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid var(--arq-color-line-default);
+  background: var(--arq-color-paper);
+}
+.hs-badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--arq-color-surface3);
+  border: 1px solid var(--arq-color-line-default);
+}
+.hs-card {
+  border: 1px solid var(--arq-color-line-subtle);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--arq-color-paper);
+  width: 100%;
+}
+.hs-banner {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--arq-color-line-subtle);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: var(--arq-color-surface2);
+  font-size: 13px;
+  width: 100%;
+}
+.hs-toast {
+  border: 1px solid var(--arq-color-line-default);
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: var(--arq-color-ink);
+  color: #fff;
+  font-size: 13px;
+}
+.hs-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--arq-color-surface3);
+  border: 1px solid var(--arq-color-line-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+.hs-skeleton {
+  width: 100%;
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--arq-color-surface2) 25%,
+    var(--arq-color-surface3) 37%,
+    var(--arq-color-surface2) 63%
+  );
+}
+.hs-progress {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--arq-color-surface3);
+  overflow: hidden;
+}
+.hs-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--arq-color-ink);
+}
+.hs-dropzone {
+  border: 1.5px dashed var(--arq-color-line-strong);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--arq-color-text-muted);
+  width: 100%;
+}
+kbd {
+  font: 11px monospace;
+  border: 1px solid var(--arq-color-line-default);
+  border-radius: 4px;
+  padding: 1px 6px;
+  background: var(--arq-color-surface2);
+}
+
+/* --- simulated states (a static harness can't rely on real :hover) --- */
+.sim-hover {
+  background: var(--arq-color-surface3) !important;
+}
+.sim-focus {
+  outline: 2px solid var(--arq-color-ink);
+  outline-offset: 2px;
+}
+.sim-active {
+  background: var(--arq-color-ink) !important;
+  color: #fff !important;
+}
+.sim-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.sim-invalid {
+  border-color: #b3261e !important;
+}
+.sim-selected {
+  background: var(--arq-color-surface3) !important;
+  border-color: var(--arq-color-ink) !important;
+}
