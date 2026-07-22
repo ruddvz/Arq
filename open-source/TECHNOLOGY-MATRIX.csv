@@ -32,3 +32,4 @@ libdxfrw,DXF and DWG,GPL-2.0,reference,Avoid proprietary core
 pdf-lib,PDF,MIT,adopt with tests,Vector output
 Keycloak,IAM,Apache-2.0,later enterprise,Operationally heavy
 OpenTelemetry JS,Observability,Apache-2.0,adopt carefully,No raw project content
+Playwright,Browser automation for renderer benchmarks,Apache-2.0,adopt (dev-only),Headless Chromium harness for protected-benchmark renderer spikes (ARQ-115/116)

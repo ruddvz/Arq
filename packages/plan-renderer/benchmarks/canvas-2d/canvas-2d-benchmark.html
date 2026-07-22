@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ARQ-115 Canvas 2D benchmark</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #eee; }
+  canvas { display: block; background: #fff; }
+</style>
+</head>
+<body>
+<canvas id="stage" width="1280" height="800"></canvas>
+<script src="scene.js"></script>
+<script>
+  /**
+   * Runs a fixed-duration pan simulation against the benchmark scene
+   * (scene.js) using plain Canvas 2D drawing calls, then exposes the
+   * measured frame-timing result on window.__ARQ_BENCHMARK_RESULT__ for
+   * run-canvas-2d-benchmark.mjs (Playwright) to read back.
+   *
+   * "Pan" here means redrawing the entire scene every frame with a
+   * shifting viewport offset - full-scene redraw is the worst case a
+   * Canvas 2D renderer faces (no incremental/dirty-rect update), and is
+   * exactly the section 120 "pan and zoom 60 fps target" scenario.
+   */
+  const canvas = document.getElementById('stage');
+  const ctx = canvas.getContext('2d');
+  const scene = window.ArqBenchmarkScene.buildScene();
+  const counts = window.ArqBenchmarkScene.countsOf(scene);
+
+  const scale = Math.min(
+    canvas.width / scene.worldWidth,
+    canvas.height / scene.worldHeight,
+  ) * 0.9;
+
+  function render(offsetX, offsetY) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(offsetX, offsetY);
+    ctx.scale(scale, scale);
+
+    ctx.fillStyle = 'rgba(190, 215, 250, 0.5)';
+    for (const room of scene.rooms) {
+      ctx.beginPath();
+      room.polygon.forEach((p, i) => (i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    ctx.fillStyle = '#3a3a3a';
+    for (const wall of scene.walls) {
+      ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
+    }
+
+    ctx.fillStyle = '#ffffff';
+    for (const opening of scene.openings) {
+      ctx.fillRect(opening.x, opening.y, opening.w, opening.h);
+    }
+
+    ctx.fillStyle = '#111111';
+    ctx.font = `${14 / scale}px sans-serif`;
+    for (const room of scene.rooms) {
+      ctx.fillText(room.label, room.labelX, room.labelY);
+    }
+
+    ctx.fillStyle = '#555555';
+    ctx.font = `${10 / scale}px sans-serif`;
+    for (const annotation of scene.annotations) {
+      ctx.fillText(annotation.text, annotation.x, annotation.y);
+    }
+
+    ctx.restore();
+  }
+
+  const TARGET_FRAMES = 180; // ~3 seconds at a healthy 60fps
+  const frameTimes = [];
+  let lastTime = null;
+  let panX = 40;
+
+  function frame(now) {
+    if (lastTime !== null) {
+      frameTimes.push(now - lastTime);
+    }
+    lastTime = now;
+    panX += 4;
+    render(panX, 40);
+
+    if (frameTimes.length < TARGET_FRAMES) {
+      requestAnimationFrame(frame);
+    } else {
+      const total = frameTimes.reduce((sum, t) => sum + t, 0);
+      const avg = total / frameTimes.length;
+      const sorted = [...frameTimes].sort((a, b) => a - b);
+      const p95 = sorted[Math.floor(sorted.length * 0.95)];
+      const max = sorted[sorted.length - 1];
+      window.__ARQ_BENCHMARK_RESULT__ = {
+        counts,
+        frameCount: frameTimes.length,
+        avgFrameMs: avg,
+        avgFps: 1000 / avg,
+        p95FrameMs: p95,
+        maxFrameMs: max,
+      };
+    }
+  }
+
+  requestAnimationFrame(frame);
+</script>
+</body>
+</html>

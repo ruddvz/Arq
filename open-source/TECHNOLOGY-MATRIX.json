@@ -229,5 +229,12 @@
     "licence": "Apache-2.0",
     "treatment": "adopt carefully",
     "notes": "No raw project content"
+  },
+  {
+    "project": "Playwright",
+    "role": "Browser automation for renderer benchmarks",
+    "licence": "Apache-2.0",
+    "treatment": "adopt (dev-only)",
+    "notes": "Headless Chromium harness for protected-benchmark renderer spikes (ARQ-115/116)"
   }
 ]
