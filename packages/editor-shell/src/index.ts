@@ -15,3 +15,5 @@ export * from './extension-snap';
 export * from './snap-tie-break';
 export * from './nearest-snap';
 export * from './numeric-overlay';
+export * from './metric-numeric-input';
+export * from './imperial-numeric-input';
