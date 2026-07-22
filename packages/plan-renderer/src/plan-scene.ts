@@ -83,10 +83,28 @@ export interface PlanTextPrimitive<TId> {
   readonly styleToken: StyleToken;
 }
 
+/**
+ * A single selection handle (section 18: "white handles with black
+ * border") - added to the scene by selection-rendering.ts (ARQ-121),
+ * never produced by buildPlanScene itself. A distinct primitive kind,
+ * not a paint variant of line/polygon: a handle is a genuinely new
+ * point (one per selected primitive's vertex) that does not exist
+ * anywhere in the base scene, unlike a selection halo/dashed outline,
+ * which reuses an already-present primitive's own points and is purely
+ * a backend paint decision driven by styleToken.
+ */
+export interface PlanHandlePrimitive<TId> {
+  readonly kind: 'handle';
+  readonly elementId: TId;
+  readonly point: WorldPoint;
+  readonly styleToken: StyleToken;
+}
+
 export type PlanPrimitive<TId> =
   | PlanLinePrimitive<TId>
   | PlanPolygonPrimitive<TId>
-  | PlanTextPrimitive<TId>;
+  | PlanTextPrimitive<TId>
+  | PlanHandlePrimitive<TId>;
 
 export interface PlanScene<TId> {
   readonly primitives: readonly PlanPrimitive<TId>[];
