@@ -9,3 +9,5 @@ export * from './wall-instance';
 export * from './wall-split';
 export * from './offset-wall';
 export * from './opening';
+export * from './door-type';
+export * from './door-instance';

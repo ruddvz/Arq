@@ -16,6 +16,12 @@
  * operations.ts). Wiring contracts/ up as a real package - so this
  * duplication can be replaced with a single source of truth - is a
  * separate structural decision, not a side effect of this issue.
+ *
+ * DoorId/DoorTypeId (ARQ-104) are new additions with no contracts/
+ * model.ts counterpart - that file predates the door type/instance
+ * split (blueprint section 46) - so they follow the same brand
+ * convention (WallId/WallTypeId's split, ARQ-060) by extension rather
+ * than by mirroring an existing declaration.
  */
 
 export type Brand<T, N extends string> = T & { readonly __brand: N };
@@ -27,6 +33,8 @@ export type OpeningId = Brand<ElementId, 'OpeningId'>;
 export type RoomId = Brand<ElementId, 'RoomId'>;
 export type LevelId = Brand<string, 'LevelId'>;
 export type WallTypeId = Brand<string, 'WallTypeId'>;
+export type DoorId = Brand<ElementId, 'DoorId'>;
+export type DoorTypeId = Brand<string, 'DoorTypeId'>;
 
 export function projectId(value: string): ProjectId {
   return value as ProjectId;
@@ -48,4 +56,10 @@ export function levelId(value: string): LevelId {
 }
 export function wallTypeId(value: string): WallTypeId {
   return value as WallTypeId;
+}
+export function doorId(value: string): DoorId {
+  return value as DoorId;
+}
+export function doorTypeId(value: string): DoorTypeId {
+  return value as DoorTypeId;
 }

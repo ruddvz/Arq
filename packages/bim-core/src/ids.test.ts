@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  doorId,
+  doorTypeId,
   elementId,
   levelId,
   openingId,
@@ -20,6 +22,8 @@ describe('id constructors', () => {
     expect(roomId('r1')).toBe('r1');
     expect(levelId('l1')).toBe('l1');
     expect(wallTypeId('t1')).toBe('t1');
+    expect(doorId('d1')).toBe('d1');
+    expect(doorTypeId('dt1')).toBe('dt1');
   });
 });
 
