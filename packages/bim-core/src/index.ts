@@ -4,6 +4,7 @@ export * from './project';
 export * from './level';
 export * from './element';
 export * from './identity-property-group';
+export * from './geometry-property-group';
 export * from './property-state';
 export * from './wall-type';
 export * from './wall-instance';
