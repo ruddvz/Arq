@@ -46,6 +46,9 @@ importers:
 
   packages/editor-shell:
     dependencies:
+      '@arq/command-system':
+        specifier: workspace:*
+        version: link:../command-system
       '@arq/geometry-2d':
         specifier: workspace:*
         version: link:../geometry-2d

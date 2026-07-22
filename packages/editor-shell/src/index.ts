@@ -17,3 +17,4 @@ export * from './nearest-snap';
 export * from './numeric-overlay';
 export * from './metric-numeric-input';
 export * from './imperial-numeric-input';
+export * from './wall-draw-tool';

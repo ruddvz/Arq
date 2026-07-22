@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@arq/geometry-2d": "workspace:*"
+    "@arq/geometry-2d": "workspace:*",
+    "@arq/command-system": "workspace:*"
   }
 }
