@@ -5,3 +5,4 @@ export * from './create-element-operation';
 export * from './update-property-operation';
 export * from './door-flip-operation';
 export * from './opening-overlap-validation';
+export * from './warnings-property-group';
