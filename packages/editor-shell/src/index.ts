@@ -12,3 +12,4 @@ export * from './intersection-snap';
 export * from './perpendicular-snap';
 export * from './grid-snap';
 export * from './extension-snap';
+export * from './snap-tie-break';
