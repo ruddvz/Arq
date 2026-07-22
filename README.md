@@ -49,6 +49,7 @@ interruption, download an Arq project archive, and export a scaled vector PDF.
 - `docs/pages/`, `docs/components/`, `docs/flows/` - every currently specified page,
   interface component, and end-to-end flow
 - `docs/research/`, `docs/history/` - interview materials and superseded earlier drafts
+- `brand/` - final logo, favicon, app icon, and print assets, plus the brand guidelines PDFs
 - `design/` - design tokens (CSS/JSON/TS) and 40 draft technical SVG icons
 - `api/` - OpenAPI spec and event catalogue drafts
 - `database/` - PostgreSQL schema, ERD, data dictionary
