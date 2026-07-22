@@ -19,3 +19,4 @@ export * from './metric-numeric-input';
 export * from './imperial-numeric-input';
 export * from './wall-draw-tool';
 export * from './door-placement-tool';
+export * from './window-placement-tool';
