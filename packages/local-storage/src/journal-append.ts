@@ -11,21 +11,12 @@
  */
 
 import type { ArqLocalDatabase, LocalOperationJournalRecord } from './database';
+import { isQuotaExceededError } from './quota-error';
 
 export type AppendOperationResult =
   | { readonly status: 'appended'; readonly sequence: number }
   | { readonly status: 'quota-exceeded'; readonly error: unknown }
   | { readonly status: 'failed'; readonly error: unknown };
-
-function isQuotaExceededError(error: unknown): boolean {
-  if (error instanceof DOMException) {
-    return error.name === 'QuotaExceededError';
-  }
-  if (error && typeof error === 'object' && 'name' in error) {
-    return (error as { name?: unknown }).name === 'QuotaExceededError';
-  }
-  return false;
-}
 
 export async function appendOperationRecord(
   db: ArqLocalDatabase,
