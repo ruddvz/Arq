@@ -10,68 +10,59 @@ Create an account and accept current terms.
 
 ## Entry points
 
-- Direct navigation where appropriate
-- Contextual action from the previous workflow step
-- Command palette for signed-in application surfaces
-- Deep link with permission validation
+- Direct navigation to `/sign-in` or `/sign-up`
+- Call to action from a public page
+- Emailed link (email verification, password reset) carrying a single-use token
+- Redirect after an expired session on a signed-in route
 
 ## Required regions
 
-- Page or surface heading
-- Primary content
+- Page heading
+- Form with clearly labelled fields
 - Primary action
-- Supporting navigation
-- Loading and progress region
 - Error and validation region
-- Help or documentation path
+- Link to the alternate auth flow (sign-in <-> sign-up, forgot password)
 
 ## Required states
 
 - Default
-- Empty where meaningful
-- Loading
-- Invalid
-- Permission denied
-- Offline where meaningful
-- Partial failure
-- Completed
+- Submitting
+- Invalid input (client-side validation)
+- Rejected credentials or expired/invalid token
+- Rate-limited
+- Success and redirect
 
 ## Behaviour
 
-- Complete the page goal without hidden configuration.
-- Cancel without committing incomplete destructive work.
-- Preserve local project state when network access fails.
-- Explain disabled actions and unavailable capabilities.
-- Do not reveal private project existence through permission errors.
+- Forgot-password and sign-up never reveal whether a given email already has an
+  account (no enumeration - same response either way).
+- Token-based flows (verify email, reset password) state the token's expiry and
+  offer a clear path to request a new one when expired.
+- No dark patterns around account creation, consent, or cancellation.
+- Password fields support password manager autofill (correct `autocomplete` values).
 
 ## Responsive behaviour
 
-- Desktop uses the complete panel layout.
-- iPad landscape preserves the canvas or primary content.
-- Portrait collapses secondary panels to drawers or sheets.
-- Public pages remain usable at 320 CSS pixels.
+- Single-column, mobile-first layout.
+- Usable at 320 CSS pixels.
 - Browser zoom to 200 percent preserves the primary action.
 
 ## Keyboard and accessibility
 
-- Logical tab order and visible focus
-- One page heading and appropriate landmarks
-- Escape closes temporary layers only
-- Enter activates a valid focused action
-- Status is not communicated by colour alone
-- Errors are associated with fields and affected model objects
-- Canvas functionality has tree, inspector and command alternatives
+- Logical tab order and visible focus.
+- Every field has a programmatically associated label and error message.
+- Enter submits the focused form.
+- Status is not communicated by colour alone.
 
 ## Analytics
 
-Record page viewed, primary action result, stable failure code and coarse latency.
-Do not record project geometry, names, addresses or raw prompts by default.
+Record which auth step was reached and a stable success/failure code only. Never
+record email addresses, passwords, or tokens.
 
 ## Acceptance criteria
 
+- [ ] Enumeration protection is implemented on forgot-password and sign-up.
+- [ ] Token expiry and re-request path are defined for verify-email and reset-password.
+- [ ] Rate-limiting behaviour is defined.
 - [ ] All required states have designs.
-- [ ] Permission and offline behaviour are defined.
-- [ ] Keyboard and iPad behaviour are tested.
-- [ ] Empty, loading, invalid and failure states exist.
-- [ ] Copy follows product-copy rules.
-- [ ] No unsupported product claim appears.
+- [ ] Copy follows the product-copy principles.

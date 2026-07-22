@@ -10,68 +10,59 @@ Show recent and owned projects.
 
 ## Entry points
 
-- Direct navigation where appropriate
-- Contextual action from the previous workflow step
-- Command palette for signed-in application surfaces
-- Deep link with permission validation
+- Primary application navigation
+- Command palette
+- Direct link (including deep links shared by another member)
+- Redirect after sign-in or after leaving a project
 
 ## Required regions
 
-- Page or surface heading
-- Primary content
+- Page heading
+- Primary content (list, grid, or form)
 - Primary action
-- Supporting navigation
-- Loading and progress region
-- Error and validation region
-- Help or documentation path
+- Empty-state content
+- Workspace context (current workspace, switcher)
 
 ## Required states
 
-- Default
-- Empty where meaningful
+- Default (populated)
+- Empty (first use / nothing yet)
 - Loading
-- Invalid
-- Permission denied
-- Offline where meaningful
-- Partial failure
-- Completed
+- Permission denied (role-gated pages - see `security/RBAC-MATRIX.csv`)
+- Offline (cached list may be shown as stale rather than hidden)
+- Partial failure (some items fail to load without blocking the rest)
 
 ## Behaviour
 
-- Complete the page goal without hidden configuration.
-- Cancel without committing incomplete destructive work.
-- Preserve local project state when network access fails.
-- Explain disabled actions and unavailable capabilities.
-- Do not reveal private project existence through permission errors.
+- Every gated action matches `security/RBAC-MATRIX.csv` for the user's workspace role
+  (see `docs/product/DECISION-REGISTER.csv` D-011 for how that role applies across
+  projects).
+- Disabled actions explain why (role, plan entitlement, or offline), never fail silently.
+- Switching workspaces returns the user to an equivalent, valid location rather than
+  an error.
 
 ## Responsive behaviour
 
-- Desktop uses the complete panel layout.
-- iPad landscape preserves the canvas or primary content.
+- Desktop uses the complete layout.
+- iPad landscape preserves the primary list/grid with secondary panels visible.
 - Portrait collapses secondary panels to drawers or sheets.
-- Public pages remain usable at 320 CSS pixels.
 - Browser zoom to 200 percent preserves the primary action.
 
 ## Keyboard and accessibility
 
-- Logical tab order and visible focus
-- One page heading and appropriate landmarks
-- Escape closes temporary layers only
-- Enter activates a valid focused action
-- Status is not communicated by colour alone
-- Errors are associated with fields and affected model objects
-- Canvas functionality has tree, inspector and command alternatives
+- Logical tab order and visible focus.
+- Lists and grids are keyboard-navigable (arrow keys or standard tab order).
+- One page heading and appropriate landmarks.
+- Status is not communicated by colour alone.
 
 ## Analytics
 
-Record page viewed, primary action result, stable failure code and coarse latency.
-Do not record project geometry, names, addresses or raw prompts by default.
+Record page viewed and primary action result with a stable code and coarse latency.
+Do not record project geometry, names, addresses, or raw prompts.
 
 ## Acceptance criteria
 
-- [ ] All required states have designs.
-- [ ] Permission and offline behaviour are defined.
+- [ ] Gated actions match `security/RBAC-MATRIX.csv` exactly.
+- [ ] Empty, loading, permission-denied, and offline states have designs.
 - [ ] Keyboard and iPad behaviour are tested.
-- [ ] Empty, loading, invalid and failure states exist.
-- [ ] Copy follows product-copy rules.
-- [ ] No unsupported product claim appears.
+- [ ] Copy follows the product-copy principles.

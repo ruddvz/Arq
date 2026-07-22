@@ -10,68 +10,57 @@ Explain the residential and small-practice workflow.
 
 ## Entry points
 
-- Direct navigation where appropriate
-- Contextual action from the previous workflow step
-- Command palette for signed-in application surfaces
-- Deep link with permission validation
+- Direct navigation and bookmarks
+- Search engines
+- Marketing links, ads, and social shares
+- Cross-links from other public pages and from in-product upgrade or help prompts
+- Documentation and changelog references
 
 ## Required regions
 
-- Page or surface heading
+- Page heading
 - Primary content
-- Primary action
-- Supporting navigation
-- Loading and progress region
-- Error and validation region
-- Help or documentation path
+- Primary call to action (sign-up, contact, or next public page)
+- Global public navigation and footer
+- Cookie or consent notice where applicable
 
 ## Required states
 
-- Default
-- Empty where meaningful
-- Loading
-- Invalid
-- Permission denied
-- Offline where meaningful
-- Partial failure
-- Completed
+- Default (populated)
+- Loading (rare - content is mostly static, but images/embeds may lazy-load)
+- Not found (bad or removed route)
+- Reduced-motion variant
 
 ## Behaviour
 
-- Complete the page goal without hidden configuration.
-- Cancel without committing incomplete destructive work.
-- Preserve local project state when network access fails.
-- Explain disabled actions and unavailable capabilities.
-- Do not reveal private project existence through permission errors.
+- Every product claim matches `business/LAUNCH-CLAIMS-CHECKLIST.md` - no unsupported claim (full CAD, full BIM, full IFC, DWG, Revit replacement, survey-grade capture, code compliance, structural safety, zero data loss).
+- Route clearly to product, pricing, security, and sign-up without dead ends.
+- No dark patterns in call-to-action placement or copy.
+- Works without JavaScript for core content where reasonably possible.
 
 ## Responsive behaviour
 
-- Desktop uses the complete panel layout.
-- iPad landscape preserves the canvas or primary content.
-- Portrait collapses secondary panels to drawers or sheets.
-- Public pages remain usable at 320 CSS pixels.
-- Browser zoom to 200 percent preserves the primary action.
+- Usable at 320 CSS pixels.
+- Standard responsive web layout - this is a marketing page, not an app shell; no canvas or panel layout applies here.
+- Browser zoom to 200 percent preserves the primary call to action.
 
 ## Keyboard and accessibility
 
-- Logical tab order and visible focus
-- One page heading and appropriate landmarks
-- Escape closes temporary layers only
-- Enter activates a valid focused action
-- Status is not communicated by colour alone
-- Errors are associated with fields and affected model objects
-- Canvas functionality has tree, inspector and command alternatives
+- Logical tab order and visible focus.
+- One page heading (`h1`) and correct landmark regions.
+- Skip-to-content link.
+- Status is not communicated by colour alone.
+- Images have accessible alternative text; decorative images are marked as such.
 
 ## Analytics
 
-Record page viewed, primary action result, stable failure code and coarse latency.
-Do not record project geometry, names, addresses or raw prompts by default.
+Record page viewed and outbound call-to-action clicked, with standard web analytics
+only. No project content applies to public pages.
 
 ## Acceptance criteria
 
-- [ ] All required states have designs.
-- [ ] Permission and offline behaviour are defined.
-- [ ] Keyboard and iPad behaviour are tested.
-- [ ] Empty, loading, invalid and failure states exist.
-- [ ] Copy follows product-copy rules.
+- [ ] Copy follows `docs/product/PRODUCT-COPY-PRINCIPLES.md` and the launch claims checklist.
 - [ ] No unsupported product claim appears.
+- [ ] Works at 320 CSS pixels and at 200 percent browser zoom.
+- [ ] One `h1`, correct landmarks, and a skip-to-content link are present.
+- [ ] Not-found and loading states are designed.
