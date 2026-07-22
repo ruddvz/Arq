@@ -123,6 +123,10 @@ select:focus-visible {
   flex-direction: column;
   gap: 6px;
 }
+.tools button {
+  min-width: 44px;
+  min-height: 44px;
+}
 .tree button {
   display: block;
   width: 100%;

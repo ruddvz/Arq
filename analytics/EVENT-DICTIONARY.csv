@@ -3,8 +3,10 @@ project_created,Project created,"workspace_id, unit_system",no raw project conte
 first_wall_created,First wall committed,"project_tier, latency_ms",no raw project content
 room_created,Room committed,"status, latency_ms",no raw project content
 view_3d_opened,3D opened,"latency_ms, device_class",no raw project content
-sheet_export_completed,PDF result,"duration_ms, result_code",no raw project content
+export_completed,Export result across all formats,"format, duration_ms, result_code",no raw project content
+import_completed,Import result,"format, duration_ms, result_code",no raw project content
 operation_rejected,Validation rejected operation,"operation_type, error_code",no raw project content
 recovery_used,Recovery opened,"operation_count, result_code",no raw project content
 command_no_result,Command search no result,query_category_only,no raw project content
 ai_proposal_applied,Bounded AI applied,"operation_count, correction_count",no raw project content
+client_crash,Unhandled client error,"context, recoverable, error_code",no raw project content
