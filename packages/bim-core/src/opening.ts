@@ -39,12 +39,18 @@
  * passed into a geometry-2d plain-number parameter (e.g. wall-outline.ts's
  * thickness) - not a claim that D-014 is resolved.
  *
- * Overlap checking ("overlaps are blocking by default", section 48) and
- * the actual editor command enforcing these rules against a live
- * project (ARQ-109) are both out of scope: this module only defines the
- * record and the two structural per-opening/per-wall checks that need
- * nothing but a single Opening plus its host Wall and WallType to
- * evaluate.
+ * Overlap checking (ARQ-109): openingsOverlap/findOverlappingOpenings
+ * implement section 48's "overlaps are blocking by default" - two
+ * openings only overlap when they share a hostWallId AND their
+ * [offset, offset + width] spans actually intersect; two openings that
+ * merely touch end-to-end (section 42's "two openings touching"
+ * adversarial case) are deliberately not flagged, matching how
+ * openingFitsWallLength already treats landing exactly on a boundary as
+ * valid rather than a failure. Turning an overlap into a user-facing
+ * ValidationMessage and wiring that into a real create/move operation
+ * is out of scope here (that needs @arq/operations's ValidationMessage,
+ * and bim-core does not depend on operations - the reverse is true) -
+ * this module only defines the pure predicate.
  */
 
 import { vectorBetween, vectorLength } from '@arq/geometry-2d';
@@ -128,4 +134,42 @@ export function openingFitsWallHeight(
   const wallHeightMm = toMillimetres(effectiveWallHeight(wall, wallType));
   const openingTopMm = toMillimetres(opening.sillHeight) + toMillimetres(opening.height);
   return openingTopMm <= wallHeightMm + toleranceMm;
+}
+
+/**
+ * Section 48: "overlaps are blocking by default" - true when `a` and `b`
+ * host on the same wall and their spans along its centerline actually
+ * intersect. Two openings on different walls never overlap. Two
+ * openings that only touch end-to-end (offset + width of one equals
+ * the other's offset, within tolerance) are not overlapping - this is
+ * section 42's "two openings touching" adversarial case, which must be
+ * accepted, not blocked.
+ */
+export function openingsOverlap(a: Opening, b: Opening, toleranceMm = 1e-6): boolean {
+  if (a.hostWallId !== b.hostWallId) {
+    return false;
+  }
+  const aStartMm = toMillimetres(a.offsetFromWallStart);
+  const aEndMm = aStartMm + toMillimetres(a.width);
+  const bStartMm = toMillimetres(b.offsetFromWallStart);
+  const bEndMm = bStartMm + toMillimetres(b.width);
+  return aStartMm < bEndMm - toleranceMm && bStartMm < aEndMm - toleranceMm;
+}
+
+/** Every pair (by reference, not index) among `openings` for which openingsOverlap is true - only ever compares openings that share a hostWallId. */
+export function findOverlappingOpenings(
+  openings: readonly Opening[],
+  toleranceMm = 1e-6,
+): readonly (readonly [Opening, Opening])[] {
+  const pairs: (readonly [Opening, Opening])[] = [];
+  for (let i = 0; i < openings.length; i += 1) {
+    for (let j = i + 1; j < openings.length; j += 1) {
+      const a = openings[i]!;
+      const b = openings[j]!;
+      if (openingsOverlap(a, b, toleranceMm)) {
+        pairs.push([a, b]);
+      }
+    }
+  }
+  return pairs;
 }

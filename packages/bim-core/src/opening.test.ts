@@ -6,8 +6,10 @@ import { createWall } from './wall-instance';
 import { createWallType } from './wall-type';
 import {
   createOpening,
+  findOverlappingOpenings,
   openingFitsWallHeight,
   openingFitsWallLength,
+  openingsOverlap,
   type CreateOpeningInput,
 } from './opening';
 
@@ -157,5 +159,93 @@ describe('openingFitsWallHeight', () => {
     const opening = createOpening({ ...baseInput, height: length(2900, 'mm') });
     expect(openingFitsWallHeight(opening, tallWall, wallType)).toBe(true);
     expect(openingFitsWallHeight(createOpening(baseInput), wall, wallType)).toBe(true);
+  });
+});
+
+describe('openingsOverlap', () => {
+  it('is false for openings on different host walls', () => {
+    const a = createOpening(baseInput);
+    const b = createOpening({
+      ...baseInput,
+      id: openingId('o-2'),
+      hostWallId: wallId('w-2'),
+      offsetFromWallStart: length(500, 'mm'),
+    });
+    expect(openingsOverlap(a, b)).toBe(false);
+  });
+
+  it('is true for two openings on the same wall whose spans genuinely intersect', () => {
+    const a = createOpening({ ...baseInput, offsetFromWallStart: length(500, 'mm'), width: length(900, 'mm') });
+    const b = createOpening({
+      ...baseInput,
+      id: openingId('o-2'),
+      offsetFromWallStart: length(1000, 'mm'),
+      width: length(900, 'mm'),
+    });
+    expect(openingsOverlap(a, b)).toBe(true);
+  });
+
+  it('is false for two openings that only touch end-to-end (adversarial: two openings touching, blueprint section 42)', () => {
+    const a = createOpening({ ...baseInput, offsetFromWallStart: length(500, 'mm'), width: length(900, 'mm') });
+    const b = createOpening({
+      ...baseInput,
+      id: openingId('o-2'),
+      offsetFromWallStart: length(1400, 'mm'),
+      width: length(900, 'mm'),
+    });
+    expect(openingsOverlap(a, b)).toBe(false);
+  });
+
+  it('is true for two openings with the exact same span (duplicated opening)', () => {
+    const a = createOpening(baseInput);
+    const b = createOpening({ ...baseInput, id: openingId('o-2') });
+    expect(openingsOverlap(a, b)).toBe(true);
+  });
+
+  it('is symmetric regardless of argument order', () => {
+    const a = createOpening({ ...baseInput, offsetFromWallStart: length(500, 'mm'), width: length(900, 'mm') });
+    const b = createOpening({
+      ...baseInput,
+      id: openingId('o-2'),
+      offsetFromWallStart: length(1000, 'mm'),
+      width: length(900, 'mm'),
+    });
+    expect(openingsOverlap(a, b)).toBe(openingsOverlap(b, a));
+  });
+});
+
+describe('findOverlappingOpenings', () => {
+  it('finds only the pairs that actually overlap, ignoring touching and different-wall pairs', () => {
+    const overlapping1 = createOpening({
+      ...baseInput,
+      offsetFromWallStart: length(500, 'mm'),
+      width: length(900, 'mm'),
+    });
+    const overlapping2 = createOpening({
+      ...baseInput,
+      id: openingId('o-2'),
+      offsetFromWallStart: length(1000, 'mm'),
+      width: length(900, 'mm'),
+    });
+    const touching = createOpening({
+      ...baseInput,
+      id: openingId('o-3'),
+      offsetFromWallStart: length(1900, 'mm'),
+      width: length(900, 'mm'),
+    });
+    const otherWall = createOpening({
+      ...baseInput,
+      id: openingId('o-4'),
+      hostWallId: wallId('w-2'),
+      offsetFromWallStart: length(500, 'mm'),
+    });
+    const pairs = findOverlappingOpenings([overlapping1, overlapping2, touching, otherWall]);
+    expect(pairs).toHaveLength(1);
+    expect(pairs[0]).toEqual([overlapping1, overlapping2]);
+  });
+
+  it('returns an empty array when nothing overlaps', () => {
+    const a = createOpening(baseInput);
+    expect(findOverlappingOpenings([a])).toEqual([]);
   });
 });
