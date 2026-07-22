@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>ARQ-117 CanvasKit benchmark</title>
+</head>
+<body>
+<script src="/scene/scene.js"></script>
+<script src="/ck/canvaskit.js"></script>
+<script>
+  /**
+   * Runs the same protected-benchmark scene and pan workload as
+   * canvas-2d-benchmark.html (ARQ-115) and pixijs-webgl-benchmark.html
+   * (ARQ-116), through CanvasKit's Skia API. Uses MakeSWCanvasSurface -
+   * Skia's own CPU software rasteriser - rather than a WebGL-backed
+   * surface: this container has no real GPU (established in ARQ-116's
+   * spike), so a WebGL-backed CanvasKit surface would only remeasure
+   * the same "no real GPU here" limitation. The software surface is the
+   * fair, GPU-agnostic way to ask "how does Skia's own rasteriser
+   * compare to the browser's native Canvas 2D rasteriser," which is a
+   * question this environment CAN actually answer.
+   *
+   * Like canvas-2d-benchmark.html, this redraws the full scene every
+   * frame (immediate-mode, matching how a Skia canvas is normally
+   * used) rather than PixiJS's retained-display-list approach.
+   *
+   * window.runArqCanvasKitBenchmark(), called after CanvasKitInit and
+   * scene.js are both loaded, returns a Promise resolving to the same
+   * result shape the other two benchmarks expose, for direct
+   * comparison. `fontUrl` is passed in by
+   * run-canvaskit-benchmark.mjs since CanvasKit needs real font bytes
+   * to draw any text at all (unlike Canvas 2D/PixiJS, which use system
+   * fonts by default).
+   */
+  window.runArqCanvasKitBenchmark = async function runArqCanvasKitBenchmark(fontUrl) {
+    const CanvasKit = await CanvasKitInit({
+      locateFile: (file) => '/ck/' + file,
+    });
+
+    const fontBytes = await (await fetch(fontUrl)).arrayBuffer();
+    const typeface = CanvasKit.Typeface.MakeTypefaceFromData(fontBytes);
+    const roomFont = new CanvasKit.Font(typeface, 14);
+    const annotationFont = new CanvasKit.Font(typeface, 10);
+
+    const scene = window.ArqBenchmarkScene.buildScene();
+    const counts = window.ArqBenchmarkScene.countsOf(scene);
+
+    const canvasEl = document.createElement('canvas');
+    canvasEl.width = 1280;
+    canvasEl.height = 800;
+    document.body.appendChild(canvasEl);
+
+    const surface = CanvasKit.MakeSWCanvasSurface(canvasEl);
+    if (!surface) {
+      throw new Error('CanvasKit.MakeSWCanvasSurface returned null');
+    }
+    const canvas = surface.getCanvas();
+
+    const scale =
+      Math.min(1280 / scene.worldWidth, 800 / scene.worldHeight) * 0.9;
+
+    const roomPaint = new CanvasKit.Paint();
+    roomPaint.setColor(CanvasKit.Color(190, 215, 250, 0.5));
+    const wallPaint = new CanvasKit.Paint();
+    wallPaint.setColor(CanvasKit.Color(58, 58, 58, 1));
+    const openingPaint = new CanvasKit.Paint();
+    openingPaint.setColor(CanvasKit.Color(255, 255, 255, 1));
+    const roomTextPaint = new CanvasKit.Paint();
+    roomTextPaint.setColor(CanvasKit.Color(17, 17, 17, 1));
+    const annotationTextPaint = new CanvasKit.Paint();
+    annotationTextPaint.setColor(CanvasKit.Color(85, 85, 85, 1));
+
+    function render(offsetX, offsetY) {
+      canvas.clear(CanvasKit.WHITE);
+      canvas.save();
+      canvas.translate(offsetX, offsetY);
+      canvas.scale(scale, scale);
+
+      for (const room of scene.rooms) {
+        const cmds = [];
+        room.polygon.forEach((p, i) => {
+          cmds.push(i === 0 ? CanvasKit.MOVE_VERB : CanvasKit.LINE_VERB, p.x, p.y);
+        });
+        cmds.push(CanvasKit.CLOSE_VERB);
+        const path = CanvasKit.Path.MakeFromCmds(cmds);
+        canvas.drawPath(path, roomPaint);
+        path.delete();
+      }
+
+      for (const wall of scene.walls) {
+        canvas.drawRect(CanvasKit.XYWHRect(wall.x, wall.y, wall.w, wall.h), wallPaint);
+      }
+      for (const opening of scene.openings) {
+        canvas.drawRect(
+          CanvasKit.XYWHRect(opening.x, opening.y, opening.w, opening.h),
+          openingPaint,
+        );
+      }
+      for (const room of scene.rooms) {
+        canvas.drawText(room.label, room.labelX, room.labelY, roomTextPaint, roomFont);
+      }
+      for (const annotation of scene.annotations) {
+        canvas.drawText(
+          annotation.text,
+          annotation.x,
+          annotation.y,
+          annotationTextPaint,
+          annotationFont,
+        );
+      }
+
+      canvas.restore();
+      surface.flush();
+    }
+
+    const WARMUP_FRAMES = 30;
+    const TARGET_FRAMES = 180;
+    const frameTimes = [];
+    let framesRendered = 0;
+    let lastTime = null;
+    let panX = 40;
+
+    return new Promise((resolve) => {
+      function frame(now) {
+        if (lastTime !== null && framesRendered >= WARMUP_FRAMES) {
+          frameTimes.push(now - lastTime);
+        }
+        lastTime = now;
+        framesRendered += 1;
+        panX += 4;
+        render(panX, 40);
+
+        if (frameTimes.length < TARGET_FRAMES) {
+          requestAnimationFrame(frame);
+        } else {
+          const total = frameTimes.reduce((sum, t) => sum + t, 0);
+          const avg = total / frameTimes.length;
+          const sorted = [...frameTimes].sort((a, b) => a - b);
+          const p95 = sorted[Math.floor(sorted.length * 0.95)];
+          const max = sorted[sorted.length - 1];
+          const result = {
+            counts,
+            frameCount: frameTimes.length,
+            avgFrameMs: avg,
+            avgFps: 1000 / avg,
+            p95FrameMs: p95,
+            maxFrameMs: max,
+          };
+          window.__ARQ_BENCHMARK_RESULT__ = result;
+          resolve(result);
+        }
+      }
+      requestAnimationFrame(frame);
+    });
+  };
+</script>
+</body>
+</html>

@@ -16,9 +16,9 @@
   {
     "project": "CanvasKit",
     "role": "2D WASM renderer",
-    "licence": "Skia terms",
+    "licence": "BSD-3-Clause",
     "treatment": "spike",
-    "notes": "Heavier integration"
+    "notes": "Heavier integration; benchmarked ARQ-117 (canvaskit-wasm 0.41.1) - SW rasteriser ~40fps vs Canvas 2D ~60fps in CI/dev container, needs a real-GPU device run before ADR-118"
   },
   {
     "project": "React Aria Components",

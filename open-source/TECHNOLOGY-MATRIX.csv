@@ -1,7 +1,7 @@
 project,role,licence,treatment,notes
 Three.js,3D renderer,MIT,adopt,"WebGL first, WebGPU optional"
 PixiJS,2D GPU renderer,MIT,spike,"Test technical line quality; benchmarked ARQ-116 - software WebGL only in CI/dev container, needs a real-GPU device run before ADR-118"
-CanvasKit,2D WASM renderer,Skia terms,spike,Heavier integration
+CanvasKit,2D WASM renderer,BSD-3-Clause,spike,"Heavier integration; benchmarked ARQ-117 (canvaskit-wasm 0.41.1) - SW rasteriser ~40fps vs Canvas 2D ~60fps in CI/dev container, needs a real-GPU device run before ADR-118"
 React Aria Components,Accessible UI,Apache-2.0,spike to adopt,Do not mix full primitive systems
 Radix Primitives,Accessible UI alternative,MIT,alternative,Choose one primary system
 Floating UI,Overlay positioning,MIT,adopt,Menus and popovers
