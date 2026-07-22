@@ -3,7 +3,7 @@ D-001,Web-first editor,proposed,ADR-001
 D-002,Plan-first semantic model,proposed,ADR-002
 D-003,Modular monolith,proposed,ADR-003
 D-004,Light appearance first,proposed,Blueprint
-D-005,"WebGL first, WebGPU optional",proposed,ADR-008
+D-005,"Canvas 2D as the v1 2D renderer backend, behind a renderer abstraction; PixiJS WebGL kept as the documented upgrade path, not the initial choice (supersedes the earlier 'WebGL first, WebGPU optional' framing - ARQ-115/116/117 spikes showed Canvas 2D alone meets the protected benchmark's pan/zoom target in the available test environment, while PixiJS/WebGL could only be measured through a software GPU emulation there, which is not representative of real hardware) - proposed pending a real-device (section 121 supported device matrix) validation run before Accepted",proposed,"ADR-008; docs/research/RENDERER-BENCHMARK-CANVAS-2D.md; RENDERER-BENCHMARK-PIXIJS-WEBGL.md; RENDERER-BENCHMARK-CANVASKIT.md"
 D-006,Purpose-built planar geometry first,proposed,ADR-007
 D-007,Dexie and IndexedDB first,proposed,ADR-006
 D-008,Review collaboration before co-authoring,proposed,ADR-013
