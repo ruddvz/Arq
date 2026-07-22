@@ -90,6 +90,9 @@ importers:
 
   packages/model-renderer:
     dependencies:
+      '@arq/plan-renderer':
+        specifier: workspace:*
+        version: link:../plan-renderer
       three:
         specifier: ^0.185.1
         version: 0.185.1
