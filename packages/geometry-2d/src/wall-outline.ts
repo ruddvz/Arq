@@ -26,20 +26,18 @@
  * Tolerance behaviour is explicit: returns null for a zero-length (or
  * near-zero-length, within `tolerance`) centerline or a non-positive
  * thickness - neither has a well-defined rectangular outline.
+ *
+ * The per-face offset math itself now lives in wall-face-line.ts, shared
+ * with the wall-join primitives (butt-join.ts/mitre-join.ts, ARQ-095/096)
+ * which need the same two face lines but unbounded, to intersect against
+ * another wall's line rather than closed into a rectangle.
  */
 
-import {
-  normalizeVector,
-  scaleVector,
-  translatePoint,
-  vector2,
-  vectorBetween,
-  vectorLength,
-} from './vector';
+import { faceLineCorners, type WallAlignment } from './wall-face-line';
 import type { WorldPoint } from './coordinate-system';
 import type { Segment } from './segment';
 
-export type WallAlignment = 'centre' | 'interior' | 'exterior';
+export type { WallAlignment };
 
 export function wallOutline(
   centerline: Segment,
@@ -47,47 +45,5 @@ export function wallOutline(
   alignment: WallAlignment,
   tolerance: number,
 ): readonly WorldPoint[] | null {
-  if (
-    !Number.isFinite(thickness) ||
-    thickness <= 0 ||
-    !Number.isFinite(tolerance) ||
-    tolerance < 0
-  ) {
-    return null;
-  }
-
-  const direction = vectorBetween(centerline.start, centerline.end);
-  if (vectorLength(direction) <= tolerance) {
-    return null;
-  }
-  const normalized = normalizeVector(direction);
-  if (!normalized) {
-    return null;
-  }
-
-  const left = vector2(-normalized.y, normalized.x);
-
-  let leftOffset: number;
-  let rightOffset: number;
-  switch (alignment) {
-    case 'centre':
-      leftOffset = thickness / 2;
-      rightOffset = thickness / 2;
-      break;
-    case 'interior':
-      leftOffset = thickness;
-      rightOffset = 0;
-      break;
-    case 'exterior':
-      leftOffset = 0;
-      rightOffset = thickness;
-      break;
-  }
-
-  const leftStart = translatePoint(centerline.start, scaleVector(left, leftOffset));
-  const leftEnd = translatePoint(centerline.end, scaleVector(left, leftOffset));
-  const rightStart = translatePoint(centerline.start, scaleVector(left, -rightOffset));
-  const rightEnd = translatePoint(centerline.end, scaleVector(left, -rightOffset));
-
-  return [leftStart, leftEnd, rightEnd, rightStart];
+  return faceLineCorners(centerline, thickness, alignment, tolerance);
 }
