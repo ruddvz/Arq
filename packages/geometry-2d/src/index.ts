@@ -13,3 +13,4 @@ export * from './butt-join';
 export * from './mitre-join';
 export * from './t-join';
 export * from './cross-join';
+export * from './wall-trim-extend';

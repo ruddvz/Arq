@@ -6,3 +6,4 @@ export * from './element';
 export * from './property-state';
 export * from './wall-type';
 export * from './wall-instance';
+export * from './wall-split';
