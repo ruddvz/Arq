@@ -14,3 +14,4 @@ export * from './door-instance';
 export * from './window-type';
 export * from './window-instance';
 export * from './room';
+export * from './room-area';
