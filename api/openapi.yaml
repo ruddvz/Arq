@@ -149,13 +149,47 @@ paths:
   /projects/{projectId}/imports:
     parameters:
       - { $ref: '#/components/parameters/ProjectId' }
+    get:
+      tags: [Imports]
+      operationId: listImports
+      responses:
+        '200':
+          description: Import records
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/ImportRecord' } }
     post:
       tags: [Imports]
       operationId: createImport
-      responses: { '202': { description: Import job created } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sourceFileId, format]
+              properties:
+                sourceFileId: { type: string, format: uuid }
+                format: { enum: [dxf, ifc, arq] }
+                formatVersion: { type: string }
+      responses:
+        '202':
+          description: Import job created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Job' }
   /projects/{projectId}/exports:
     parameters:
       - { $ref: '#/components/parameters/ProjectId' }
+    get:
+      tags: [Exports]
+      operationId: listExports
+      responses:
+        '200':
+          description: Export records
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/ExportRecord' } }
     post:
       tags: [Exports]
       operationId: createExport
@@ -170,7 +204,12 @@ paths:
                 format: { enum: [pdf, arq, dxf, ifc, glb] }
                 revision: { type: integer, minimum: 0 }
                 scope: { type: object }
-      responses: { '202': { description: Export job created } }
+      responses:
+        '202':
+          description: Export job created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Job' }
   /projects/{projectId}/comments:
     parameters:
       - { $ref: '#/components/parameters/ProjectId' }
@@ -182,6 +221,23 @@ paths:
       tags: [Comments]
       operationId: createComment
       responses: { '201': { description: Created } }
+  /projects/{projectId}/comments/{commentId}:
+    parameters:
+      - { $ref: '#/components/parameters/ProjectId' }
+      - { name: commentId, in: path, required: true, schema: { type: string, format: uuid } }
+    patch:
+      tags: [Comments]
+      operationId: updateComment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body: { type: string, minLength: 1, maxLength: 10000 }
+                resolved: { type: boolean }
+      responses: { '200': { description: Updated } }
   /projects/{projectId}/issues:
     parameters:
       - { $ref: '#/components/parameters/ProjectId' }
@@ -193,6 +249,23 @@ paths:
       tags: [Issues]
       operationId: createIssue
       responses: { '201': { description: Created } }
+  /projects/{projectId}/issues/{issueId}:
+    parameters:
+      - { $ref: '#/components/parameters/ProjectId' }
+      - { name: issueId, in: path, required: true, schema: { type: string, format: uuid } }
+    patch:
+      tags: [Issues]
+      operationId: updateIssue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { enum: [open, in_progress, blocked, resolved, closed] }
+                assigneeId: { type: string, format: uuid }
+      responses: { '200': { description: Updated } }
   /projects/{projectId}/share-links:
     parameters:
       - { $ref: '#/components/parameters/ProjectId' }
@@ -262,13 +335,15 @@ components:
         templateId: { type: string, format: uuid }
     ProjectMetadata:
       type: object
-      required: [id, workspaceId, name, revision, archived]
+      required: [id, workspaceId, name, revision, archived, units, schemaVersion]
       properties:
         id: { type: string, format: uuid }
         workspaceId: { type: string, format: uuid }
         name: { type: string }
         revision: { type: integer, minimum: 0 }
         archived: { type: boolean }
+        units: { enum: [metric, imperial] }
+        schemaVersion: { type: integer, minimum: 0 }
     CreateSnapshotRequest:
       type: object
       required: [revision, sha256, bytes]
@@ -313,3 +388,27 @@ components:
         progress: { type: number, minimum: 0, maximum: 1 }
         stage: { type: string }
         errorCode: { type: string }
+    ImportRecord:
+      type: object
+      required: [id, projectId, format, status, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        format: { enum: [dxf, ifc, arq] }
+        formatVersion: { type: string }
+        status: { enum: [queued, running, succeeded, failed, cancelled] }
+        report: { type: object }
+        createdAt: { type: string, format: date-time }
+        completedAt: { type: string, format: date-time }
+    ExportRecord:
+      type: object
+      required: [id, projectId, revision, format, status, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        revision: { type: integer, minimum: 0 }
+        format: { enum: [pdf, arq, dxf, ifc, glb] }
+        status: { enum: [queued, running, succeeded, failed, cancelled] }
+        report: { type: object }
+        createdAt: { type: string, format: date-time }
+        completedAt: { type: string, format: date-time }

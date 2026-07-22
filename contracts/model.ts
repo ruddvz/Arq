@@ -5,6 +5,7 @@ export type WallId = Brand<ElementId, 'WallId'>;
 export type OpeningId = Brand<ElementId, 'OpeningId'>;
 export type RoomId = Brand<ElementId, 'RoomId'>;
 export type LevelId = Brand<string, 'LevelId'>;
+export type WallTypeId = Brand<string, 'WallTypeId'>;
 export interface Point2 {
   readonly x: number;
   readonly y: number;
@@ -16,7 +17,7 @@ export interface Level {
   readonly storeyHeight?: number;
 }
 export interface WallType {
-  readonly id: string;
+  readonly id: WallTypeId;
   readonly name: string;
   readonly thickness: number;
   readonly defaultHeight: number;
@@ -24,7 +25,7 @@ export interface WallType {
 }
 export interface Wall {
   readonly id: WallId;
-  readonly typeId: string;
+  readonly typeId: WallTypeId;
   readonly levelId: LevelId;
   readonly start: Point2;
   readonly end: Point2;

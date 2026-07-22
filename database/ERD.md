@@ -13,4 +13,7 @@ erDiagram
  PROJECT ||--o{ PROJECT_ISSUE : has
  PROJECT ||--o{ SHARE_LINK : has
  WORKSPACE ||--o{ FILE_OBJECT : owns
+ FILE_OBJECT ||--o{ PROJECT_SNAPSHOT : backs
+ FILE_OBJECT ||--o{ IMPORT_RECORD : "source for"
+ FILE_OBJECT ||--o{ EXPORT_RECORD : "output of"
 ```
