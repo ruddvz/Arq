@@ -1,8 +1,8 @@
 # Incoming v2.0/v4.0 proposal material - not yet adopted
 
 This directory holds planning material the user uploaded to a working
-session (2026-07-22), stored verbatim for reference. **None of it has
-been adopted.** The repository's actual current source of truth is
+session (2026-07-22), stored verbatim for reference. **Most of it has
+not been adopted.** The repository's actual current source of truth is
 still `docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md`
 and the ADRs under `docs/adr/`, unchanged.
 
@@ -14,11 +14,44 @@ and the ADRs under `docs/adr/`, unchanged.
   with decisions already implemented and shipped here.
 - `ARQ-UI-UX-CRITIQUE-v4.0.md` - a UI/UX critique of a marketing/app
   design system that goes well beyond this repository's current
-  backlog scope (ARQ-001 through ARQ-191).
-- `page-renderings-2.0/` - three of six referenced design-rendering
-  boards (marketing site, comments/issues/versions, sync-conflict UI,
-  diagnostics dashboard, command palette, onboarding, AI-proposal
-  apply flow).
+  backlog scope.
+- `page-renderings-2.0/` - the complete set of six referenced design-
+  rendering boards (marketing site and docs; account/billing, plan/3D/
+  sheet/inspect/document/present editor modes; auth and workspace
+  flows).
+
+## What was reviewed from the "v4.0 CORE" master pack and its outcome
+
+A later upload (`ARQ-EXECUTION-READY-MASTER-PACK-v4.0-CORE.zip`) was
+extracted and reviewed in full. It contains two very different kinds
+of material:
+
+1. **`implementation-patches/live-github/`** - concrete, targeted
+   patches explicitly prepared for this exact repository and branch
+   (`ruddvz/Arq`, `claude/arq-cad-platform-research-ba8rav`), by a
+   separate session whose GitHub write access returned HTTP 403. Its
+   one patch, `centre-snap/`, was reviewed, adapted (reformatted,
+   reconciled against this repo's actual state) and applied: it
+   completed ARQ-191's "Centre snap" half (`nearest-snap.ts` already
+   covered "Nearest") and split the new candidate contract into
+   ARQ-192, both closed on GitHub with evidence.
+2. **Everything else** - a much larger, self-contained planning/
+   reference archive: an extended static backlog (239 items, mostly
+   unfilled templates), a parallel Python reference implementation
+   (`reference-implementation/arqfs`), a standalone HTML/JS/CSS
+   prototype, a separate `monorepo-starter` scaffold, and business/
+   legal/operations documents. None of this targets this repository's
+   actual file layout the way the live-github patch does, and adopting
+   it wholesale would mean discarding or contradicting 190+ already-
+   shipped, tested issues in favour of an unreviewed parallel
+   implementation. It has not been merged. `remaining/REMAINING-WORK.md`
+   and `remaining/DECISIONS-REQUIRING-EVIDENCE.csv` (inside the pack,
+   not copied here) list what the pack's own authors consider still
+   undecided.
+3. **`ARQLogoEssentialsFINAL.zip`** - already fully present in this
+   repository's `brand/` directory (a concurrent PR merged it earlier);
+   the zip's contents were diffed file-for-file against `brand/` and
+   nothing was missing or different, so nothing further was done.
 
 ## Known, unresolved conflicts with what is already shipped
 
