@@ -4,6 +4,7 @@ export * from './arqfs-schema';
 export * from './arqfs-open';
 export * from './arqfs-archive-store';
 export * from './arqfs-clean-export';
+export * from './arqfs-migration';
 export * from './arqfs-working-copy';
 export * from './arqfs-resource-chunks';
 export * from './arqfs-worker-protocol';

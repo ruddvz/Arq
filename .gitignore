@@ -24,6 +24,11 @@ coverage/
 .turbo/
 .vite/
 
+# Rust (ARQ-203) - target/ is Cargo's build cache; pkg/ is wasm-bindgen's
+# regenerable output (scripts/build-arq-core-wasm.mjs rebuilds it from source)
+rust/target/
+**/pkg/
+
 # Environment
 .env
 .env.*

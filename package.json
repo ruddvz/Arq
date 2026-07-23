@@ -23,7 +23,13 @@
     "benchmark:pencil-input": "node scripts/run-pencil-pointer-capability-check.mjs",
     "benchmark:hover-sequence": "node scripts/run-hover-sequence-capability-check.mjs",
     "benchmark:arqfs-opfs": "node scripts/run-arqfs-opfs-capability-check.mjs",
-    "benchmark:arqfs-writer-lock": "node scripts/run-arqfs-writer-lock-capability-check.mjs"
+    "benchmark:arqfs-writer-lock": "node scripts/run-arqfs-writer-lock-capability-check.mjs",
+    "rust:test": "cargo test --manifest-path rust/Cargo.toml",
+    "rust:fmt-check": "cargo fmt --manifest-path rust/Cargo.toml --check",
+    "rust:clippy": "cargo clippy --manifest-path rust/Cargo.toml --all-targets",
+    "rust:build-wasm": "node scripts/build-arq-core-wasm.mjs",
+    "rust:verify-wasm-parity": "node scripts/verify-arq-core-wasm-parity.mjs",
+    "benchmark:arq-core-worker": "node scripts/run-arq-core-worker-capability-check.mjs"
   },
   "devDependencies": {
     "canvaskit-wasm": "^0.41.1",

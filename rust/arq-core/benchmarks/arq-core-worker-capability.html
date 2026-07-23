@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>arq-core WASM Worker capability check (ARQ-204)</title>
+  </head>
+  <body>
+    <script type="module">
+      const worker = new Worker('./arq-core-worker-capability-worker.js', { type: 'module' });
+      worker.onmessage = (event) => {
+        window.__ARQ_CORE_WORKER_RESULT__ = event.data;
+      };
+      worker.onerror = (event) => {
+        window.__ARQ_CORE_WORKER_RESULT__ = { ok: false, error: event.message || 'worker error' };
+      };
+      worker.postMessage({ type: 'run' });
+    </script>
+  </body>
+</html>

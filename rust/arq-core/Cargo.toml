@@ -1,0 +1,15 @@
+[package]
+name = "arq-core"
+version = "0.1.0"
+edition = "2021"
+description = "Shared deterministic core (ADR-0020): canonical numeric normalisation, deterministic record ordering, and semantic hashing. Does not replace TypeScript UI or renderer code."
+license = "MIT OR Apache-2.0"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+sha2 = "0.10"
+wasm-bindgen = "0.2"
+
+[dev-dependencies]
