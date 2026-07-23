@@ -7,8 +7,20 @@ section 85 ("Presence") - participant initials, active view, selection
 where permitted, cursor in same view, and idle state - over the real
 `y-protocols` Awareness protocol (`open-source/TECHNOLOGY-MATRIX.csv`/
 `.json` already recorded Yjs with treatment "spike" and note "Presence and
-comments"; this is exactly that spike). Comments and operation sync (the
-CRDT document-sync half of that note) are separate, later work.
+comments"; this is exactly that spike). Operation sync (real geometry
+edits) is separate, later work.
+
+`comment.ts` + `comments-store.ts` (ARQ-163) implement comments - a
+different part of Yjs than presence: comments are persistent structured
+metadata (section 83: "Do not store the entire B-rep or building model as
+a naive Yjs document" - a comment thread is exactly the kind of metadata
+that document _is_ meant for), backed by a real `Y.Map` CRDT document
+rather than ephemeral Awareness state. Threading (`parentCommentId`),
+resolve/reopen, and a `targetElementId` (matching
+`docs/commands/specs/CMD-095-add-comment.md`'s "target and body" inputs)
+are all supported; the full command lifecycle (permission checks, undo,
+model-dependency invalidation) that CMD-095 itself describes is separate,
+later work.
 
 - **No destructive merge, by construction**: Awareness only ever lets a
   client write its own state; a remote participant's entry is replaced
@@ -28,7 +40,15 @@ CRDT document-sync half of that note) are separate, later work.
 - **Untrusted remote state**: `parsePresenceState` treats every remote
   participant's Awareness state as untrusted input (same trust boundary as
   `@arq/project-format`'s `importArchive` or `@arq/dxf-adapter`'s
-  `parseDxf`) - a malformed entry is skipped, never thrown.
+  `parseDxf`) - a malformed entry is skipped, never thrown. `comments-store.ts`'s
+  `listComments` applies the same defensive parsing to a remote peer's
+  Yjs comment entries.
+- **Comments' "no silent destructive merge"**: verified directly against
+  the real library, not assumed - two peers concurrently adding different
+  comments and syncing both ways preserves both (never drops one), and a
+  concurrent resolve-vs-reopen on the very same comment converges to one
+  agreed value on both peers rather than diverging, crashing, or losing
+  the comment's own text.
 
 New dependencies: `yjs` (MIT) and `y-protocols` (MIT), both scoped to this
 package only.
