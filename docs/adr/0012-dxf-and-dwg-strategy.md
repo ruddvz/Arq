@@ -31,6 +31,15 @@ Document at least two credible alternatives before approval.
 - Update package specifications.
 - Update the decision register.
 
+**ARQ-158 spike evidence:** `@arq/dxf-adapter`'s `parseDxf` prototypes reading
+`docs/interoperability/DXF-PLAN.md`'s Stage 1 entity list (LINE, LWPOLYLINE,
+ARC, CIRCLE, TEXT, layers, units) with a small hand-written reader for DXF's
+ASCII group-code format - no third-party DXF library was introduced, since
+none has been reviewed or chosen yet under this still-Proposed ADR. This
+validates that Stage 1 is reachable without a new dependency; it does not
+by itself resolve the open DWG question or select a library for any format
+beyond this ASCII DXF subset.
+
 ## Rollback
 
 Define how the repository can change this choice without losing project data.
