@@ -5,10 +5,14 @@ ArqScript is a deterministic, unit-aware language for architectural operations.
 It is not the only project representation and does not execute arbitrary code.
 
 This document defines the v0 grammar itself (blueprint section 98's example
-script, section 99's command list). The AST shape below is implemented in
-`@arq/arqscript` (`arqscript-command.ts`, `arqscript-document.ts`); turning
-source text like the example into that AST is a separate, later step
-(ARQ-167, "implement ArqScript parser") - no lexer or parser exists yet.
+script, section 99's command list), reconciled against
+`docs/ai/ARQSCRIPT-GRAMMAR.ebnf` - a draft this issue started from (it
+already existed, covering 7 of section 99's 11 commands) and completed
+here with the three missing statements (`update wall`, `select`, `rename`).
+The AST shape below is implemented in `@arq/arqscript`
+(`arqscript-command.ts`, `arqscript-document.ts`); turning source text
+like the example into that AST is a separate, later step (ARQ-167,
+"implement ArqScript parser") - no lexer or parser exists yet.
 
 ## Example (section 98)
 
@@ -32,42 +36,53 @@ door "D1" {
 }
 ```
 
-## Grammar (EBNF-ish)
+## Grammar
+
+The canonical, single-source grammar is `docs/ai/ARQSCRIPT-GRAMMAR.ebnf`
+(reproduced below in full - do not let this copy drift from that file):
 
 ```ebnf
-document   = "version" string, { command } ;
-command    = units | level | wall | update_wall | door | window
-           | room | dimension | select_id | select_category | rename ;
-
-units      = "units" unit ;
-level      = "level" string "elevation" length ;
-wall       = "wall" string "{" "from" ":" point "to" ":" point
-             [ "type" ":" string ] [ "height" ":" length ] "}" ;
-update_wall= "update" "wall" string "{" [ "type" ":" string ]
-             [ "height" ":" length ] "}" ;
-door       = "door" string "{" "host" ":" string
-             [ "width" ":" length ] [ "height" ":" length ]
-             "offset" ":" length "}" ;
-window     = "window" string "{" "host" ":" string
-             [ "width" ":" length ] [ "height" ":" length ]
-             [ "sill" ":" length ] "offset" ":" length "}" ;
-room       = "room" string "{" "name" ":" string
-             "boundary" ":" "[" point, { "," point } "]" "}" ;
-dimension  = "dimension" string "{" "from" ":" point "to" ":" point "}" ;
-select_id  = "select" "id" string, { "," string } ;
-select_category = "select" "category" string ;
-rename     = "rename" string "to" string ;
-
-point      = "point" "(" length "," length ")" ;
-length     = number ( "mm" | "cm" | "m" | "in" | "ft" ) ;
-unit       = "mm" | "cm" | "m" | "in" | "ft" ;
-string     = '"' , { character } , '"' ;
+document      = version_decl, { statement } ;
+version_decl  = "version", string ;
+statement     = units_decl | level_decl | wall_decl | update_wall_decl |
+                door_decl | window_decl | room_decl | dimension_decl |
+                select_id_decl | select_category_decl | rename_decl ;
+units_decl    = "units", ("metric" | "imperial") ;
+level_decl    = "level", string, "elevation", length ;
+wall_decl     = "wall", string, "{", { property }, "}" ;
+update_wall_decl = "update", "wall", string, "{", { property }, "}" ;
+door_decl     = "door", string, "{", { property }, "}" ;
+window_decl   = "window", string, "{", { property }, "}" ;
+room_decl     = "room", string, "{", { property }, "}" ;
+dimension_decl = "dimension", string, "{", { property }, "}" ;
+select_id_decl = "select", "id", string, { ",", string } ;
+select_category_decl = "select", "category", string ;
+rename_decl   = "rename", string, "to", string ;
+property      = identifier, ":", value ;
+value         = string | number | length | point | array ;
+point         = "point", "(", length, ",", length, ")" ;
+array         = "[", [ value, { ",", value } ], "]" ;
+length        = number, unit ;
+unit          = "mm" | "cm" | "m" | "in" | "ft" ;
+identifier    = letter, { letter | digit | "_" } ;
+string        = '"', { character }, '"' ;
+number        = [ "-" ], digit, { digit | "." } ;
 ```
 
-A `[ ... ]` bracketed clause is optional; an omitted `wall`/`door`/`window`
-field falls back to a documented default (see the command table below) and
-is recorded as a visible assumption - never silently applied - per
-blueprint section 97's AI workflow step 3 ("assumptions").
+Note `units_decl`'s `("metric" | "imperial")` is the project's measurement
+_system_ (matching `@arq/bim-core`'s already-shipped
+`ProjectUnitsPreference`, project.ts, ARQ-061) - a distinct concept from
+`unit` (`"mm" | "cm" | "m" | "in" | "ft"`), which is the suffix on an
+individual `length` value like `3000mm`. `property`'s generic
+`identifier: value` shape means the grammar itself does not hard-code
+which named fields (`from`/`to`/`type`/`height`, `host`/`width`/...) a
+`wall`/`door`/`window`/`room`/`dimension` block must contain - that
+per-command required/optional field validation happens one layer up, in
+the AST construction functions (`arqscript-command.ts`'s `createWallCommand`
+and friends), which is also where an omitted optional field falls back to
+a documented default (see the command table below) and is recorded as a
+visible assumption - never silently applied - per blueprint section 97's
+AI workflow step 3 ("assumptions").
 
 ## Commands (section 99), AST node and typed-operation mapping
 

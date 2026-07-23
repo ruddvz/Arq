@@ -10,6 +10,14 @@ dimension, select by ID, select by category, rename. Turning ArqScript
 source text into these AST nodes is a separate, later step (ARQ-167,
 "implement ArqScript parser"); this package has no lexer or parser yet.
 
+The canonical syntax grammar lives in `docs/ai/ARQSCRIPT-GRAMMAR.ebnf` - a
+draft that already existed before this issue (7 of the 11 commands),
+completed here with the three missing statements (`update wall`,
+`select`, `rename`) and reconciled with these AST types, including
+`units`'s `'metric' | 'imperial'` value (a project-wide measurement
+_system_, matching `@arq/bim-core`'s `ProjectUnitsPreference`) rather than
+a per-length `mm`/`cm`/`m`/`in`/`ft` suffix.
+
 - **"Output is a previewable typed operation"**: every command carries an
   `operationType` field naming the `@arq/operations` `ModelOperation` type
   it will eventually produce (e.g. a `wall` command's `operationType` is

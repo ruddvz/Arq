@@ -55,10 +55,23 @@ function requireNonEmpty(value: string, label: string): string {
 export const DEFAULT_WALL_TYPE = 'Generic 100';
 export const DEFAULT_WALL_HEIGHT_MM = 2700;
 
+/**
+ * `unit` is the project's measurement *system* ('metric' | 'imperial') -
+ * matching both docs/ai/ARQSCRIPT-GRAMMAR.ebnf's pre-existing
+ * `units_decl = "units", ("metric" | "imperial")` (this issue's own
+ * starting-point draft) and @arq/bim-core's already-shipped
+ * `ProjectUnitsPreference` (project.ts, ARQ-061) exactly. This is
+ * deliberately not the same choice as a length value's own `mm`/`cm`/
+ * `m`/`in`/`ft` suffix (ArqScriptPoint's fields, wall/door/window
+ * lengths): those are per-value units on individual lengths; this
+ * command is a project-wide display/authoring preference, the same
+ * distinction bim-core's own ProjectUnitsPreference doc comment draws
+ * against internal storage.
+ */
 export interface UnitsCommand {
   readonly kind: 'units';
   readonly operationType: 'DefineProjectUnits';
-  readonly unit: 'mm' | 'cm' | 'm' | 'in' | 'ft';
+  readonly unit: 'metric' | 'imperial';
   readonly assumptions: readonly string[];
 }
 

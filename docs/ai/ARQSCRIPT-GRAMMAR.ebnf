@@ -1,14 +1,19 @@
 document      = version_decl, { statement } ;
 version_decl  = "version", string ;
-statement     = units_decl | level_decl | wall_decl | door_decl |
-                window_decl | room_decl | dimension_decl ;
+statement     = units_decl | level_decl | wall_decl | update_wall_decl |
+                door_decl | window_decl | room_decl | dimension_decl |
+                select_id_decl | select_category_decl | rename_decl ;
 units_decl    = "units", ("metric" | "imperial") ;
 level_decl    = "level", string, "elevation", length ;
 wall_decl     = "wall", string, "{", { property }, "}" ;
+update_wall_decl = "update", "wall", string, "{", { property }, "}" ;
 door_decl     = "door", string, "{", { property }, "}" ;
 window_decl   = "window", string, "{", { property }, "}" ;
 room_decl     = "room", string, "{", { property }, "}" ;
 dimension_decl = "dimension", string, "{", { property }, "}" ;
+select_id_decl = "select", "id", string, { ",", string } ;
+select_category_decl = "select", "category", string ;
+rename_decl   = "rename", string, "to", string ;
 property      = identifier, ":", value ;
 value         = string | number | length | point | array ;
 point         = "point", "(", length, ",", length, ")" ;

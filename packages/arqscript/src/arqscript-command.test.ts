@@ -21,13 +21,17 @@ import {
 } from './arqscript-command';
 
 describe('createUnitsCommand', () => {
-  it('constructs a units command with no assumptions', () => {
-    expect(createUnitsCommand('mm')).toEqual({
+  it('constructs a units command for the metric system, matching the pre-existing ARQSCRIPT-GRAMMAR.ebnf draft', () => {
+    expect(createUnitsCommand('metric')).toEqual({
       kind: 'units',
       operationType: 'DefineProjectUnits',
-      unit: 'mm',
+      unit: 'metric',
       assumptions: [],
     });
+  });
+
+  it('constructs a units command for the imperial system', () => {
+    expect(createUnitsCommand('imperial').unit).toBe('imperial');
   });
 });
 
