@@ -12,6 +12,19 @@ into a plain summary (express ID, IFC type, name, global ID). No geometry
 is extracted, and no mapping into real `@arq/bim-core` elements happens
 here - both are separate, later steps.
 
+`buildIfcMappingReport` (ARQ-161) answers a different question than
+`readIfcModel`'s own support report: of the IFC types this prototype can
+read, which ones correspond to an Arq concept that actually exists in
+`@arq/bim-core` today? "Mapped" means only that a concept exists to
+eventually receive the data (Level, Room, WallType/WallInstance,
+DoorType/DoorInstance, WindowType/WindowInstance, and the ProjectV0 root) -
+it does not mean any conversion code exists, and this package still takes
+no dependency on `@arq/bim-core` at all (per this issue's own non-goal
+against coupling project semantics to an external-format class). Site,
+Building, Slab, Column, Beam and Roof are honestly reported as
+`'no-arq-concept-yet'`, hand-checked against `@arq/bim-core`'s real
+current source, not assumed.
+
 `web-ifc` is the only dependency this package (or any other in this
 monorepo) takes on it - `open-source/TECHNOLOGY-MATRIX.csv`/`.json`
 already recorded it with treatment "isolate and spike" before this issue;
