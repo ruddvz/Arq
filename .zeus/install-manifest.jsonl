@@ -110,3 +110,5 @@
 {"path":"scripts/zeus.mjs"}
 {"path":"AGENTS.md"}
 {"path":"CLAUDE-ZEUS-SNIPPET.md"}
+{"path":".claude/settings.json"}
+{"path":"CLAUDE.md"}
