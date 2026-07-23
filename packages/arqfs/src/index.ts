@@ -3,4 +3,7 @@ export * from './arqfs-header';
 export * from './arqfs-schema';
 export * from './arqfs-open';
 export * from './arqfs-archive-store';
+export * from './arqfs-worker-protocol';
+export * from './arqfs-worker-handler';
+export * from './arqfs-single-writer-lock';
 export * from './arqfs-node-driver';

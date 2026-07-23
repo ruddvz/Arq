@@ -21,7 +21,9 @@
     "benchmark:canvaskit": "node scripts/run-canvaskit-benchmark.mjs",
     "benchmark:render-frame": "node scripts/run-render-frame-benchmark.mjs",
     "benchmark:pencil-input": "node scripts/run-pencil-pointer-capability-check.mjs",
-    "benchmark:hover-sequence": "node scripts/run-hover-sequence-capability-check.mjs"
+    "benchmark:hover-sequence": "node scripts/run-hover-sequence-capability-check.mjs",
+    "benchmark:arqfs-opfs": "node scripts/run-arqfs-opfs-capability-check.mjs",
+    "benchmark:arqfs-writer-lock": "node scripts/run-arqfs-writer-lock-capability-check.mjs"
   },
   "devDependencies": {
     "canvaskit-wasm": "^0.41.1",

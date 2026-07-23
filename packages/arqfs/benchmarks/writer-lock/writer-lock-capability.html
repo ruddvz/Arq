@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>arqfs single-writer lock capability check (ARQ-220)</title>
+  </head>
+  <body>
+    <script type="module">
+      // Plain-JS mirror of packages/arqfs/src/arqfs-single-writer-lock.ts's logic -
+      // no bundler exists yet in this repo (that's Phase 7), so this capability check
+      // exercises the real Web Locks API + BroadcastChannel mechanics directly,
+      // matching the same pattern already used by the Pencil/hover-sequence
+      // capability checks (packages/input-system/benchmarks).
+      const LOCK_NAME = 'arqfs-project-writer';
+      const CHANNEL_NAME = 'arqfs-writer-notifications';
+
+      let releaseHeldLock = () => {};
+      const notifications = [];
+      const channel = new BroadcastChannel(CHANNEL_NAME);
+      channel.onmessage = (event) => notifications.push(event.data);
+
+      window.__acquireLock = () =>
+        new Promise((resolveAcquired) => {
+          navigator.locks.request(LOCK_NAME, { mode: 'exclusive' }, () => {
+            const notifyChannel = new BroadcastChannel(CHANNEL_NAME);
+            notifyChannel.postMessage({ type: 'writer-acquired' });
+            notifyChannel.close();
+            resolveAcquired();
+            return new Promise((resolveHeld) => {
+              releaseHeldLock = () => {
+                const releaseChannel = new BroadcastChannel(CHANNEL_NAME);
+                releaseChannel.postMessage({ type: 'writer-released' });
+                releaseChannel.close();
+                resolveHeld();
+              };
+            });
+          });
+        });
+
+      window.__releaseLock = () => releaseHeldLock();
+      window.__getNotifications = () => notifications;
+      window.__queryPendingRequests = async () => {
+        const state = await navigator.locks.query();
+        return { held: state.held, pending: state.pending };
+      };
+      window.__ARQ_WRITER_LOCK_READY__ = true;
+    </script>
+  </body>
+</html>
