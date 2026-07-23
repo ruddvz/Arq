@@ -15,9 +15,12 @@ the rest of `.zeus/` by default.
    release, CI, deployment, production or incident work.
 5. Report real, verified status only: green, partial, blocked or failed.
 
-A `UserPromptSubmit` hook (`.claude/settings.json` → `scripts/zeus-hook.sh`) reinforces
-this on every actionable prompt; it stays silent on acknowledgements, `/zeus-*` slash
-commands (which already carry their own contract), and automation/webhook payloads.
+A `UserPromptSubmit` hook (`.claude/settings.json` → `scripts/zeus-hook.sh`) compiles and
+echoes back the actual Zeus contract for every actionable prompt — mode, risk, tier,
+delivery stop, owner/reviewers, routed modules, acceptance criteria and checks (via
+`node scripts/zeus-fast-compile.mjs --task "..."`) — so what Zeus decided is always
+visible, not silent. It stays quiet only on acknowledgements, `/zeus-*` slash commands
+(which already carry their own contract), and automation/webhook payloads.
 
 Full specification: `.zeus/ZEUS.md`. Domain rules: `.zeus/modules/`. Slash commands:
 `/zeus`, `/zeus-audit`, `/zeus-handoff`, `/zeus-design`, `/zeus-incident`,
