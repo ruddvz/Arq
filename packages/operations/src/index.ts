@@ -8,3 +8,4 @@ export * from './opening-overlap-validation';
 export * from './warnings-property-group';
 export * from './history-property-group';
 export * from './accessible-selection-description';
+export * from './explain-selection';
