@@ -7,9 +7,11 @@
  * compressed-container-decoding layer, is out of scope here per this
  * issue's non-goal against introducing unreviewed dependencies). What IS
  * fully implemented and tested at this layer: path-traversal protection
- * (every entry name is checked before anything is read) and a per-entry
- * size cap as defense-in-depth once bytes are already decoded, even
- * though the primary zip-bomb defense belongs one layer down.
+ * (every entry name is checked before anything is read), a per-entry
+ * size cap, a whole-archive total size cap, and a generic JSON
+ * node-count/nesting-depth cap on every parsed section (ARQ-157) - all
+ * defense-in-depth once bytes are already decoded, even though the
+ * primary zip-bomb defense belongs one layer down.
  *
  * Required vs optional, straight from blueprint section 73: manifest.json
  * and model.json are required (a missing or corrupt one rejects the
@@ -22,6 +24,11 @@
 
 import { parseManifest, serializeManifest, type ArqManifest } from './manifest';
 import { computeChecksums, serializeChecksums } from './checksum';
+import {
+  exceedsJsonComplexityLimits,
+  totalArchiveBytes,
+  MAX_ARCHIVE_TOTAL_BYTES,
+} from './complexity-limits';
 
 /** Defense-in-depth per-entry size cap once bytes are already decoded - the primary zip-bomb defense belongs at the (not yet chosen) zip container layer. */
 export const MAX_ENTRY_BYTES = 500 * 1024 * 1024;
@@ -103,6 +110,10 @@ export type ArchiveOpenResult =
 export async function importArchive(
   entries: ReadonlyMap<string, Uint8Array>,
 ): Promise<ArchiveOpenResult> {
+  if (totalArchiveBytes(entries) > MAX_ARCHIVE_TOTAL_BYTES) {
+    return { status: 'rejected', reason: 'archive exceeds total size limit' };
+  }
+
   for (const [path, content] of entries) {
     if (!isPathSafe(path)) {
       return { status: 'rejected', reason: `unsafe archive path: ${path}` };
@@ -133,6 +144,10 @@ export async function importArchive(
   } catch {
     return { status: 'rejected', reason: 'corrupt model.json' };
   }
+  const modelComplexity = exceedsJsonComplexityLimits(model);
+  if (modelComplexity.exceeded) {
+    return { status: 'rejected', reason: `model.json ${modelComplexity.reason}` };
+  }
 
   const corruptOptionalPaths: string[] = [];
 
@@ -142,6 +157,10 @@ export async function importArchive(
     try {
       const text = decoder.decode(operationsBytes);
       operations = text.length === 0 ? [] : text.split('\n').map((line) => JSON.parse(line));
+      if (exceedsJsonComplexityLimits(operations).exceeded) {
+        operations = [];
+        corruptOptionalPaths.push('operations.ndjson');
+      }
     } catch {
       corruptOptionalPaths.push('operations.ndjson');
     }
@@ -153,8 +172,14 @@ export async function importArchive(
     if (!bytes) {
       continue;
     }
+    const key = file === 'views.json' ? 'views' : 'sheets';
     try {
-      optionalJson[file === 'views.json' ? 'views' : 'sheets'] = JSON.parse(decoder.decode(bytes));
+      const parsed = JSON.parse(decoder.decode(bytes));
+      if (exceedsJsonComplexityLimits(parsed).exceeded) {
+        corruptOptionalPaths.push(file);
+        continue;
+      }
+      optionalJson[key] = parsed;
     } catch {
       corruptOptionalPaths.push(file);
     }

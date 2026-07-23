@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createManifest } from './manifest';
 import { exportArchive, importArchive, MAX_ENTRY_BYTES } from './archive';
+import { MAX_ARCHIVE_TOTAL_BYTES, MAX_JSON_NODE_COUNT } from './complexity-limits';
 
 const baseManifestInput = {
   projectId: 'p1',
@@ -155,5 +156,47 @@ describe('importArchive rejects unsafe archive contents', () => {
     ]);
     const result = await importArchive(entries);
     expect(result.status).toBe('rejected');
+  });
+
+  it('rejects an archive whose total entry size exceeds MAX_ARCHIVE_TOTAL_BYTES, even with every individual entry under the per-entry cap', async () => {
+    const manifest = createManifest(baseManifestInput);
+    const entryBytes = 400 * 1024 * 1024;
+    expect(entryBytes).toBeLessThan(MAX_ENTRY_BYTES);
+    const entries = new Map([
+      ['manifest.json', new TextEncoder().encode(JSON.stringify(manifest))],
+      ['model.json', new Uint8Array(entryBytes)],
+      ['operations.ndjson', new Uint8Array(entryBytes)],
+      ['views.json', new Uint8Array(entryBytes)],
+    ]);
+    expect(entryBytes * 3).toBeGreaterThan(MAX_ARCHIVE_TOTAL_BYTES);
+    const result = await importArchive(entries);
+    expect(result.status).toBe('rejected');
+  });
+
+  it('rejects model.json whose parsed structure exceeds the JSON complexity limit', async () => {
+    const manifest = createManifest(baseManifestInput);
+    const hugeArray = Array.from({ length: MAX_JSON_NODE_COUNT + 10 }, (_, i) => i);
+    const entries = new Map([
+      ['manifest.json', new TextEncoder().encode(JSON.stringify(manifest))],
+      ['model.json', new TextEncoder().encode(JSON.stringify(hugeArray))],
+    ]);
+    const result = await importArchive(entries);
+    expect(result.status).toBe('rejected');
+  });
+
+  it('reports an over-complex optional section (views.json) as corrupt rather than rejecting the whole archive', async () => {
+    const manifest = createManifest(baseManifestInput);
+    const hugeArray = Array.from({ length: MAX_JSON_NODE_COUNT + 10 }, (_, i) => i);
+    const entries = new Map([
+      ['manifest.json', new TextEncoder().encode(JSON.stringify(manifest))],
+      ['model.json', new TextEncoder().encode('{}')],
+      ['views.json', new TextEncoder().encode(JSON.stringify(hugeArray))],
+    ]);
+    const result = await importArchive(entries);
+    expect(result.status).toBe('opened');
+    if (result.status === 'opened') {
+      expect(result.corruptOptionalPaths).toEqual(['views.json']);
+      expect(result.views).toBeUndefined();
+    }
   });
 });
