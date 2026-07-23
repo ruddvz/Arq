@@ -1,0 +1,18 @@
+{
+  "name": "@arq/arqfs",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Native SQLite .arq file format (ADR-0019) - schema v1, stored as the working, user-visible project file alongside @arq/project-format's existing portable archive.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@arq/project-format": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "better-sqlite3": "^11.10.0"
+  }
+}
