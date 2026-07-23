@@ -27,18 +27,21 @@
  * - `SheetHandlePrimitive` is intentionally never drawn: a selection
  *   handle (section 18) is an interactive editor affordance with no
  *   printed meaning on an exported sheet.
- * - Steps 1-3 and 5-10 of section 59's pipeline (freeze snapshot,
- *   validate sheet, resolve fonts, add metadata beyond title, validate
- *   page count/bounds, store export record, return download, never
- *   modify project state) are orchestration this prototype does not
- *   attempt - this module is a pure function from already-built inputs
- *   to PDF bytes, touching no project state at all, which is exactly
- *   what upholds "never modify project state" by construction.
+ * - Steps 1-3 and 6-10 of section 59's pipeline (freeze snapshot,
+ *   validate sheet, resolve fonts, validate page count/bounds, store
+ *   export record, return download, never modify project state) are
+ *   orchestration this prototype does not attempt - this module is a
+ *   pure function from already-built inputs to PDF bytes, touching no
+ *   project state at all, which is exactly what upholds "never modify
+ *   project state" by construction. Step 5, "add metadata", is
+ *   export-metadata.ts's job (ARQ-145), applied here rather than
+ *   duplicated inline.
  */
 
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import type { Sheet } from '@arq/bim-core';
 import type { SheetPrimitive, SheetSpacePoint, SheetViewportScene } from '@arq/plan-renderer';
+import { applySheetExportMetadata } from './export-metadata';
 
 const LINE_THICKNESS_PT = 1;
 const TEXT_SIZE_PT = 10;
@@ -46,6 +49,7 @@ const BLACK = rgb(0, 0, 0);
 
 export interface ExportSheetToPdfInput<TId> {
   readonly sheet: Sheet;
+  readonly projectName: string;
   readonly viewportScene: SheetViewportScene<TId>;
   /** PDF page size in points (1/72 inch) - the paper-space units SheetViewportScene's points are already expressed in. */
   readonly pageWidthPt: number;
@@ -71,8 +75,12 @@ export async function exportSheetToPdf<TId>(
     drawSheetPrimitive(page, primitive, font);
   }
 
-  document.setTitle(input.sheet.title);
-  document.setSubject(`Sheet ${input.sheet.number}`);
+  applySheetExportMetadata(document, {
+    projectName: input.projectName,
+    sheetNumber: input.sheet.number,
+    sheetTitle: input.sheet.title,
+    revision: input.sheet.revision,
+  });
 
   return document.save();
 }

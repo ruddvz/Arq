@@ -13,6 +13,8 @@ const sheet = createSheet({
   viewport: { viewId: viewId('view-1'), scale: 0.01, position: { x: 20, y: 20 } },
 });
 
+const projectName = 'Hillside Residence';
+
 const sceneWithEveryPrimitiveKind: SheetViewportScene<string> = {
   primitives: [
     {
@@ -57,6 +59,7 @@ describe('exportSheetToPdf', () => {
   it('produces bytes with a real PDF magic header', async () => {
     const bytes = await exportSheetToPdf({
       sheet,
+      projectName,
       viewportScene: sceneWithEveryPrimitiveKind,
       pageWidthPt: A1_WIDTH_PT,
       pageHeightPt: A1_HEIGHT_PT,
@@ -68,6 +71,7 @@ describe('exportSheetToPdf', () => {
   it('produces a single-page PDF at the requested page size', async () => {
     const bytes = await exportSheetToPdf({
       sheet,
+      projectName,
       viewportScene: sceneWithEveryPrimitiveKind,
       pageWidthPt: A1_WIDTH_PT,
       pageHeightPt: A1_HEIGHT_PT,
@@ -82,6 +86,7 @@ describe('exportSheetToPdf', () => {
   it('sets the document title from the sheet title', async () => {
     const bytes = await exportSheetToPdf({
       sheet,
+      projectName,
       viewportScene: sceneWithEveryPrimitiveKind,
       pageWidthPt: A1_WIDTH_PT,
       pageHeightPt: A1_HEIGHT_PT,
@@ -90,9 +95,22 @@ describe('exportSheetToPdf', () => {
     expect(loaded.getTitle()).toBe('Level 1 Floor Plan');
   });
 
+  it('sets the document subject from project name, sheet number and revision', async () => {
+    const bytes = await exportSheetToPdf({
+      sheet,
+      projectName,
+      viewportScene: sceneWithEveryPrimitiveKind,
+      pageWidthPt: A1_WIDTH_PT,
+      pageHeightPt: A1_HEIGHT_PT,
+    });
+    const loaded = await PDFDocument.load(bytes);
+    expect(loaded.getSubject()).toBe('Hillside Residence - Sheet A1.1 - Rev 0');
+  });
+
   it('produces a valid, loadable PDF for an empty scene', async () => {
     const bytes = await exportSheetToPdf({
       sheet,
+      projectName,
       viewportScene: { primitives: [] },
       pageWidthPt: A1_WIDTH_PT,
       pageHeightPt: A1_HEIGHT_PT,
@@ -105,6 +123,7 @@ describe('exportSheetToPdf', () => {
     await expect(
       exportSheetToPdf({
         sheet,
+        projectName,
         viewportScene: { primitives: [] },
         pageWidthPt: 0,
         pageHeightPt: 100,
@@ -116,6 +135,7 @@ describe('exportSheetToPdf', () => {
     await expect(
       exportSheetToPdf({
         sheet,
+        projectName,
         viewportScene: { primitives: [] },
         pageWidthPt: 100,
         pageHeightPt: Number.NaN,
