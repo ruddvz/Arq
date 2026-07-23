@@ -31,11 +31,23 @@
     "certified": false,
     "note": "Not one of section 121's supported-device-matrix tiers - a real-hardware validation run is still required before any target below is called Achieved (see docs/adr/0008-rendering-strategy.md and every RENDERER-BENCHMARK-*.md's own 'Important caveat')."
   },
-  "ciBaseline": {
-    "renderer": "canvas-2d",
-    "avgFps": 59.35,
-    "regressionThresholdPercent": 10,
-    "source": "docs/research/RENDERER-BENCHMARK-CANVAS-2D.md (ARQ-115), the lowest of three measured runs on 2026-07-22 - not the average, so ordinary run-to-run variance does not itself register as a regression.",
-    "checkedBy": "@arq/plan-renderer's isFpsRegression (benchmark-regression.ts, ARQ-148)"
-  }
+  "ciBaselines": [
+    {
+      "metric": "panZoomAvgFps",
+      "renderer": "canvas-2d",
+      "value": 59.35,
+      "regressionThresholdPercent": 10,
+      "regressionDirection": "belowIsWorse",
+      "source": "docs/research/RENDERER-BENCHMARK-CANVAS-2D.md (ARQ-115), the lowest of three measured runs on 2026-07-22 - not the average, so ordinary run-to-run variance does not itself register as a regression.",
+      "checkedBy": "@arq/plan-renderer's isFpsRegression (benchmark-regression.ts, ARQ-148)"
+    },
+    {
+      "metric": "selectionMedianMs",
+      "value": 0.035,
+      "regressionThresholdPercent": 200,
+      "regressionDirection": "aboveIsWorse",
+      "source": "packages/editor-shell/src/selection-benchmark.test.ts (ARQ-149), real pickAt hit-testing against ~1,000 synthetic candidates, 500 trials, median of real performance.now() measurements on 2026-07-22.",
+      "note": "A generous 200% threshold: at 0.035ms against a 50ms absolute target, this benchmark has enormous headroom in this environment, so a tight percentage threshold would be noise, not signal - the real gate is the 50ms absolute target asserted directly in the test."
+    }
+  ]
 }
