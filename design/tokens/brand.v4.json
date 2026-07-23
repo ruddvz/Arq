@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "4.0",
+  "status": "canonical",
+  "brand": {
+    "black": "#000000",
+    "white": "#FFFFFF",
+    "phthaloGreen": "#0B6B50"
+  },
+  "usage": {
+    "primaryInterface": "black-white-neutral",
+    "accent": "phthaloGreen",
+    "accentRule": "Use for brand identity, focus, active state and selected emphasis; never as decoration everywhere."
+  },
+  "logoMinimums": {
+    "wordmarkPx": 64,
+    "symbolPx": 24,
+    "taglineLockupPx": 360,
+    "wordmarkMm": 18,
+    "symbolMm": 7,
+    "taglineLockupMm": 90
+  }
+}

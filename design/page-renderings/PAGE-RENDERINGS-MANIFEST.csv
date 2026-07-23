@@ -1,0 +1,58 @@
+global_page,board,position,title,slug,exact_board_crop,high_resolution_rendering,high_resolution_dimensions,status
+1,1,1,Marketing home,marketing-home,,,,asset deferred; attach from external visual pack later
+2,1,2,Product overview,product-overview,,,,asset deferred; attach from external visual pack later
+3,1,3,For architects,for-architects,,,,asset deferred; attach from external visual pack later
+4,1,4,For students,for-students,,,,asset deferred; attach from external visual pack later
+5,1,5,Collaboration,collaboration,,,,asset deferred; attach from external visual pack later
+6,1,6,AI,ai,,,,asset deferred; attach from external visual pack later
+7,1,7,Interoperability,interoperability,,,,asset deferred; attach from external visual pack later
+8,1,8,iPad,ipad,,,,asset deferred; attach from external visual pack later
+9,1,9,Pricing,pricing,,,,asset deferred; attach from external visual pack later
+10,1,10,Security,security,,,,asset deferred; attach from external visual pack later
+11,2,1,Documentation index,documentation-index,,,,asset deferred; attach from external visual pack later
+12,2,2,Changelog,changelog,,,,asset deferred; attach from external visual pack later
+13,2,3,System status,system-status,,,,asset deferred; attach from external visual pack later
+14,2,4,Contact and support,contact-and-support,,,,asset deferred; attach from external visual pack later
+15,2,5,Privacy notice,privacy-notice,,,,asset deferred; attach from external visual pack later
+16,2,6,Terms of service,terms-of-service,,,,asset deferred; attach from external visual pack later
+17,2,7,Open-source notices,open-source-notices,,,,asset deferred; attach from external visual pack later
+18,2,8,Sign in,sign-in,,,,asset deferred; attach from external visual pack later
+19,2,9,Sign up,sign-up,,,,asset deferred; attach from external visual pack later
+20,2,10,Verify email,verify-email,,,,asset deferred; attach from external visual pack later
+21,3,1,Forgot password,forgot-password,,,,asset deferred; attach from external visual pack later
+22,3,2,Reset password,reset-password,,,,asset deferred; attach from external visual pack later
+23,3,3,Recent projects,recent-projects,,,,asset deferred; attach from external visual pack later
+24,3,4,Shared with me,shared-with-me,,,,asset deferred; attach from external visual pack later
+25,3,5,Templates,templates,,,,asset deferred; attach from external visual pack later
+26,3,6,Archived projects,archived-projects,,,,asset deferred; attach from external visual pack later
+27,3,7,New project,new-project,,,,asset deferred; attach from external visual pack later
+28,3,8,Import project,import-project,,,,asset deferred; attach from external visual pack later
+29,3,9,Workspace members,workspace-members,,,,asset deferred; attach from external visual pack later
+30,3,10,Workspace settings,workspace-settings,,,,asset deferred; attach from external visual pack later
+31,4,1,Account settings,account-settings,,,,asset deferred; attach from external visual pack later
+32,4,2,Billing,billing,,,,asset deferred; attach from external visual pack later
+33,4,3,Plan editor,plan-editor,,,,asset deferred; attach from external visual pack later
+34,4,4,3D editor,3d-editor,,,,asset deferred; attach from external visual pack later
+35,4,5,Split view,split-view,,,,asset deferred; attach from external visual pack later
+36,4,6,Sheet editor,sheet-editor,,,,asset deferred; attach from external visual pack later
+37,4,7,Inspect mode,inspect-mode,,,,asset deferred; attach from external visual pack later
+38,4,8,Document mode,document-mode,,,,asset deferred; attach from external visual pack later
+39,4,9,Review mode,review-mode,,,,asset deferred; attach from external visual pack later
+40,4,10,Present mode,present-mode,,,,asset deferred; attach from external visual pack later
+41,5,1,Comments,comments,,,,asset deferred; attach from external visual pack later
+42,5,2,Issues,issues,,,,asset deferred; attach from external visual pack later
+43,5,3,Version history,version-history,,,,asset deferred; attach from external visual pack later
+44,5,4,Revision compare,revision-compare,,,,asset deferred; attach from external visual pack later
+45,5,5,Import report,import-report,,,,asset deferred; attach from external visual pack later
+46,5,6,Export dialog,export-dialog,,,,asset deferred; attach from external visual pack later
+47,5,7,Export report,export-report,,,,asset deferred; attach from external visual pack later
+48,5,8,Project settings,project-settings,,,,asset deferred; attach from external visual pack later
+49,5,9,Share project,share-project,,,,asset deferred; attach from external visual pack later
+50,5,10,Recovery,recovery,,,,asset deferred; attach from external visual pack later
+51,6,1,Sync conflict,sync-conflict,,,,asset deferred; attach from external visual pack later
+52,6,2,Diagnostics,diagnostics,,,,asset deferred; attach from external visual pack later
+53,6,3,Command palette,command-palette,,,,asset deferred; attach from external visual pack later
+54,6,4,Keyboard shortcuts,keyboard-shortcuts,,,,asset deferred; attach from external visual pack later
+55,6,5,Onboarding project,onboarding-project,,,,asset deferred; attach from external visual pack later
+56,6,6,Model health,model-health,,,,asset deferred; attach from external visual pack later
+57,6,7,AI proposal,ai-proposal,,,,asset deferred; attach from external visual pack later

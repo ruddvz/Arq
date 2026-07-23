@@ -1,0 +1,2652 @@
+[
+  {
+    "id": "FEAT-001",
+    "group": "Project and files",
+    "feature": "Create project",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-002",
+    "group": "Project and files",
+    "feature": "Open project",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-003",
+    "group": "Project and files",
+    "feature": "Recent projects",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-004",
+    "group": "Project and files",
+    "feature": "Duplicate project",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-005",
+    "group": "Project and files",
+    "feature": "Archive project",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-006",
+    "group": "Project and files",
+    "feature": "Restore project",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-007",
+    "group": "Project and files",
+    "feature": "Clean .arq export",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-008",
+    "group": "Project and files",
+    "feature": "Linked external .arq document",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-009",
+    "group": "Project and files",
+    "feature": "Project templates",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-010",
+    "group": "Project and files",
+    "feature": "Safe mode",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-011",
+    "group": "Project and files",
+    "feature": "Recovery centre",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-012",
+    "group": "Project and files",
+    "feature": "Project diagnostics",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-013",
+    "group": "Project and files",
+    "feature": "Project comparison",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-014",
+    "group": "Project and files",
+    "feature": "Project branching",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-015",
+    "group": "Project and files",
+    "feature": "Project merge",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-016",
+    "group": "Units and coordinates",
+    "feature": "Metric units",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-017",
+    "group": "Units and coordinates",
+    "feature": "Imperial units",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-018",
+    "group": "Units and coordinates",
+    "feature": "Display precision",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-019",
+    "group": "Units and coordinates",
+    "feature": "Internal canonical units",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-020",
+    "group": "Units and coordinates",
+    "feature": "Project origin",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-021",
+    "group": "Units and coordinates",
+    "feature": "North direction",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-022",
+    "group": "Units and coordinates",
+    "feature": "Shared coordinates",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-023",
+    "group": "Units and coordinates",
+    "feature": "Survey point",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-024",
+    "group": "Units and coordinates",
+    "feature": "Georeferencing",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-025",
+    "group": "Units and coordinates",
+    "feature": "True north and project north",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-026",
+    "group": "2D drafting",
+    "feature": "Line",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-027",
+    "group": "2D drafting",
+    "feature": "Polyline",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-028",
+    "group": "2D drafting",
+    "feature": "Rectangle",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-029",
+    "group": "2D drafting",
+    "feature": "Polygon",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-030",
+    "group": "2D drafting",
+    "feature": "Circle",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-031",
+    "group": "2D drafting",
+    "feature": "Arc",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-032",
+    "group": "2D drafting",
+    "feature": "Ellipse",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-033",
+    "group": "2D drafting",
+    "feature": "Spline",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-034",
+    "group": "2D drafting",
+    "feature": "Construction line",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-035",
+    "group": "2D drafting",
+    "feature": "Detail line",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-036",
+    "group": "2D drafting",
+    "feature": "Region",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-037",
+    "group": "2D drafting",
+    "feature": "Hatch and fill",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-038",
+    "group": "2D drafting",
+    "feature": "Offset",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-039",
+    "group": "2D drafting",
+    "feature": "Trim",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-040",
+    "group": "2D drafting",
+    "feature": "Extend",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-041",
+    "group": "2D drafting",
+    "feature": "Split",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-042",
+    "group": "2D drafting",
+    "feature": "Join",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-043",
+    "group": "2D drafting",
+    "feature": "Fillet",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-044",
+    "group": "2D drafting",
+    "feature": "Chamfer",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-045",
+    "group": "2D drafting",
+    "feature": "Move",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-046",
+    "group": "2D drafting",
+    "feature": "Copy",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-047",
+    "group": "2D drafting",
+    "feature": "Rotate",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-048",
+    "group": "2D drafting",
+    "feature": "Mirror",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-049",
+    "group": "2D drafting",
+    "feature": "Scale imported linework",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-050",
+    "group": "2D drafting",
+    "feature": "Rectangular array",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-051",
+    "group": "2D drafting",
+    "feature": "Polar array",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-052",
+    "group": "2D drafting",
+    "feature": "Align",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-053",
+    "group": "2D drafting",
+    "feature": "Distribute",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-054",
+    "group": "2D drafting",
+    "feature": "Constraints",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-055",
+    "group": "2D drafting",
+    "feature": "Selection filters",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-056",
+    "group": "2D drafting",
+    "feature": "Layers for imported content",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-057",
+    "group": "2D drafting",
+    "feature": "Line styles",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-058",
+    "group": "2D drafting",
+    "feature": "Line weights",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-059",
+    "group": "Architectural model",
+    "feature": "Levels",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-060",
+    "group": "Architectural model",
+    "feature": "Grids",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-061",
+    "group": "Architectural model",
+    "feature": "Straight walls",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-062",
+    "group": "Architectural model",
+    "feature": "Wall types",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-063",
+    "group": "Architectural model",
+    "feature": "Wall joins",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-064",
+    "group": "Architectural model",
+    "feature": "Wall profile edit",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-065",
+    "group": "Architectural model",
+    "feature": "Curved walls",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-066",
+    "group": "Architectural model",
+    "feature": "Stacked walls",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-067",
+    "group": "Architectural model",
+    "feature": "Curtain walls",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-068",
+    "group": "Architectural model",
+    "feature": "Doors",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-069",
+    "group": "Architectural model",
+    "feature": "Windows",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-070",
+    "group": "Architectural model",
+    "feature": "Generic openings",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-071",
+    "group": "Architectural model",
+    "feature": "Hosted components",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-072",
+    "group": "Architectural model",
+    "feature": "Rooms",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-073",
+    "group": "Architectural model",
+    "feature": "Areas",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-074",
+    "group": "Architectural model",
+    "feature": "Room separation lines",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-075",
+    "group": "Architectural model",
+    "feature": "Slabs and floors",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-076",
+    "group": "Architectural model",
+    "feature": "Ceilings",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-077",
+    "group": "Architectural model",
+    "feature": "Columns",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-078",
+    "group": "Architectural model",
+    "feature": "Beams",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-079",
+    "group": "Architectural model",
+    "feature": "Basic stairs",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-080",
+    "group": "Architectural model",
+    "feature": "Advanced stairs",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-081",
+    "group": "Architectural model",
+    "feature": "Railings",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-082",
+    "group": "Architectural model",
+    "feature": "Ramps",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-083",
+    "group": "Architectural model",
+    "feature": "Roof by footprint",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-084",
+    "group": "Architectural model",
+    "feature": "Roof by extrusion",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-085",
+    "group": "Architectural model",
+    "feature": "Shaft openings",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-086",
+    "group": "Architectural model",
+    "feature": "Generic components",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-087",
+    "group": "Architectural model",
+    "feature": "Groups",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-088",
+    "group": "Architectural model",
+    "feature": "Assemblies",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-089",
+    "group": "Architectural model",
+    "feature": "Parts",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-090",
+    "group": "Architectural model",
+    "feature": "Phases",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-091",
+    "group": "Architectural model",
+    "feature": "Design options",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-092",
+    "group": "Architectural model",
+    "feature": "Demolition and renovation",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-093",
+    "group": "Site and context",
+    "feature": "Site boundary",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-094",
+    "group": "Site and context",
+    "feature": "Property lines",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-095",
+    "group": "Site and context",
+    "feature": "Topography surface",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-096",
+    "group": "Site and context",
+    "feature": "Graded region",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-097",
+    "group": "Site and context",
+    "feature": "Building pad",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-098",
+    "group": "Site and context",
+    "feature": "Parking components",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-099",
+    "group": "Site and context",
+    "feature": "Trees and entourage",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-100",
+    "group": "Site and context",
+    "feature": "Sun study",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-101",
+    "group": "Site and context",
+    "feature": "Geographic location",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-102",
+    "group": "Site and context",
+    "feature": "GIS reference import",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-103",
+    "group": "Site and context",
+    "feature": "Point cloud viewing",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-104",
+    "group": "Site and context",
+    "feature": "Point cloud authoring",
+    "stage": "Later",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-105",
+    "group": "Views",
+    "feature": "Floor plan",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-106",
+    "group": "Views",
+    "feature": "Reflected ceiling plan",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-107",
+    "group": "Views",
+    "feature": "Orthographic 3D",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-108",
+    "group": "Views",
+    "feature": "Perspective 3D",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-109",
+    "group": "Views",
+    "feature": "Section",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-110",
+    "group": "Views",
+    "feature": "Elevation",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-111",
+    "group": "Views",
+    "feature": "Detail view",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-112",
+    "group": "Views",
+    "feature": "Drafting view",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-113",
+    "group": "Views",
+    "feature": "Legend",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-114",
+    "group": "Views",
+    "feature": "Saved view",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-115",
+    "group": "Views",
+    "feature": "Split view",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-116",
+    "group": "Views",
+    "feature": "View crop",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-117",
+    "group": "Views",
+    "feature": "Annotation crop",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-118",
+    "group": "Views",
+    "feature": "View template",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-119",
+    "group": "Views",
+    "feature": "Visibility classes",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-120",
+    "group": "Views",
+    "feature": "Hide and isolate",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-121",
+    "group": "Views",
+    "feature": "Reveal hidden",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-122",
+    "group": "Views",
+    "feature": "View depth",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-123",
+    "group": "Views",
+    "feature": "Discipline filters",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-124",
+    "group": "Views",
+    "feature": "Presentation mode",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-125",
+    "group": "Documentation",
+    "feature": "Linear dimension",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-126",
+    "group": "Documentation",
+    "feature": "Aligned dimension",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-127",
+    "group": "Documentation",
+    "feature": "Angular dimension",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-128",
+    "group": "Documentation",
+    "feature": "Radial dimension",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-129",
+    "group": "Documentation",
+    "feature": "Spot elevation",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-130",
+    "group": "Documentation",
+    "feature": "Text note",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-131",
+    "group": "Documentation",
+    "feature": "Leader",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-132",
+    "group": "Documentation",
+    "feature": "Room tag",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-133",
+    "group": "Documentation",
+    "feature": "Door tag",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-134",
+    "group": "Documentation",
+    "feature": "Window tag",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-135",
+    "group": "Documentation",
+    "feature": "Generic tag",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-136",
+    "group": "Documentation",
+    "feature": "Keynotes",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-137",
+    "group": "Documentation",
+    "feature": "Revision cloud",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-138",
+    "group": "Documentation",
+    "feature": "Revision schedule",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-139",
+    "group": "Documentation",
+    "feature": "Sheet",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-140",
+    "group": "Documentation",
+    "feature": "Viewport",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-141",
+    "group": "Documentation",
+    "feature": "Title block",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-142",
+    "group": "Documentation",
+    "feature": "Sheet numbering",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-143",
+    "group": "Documentation",
+    "feature": "Sheet set",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-144",
+    "group": "Documentation",
+    "feature": "Print set",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-145",
+    "group": "Documentation",
+    "feature": "Vector PDF",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-146",
+    "group": "Documentation",
+    "feature": "Print preview",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-147",
+    "group": "Documentation",
+    "feature": "Schedules",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-148",
+    "group": "Documentation",
+    "feature": "Door schedule",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-149",
+    "group": "Documentation",
+    "feature": "Window schedule",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-150",
+    "group": "Documentation",
+    "feature": "Room schedule",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-151",
+    "group": "Documentation",
+    "feature": "Material takeoff",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-152",
+    "group": "Documentation",
+    "feature": "Calculated schedule fields",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-153",
+    "group": "Documentation",
+    "feature": "Schedule formatting",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-154",
+    "group": "Collaboration and review",
+    "feature": "Workspace roles",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-155",
+    "group": "Collaboration and review",
+    "feature": "Share link",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-156",
+    "group": "Collaboration and review",
+    "feature": "Viewer",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-157",
+    "group": "Collaboration and review",
+    "feature": "Commenter",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-158",
+    "group": "Collaboration and review",
+    "feature": "Model comments",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-159",
+    "group": "Collaboration and review",
+    "feature": "Sheet comments",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-160",
+    "group": "Collaboration and review",
+    "feature": "Issues",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-161",
+    "group": "Collaboration and review",
+    "feature": "Issue assignment",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-162",
+    "group": "Collaboration and review",
+    "feature": "Revision history",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-163",
+    "group": "Collaboration and review",
+    "feature": "Revision compare",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-164",
+    "group": "Collaboration and review",
+    "feature": "Presence",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-165",
+    "group": "Collaboration and review",
+    "feature": "Live cursors",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-166",
+    "group": "Collaboration and review",
+    "feature": "Element ownership",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-167",
+    "group": "Collaboration and review",
+    "feature": "Offline collaboration",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-168",
+    "group": "Collaboration and review",
+    "feature": "Geometry conflict resolution",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-169",
+    "group": "Collaboration and review",
+    "feature": "Named branches",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-170",
+    "group": "Collaboration and review",
+    "feature": "Approvals",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-171",
+    "group": "Collaboration and review",
+    "feature": "Issued sheet state",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-172",
+    "group": "Collaboration and review",
+    "feature": "BCF exchange",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-173",
+    "group": "Interoperability",
+    "feature": "Image underlay",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-174",
+    "group": "Interoperability",
+    "feature": "PDF underlay",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-175",
+    "group": "Interoperability",
+    "feature": "Arq native file",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-176",
+    "group": "Interoperability",
+    "feature": "PDF export",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-177",
+    "group": "Interoperability",
+    "feature": "CSV schedule export",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-178",
+    "group": "Interoperability",
+    "feature": "DXF import subset",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-179",
+    "group": "Interoperability",
+    "feature": "DXF export subset",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-180",
+    "group": "Interoperability",
+    "feature": "IFC viewing",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-181",
+    "group": "Interoperability",
+    "feature": "IFC property inspection",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-182",
+    "group": "Interoperability",
+    "feature": "IFC import subset",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-183",
+    "group": "Interoperability",
+    "feature": "IFC export subset",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-184",
+    "group": "Interoperability",
+    "feature": "BCF import and export",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-185",
+    "group": "Interoperability",
+    "feature": "GLB export",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-186",
+    "group": "Interoperability",
+    "feature": "STEP selected solids",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-187",
+    "group": "Interoperability",
+    "feature": "DWG licensed conversion",
+    "stage": "Evidence",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-188",
+    "group": "Interoperability",
+    "feature": "RVT connector",
+    "stage": "Evidence",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-189",
+    "group": "Interoperability",
+    "feature": "Speckle connector",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-190",
+    "group": "Interoperability",
+    "feature": "Revit connector",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-191",
+    "group": "Interoperability",
+    "feature": "Rhino connector",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-192",
+    "group": "Interoperability",
+    "feature": "AutoCAD connector",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-193",
+    "group": "Visualisation",
+    "feature": "Monochrome technical 3D",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-194",
+    "group": "Visualisation",
+    "feature": "Materials",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-195",
+    "group": "Visualisation",
+    "feature": "Textures",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-196",
+    "group": "Visualisation",
+    "feature": "Sun and shadows",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-197",
+    "group": "Visualisation",
+    "feature": "Ambient occlusion",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-198",
+    "group": "Visualisation",
+    "feature": "Section box",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-199",
+    "group": "Visualisation",
+    "feature": "Exploded view",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-200",
+    "group": "Visualisation",
+    "feature": "Diagram styles",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-201",
+    "group": "Visualisation",
+    "feature": "Image export",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-202",
+    "group": "Visualisation",
+    "feature": "Video path",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-203",
+    "group": "Visualisation",
+    "feature": "Photorealistic renderer integration",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-204",
+    "group": "Visualisation",
+    "feature": "Native path tracing",
+    "stage": "Later",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-205",
+    "group": "Visualisation",
+    "feature": "AR walkthrough",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-206",
+    "group": "Visualisation",
+    "feature": "Vision Pro review",
+    "stage": "Later",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-207",
+    "group": "AI and automation",
+    "feature": "Explain selected object",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-208",
+    "group": "AI and automation",
+    "feature": "Explain validation error",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-209",
+    "group": "AI and automation",
+    "feature": "Natural language command search",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-210",
+    "group": "AI and automation",
+    "feature": "Bounded wall modification",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-211",
+    "group": "AI and automation",
+    "feature": "Bounded opening modification",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-212",
+    "group": "AI and automation",
+    "feature": "Room naming assistance",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-213",
+    "group": "AI and automation",
+    "feature": "Schedule generation",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-214",
+    "group": "AI and automation",
+    "feature": "Model health suggestions",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-215",
+    "group": "AI and automation",
+    "feature": "ArqScript parser",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-216",
+    "group": "AI and automation",
+    "feature": "ArqScript executor",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-217",
+    "group": "AI and automation",
+    "feature": "AI proposal preview",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-218",
+    "group": "AI and automation",
+    "feature": "AI grouped undo",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-219",
+    "group": "AI and automation",
+    "feature": "Sketch calibration",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-220",
+    "group": "AI and automation",
+    "feature": "Sketch to bounded operations",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-221",
+    "group": "AI and automation",
+    "feature": "Room layout alternatives",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-222",
+    "group": "AI and automation",
+    "feature": "Whole-building generation",
+    "stage": "Research",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-223",
+    "group": "AI and automation",
+    "feature": "Code compliance assistance",
+    "stage": "Research",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-224",
+    "group": "AI and automation",
+    "feature": "Structural design generation",
+    "stage": "Not planned",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-225",
+    "group": "Native and field",
+    "feature": "PWA install",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-226",
+    "group": "Native and field",
+    "feature": "Native desktop shell",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-227",
+    "group": "Native and field",
+    "feature": "macOS document integration",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-228",
+    "group": "Native and field",
+    "feature": "Windows file association",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-229",
+    "group": "Native and field",
+    "feature": "iPad document integration",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-230",
+    "group": "Native and field",
+    "feature": "Apple Pencil hover",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-231",
+    "group": "Native and field",
+    "feature": "Apple Pencil double tap",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-232",
+    "group": "Native and field",
+    "feature": "Apple Pencil squeeze",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-233",
+    "group": "Native and field",
+    "feature": "Pencil haptic snap",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-234",
+    "group": "Native and field",
+    "feature": "RoomPlan import",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-235",
+    "group": "Native and field",
+    "feature": "LiDAR source capture",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-236",
+    "group": "Native and field",
+    "feature": "Capture correction workflow",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-237",
+    "group": "Native and field",
+    "feature": "Phone viewer",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-238",
+    "group": "Native and field",
+    "feature": "Phone markup",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-239",
+    "group": "Native and field",
+    "feature": "Offline project replica",
+    "stage": "R1",
+    "status": "protected",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-240",
+    "group": "Administration and platform",
+    "feature": "Account settings",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-241",
+    "group": "Administration and platform",
+    "feature": "Workspace settings",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-242",
+    "group": "Administration and platform",
+    "feature": "Billing",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-243",
+    "group": "Administration and platform",
+    "feature": "Usage limits",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-244",
+    "group": "Administration and platform",
+    "feature": "Audit log",
+    "stage": "R3",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-245",
+    "group": "Administration and platform",
+    "feature": "SSO",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-246",
+    "group": "Administration and platform",
+    "feature": "SCIM",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-247",
+    "group": "Administration and platform",
+    "feature": "Regional hosting",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-248",
+    "group": "Administration and platform",
+    "feature": "API keys",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-249",
+    "group": "Administration and platform",
+    "feature": "Webhooks",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-250",
+    "group": "Administration and platform",
+    "feature": "Plugin SDK",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-251",
+    "group": "Administration and platform",
+    "feature": "Plugin permissions",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-252",
+    "group": "Administration and platform",
+    "feature": "Organisation templates",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-253",
+    "group": "Administration and platform",
+    "feature": "Component library administration",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-254",
+    "group": "Administration and platform",
+    "feature": "Security dashboard",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-255",
+    "group": "Administration and platform",
+    "feature": "Data retention controls",
+    "stage": "R4",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-256",
+    "group": "Administration and platform",
+    "feature": "Support bundle",
+    "stage": "R2",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-257",
+    "group": "Structural and MEP",
+    "feature": "Structural analytical model",
+    "stage": "Later",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-258",
+    "group": "Structural and MEP",
+    "feature": "Loads and combinations",
+    "stage": "Later",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-259",
+    "group": "Structural and MEP",
+    "feature": "Structural analysis",
+    "stage": "Not planned",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-260",
+    "group": "Structural and MEP",
+    "feature": "Duct authoring",
+    "stage": "Later",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-261",
+    "group": "Structural and MEP",
+    "feature": "Pipe authoring",
+    "stage": "Later",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-262",
+    "group": "Structural and MEP",
+    "feature": "Electrical circuits",
+    "stage": "Later",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-263",
+    "group": "Structural and MEP",
+    "feature": "MEP sizing",
+    "stage": "Not planned",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-264",
+    "group": "Structural and MEP",
+    "feature": "Clash detection",
+    "stage": "R5",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  },
+  {
+    "id": "FEAT-265",
+    "group": "Structural and MEP",
+    "feature": "Fabrication detail",
+    "stage": "Not planned",
+    "status": "planned",
+    "dependency": "See command and entity catalogues",
+    "quality_gate": "Usability, correctness, recovery, accessibility, performance and security",
+    "claim_rule": "Do not market as available before release evidence"
+  }
+]

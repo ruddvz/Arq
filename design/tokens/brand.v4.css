@@ -1,0 +1,20 @@
+:root {
+  --arq-black: #000000;
+  --arq-white: #ffffff;
+  --arq-phthalo-green: #0b6b50;
+
+  --arq-brand-foreground: var(--arq-black);
+  --arq-brand-background: var(--arq-white);
+  --arq-brand-accent: var(--arq-phthalo-green);
+
+  --arq-focus-ring: var(--arq-phthalo-green);
+  --arq-selection-outline: var(--arq-phthalo-green);
+  --arq-active-indicator: var(--arq-phthalo-green);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --arq-brand-foreground: var(--arq-white);
+    --arq-brand-background: var(--arq-black);
+  }
+}

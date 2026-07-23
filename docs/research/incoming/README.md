@@ -20,58 +20,82 @@ and the ADRs under `docs/adr/`, unchanged.
   sheet/inspect/document/present editor modes; auth and workspace
   flows).
 
-## What was reviewed from the "v4.0 CORE" master pack and its outcome
+## What was reviewed from the "v4.0 CORE" master pack, in detail, and what was done
 
 A later upload (`ARQ-EXECUTION-READY-MASTER-PACK-v4.0-CORE.zip`) was
-extracted and reviewed in full. It contains two very different kinds
-of material:
+extracted and reviewed file-by-file against this repository's actual
+state (not just skimmed by directory name). Findings:
 
-1. **`implementation-patches/live-github/`** - concrete, targeted
-   patches explicitly prepared for this exact repository and branch
-   (`ruddvz/Arq`, `claude/arq-cad-platform-research-ba8rav`), by a
-   separate session whose GitHub write access returned HTTP 403. Its
-   one patch, `centre-snap/`, was reviewed, adapted (reformatted,
-   reconciled against this repo's actual state) and applied: it
-   completed ARQ-191's "Centre snap" half (`nearest-snap.ts` already
-   covered "Nearest") and split the new candidate contract into
-   ARQ-192, both closed on GitHub with evidence.
-2. **Everything else** - a much larger, self-contained planning/
-   reference archive: an extended static backlog (239 items, mostly
-   unfilled templates), a parallel Python reference implementation
-   (`reference-implementation/arqfs`), a standalone HTML/JS/CSS
-   prototype, a separate `monorepo-starter` scaffold, and business/
-   legal/operations documents. None of this targets this repository's
-   actual file layout the way the live-github patch does, and adopting
-   it wholesale would mean discarding or contradicting 190+ already-
-   shipped, tested issues in favour of an unreviewed parallel
-   implementation. It has not been merged. `remaining/REMAINING-WORK.md`
-   and `remaining/DECISIONS-REQUIRING-EVIDENCE.csv` (inside the pack,
-   not copied here) list what the pack's own authors consider still
-   undecided.
-3. **`ARQLogoEssentialsFINAL.zip`** - already fully present in this
-   repository's `brand/` directory (a concurrent PR merged it earlier);
-   the zip's contents were diffed file-for-file against `brand/` and
-   nothing was missing or different, so nothing further was done.
+1. **Backlog 001-189: identical.** Byte-for-byte diff of every file
+   found no differences at all between the pack's `backlog/issues/`
+   and this repository's - same plan, same content. This means the
+   pack is a genuine continuation of the same planning lineage this
+   repository was built from, not a rival/forked plan.
+2. **Backlog 190+: both sides independently extended it past 189, with
+   different content at the same numbers.** This repository's own
+   190-192 (component-doc differentiation, centre/nearest snap, circular
+   snap candidate) were discovered and added during real implementation
+   work here. The pack's 190-239 are a different, later set (file-system/
+   SQLite/Rust-core/sync/performance/security items) discovered by
+   whoever built the pack. Both are legitimate; they just collided on
+   numbering. **Resolved**: the pack's 190-239 were renumbered +3 (to
+   193-242, no cross-references needed adjusting - none of these 50
+   files referenced another by number) and copied in, extending this
+   repository's ordered backlog to 242 items with no gaps or duplicates.
+3. **`implementation-patches/live-github/centre-snap/`** - a concrete,
+   targeted patch prepared for this exact repository and branch by a
+   separate session whose GitHub write access returned HTTP 403.
+   Reviewed, adapted, and applied in an earlier turn: completed ARQ-191's
+   "Centre snap" half and split the new candidate contract into ARQ-192,
+   both closed on GitHub with evidence.
+4. **New reference material adopted as documentation** (not yet
+   implemented, not yet decided): ADR-0019 through ADR-0026 (`docs/adr/`),
+   14 architecture documents (`docs/architecture/`), the full command
+   catalogue and 107 individual command specs (`docs/commands/`), the
+   v4.0 brand implementation spec (`docs/brand/`), two new contract files
+   (`contracts/arqfs.ts`, `contracts/performance.ts`), a page-renderings
+   manifest and v4 brand design tokens (`design/`). These are additive -
+   nothing existing was overwritten - and give real, detailed reference
+   material for backlog items 193+ as they're reached.
+5. **Historical blueprint revisions filed for reference**:
+   `blueprint-revisions/` holds the pack's v1.1, v2.0 and v3.0 full
+   blueprint documents, its `SOURCE-OF-TRUTH.md`, and its
+   `FULL-PLATFORM-FEATURE-CATALOG`. None of these are this repository's
+   source of truth (still `ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md`
+   and `docs/adr/`, both unchanged).
+6. **`ARQLogoEssentialsFINAL.zip`** - already fully present in this
+   repository's `brand/` directory (merged via a concurrent PR earlier);
+   diffed file-for-file, identical, nothing further done.
+7. **Not adopted**: the pack's extended static backlog metadata beyond
+   the issue files themselves, its parallel Python reference
+   implementation (`reference-implementation/arqfs`), its standalone
+   HTML/JS/CSS prototype, and its separate `monorepo-starter` scaffold.
+   None of these target this repository's actual file layout, and
+   adopting them would mean discarding or duplicating 190+ already-
+   shipped, tested issues rather than extending them.
 
-## Known, unresolved conflicts with what is already shipped
+## The one real, unresolved architectural conflict
 
-`ARQ-BLUEPRINT-v2.0-PROPOSAL.md`'s own "Corrections made in v2.0" list
-includes two items that directly reverse work already implemented and
-tested in this repository:
+The pack's own `docs/product/SOURCE-OF-TRUTH.md` (filed in
+`blueprint-revisions/`) explicitly states its current source includes
+"ADR-0019 and later" and lists **"Dexie project database"** and
+**"generic IndexedDB ADR-0006"** under "Historical or superseded."
+ADR-0019/0021/0024 (now in `docs/adr/`) propose a SQLite-WASM +
+OPFS-backed `.arq` file format instead, and ADR-0020 proposes a shared
+Rust core compiled to WebAssembly.
 
-1. **"Removed Dexie as the primary project store"** - `@arq/local-storage`
-   already adopted Dexie (recorded as "adopt" in
-   `open-source/TECHNOLOGY-MATRIX.csv`) as its first local store.
-2. **"Locked WebGLRenderer as the Release 1 production path"** - this
-   directly contradicts `docs/adr/0008-rendering-strategy.md` (ARQ-118),
-   which recommends Canvas 2D as the v1 2D renderer backend, based on
-   real, measured benchmark evidence (`docs/research/RENDERER-BENCHMARK-CANVAS-2D.md`,
-   `RENDERER-BENCHMARK-PIXIJS-WEBGL.md`, `RENDERER-BENCHMARK-CANVASKIT.md`).
+This is a real, deliberate, hard-to-reverse conflict with what is
+already shipped and tested here: `@arq/local-storage` is a working,
+tested Dexie/IndexedDB implementation (`database.ts`, `journal-append.ts`,
+`journal-recovery.ts`, `snapshot.ts`, `archive-export.ts`, `quota-error.ts`,
+`recovery-report.ts`). Adopting the pack's direction would mean rewriting
+or discarding that package, and adding an entirely new Rust/WASM
+toolchain to the monorepo's build. (The earlier note in this file about
+a WebGLRenderer conflict was a misreading: the pack's ADR-0025 is about
+the *3D* renderer, Three.js `WebGLRenderer` vs `WebGPURenderer` - which
+matches what `@arq/model-renderer` already uses. It does not conflict
+with ADR-0008, which is about the *2D* renderer.)
 
-Reverting either decision - re-architecting local storage away from
-Dexie, or reversing the renderer ADR - would undo real, tested,
-already-shipped work. That is a deliberate, user-facing decision this
-session has not been asked to make with enough clarity to act on
-irreversibly, so it has not been made. This directory exists so the
-material is not lost and is available the moment an explicit decision
-is given on how to reconcile it.
+This decision has not been made unilaterally - it needs the user's
+explicit go-ahead, since it discards real, tested work and adds a new
+toolchain dependency.
