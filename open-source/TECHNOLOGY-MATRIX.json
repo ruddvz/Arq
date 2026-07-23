@@ -214,7 +214,14 @@
     "role": "PDF",
     "licence": "MIT",
     "treatment": "adopt with tests",
-    "notes": "Vector output"
+    "notes": "Vector output; wired in ARQ-142 (pdf-lib 1.17.1, @arq/pdf-export)"
+  },
+  {
+    "project": "@pdf-lib/fontkit",
+    "role": "PDF font embedding",
+    "licence": "MIT",
+    "treatment": "adopt with tests",
+    "notes": "pdf-lib's TrueType/OpenType embedding backend; wired in ARQ-143 (1.1.1, @arq/pdf-export)"
   },
   {
     "project": "Keycloak",
