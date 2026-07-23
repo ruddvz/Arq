@@ -31,4 +31,11 @@ Second:
 
 - one bounded modification.
 
+`proposeWallHeightEdit` (`packages/arqscript/src/wall-edit-proposal.ts`,
+ARQ-170) prototypes section 100's own example ("Change the selected walls
+to 150 mm"): original request, parsed intent, before/after values, and
+one previewable `UpdateWallCommand` per target wall, all sharing one
+`scriptId` (grouped undo) - reusing `@arq/arqscript`'s own grammar rather
+than a parallel "proposal operation" shape.
+
 Do not begin with automatic whole-building generation.

@@ -59,3 +59,14 @@ and `@arq/project-format`'s `importArchive` already use. AI guardrail "No
 arbitrary code execution" (`docs/ai/AI-GUARDRAILS.md`) holds: this parser
 only ever produces plain AST data, with no `eval`/`Function`/dynamic
 dispatch on source text anywhere.
+
+`wall-edit-proposal.ts` (ARQ-170) prototypes blueprint section 100
+Feature 2's own example ("Change the selected walls to 150 mm"):
+`proposeWallHeightEdit` takes the already-parsed intent a caller supplies
+(no NL/intent-extraction layer exists here either) and builds section
+101's "AI proposal panel" data - original request, parsed intent,
+before/after values, and one `UpdateWallCommand` per target wall
+assembled into a single `ArqScriptDocument` sharing one `scriptId` -
+reusing this package's own grammar rather than inventing a parallel
+"proposal operation" shape. `warnings` is honestly always empty: no
+semantic/geometry validation is wired to this data-layer prototype.
