@@ -50,5 +50,14 @@ later work.
   agreed value on both peers rather than diverging, crashing, or losing
   the comment's own text.
 
+`issue.ts` + `issues-store.ts` (ARQ-164) implement issues - a distinct
+review item from a comment (the blueprint consistently lists "comments"
+and "issues" as siblings, e.g. the "Review" purpose list and "Release 2:
+exchange and review"), with its own status workflow
+(`'open' | 'in-progress' | 'resolved' | 'closed'`) and optional assignee,
+following comments-store.ts's exact same Y.Map CRDT pattern and the same
+"no silent destructive merge" guarantees (verified the same way: parallel
+concurrent-add and concurrent-status-change tests).
+
 New dependencies: `yjs` (MIT) and `y-protocols` (MIT), both scoped to this
 package only.
