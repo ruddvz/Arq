@@ -26,19 +26,10 @@
       "type": "string"
     },
     "risk": {
-      "enum": [
-        "low",
-        "moderate",
-        "high",
-        "critical"
-      ]
+      "enum": ["low", "moderate", "high", "critical"]
     },
     "tier": {
-      "enum": [
-        "fast",
-        "standard",
-        "deep"
-      ]
+      "enum": ["fast", "standard", "deep"]
     },
     "deliveryStop": {
       "type": "string"

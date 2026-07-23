@@ -56,11 +56,5 @@
     "build": 600000,
     "ciPoll": 900000
   },
-  "status": [
-    "green",
-    "partial",
-    "blocked",
-    "failed",
-    "rolled-back"
-  ]
+  "status": ["green", "partial", "blocked", "failed", "rolled-back"]
 }

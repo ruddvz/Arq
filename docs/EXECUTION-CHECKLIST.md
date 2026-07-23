@@ -1,6 +1,7 @@
 # Zeus 3.0 Execution Checklist
 
 ## Compile
+
 - [ ] Outcome/current state
 - [ ] Scope/non-goals
 - [ ] Existing systems to reuse
@@ -8,6 +9,7 @@
 - [ ] Binary acceptance and rollback
 
 ## Orchestrate
+
 - [ ] Accountable role
 - [ ] Independent reviewers
 - [ ] Dependency waves
@@ -15,6 +17,7 @@
 - [ ] Blocking decisions resolved
 
 ## Implement and review
+
 - [ ] Invalid-state atomicity
 - [ ] Targeted tests
 - [ ] Actual runtime/file/visual inspection
@@ -22,6 +25,7 @@
 - [ ] Senior gate repaired and rerun
 
 ## GitHub and CI
+
 - [ ] Scoped branch/diff
 - [ ] Draft PR evidence
 - [ ] Required checks known
@@ -30,6 +34,7 @@
 - [ ] Merge authority and expected head
 
 ## Deploy and production
+
 - [ ] Merged SHA
 - [ ] Post-merge CI
 - [ ] Deployment status and SHA

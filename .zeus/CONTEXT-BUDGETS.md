@@ -1,10 +1,10 @@
 # Context and token budgets
 
-| Tier | Modules | Sources | Retrieved characters | Visible contract |
-|---|---:|---:|---:|---:|
-| Fast | 1 | 4 | 8,000 | ≤700 chars |
-| Standard | 4 | 10 | 28,000 | ≤1,500 chars |
-| Deep | 8 | 24 | 80,000 | ≤3,000 chars |
+| Tier     | Modules | Sources | Retrieved characters | Visible contract |
+| -------- | ------: | ------: | -------------------: | ---------------: |
+| Fast     |       1 |       4 |                8,000 |       ≤700 chars |
+| Standard |       4 |      10 |               28,000 |     ≤1,500 chars |
+| Deep     |       8 |      24 |               80,000 |     ≤3,000 chars |
 
 Rules:
 

@@ -1,27 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "required": [
-    "date",
-    "complexity",
-    "lane",
-    "task",
-    "outcome",
-    "rounds"
-  ],
+  "required": ["date", "complexity", "lane", "task", "outcome", "rounds"],
   "properties": {
     "date": {
       "type": "string",
       "format": "date"
     },
     "complexity": {
-      "enum": [
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL"
-      ]
+      "enum": ["XS", "S", "M", "L", "XL"]
     },
     "lane": {
       "type": "string",
@@ -33,13 +20,7 @@
       "maxLength": 180
     },
     "outcome": {
-      "enum": [
-        "green",
-        "partial",
-        "blocked",
-        "failed",
-        "rolled_back"
-      ]
+      "enum": ["green", "partial", "blocked", "failed", "rolled_back"]
     },
     "rounds": {
       "type": "integer",

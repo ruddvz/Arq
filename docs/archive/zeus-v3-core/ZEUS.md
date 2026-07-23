@@ -6,7 +6,7 @@ description: |
   supervises GitHub/CI/deployment and verifies production.
 metadata:
   project: Arq
-  version: "3.0.0"
+  version: '3.0.0'
   mode: execution-first
 ---
 
@@ -227,9 +227,13 @@ Use only verified status:
 Final handoff uses non-empty sections only:
 
 ### Result
+
 ### Verified
+
 ### CI/CD and production
+
 ### Critique resolved
+
 ### Remaining
 
 ## 15. Activate

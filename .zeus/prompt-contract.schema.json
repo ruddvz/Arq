@@ -18,22 +18,10 @@
       "minLength": 1
     },
     "mode": {
-      "enum": [
-        "answer",
-        "plan",
-        "implement",
-        "audit",
-        "release",
-        "incident"
-      ]
+      "enum": ["answer", "plan", "implement", "audit", "release", "incident"]
     },
     "risk": {
-      "enum": [
-        "low",
-        "moderate",
-        "high",
-        "critical"
-      ]
+      "enum": ["low", "moderate", "high", "critical"]
     },
     "scope": {
       "type": "array",

@@ -1,7 +1,61 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
-const args=process.argv.slice(2); const i=args.indexOf('--config'); if(i<0){console.error('Usage: zeus-production-smoke --config smoke.json');process.exit(2);} const config=JSON.parse(readFileSync(args[i+1],'utf8')); const results=[];
-for(const probe of config.http??[]){try{const r=await fetch(probe.url,{method:probe.method??'GET',redirect:'follow',signal:AbortSignal.timeout(probe.timeoutMs??15000),headers:probe.headers??{}});const text=await r.text();const ok=(probe.statuses??[200]).includes(r.status)&&(!probe.contains||text.includes(probe.contains));const safeUrl=new URL(probe.url).origin+new URL(probe.url).pathname;results.push({name:probe.name,url:safeUrl,status:r.status,ok});}catch(e){let safeUrl=probe.url;try{const u=new URL(probe.url);safeUrl=u.origin+u.pathname}catch{}results.push({name:probe.name,url:safeUrl,ok:false,error:String(e)});}}
-for(const probe of config.commands??[]){const r=spawnSync(probe.command,probe.args??[],{encoding:'utf8',timeout:probe.timeoutMs??120000});results.push({name:probe.name,command:[probe.command,...(probe.args??[])].join(' '),ok:r.status===0,status:r.status,output:((r.stdout??'')+'\n'+(r.stderr??'')).trim().slice(-5000)});}
-const failed=results.filter(r=>!r.ok);console.log(JSON.stringify({status:failed.length?'failed':'green',environment:config.environment??'unknown',sha:config.sha??null,results},null,2));process.exit(failed.length?1:0);
+const args = process.argv.slice(2);
+const i = args.indexOf('--config');
+if (i < 0) {
+  console.error('Usage: zeus-production-smoke --config smoke.json');
+  process.exit(2);
+}
+const config = JSON.parse(readFileSync(args[i + 1], 'utf8'));
+const results = [];
+for (const probe of config.http ?? []) {
+  try {
+    const r = await fetch(probe.url, {
+      method: probe.method ?? 'GET',
+      redirect: 'follow',
+      signal: AbortSignal.timeout(probe.timeoutMs ?? 15000),
+      headers: probe.headers ?? {},
+    });
+    const text = await r.text();
+    const ok =
+      (probe.statuses ?? [200]).includes(r.status) &&
+      (!probe.contains || text.includes(probe.contains));
+    const safeUrl = new URL(probe.url).origin + new URL(probe.url).pathname;
+    results.push({ name: probe.name, url: safeUrl, status: r.status, ok });
+  } catch (e) {
+    let safeUrl = probe.url;
+    try {
+      const u = new URL(probe.url);
+      safeUrl = u.origin + u.pathname;
+    } catch {}
+    results.push({ name: probe.name, url: safeUrl, ok: false, error: String(e) });
+  }
+}
+for (const probe of config.commands ?? []) {
+  const r = spawnSync(probe.command, probe.args ?? [], {
+    encoding: 'utf8',
+    timeout: probe.timeoutMs ?? 120000,
+  });
+  results.push({
+    name: probe.name,
+    command: [probe.command, ...(probe.args ?? [])].join(' '),
+    ok: r.status === 0,
+    status: r.status,
+    output: ((r.stdout ?? '') + '\n' + (r.stderr ?? '')).trim().slice(-5000),
+  });
+}
+const failed = results.filter((r) => !r.ok);
+console.log(
+  JSON.stringify(
+    {
+      status: failed.length ? 'failed' : 'green',
+      environment: config.environment ?? 'unknown',
+      sha: config.sha ?? null,
+      results,
+    },
+    null,
+    2,
+  ),
+);
+process.exit(failed.length ? 1 : 0);

@@ -1,12 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "required": [
-    "runId",
-    "state",
-    "outcome",
-    "evidence"
-  ],
+  "required": ["runId", "state", "outcome", "evidence"],
   "properties": {
     "runId": {
       "type": "string"
@@ -39,60 +34,34 @@
       "type": "string"
     },
     "branch": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "type": ["string", "null"]
     },
     "baseSha": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "type": ["string", "null"]
     },
     "headSha": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "type": ["string", "null"]
     },
     "pr": {
-      "type": [
-        "integer",
-        "null"
-      ]
+      "type": ["integer", "null"]
     },
     "mergedSha": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "type": ["string", "null"]
     },
     "deployedSha": {
-      "type": [
-        "string",
-        "null"
-      ]
+      "type": ["string", "null"]
     },
     "evidence": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "kind",
-          "status"
-        ],
+        "required": ["kind", "status"],
         "properties": {
           "kind": {
             "type": "string"
           },
           "status": {
-            "enum": [
-              "pass",
-              "fail",
-              "unknown",
-              "not-applicable"
-            ]
+            "enum": ["pass", "fail", "unknown", "not-applicable"]
           },
           "source": {
             "type": "string"

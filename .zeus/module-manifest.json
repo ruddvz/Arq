@@ -166,29 +166,14 @@
       "id": "ai",
       "title": "AI and ArqScript",
       "path": ".zeus/modules/ai.md",
-      "triggers": [
-        "ai",
-        "arqscript",
-        "proposal",
-        "agent",
-        "generate",
-        "copilot"
-      ],
+      "triggers": ["ai", "arqscript", "proposal", "agent", "generate", "copilot"],
       "priority": 91
     },
     {
       "id": "interoperability",
       "title": "Import, export and interoperability",
       "path": ".zeus/modules/interoperability.md",
-      "triggers": [
-        "ifc",
-        "dxf",
-        "dwg",
-        "pdf",
-        "import",
-        "export",
-        "interoperability"
-      ],
+      "triggers": ["ifc", "dxf", "dwg", "pdf", "import", "export", "interoperability"],
       "priority": 90
     },
     {

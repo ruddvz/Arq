@@ -1,4 +1,53 @@
 #!/usr/bin/env node
-import { readFileSync } from 'node:fs';import { join,dirname } from 'node:path';import { spawnSync } from 'node:child_process';import { route } from './lib/zeus-engine.mjs';
-const a=process.argv.slice(2);const val=n=>{const i=a.indexOf(`--${n}`);return i>=0?a[i+1]:null};const root=val('root')??process.cwd();const packageRoot=dirname(dirname(new URL(import.meta.url).pathname));const map=JSON.parse(readFileSync(join(packageRoot,'.zeus','impact-map.json'),'utf8'));let files=[];if(val('files'))files=val('files').split(',').filter(Boolean);else{const r=spawnSync('git',['-C',root,'status','--porcelain'],{encoding:'utf8'});files=(r.stdout??'').split('\n').filter(Boolean).map(x=>x.slice(3).trim()).filter(Boolean)}
-const globToRe=g=>new RegExp('^'+g.replace(/[.+^${}()|[\]\\]/g,'\\$&').replaceAll('**','§').replaceAll('*','[^/]*').replaceAll('§','.*')+'$');const modules=new Set(),checks=new Set();let risk='low';const rank={low:0,moderate:1,high:2,critical:3};for(const f of files){for(const p of map.patterns){if(globToRe(p.glob).test(f)){for(const m of p.modules)modules.add(m);for(const c of p.checks)checks.add(c);if(rank[p.risk]>rank[risk])risk=p.risk}}}const task=val('task');if(task){const r=route(task);for(const m of r.modules)modules.add(m.id);if(rank[r.risk]>rank[risk])risk=r.risk}console.log(JSON.stringify({files,modules:[...modules],checks:[...checks],risk},null,2));
+import { readFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { route } from './lib/zeus-engine.mjs';
+const a = process.argv.slice(2);
+const val = (n) => {
+  const i = a.indexOf(`--${n}`);
+  return i >= 0 ? a[i + 1] : null;
+};
+const root = val('root') ?? process.cwd();
+const packageRoot = dirname(dirname(new URL(import.meta.url).pathname));
+const map = JSON.parse(readFileSync(join(packageRoot, '.zeus', 'impact-map.json'), 'utf8'));
+let files = [];
+if (val('files')) files = val('files').split(',').filter(Boolean);
+else {
+  const r = spawnSync('git', ['-C', root, 'status', '--porcelain'], { encoding: 'utf8' });
+  files = (r.stdout ?? '')
+    .split('\n')
+    .filter(Boolean)
+    .map((x) => x.slice(3).trim())
+    .filter(Boolean);
+}
+const globToRe = (g) =>
+  new RegExp(
+    '^' +
+      g
+        .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+        .replaceAll('**', '§')
+        .replaceAll('*', '[^/]*')
+        .replaceAll('§', '.*') +
+      '$',
+  );
+const modules = new Set(),
+  checks = new Set();
+let risk = 'low';
+const rank = { low: 0, moderate: 1, high: 2, critical: 3 };
+for (const f of files) {
+  for (const p of map.patterns) {
+    if (globToRe(p.glob).test(f)) {
+      for (const m of p.modules) modules.add(m);
+      for (const c of p.checks) checks.add(c);
+      if (rank[p.risk] > rank[risk]) risk = p.risk;
+    }
+  }
+}
+const task = val('task');
+if (task) {
+  const r = route(task);
+  for (const m of r.modules) modules.add(m.id);
+  if (rank[r.risk] > rank[risk]) risk = r.risk;
+}
+console.log(JSON.stringify({ files, modules: [...modules], checks: [...checks], risk }, null, 2));
