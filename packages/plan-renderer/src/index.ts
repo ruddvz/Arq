@@ -5,3 +5,4 @@ export * from './selection-rendering';
 export * from './snap-glyph-rendering';
 export * from './visibility-state';
 export * from './room-label';
+export * from './sheet-viewport';
