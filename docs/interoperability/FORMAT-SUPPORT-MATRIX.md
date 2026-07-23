@@ -12,3 +12,7 @@
 | STEP     | Selected solids                       | Later         |
 | DWG      | Licensed conversion only if justified | Not committed |
 | RVT      | Connector or external workflow only   | Not committed |
+
+DXF's own detailed entity/section/units matrix, reflecting what the
+`@arq/dxf-adapter` prototype parser actually reads (not just this release
+target): `docs/interoperability/DXF-SUPPORT-MATRIX.md` (ARQ-159).

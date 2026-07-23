@@ -21,3 +21,6 @@ Export, DWG, and mapping parsed entities into real `@arq/bim-core`
 elements are all out of this prototype's scope - see ADR-0012 and
 `docs/commands/specs/CMD-091-import-dxf.md` / `CMD-092-export-dxf.md` for
 the full command-level scope this prototype is one step toward.
+
+See `docs/interoperability/DXF-SUPPORT-MATRIX.md` (ARQ-159) for the
+complete, test-backed matrix of exactly what is and is not read today.
