@@ -14,7 +14,7 @@
         "refactor",
         "product scope"
       ],
-      "priority": 100
+      "priority": 101
     },
     {
       "id": "geometry",
@@ -34,6 +34,30 @@
         "bim",
         "tolerance",
         "unit"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "editor-input",
+      "title": "Editor, commands, selection and input",
+      "path": ".zeus/modules/editor-input.md",
+      "triggers": [
+        "editor",
+        "selection",
+        "select",
+        "snap",
+        "keyboard",
+        "cursor",
+        "drag",
+        "click",
+        "hover",
+        "tool",
+        "command",
+        "escape",
+        "cancel",
+        "undo",
+        "redo",
+        "focus"
       ],
       "priority": 99
     },

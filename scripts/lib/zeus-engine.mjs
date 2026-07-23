@@ -78,6 +78,7 @@ export function route(task, forcedTier = null) {
 const roleMap = {
   architecture: 'product-architecture',
   geometry: 'geometry-bim',
+  'editor-input': 'editor-interaction',
   arqfs: 'arqfs-recovery',
   rendering: 'rendering-performance',
   'ui-visual': 'ui-visual',
