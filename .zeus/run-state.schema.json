@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "runId",
+    "state",
+    "outcome",
+    "evidence"
+  ],
+  "properties": {
+    "runId": {
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "intake",
+        "compiled",
+        "evidence_ready",
+        "planned",
+        "branch_ready",
+        "implementing",
+        "local_green",
+        "review_green",
+        "pr_open",
+        "ci_running",
+        "ci_green",
+        "merge_authorized",
+        "merged",
+        "deployment_running",
+        "production_verified",
+        "closed",
+        "blocked",
+        "failed",
+        "rolled_back",
+        "incident_open"
+      ]
+    },
+    "outcome": {
+      "type": "string"
+    },
+    "branch": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "baseSha": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "headSha": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pr": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "mergedSha": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "deployedSha": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "status"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "unknown",
+              "not-applicable"
+            ]
+          },
+          "source": {
+            "type": "string"
+          },
+          "details": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

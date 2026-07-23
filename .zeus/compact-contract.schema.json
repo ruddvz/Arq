@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "version",
+    "intent",
+    "mode",
+    "risk",
+    "tier",
+    "deliveryStop",
+    "modules",
+    "owner",
+    "acceptance",
+    "checks",
+    "budget"
+  ],
+  "properties": {
+    "version": {
+      "const": "4.0.0"
+    },
+    "intent": {
+      "type": "string",
+      "maxLength": 320
+    },
+    "mode": {
+      "type": "string"
+    },
+    "risk": {
+      "enum": [
+        "low",
+        "moderate",
+        "high",
+        "critical"
+      ]
+    },
+    "tier": {
+      "enum": [
+        "fast",
+        "standard",
+        "deep"
+      ]
+    },
+    "deliveryStop": {
+      "type": "string"
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "owner": {
+      "type": "string"
+    },
+    "reviewers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "acceptance": {
+      "type": "array"
+    },
+    "checks": {
+      "type": "array"
+    },
+    "budget": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,118 @@
+{
+  "version": "3.0.0",
+  "project": "Arq",
+  "roles": [
+    {
+      "id": "orchestrator",
+      "accountable": true,
+      "capabilities": [
+        "scope",
+        "task-graph",
+        "authority",
+        "delivery-state"
+      ]
+    },
+    {
+      "id": "product-architecture",
+      "capabilities": [
+        "workflow",
+        "ADR",
+        "package-boundaries",
+        "scope"
+      ]
+    },
+    {
+      "id": "semantic-model",
+      "capabilities": [
+        "entities",
+        "operations",
+        "undo",
+        "serialization"
+      ]
+    },
+    {
+      "id": "geometry-constraints",
+      "capabilities": [
+        "units",
+        "tolerances",
+        "topology",
+        "property-tests"
+      ]
+    },
+    {
+      "id": "editor-interaction",
+      "capabilities": [
+        "commands",
+        "selection",
+        "snapping",
+        "input",
+        "focus"
+      ]
+    },
+    {
+      "id": "rendering-performance",
+      "capabilities": [
+        "2D",
+        "3D",
+        "benchmarks",
+        "frame-budget"
+      ]
+    },
+    {
+      "id": "arqfs-sync-recovery",
+      "capabilities": [
+        "SQLite",
+        "OPFS",
+        "migration",
+        "sync",
+        "recovery"
+      ]
+    },
+    {
+      "id": "ui-visual",
+      "capabilities": [
+        "design-system",
+        "responsive",
+        "pixel-regression"
+      ]
+    },
+    {
+      "id": "accessibility",
+      "capabilities": [
+        "keyboard",
+        "screen-reader",
+        "touch",
+        "contrast"
+      ]
+    },
+    {
+      "id": "security-supply-chain",
+      "capabilities": [
+        "threat-model",
+        "authorization",
+        "secrets",
+        "dependencies"
+      ]
+    },
+    {
+      "id": "qa-release",
+      "capabilities": [
+        "tests",
+        "evidence",
+        "release-gate",
+        "smoke"
+      ]
+    },
+    {
+      "id": "cicd-reliability",
+      "capabilities": [
+        "PR",
+        "CI",
+        "logs",
+        "merge",
+        "deploy",
+        "incident"
+      ]
+    }
+  ]
+}

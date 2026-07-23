@@ -1,0 +1,151 @@
+{
+  "patterns": [
+    {
+      "glob": "docs/**",
+      "modules": [],
+      "checks": [
+        "format:check"
+      ],
+      "risk": "low"
+    },
+    {
+      "glob": "**/*.md",
+      "modules": [],
+      "checks": [
+        "format:check"
+      ],
+      "risk": "low"
+    },
+    {
+      "glob": "packages/geometry-*/**",
+      "modules": [
+        "geometry"
+      ],
+      "checks": [
+        "typecheck",
+        "test"
+      ],
+      "risk": "high"
+    },
+    {
+      "glob": "packages/model-*/**",
+      "modules": [
+        "geometry",
+        "architecture"
+      ],
+      "checks": [
+        "typecheck",
+        "test"
+      ],
+      "risk": "high"
+    },
+    {
+      "glob": "packages/editor-*/**",
+      "modules": [
+        "geometry",
+        "accessibility"
+      ],
+      "checks": [
+        "typecheck",
+        "test"
+      ],
+      "risk": "moderate"
+    },
+    {
+      "glob": "packages/render*/**",
+      "modules": [
+        "rendering"
+      ],
+      "checks": [
+        "typecheck",
+        "test",
+        "build"
+      ],
+      "risk": "high"
+    },
+    {
+      "glob": "**/*arqfs*/**",
+      "modules": [
+        "arqfs",
+        "security"
+      ],
+      "checks": [
+        "typecheck",
+        "test",
+        "build"
+      ],
+      "risk": "high"
+    },
+    {
+      "glob": "**/migrations/**",
+      "modules": [
+        "arqfs",
+        "security"
+      ],
+      "checks": [
+        "test",
+        "build"
+      ],
+      "risk": "critical"
+    },
+    {
+      "glob": "apps/**",
+      "modules": [
+        "ui-visual",
+        "accessibility"
+      ],
+      "checks": [
+        "lint",
+        "typecheck",
+        "test",
+        "build"
+      ],
+      "risk": "moderate"
+    },
+    {
+      "glob": ".github/workflows/**",
+      "modules": [
+        "github-cicd",
+        "security"
+      ],
+      "checks": [
+        "format:check"
+      ],
+      "risk": "high"
+    },
+    {
+      "glob": "**/*security*/**",
+      "modules": [
+        "security"
+      ],
+      "checks": [
+        "typecheck",
+        "test"
+      ],
+      "risk": "high"
+    },
+    {
+      "glob": "**/*import*/**",
+      "modules": [
+        "interoperability",
+        "security"
+      ],
+      "checks": [
+        "typecheck",
+        "test"
+      ],
+      "risk": "high"
+    },
+    {
+      "glob": "**/*export*/**",
+      "modules": [
+        "interoperability"
+      ],
+      "checks": [
+        "typecheck",
+        "test"
+      ],
+      "risk": "high"
+    }
+  ]
+}

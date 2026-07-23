@@ -1,0 +1,10 @@
+{
+  "environment": "staging",
+  "sha": "REPLACE_WITH_DEPLOYED_SHA",
+  "http": [
+    {"name": "application health", "url": "https://example.invalid/health", "statuses": [200], "timeoutMs": 15000}
+  ],
+  "commands": [
+    {"name": "configured browser smoke suite", "command": "pnpm", "args": ["test:smoke"], "timeoutMs": 300000}
+  ]
+}

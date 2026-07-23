@@ -1,0 +1,13 @@
+{
+  "runId": "example",
+  "state": "intake",
+  "outcome": "",
+  "branch": null,
+  "baseSha": null,
+  "headSha": null,
+  "pr": null,
+  "mergedSha": null,
+  "deployedSha": null,
+  "evidence": [],
+  "blockers": []
+}

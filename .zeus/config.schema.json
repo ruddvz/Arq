@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "version",
+    "project",
+    "budgets",
+    "cache",
+    "index"
+  ],
+  "properties": {
+    "version": {
+      "const": "4.0.0"
+    },
+    "project": {
+      "const": "Arq"
+    },
+    "budgets": {
+      "type": "object"
+    },
+    "cache": {
+      "type": "object"
+    },
+    "index": {
+      "type": "object"
+    },
+    "timeoutsMs": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}
