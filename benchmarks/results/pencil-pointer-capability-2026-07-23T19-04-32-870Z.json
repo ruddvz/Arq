@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-07-23T19:04:32.870Z",
+  "environment": "headless Chromium 141.0.7390.37, sandboxed container - real browser engine, not a physical iPad or Apple Pencil (see docs/research/PENCIL-WEB-INPUT.md)",
+  "pen": {
+    "pointerType": "pen",
+    "pressure": 0.6200000047683716,
+    "tiltX": 15,
+    "tiltY": -20,
+    "twist": 30,
+    "isPrimary": true
+  },
+  "touch": {
+    "pointerType": "touch",
+    "pressure": 0,
+    "tiltX": 0,
+    "tiltY": 0,
+    "twist": 0,
+    "isPrimary": true
+  },
+  "mouse": {
+    "pointerType": "mouse",
+    "pressure": 0,
+    "tiltX": 0,
+    "tiltY": 0,
+    "twist": 0,
+    "isPrimary": true
+  },
+  "hoverWithoutDownFired": true,
+  "pointerEventsSupported": true
+}

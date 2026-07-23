@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ARQ-171: Pencil web input capability check</title>
+  </head>
+  <body>
+    <!--
+      ARQ-171: ipad: test Pencil web input.
+
+      Verifies the real W3C Pointer Events API a real browser engine
+      implements - not this repository's own code, and not a real Apple
+      Pencil (no physical iPad/Pencil hardware exists in this sandboxed
+      environment; see docs/research/PENCIL-WEB-INPUT.md's own caveat).
+      Dispatches genuine `PointerEvent` instances with pointerType 'pen',
+      'touch' and 'mouse' at a real element and records exactly which
+      fields (pointerType, pressure, tiltX/tiltY, twist) the browser's own
+      event object actually carries through to a listener, plus whether
+      `pointerover` (hover) fires without a `pointerdown` for a 'pen'
+      event - the mechanism section 13's "Pencil hover preview" depends
+      on. This is real evidence of web-platform capability, driven by
+      scripts/run-pencil-pointer-capability-check.mjs in real headless
+      Chromium (Playwright), the same pattern
+      canvas-2d-benchmark.html/run-canvas-2d-benchmark.mjs already use.
+    -->
+    <div id="target" style="width: 200px; height: 200px"></div>
+    <script>
+      (function () {
+        const target = document.getElementById('target');
+        const results = {};
+
+        function recordFieldsFor(pointerType) {
+          return new Promise((resolve) => {
+            const handler = (event) => {
+              target.removeEventListener('pointerdown', handler);
+              resolve({
+                pointerType: event.pointerType,
+                pressure: event.pressure,
+                tiltX: event.tiltX,
+                tiltY: event.tiltY,
+                twist: event.twist,
+                isPrimary: event.isPrimary,
+              });
+            };
+            target.addEventListener('pointerdown', handler);
+            const init = { pointerType, bubbles: true, cancelable: true, isPrimary: true };
+            if (pointerType === 'pen') {
+              init.pressure = 0.62;
+              init.tiltX = 15;
+              init.tiltY = -20;
+              init.twist = 30;
+            }
+            target.dispatchEvent(new PointerEvent('pointerdown', init));
+          });
+        }
+
+        function recordHoverWithoutDown() {
+          return new Promise((resolve) => {
+            let overFired = false;
+            const overHandler = () => {
+              overFired = true;
+            };
+            target.addEventListener('pointerover', overHandler, { once: true });
+            target.dispatchEvent(
+              new PointerEvent('pointerover', { pointerType: 'pen', bubbles: true }),
+            );
+            // Synchronous dispatch - no down event was ever sent.
+            target.removeEventListener('pointerover', overHandler);
+            resolve(overFired);
+          });
+        }
+
+        Promise.all([
+          recordFieldsFor('pen'),
+          recordFieldsFor('touch'),
+          recordFieldsFor('mouse'),
+          recordHoverWithoutDown(),
+        ]).then(([pen, touch, mouse, hoverWithoutDownFired]) => {
+          results.pen = pen;
+          results.touch = touch;
+          results.mouse = mouse;
+          results.hoverWithoutDownFired = hoverWithoutDownFired;
+          results.pointerEventsSupported = typeof window.PointerEvent === 'function';
+          window.__ARQ_PENCIL_CAPABILITY_RESULT__ = results;
+        });
+      })();
+    </script>
+  </body>
+</html>
