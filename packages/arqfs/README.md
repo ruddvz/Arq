@@ -33,15 +33,28 @@ Worker/OPFS/WASM runtime as a separate `ArqfsDriver` behind the same interface -
   single-writer coordination, verified for real via a two-tab headless-Chromium
   check (`docs/research/ARQFS-OPFS-CAPABILITY.md`) - browser-only, so not
   Vitest-testable here.
+- `arqfs-clean-export.ts` (ARQ-197): `VACUUM INTO` produces a clean copy with no
+  WAL/SHM sidecars - verified directly against a source database left in WAL mode,
+  not assumed.
+- `arqfs-working-copy.ts` (ARQ-198): the one-row-per-file working-copy state
+  (`contracts/arqfs.ts`'s `ArqWorkingCopy` shape) and its commit-order transitions
+  (`beginLocalWrite`/`commitLocalWrite`/`failLocalWrite`). `syncState`/
+  `publicationState` start at `'offline'`/`'not-linked'` - the only honest values
+  before any sync epic exists (ARQ-206 onward).
+- `arqfs-resource-chunks.ts` (ARQ-199): splits a resource into content-addressed
+  chunks (each with its own sha256) and reassembles them, re-verifying every chunk's
+  hash and the total byte length on the way back out rather than trusting storage.
+- `workers/arqfs-worker`'s real entry point already runs this package's real v1
+  schema (via `arqfs-worker-handler.ts`, unchanged) - only its own standalone
+  capability-check fixture (`benchmarks/opfs-capability-worker.js`) deliberately
+  uses a throwaway schema, kept separate on purpose as a minimal, no-bundler-needed
+  proof of the underlying sqlite-wasm/OPFS mechanics.
 
 ## What this does not do yet
 
-- No content-addressed resource chunk storage, only the resource descriptor shape
-  (ARQ-199).
 - No copy-on-write migration execution beyond the registry already in
   `@arq/project-format` (ARQ-201).
 - No fuzzing of untrusted input yet (ARQ-217) - `arqfs-node-driver.ts` is a thin,
   trusted wrapper, not a hardened boundary.
-- The real v1 schema has not yet been merged onto the Worker/OPFS runtime -
-  `workers/arqfs-worker`'s own capability checks deliberately use a throwaway
-  schema; that merge is ARQ-197 onward.
+- No real network sync (ARQ-206 onward) - `working_copy_state`'s `syncState`/
+  `publicationState` are placeholders for it, not an implementation of it.

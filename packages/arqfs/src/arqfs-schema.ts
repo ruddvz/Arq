@@ -32,7 +32,7 @@ const CREATE_ARCHIVE_ENTRY_TABLE = `
   )
 `;
 
-/** Matches contracts/arqfs.ts's ArqResourceDescriptor shape (reference-only; reproduced, not imported - see arqfs-header.ts). Chunk storage itself is ARQ-199. */
+/** Matches contracts/arqfs.ts's ArqResourceDescriptor shape (reference-only; reproduced, not imported - see arqfs-header.ts). Chunk storage itself is resource_chunk, below (ARQ-199). */
 const CREATE_RESOURCE_TABLE = `
   CREATE TABLE resource (
     sha256 TEXT PRIMARY KEY,
@@ -52,10 +52,48 @@ const CREATE_RESOURCE_TABLE = `
   )
 `;
 
+/**
+ * ARQ-199: content-addressed resource chunks. Each chunk carries its own sha256 so a
+ * future resumable upload (ARQ-208) can verify/dedupe per chunk rather than only at
+ * the whole-resource level. Ordered by (resource_sha256, chunk_index); a resource's
+ * chunks are reassembled by reading them back in that order.
+ */
+const CREATE_RESOURCE_CHUNK_TABLE = `
+  CREATE TABLE resource_chunk (
+    resource_sha256 TEXT NOT NULL REFERENCES resource(sha256),
+    chunk_index INTEGER NOT NULL,
+    chunk_sha256 TEXT NOT NULL,
+    content BLOB NOT NULL,
+    PRIMARY KEY (resource_sha256, chunk_index)
+  )
+`;
+
 const CREATE_SCHEMA_MIGRATION_TABLE = `
   CREATE TABLE schema_migration (
     version INTEGER PRIMARY KEY,
     applied_at_unix_ms INTEGER NOT NULL
+  )
+`;
+
+/**
+ * ARQ-198: working copy / linked document state - contracts/arqfs.ts's
+ * ArqWorkingCopy shape, one row per project (enforced by the id=1 CHECK, since a
+ * single arqfs file holds exactly one project's working-copy state). Separate from
+ * arqfs_meta (which is permanently frozen for version bootstrapping) since this is
+ * ordinary mutable application state, not format-version identification.
+ */
+const CREATE_WORKING_COPY_STATE_TABLE = `
+  CREATE TABLE working_copy_state (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    project_id TEXT NOT NULL,
+    local_revision INTEGER NOT NULL,
+    server_revision INTEGER,
+    linked_external_path TEXT,
+    local_commit_state TEXT NOT NULL CHECK (local_commit_state IN ('clean', 'writing', 'failed')),
+    sync_state TEXT NOT NULL CHECK (sync_state IN ('offline', 'syncing', 'synced', 'conflict')),
+    publication_state TEXT NOT NULL CHECK (
+      publication_state IN ('not-linked', 'current', 'pending', 'failed')
+    )
   )
 `;
 
@@ -68,7 +106,9 @@ export function createArqfsSchemaV1(driver: ArqfsDriver): void {
     driver.exec(CREATE_META_TABLE);
     driver.exec(CREATE_ARCHIVE_ENTRY_TABLE);
     driver.exec(CREATE_RESOURCE_TABLE);
+    driver.exec(CREATE_RESOURCE_CHUNK_TABLE);
     driver.exec(CREATE_SCHEMA_MIGRATION_TABLE);
+    driver.exec(CREATE_WORKING_COPY_STATE_TABLE);
 
     const insertMeta = 'INSERT INTO arqfs_meta (key, value) VALUES (?, ?)';
     driver.run(insertMeta, ['format_major', String(ARQFS_CURRENT_FORMAT_VERSION.major)]);
