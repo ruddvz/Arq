@@ -39,6 +39,8 @@ importers:
 
   apps/web: {}
 
+  packages/arqscript: {}
+
   packages/bim-core:
     dependencies:
       '@arq/geometry-2d':
@@ -147,6 +149,12 @@ importers:
         version: link:../geometry-2d
 
   packages/project-format: {}
+
+  packages/roomplan-adapter:
+    dependencies:
+      '@arq/arqscript':
+        specifier: workspace:*
+        version: link:../arqscript
 
   packages/telemetry: {}
 

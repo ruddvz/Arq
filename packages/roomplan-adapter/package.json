@@ -1,0 +1,14 @@
+{
+  "name": "@arq/roomplan-adapter",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Apple RoomPlan capture conversion into ArqScript operations (see §109).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@arq/arqscript": "workspace:*"
+  }
+}
