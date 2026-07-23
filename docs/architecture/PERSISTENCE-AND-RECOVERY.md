@@ -17,7 +17,10 @@ file).
 - clean export through the SQLite backup API; no WAL/SHM sidecars;
 - migration is copy-on-write and recoverable (ADR-0019, ADR-0023).
 
-Implementation: `packages/arqfs` (ARQ-195 onward).
+Implementation: `packages/arqfs` (ARQ-195 onward), storing `@arq/project-format`'s
+existing logical archive entries (manifest/model/operations/views/sheets) as SQLite
+rows rather than a competing serialization - see `docs/architecture/
+ARQ-FILE-FORMAT.md`'s "Relationship to the existing `@arq/project-format` archive".
 
 ## Derived tier: Dexie / IndexedDB
 

@@ -44,6 +44,35 @@ Once a major version ships, no existing field or table ever changes meaning. Onl
 additive, backward-compatible fields are allowed within a minor version. A breaking
 change requires a major version bump plus a migration path (ARQ-201).
 
+## Relationship to the existing `@arq/project-format` archive
+
+`@arq/project-format` already defines the canonical _logical_ content of a `.arq`
+project (ARQ-076 through ARQ-080): `manifest.json`, `model.json`,
+`operations.ndjson`, `views.json`, `sheets.json`, `checksums.json`, each with its own
+required/optional handling, checksum verification, and schema-version migration
+registry (`createMigrationRegistry`). None of that changes or gets duplicated here.
+
+What ADR-0019 adds is a second _physical container_ for that same logical content.
+Today `exportArchive`/`importArchive` produce and consume a flat map of
+path-to-bytes (naturally realized as a zip file) with no random access - reading
+`model.json` alone still means decoding the whole archive. The SQLite file stores the
+same logical entries as rows (one per manifest/model/operations/views/sheets, plus
+resource blobs per `ArqResourceDescriptor`), giving random access, transactions and
+progressive opening (ADR-0023) without changing what the bytes mean or how they
+migrate.
+
+Both physical containers stay valid, for different purposes:
+
+- **`.arq` (SQLite, this document):** the live, working, user-visible project file -
+  what the application actually opens, edits and saves day to day.
+- **Portable zip archive (`@arq/project-format`, unchanged):** a portable,
+  git-diffable interchange bundle - export/import, sharing outside the app, or a
+  human-inspectable format that needs no SQLite runtime to read.
+
+`packages/arqfs` (ARQ-195) depends on `@arq/project-format` and stores its existing
+entry shapes inside SQLite tables/blobs; it does not reimplement manifest parsing,
+checksum computation, or migration sequencing - those stay exactly where they are.
+
 ## Non-goals
 
 - No reader or writer implementation here - that is `packages/arqfs` (ARQ-195).
