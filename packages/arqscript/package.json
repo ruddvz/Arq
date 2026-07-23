@@ -1,0 +1,11 @@
+{
+  "name": "@arq/arqscript",
+  "private": true,
+  "version": "0.0.0",
+  "description": "ArqScript v0: a human-readable, versioned, unit-aware, deterministic operation language (see §98-99).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}
