@@ -10,6 +10,7 @@ mkdir -p "$TMP/repo/src" "$TMP/repo/docs";cd "$TMP/repo";git init -q;git config 
 JSON
 printf '# Fixture\n' >README.md;printf 'export const wall=1;\n' >src/wall.ts;git add .;git commit -qm init;git checkout -qb agent/fixture
 node "$ROOT/scripts/zeus-index.mjs" --root "$TMP/repo" >"$TMP/index1.json";node "$ROOT/scripts/zeus-index.mjs" --root "$TMP/repo" >"$TMP/index2.json";node -e "const x=require('$TMP/index2.json');if(x.status!=='hit')process.exit(1)"
+mkdir -p "$TMP/repo/.zeus/runs";printf 'stale log\n' >"$TMP/repo/.zeus/runs/run.log";node "$ROOT/scripts/zeus-index.mjs" --root "$TMP/repo" --force >/dev/null;node -e "const fs=require('fs');const idx=JSON.parse(fs.readFileSync('$TMP/repo/.zeus/cache/project-index.json','utf8'));if(idx.files.some(f=>f.path.startsWith('.zeus/cache/')||f.path.startsWith('.zeus/runs/')))process.exit(1)"
 node "$ROOT/scripts/zeus-context.mjs" --root "$TMP/repo" --query 'wall source' >"$TMP/context.json";node -e "const x=require('$TMP/context.json');if(!x.results.length||x.results.length>4)process.exit(1)"
 printf '// change\n' >>src/wall.ts;node "$ROOT/scripts/zeus-impact.mjs" --root "$TMP/repo" --task 'fix wall geometry' >"$TMP/impact.json";node -e "const x=require('$TMP/impact.json');if(!x.modules.includes('geometry'))process.exit(1)"
 node "$ROOT/scripts/zeus-check.mjs" --root "$TMP/repo" --tier fast --task 'fix wall geometry' >"$TMP/check.json";node -e "const x=require('$TMP/check.json');if(x.status!=='green')process.exit(1)"

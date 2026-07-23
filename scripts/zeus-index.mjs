@@ -46,14 +46,20 @@ if (!a.includes('--force') && existsSync(cache)) {
     }
   } catch {}
 }
+let locked = false;
 try {
   const fd = openSync(lock, 'wx');
   closeSync(fd);
+  locked = true;
 } catch {
   try {
     const age = Date.now() - statSync(lock).mtimeMs;
-    if (age > config.cache.lockStaleSeconds * 1000) unlinkSync(lock);
-    else {
+    if (age > config.cache.lockStaleSeconds * 1000) {
+      unlinkSync(lock);
+      const fd = openSync(lock, 'wx');
+      closeSync(fd);
+      locked = true;
+    } else {
       console.error(
         JSON.stringify({ status: 'blocked', reason: 'index lock active', lock }, null, 2),
       );
@@ -61,7 +67,11 @@ try {
     }
   } catch {}
 }
-const excluded = new Set(config.index.exclude);
+const excludedNames = new Set(config.index.exclude.filter((e) => !e.includes('/')));
+const excludedPaths = config.index.exclude.filter((e) => e.includes('/'));
+const isExcluded = (relPath, name) =>
+  excludedNames.has(name) ||
+  excludedPaths.some((e) => relPath === e || relPath.startsWith(e + '/'));
 const textExt = new Set([
   '.md',
   '.txt',
@@ -87,8 +97,9 @@ const textExt = new Set([
 const files = [];
 const walk = (d) => {
   for (const name of readdirSync(d)) {
-    if (excluded.has(name)) continue;
     const p = join(d, name);
+    const relPath = relative(root, p).replaceAll('\\', '/');
+    if (isExcluded(relPath, name)) continue;
     let st;
     try {
       st = statSync(p);
@@ -107,10 +118,9 @@ const walk = (d) => {
       } catch {
         continue;
       }
-      const rel = relative(root, p).replaceAll('\\', '/');
       const headings = [...text.matchAll(/^#{1,4}\s+(.+)$/gm)].slice(0, 12).map((m) => m[1].trim());
       const words =
-        (rel + ' ' + headings.join(' ') + ' ' + text)
+        (relPath + ' ' + headings.join(' ') + ' ' + text)
           .toLowerCase()
           .match(/[a-z][a-z0-9_.-]{2,}/g) ?? [];
       const freq = {};
@@ -120,7 +130,7 @@ const walk = (d) => {
         .slice(0, config.index.maxKeywords)
         .map((x) => x[0]);
       files.push({
-        path: rel,
+        path: relPath,
         size: st.size,
         mtimeMs: Math.trunc(st.mtimeMs),
         hash: createHash('sha1').update(text).digest('hex'),
@@ -141,7 +151,9 @@ try {
     JSON.stringify({ status: 'built', cache, files: files.length, fingerprint }, null, 2),
   );
 } finally {
-  try {
-    unlinkSync(lock);
-  } catch {}
+  if (locked) {
+    try {
+      unlinkSync(lock);
+    } catch {}
+  }
 }
