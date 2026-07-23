@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "dexie": "^4.4.4"
+    "dexie": "^4.4.4",
+    "@arq/project-format": "workspace:*"
   },
   "devDependencies": {
     "fake-indexeddb": "^6.2.5"

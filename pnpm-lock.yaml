@@ -80,6 +80,9 @@ importers:
 
   packages/local-storage:
     dependencies:
+      '@arq/project-format':
+        specifier: workspace:*
+        version: link:../project-format
       dexie:
         specifier: ^4.4.4
         version: 4.4.4

@@ -5,3 +5,4 @@ export * from './journal-recovery';
 export * from './snapshot';
 export * from './quota-error';
 export * from './recovery-report';
+export * from './derived-cache';

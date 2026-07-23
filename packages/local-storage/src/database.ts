@@ -43,6 +43,22 @@ export interface LocalOperationJournalRecord {
   readonly createdAt: string;
 }
 
+/**
+ * A regeneratable, non-authoritative cache entry (section 72: "Derived
+ * caches may be discarded and regenerated") - e.g. a plan-render cache
+ * or a computed room-area cache - kept in its own table, deliberately
+ * separate from projectSnapshots/operationJournal (ARQ-146,
+ * derived-cache.ts), so recovering from a corrupt cache entry can never
+ * touch committed project data.
+ */
+export interface LocalDerivedCacheRecord {
+  readonly id?: number;
+  readonly projectId: string;
+  readonly cacheKey: string;
+  readonly data: Uint8Array;
+  readonly sha256: string;
+}
+
 export interface LocalDatabaseOptions {
   readonly indexedDB?: IDBFactory;
   readonly IDBKeyRange?: typeof IDBKeyRange;
@@ -53,12 +69,16 @@ const DEFAULT_DATABASE_NAME = 'arq-local-db';
 export class ArqLocalDatabase extends Dexie {
   projectSnapshots!: Table<LocalProjectSnapshotRecord, number>;
   operationJournal!: Table<LocalOperationJournalRecord, number>;
+  derivedCaches!: Table<LocalDerivedCacheRecord, number>;
 
   constructor(databaseName: string = DEFAULT_DATABASE_NAME, options: LocalDatabaseOptions = {}) {
     super(databaseName, options);
     this.version(1).stores({
       projectSnapshots: '++id, projectId, revision, [projectId+revision]',
       operationJournal: '++id, projectId, operationId, [projectId+id]',
+    });
+    this.version(2).stores({
+      derivedCaches: '++id, projectId, cacheKey, [projectId+cacheKey]',
     });
   }
 }
