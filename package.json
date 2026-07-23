@@ -20,7 +20,8 @@
     "benchmark:pixijs": "node scripts/run-pixijs-webgl-benchmark.mjs",
     "benchmark:canvaskit": "node scripts/run-canvaskit-benchmark.mjs",
     "benchmark:render-frame": "node scripts/run-render-frame-benchmark.mjs",
-    "benchmark:pencil-input": "node scripts/run-pencil-pointer-capability-check.mjs"
+    "benchmark:pencil-input": "node scripts/run-pencil-pointer-capability-check.mjs",
+    "benchmark:hover-sequence": "node scripts/run-hover-sequence-capability-check.mjs"
   },
   "devDependencies": {
     "canvaskit-wasm": "^0.41.1",

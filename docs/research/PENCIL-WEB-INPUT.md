@@ -103,3 +103,37 @@ This table itself is drawn directly from sections 13 and 108's own
 are exactly what this session's real Chromium run above confirms works;
 the native-only rows are exactly what those sections already name as
 requiring native APIs.
+
+## Hover-preview state machine (ARQ-172)
+
+`packages/input-system/src/hover-preview.ts`'s `createHoverPreviewTracker`
+builds the actual hover-preview interaction on top of the capability
+confirmed above: `over` starts a session, `move` reports position while
+hovering, `out` or a real `down` (contact) ends it. It only starts a
+session for a pointer `pointer-role.ts` classifies as `'pencil'` -
+section 13 assigns "hover preview" to Apple Pencil specifically, not
+Finger or Keyboard/trackpad.
+
+**A second real-browser check**
+(`packages/input-system/benchmarks/pencil-web-input/hover-sequence-capability.html`,
+`scripts/run-hover-sequence-capability-check.mjs`) dispatched a full
+`over -> move -> move -> out` sequence (no `down`) for `pen`, `touch` and
+`mouse` pointerTypes. Result (2026-07-23,
+`benchmarks/results/hover-sequence-capability-2026-07-23T19-10-01-385Z.json`):
+**identical for all three** - `["over","move","move","out"]`, no `down`,
+2 move events each.
+
+**Important, honest finding**: this shows the DOM's event-dispatch API
+itself does not restrict a hover sequence by `pointerType` - any code
+that constructs and dispatches these events can send a full hover
+sequence claiming to be from any pointer type. The Pencil-only
+restriction is therefore not something the browser enforces for us; it
+is exactly what `hover-preview.ts`'s own role check enforces at the
+application level (already verified by the DOM-free unit tests: a
+`'touch'` or `'mouse'` `over` sample produces no `hover-start`). Separately,
+real touchscreens do not have hardware proximity/hover sensing at all, so
+a real finger physically cannot generate a `pointerover` before contact
+the way a real Pencil's proximity sensor can - but confirming that
+physical difference needs real touch hardware, which this sandboxed
+environment does not have; only the synthetic-dispatch behaviour above
+was verified here.

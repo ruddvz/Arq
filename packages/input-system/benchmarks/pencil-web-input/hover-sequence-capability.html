@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ARQ-172: native hover sequence capability check</title>
+  </head>
+  <body>
+    <!--
+      ARQ-172: ipad: prototype native hover.
+
+      Extends ARQ-171's pointerover-without-pointerdown finding to a full
+      hover *sequence*: pointerover, several pointermove samples, then
+      pointerout - all with no pointerdown in between - for pointerType
+      'pen', 'touch' and 'mouse'. Verifies the real browser engine
+      delivers a continuous, correctly-ordered event sequence a
+      hover-preview UI could actually drive (hover-preview.ts), not just
+      a single event. Driven by
+      scripts/run-hover-sequence-capability-check.mjs in real headless
+      Chromium (Playwright) - no physical iPad/Pencil hardware exists in
+      this sandboxed environment (see docs/research/PENCIL-WEB-INPUT.md).
+    -->
+    <div id="target" style="width: 200px; height: 200px"></div>
+    <script>
+      (function () {
+        const target = document.getElementById('target');
+
+        function recordSequenceFor(pointerType) {
+          const events = [];
+          const overHandler = (e) => events.push({ type: 'over', pointerType: e.pointerType });
+          const moveHandler = (e) =>
+            events.push({ type: 'move', pointerType: e.pointerType, x: e.clientX, y: e.clientY });
+          const outHandler = (e) => events.push({ type: 'out', pointerType: e.pointerType });
+          const downHandler = (e) => events.push({ type: 'down', pointerType: e.pointerType });
+
+          target.addEventListener('pointerover', overHandler);
+          target.addEventListener('pointermove', moveHandler);
+          target.addEventListener('pointerout', outHandler);
+          target.addEventListener('pointerdown', downHandler);
+
+          const base = { pointerType, bubbles: true, cancelable: true, isPrimary: true };
+          target.dispatchEvent(
+            new PointerEvent('pointerover', { ...base, clientX: 0, clientY: 0 }),
+          );
+          target.dispatchEvent(
+            new PointerEvent('pointermove', { ...base, clientX: 10, clientY: 10 }),
+          );
+          target.dispatchEvent(
+            new PointerEvent('pointermove', { ...base, clientX: 20, clientY: 15 }),
+          );
+          target.dispatchEvent(
+            new PointerEvent('pointerout', { ...base, clientX: 20, clientY: 15 }),
+          );
+
+          target.removeEventListener('pointerover', overHandler);
+          target.removeEventListener('pointermove', moveHandler);
+          target.removeEventListener('pointerout', outHandler);
+          target.removeEventListener('pointerdown', downHandler);
+
+          return {
+            eventTypesInOrder: events.map((e) => e.type),
+            noDownFired: !events.some((e) => e.type === 'down'),
+            moveCount: events.filter((e) => e.type === 'move').length,
+          };
+        }
+
+        window.__ARQ_HOVER_SEQUENCE_RESULT__ = {
+          pen: recordSequenceFor('pen'),
+          touch: recordSequenceFor('touch'),
+          mouse: recordSequenceFor('mouse'),
+        };
+      })();
+    </script>
+  </body>
+</html>
