@@ -6,3 +6,4 @@ export * from './snap-glyph-rendering';
 export * from './visibility-state';
 export * from './room-label';
 export * from './sheet-viewport';
+export * from './benchmark-regression';
