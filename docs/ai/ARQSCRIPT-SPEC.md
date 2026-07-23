@@ -10,9 +10,11 @@ script, section 99's command list), reconciled against
 already existed, covering 7 of section 99's 11 commands) and completed
 here with the three missing statements (`update wall`, `select`, `rename`).
 The AST shape below is implemented in `@arq/arqscript`
-(`arqscript-command.ts`, `arqscript-document.ts`); turning source text
-like the example into that AST is a separate, later step (ARQ-167,
-"implement ArqScript parser") - no lexer or parser exists yet.
+(`arqscript-command.ts`, `arqscript-document.ts`). Turning source text
+like the example into that AST (ARQ-167, "implement ArqScript parser") is
+implemented in `arqscript-lexer.ts`/`arqscript-value-parser.ts`/
+`arqscript-parser.ts` - `parseArqScript(source, scriptId)` parses this
+exact example into the three commands the AST node table below names.
 
 ## Example (section 98)
 

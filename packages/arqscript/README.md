@@ -6,9 +6,18 @@ ArqScript v0: a human-readable, versioned, unit-aware, deterministic operation l
 grammar itself - the AST shape of a valid ArqScript v0 document - for
 blueprint section 99's eleven commands: define units, create level,
 create wall, update wall, place door, place window, create room, add
-dimension, select by ID, select by category, rename. Turning ArqScript
-source text into these AST nodes is a separate, later step (ARQ-167,
-"implement ArqScript parser"); this package has no lexer or parser yet.
+dimension, select by ID, select by category, rename.
+
+The lexer/parser modules (`arqscript-lexer.ts`, `arqscript-token-cursor.ts`,
+`arqscript-value-parser.ts`, `arqscript-parser.ts`, ARQ-167) turn
+ArqScript v0 source text into that AST: `parseArqScript(source, scriptId)`
+tokenizes, parses per `docs/ai/ARQSCRIPT-GRAMMAR.ebnf`'s statement
+grammar, and delegates every command's required/optional field
+validation to its own `arqscript-command.ts` constructor (so defaults/
+assumptions live in exactly one place). A hand-written recursive-descent
+parser, not a parser-generator library - this issue's own non-goal rules
+out an unreviewed dependency, and the grammar is simple enough not to
+need one.
 
 The canonical syntax grammar lives in `docs/ai/ARQSCRIPT-GRAMMAR.ebnf` - a
 draft that already existed before this issue (7 of the 11 commands),
@@ -39,5 +48,14 @@ a per-length `mm`/`cm`/`m`/`in`/`ft` suffix.
   wired up.
 
 No dependency on `@arq/bim-core`: lengths are plain millimetre `number`s,
-not `@arq/bim-core`'s `Length` type, since nothing in this grammar-only
-package validates geometry or project state yet.
+not `@arq/bim-core`'s `Length` type, since nothing in this package
+validates geometry or project state yet.
+
+`parseArqScript` never throws - every syntax error or semantic-validation
+error (from a `create*Command` constructor, e.g. an empty wall id) is
+caught and returned as a well-formed `'rejected'` result carrying a source
+position, the same safe-failure boundary `@arq/dxf-adapter`'s `parseDxf`
+and `@arq/project-format`'s `importArchive` already use. AI guardrail "No
+arbitrary code execution" (`docs/ai/AI-GUARDRAILS.md`) holds: this parser
+only ever produces plain AST data, with no `eval`/`Function`/dynamic
+dispatch on source text anywhere.

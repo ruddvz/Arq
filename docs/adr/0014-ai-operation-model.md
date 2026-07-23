@@ -40,6 +40,15 @@ ArqScript" is a coherent grammar shape; it does not yet implement a
 parser (ARQ-167), semantic/geometry validation, or actual operation
 construction/preview - those remain open, later work.
 
+**ARQ-167 spike evidence:** `parseArqScript` (`arqscript-parser.ts`) turns
+real ArqScript v0 source text - including the exact section 98 example
+script - into the AST ARQ-166 defined, never throwing (a hand-written
+lexer/recursive-descent parser, no unreviewed dependency). This validates
+that ArqScript source text can be turned into these typed-operation-named
+AST nodes deterministically and safely; semantic/geometry validation and
+actual `@arq/operations` `ModelOperation` construction/preview remain
+open, later work.
+
 ## Rollback
 
 Define how the repository can change this choice without losing project data.
