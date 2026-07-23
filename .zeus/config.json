@@ -1,0 +1,60 @@
+{
+  "version": "4.0.0",
+  "project": "Arq",
+  "mode": "adaptive-fast",
+  "nodeMinimum": 18,
+  "budgets": {
+    "fast": {
+      "modules": 1,
+      "sources": 4,
+      "contextChars": 8000,
+      "contractChars": 700,
+      "repairRounds": 2
+    },
+    "standard": {
+      "modules": 4,
+      "sources": 10,
+      "contextChars": 28000,
+      "contractChars": 1500,
+      "repairRounds": 3
+    },
+    "deep": {
+      "modules": 8,
+      "sources": 24,
+      "contextChars": 80000,
+      "contractChars": 3000,
+      "repairRounds": 5
+    }
+  },
+  "cache": {
+    "directory": ".zeus/cache",
+    "indexTtlSeconds": 86400,
+    "checkTtlSeconds": 300,
+    "lockStaleSeconds": 60,
+    "criticalEvidenceCache": false
+  },
+  "index": {
+    "maxFileBytes": 1000000,
+    "sampleChars": 4096,
+    "maxKeywords": 30,
+    "exclude": [
+      ".git",
+      "node_modules",
+      "dist",
+      "build",
+      "coverage",
+      ".next",
+      "target",
+      "vendor",
+      ".zeus/cache",
+      ".zeus/runs"
+    ]
+  },
+  "timeoutsMs": {
+    "focused": 120000,
+    "package": 300000,
+    "build": 600000,
+    "ciPoll": 900000
+  },
+  "status": ["green", "partial", "blocked", "failed", "rolled_back"]
+}

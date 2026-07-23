@@ -1,0 +1,194 @@
+{
+  "version": "4.0.0",
+  "modules": [
+    {
+      "id": "architecture",
+      "title": "Architecture and scope",
+      "path": ".zeus/modules/architecture.md",
+      "triggers": [
+        "architecture",
+        "adr",
+        "package",
+        "boundary",
+        "schema",
+        "refactor",
+        "product scope"
+      ],
+      "priority": 100
+    },
+    {
+      "id": "geometry",
+      "title": "Geometry, constraints and semantic BIM",
+      "path": ".zeus/modules/geometry.md",
+      "triggers": [
+        "geometry",
+        "topology",
+        "constraint",
+        "snap",
+        "intersection",
+        "offset",
+        "wall",
+        "room",
+        "door",
+        "window",
+        "bim",
+        "tolerance",
+        "unit"
+      ],
+      "priority": 99
+    },
+    {
+      "id": "arqfs",
+      "title": ".arq, storage, sync and recovery",
+      "path": ".zeus/modules/arqfs.md",
+      "triggers": [
+        ".arq",
+        "sqlite",
+        "opfs",
+        "storage",
+        "sync",
+        "migration",
+        "recovery",
+        "corrupt",
+        "wal",
+        "snapshot"
+      ],
+      "priority": 98
+    },
+    {
+      "id": "rendering",
+      "title": "Rendering and performance",
+      "path": ".zeus/modules/rendering.md",
+      "triggers": [
+        "render",
+        "canvas",
+        "webgl",
+        "webgpu",
+        "3d",
+        "mesh",
+        "fps",
+        "latency",
+        "performance",
+        "benchmark"
+      ],
+      "priority": 97
+    },
+    {
+      "id": "ui-visual",
+      "title": "UI, UX and pixel precision",
+      "path": ".zeus/modules/ui-visual.md",
+      "triggers": [
+        "ui",
+        "ux",
+        "page",
+        "component",
+        "pixel",
+        "responsive",
+        "layout",
+        "design",
+        "icon",
+        "typography",
+        "visual",
+        "screenshot"
+      ],
+      "priority": 96
+    },
+    {
+      "id": "accessibility",
+      "title": "Accessibility and input parity",
+      "path": ".zeus/modules/accessibility.md",
+      "triggers": [
+        "accessibility",
+        "screen reader",
+        "focus",
+        "keyboard",
+        "touch",
+        "pencil",
+        "contrast",
+        "aria",
+        "gesture"
+      ],
+      "priority": 95
+    },
+    {
+      "id": "security",
+      "title": "Security and supply chain",
+      "path": ".zeus/modules/security.md",
+      "triggers": [
+        "security",
+        "auth",
+        "permission",
+        "secret",
+        "token",
+        "dependency",
+        "license",
+        "supply chain",
+        "untrusted",
+        "parser"
+      ],
+      "priority": 94
+    },
+    {
+      "id": "github-cicd",
+      "title": "GitHub and CI/CD",
+      "path": ".zeus/modules/github-cicd.md",
+      "triggers": [
+        "github",
+        "branch",
+        "commit",
+        "pull request",
+        "pr",
+        "ci",
+        "workflow",
+        "check",
+        "merge",
+        "actions"
+      ],
+      "priority": 93
+    },
+    {
+      "id": "release-production",
+      "title": "Release, deployment and production",
+      "path": ".zeus/modules/release-production.md",
+      "triggers": [
+        "release",
+        "deploy",
+        "deployment",
+        "production",
+        "ship",
+        "rollback",
+        "smoke",
+        "environment"
+      ],
+      "priority": 92
+    },
+    {
+      "id": "ai",
+      "title": "AI and ArqScript",
+      "path": ".zeus/modules/ai.md",
+      "triggers": ["ai", "arqscript", "proposal", "agent", "generate", "copilot"],
+      "priority": 91
+    },
+    {
+      "id": "interoperability",
+      "title": "Import, export and interoperability",
+      "path": ".zeus/modules/interoperability.md",
+      "triggers": ["ifc", "dxf", "dwg", "pdf", "import", "export", "interoperability"],
+      "priority": 90
+    },
+    {
+      "id": "incident",
+      "title": "Incident response",
+      "path": ".zeus/modules/incident.md",
+      "triggers": [
+        "incident",
+        "outage",
+        "broken production",
+        "rollback production",
+        "ci failing",
+        "deployment failing"
+      ],
+      "priority": 89
+    }
+  ]
+}

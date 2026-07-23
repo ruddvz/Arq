@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["date", "complexity", "lane", "task", "outcome", "rounds"],
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "complexity": {
+      "enum": ["XS", "S", "M", "L", "XL"]
+    },
+    "lane": {
+      "type": "string",
+      "maxLength": 60
+    },
+    "task": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 180
+    },
+    "outcome": {
+      "enum": ["green", "partial", "blocked", "failed", "rolled_back"]
+    },
+    "rounds": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 20
+    },
+    "verified": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "remaining": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "deliveryStop": {
+      "enum": [
+        "answer",
+        "plan",
+        "local-green",
+        "pr-open",
+        "ci-green",
+        "merged",
+        "production-verified"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+import { readFileSync } from 'node:fs';
+import { compile } from './lib/zeus-engine.mjs';
+const a = process.argv.slice(2);
+const i = a.indexOf('--task');
+const task = (i >= 0 ? a[i + 1] : readFileSync(0, 'utf8')).trim();
+if (!task) {
+  console.error('Provide --task or stdin');
+  process.exit(2);
+}
+const c = compile(task);
+const roles = [c.owner, ...c.reviewers];
+const writers = roles.filter((x, i) => roles.indexOf(x) === i && !/qa|security/.test(x));
+console.log(
+  JSON.stringify(
+    {
+      accountable: c.owner,
+      roles: [...new Set(roles)],
+      waves: [
+        { wave: 0, name: 'evidence', roles: [c.owner] },
+        { wave: 1, name: 'implementation', roles: writers },
+        { wave: 2, name: 'review', roles: c.reviewers },
+        { wave: 3, name: 'delivery', roles: [c.owner, 'qa-release'] },
+      ],
+      rules: [
+        'one accountable owner',
+        'no concurrent writers to one canonical surface',
+        'review current head before merge',
+      ],
+    },
+    null,
+    2,
+  ),
+);

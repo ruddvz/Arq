@@ -1,0 +1,5 @@
+---
+description: Zeus 4 fast adaptive execution for Arq.
+alwaysApply: true
+---
+Load only `.zeus/FAST-KERNEL.md`, route required modules, use indexed context, run adaptive checks and report verified status.

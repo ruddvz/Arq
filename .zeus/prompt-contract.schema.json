@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "outcome",
+    "mode",
+    "risk",
+    "scope",
+    "nonGoals",
+    "acceptance",
+    "roles",
+    "verification",
+    "deliveryStop"
+  ],
+  "properties": {
+    "outcome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "enum": ["answer", "plan", "implement", "audit", "release", "incident"]
+    },
+    "risk": {
+      "enum": ["low", "moderate", "high", "critical"]
+    },
+    "scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "nonGoals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "acceptance": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verification": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "deliveryStop": {
+      "enum": [
+        "answer",
+        "plan",
+        "local-green",
+        "pr-open",
+        "ci-green",
+        "merged",
+        "production-verified"
+      ]
+    },
+    "rollback": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+import { createHash } from 'node:crypto';
+import { readFileSync, existsSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { resolve, join } from 'node:path';
+const a = process.argv.slice(2);
+const i = a.indexOf('--root');
+const root = resolve(i >= 0 ? a[i + 1] : process.cwd());
+const git = (args) =>
+  spawnSync('git', ['-C', root, ...args], { encoding: 'utf8', maxBuffer: 50 * 1024 * 1024 });
+const h = createHash('sha256');
+const head = git(['rev-parse', 'HEAD']);
+h.update(head.status === 0 ? head.stdout : 'no-head');
+const diff = git(['diff', '--no-ext-diff', '--binary', 'HEAD']);
+h.update(diff.stdout ?? '');
+const others = git(['ls-files', '--others', '--exclude-standard']);
+for (const rel of (others.stdout ?? '').split('\n').filter(Boolean).sort()) {
+  if (rel.startsWith('.zeus/cache/') || rel.startsWith('.zeus/runs/')) continue;
+  h.update(rel);
+  const p = join(root, rel);
+  try {
+    const s = readFileSync(p);
+    if (s.length <= 2_000_000) h.update(s);
+    else h.update(String(s.length));
+  } catch {}
+}
+for (const f of ['package.json', 'pnpm-lock.yaml', 'package-lock.json', 'yarn.lock']) {
+  const p = join(root, f);
+  if (existsSync(p)) {
+    h.update(f);
+    h.update(readFileSync(p));
+  }
+}
+console.log(
+  JSON.stringify(
+    { root, head: head.status === 0 ? head.stdout.trim() : null, fingerprint: h.digest('hex') },
+    null,
+    2,
+  ),
+);

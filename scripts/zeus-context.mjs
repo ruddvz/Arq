@@ -1,0 +1,85 @@
+#!/usr/bin/env node
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve, join, dirname } from 'node:path';
+import { spawnSync } from 'node:child_process';
+const a = process.argv.slice(2);
+const val = (n, d = null) => {
+  const i = a.indexOf(`--${n}`);
+  return i >= 0 ? a[i + 1] : d;
+};
+const root = resolve(val('root', process.cwd()));
+const packageRoot = dirname(dirname(new URL(import.meta.url).pathname));
+const config = JSON.parse(readFileSync(join(packageRoot, '.zeus', 'config.json'), 'utf8'));
+const cache = resolve(val('cache', join(root, config.cache.directory, 'project-index.json')));
+if (!existsSync(cache)) {
+  const r = spawnSync(
+    process.execPath,
+    [join(packageRoot, 'scripts', 'zeus-index.mjs'), '--root', root, '--cache', cache],
+    { encoding: 'utf8' },
+  );
+  if (r.status !== 0) {
+    process.stderr.write(r.stderr);
+    process.exit(r.status ?? 1);
+  }
+}
+const idx = JSON.parse(readFileSync(cache, 'utf8'));
+const query = val('query');
+if (!query) {
+  console.error('Use --query');
+  process.exit(2);
+}
+const tier = val('tier', 'fast');
+const budget = config.budgets[tier] ?? config.budgets.fast;
+const limit = Math.min(Number(val('limit', budget.sources)), budget.sources);
+const q = query.toLowerCase().match(/[a-z][a-z0-9_.-]{2,}/g) ?? [];
+const authority = (p) =>
+  /^(src|packages|apps)\//.test(p)
+    ? 8
+    : /adr|decision|file-system|schema|contract/i.test(p)
+      ? 10
+      : /readme|start-here/i.test(p)
+        ? 6
+        : /archive|historical/i.test(p)
+          ? -6
+          : 0;
+const scored = idx.files
+  .map((f) => {
+    const hay = (f.path + ' ' + f.headings.join(' ') + ' ' + f.keywords.join(' ')).toLowerCase();
+    let score = authority(f.path);
+    for (const t of q) {
+      if (f.path.toLowerCase().includes(t)) score += 8;
+      if (hay.includes(t)) score += 2;
+    }
+    return { ...f, score };
+  })
+  .filter((f) => f.score > 0)
+  .sort((x, y) => y.score - x.score || x.path.localeCompare(y.path))
+  .slice(0, limit);
+let used = 0;
+const results = [];
+for (const f of scored) {
+  const item = { path: f.path, score: f.score, headings: f.headings };
+  if (a.includes('--snippets')) {
+    const remaining = budget.contextChars - used;
+    if (remaining <= 0) break;
+    try {
+      const text = readFileSync(join(root, f.path), 'utf8').slice(0, Math.min(1200, remaining));
+      item.snippet = text;
+      used += text.length;
+    } catch {}
+  }
+  results.push(item);
+}
+console.log(
+  JSON.stringify(
+    {
+      query,
+      tier,
+      budget: { sources: limit, contextChars: budget.contextChars },
+      fingerprint: idx.fingerprint,
+      results,
+    },
+    null,
+    2,
+  ),
+);

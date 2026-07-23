@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["headSha", "local", "github", "deployment", "production"],
+  "properties": {
+    "headSha": {
+      "type": "string"
+    },
+    "local": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    },
+    "github": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    },
+    "deployment": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    },
+    "production": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "required": ["name", "status"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "enum": ["pass", "fail", "unknown", "not-applicable"]
+        },
+        "evidence": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

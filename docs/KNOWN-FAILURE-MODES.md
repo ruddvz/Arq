@@ -1,0 +1,24 @@
+# Known Zeus 3.0 Failure Modes
+
+- A long prompt is mistaken for execution.
+- Planning stops despite an implementation request.
+- An agent/person is invented instead of capability discovery.
+- Two agents edit the same canonical surface concurrently.
+- An open ADR is silently resolved inside a feature.
+- Invalid geometry partially commits.
+- Renderer state becomes canonical.
+- `.arq` migration overwrites the only source.
+- Raw SQLite pages are synchronized.
+- Pixel baseline is updated to hide a defect.
+- A local/container result is called device certification.
+- Unrelated worktree changes are staged.
+- A PR review applies to an old head.
+- Deterministic CI failure is blindly rerun.
+- A failing test is disabled for Green.
+- CI success is called deployment success.
+- Deployed SHA is not checked.
+- Production smoke creates persistent garbage.
+- A critical regression is forward-fixed without considering rollback.
+- Connector 403 is retried repeatedly.
+- Secrets appear in logs or prompts.
+- Unknown production state is reported Green.
