@@ -1,9 +1,9 @@
 {
-  "version": "3.0.0",
+  "version": "4.0.0",
   "project": "Arq",
   "roles": [
     {
-      "id": "orchestrator",
+      "id": "executor",
       "accountable": true,
       "capabilities": ["scope", "task-graph", "authority", "delivery-state"]
     },
@@ -12,12 +12,17 @@
       "capabilities": ["workflow", "ADR", "package-boundaries", "scope"]
     },
     {
-      "id": "semantic-model",
-      "capabilities": ["entities", "operations", "undo", "serialization"]
-    },
-    {
-      "id": "geometry-constraints",
-      "capabilities": ["units", "tolerances", "topology", "property-tests"]
+      "id": "geometry-bim",
+      "capabilities": [
+        "units",
+        "tolerances",
+        "topology",
+        "property-tests",
+        "semantic entities",
+        "operations",
+        "undo",
+        "serialization"
+      ]
     },
     {
       "id": "editor-interaction",
@@ -28,7 +33,7 @@
       "capabilities": ["2D", "3D", "benchmarks", "frame-budget"]
     },
     {
-      "id": "arqfs-sync-recovery",
+      "id": "arqfs-recovery",
       "capabilities": ["SQLite", "OPFS", "migration", "sync", "recovery"]
     },
     {
@@ -40,15 +45,27 @@
       "capabilities": ["keyboard", "screen-reader", "touch", "contrast"]
     },
     {
-      "id": "security-supply-chain",
+      "id": "security",
       "capabilities": ["threat-model", "authorization", "secrets", "dependencies"]
+    },
+    {
+      "id": "ai-arqscript",
+      "capabilities": ["typed operations", "validation", "diff", "assumptions"]
+    },
+    {
+      "id": "interoperability",
+      "capabilities": ["IFC", "DXF", "DWG", "PDF", "provenance", "unit-mapping"]
+    },
+    {
+      "id": "incident-commander",
+      "capabilities": ["stabilisation", "rollback", "recovery", "communication"]
     },
     {
       "id": "qa-release",
       "capabilities": ["tests", "evidence", "release-gate", "smoke"]
     },
     {
-      "id": "cicd-reliability",
+      "id": "delivery-reliability",
       "capabilities": ["PR", "CI", "logs", "merge", "deploy", "incident"]
     }
   ]

@@ -1,4 +1,4 @@
-# Known Zeus 3.0 Failure Modes
+# Known Zeus Failure Modes
 
 - A long prompt is mistaken for execution.
 - Planning stops despite an implementation request.
