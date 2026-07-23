@@ -29,7 +29,16 @@
    * project interactive under 2 seconds" budget), not part of ongoing
    * pan/zoom frame rate. Applied identically in
    * pixijs-webgl-benchmark.html (ARQ-116) for a fair comparison.
+   *
+   * ARQ-151 adds one more measurement to that same warm-up window
+   * rather than building a second harness: timeToFirstFrameMs, the
+   * wall-clock time from "data available" (right after buildScene()
+   * returns) to the first completed render() call - section 120's
+   * "local project interactive under 2 seconds after data is
+   * available" target, which the pan/zoom stats above deliberately do
+   * not measure (they exclude exactly this warm-up cost).
    */
+  const dataAvailableAt = performance.now();
   const canvas = document.getElementById('stage');
   const ctx = canvas.getContext('2d');
   const scene = window.ArqBenchmarkScene.buildScene();
@@ -86,6 +95,7 @@
   let framesRendered = 0;
   let lastTime = null;
   let panX = 40;
+  let timeToFirstFrameMs = null;
 
   function frame(now) {
     if (lastTime !== null && framesRendered >= WARMUP_FRAMES) {
@@ -95,6 +105,9 @@
     framesRendered += 1;
     panX += 4;
     render(panX, 40);
+    if (timeToFirstFrameMs === null) {
+      timeToFirstFrameMs = performance.now() - dataAvailableAt;
+    }
 
     if (frameTimes.length < TARGET_FRAMES) {
       requestAnimationFrame(frame);
@@ -106,6 +119,7 @@
       const max = sorted[sorted.length - 1];
       window.__ARQ_BENCHMARK_RESULT__ = {
         counts,
+        timeToFirstFrameMs,
         frameCount: frameTimes.length,
         avgFrameMs: avg,
         avgFps: 1000 / avg,

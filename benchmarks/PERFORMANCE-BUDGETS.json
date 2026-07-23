@@ -56,6 +56,15 @@
       "regressionDirection": "aboveIsWorse",
       "source": "packages/geometry-2d/src/room-rebuild-benchmark.test.ts (ARQ-150), real traceRoomBoundary + polygonArea against a 136-wall/60-room grid, 200 trials, median of real performance.now() measurements on 2026-07-22.",
       "note": "Same generous-threshold reasoning as selectionMedianMs: enormous headroom below the 150ms absolute target makes a tight percentage threshold noise, not signal."
+    },
+    {
+      "metric": "timeToFirstFrameMs",
+      "renderer": "canvas-2d",
+      "value": 70.4,
+      "regressionThresholdPercent": 200,
+      "regressionDirection": "aboveIsWorse",
+      "source": "scripts/run-render-frame-benchmark.mjs (ARQ-151), real headless-Chromium measurement via Playwright, the highest (most conservative) of three runs on 2026-07-23 - not the average, so ordinary run-to-run variance does not itself register as a regression.",
+      "note": "Measures section 120's localInteractiveSeconds (2000ms) target, not panZoomFpsTarget - time from scene data available to the first completed render() call, which the panZoomAvgFps benchmark deliberately excludes from its own stats as one-time warm-up cost."
     }
   ]
 }
