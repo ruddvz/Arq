@@ -22,3 +22,4 @@ export * from './room-area';
 export * from './dimension-reference';
 export * from './linear-dimension';
 export * from './text-note';
+export * from './sheet';

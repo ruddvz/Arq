@@ -18,13 +18,17 @@
  * separate structural decision, not a side effect of this issue.
  *
  * DoorId/DoorTypeId (ARQ-104), WindowId/WindowTypeId (ARQ-107),
- * DimensionId (ARQ-137) and TextNoteId (ARQ-139) are new additions with
- * no contracts/model.ts counterpart - that file predates the door/
- * window type/instance splits (blueprint sections 46/47), the
- * dimension reference model (section 55, ARQ-136) and text notes
- * (section 56, ARQ-139) - so they follow the same brand convention
- * (WallId/WallTypeId's split, ARQ-060) by extension rather than by
- * mirroring an existing declaration.
+ * DimensionId (ARQ-137), TextNoteId (ARQ-139), ViewId and SheetId
+ * (ARQ-140) are new additions with no contracts/model.ts counterpart -
+ * that file predates the door/window type/instance splits (blueprint
+ * sections 46/47), the dimension reference model (section 55, ARQ-136),
+ * text notes (section 56, ARQ-139) and sheets (section 58, ARQ-140) -
+ * so they follow the same brand convention by extension rather than by
+ * mirroring an existing declaration. ViewId/SheetId brand directly off
+ * `string`, not `ElementId`, the same way LevelId/WallTypeId do: a View
+ * or Sheet is a top-level project entity (section 32 lists View and
+ * Sheet separately from Element/ElementType), not a selectable building
+ * element.
  */
 
 export type Brand<T, N extends string> = T & { readonly __brand: N };
@@ -42,6 +46,8 @@ export type WindowId = Brand<ElementId, 'WindowId'>;
 export type WindowTypeId = Brand<string, 'WindowTypeId'>;
 export type DimensionId = Brand<ElementId, 'DimensionId'>;
 export type TextNoteId = Brand<ElementId, 'TextNoteId'>;
+export type ViewId = Brand<string, 'ViewId'>;
+export type SheetId = Brand<string, 'SheetId'>;
 
 export function projectId(value: string): ProjectId {
   return value as ProjectId;
@@ -81,4 +87,10 @@ export function dimensionId(value: string): DimensionId {
 }
 export function textNoteId(value: string): TextNoteId {
   return value as TextNoteId;
+}
+export function viewId(value: string): ViewId {
+  return value as ViewId;
+}
+export function sheetId(value: string): SheetId {
+  return value as SheetId;
 }

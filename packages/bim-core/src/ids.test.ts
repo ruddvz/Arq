@@ -8,7 +8,9 @@ import {
   openingId,
   projectId,
   roomId,
+  sheetId,
   textNoteId,
+  viewId,
   wallId,
   wallTypeId,
   windowId,
@@ -32,6 +34,8 @@ describe('id constructors', () => {
     expect(windowTypeId('wint1')).toBe('wint1');
     expect(dimensionId('dim1')).toBe('dim1');
     expect(textNoteId('tn1')).toBe('tn1');
+    expect(viewId('v1')).toBe('v1');
+    expect(sheetId('sh1')).toBe('sh1');
   });
 });
 
