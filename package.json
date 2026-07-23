@@ -18,7 +18,8 @@
     "format:check": "prettier --check .",
     "benchmark:canvas2d": "node scripts/run-canvas-2d-benchmark.mjs",
     "benchmark:pixijs": "node scripts/run-pixijs-webgl-benchmark.mjs",
-    "benchmark:canvaskit": "node scripts/run-canvaskit-benchmark.mjs"
+    "benchmark:canvaskit": "node scripts/run-canvaskit-benchmark.mjs",
+    "benchmark:render-frame": "node scripts/run-render-frame-benchmark.mjs"
   },
   "devDependencies": {
     "canvaskit-wasm": "^0.41.1",

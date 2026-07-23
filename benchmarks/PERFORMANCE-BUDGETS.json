@@ -21,5 +21,50 @@
     "panZoomFpsTarget": 60,
     "orbitFpsTarget": 60
   },
-  "note": "Planning targets. Do not publish as achieved until measured."
+  "note": "Planning targets. Do not publish as achieved until measured.",
+  "benchmarkDevice": {
+    "name": "CI reference environment (ARQ-148)",
+    "description": "Headless Chromium (Playwright) in this repository's sandboxed CI/dev container - software rendered, no GPU.",
+    "cpu": "Intel Xeon @ 2.80GHz, 4 vCPU",
+    "memoryGiB": 16,
+    "os": "Linux x86_64",
+    "certified": false,
+    "note": "Not one of section 121's supported-device-matrix tiers - a real-hardware validation run is still required before any target below is called Achieved (see docs/adr/0008-rendering-strategy.md and every RENDERER-BENCHMARK-*.md's own 'Important caveat')."
+  },
+  "ciBaselines": [
+    {
+      "metric": "panZoomAvgFps",
+      "renderer": "canvas-2d",
+      "value": 59.35,
+      "regressionThresholdPercent": 10,
+      "regressionDirection": "belowIsWorse",
+      "source": "docs/research/RENDERER-BENCHMARK-CANVAS-2D.md (ARQ-115), the lowest of three measured runs on 2026-07-22 - not the average, so ordinary run-to-run variance does not itself register as a regression.",
+      "checkedBy": "@arq/plan-renderer's isFpsRegression (benchmark-regression.ts, ARQ-148)"
+    },
+    {
+      "metric": "selectionMedianMs",
+      "value": 0.035,
+      "regressionThresholdPercent": 200,
+      "regressionDirection": "aboveIsWorse",
+      "source": "packages/editor-shell/src/selection-benchmark.test.ts (ARQ-149), real pickAt hit-testing against ~1,000 synthetic candidates, 500 trials, median of real performance.now() measurements on 2026-07-22.",
+      "note": "A generous 200% threshold: at 0.035ms against a 50ms absolute target, this benchmark has enormous headroom in this environment, so a tight percentage threshold would be noise, not signal - the real gate is the 50ms absolute target asserted directly in the test."
+    },
+    {
+      "metric": "roomRecalculateMedianMs",
+      "value": 0.63,
+      "regressionThresholdPercent": 200,
+      "regressionDirection": "aboveIsWorse",
+      "source": "packages/geometry-2d/src/room-rebuild-benchmark.test.ts (ARQ-150), real traceRoomBoundary + polygonArea against a 136-wall/60-room grid, 200 trials, median of real performance.now() measurements on 2026-07-22.",
+      "note": "Same generous-threshold reasoning as selectionMedianMs: enormous headroom below the 150ms absolute target makes a tight percentage threshold noise, not signal."
+    },
+    {
+      "metric": "timeToFirstFrameMs",
+      "renderer": "canvas-2d",
+      "value": 70.4,
+      "regressionThresholdPercent": 200,
+      "regressionDirection": "aboveIsWorse",
+      "source": "scripts/run-render-frame-benchmark.mjs (ARQ-151), real headless-Chromium measurement via Playwright, the highest (most conservative) of three runs on 2026-07-23 - not the average, so ordinary run-to-run variance does not itself register as a regression.",
+      "note": "Measures section 120's localInteractiveSeconds (2000ms) target, not panZoomFpsTarget - time from scene data available to the first completed render() call, which the panZoomAvgFps benchmark deliberately excludes from its own stats as one-time warm-up cost."
+    }
+  ]
 }

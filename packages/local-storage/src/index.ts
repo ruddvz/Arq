@@ -6,3 +6,4 @@ export * from './snapshot';
 export * from './quota-error';
 export * from './recovery-report';
 export * from './derived-cache';
+export * from './safe-mode';

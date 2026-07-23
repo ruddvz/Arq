@@ -41,6 +41,7 @@ describe('computeRecoveryReport', () => {
       projectId: 'p1',
       hasSnapshot: false,
       lastCommittedAt: undefined,
+      snapshotRevision: 0,
       recoveredOperationCount: 0,
       incompleteOperations: [],
     });
@@ -68,6 +69,7 @@ describe('computeRecoveryReport', () => {
     );
     const report = await computeRecoveryReport(db, 'p1');
     expect(report.hasSnapshot).toBe(true);
+    expect(report.snapshotRevision).toBe(5);
     expect(report.recoveredOperationCount).toBe(2);
     expect(report.lastCommittedAt).toBe('2026-07-22T00:02:00.000Z');
   });

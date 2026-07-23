@@ -25,6 +25,8 @@ export interface RecoveryReport {
   readonly projectId: string;
   readonly hasSnapshot: boolean;
   readonly lastCommittedAt: string | undefined;
+  /** The revision a caller can safely reopen at without replaying any journal entry - the snapshot's own revision, or 0 with no snapshot yet. Read by safe-mode.ts (ARQ-147). */
+  readonly snapshotRevision: number;
   readonly recoveredOperationCount: number;
   readonly incompleteOperations: readonly LocalOperationJournalRecord[];
 }
@@ -58,6 +60,7 @@ export async function computeRecoveryReport(
     projectId,
     hasSnapshot: latestSnapshot !== undefined,
     lastCommittedAt,
+    snapshotRevision: asOfRevision,
     recoveredOperationCount: recovered.length,
     incompleteOperations: recovered.filter(isIncomplete),
   };
