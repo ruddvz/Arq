@@ -7,7 +7,8 @@ Radix Primitives,Accessible UI alternative,MIT,alternative,Choose one primary sy
 Floating UI,Overlay positioning,MIT,adopt,Menus and popovers
 Dexie,IndexedDB,Apache-2.0,adopt,First local store
 SQLite WASM,Local SQL,Apache-2.0,later spike,OPFS and Worker constraints
-Yjs,CRDT,MIT,spike,Presence and comments
+Yjs,CRDT,MIT,spike,"Spiked ARQ-162 (yjs 13.6.31 + y-protocols 1.0.7 Awareness protocol, @arq/collaboration, presence only - not the CRDT document-sync half of this note)"
+y-protocols,Yjs Awareness/sync/auth wire protocols,MIT,spike,"Spiked ARQ-162 alongside yjs itself - its Awareness class is the presence protocol used, @arq/collaboration only"
 Automerge,CRDT alternative,MIT,alternative,Choose one
 OpenCascade.js,Exact solids,LGPL-2.1,isolate and spike,No core coupling
 RepliCAD,Browser CAD abstraction,MIT,reference or spike,OpenCascade abstraction

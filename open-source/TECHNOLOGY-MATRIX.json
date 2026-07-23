@@ -60,7 +60,14 @@
     "role": "CRDT",
     "licence": "MIT",
     "treatment": "spike",
-    "notes": "Presence and comments"
+    "notes": "Spiked ARQ-162 (yjs 13.6.31 + y-protocols 1.0.7 Awareness protocol, @arq/collaboration, presence only - not the CRDT document-sync half of this note)"
+  },
+  {
+    "project": "y-protocols",
+    "role": "Yjs Awareness/sync/auth wire protocols",
+    "licence": "MIT",
+    "treatment": "spike",
+    "notes": "Spiked ARQ-162 alongside yjs itself - its Awareness class is the presence protocol used, @arq/collaboration only"
   },
   {
     "project": "Automerge",
