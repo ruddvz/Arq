@@ -59,5 +59,19 @@ following comments-store.ts's exact same Y.Map CRDT pattern and the same
 "no silent destructive merge" guarantees (verified the same way: parallel
 concurrent-add and concurrent-status-change tests).
 
+`revision-snapshot.ts` + `revision-snapshots-store.ts` (ARQ-165) implement
+revision snapshots - a named, user-facing checkpoint ("Submitted for
+permit"), distinct from `@arq/local-storage`'s own `snapshot.ts` (a
+periodic _technical_ crash-recovery mechanism, not a user-labeled
+checkpoint). A snapshot's `stateReference` is a deliberately opaque
+string (a checksum, a journal sequence number - whatever the caller's own
+persistence layer uses to identify "this exact project state"), keeping
+this package agnostic to what it means, and is immutable once created
+along with `createdAtMs` - only `label`/`description` can be edited
+later. This issue implements the snapshot record only; actually diffing
+two revisions ("revision comparison" itself) is separate, later work.
+Same Y.Map CRDT pattern and "no silent destructive merge" guarantees as
+comments/issues.
+
 New dependencies: `yjs` (MIT) and `y-protocols` (MIT), both scoped to this
 package only.
