@@ -137,7 +137,7 @@
     "role": "IFC",
     "licence": "MPL-2.0",
     "treatment": "isolate and spike",
-    "notes": "Adapter boundary"
+    "notes": "Spiked ARQ-160 (web-ifc 0.0.77, @arq/ifc-adapter only - no other package depends on it, per §19 isolation)"
   },
   {
     "project": "That Open Components",

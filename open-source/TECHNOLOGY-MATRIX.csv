@@ -18,7 +18,7 @@ KittyCAD ezpz,Constraint solver,MIT,spike,Early Rust and WASM project
 text-to-cad,Agent CAD workflows,MIT,reference,Skills and benchmarks
 GenCAD,Image-conditioned CAD,unclear,avoid reuse,Read paper only
 RevitLookup,BIM inspection,MIT,reference,Inspector patterns
-web-ifc,IFC,MPL-2.0,isolate and spike,Adapter boundary
+web-ifc,IFC,MPL-2.0,isolate and spike,"Spiked ARQ-160 (web-ifc 0.0.77, @arq/ifc-adapter only - no other package depends on it, per §19 isolation)"
 That Open Components,BIM viewer components,verify current,spike,Use current stack
 web-ifc-viewer,Old BIM viewer,deprecated,avoid,Do not start new work
 IfcOpenShell,IFC toolkit,LGPL-3.0,isolate server-side,Legal review

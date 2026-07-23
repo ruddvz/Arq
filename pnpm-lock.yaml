@@ -74,7 +74,11 @@ importers:
 
   packages/icons: {}
 
-  packages/ifc-adapter: {}
+  packages/ifc-adapter:
+    dependencies:
+      web-ifc:
+        specifier: ^0.0.77
+        version: 0.0.77
 
   packages/input-system: {}
 
@@ -786,6 +790,9 @@ packages:
       jsdom:
         optional: true
 
+  web-ifc@0.0.77:
+    resolution: {integrity: sha512-VzQ0W/Iiqbidxn1ECUvz6qJ6p2sXBVNcOsUOBCETzy77psAH6yFLKQm74aXabkx3JH4OvFVHe8k1qS6+Z2zl1w==}
+
   why-is-node-running@2.3.0:
     resolution: {integrity: sha512-hUrmaWBdVDcxvYqnyh09zunKzROWjbZTiNy8dBEjkS7ehEDQibXJ7XvlmtbwuTclUiIyN+CyXQD4Vmko8fNm8w==}
     engines: {node: '>=8'}
@@ -1317,6 +1324,8 @@ snapshots:
       - sugarss
       - supports-color
       - terser
+
+  web-ifc@0.0.77: {}
 
   why-is-node-running@2.3.0:
     dependencies:
