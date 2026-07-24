@@ -1,4 +1,11 @@
 import type { ArqfsDriver } from './arqfs-driver';
+import {
+  ArqfsPolicyError,
+  DEFAULT_ARQFS_STORAGE_POLICY,
+  validateResourceMetadata,
+  validateResourceShape,
+  type ArqfsStoragePolicy,
+} from './arqfs-policy';
 
 /** Matches contracts/arqfs.ts's ArqResourceDescriptor.canonicalRole (reference-only; reproduced, not imported - see arqfs-header.ts). */
 export type ArqfsResourceCanonicalRole =
@@ -48,17 +55,50 @@ export async function putResource(
   mediaType: string,
   canonicalRole: ArqfsResourceCanonicalRole,
   chunkSize: number,
+  policy: ArqfsStoragePolicy = DEFAULT_ARQFS_STORAGE_POLICY,
 ): Promise<{ readonly sha256: string }> {
+  validateResourceMetadata(mediaType, canonicalRole, policy);
+  validateResourceShape(
+    content.byteLength,
+    chunkSize,
+    Math.max(1, Math.ceil(content.byteLength / chunkSize)),
+    policy,
+  );
   const resourceSha256 = await sha256Hex(content);
   const chunks = splitIntoChunks(content, chunkSize);
   const chunkHashes = await Promise.all(chunks.map((chunk) => sha256Hex(chunk)));
 
   driver.transaction(() => {
-    const existing = driver.query<{ readonly sha256: string }>(
-      'SELECT sha256 FROM resource WHERE sha256 = ?',
+    const existing = driver.query<{
+      readonly sha256: string;
+      readonly media_type: string;
+      readonly canonical_role: ArqfsResourceCanonicalRole;
+      readonly byte_length: number;
+      readonly chunk_size: number;
+      readonly chunk_count: number;
+    }>(
+      'SELECT sha256, media_type, canonical_role, byte_length, chunk_size, chunk_count FROM resource WHERE sha256 = ?',
       [resourceSha256],
     );
-    if (existing.length > 0) {
+    const existingDescriptor = existing[0];
+    if (existingDescriptor !== undefined) {
+      // Only fields that content addressing does NOT already determine can conflict.
+      // `media_type` and `canonical_role` are caller-supplied semantics, so a
+      // mismatch is a genuine poisoning signal; `byte_length` must follow from the
+      // bytes, so a mismatch means the stored descriptor is corrupt. `chunk_size`
+      // and `chunk_count` are physical layout of the copy already on disk - storing
+      // identical bytes under a different chunking policy is legitimate dedupe and
+      // must not be rejected, because the stored chunks are already self-consistent.
+      if (
+        existingDescriptor.media_type !== mediaType ||
+        existingDescriptor.canonical_role !== canonicalRole ||
+        existingDescriptor.byte_length !== content.byteLength
+      ) {
+        throw new ArqfsPolicyError(
+          'ARQ_RESOURCE_METADATA_CONFLICT',
+          'Content-addressed resource already exists with different metadata.',
+        );
+      }
       return;
     }
 
@@ -106,14 +146,31 @@ export type AssembleResourceResult =
 export async function assembleResource(
   driver: ArqfsDriver,
   resourceSha256: string,
+  policy: ArqfsStoragePolicy = DEFAULT_ARQFS_STORAGE_POLICY,
 ): Promise<AssembleResourceResult> {
   const descriptorRows = driver.query<{
     readonly byte_length: number;
     readonly chunk_count: number;
-  }>('SELECT byte_length, chunk_count FROM resource WHERE sha256 = ?', [resourceSha256]);
+    readonly chunk_size: number;
+  }>('SELECT byte_length, chunk_count, chunk_size FROM resource WHERE sha256 = ?', [
+    resourceSha256,
+  ]);
   const descriptor = descriptorRows[0];
   if (!descriptor) {
     return { status: 'rejected', reason: 'unknown resource' };
+  }
+  try {
+    validateResourceShape(
+      descriptor.byte_length,
+      descriptor.chunk_size,
+      descriptor.chunk_count,
+      policy,
+    );
+  } catch (error) {
+    return {
+      status: 'rejected',
+      reason: error instanceof Error ? error.message : String(error),
+    };
   }
 
   const chunkRows = driver.query<{
@@ -142,6 +199,13 @@ export async function assembleResource(
     if ((await sha256Hex(bytes)) !== row.chunk_sha256) {
       return { status: 'rejected', reason: `chunk ${index} failed integrity check` };
     }
+    const expectedLength =
+      index === descriptor.chunk_count - 1
+        ? descriptor.byte_length - descriptor.chunk_size * (descriptor.chunk_count - 1)
+        : descriptor.chunk_size;
+    if (bytes.byteLength !== expectedLength) {
+      return { status: 'rejected', reason: `chunk ${index} length does not match descriptor` };
+    }
     assembled.set(bytes, offset);
     offset += bytes.length;
   }
@@ -150,6 +214,13 @@ export async function assembleResource(
     return {
       status: 'rejected',
       reason: `assembled length ${offset} does not match descriptor byte_length ${descriptor.byte_length}`,
+    };
+  }
+
+  if ((await sha256Hex(assembled)) !== resourceSha256) {
+    return {
+      status: 'rejected',
+      reason: 'assembled resource failed whole-resource integrity check',
     };
   }
 

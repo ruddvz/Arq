@@ -1,6 +1,7 @@
 import type { ArqfsDriver } from './arqfs-driver';
 import { exportCleanArqfsCopy } from './arqfs-clean-export';
 import { openArqfs } from './arqfs-open';
+import { checkArqfsIntegrity } from './arqfs-integrity';
 
 /**
  * ARQ-201: copy-on-write migration. The source is never mutated - only read from,
@@ -42,6 +43,13 @@ export function migrateArqfsCopyOnWrite(
       return {
         status: 'rejected',
         reason: 'migrated copy failed to reopen cleanly after migration',
+      };
+    }
+    const integrity = checkArqfsIntegrity(targetDriver);
+    if (!integrity.ok) {
+      return {
+        status: 'rejected',
+        reason: 'migrated copy failed SQLite integrity checks',
       };
     }
     return { status: 'migrated' };

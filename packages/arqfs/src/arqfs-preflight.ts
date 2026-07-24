@@ -30,6 +30,8 @@ export type ArqfsBytePreflightResult =
       readonly estimatedPageCount: number;
       readonly applicationId: number;
       readonly schemaVersion: number;
+      readonly writeVersion: 1 | 2;
+      readonly readVersion: 1 | 2;
     }
   | { readonly status: 'rejected'; readonly code: string; readonly reason: string };
 
@@ -47,6 +49,18 @@ export function preflightArqfsBytes(
   bytes: Uint8Array,
   policy: ArqfsPreflightPolicy = DEFAULT_ARQFS_PREFLIGHT_POLICY,
 ): ArqfsBytePreflightResult {
+  if (
+    !Number.isSafeInteger(policy.maxFileBytes) ||
+    policy.maxFileBytes < MINIMUM_SQLITE_HEADER_BYTES ||
+    !Number.isSafeInteger(policy.maxPageCount) ||
+    policy.maxPageCount < 1
+  ) {
+    return {
+      status: 'rejected',
+      code: 'ARQ_PREFLIGHT_POLICY_INVALID',
+      reason: 'Preflight policy is invalid.',
+    };
+  }
   if (bytes.byteLength > policy.maxFileBytes) {
     return {
       status: 'rejected',
@@ -75,6 +89,29 @@ export function preflightArqfsBytes(
       reason: 'Invalid SQLite page size.',
     };
   }
+  const writeVersion = bytes[18];
+  const readVersion = bytes[19];
+  if ((writeVersion !== 1 && writeVersion !== 2) || (readVersion !== 1 && readVersion !== 2)) {
+    return {
+      status: 'rejected',
+      code: 'ARQ_INVALID_JOURNAL_MODE',
+      reason: 'SQLite journal mode header is invalid.',
+    };
+  }
+  if ((bytes[20] ?? 0) >= pageSize) {
+    return {
+      status: 'rejected',
+      code: 'ARQ_INVALID_RESERVED_BYTES',
+      reason: 'SQLite reserved-byte count is invalid.',
+    };
+  }
+  if (bytes[21] !== 64 || bytes[22] !== 32 || bytes[23] !== 32) {
+    return {
+      status: 'rejected',
+      code: 'ARQ_INVALID_PAYLOAD_FRACTIONS',
+      reason: 'SQLite payload fraction header is invalid.',
+    };
+  }
   const applicationId = readU32BE(bytes, 68);
   if (applicationId !== ARQ_APPLICATION_ID) {
     return {
@@ -84,13 +121,38 @@ export function preflightArqfsBytes(
     };
   }
   const schemaVersion = readU32BE(bytes, 60);
-  const estimatedPageCount = Math.ceil(bytes.byteLength / pageSize);
-  if (estimatedPageCount > policy.maxPageCount) {
+  const declaredPageCount = readU32BE(bytes, 28);
+  const physicalPageCount = Math.floor(bytes.byteLength / pageSize);
+  if (physicalPageCount < 1 || bytes.byteLength % pageSize !== 0) {
+    return {
+      status: 'rejected',
+      code: 'ARQ_FILE_TRUNCATED',
+      reason: 'SQLite file bytes do not contain complete pages.',
+    };
+  }
+  if (declaredPageCount > policy.maxPageCount || physicalPageCount > policy.maxPageCount) {
     return {
       status: 'rejected',
       code: 'ARQ_PAGE_LIMIT_EXCEEDED',
       reason: 'File exceeds configured page-count limit.',
     };
   }
-  return { status: 'accepted', pageSize, estimatedPageCount, applicationId, schemaVersion };
+  if (declaredPageCount > 0 && declaredPageCount > physicalPageCount) {
+    return {
+      status: 'rejected',
+      code: 'ARQ_FILE_TRUNCATED',
+      reason: 'SQLite page count exceeds the bytes available in the file.',
+    };
+  }
+  const estimatedPageCount =
+    declaredPageCount > 0 ? declaredPageCount : Math.ceil(bytes.byteLength / pageSize);
+  return {
+    status: 'accepted',
+    pageSize,
+    estimatedPageCount,
+    applicationId,
+    schemaVersion,
+    writeVersion: writeVersion as 1 | 2,
+    readVersion: readVersion as 1 | 2,
+  };
 }

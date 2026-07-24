@@ -118,7 +118,7 @@ describe('evaluateOpenCapabilities', () => {
     expect(capabilities.unsupportedRequiredFeatures).toContain('format-major-too-new-for-reader');
   });
 
-  it('allows read but refuses write when the reader major is below minWriterMajor but above minReaderMajor', () => {
+  it('refuses a reader from an older major across a format-major boundary', () => {
     const file: ArqFormatVersion = {
       major: 2,
       minor: 0,
@@ -135,9 +135,26 @@ describe('evaluateOpenCapabilities', () => {
     };
 
     const capabilities = evaluateOpenCapabilities(file, readerV1);
-    expect(capabilities.canRead).toBe(true);
+    expect(capabilities.canRead).toBe(false);
     expect(capabilities.canWrite).toBe(false);
-    expect(capabilities.safeModeRequired).toBe(false);
+    expect(capabilities.safeModeRequired).toBe(true);
+    expect(capabilities.unsupportedRequiredFeatures).toContain('format-major-too-new-for-reader');
+  });
+
+  it('refuses a future schema instead of opening it as writable', () => {
+    const futureFile: ArqFormatVersion = {
+      major: 1,
+      minor: 0,
+      schema: 3,
+      minReaderMajor: 1,
+      minWriterMajor: 1,
+    };
+
+    const capabilities = evaluateOpenCapabilities(futureFile, ARQFS_CURRENT_FORMAT_VERSION);
+    expect(capabilities.canRead).toBe(false);
+    expect(capabilities.canWrite).toBe(false);
+    expect(capabilities.safeModeRequired).toBe(true);
+    expect(capabilities.unsupportedRequiredFeatures).toContain('schema-too-new-for-reader');
   });
 
   it('reports canMigrate when the file schema is older than the reader schema', () => {

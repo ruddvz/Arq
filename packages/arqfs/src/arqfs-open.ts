@@ -40,21 +40,40 @@ export function evaluateOpenCapabilities(
   readerFormatVersion: ArqFormatVersion,
   unsupportedFeatures: readonly string[] = [],
 ): ArqOpenCapabilities {
-  const versionCanRead = readerFormatVersion.major >= fileHeader.minReaderMajor;
-  const canRead = versionCanRead && unsupportedFeatures.length === 0;
+  const validHeader = [
+    fileHeader.major,
+    fileHeader.minor,
+    fileHeader.minReaderMajor,
+    fileHeader.minWriterMajor,
+    fileHeader.schema,
+    readerFormatVersion.major,
+    readerFormatVersion.minor,
+    readerFormatVersion.schema,
+    readerFormatVersion.minReaderMajor,
+    readerFormatVersion.minWriterMajor,
+  ].every((value) => Number.isSafeInteger(value) && value >= 0);
+  const reasons: string[] = [];
+  const majorCanRead =
+    validHeader &&
+    readerFormatVersion.major >= fileHeader.major &&
+    readerFormatVersion.major >= fileHeader.minReaderMajor;
+  if (!majorCanRead) {
+    reasons.push('format-major-too-new-for-reader');
+  }
+  const schemaCanRead = validHeader && fileHeader.schema <= readerFormatVersion.schema;
+  if (!schemaCanRead) {
+    reasons.push('schema-too-new-for-reader');
+  }
+  reasons.push(...unsupportedFeatures);
+  const canRead = majorCanRead && schemaCanRead && unsupportedFeatures.length === 0;
   const canWrite = canRead && readerFormatVersion.major >= fileHeader.minWriterMajor;
   const canMigrate = canWrite && fileHeader.schema < readerFormatVersion.schema;
-  const unsupportedRequiredFeatures: string[] = [];
-  if (!versionCanRead) {
-    unsupportedRequiredFeatures.push('format-major-too-new-for-reader');
-  }
-  unsupportedRequiredFeatures.push(...unsupportedFeatures);
   return {
     canRead,
     canWrite,
     canMigrate,
     safeModeRequired: !canRead,
-    unsupportedRequiredFeatures,
+    unsupportedRequiredFeatures: reasons,
   };
 }
 
@@ -99,6 +118,13 @@ export function openArqfs(
   }
 
   const meta = new Map(metaRows.map((row) => [row.key, row.value]));
+  const requiredMetaKeys = ['format_major', 'format_minor', 'min_reader_major', 'min_writer_major'];
+  if (requiredMetaKeys.some((key) => !/^\d+$/.test(meta.get(key) ?? ''))) {
+    return {
+      status: 'rejected',
+      reason: 'arqfs_meta is missing or contains non-numeric version fields',
+    };
+  }
   const major = Number(meta.get('format_major'));
   const minor = Number(meta.get('format_minor'));
   const minReaderMajor = Number(meta.get('min_reader_major'));
@@ -106,10 +132,16 @@ export function openArqfs(
 
   if (
     typeof schema !== 'number' ||
-    !Number.isFinite(major) ||
-    !Number.isFinite(minor) ||
-    !Number.isFinite(minReaderMajor) ||
-    !Number.isFinite(minWriterMajor)
+    !Number.isSafeInteger(schema) ||
+    schema < 0 ||
+    !Number.isSafeInteger(major) ||
+    !Number.isSafeInteger(minor) ||
+    !Number.isSafeInteger(minReaderMajor) ||
+    !Number.isSafeInteger(minWriterMajor) ||
+    major < 0 ||
+    minor < 0 ||
+    minReaderMajor < 0 ||
+    minWriterMajor < 0
   ) {
     return {
       status: 'rejected',
@@ -119,17 +151,20 @@ export function openArqfs(
 
   const header: ArqFormatVersion = { major, minor, schema, minReaderMajor, minWriterMajor };
 
-  // feature_flag exists on every file created by createArqfsSchemaV1, but this stays
-  // defensive (treats an unreadable/missing table as "no flags declared") rather than
-  // assuming every file this reader ever encounters was created by this exact schema.
-  let unsupportedFeatures: readonly string[] = [];
+  // feature_flag exists on every file created by createArqfsSchemaV1. A missing or
+  // unreadable table is structural corruption, not an empty compatibility matrix:
+  // treating it as empty could let a reader silently ignore required semantics.
+  let unsupportedFeatures: readonly string[];
   try {
     unsupportedFeatures = unsupportedRequiredFeatures(
       readFeatureFlags(driver),
       KNOWN_FEATURE_NAMES,
     );
-  } catch {
-    unsupportedFeatures = [];
+  } catch (error) {
+    return {
+      status: 'rejected',
+      reason: `could not read feature flags: ${error instanceof Error ? error.message : String(error)}`,
+    };
   }
 
   return {
