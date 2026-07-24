@@ -1,6 +1,7 @@
 import { describe, expect, it, afterEach } from 'vitest';
 import { createNodeArqfsDriver } from './arqfs-node-driver';
 import { handleArqfsWorkerRequest, type ArqfsWorkerContext } from './arqfs-worker-handler';
+import { ARQFS_SCHEMA_VERSION_V2 } from './arqfs-schema-v2';
 import type { ArqfsDriver } from './arqfs-driver';
 
 describe('handleArqfsWorkerRequest', () => {
@@ -17,7 +18,7 @@ describe('handleArqfsWorkerRequest', () => {
     return context;
   }
 
-  it("initialises the v1 schema on 'open' for a brand new (application_id = 0) database", () => {
+  it("initialises the latest schema (not v1) on 'open' for a brand new (application_id = 0) database", () => {
     const ctx = freshContext();
 
     const response = handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
@@ -26,6 +27,10 @@ describe('handleArqfsWorkerRequest', () => {
     if (response.ok && response.payload.kind === 'open') {
       expect(response.payload.result.status).toBe('opened');
       expect(response.payload.usedVfs).toBe('test-node-driver');
+      if (response.payload.result.status === 'opened') {
+        // FP-005: a real new file must never start on an already-superseded schema.
+        expect(response.payload.result.header.schema).toBe(ARQFS_SCHEMA_VERSION_V2);
+      }
     } else {
       throw new Error('expected an open payload');
     }

@@ -1,5 +1,6 @@
 import type { ArqfsDriver } from './arqfs-driver';
 import { createArqfsSchemaV1 } from './arqfs-schema';
+import { createArqfsSchemaLatest } from './arqfs-schema-v2';
 import { openArqfs } from './arqfs-open';
 import { putArchiveEntries, getArchiveEntry, listArchiveEntryPaths } from './arqfs-archive-store';
 import type { ArqfsWorkerRequest, ArqfsWorkerResponse } from './arqfs-worker-protocol';
@@ -28,9 +29,11 @@ export function handleArqfsWorkerRequest(
         // application_id reads as 0 only on a database SQLite itself has never
         // touched (its own default) - safe to initialize. Any other value, right or
         // wrong, is left to openArqfs to accept or reject; this must never overwrite
-        // a real conflict.
+        // a real conflict. A brand-new file always starts at the latest schema
+        // (FP-005) - there is no reason for a file created today to start on an
+        // already-superseded schema version.
         if (context.driver.pragma('application_id') === 0) {
-          createArqfsSchemaV1(context.driver);
+          createArqfsSchemaLatest(context.driver, createArqfsSchemaV1);
         }
         const result = openArqfs(context.driver);
         return {
