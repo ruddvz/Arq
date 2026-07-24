@@ -16,6 +16,7 @@ export * from './arqfs-worker-protocol';
 export * from './arqfs-worker-handler';
 export * from './arqfs-single-writer-lock';
 export * from './arqfs-node-driver';
+export * from './arqfs-node-atomic-swap';
 export * from './arqfs-schema-v2';
 export * from './arqfs-provenance';
 export * from './arqfs-resource-reference';

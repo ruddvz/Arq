@@ -1,5 +1,9 @@
 import type { ArqfsDriver } from './arqfs-driver';
-import { migrateArqfsCopyOnWrite, type ArqfsMigrationResult } from './arqfs-migration';
+import {
+  migrateArqfsCopyOnWrite,
+  type ArqfsMigrationOptions,
+  type ArqfsMigrationResult,
+} from './arqfs-migration';
 
 /**
  * ARQ-238-adjacent: schema v2 adds provenance/import tracking on top of the
@@ -152,13 +156,22 @@ export function migrateArqfsSchemaV1ToV2ViaCopy(
   sourceDriver: ArqfsDriver,
   targetPath: string,
   openDriver: (path: string) => ArqfsDriver,
+  options: ArqfsMigrationOptions = {},
 ): ArqfsMigrationResult {
-  return migrateArqfsCopyOnWrite(sourceDriver, targetPath, openDriver, (target) => {
-    const result = migrateArqfsSchemaV1ToV2(target);
-    if (result.status !== 'migrated') {
-      throw new Error(
-        result.status === 'already-current' ? 'target copy is already at schema v2' : result.reason,
-      );
-    }
-  });
+  return migrateArqfsCopyOnWrite(
+    sourceDriver,
+    targetPath,
+    openDriver,
+    (target) => {
+      const result = migrateArqfsSchemaV1ToV2(target);
+      if (result.status !== 'migrated') {
+        throw new Error(
+          result.status === 'already-current'
+            ? 'target copy is already at schema v2'
+            : result.reason,
+        );
+      }
+    },
+    options,
+  );
 }
