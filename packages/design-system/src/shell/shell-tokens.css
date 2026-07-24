@@ -1,0 +1,48 @@
+/*
+ * Blueprint section 17 ("Colour tokens") and section 19 ("Spacing and shape") -
+ * the UI-chrome tokens the desktop/iPad shell (section 12/13) needs, distinct
+ * from brand.v4.css's three brand-identity colours (black/white/phthalo green,
+ * used only for the logo and accent states, section 18). Values below are
+ * copied verbatim from the blueprint's tables, not invented.
+ */
+:root {
+  /* Section 17 */
+  --arq-ui-paper: #ffffff;
+  --arq-ui-surface-1: #fafafa;
+  --arq-ui-surface-2: #f4f4f4;
+  --arq-ui-surface-3: #ececec;
+  --arq-ui-line-subtle: #e2e2e2;
+  --arq-ui-line-default: #c7c7c7;
+  --arq-ui-line-strong: #737373;
+  --arq-ui-text-muted: #737373;
+  --arq-ui-text-secondary: #555555;
+  --arq-ui-text-primary: #151515;
+  --arq-ui-ink: #000000;
+
+  /* Section 19: 4-point base grid */
+  --arq-space-micro: 4px;
+  --arq-space-compact: 8px;
+  --arq-space-control-group: 12px;
+  --arq-space-panel: 16px;
+  --arq-space-section: 24px;
+  --arq-space-major-group: 32px;
+  --arq-space-page: 48px;
+
+  /* Section 19: corners */
+  --arq-radius-control: 4px;
+  --arq-radius-menu: 6px;
+  --arq-radius-dialog: 8px;
+  --arq-radius-ipad-palette: 10px;
+
+  /* Section 121/section 30: iPad touch targets must be at least 44x44 CSS px. */
+  --arq-touch-target-min: 44px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Section 15: "Locked for Release 1: light appearance only." No dark-mode
+       token set is approved yet - intentionally left unset rather than
+       guessing values, a documented gap like canvas2d-paint.ts's colour
+       fallback. */
+  }
+}

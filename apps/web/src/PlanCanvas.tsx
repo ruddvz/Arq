@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { worldPoint, type Viewport } from '@arq/geometry-2d';
+import { useEffect, useRef, type PointerEvent } from 'react';
+import { screenPoint, screenToWorld, worldPoint, type Viewport } from '@arq/geometry-2d';
 import { fitToBounds } from '@arq/editor-shell';
 import { buildPlanScene, paintPlanScene, type PlanPrimitiveInput } from '@arq/plan-renderer';
 
@@ -36,8 +36,20 @@ const DEMO_INPUTS: readonly PlanPrimitiveInput<string>[] = [
 const NO_SELECTION = { primary: null, secondary: new Set<string>() };
 const NONE = new Set<string>();
 
-export function PlanCanvas(): JSX.Element {
+export interface PlanCanvasProps {
+  /** Reports the world position under the pointer (null once the pointer leaves the canvas) - drives the status bar's cursor-coordinates readout (ARQ-027). */
+  readonly onPointerWorldPositionChange?: (
+    point: { readonly x: number; readonly y: number } | null,
+  ) => void;
+  /** Reports the viewport's current zoom in CSS-pixel terms (device-pixel-ratio removed) - drives the status bar's view-scale readout. */
+  readonly onViewportPixelsPerUnitChange?: (cssPixelsPerUnit: number) => void;
+}
+
+export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
+  const { onPointerWorldPositionChange, onViewportPixelsPerUnitChange } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const viewportRef = useRef<Viewport | null>(null);
+  const devicePixelRatioRef = useRef(1);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -54,6 +66,7 @@ export function PlanCanvas(): JSX.Element {
         return;
       }
       const devicePixelRatio = window.devicePixelRatio || 1;
+      devicePixelRatioRef.current = devicePixelRatio;
       const rect = canvas.getBoundingClientRect();
       canvas.width = Math.max(1, Math.round(rect.width * devicePixelRatio));
       canvas.height = Math.max(1, Math.round(rect.height * devicePixelRatio));
@@ -70,6 +83,8 @@ export function PlanCanvas(): JSX.Element {
         screenHeight: canvas.height,
         pixelsPerUnit: fitted.pixelsPerUnit * devicePixelRatio,
       };
+      viewportRef.current = viewport;
+      onViewportPixelsPerUnitChange?.(fitted.pixelsPerUnit);
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.font = `${14 * devicePixelRatio}px sans-serif`;
@@ -81,7 +96,32 @@ export function PlanCanvas(): JSX.Element {
     paint();
     window.addEventListener('resize', paint);
     return () => window.removeEventListener('resize', paint);
-  }, []);
+  }, [onViewportPixelsPerUnitChange]);
 
-  return <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />;
+  function handlePointerMove(event: PointerEvent<HTMLCanvasElement>): void {
+    const canvas = canvasRef.current;
+    const viewport = viewportRef.current;
+    if (canvas === null || viewport === null || onPointerWorldPositionChange === undefined) {
+      return;
+    }
+    const rect = canvas.getBoundingClientRect();
+    const devicePixelRatio = devicePixelRatioRef.current;
+    const world = screenToWorld(
+      viewport,
+      screenPoint(
+        (event.clientX - rect.left) * devicePixelRatio,
+        (event.clientY - rect.top) * devicePixelRatio,
+      ),
+    );
+    onPointerWorldPositionChange({ x: world.x, y: world.y });
+  }
+
+  return (
+    <canvas
+      ref={canvasRef}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={() => onPointerWorldPositionChange?.(null)}
+      style={{ width: '100%', height: '100%', display: 'block' }}
+    />
+  );
 }

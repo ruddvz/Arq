@@ -11,10 +11,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@arq/bim-core": "workspace:*",
     "@arq/design-system": "workspace:*",
     "@arq/editor-shell": "workspace:*",
     "@arq/geometry-2d": "workspace:*",
     "@arq/icons": "workspace:*",
+    "@arq/operations": "workspace:*",
     "@arq/plan-renderer": "workspace:*",
     "react": "^18",
     "react-aria-components": "^1.19.0",

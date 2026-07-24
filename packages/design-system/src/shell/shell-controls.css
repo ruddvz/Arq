@@ -1,0 +1,61 @@
+/*
+ * Shared control states for every shell component (top bar, tool rail, model
+ * panel, inspector, status bar, context bar, command palette): default,
+ * hover, active/pressed, disabled, error - the state coverage each of
+ * ARQ-023 through ARQ-031's acceptance criteria requires individually. Kept
+ * in one file rather than duplicated per component since the states
+ * themselves (section 18, "State language") are shared vocabulary, not
+ * something each shell reinvents.
+ */
+@import '../tokens.css';
+@import './shell-tokens.css';
+
+.arq-shell-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--arq-space-micro);
+  min-width: var(--arq-touch-target-min);
+  min-height: var(--arq-touch-target-min);
+  padding: var(--arq-space-compact) var(--arq-space-control-group);
+  border: 1px solid transparent;
+  border-radius: var(--arq-radius-control);
+  background: transparent;
+  color: var(--arq-ui-text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Hover (section 18: "subtle grey fill"). */
+.arq-shell-button:hover:not(:disabled) {
+  background: var(--arq-ui-surface-2);
+}
+
+/* Keyboard focus must be visible (section 12: "labels appear on hover and keyboard focus"). */
+.arq-shell-button:focus-visible {
+  outline: 2px solid var(--arq-focus-ring);
+  outline-offset: 1px;
+}
+
+/* Active tool / pressed toggle (section 18: "black icon container with white glyph"). */
+.arq-shell-button[aria-pressed='true'] {
+  background: var(--arq-ui-ink);
+  color: var(--arq-ui-paper);
+}
+
+.arq-shell-button:disabled {
+  color: var(--arq-ui-text-muted);
+  cursor: not-allowed;
+}
+
+/* Blocking error (section 18: "octagonal icon, cross-hatch and written label" - the
+   written label is the caller's job via aria-describedby/visible text; this class
+   only guarantees the control itself is never distinguished by colour alone). */
+.arq-shell-button[aria-invalid='true'] {
+  border-color: var(--arq-ui-line-strong);
+}
+
+.arq-shell-panel {
+  background: var(--arq-ui-surface-1);
+  border-color: var(--arq-ui-line-subtle);
+}
