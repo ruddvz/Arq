@@ -6,7 +6,23 @@ import type { ArqfsRecoveryReport } from './arqfs-recovery-report';
  * this module only computes a plan, it does not itself open a driver, attempt a
  * migration, or read any bytes.
  */
+/**
+ * FP-016: a structured discriminant a UI can branch on directly, instead of
+ * pattern-matching substrings of `reason` (which is free text for logs/
+ * diagnostics only and may reword at any time). `'unreadable'` covers both
+ * ways `canOpen` can be false (wrong application ID and reader-too-old-to-read)
+ * since from a caller's perspective both are simply "cannot open this file" -
+ * `reason` still distinguishes them for diagnostics.
+ */
+export type ArqfsSafeModePlanKind =
+  | 'unreadable'
+  | 'reader-too-old-to-write'
+  | 'missing-required-entries'
+  | 'safe-mode-required'
+  | 'healthy';
+
 export interface ArqfsSafeModePlan {
+  readonly kind: ArqfsSafeModePlanKind;
   /** False only when the file cannot be read at all (wrong application ID, or a reader major version below the file's minReaderMajor). */
   readonly canOpen: boolean;
   /** True when the file should be opened read-only - either the reader's own capabilities say so, or required content is missing/the file needs a migration this caller has not been told to run. */
@@ -18,6 +34,7 @@ export interface ArqfsSafeModePlan {
 export function resolveArqfsSafeModePlan(report: ArqfsRecoveryReport): ArqfsSafeModePlan {
   if (report.openResult.status === 'rejected') {
     return {
+      kind: 'unreadable',
       canOpen: false,
       openReadOnly: true,
       missingRequiredEntries: report.missingRequiredEntries,
@@ -28,6 +45,7 @@ export function resolveArqfsSafeModePlan(report: ArqfsRecoveryReport): ArqfsSafe
   const { capabilities } = report.openResult;
   if (!capabilities.canRead) {
     return {
+      kind: 'unreadable',
       canOpen: false,
       openReadOnly: true,
       missingRequiredEntries: report.missingRequiredEntries,
@@ -37,6 +55,7 @@ export function resolveArqfsSafeModePlan(report: ArqfsRecoveryReport): ArqfsSafe
 
   if (report.missingRequiredEntries.length > 0) {
     return {
+      kind: 'missing-required-entries',
       canOpen: true,
       openReadOnly: true,
       missingRequiredEntries: report.missingRequiredEntries,
@@ -46,6 +65,7 @@ export function resolveArqfsSafeModePlan(report: ArqfsRecoveryReport): ArqfsSafe
 
   if (!capabilities.canWrite) {
     return {
+      kind: 'reader-too-old-to-write',
       canOpen: true,
       openReadOnly: true,
       missingRequiredEntries: [],
@@ -55,6 +75,7 @@ export function resolveArqfsSafeModePlan(report: ArqfsRecoveryReport): ArqfsSafe
 
   if (capabilities.safeModeRequired) {
     return {
+      kind: 'safe-mode-required',
       canOpen: true,
       openReadOnly: true,
       missingRequiredEntries: [],
@@ -62,5 +83,11 @@ export function resolveArqfsSafeModePlan(report: ArqfsRecoveryReport): ArqfsSafe
     };
   }
 
-  return { canOpen: true, openReadOnly: false, missingRequiredEntries: [], reason: 'healthy' };
+  return {
+    kind: 'healthy',
+    canOpen: true,
+    openReadOnly: false,
+    missingRequiredEntries: [],
+    reason: 'healthy',
+  };
 }
