@@ -3,6 +3,7 @@ import {
   ArqfsPolicyError,
   DEFAULT_ARQFS_STORAGE_POLICY,
   validateArqfsArchivePath,
+  validateArqfsProjectId,
   validateArchiveEntryBytes,
   validateArchiveTotals,
   validateChunkSize,
@@ -55,5 +56,23 @@ describe('arqfs storage policy', () => {
     expect(() => validateResourceMetadata('image/png', 'user-texture')).not.toThrow();
     expect(() => validateResourceMetadata('', 'user-texture')).toThrow(ArqfsPolicyError);
     expect(() => validateResourceMetadata('image/png', 'unknown-role')).toThrow(ArqfsPolicyError);
+  });
+
+  it('accepts a normal project id and rejects anything that could escape its own OPFS filename', () => {
+    expect(() => validateArqfsProjectId('project-1')).not.toThrow();
+    expect(() => validateArqfsProjectId('a1b2c3d4-e5f6-47a8-9012-345678901234')).not.toThrow();
+    for (const projectId of [
+      '',
+      '.',
+      '..',
+      'a/b',
+      '../escape',
+      'a\\b',
+      'a\0b',
+      'a\nb',
+      'x'.repeat(256),
+    ]) {
+      expect(() => validateArqfsProjectId(projectId)).toThrow(ArqfsPolicyError);
+    }
   });
 });

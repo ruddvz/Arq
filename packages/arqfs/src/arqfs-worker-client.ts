@@ -12,10 +12,14 @@ export interface ArqfsWorkerLike {
     type: 'message',
     listener: (event: MessageEvent<ArqfsWorkerResponse>) => void,
   ): void;
+  addEventListener(type: 'error', listener: (event: ErrorEvent) => void): void;
+  addEventListener(type: 'messageerror', listener: (event: MessageEvent) => void): void;
   removeEventListener(
     type: 'message',
     listener: (event: MessageEvent<ArqfsWorkerResponse>) => void,
   ): void;
+  removeEventListener(type: 'error', listener: (event: ErrorEvent) => void): void;
+  removeEventListener(type: 'messageerror', listener: (event: MessageEvent) => void): void;
 }
 
 export interface ArqfsWorkerRequestOptions {
@@ -35,6 +39,22 @@ export class ArqfsWorkerRequestError extends Error {
   }
 }
 
+export interface ArqfsWorkerCrashInfo {
+  readonly kind: 'error' | 'messageerror';
+  readonly message: string;
+}
+
+export interface ArqfsWorkerClientOptions {
+  /**
+   * Called once, the first time the underlying Worker fires 'error' or
+   * 'messageerror'. Every pending request has already been rejected by the time
+   * this runs, and every request on this client rejects from here on - this
+   * client's job is bounding the damage of a crash, not surviving it. Recovery is
+   * the owner's decision: construct a fresh Worker and a fresh client.
+   */
+  readonly onCrash?: (info: ArqfsWorkerCrashInfo) => void;
+}
+
 interface PendingRequest {
   readonly resolve: (payload: ArqfsWorkerResponsePayload) => void;
   readonly reject: (error: unknown) => void;
@@ -51,6 +71,11 @@ export class ArqfsWorkerClient {
   private nextRequestId = 1;
   private readonly pending = new Map<number, PendingRequest>();
   private disposed = false;
+  private crashedState = false;
+
+  get crashed(): boolean {
+    return this.crashedState;
+  }
 
   private readonly onMessage = (event: MessageEvent<ArqfsWorkerResponse>): void => {
     const response = event.data;
@@ -71,8 +96,43 @@ export class ArqfsWorkerClient {
     }
   };
 
-  constructor(private readonly worker: ArqfsWorkerLike) {
+  private readonly onWorkerError = (event: ErrorEvent): void => {
+    this.handleCrash(
+      'error',
+      event.message.length > 0 ? event.message : 'arqfs Worker reported an error',
+    );
+  };
+
+  private readonly onWorkerMessageError = (): void => {
+    // messageerror carries no usable detail - a MessageEvent whose data typically
+    // failed to deserialize - and no way to identify which in-flight request
+    // produced it, so every pending request is rejected rather than left to time out.
+    this.handleCrash('messageerror', 'arqfs Worker response could not be deserialized');
+  };
+
+  private handleCrash(kind: 'error' | 'messageerror', message: string): void {
+    if (this.crashedState || this.disposed) return;
+    this.crashedState = true;
+    this.rejectAllPending((requestId) => new ArqfsWorkerRequestError(requestId, message));
+    this.options.onCrash?.({ kind, message });
+  }
+
+  private rejectAllPending(makeError: (requestId: number) => unknown): void {
+    for (const [requestId, pending] of this.pending) {
+      if (pending.timeout !== undefined) clearTimeout(pending.timeout);
+      pending.abort?.();
+      pending.reject(makeError(requestId));
+    }
+    this.pending.clear();
+  }
+
+  constructor(
+    private readonly worker: ArqfsWorkerLike,
+    private readonly options: ArqfsWorkerClientOptions = {},
+  ) {
     worker.addEventListener('message', this.onMessage);
+    worker.addEventListener('error', this.onWorkerError);
+    worker.addEventListener('messageerror', this.onWorkerMessageError);
   }
 
   request(
@@ -81,6 +141,9 @@ export class ArqfsWorkerClient {
   ): Promise<ArqfsWorkerResponsePayload> {
     if (this.disposed) {
       return Promise.reject(new Error('arqfs Worker client is disposed'));
+    }
+    if (this.crashedState) {
+      return Promise.reject(new Error('arqfs Worker crashed; construct a new Worker and client'));
     }
     const requestId = this.nextRequestId++;
     const message = { ...request, id: requestId } as ArqfsWorkerRequest;
@@ -128,11 +191,8 @@ export class ArqfsWorkerClient {
     if (this.disposed) return;
     this.disposed = true;
     this.worker.removeEventListener('message', this.onMessage);
-    for (const [requestId, pending] of this.pending) {
-      if (pending.timeout !== undefined) clearTimeout(pending.timeout);
-      pending.abort?.();
-      pending.reject(new ArqfsWorkerRequestError(requestId, reason));
-    }
-    this.pending.clear();
+    this.worker.removeEventListener('error', this.onWorkerError);
+    this.worker.removeEventListener('messageerror', this.onWorkerMessageError);
+    this.rejectAllPending((requestId) => new ArqfsWorkerRequestError(requestId, reason));
   }
 }

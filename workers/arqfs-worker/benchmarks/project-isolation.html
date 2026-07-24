@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>arqfs project-scoped OPFS filename isolation check (ARQ-196/220)</title>
+  </head>
+  <body>
+    <script type="module">
+      // Each call creates a brand new Worker instance for the given project id and
+      // terminates it before resolving, so a write followed by a page reload
+      // followed by a read proves real OPFS persistence AND isolation across both
+      // worker teardown and full page navigation - not JS variable retention.
+      let nextId = 1;
+
+      function runOnFreshWorker(projectId, request) {
+        return new Promise((resolve, reject) => {
+          const worker = new Worker(
+            `./project-isolation-worker.js?project=${encodeURIComponent(projectId)}`,
+            { type: 'module' },
+          );
+          const timeout = setTimeout(() => {
+            worker.terminate();
+            reject(new Error('worker timed out'));
+          }, 10_000);
+          worker.onmessage = (event) => {
+            clearTimeout(timeout);
+            worker.terminate();
+            resolve(event.data);
+          };
+          worker.onerror = (event) => {
+            clearTimeout(timeout);
+            worker.terminate();
+            reject(new Error(event.message || 'worker error'));
+          };
+          worker.postMessage({ id: nextId++, ...request });
+        });
+      }
+
+      window.__arqfsIsolationWrite = (projectId, value) =>
+        runOnFreshWorker(projectId, { type: 'write', value });
+      window.__arqfsIsolationRead = (projectId) => runOnFreshWorker(projectId, { type: 'read' });
+      window.__ARQ_ARQFS_ISOLATION_READY__ = true;
+    </script>
+  </body>
+</html>

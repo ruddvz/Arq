@@ -74,7 +74,8 @@ export type ArqfsPolicyCode =
   | 'ARQ_TOO_MANY_CHUNKS'
   | 'ARQ_RESOURCE_METADATA_CONFLICT'
   | 'ARQ_RESOURCE_METADATA_INVALID'
-  | 'ARQ_POLICY_INVALID';
+  | 'ARQ_POLICY_INVALID'
+  | 'ARQ_PROJECT_ID_INVALID';
 
 export class ArqfsPolicyError extends Error {
   readonly code: ArqfsPolicyCode;
@@ -116,6 +117,35 @@ export function validateArqfsArchivePath(
   const segments = path.split('/');
   if (segments.some((segment) => segment.length === 0 || segment === '.' || segment === '..')) {
     throw new ArqfsPolicyError('ARQ_PATH_INVALID', 'Archive path contains an invalid segment.');
+  }
+}
+
+const MAX_PROJECT_ID_BYTES = 255;
+
+/**
+ * A project ID becomes one path segment of an OPFS filename (`arqfs-worker-entry.ts`
+ * derives `/arq-projects/<projectId>.sqlite3` from it) - never a filesystem path
+ * itself. The same traversal and control-character concerns as
+ * `validateArqfsArchivePath` apply, but a `/` here is always an attempt to escape
+ * the single segment rather than a legitimate nested path, so it is rejected rather
+ * than split and walked.
+ */
+export function validateArqfsProjectId(projectId: string): void {
+  const encodedLength = new TextEncoder().encode(projectId).byteLength;
+  if (
+    projectId.length === 0 ||
+    projectId === '.' ||
+    projectId === '..' ||
+    encodedLength > MAX_PROJECT_ID_BYTES ||
+    projectId.includes('/') ||
+    projectId.includes('\\') ||
+    projectId.includes('\0') ||
+    [...projectId].some((character) => character < ' ')
+  ) {
+    throw new ArqfsPolicyError(
+      'ARQ_PROJECT_ID_INVALID',
+      'Project id is not a safe filename segment.',
+    );
   }
 }
 
