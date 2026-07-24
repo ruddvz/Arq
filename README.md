@@ -66,16 +66,16 @@ ARQ is not initially a replacement for every AutoCAD, Revit, Archicad, SketchUp,
 
 The repository is in active technical validation and vertical-slice implementation.
 
-| Area | Current repository state |
-| --- | --- |
-| Browser editor | Vite, React, and TypeScript application shell with a Canvas 2D demo scene |
-| Design system | Product shell components, design tokens, and a generated technical icon package |
-| Domain boundaries | Geometry, semantic model, operations, validation, rendering, storage, and adapter packages |
-| Shared core | Rust crate with WebAssembly build and parity-check tooling |
+| Area                  | Current repository state                                                                             |
+| --------------------- | ---------------------------------------------------------------------------------------------------- |
+| Browser editor        | Vite, React, and TypeScript application shell with a Canvas 2D demo scene                            |
+| Design system         | Product shell components, design tokens, and a generated technical icon package                      |
+| Domain boundaries     | Geometry, semantic model, operations, validation, rendering, storage, and adapter packages           |
+| Shared core           | Rust crate with WebAssembly build and parity-check tooling                                           |
 | Local project storage | Native SQLite and browser OPFS prototypes, single-writer protection, export, and recovery groundwork |
-| Synchronisation | Narrow operation and snapshot protocol groundwork, not a finished collaboration product |
-| Quality system | Unit, property, browser, capability, performance, formatting, type, dependency, and licence checks |
-| Product workflow | Incomplete. The first wall-to-room-to-plan-to-3D-to-sheet workflow remains the release gate |
+| Synchronisation       | Narrow operation and snapshot protocol groundwork, not a finished collaboration product              |
+| Quality system        | Unit, property, browser, capability, performance, formatting, type, dependency, and licence checks   |
+| Product workflow      | Incomplete. The first wall-to-room-to-plan-to-3D-to-sheet workflow remains the release gate          |
 
 ### Current milestone
 
@@ -316,15 +316,15 @@ A material architecture change should be recorded through an ADR. Planning prose
 
 This README uses the canonical ARQ wordmark from `brand/01_VECTOR/`. GitHub switches between the Phthalo Green and white variants based on the reader's colour scheme.
 
-| Use | Canonical location |
-| --- | --- |
-| Brand guidelines | [`brand/00_GUIDE/ARQ_Brand_Guidelines_FINAL.pdf`](brand/00_GUIDE/ARQ_Brand_Guidelines_FINAL.pdf) |
-| Quick reference | [`brand/00_GUIDE/ARQ_Logo_Quick_Reference_FINAL.pdf`](brand/00_GUIDE/ARQ_Logo_Quick_Reference_FINAL.pdf) |
-| SVG wordmarks and symbols | [`brand/01_VECTOR/`](brand/01_VECTOR/) |
-| High-resolution transparent PNGs | [`brand/02_4K_PNG/`](brand/02_4K_PNG/) |
-| Favicons, manifest, PWA icons, and social image | [`brand/03_WEB/`](brand/03_WEB/) |
-| App icon masters | [`brand/04_APP_ICONS/`](brand/04_APP_ICONS/) |
-| Print-ready assets | [`brand/05_PRINT/`](brand/05_PRINT/) |
+| Use                                             | Canonical location                                                                                       |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Brand guidelines                                | [`brand/00_GUIDE/ARQ_Brand_Guidelines_FINAL.pdf`](brand/00_GUIDE/ARQ_Brand_Guidelines_FINAL.pdf)         |
+| Quick reference                                 | [`brand/00_GUIDE/ARQ_Logo_Quick_Reference_FINAL.pdf`](brand/00_GUIDE/ARQ_Logo_Quick_Reference_FINAL.pdf) |
+| SVG wordmarks and symbols                       | [`brand/01_VECTOR/`](brand/01_VECTOR/)                                                                   |
+| High-resolution transparent PNGs                | [`brand/02_4K_PNG/`](brand/02_4K_PNG/)                                                                   |
+| Favicons, manifest, PWA icons, and social image | [`brand/03_WEB/`](brand/03_WEB/)                                                                         |
+| App icon masters                                | [`brand/04_APP_ICONS/`](brand/04_APP_ICONS/)                                                             |
+| Print-ready assets                              | [`brand/05_PRINT/`](brand/05_PRINT/)                                                                     |
 
 Brand rules for implementation:
 
