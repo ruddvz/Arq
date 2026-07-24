@@ -6,54 +6,31 @@ Show collaborator identity and state.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Initials or photo
+- Presence indicator (online/idle/offline)
+- Optional colour keyed to the collaborator
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Online
+- Idle
+- Offline
+- Focus visible (when interactive, e.g. in CMP-043)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Presence state reflects the real current connection status of that specific collaborator, updating live rather than on a stale snapshot.
+- Colour keying alone never distinguishes collaborators for accessibility purposes - initials/photo plus an accessible name (real person's name) always accompany it.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Fixed circular/rounded size per usage context (e.g. smaller stacked in a group, larger standalone in CMP-043).
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Not independently focusable unless it is itself a trigger (e.g. within CMP-043); otherwise purely decorative with an accessible name via `alt`/`aria-label`.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Presence state updates live and never shows a stale status.
+- [ ] A real accessible name (not colour alone) identifies the collaborator.

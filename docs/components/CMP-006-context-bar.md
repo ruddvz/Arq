@@ -6,54 +6,34 @@ Expose immediate controls for the active tool or selection.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Context-dependent control group
+- Optional selection summary (count/type)
+- Optional confirm/cancel for multi-step tool settings
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Empty (no tool/selection - hidden or shows a hint)
+- Populated for active tool
+- Populated for active selection
+- Disabled sub-controls where a setting does not apply
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Content is entirely driven by the active tool or selection - it has no state of its own to persist across a tool change.
+- Never shows controls for a setting that cannot apply to the current selection (e.g. wall thickness when nothing is selected).
+- Changes commit immediately per control (this is a live settings surface, not a form with a separate save step).
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Height adapts to its densest realistic content but does not grow unbounded - overflow controls collapse into a menu.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Tab order flows left to right through whatever controls are currently shown.
+- Escape returns focus to the canvas/model without discarding already-committed changes.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Empty state never shows disabled ghost controls for a tool that is not active.
+- [ ] Every visible control is genuinely applicable to the current tool/selection.
+- [ ] Tab order stays predictable as controls change between tools.

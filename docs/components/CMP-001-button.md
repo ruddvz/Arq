@@ -7,53 +7,42 @@ Trigger a labelled action.
 ## Anatomy
 
 - Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Label text
+- Optional leading icon
+- Optional trailing icon
+- Accessible name (label text or aria-label)
 
 ## Required states
 
 - Default
-- Hover where pointer exists
+- Hover
 - Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Active/pressed
+- Disabled with reason
+- Loading (label replaced by spinner, width preserved)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- A destructive action (delete, discard) requires a distinct visual treatment, never colour alone.
+- A loading button disables re-submission but keeps its layout width so surrounding content does not reflow.
+- Uses the same command availability and permission rules as the action it triggers - a button is never enabled for an action the user cannot perform.
+- A disabled button exposes why via `aria-describedby` or an adjacent tooltip, not silently.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Desktop default height follows the button size tokens (compact/default/large).
+- iPad hit target is at least 44x44pt regardless of visual size.
+- Label truncates with an accessible full-text fallback (title attribute or tooltip) rather than wrapping.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Reachable by Tab in document order; activated by Space and Enter.
+- Native `<button>` semantics are used wherever the platform allows it, not a `div` with a click handler.
+- `aria-busy="true"` while loading; screen readers announce the loading label change.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] All required states are implemented and visually distinct without relying on colour alone.
+- [ ] Space and Enter both activate the button; loading state cannot be re-triggered.
+- [ ] Disabled reason is available to assistive technology, not just sighted users.
+- [ ] Contrast and focus-visible outline pass at every state.

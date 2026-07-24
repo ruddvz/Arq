@@ -6,54 +6,33 @@ Show import or export stage and cancellation.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Stage label (e.g. detecting/converting/validating/staging)
+- Progress indicator (delegates to CMP-033)
+- Cancel action
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Queued
+- In progress (per real pipeline stage)
+- Cancelling
+- Cancelled
+- Complete
+- Failed
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Stage label always reflects the real current stage of the actual import/export pipeline (matches this repo's real `ImportWorkerRequest`/`ImportWorkerResponse` stages), never a generic "Working..." with no real detail.
+- Cancellation is honoured promptly and never results in a stale "converted"/"failed" result appearing after the user was already told it was cancelled - this exact race (FP-019) was found and fixed in the real worker handler this component reflects.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Compact row form for a file list context; a larger standalone form for a single big operation.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Cancel is a normal, always-reachable focusable button while an operation is in progress.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Stage label always matches the real current pipeline stage, not a generic placeholder.
+- [ ] Never shows a converted/failed result for an operation the user was already told was cancelled.

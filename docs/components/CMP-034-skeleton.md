@@ -6,54 +6,27 @@ Reserve loading layout.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Shape(s) approximating the real content's eventual layout
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Visible (loading)
+- Replaced by real content
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Reserves the exact layout space the real content will occupy, so its arrival never causes a layout shift.
+- Never shown for longer than a brief, genuinely-loading window - a slow operation should switch to CMP-033 Progress indicator instead once it is clear the wait is non-trivial.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Matches the real content's eventual dimensions exactly, not an approximate placeholder size.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Not focusable; purely visual, and marked `aria-hidden` so screen readers do not announce a shape with no real content yet.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Causes zero layout shift when replaced by real content.
+- [ ] Never used to disguise a genuinely long-running operation that should show real progress instead.

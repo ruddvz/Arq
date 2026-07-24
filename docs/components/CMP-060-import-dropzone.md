@@ -6,54 +6,32 @@ Accept supported files.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Drop target region
+- Instructional text listing supported formats
+- Fallback "browse" action for non-drag input
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Idle
+- Drag-over (valid file type)
+- Drag-over (invalid file type)
+- Uploading/processing
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Validates file type/extension on drag-over, giving feedback before drop, not only after a failed drop.
+- Always offers a non-drag "browse" fallback - never drag-and-drop-only, since drag-and-drop is not available on every input method.
+- Delegates real acquisition/detection to `packages/file-ingress` - this component is the UI surface, not where detection logic lives.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Large enough drop target to be a comfortable, discoverable pointer/touch target, not a thin strip.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- The "browse" fallback action opens a native file picker and is a normal focusable button, fully keyboard-operable.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] A working keyboard-only path (via the browse fallback) exists independent of drag-and-drop.
+- [ ] Invalid file type is communicated before or immediately at drop, using the real detection result, not a guess.

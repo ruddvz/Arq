@@ -6,54 +6,37 @@ Search and choose an option.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Label
+- Editable text input
+- Popup listbox of filtered suggestions
+- Optional "create new" affordance
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Empty
+- Typing (filtering)
+- Open with suggestions
+- No matches (optionally offers "create new")
+- Selected
+- Disabled with reason
+- Invalid
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Filters the option list against the typed text; does not require an exact match unless the field explicitly restricts to existing values.
+- If free text is not a valid final value, the field rejects commit of unmatched text with a stated reason rather than silently accepting it.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Same as CMP-014's trigger height; popup matches CMP-014's sizing rule.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Typing filters the popup live; Arrow Down moves focus from the input into the filtered list without closing it.
+- Enter commits the highlighted suggestion (or the typed text, if free text is allowed); Escape closes without committing a change.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Filtering is case-insensitive and updates the popup on every keystroke without losing input focus.
+- [ ] Free-text rejection (where applicable) states why, rather than silently ignoring the keystroke.
+- [ ] Screen reader announces the live result count as filtering happens.

@@ -6,54 +6,30 @@ Create diagnostics with explicit consent.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Explanation of exactly what diagnostic data will be included
+- Explicit consent checkbox/action
+- Create action
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Awaiting consent
+- Creating
+- Ready to share/download
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Never creates or transmits a diagnostics bundle without an explicit, informed consent action - never automatic, matching this repo's privacy-conscious design intent.
+- States exactly what categories of data are included (e.g. logs, model metadata) and, just as importantly, what is explicitly excluded (e.g. real project content/analytics), so consent is genuinely informed.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Typically hosted in CMP-026 Dialog given the significance of the consent decision.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Follows CMP-026 Dialog's keyboard contract; the consent checkbox and create action are independent Tab stops, with create disabled until consent is given.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Bundle creation is impossible without the explicit consent step having occurred first.
+- [ ] Included and excluded data categories are both stated plainly, not just included categories.

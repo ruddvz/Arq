@@ -6,54 +6,30 @@ Assign a role.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- List of assignable roles
+- Currently-assigned role indicator
+- Optional description of what each role can do
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Open (choosing a new role)
+- Disabled with reason (e.g. cannot demote the last owner)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Never allows removing the last remaining owner/admin from a workspace/project - that specific option is disabled with a stated reason rather than allowed and failing later.
+- Shows what each role can actually do (delegates to real RBAC data, not a static description that could drift from the truth).
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Follows CMP-014 Select's sizing where rendered as a dropdown, or a radio-group's sizing (CMP-017) where rendered as a list with descriptions.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Follows CMP-014 or CMP-017's keyboard contract depending on which visual form this instance uses.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Cannot produce a workspace/project with zero owners/admins under any interaction path.
+- [ ] Role descriptions shown always match the real current RBAC rules, not a stale hard-coded copy.

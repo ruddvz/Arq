@@ -6,54 +6,28 @@ Navigate a large plan later.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Small proportional overview of the full plan
+- Viewport rectangle showing the current visible region
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Dragging the viewport rectangle (panning the main view)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Explicitly deferred: this repo's own `docs/platform/*` plans mark large-plan navigation aids as "later," not yet implemented - this doc describes the intended contract for when it is built, not a claim that it exists today.
+- When built, dragging the viewport rectangle pans the main canvas live, and the main canvas panning likewise updates the rectangle live (bidirectional, not one-way).
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Small, fixed corner placement; never obscures a meaningful portion of the main canvas.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- When built, a documented shortcut toggles its visibility; the viewport rectangle itself is not required to be keyboard-draggable since CMP-049's own keyboard pan already covers that need.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] This component's absence from the shipped application is correctly reflected as "not yet built" rather than claimed complete.
+- [ ] When built: viewport-rectangle drag and main-canvas pan stay bidirectionally synchronised.

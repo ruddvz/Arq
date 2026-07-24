@@ -6,54 +6,32 @@ Enter a bounded natural-language request.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Bounded text input
+- Character/length indicator
+- Submit action
+- Optional context chip showing what the request will apply to (e.g. current selection)
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Empty
+- Typing
+- Submitted (processing)
+- Disabled with reason
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Bounded by a real, stated length limit rather than silently truncating at submission.
+- Shows what context (selection/scope) the request applies to before submission, so the user is never surprised by what the AI acted on.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Multi-line, growing up to a maximum height with internal scrolling beyond that, matching CMP-011's general text-input conventions.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Enter submits (Shift+Enter inserts a newline); Escape clears an unsubmitted draft.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Length limit is stated and enforced before submission, not a silent truncation.
+- [ ] Applied context/scope is always shown before the request is sent.

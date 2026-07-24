@@ -6,54 +6,34 @@ Adjust a bounded continuous value.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Track
+- Thumb
+- Current value readout
+- Optional min/max labels
+- Optional step ticks
 
 ## Required states
 
 - Default
-- Hover where pointer exists
 - Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Dragging (thumb active)
+- Disabled with reason
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Dragging the thumb previews the value live; the underlying setting commits continuously or on release, per the specific control's own documented choice - never silently only on blur with no visual feedback while dragging.
+- Always shows the current numeric value as text, never relying on thumb position alone for a value that matters precisely.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Track is at least 44pt long in its scrolling/interactive axis on iPad; thumb hit target is at least 44x44pt even if the visual thumb is smaller.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Arrow Left/Right (or Up/Down if vertical) adjusts by one step; Page Up/Down adjusts by a larger step; Home/End jump to min/max.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Current value is always shown as readable text, not thumb-position-only.
+- [ ] Full keyboard operation (arrows, page, home/end) works without a pointer.
+- [ ] Thumb hit target meets 44pt even when the visual thumb is smaller.

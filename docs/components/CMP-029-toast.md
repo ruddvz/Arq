@@ -6,54 +6,33 @@ Announce transient result.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Icon (optional, matching severity)
+- Message text
+- Optional single action (e.g. Undo)
+- Auto-dismiss timer
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Visible
+- Visible with action
+- Dismissing (exit animation)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Transient and non-blocking - never requires acknowledgement to continue working, and never contains more than one action.
+- Auto-dismisses after a fixed duration unless the user is actively hovering/focused on it (e.g. reading it or about to click Undo), in which case the timer pauses.
+- Multiple toasts queue rather than overlapping or replacing one another before being seen.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Fixed maximum width; message text wraps rather than truncating a fact the user needs.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Never steals focus on appearance; its optional action (if present) is reachable by Tab for as long as the toast remains visible, and Escape dismisses it early.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Never steals focus when it appears.
+- [ ] Timer pauses on hover/focus and resumes correctly.
+- [ ] Announced via `aria-live="polite"` so it is not missed by screen reader users without stealing their focus.

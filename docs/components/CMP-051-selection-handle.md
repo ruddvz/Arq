@@ -6,54 +6,30 @@ Manipulate selected geometry.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Draggable grip rendered at a manipulable geometry point (endpoint, midpoint, corner)
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Hover
+- Dragging
+- Snapped (delegates to CMP-053 Snap glyph while dragging)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Dragging respects the same active snap settings as any other drawing operation - a handle drag is not a separate, unsnapped code path.
+- A drag that would produce invalid/degenerate geometry (e.g. collapsing a wall to zero length) is rejected at drop, reverting to the last valid position rather than committing broken geometry.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Hit target is at least 44x44pt on iPad even though the visual grip is typically much smaller, matching every other interactive control's touch-target rule.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- A selected handle can be nudged by arrow keys at the current grid/snap increment, so precise adjustment is not pointer-only.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] A drag that would produce degenerate geometry is rejected, not silently committed.
+- [ ] Keyboard nudging works as a genuine alternative to pointer dragging.
+- [ ] Touch target meets 44pt regardless of visual grip size.

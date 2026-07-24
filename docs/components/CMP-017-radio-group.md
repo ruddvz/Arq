@@ -6,54 +6,32 @@ Choose one exclusive option.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Group label
+- Set of mutually exclusive radio options
+- Optional per-option helper text
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Default (one option selected)
+- Focus visible (on the focused option)
+- Disabled with reason (whole group or a single option)
+- Invalid (group-level, e.g. required but unanswered)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Exactly one option is selected within the group at all times once a default exists.
+- A single disabled option within an otherwise-enabled group states why that specific option is unavailable.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Options stack vertically by default; a compact horizontal layout is allowed only when there are two options and space is tight.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Arrow Up/Down (or Left/Right if horizontal) moves selection between options directly - the group is a single Tab stop, matching native radio-group semantics.
+- Tab enters/exits the whole group at the currently-selected option.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] The group is a single Tab stop; arrow keys move the actual selection, not just visual focus.
+- [ ] A per-option disabled reason is exposed via `aria-describedby` on that option.

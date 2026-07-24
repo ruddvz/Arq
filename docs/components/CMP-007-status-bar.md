@@ -6,54 +6,37 @@ Show units, snap, selection, save, sync and model health.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Unit system indicator (metric/imperial)
+- Active snap type (delegates to CMP-053 Snap glyph)
+- Selection summary (count and type)
+- Save/sync status (delegates to CMP-072 Sync state)
+- Model health summary (delegates to CMP-070)
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Selection empty vs populated
+- Snap active vs inactive
+- Sync: saved/saving/offline/conflict
+- Model health: healthy/warnings/errors
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Every segment is read-only status except the unit toggle, which is a real control.
+- Model health segment is clickable and opens CMP-070/CMP-071 detail, but only when there is something to show - not a dead click target when healthy.
+- Never blocks or delays canvas interaction; it only reflects state, it does not gate it.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Fixed single-row height across the whole application; segments truncate individually under width pressure, never the whole bar.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Each interactive segment (unit toggle, model health) is an independent Tab stop with its own accessible name.
+- Status-only segments (snap, selection, sync) are exposed via `aria-live="polite"` region updates, not as focusable elements.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Status-only segments are announced via `aria-live`, not focus-stealing.
+- [ ] Model health segment truthfully reflects zero, warning, and error counts with no lag from the actual model state.
+- [ ] Unit toggle change is reflected immediately across every open numeric field.

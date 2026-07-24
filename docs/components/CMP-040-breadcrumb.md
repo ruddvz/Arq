@@ -6,54 +6,29 @@ Show hierarchical location.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Ordered sequence of ancestor labels
+- Separators
+- Current (non-clickable) final segment
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Truncated (collapses middle segments on narrow width)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Every segment except the final (current) one is a real navigation link, not decorative text.
+- Truncation collapses middle segments behind an overflow affordance rather than dropping them entirely, so the full path remains reachable.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Single line; truncates via overflow rather than wrapping to a second line.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Each ancestor segment is an independent Tab stop and real link/button; the current segment is not focusable since it performs no action.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Every non-current segment genuinely navigates.
+- [ ] Truncated segments remain reachable via the overflow affordance, never silently lost.

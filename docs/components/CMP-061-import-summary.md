@@ -6,54 +6,30 @@ Report preserved and unsupported content.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Per-format fidelity summary (native/exact/structured/approximated/underlay/attached/rejected)
+- List of preserved vs unsupported content
+- Link to detailed issues (delegates to CMP-032)
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Success (fully preserved)
+- Partial (some content approximated/attached/ignored)
+- Failed
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Never claims an import was "exact" when it was actually approximated or merely attached - fidelity is reported honestly using the real fidelity levels the ingress pipeline actually produces (`packages/file-ingress`), never rounded up.
+- Every unsupported/approximated item is individually listed, not summarised away into a single vague count.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Scrolls internally for imports with many individual issues rather than truncating the list.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Each listed issue, where actionable, is a real link/button reachable by Tab, following CMP-032's pattern.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Fidelity reported always matches the real adapter/report fidelity level, never inflated.
+- [ ] Every unsupported/approximated item is individually visible, not hidden behind a count alone.

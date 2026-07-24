@@ -6,54 +6,32 @@ Select format, scope and validation.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Format selector
+- Scope selector (whole project / current view / selection)
+- Validation summary before export (delegates to CMP-032)
+- Confirm action
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Validating
+- Blocked (validation problems exist)
+- Ready to export
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Export is blocked while real blocking validation problems exist, shown via the same CMP-032 pattern used elsewhere, never allowed to proceed to a broken output silently.
+- Scope selection genuinely constrains what gets exported - a "current view" export never silently includes the whole project.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Typically hosted in CMP-026 Dialog; sized to that dialog's content rules.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Follows CMP-026 Dialog's and CMP-014 Select's keyboard contracts for its respective parts.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Export is genuinely blocked (not just visually discouraged) while blocking validation problems exist.
+- [ ] Selected scope accurately constrains the real exported content.

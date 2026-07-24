@@ -6,54 +6,33 @@ Track an actionable issue.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Title
+- Status (open/in-progress/resolved)
+- Assignee (delegates to CMP-044)
+- Priority indicator
+- Link to the affected model/sheet location
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Open
+- In progress
+- Resolved
+- Overdue (if a due date exists and has passed)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Status changes are real, auditable state (matching CMP-065's resolve/reopen auditability rule), never a purely local UI toggle.
+- Overdue is computed live against a real due date and the current time, never a stale precomputed flag.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Fits comfortably as a row in CMP-037 List or CMP-036 Data table depending on context.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Whole card/row is a single Tab stop opening its detail; status/assignee/priority controls within an expanded detail view are separate subsequent stops.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Status changes are real auditable state, not a local-only visual toggle.
+- [ ] Overdue is computed live against the real current time and due date.

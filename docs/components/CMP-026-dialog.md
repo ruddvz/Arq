@@ -6,54 +6,36 @@ Require focused confirmation or input.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Overlay/scrim
+- Title
+- Body content
+- Primary and secondary actions
+- Optional close control
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Closed
+- Open
+- Open with a validation error blocking its primary action
+- Busy (primary action in progress)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Modal: traps focus within itself while open and blocks interaction with the rest of the page via the scrim.
+- Closing via any path (action button, Escape, scrim click, close control) returns focus to the exact element that opened it - the precise defect (BUG-RISK-140) already found and fixed in the static prototype (issue ARQ-211/#211).
+- A destructive primary action (delete, discard) is visually distinct from a neutral one and never the pre-focused default unless the destructive action is genuinely what most users want (e.g. confirming a delete they already explicitly requested).
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Sized to its content up to a maximum width/height per breakpoint; scrolls its body internally rather than exceeding the viewport.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Focus moves to the dialog (its title or first focusable element) on open, and is trapped within it via Tab/Shift+Tab.
+- Escape closes it exactly like a cancel action, unless the dialog explicitly documents itself as non-dismissable (e.g. mid-destructive-operation with no safe cancel point).
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Focus returns to the exact trigger element after every close path (button, Escape, scrim click).
+- [ ] Focus is trapped within the dialog while open; Tab never escapes to the background page.
+- [ ] `role="dialog"`/`aria-modal="true"` and a real accessible name (title) are present.

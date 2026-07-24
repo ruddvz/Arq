@@ -6,54 +6,30 @@ Enter distance and angle during a command.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Small floating input tracking the cursor during an active drawing command
+- Distance and/or angle fields (unit-aware, delegates to CMP-012)
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Hidden (no active command)
+- Visible, tracking pointer
+- Visible, value being typed (locks that axis to the typed value)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Lets a user type an exact distance/angle mid-command instead of relying on pointer precision alone - typing a value locks that dimension until the point is committed.
+- Follows the exact same metric/imperial parsing rule as CMP-012 Numeric field - no separate, inconsistent parser for in-canvas entry.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Small and positioned near the cursor without obscuring the point currently being placed.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Tab (or a documented key) switches which field (distance vs angle) currently accepts typed input.
+- Enter commits the point at the typed value(s); Escape cancels the current segment without discarding the command entirely.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Uses the identical parsing rules as CMP-012, verified against the same test cases.
+- [ ] Typed value takes precedence over pointer position for the locked axis until committed.

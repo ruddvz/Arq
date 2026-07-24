@@ -6,54 +6,32 @@ Show file name, status, size and actions.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- File name
+- Status (delegates to CMP-072/CMP-070 style indicators as applicable)
+- Size
+- Row actions (delegates to CMP-022 Menu)
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Hover
+- Processing (import/export in progress, delegates to CMP-082)
+- Error
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Shows real current file size and status, never a stale value from when the row was first rendered.
+- Row actions available always reflect what is genuinely possible for that file's current status (e.g. no "open" action for a file still processing).
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Fits as a row within CMP-036 Data table or CMP-037 List depending on context.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Row is a Tab stop for its primary action; the row actions menu is a separate, subsequent Tab stop.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Size/status shown is always live-accurate, not stale.
+- [ ] Available row actions always match what is genuinely valid for the file's current real status.

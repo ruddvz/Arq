@@ -6,54 +6,32 @@ Show non-modal contextual content.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Trigger
+- Non-modal popup content region
+- Optional close affordance
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Closed
+- Open
+- Focus within
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Non-modal: unlike CMP-026 Dialog, the rest of the page remains interactive while a popover is open, and it closes on outside interaction rather than blocking it.
+- Positions itself relative to its trigger and repositions/flips if it would otherwise render off-screen.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Sized to its content up to a sensible maximum width/height; scrolls internally beyond that rather than growing unbounded.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Escape closes it and returns focus to the trigger.
+- Tab moves through its internal focusable content; Tab out of the last item closes it and continues into the page's normal tab order (a popover never traps focus - that is Dialog's job).
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Does not trap focus, unlike a Dialog - Tab can leave it into the rest of the page.
+- [ ] Repositions to stay fully visible regardless of trigger location near a viewport edge.
+- [ ] Escape closes and restores focus to the trigger.

@@ -6,54 +6,30 @@ Resolve incompatible operations.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Description of the conflicting operations
+- Options for resolution (e.g. keep mine / keep theirs / merge where possible)
+- Preview of the outcome before committing
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Unresolved conflict presented
+- Previewing a chosen resolution
+- Resolved
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Never silently auto-resolves a genuine conflict in a way that could discard someone's real work without their explicit choice.
+- Shows a real preview of the outcome before the user commits to a resolution, not just an abstract description of the options.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Typically hosted in CMP-026 Dialog given the significance of the decision; sized to that dialog's content rules.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Follows CMP-026 Dialog's keyboard contract; each resolution option is an independent, labelled Tab stop.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Never auto-resolves a genuine conflict without explicit user choice.
+- [ ] A real preview of the outcome is shown before commit, not just an abstract description.

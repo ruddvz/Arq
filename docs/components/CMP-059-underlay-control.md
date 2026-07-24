@@ -6,54 +6,31 @@ Calibrate, lock and change opacity.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Underlay thumbnail/name
+- Opacity slider (delegates to CMP-019)
+- Lock toggle
+- Calibration action
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Default (unlocked)
+- Locked (position/scale fixed)
+- Calibrating (mid-calibration flow)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Locking prevents the underlay from being accidentally moved/rescaled by a subsequent pointer drag meant for real model geometry.
+- Calibration (setting the underlay's real-world scale from two reference points) is a distinct, explicit flow the user opts into - never inferred automatically.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Compact panel, typically hosted in CMP-006 Context bar when the underlay tool is active.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Opacity slider follows CMP-019's keyboard contract; lock toggle follows CMP-018 Switch's.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Locked underlays cannot be moved/rescaled by an ordinary drag meant for model geometry.
+- [ ] Calibration never runs automatically without explicit user initiation.

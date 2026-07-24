@@ -6,54 +6,31 @@ Display ordered or filtered items.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Ordered or filtered set of items
+- Optional per-item leading/trailing content
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Item hover
+- Item selected
+- Filtered (subset visible)
+- Empty (delegates to CMP-035)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Simpler than CMP-036 Data table: single-column items with no per-column sort/resize - used when structure is genuinely one-dimensional.
+- Filtering preserves the underlying item order rather than re-sorting by relevance unless the list explicitly documents relevance-ranked filtering.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Item height is consistent across the list unless an item genuinely carries more content (e.g. a two-line item), in which case that height difference is intentional and documented, not accidental.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Arrow Up/Down moves a roving item focus; Enter/Space activates the focused item.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Roving focus and Enter/Space activation work without a pointer.
+- [ ] Filtering never reorders items unless explicitly documented as relevance-ranked.

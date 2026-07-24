@@ -6,54 +6,33 @@ Summarise a project or template.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Thumbnail/preview
+- Title
+- Metadata (e.g. last saved, sync status)
+- Optional actions (delegates to CMP-022 Menu)
 
 ## Required states
 
 - Default
-- Hover where pointer exists
+- Hover
 - Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Selected (in a multi-select grid)
+- Syncing/offline (delegates to CMP-072/CMP-073)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- The whole card is a single activation target (opens the project/template) in addition to any secondary actions menu, so a click anywhere on the card except an explicit action opens it.
+- Thumbnail reflects real current project content where available, falling back to a generic placeholder rather than a stale image.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Fixed aspect ratio for the thumbnail region across a grid of cards so the grid stays visually aligned.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- The whole card is one Tab stop, activated by Enter; its secondary-actions menu (if present) is a separate, subsequent Tab stop.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Card and its secondary-actions menu are each independently reachable and operable by keyboard.
+- [ ] Thumbnail never shows stale content once real project content exists.

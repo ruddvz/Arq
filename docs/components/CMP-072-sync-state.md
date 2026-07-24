@@ -6,54 +6,29 @@ Distinguish local save from cloud sync.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Compact status text/icon distinguishing local-save from cloud-sync
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Saved locally, not yet synced
+- Syncing
+- Synced
+- Sync error
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Explicitly distinguishes "safe on this device" from "safe in the cloud" - these are never merged into one ambiguous "saved" state, since the difference is materially important if the device is lost.
+- Sync error state names the real problem where known (e.g. offline vs a real conflict) rather than one generic failure icon.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Compact, typically hosted in CMP-004 Top application bar and/or CMP-007 Status bar.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Announced via `aria-live="polite"` on state change; not independently focusable unless clicking it opens more detail, in which case it is a normal Tab stop.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Local-save and cloud-sync are always distinguishable, never merged.
+- [ ] Sync error names the real specific problem where the underlying system knows it.

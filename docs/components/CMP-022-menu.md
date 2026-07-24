@@ -6,54 +6,37 @@ Show contextual actions.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Trigger (usually a button)
+- Popup list of actions/options
+- Optional icons/shortcuts per item
+- Optional separators/groups
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Closed
+- Open
+- Item focused
+- Item disabled with reason
+- Submenu open (nested menu)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Opens anchored to its trigger and closes on: item activation, Escape, or an outside click/tap.
+- A disabled menu item states why via an adjacent hint or `aria-describedby`, and is never silently removed (removing it would make the menu's shape unpredictable).
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Popup width fits its longest item label; height scrolls internally rather than growing past the visible viewport.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Enter/Space/Down Arrow on the trigger opens the menu with the first item focused.
+- Arrow Up/Down moves focus between items; Right Arrow opens a submenu, Left Arrow closes it and returns to the parent item.
+- Escape closes the (sub)menu and returns focus to its trigger.
+- Type-ahead jumps to the next item starting with the typed character.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Full keyboard operation (open, navigate, submenu, activate, escape) works without a pointer.
+- [ ] Focus returns to the trigger after every close path, matching the exact focus-return defect already found and fixed in the static prototype (issue ARQ-211/#211).
+- [ ] Disabled items state why rather than disappearing.

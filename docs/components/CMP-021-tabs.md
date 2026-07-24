@@ -6,54 +6,33 @@ Navigate peer sections.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Tab list
+- Individual tab triggers
+- Associated tab panel
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Focus visible (on the focused tab)
+- Selected tab
+- Disabled tab with reason
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Switching tabs preserves each unselected panel's scroll position and any in-progress uncommitted edit rather than discarding it.
+- A disabled tab (e.g. a Document tab before any sheet exists) states why rather than simply being unreachable with no explanation.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Tab list height is fixed; long tab labels truncate with an accessible full label available via tooltip.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Arrow Left/Right moves focus and selection between tabs (roving tabindex, single Tab stop for the tab list itself).
+- Tab (the key) moves from the tab list into the currently-selected panel's content.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Switching tabs never discards an unselected panel's in-progress state.
+- [ ] Tab list is a single Tab stop; arrow keys move both focus and selection together.
+- [ ] `role="tablist"`/`role="tab"`/`role="tabpanel"` and `aria-selected` are used correctly.

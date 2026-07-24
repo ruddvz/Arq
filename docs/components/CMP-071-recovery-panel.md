@@ -6,54 +6,29 @@ Explain recovered and incomplete work.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- List of recovered content
+- List of content that could not be recovered, with reason
+- Acknowledge/continue action
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Visible after a recovery event
+- Acknowledged/dismissed
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- States plainly and specifically what was recovered and what was not, with a real reason for the latter - never a vague "some content may be missing."
+- Delegates to the real recovery-report data (matches `packages/arqfs`'s `arqfs-recovery-report.ts`/`arqfs-safe-mode.ts` structured plan, not a UI-invented summary).
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Typically hosted in CMP-026 Dialog on first open after a recovery event; scrolls internally for a long list of affected content.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Follows CMP-026 Dialog's keyboard contract; the acknowledge action is its primary/default focused action on open.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Every listed unrecovered item states a real, specific reason, never a generic disclaimer.
+- [ ] Content shown is sourced from the real recovery report structure, not invented in the UI layer.

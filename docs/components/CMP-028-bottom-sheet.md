@@ -6,54 +6,34 @@ Show secondary iPad portrait content.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Drag handle
+- Title
+- Body content
+- Optional actions
+- Scrim below the sheet
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Closed
+- Peek (partially visible, collapsed)
+- Open (fully expanded)
+- Dragging (mid-gesture)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- iPad-portrait-specific secondary surface, replacing CMP-027 Drawer where a side panel would not fit the portrait layout.
+- Drag handle supports both a full swipe-to-dismiss gesture and a tap-to-toggle between peek and open, so it is never gesture-only.
+- Settles into exactly one of its defined snap positions (peek/open/closed) after a drag ends - never left at an arbitrary partial height.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Peek height and open height are each fixed per breakpoint, not proportional to unrelated content changes.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- When a hardware keyboard is attached, Escape closes it and a documented shortcut toggles peek/open, so it is not touch-gesture-only even on iPad.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Settles into a defined snap position after every drag, never an arbitrary height.
+- [ ] Fully operable by tap alone (no gesture-only dead ends) and by keyboard when a hardware keyboard is attached.

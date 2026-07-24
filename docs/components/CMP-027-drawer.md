@@ -6,54 +6,33 @@ Show secondary desktop content.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Overlay/scrim (optional, may allow background interaction depending on use)
+- Slide-in panel from a screen edge
+- Title
+- Body content
+- Optional actions
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Closed
+- Open
+- Resizing (if the drawer supports a draggable edge)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Desktop-oriented secondary surface (e.g. detailed inspector or history panel) that does not block the whole canvas the way a Dialog does, unless explicitly configured as modal for a specific flow.
+- Remembers its last width/open-state per surface within a session, rather than resetting every time it is reopened.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Has a documented minimum and maximum width if resizable; below the minimum it should behave like CMP-028 Bottom sheet instead (that is a distinct component, not this one shrunk down).
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Escape closes it (if dismissable) and returns focus to its trigger.
+- If configured modal for a specific flow, follows the same focus-trap rule as CMP-026 Dialog; if non-modal, follows CMP-024 Popover's non-trapping rule instead.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Open/width state persists correctly across reopen within a session.
+- [ ] Focus-trap behaviour matches whichever mode (modal or non-modal) this specific drawer instance actually uses - never ambiguous.

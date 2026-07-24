@@ -6,54 +6,35 @@ Search actions and objects.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Search input
+- Filtered, ranked list of matching commands/objects
+- Optional keyboard-shortcut hints per result (CMP-048)
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Closed
+- Open, empty query (recent/suggested commands)
+- Open, typing (filtered results)
+- No results
+- Result focused
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Ranks results by relevance to the typed query, not just alphabetically or by insertion order.
+- Never executes a command silently on typing - only on explicit selection (Enter or click), so a fast typist never accidentally fires something destructive mid-query.
+- A command unavailable in the current context (e.g. no permission, or requires a selection that does not exist) still appears but is shown disabled with a stated reason, so users can discover what exists.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Modal-style overlay sized to a fixed maximum width/height regardless of viewport, centred, with internal scrolling for long result lists.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- A documented global shortcut (e.g. Cmd/Ctrl+K) opens it from anywhere in the application.
+- Arrow Up/Down moves the highlighted result; Enter executes it; Escape closes without executing anything.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Global shortcut opens it from any screen/mode.
+- [ ] Nothing executes until explicit selection - typing alone never triggers a command.
+- [ ] Unavailable commands are discoverable (shown, disabled, with a reason), not hidden.

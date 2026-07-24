@@ -7,53 +7,37 @@ Trigger a compact action with an accessible name.
 ## Anatomy
 
 - Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Icon glyph
+- Accessible name via `aria-label`
+- Optional badge (unread/count)
 
 ## Required states
 
 - Default
-- Hover where pointer exists
+- Hover
 - Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Active/pressed
+- Disabled with reason
+- Selected (toggle-style icon buttons)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Never ships without an accessible name - the icon alone is not a label.
+- A toggle-style icon button (e.g. mute/unmute) exposes `aria-pressed`, not just a visual colour change.
+- Adjacent icon buttons keep at least 8px of visual separation so adjacent 44pt touch targets do not overlap.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Hit target is at least 44x44pt on iPad even when the glyph itself is 20-24px.
+- Icon-only - no visible label text ever appears, by definition of this component.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Space and Enter activate; if toggle-style, activation flips `aria-pressed` and is announced.
+- A tooltip (CMP-025) shows the accessible name on hover/focus for sighted pointer/keyboard users.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Every instance has a real accessible name, verified programmatically, not just visually apparent.
+- [ ] Toggle-style instances expose `aria-pressed` and are announced on change.
+- [ ] Touch target measures at least 44x44pt regardless of glyph size.

@@ -6,54 +6,36 @@ Show label, value, inheritance and validation.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Label
+- Value control (delegates to the relevant input component)
+- Inheritance indicator (from type/template vs overridden)
+- Inline validation slot (CMP-031)
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Default (own value)
+- Inherited (from type/template, not overridden)
+- Overridden (was inherited, now has its own value)
+- Invalid
+- Read-only
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Inherited values are visually distinguished from overridden ones, and offer a "reset to inherited" action once overridden.
+- An invalid value shows its inline validation immediately adjacent, never in a separate panel the user must find.
+- Read-only rows still display the real current value - never blank just because it can't be edited here.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Fixed label column width across all rows in one inspector so values align in a scannable column.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Tab reaches the value control directly; label is not independently focusable.
+- The "reset to inherited" action, when present, is reachable by Tab after the value control.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Inherited vs overridden is programmatically determinable, not colour-only.
+- [ ] Inline validation appears in the same row as its field, immediately on invalid commit.
+- [ ] Reset-to-inherited restores the exact prior inherited value, not a stale cached one.

@@ -6,54 +6,30 @@ Report output and warnings.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Success/failure summary
+- List of warnings (e.g. content that could not be represented in the target format)
+- Output file/location reference
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Success (no warnings)
+- Success with warnings
+- Failed
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Reports every real warning the export pipeline actually produced - never suppresses a warning to present a cleaner-looking summary.
+- Distinguishes "succeeded with caveats" from "succeeded cleanly" as genuinely different states, not the same green checkmark for both.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Scrolls internally for exports with many warnings rather than truncating the list.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Each listed warning, where it links to a source object, is reachable by Tab, following CMP-032's pattern.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Every real warning from the export pipeline is shown, none suppressed for presentation.
+- [ ] "Succeeded with warnings" is visually and programmatically distinct from a fully clean success.

@@ -6,54 +6,32 @@ Create and revoke controlled links.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Current link (if one exists) with copy action
+- "Create link" action
+- Access-level control (view/comment/edit)
+- "Revoke" action for existing links
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- No link exists yet
+- Link exists
+- Just copied (transient confirmation)
+- Revoking (confirm step)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Revoking a link is a real permission change with immediate effect on anyone holding the old link - it always requires an explicit confirm step, never a single accidental click.
+- Copy action gives clear, brief transient confirmation (matches CMP-029 Toast's pattern) rather than silent success.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Compact, typically hosted inside CMP-024 Popover or CMP-026 Dialog rather than a standalone full page.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Every action (create, copy, change access level, revoke) is an independent, labelled Tab stop.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Revoke always requires an explicit confirm step.
+- [ ] Copy gives real, perceivable confirmation, not silent success.

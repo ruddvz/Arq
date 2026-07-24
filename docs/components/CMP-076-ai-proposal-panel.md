@@ -6,54 +6,35 @@ Preview intent, assumptions and operations.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Stated intent summary
+- List of assumptions the proposal made
+- List of proposed operations (rows are CMP-077)
+- Accept/reject/edit actions
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Proposing (loading)
+- Ready for review
+- Partially accepted (some operations accepted, others rejected)
+- Fully accepted
+- Fully rejected
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Never applies a single proposed operation to the real model until the user explicitly accepts it (or that specific operation) - matches this repo's own AI-guardrails discipline that architects remain responsible and proposals may be wrong.
+- Every assumption the AI made is stated explicitly, never silently baked into the proposal with no visibility.
+- Supports accepting individual operations rather than only all-or-nothing, since a mostly-good proposal with one wrong operation should not have to be entirely discarded.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Typically a CMP-027 Drawer or full panel given the amount of content (intent, assumptions, potentially many operations); scrolls internally.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Arrow Up/Down moves focus between listed operations; each has its own accept/reject Tab stops (delegates to CMP-077).
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] No proposed operation is ever applied to the real model without explicit per-operation or whole-proposal acceptance.
+- [ ] Every assumption is visibly stated, not silently embedded.
+- [ ] Partial (per-operation) acceptance is genuinely supported, not just all-or-nothing.

@@ -6,54 +6,36 @@ Show project identity and global actions.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Project/document title (editable inline)
+- Save/sync status (delegates to CMP-072 Sync state)
+- Global actions (share, undo/redo, command palette entry)
+- Workspace/user menu entry point
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Title in edit mode
+- Sync status: saved/saving/offline/conflict
+- Narrow-viewport collapsed (icons only)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Persists across every tool/mode change - never re-rendered or reflowed by a tool switch.
+- Title edits commit on blur or Enter, and revert on Escape without saving a partial edit.
+- On a narrow viewport, secondary actions collapse into an overflow menu rather than being hidden entirely.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Fixed height across the whole application chrome; never resizes when content below it changes.
+- Title truncates with an accessible full name available via tooltip/title attribute.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Tab order moves left-to-right through title, then global actions, then workspace/user menu.
+- A documented shortcut (matching CMP-047 Command palette) opens global search/commands directly from anywhere.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Title edit commits and reverts correctly on blur/Enter/Escape.
+- [ ] Sync status is always one of a known finite set, never blank or ambiguous.
+- [ ] Narrow-viewport collapse preserves access to every action via overflow, none silently dropped.

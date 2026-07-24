@@ -6,54 +6,31 @@ Anchor a comment to model or sheet.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Pin marker anchored to a model/sheet coordinate
+- Author avatar (delegates to CMP-044)
+- Resolved/unresolved indicator
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Unresolved
+- Resolved
+- Hover (preview)
+- Selected (opens CMP-065 Comment thread)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Stays anchored to its real model/sheet coordinate through pan/zoom, and through any geometry edit that moves the annotated object, rather than drifting to a stale screen position.
+- Resolved pins remain visible (dimmed/distinct) rather than disappearing, so resolved discussion history stays discoverable.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Hit target at least 44x44pt on iPad even though the visual pin marker is smaller.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Reachable via CMP-008 Model tree's comment listing (not pointer-only), opening the same CMP-065 thread that clicking the pin would.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Pin position never drifts from its real anchored coordinate through pan/zoom/geometry edits.
+- [ ] Resolved pins remain visible and reachable, not deleted from view.

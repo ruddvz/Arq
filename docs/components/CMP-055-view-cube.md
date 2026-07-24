@@ -6,54 +6,28 @@ Change 3D orientation.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- 3D orientation cube/indicator with face/edge/corner hit regions
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Hover (per face/edge/corner)
+- Active drag (free rotate)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Clicking a face/edge/corner animates to that exact standard orientation; dragging free-rotates the 3D view continuously.
+- 3D-view-only - hidden or disabled in plan/2D views where orientation has no meaning.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Fixed small size in a corner of the 3D viewport, never obscuring model content beneath it.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- A documented set of shortcuts (e.g. numeric keys for standard views) provides the same standard-orientation jumps as clicking a face, so the view cube itself is not the only way to reach a given orientation.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Every standard orientation reachable by click is also reachable by a documented keyboard shortcut.
+- [ ] Correctly hidden/disabled outside 3D views.

@@ -6,54 +6,36 @@ Search pages, objects or commands.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Search icon
+- Input
+- Clear button (appears once non-empty)
+- Optional live result count
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Empty
+- Typing (debounced)
+- Has results
+- No results found
+- Disabled with reason
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Debounces query execution so every keystroke does not trigger a full search pass.
+- "No results" is an explicit, distinct empty state (CMP-035), never an indistinguishable blank list.
+- Clear button both empties the field and returns focus to the input, ready for a new query.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Matches CMP-011's field height; grows to fill its container width up to a sensible maximum.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Escape clears the query if non-empty, or blurs the field if already empty.
+- Down Arrow from the field moves focus into the first result, where the results list owns further navigation.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Query execution is debounced, not fired on every keystroke.
+- [ ] Empty/no-results/has-results are each a distinct, correctly-announced state.
+- [ ] Escape's two-stage behaviour (clear, then blur) works exactly as specified.

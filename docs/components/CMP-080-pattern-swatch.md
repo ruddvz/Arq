@@ -6,54 +6,29 @@ Select a monochrome pattern.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Small preview swatch of a monochrome hatch/fill pattern
+- Selection indicator
 
 ## Required states
 
 - Default
-- Hover where pointer exists
+- Hover
 - Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Selected
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Distinguishes patterns by their actual visual density/texture, not colour, since these are explicitly monochrome patterns meant to remain legible on any material colour underneath.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Fixed small square/rect per swatch in a grid; hit target still meets 44pt on iPad even though the visual swatch is smaller.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Arranged as a roving-tabindex grid (arrow keys move selection, matching CMP-020's single-Tab-stop pattern); Enter/Space selects the focused swatch.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Every pattern remains distinguishable purely by its texture, independent of colour.
+- [ ] Full keyboard grid navigation works without a pointer.

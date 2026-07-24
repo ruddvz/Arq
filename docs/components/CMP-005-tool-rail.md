@@ -6,54 +6,37 @@ Expose stable tool categories and active tool.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Fixed set of tool category icons
+- Active-tool indicator
+- Optional flyout for tools with sub-options
 
 ## Required states
 
 - Default
-- Hover where pointer exists
+- Hover
 - Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Active tool (pressed + selected)
+- Disabled (tool unavailable in current mode)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Exactly one tool is active at a time; selecting a new tool always deactivates the previous one.
+- Active tool is indicated by shape/icon change and a text label on hover/focus, never colour alone (this exact defect was found and fixed in the static prototype - issue ARQ-211/#211).
+- A tool that does not apply to the current view (e.g. a 3D-only tool while in plan view) is disabled with a reason, not hidden, so the rail does not reflow.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Fixed width regardless of viewport; icons meet the 44pt iPad hit target.
+- On iPad landscape the rail persists; on iPad portrait it collapses into the tool selection surface documented for the portrait shell.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Arrow Up/Down (or Left/Right if rendered horizontally) moves the roving tabindex between tools; Tab exits the rail entirely.
+- A documented single-key shortcut per tool (matching the desktop CAD convention already in `packages/editor-shell`) activates it directly.
+- Each tool button exposes `aria-pressed` reflecting the active tool.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Active tool is programmatically determinable (`aria-pressed`), not shape/colour-only.
+- [ ] Disabled tools state why via `aria-describedby`, not just a visual dim.
+- [ ] Roving tabindex keeps the rail a single Tab stop from the rest of the page.

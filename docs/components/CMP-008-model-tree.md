@@ -6,54 +6,36 @@ Navigate levels, views, sheets, imports and elements.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Search/filter field (delegates to CMP-013)
+- Hierarchical tree of levels/views/sheets/imports/elements (rows are CMP-038 Tree item)
+- Empty state for a project with nothing yet
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Filtered (matches highlighted, non-matches collapsed)
+- Empty (no project content yet)
+- Node selected/multi-selected
+- Node loading (large import still staging)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Selecting a node in the tree selects the same object on the canvas and in the inspector - one selection model shared across all three surfaces.
+- Filtering never deletes or hides data, only visually collapses non-matching branches; clearing the filter restores the prior expand/collapse state exactly.
+- A node still being staged from an in-progress import shows a loading affordance rather than appearing complete or missing.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Resizable panel with a minimum width that keeps the deepest realistic nesting level legible without horizontal scroll for common projects.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Arrow Up/Down moves focus between visible rows; Right expands a collapsed node, Left collapses/moves to parent.
+- Type-ahead jumps focus to the next row starting with the typed character(s).
+- Enter/Space selects; Shift+Arrow extends a contiguous multi-selection.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Selection stays synchronised across tree, canvas, and inspector in both directions.
+- [ ] Filter state is fully reversible without losing prior expand/collapse state.
+- [ ] Full keyboard tree navigation (arrows, type-ahead, multi-select) works without a pointer.

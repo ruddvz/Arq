@@ -6,54 +6,27 @@ Display a platform-aware shortcut.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- One or more key glyphs (e.g. platform-correct modifier symbols)
+- Optional connecting "+" or spacing convention
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Visible
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Renders the platform-correct modifier glyphs (e.g. Cmd/Option on macOS/iPadOS vs Ctrl/Alt elsewhere) rather than one hard-coded convention everywhere.
+- Purely informative; never itself an interactive trigger for the shortcut it describes.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Compact inline element sized to sit naturally inside a menu item, tooltip, or button without disrupting that container's row height.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Not focusable; purely decorative/informative text for sighted and screen-reader users alike (the latter via a real text equivalent, not an image of the keys).
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Renders the correct platform-specific modifier glyphs per platform.
+- [ ] Announces as real text to screen readers, not as an unlabelled image.

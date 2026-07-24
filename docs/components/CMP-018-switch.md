@@ -6,54 +6,33 @@ Toggle an immediate setting.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Switch track and thumb
+- Label
+- Optional immediate-effect notice for a setting with side effects
 
 ## Required states
 
-- Default
-- Hover where pointer exists
+- Off
+- On
 - Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Disabled with reason
+- Transitioning (mid-animation, non-interactive)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Change takes effect immediately on toggle - a switch never requires a separate "apply"/"save" step, unlike a form field.
+- If the setting has a consequence the user should know before confirming, a switch is the wrong component - use a checkbox with an explicit confirm action instead.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Track/thumb sizing follows the design tokens; full label+switch hit target is at least 44pt tall on iPad.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Space toggles when focused; Enter is not overloaded onto a switch to avoid double-meaning with dialog "default action" semantics.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Toggling has no separate save step - the underlying setting changes immediately.
+- [ ] `role="switch"` and `aria-checked` are used, not a checkbox role.
+- [ ] Disabled reason is exposed via `aria-describedby`.

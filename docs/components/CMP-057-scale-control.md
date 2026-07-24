@@ -6,54 +6,29 @@ Show or select drawing scale.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Current drawing scale readout
+- Scale selector (delegates to CMP-014 Select for a fixed list of standard scales)
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Open (choosing a new scale)
+- Custom scale entered
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- Changing scale affects sheet/print output and scale-dependent annotation sizing, not the underlying model geometry itself - it is a presentation setting, not a geometry edit.
+- A custom (non-standard) scale is validated to a sane, positive, non-degenerate ratio before being accepted.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Matches CMP-014 Select's sizing.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Follows CMP-014's keyboard contract when acting as a picker; a typed custom value follows CMP-012 Numeric field's validation-on-commit rule.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Never mutates underlying model geometry - verified to affect only presentation/output.
+- [ ] Custom scale entry rejects a non-positive or degenerate ratio with a stated reason.

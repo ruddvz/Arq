@@ -6,54 +6,34 @@ Edit and inspect selected object properties.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Selected-object type/name header
+- Grouped property rows (CMP-010)
+- Empty state for no/mixed selection
 
 ## Required states
 
-- Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- Empty (nothing selected)
+- Single selection
+- Multi-selection with mixed values
+- Read-only (no permission to edit)
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- A mixed-value property across a multi-selection shows an explicit "Mixed" indicator, never a blank field or an arbitrarily-picked single value.
+- Committing an edit applies to every selected object atomically - either all update or none do, never a partial batch.
+- Read-only mode (no edit permission) disables inputs with a reason rather than hiding them, so the user still sees the object's real state.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Resizable panel; property rows wrap rather than truncate their value where truncation would hide a decision-relevant number.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- Tab moves between property rows in visual order; each row's own control (CMP-011/012/014/016/etc.) owns its internal key handling.
+- Escape in an editing field reverts that field's uncommitted edit without closing the inspector.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Mixed-value state is visually and programmatically distinct from a real shared value.
+- [ ] Multi-object commits are atomic - a rejected validation on one object rejects the whole edit, not a partial one.
+- [ ] Read-only state is announced to assistive technology, not just visually dimmed.

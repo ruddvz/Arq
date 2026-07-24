@@ -6,54 +6,30 @@ Fit and change view scale.
 
 ## Anatomy
 
-- Container
-- Primary content
-- Optional leading visual
-- Optional supporting content
-- Optional status or validation
-- Accessible label or name
+- Current zoom percentage/scale readout
+- Zoom in/out controls
+- "Fit to view" action
 
 ## Required states
 
 - Default
-- Hover where pointer exists
-- Focus visible
-- Active or pressed
-- Disabled with reason where useful
-- Loading where applicable
-- Invalid where applicable
-- Selected where applicable
+- At minimum zoom
+- At maximum zoom
 
 ## Behaviour
 
-- Does not commit destructive work without explicit intent.
-- Does not rely on colour alone.
-- Preserves focus when content updates.
-- Uses the same command and permission rules as the underlying action.
-- Explains unavailable actions.
-- Supports reduced motion.
+- At minimum/maximum zoom, the relevant in/out control is disabled with a reason rather than allowed to silently do nothing.
+- "Fit to view" always frames the real current model extent, recalculated live, never a cached extent from an earlier state.
 
 ## Sizing
 
-- Desktop density follows design tokens.
-- iPad target is at least 44 points.
-- The visual glyph may be smaller than its hit target.
-- Truncated text exposes the full value safely.
+- Compact, typically docked in CMP-007 Status bar or as a floating canvas control.
 
 ## Keyboard and accessibility
 
-- Native keyboard semantics where possible
-- Space and Enter follow platform expectations
-- Escape closes temporary content without undoing committed work
-- Programmatic role, name, state and value
-- Error association and focus management
-- Screen-reader announcement for asynchronous changes
+- +/- keys (or the documented shortcuts) zoom in/out; a documented shortcut triggers fit-to-view, matching CMP-049 Canvas's own keyboard contract.
 
 ## Acceptance criteria
 
-- [ ] All required states are implemented.
-- [ ] Keyboard and touch behaviour are tested.
-- [ ] Contrast and focus pass.
-- [ ] Disabled reason is available.
-- [ ] No project content is sent through analytics.
-- [ ] Visual regression covers protected states.
+- [ ] Limit controls disable with a stated reason at min/max zoom rather than silently no-op-ing.
+- [ ] Fit-to-view always reflects the real current model extent.
