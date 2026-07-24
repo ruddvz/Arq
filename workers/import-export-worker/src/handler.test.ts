@@ -97,6 +97,28 @@ describe('createImportWorkerHandler', () => {
     expect(failed?.type === 'failed' && failed.message).toMatch(/direct open path/);
   });
 
+  it('FP-007: rejects a convert request whose expectedSourceSha256 does not match the actual bytes', async () => {
+    const handler = createImportWorkerHandler({ adapters: registry() });
+    const post = vi.fn<(response: ImportWorkerResponse, transfer?: Transferable[]) => void>();
+    const request: ImportWorkerRequest = {
+      type: 'convert',
+      requestId: 'r6',
+      bytes: PDF_BYTES.buffer as ArrayBuffer,
+      source: { name: 'underlay.pdf', byteLength: PDF_BYTES.byteLength },
+      formatId: 'pdf',
+      adapterId: 'underlay',
+      policy: serialiseImportPolicy(DEFAULT_IMPORT_POLICY),
+      expectedSourceSha256: 'not-the-real-hash',
+    };
+
+    await handler(request, post);
+
+    const failed = post.mock.calls.find((call) => call[0]?.type === 'failed')?.[0];
+    expect(failed).toBeDefined();
+    expect(failed?.type === 'failed' && failed.message).toMatch(/hash changed/i);
+    expect(post.mock.calls.some((call) => call[0]?.type === 'converted')).toBe(false);
+  });
+
   it('acknowledges a cancel request for an id with no active conversion', async () => {
     const handler = createImportWorkerHandler({ adapters: registry() });
     const post = vi.fn<(response: ImportWorkerResponse, transfer?: Transferable[]) => void>();
