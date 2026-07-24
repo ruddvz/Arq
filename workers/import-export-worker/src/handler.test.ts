@@ -4,6 +4,8 @@ import {
   UnderlayAdapter,
   DEFAULT_IMPORT_POLICY,
   serialiseImportPolicy,
+  type ImportAdapter,
+  type ImportAdapterResult,
 } from '@arq/file-ingress';
 import { createImportWorkerHandler } from './handler';
 import type { ImportWorkerRequest, ImportWorkerResponse } from './protocol';
@@ -102,5 +104,65 @@ describe('createImportWorkerHandler', () => {
     await handler({ type: 'cancel', requestId: 'unknown' }, post);
 
     expect(post).toHaveBeenCalledWith({ type: 'cancelled', requestId: 'unknown' });
+  });
+
+  it('FP-019: never posts a converted/failed result for a request already reported cancelled', async () => {
+    // A fake adapter whose convert() only resolves once the test explicitly
+    // lets it, so cancel can arrive while it is genuinely still in flight -
+    // reproducing the real race, not just asserting the code path exists.
+    let resolveConvert: (result: ImportAdapterResult) => void = () => {};
+    const slowAdapter: ImportAdapter = {
+      id: 'underlay',
+      version: '1.0.0',
+      formatIds: ['pdf'],
+      maximumFidelity: 'underlay',
+      convert: () => new Promise((resolve) => (resolveConvert = resolve)),
+    };
+    const reg = new AdapterRegistry();
+    reg.register(slowAdapter);
+
+    const handler = createImportWorkerHandler({ adapters: reg });
+    const post = vi.fn<(response: ImportWorkerResponse, transfer?: Transferable[]) => void>();
+    const convertRequest: ImportWorkerRequest = {
+      type: 'convert',
+      requestId: 'r5',
+      bytes: PDF_BYTES.buffer as ArrayBuffer,
+      source: { name: 'underlay.pdf', byteLength: PDF_BYTES.byteLength },
+      formatId: 'pdf',
+      adapterId: 'underlay',
+      policy: serialiseImportPolicy(DEFAULT_IMPORT_POLICY),
+    };
+
+    const conversion = handler(convertRequest, post);
+    await handler({ type: 'cancel', requestId: 'r5' }, post);
+
+    expect(post).toHaveBeenCalledWith({ type: 'cancelled', requestId: 'r5' });
+
+    // The adapter finishes normally *after* cancellation was already reported.
+    resolveConvert({
+      stagedElements: [],
+      resources: [],
+      mappings: [],
+      report: {
+        formatId: 'pdf',
+        adapterId: 'underlay',
+        adapterVersion: '1.0.0',
+        fidelity: 'underlay',
+        sourceSha256: 'x',
+        sourceByteLength: PDF_BYTES.byteLength,
+        preservedCount: 0,
+        convertedCount: 0,
+        approximatedCount: 0,
+        ignoredCount: 0,
+        issues: [],
+        timingsMs: {},
+      },
+    });
+    await conversion;
+
+    const postedTypes = post.mock.calls.map((call) => call[0]?.type);
+    expect(postedTypes).toEqual(['cancelled']);
+    expect(postedTypes).not.toContain('converted');
+    expect(postedTypes).not.toContain('failed');
   });
 });

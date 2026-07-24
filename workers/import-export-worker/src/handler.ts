@@ -12,8 +12,21 @@ export interface ImportWorkerDependencies {
   readonly adapters: AdapterRegistry;
 }
 
+/**
+ * FP-019: a cancel can arrive after an adapter's `convert()` has already
+ * passed its one abort check and is going to settle anyway (today's
+ * adapters do all their work synchronously inside one `async` call, so
+ * there is no later checkpoint for them to notice the abort). Without
+ * `cancelledRequestIds`, that late settlement would still post a second,
+ * final message (`'converted'`/`'failed'`) for a request the caller was
+ * already told is `'cancelled'` - a real race, not a hypothetical one.
+ * Once a request is cancelled, its outcome is `'cancelled'` permanently;
+ * any later settlement of the same requestId is silently dropped instead
+ * of posted.
+ */
 export function createImportWorkerHandler(dependencies: ImportWorkerDependencies) {
   const active = new Map<string, AbortController>();
+  const cancelledRequestIds = new Set<string>();
 
   return async (
     request: ImportWorkerRequest,
@@ -21,16 +34,29 @@ export function createImportWorkerHandler(dependencies: ImportWorkerDependencies
   ): Promise<void> => {
     if (request.type === 'cancel') {
       active.get(request.requestId)?.abort();
+      cancelledRequestIds.add(request.requestId);
       post({ type: 'cancelled', requestId: request.requestId });
       return;
     }
 
     const controller = new AbortController();
     active.set(request.requestId, controller);
+
+    function postFinal(response: ImportWorkerResponse, transfer?: Transferable[]): void {
+      if (cancelledRequestIds.has(request.requestId)) {
+        return;
+      }
+      if (transfer) {
+        post(response, transfer);
+      } else {
+        post(response);
+      }
+    }
+
     try {
       const bytes = new Uint8Array(request.bytes);
       if (request.type === 'detect') {
-        post({
+        postFinal({
           type: 'detected',
           requestId: request.requestId,
           candidates: detectFormat(bytes, request.source),
@@ -66,12 +92,14 @@ export function createImportWorkerHandler(dependencies: ImportWorkerDependencies
       const transfer = result.resources
         .map((item) => item.bytes.buffer)
         .filter((buffer): buffer is ArrayBuffer => buffer instanceof ArrayBuffer);
-      post({ type: 'converted', requestId: request.requestId, result }, [...new Set(transfer)]);
+      postFinal({ type: 'converted', requestId: request.requestId, result }, [
+        ...new Set(transfer),
+      ]);
     } catch (error) {
       if (controller.signal.aborted) {
-        post({ type: 'cancelled', requestId: request.requestId });
+        postFinal({ type: 'cancelled', requestId: request.requestId });
       } else {
-        post({
+        postFinal({
           type: 'failed',
           requestId: request.requestId,
           code: 'IMPORT_WORKER_FAILED',
@@ -80,6 +108,7 @@ export function createImportWorkerHandler(dependencies: ImportWorkerDependencies
       }
     } finally {
       active.delete(request.requestId);
+      cancelledRequestIds.delete(request.requestId);
     }
   };
 }
