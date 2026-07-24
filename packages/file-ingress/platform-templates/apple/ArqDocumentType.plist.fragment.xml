@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Arq (.arq) file-association template - FP-012 reference material.
+
+  This is NOT a complete Info.plist - it is not applied by any macOS/iPadOS
+  build in this repository today (no native shell exists yet - see
+  docs/platform/IPAD-PLAN.md, docs/platform/DESKTOP-SHELL-PLAN.md and
+  docs/platform/FILE-ASSOCIATION-PLAN.md). A real Apple packaging step must
+  merge the two top-level keys inside the <dict> below (CFBundleDocumentTypes,
+  UTExportedTypeDeclarations) into the app target's actual Info.plist, which
+  already carries the real CFBundleIdentifier, <?xml?> prolog, DOCTYPE and
+  <plist> wrapper this fragment intentionally omits so it stays a small,
+  parseable, mergeable unit rather than a second competing Info.plist.
+
+  Extension: .arq
+  MIME type: application/vnd.arq.project+sqlite
+  UTI:       com.arq.project
+
+  A file extension/UTI association only controls what Finder/the Files app
+  offers to open with Arq. Arq itself must still independently verify the
+  real SQLite application_id (0x41525131, "ARQ1") before trusting the file's
+  contents - see packages/file-ingress/src/native-arq-header.ts's
+  inspectNativeArqHeader. A file merely named *.arq is never trusted on the
+  strength of this declaration alone.
+-->
+<dict>
+  <key>CFBundleDocumentTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeName</key>
+      <string>Arq Project</string>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>LSItemContentTypes</key>
+      <array>
+        <string>com.arq.project</string>
+      </array>
+      <key>LSHandlerRank</key>
+      <string>Owner</string>
+    </dict>
+  </array>
+  <key>UTExportedTypeDeclarations</key>
+  <array>
+    <dict>
+      <key>UTTypeIdentifier</key>
+      <string>com.arq.project</string>
+      <key>UTTypeDescription</key>
+      <string>Arq Project</string>
+      <key>UTTypeConformsTo</key>
+      <array>
+        <string>public.database</string>
+        <string>public.data</string>
+      </array>
+      <key>UTTypeTagSpecification</key>
+      <dict>
+        <key>public.filename-extension</key>
+        <array>
+          <string>arq</string>
+        </array>
+        <key>public.mime-type</key>
+        <string>application/vnd.arq.project+sqlite</string>
+      </dict>
+    </dict>
+  </array>
+</dict>

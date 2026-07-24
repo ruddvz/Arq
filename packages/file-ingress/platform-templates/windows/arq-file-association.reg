@@ -1,0 +1,44 @@
+Windows Registry Editor Version 5.00
+
+; Arq (.arq) file-association template - FP-012 reference material.
+;
+; This is NOT applied by any installer in this repository today (no
+; Windows/Electron/Tauri shell exists yet - see docs/platform/DESKTOP-SHELL-PLAN.md
+; and docs/platform/FILE-ASSOCIATION-PLAN.md). A real Windows packaging step must:
+;   1. Replace the two "C:\Program Files\Arq\Arq.exe" paths below with the real
+;      installed executable path (or generate this fragment from the installer's
+;      own install directory at install time).
+;   2. Merge/import this fragment as part of installation, not ship it standalone.
+;
+; Extension: .arq
+; MIME type: application/vnd.arq.project+sqlite
+; ProgID:    Arq.Project.1
+;
+; This registry entry only controls what the OS launches on double-click. Arq
+; itself must still independently verify the real SQLite application_id
+; (0x41525131, "ARQ1") before trusting the file's contents - see
+; packages/file-ingress/src/native-arq-header.ts's inspectNativeArqHeader.
+; A file merely named *.arq is never trusted on the strength of this
+; association alone.
+;
+; Per-user (HKEY_CURRENT_USER\Software\Classes) rather than machine-wide
+; (HKEY_CLASSES_ROOT) so this fragment can be applied without administrator
+; rights, per current Windows guidance for app file-type registration. A full
+; production installer additionally registers under
+; HKEY_CURRENT_USER\Software\RegisteredApplications and a per-app Capabilities
+; key so Arq appears in Windows' "Default apps" picker - omitted here as
+; that dance depends on the real installer's own app registration name, which
+; does not exist yet.
+
+[HKEY_CURRENT_USER\Software\Classes\.arq]
+@="Arq.Project.1"
+"Content Type"="application/vnd.arq.project+sqlite"
+
+[HKEY_CURRENT_USER\Software\Classes\Arq.Project.1]
+@="Arq Project"
+
+[HKEY_CURRENT_USER\Software\Classes\Arq.Project.1\DefaultIcon]
+@="\"C:\\Program Files\\Arq\\Arq.exe\",0"
+
+[HKEY_CURRENT_USER\Software\Classes\Arq.Project.1\shell\open\command]
+@="\"C:\\Program Files\\Arq\\Arq.exe\" \"%1\""

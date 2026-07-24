@@ -1,0 +1,34 @@
+{
+  "_comment": [
+    "Arq (.arq) file-association template - FP-012 reference material.",
+    "This is NOT a complete web app manifest - apps/web has no manifest.json",
+    "today (see docs/platform/WEB-PLATFORM.md and",
+    "docs/platform/FILE-ASSOCIATION-PLAN.md). A real PWA packaging step must",
+    "merge the file_handlers array below into the app's real manifest.json,",
+    "which already carries the real name/icons/start_url/scope this fragment",
+    "intentionally omits so it stays a small, mergeable unit.",
+    "Extension: .arq  MIME type: application/vnd.arq.project+sqlite",
+    "A file_handlers registration only controls what the OS offers to launch",
+    "Arq with. Arq itself must still independently verify the real SQLite",
+    "application_id (0x41525131, 'ARQ1') before trusting the file's contents -",
+    "see packages/file-ingress/src/native-arq-header.ts's",
+    "inspectNativeArqHeader. A file merely named *.arq is never trusted on the",
+    "strength of this registration alone."
+  ],
+  "file_handlers": [
+    {
+      "action": "/open-file",
+      "accept": {
+        "application/vnd.arq.project+sqlite": [".arq"]
+      },
+      "icons": [
+        {
+          "src": "/icons/arq-document-256.png",
+          "sizes": "256x256",
+          "type": "image/png"
+        }
+      ],
+      "launch_type": "single-client"
+    }
+  ]
+}
