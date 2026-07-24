@@ -20,6 +20,51 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # packages/arqfs's native suite requires a real better-sqlite3 binding
+      # for the active Node ABI - `pnpm install` builds/fetches it as part of
+      # better-sqlite3's own install step. If that step is ever skipped or
+      # fails silently, the native arqfs tests must fail loudly here rather
+      # than the suite quietly passing with the native module absent - see
+      # arqfs-node-driver.ts's own doc comment on why it exists.
+      - run: pnpm test
+
+  browser-capability-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: npx playwright install --with-deps chromium
+      # Real headless-Chromium evidence for the claims this repository makes
+      # about OPFS persistence, single-writer coordination, cross-project
+      # isolation, and the overlay/file-open UI - the same checks used to
+      # verify ARQFS-008/009/012-014 and UI-001/003/011 during development,
+      # now enforced on every PR rather than only run by hand.
+      - run: pnpm benchmark:arqfs-opfs
+      - run: pnpm benchmark:arqfs-writer-lock
+      - run: pnpm benchmark:arqfs-project-isolation
+      - run: pnpm benchmark:design-system-dialog
+      - run: pnpm benchmark:file-open
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-capability-check-results
+          path: benchmarks/results/
+
   dependency-licence-scan:
     runs-on: ubuntu-latest
     steps:
