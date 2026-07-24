@@ -29,7 +29,8 @@
     "rust:clippy": "cargo clippy --manifest-path rust/Cargo.toml --all-targets",
     "rust:build-wasm": "node scripts/build-arq-core-wasm.mjs",
     "rust:verify-wasm-parity": "node scripts/verify-arq-core-wasm-parity.mjs",
-    "benchmark:arq-core-worker": "node scripts/run-arq-core-worker-capability-check.mjs"
+    "benchmark:arq-core-worker": "node scripts/run-arq-core-worker-capability-check.mjs",
+    "check:dependency-licences": "node scripts/check-dependency-licences.mjs"
   },
   "devDependencies": {
     "canvaskit-wasm": "^0.41.1",

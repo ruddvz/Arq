@@ -1,0 +1,41 @@
+# ARQ-017: dependency update automation.
+#
+# One pnpm-ecosystem entry covers the whole workspace (Dependabot resolves
+# pnpm-lock.yaml from the repo root regardless of how many workspace
+# package.json files exist - no per-package entry needed). A separate
+# entry keeps the GitHub Actions workflow versions (actions/checkout@v4,
+# etc.) up to date the same way, since those are pinned dependencies too.
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 10
+    labels:
+      - 'area: chore'
+    groups:
+      # docs/product/DEPENDENCY-AND-LICENCE-POLICY.md's allow-list is
+      # checked in CI (dependency-licence-scan) regardless of grouping -
+      # grouping here is purely to keep routine patch/minor bumps from
+      # generating one PR per package.
+      minor-and-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+
+  - package-ecosystem: 'cargo'
+    directory: '/rust'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 10
+    labels:
+      - 'area: chore'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 10
+    labels:
+      - 'area: chore'
