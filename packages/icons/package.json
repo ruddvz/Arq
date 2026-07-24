@@ -6,6 +6,13 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
+    "generate": "node ../../scripts/generate-icon-components.mjs",
     "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18"
+  },
+  "devDependencies": {
+    "@types/react": "^18"
   }
 }

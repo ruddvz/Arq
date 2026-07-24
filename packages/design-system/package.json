@@ -7,5 +7,11 @@
   "main": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^18"
+  },
+  "devDependencies": {
+    "@types/react": "^18"
   }
 }

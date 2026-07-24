@@ -7,3 +7,4 @@ export * from './visibility-state';
 export * from './room-label';
 export * from './sheet-viewport';
 export * from './benchmark-regression';
+export * from './canvas2d-paint';

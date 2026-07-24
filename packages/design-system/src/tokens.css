@@ -1,0 +1,4 @@
+/* Real design tokens (brand v4): design/tokens/brand.v4.css is the single source of
+   truth - this file's job is to be the one place @arq/design-system's consumers
+   import from, not to duplicate the token values. */
+@import '../../../design/tokens/brand.v4.css';
