@@ -1,0 +1,11 @@
+{
+  "name": "@arq/sync-protocol",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Local-first replica and operation sync protocol (ADR-0021) - typed operation envelope, idempotent upload, resumable resource-chunk upload, and conflict classification. Pure logic only, no network client (apps/api is still a stub).",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -169,6 +169,8 @@ importers:
         specifier: workspace:*
         version: link:../arqscript
 
+  packages/sync-protocol: {}
+
   packages/telemetry: {}
 
   packages/test-models: {}
