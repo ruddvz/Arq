@@ -65,6 +65,18 @@ describe('arqfs-resource-chunks', () => {
     expect(result).toEqual({ status: 'assembled', content: new Uint8Array(0) });
   });
 
+  it('storing identical content twice is an idempotent no-op, not a UNIQUE constraint error (ARQ-217 fuzz finding)', async () => {
+    const d = freshDriver();
+    const content = new TextEncoder().encode('shared texture bytes');
+
+    const first = await putResource(d, content, 'image/png', 'user-texture', 1000);
+    const second = await putResource(d, content, 'image/png', 'user-texture', 1000);
+
+    expect(second.sha256).toBe(first.sha256);
+    const rows = d.query('SELECT sha256 FROM resource WHERE sha256 = ?', [first.sha256]);
+    expect(rows).toHaveLength(1);
+  });
+
   it('rejects assembling an unknown resource rather than throwing', async () => {
     const d = freshDriver();
     const result = await assembleResource(d, 'nonexistent-sha256');

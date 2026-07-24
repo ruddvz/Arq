@@ -97,6 +97,21 @@ const CREATE_WORKING_COPY_STATE_TABLE = `
   )
 `;
 
+/**
+ * ARQ-221: feature flag compatibility matrix. A file declares which optional
+ * capabilities it uses; `required = 1` means a reader that does not recognise the
+ * name cannot safely interpret this file's full semantics (refuse to open, like an
+ * unrecognised major version - see arqfs-feature-flags.ts's evaluateFeatureFlagSupport).
+ * `required = 0` matches @arq/project-format's own "unknown optional sections
+ * ignored safely" rule - a reader that does not recognise it simply ignores it.
+ */
+const CREATE_FEATURE_FLAG_TABLE = `
+  CREATE TABLE feature_flag (
+    name TEXT PRIMARY KEY,
+    required INTEGER NOT NULL CHECK (required IN (0, 1))
+  )
+`;
+
 /** Creates the v1 schema on a freshly opened, empty database. Not idempotent - callers must only call this once per new file (see arqfs-open.ts for opening an existing one). */
 export function createArqfsSchemaV1(driver: ArqfsDriver): void {
   driver.exec(`PRAGMA application_id = ${ARQ_APPLICATION_ID}`);
@@ -109,6 +124,7 @@ export function createArqfsSchemaV1(driver: ArqfsDriver): void {
     driver.exec(CREATE_RESOURCE_CHUNK_TABLE);
     driver.exec(CREATE_SCHEMA_MIGRATION_TABLE);
     driver.exec(CREATE_WORKING_COPY_STATE_TABLE);
+    driver.exec(CREATE_FEATURE_FLAG_TABLE);
 
     const insertMeta = 'INSERT INTO arqfs_meta (key, value) VALUES (?, ?)';
     driver.run(insertMeta, ['format_major', String(ARQFS_CURRENT_FORMAT_VERSION.major)]);

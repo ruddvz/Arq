@@ -34,6 +34,13 @@ function splitIntoChunks(content: Uint8Array, chunkSize: number): Uint8Array[] {
  * own sha256 (verified again on assembleResource, not just trusted) so a future
  * resumable upload (ARQ-208) can verify/dedupe per chunk, not only at the
  * whole-resource level.
+ *
+ * Idempotent by design, not by accident: storing content whose sha256 already
+ * exists is a no-op (caught by a fuzz test - property-based testing generated the
+ * same content twice across separate calls and hit a real UNIQUE constraint
+ * failure before this check existed). Content-addressing's whole premise is that
+ * identical bytes hash identically, so re-storing them is safe to skip rather than
+ * treat as a conflict - a real caller re-uploading a shared texture must not fail.
  */
 export async function putResource(
   driver: ArqfsDriver,
@@ -47,6 +54,14 @@ export async function putResource(
   const chunkHashes = await Promise.all(chunks.map((chunk) => sha256Hex(chunk)));
 
   driver.transaction(() => {
+    const existing = driver.query<{ readonly sha256: string }>(
+      'SELECT sha256 FROM resource WHERE sha256 = ?',
+      [resourceSha256],
+    );
+    if (existing.length > 0) {
+      return;
+    }
+
     driver.run(
       `INSERT INTO resource (sha256, media_type, canonical_role, byte_length, chunk_size, chunk_count)
        VALUES (?, ?, ?, ?, ?, ?)`,

@@ -4,6 +4,11 @@ import {
   ARQFS_CURRENT_FORMAT_VERSION,
   type ArqFormatVersion,
 } from './arqfs-header';
+import {
+  readFeatureFlags,
+  unsupportedRequiredFeatures,
+  KNOWN_FEATURE_NAMES,
+} from './arqfs-feature-flags';
 
 /** Reproduces contracts/arqfs.ts's ArqOpenCapabilities shape - reference-only, not imported (see arqfs-header.ts). */
 export interface ArqOpenCapabilities {
@@ -25,19 +30,25 @@ export type ArqfsOpenResult =
 /**
  * A reader whose own major version is below the file's minReaderMajor must refuse to
  * open at all; one below minWriterMajor may still read but must refuse to write,
- * rather than risk silently corrupting semantics it does not fully understand.
+ * rather than risk silently corrupting semantics it does not fully understand. An
+ * unrecognised *required* feature flag (ARQ-221) is treated the same as a too-new
+ * major version - refuse to open at all - since a reader proceeding anyway could
+ * silently misinterpret the file's canonical semantics.
  */
 export function evaluateOpenCapabilities(
   fileHeader: ArqFormatVersion,
   readerFormatVersion: ArqFormatVersion,
+  unsupportedFeatures: readonly string[] = [],
 ): ArqOpenCapabilities {
-  const canRead = readerFormatVersion.major >= fileHeader.minReaderMajor;
+  const versionCanRead = readerFormatVersion.major >= fileHeader.minReaderMajor;
+  const canRead = versionCanRead && unsupportedFeatures.length === 0;
   const canWrite = canRead && readerFormatVersion.major >= fileHeader.minWriterMajor;
   const canMigrate = canWrite && fileHeader.schema < readerFormatVersion.schema;
   const unsupportedRequiredFeatures: string[] = [];
-  if (!canRead) {
+  if (!versionCanRead) {
     unsupportedRequiredFeatures.push('format-major-too-new-for-reader');
   }
+  unsupportedRequiredFeatures.push(...unsupportedFeatures);
   return {
     canRead,
     canWrite,
@@ -107,9 +118,23 @@ export function openArqfs(
   }
 
   const header: ArqFormatVersion = { major, minor, schema, minReaderMajor, minWriterMajor };
+
+  // feature_flag exists on every file created by createArqfsSchemaV1, but this stays
+  // defensive (treats an unreadable/missing table as "no flags declared") rather than
+  // assuming every file this reader ever encounters was created by this exact schema.
+  let unsupportedFeatures: readonly string[] = [];
+  try {
+    unsupportedFeatures = unsupportedRequiredFeatures(
+      readFeatureFlags(driver),
+      KNOWN_FEATURE_NAMES,
+    );
+  } catch {
+    unsupportedFeatures = [];
+  }
+
   return {
     status: 'opened',
     header,
-    capabilities: evaluateOpenCapabilities(header, readerFormatVersion),
+    capabilities: evaluateOpenCapabilities(header, readerFormatVersion, unsupportedFeatures),
   };
 }

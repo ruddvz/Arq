@@ -19,7 +19,7 @@ describe('createArqfsSchemaV1', () => {
     expect(driver.pragma('user_version')).toBe(ARQFS_SCHEMA_VERSION);
   });
 
-  it('creates all six v1 tables', () => {
+  it('creates all seven v1 tables', () => {
     driver = createNodeArqfsDriver();
     createArqfsSchemaV1(driver);
 
@@ -31,6 +31,7 @@ describe('createArqfsSchemaV1', () => {
     expect(tables).toEqual([
       'archive_entry',
       'arqfs_meta',
+      'feature_flag',
       'resource',
       'resource_chunk',
       'schema_migration',
