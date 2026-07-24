@@ -12,19 +12,19 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ## Delivery order
 
-| Order | Epic | Why it comes now |
-| --- | --- | --- |
-| 0 | Architecture baseline | Prevents irreversible data-model mistakes |
-| 1 | Semantic document and persistence | Creates durable source of truth |
-| 2 | Transactions and model-worker protocol | Makes edits reliable before geometry grows |
-| 3 | Coordinates, units, and tolerances | Prevents large-site and import debt |
-| 4 | Derivation DAG and formula service | Enables correct propagation |
-| 5 | Plan primitives, spatial index, and snapping | Delivers the first excellent editing experience |
-| 6 | Deterministic 2.5D architecture builder | Produces useful model geometry without premature B-Rep scope |
-| 7 | Renderer adapter and multi-view caches | Makes presentation disposable and fast |
-| 8 | Kernel adapter and measured B-Rep spike | Adds advanced geometry only after the foundations work |
-| 9 | Import/export subsets | Adds interoperability with an honest capability boundary |
-| 10 | Reliability, performance, and collaboration foundations | Hardens a working engine |
+| Order | Epic                                                    | Why it comes now                                             |
+| ----- | ------------------------------------------------------- | ------------------------------------------------------------ |
+| 0     | Architecture baseline                                   | Prevents irreversible data-model mistakes                    |
+| 1     | Semantic document and persistence                       | Creates durable source of truth                              |
+| 2     | Transactions and model-worker protocol                  | Makes edits reliable before geometry grows                   |
+| 3     | Coordinates, units, and tolerances                      | Prevents large-site and import debt                          |
+| 4     | Derivation DAG and formula service                      | Enables correct propagation                                  |
+| 5     | Plan primitives, spatial index, and snapping            | Delivers the first excellent editing experience              |
+| 6     | Deterministic 2.5D architecture builder                 | Produces useful model geometry without premature B-Rep scope |
+| 7     | Renderer adapter and multi-view caches                  | Makes presentation disposable and fast                       |
+| 8     | Kernel adapter and measured B-Rep spike                 | Adds advanced geometry only after the foundations work       |
+| 9     | Import/export subsets                                   | Adds interoperability with an honest capability boundary     |
+| 10    | Reliability, performance, and collaboration foundations | Hardens a working engine                                     |
 
 ## Epic 0: Architecture baseline
 
@@ -61,13 +61,13 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ### Acceptance scenarios
 
-| Scenario | Expected result |
-| --- | --- |
-| Save and restore a wall with a hosted window | Same stable IDs, parameters, relations, and revision history semantics |
-| Load a prior schema fixture | Deterministic migration plus migration report |
-| Load a future schema fixture | Read-only or guarded path; unknown fields not silently destroyed |
-| Delete a host wall | Defined policy moves, deletes, or invalidates hosted opening with diagnostic |
-| Duplicate a wall type | New type ID, occurrences stay attached to original unless commanded otherwise |
+| Scenario                                     | Expected result                                                               |
+| -------------------------------------------- | ----------------------------------------------------------------------------- |
+| Save and restore a wall with a hosted window | Same stable IDs, parameters, relations, and revision history semantics        |
+| Load a prior schema fixture                  | Deterministic migration plus migration report                                 |
+| Load a future schema fixture                 | Read-only or guarded path; unknown fields not silently destroyed              |
+| Delete a host wall                           | Defined policy moves, deletes, or invalidates hosted opening with diagnostic  |
+| Duplicate a wall type                        | New type ID, occurrences stay attached to original unless commanded otherwise |
 
 ### Done when
 
@@ -90,13 +90,13 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ### Acceptance scenarios
 
-| Scenario | Expected result |
-| --- | --- |
-| Submit command against old base revision | Rejected with STALE_BASE_REVISION and current revision |
-| Invalid host assignment | Entire transaction rejected; document unchanged |
-| Drag emits 200 preview updates and one final command | Exactly one user undo entry |
-| Undo while tessellation is active | New revision commits; old tessellation result is discarded |
-| Browser reload during autosave | Load last coherent revision or prior valid revision |
+| Scenario                                             | Expected result                                            |
+| ---------------------------------------------------- | ---------------------------------------------------------- |
+| Submit command against old base revision             | Rejected with STALE_BASE_REVISION and current revision     |
+| Invalid host assignment                              | Entire transaction rejected; document unchanged            |
+| Drag emits 200 preview updates and one final command | Exactly one user undo entry                                |
+| Undo while tessellation is active                    | New revision commits; old tessellation result is discarded |
+| Browser reload during autosave                       | Load last coherent revision or prior valid revision        |
 
 ### Done when
 
@@ -117,13 +117,13 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ### Acceptance scenarios
 
-| Scenario | Expected result |
-| --- | --- |
-| Model contains large geographic coordinates | Local building edits and rendering remain stable |
-| Import with millimetres | Values convert once and preserve physical size |
-| Change display units | Canonical model unchanged; only labels and input formatting change |
-| Non-finite coordinate arrives from importer | Transaction rejects with diagnostic |
-| Render origin changes while panning | GPU cache invalidates, document revision does not change |
+| Scenario                                    | Expected result                                                    |
+| ------------------------------------------- | ------------------------------------------------------------------ |
+| Model contains large geographic coordinates | Local building edits and rendering remain stable                   |
+| Import with millimetres                     | Values convert once and preserve physical size                     |
+| Change display units                        | Canonical model unchanged; only labels and input formatting change |
+| Non-finite coordinate arrives from importer | Transaction rejects with diagnostic                                |
+| Render origin changes while panning         | GPU cache invalidates, document revision does not change           |
 
 ### Done when
 
@@ -143,12 +143,12 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ### Acceptance scenarios
 
-| Scenario | Expected result |
-| --- | --- |
-| Raise a level controlling a wall and hosted door | All downstream products update in dependency order |
-| Formula A -> B -> C -> A | Transaction rejects with cycle path |
+| Scenario                                             | Expected result                                            |
+| ---------------------------------------------------- | ---------------------------------------------------------- |
+| Raise a level controlling a wall and hosted door     | All downstream products update in dependency order         |
+| Formula A -> B -> C -> A                             | Transaction rejects with cycle path                        |
 | Equal-distance constraint conflicts with fixed value | Solver returns over-constraint diagnostic; no partial move |
-| Change one wall in a large model | Only downstream affected derivations recompute |
+| Change one wall in a large model                     | Only downstream affected derivations recompute             |
 
 ### Done when
 
@@ -171,16 +171,16 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ### Acceptance scenarios
 
-| Scenario | Expected result |
-| --- | --- |
-| Dense plan and fast pointer move | Query remains bounded; no full-scene scan |
-| Two equally close targets | Deterministic target based on declared precedence and stable tie-break |
-| Zoom in/out | Same visual snap tolerance in pixels |
-| Hidden or locked layer | Excluded according to visible command policy |
-| Near-parallel segments | No false intersection or NaN |
-| Large coordinates | Snap point stays stable |
+| Scenario                                            | Expected result                                                                |
+| --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Dense plan and fast pointer move                    | Query remains bounded; no full-scene scan                                      |
+| Two equally close targets                           | Deterministic target based on declared precedence and stable tie-break         |
+| Zoom in/out                                         | Same visual snap tolerance in pixels                                           |
+| Hidden or locked layer                              | Excluded according to visible command policy                                   |
+| Near-parallel segments                              | No false intersection or NaN                                                   |
+| Large coordinates                                   | Snap point stays stable                                                        |
 | Renderer packet rebuild during an asynchronous pick | Stale GPU readback is discarded and cannot select a different semantic element |
-| Inspect-through on a curtain wall | Ordered semantic candidates follow the declared category policy |
+| Inspect-through on a curtain wall                   | Ordered semantic candidates follow the declared category policy                |
 
 ### Done when
 
@@ -202,13 +202,13 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ### Acceptance scenarios
 
-| Scenario | Expected result |
-| --- | --- |
-| Move a wall containing a window | Window remains hosted and moves by defined local placement rule |
-| Change level height | Wall and opening update without identity replacement |
-| Two walls join | Result follows declared join policy and emits limitation diagnostic if unsupported |
-| Delete opening | Host wall regenerates cleanly |
-| Invalid opening outside host | Reject or show unresolved state, never silently corrupt geometry |
+| Scenario                        | Expected result                                                                    |
+| ------------------------------- | ---------------------------------------------------------------------------------- |
+| Move a wall containing a window | Window remains hosted and moves by defined local placement rule                    |
+| Change level height             | Wall and opening update without identity replacement                               |
+| Two walls join                  | Result follows declared join policy and emits limitation diagnostic if unsupported |
+| Delete opening                  | Host wall regenerates cleanly                                                      |
+| Invalid opening outside host    | Reject or show unresolved state, never silently corrupt geometry                   |
 
 ### Done when
 
@@ -230,13 +230,13 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ### Acceptance scenarios
 
-| Scenario | Expected result |
-| --- | --- |
-| Old render packet arrives after undo | Packet is ignored |
-| Change render origin | Scene buffers rebuild without model mutation |
-| Thin line is selected | CPU fallback finds semantic target |
-| OffscreenCanvas unsupported | Main-thread renderer still works |
-| WebGPU unavailable | WebGL2 path remains feature-complete for core editing |
+| Scenario                                    | Expected result                                                                                |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Old render packet arrives after undo        | Packet is ignored                                                                              |
+| Change render origin                        | Scene buffers rebuild without model mutation                                                   |
+| Thin line is selected                       | CPU fallback finds semantic target                                                             |
+| OffscreenCanvas unsupported                 | Main-thread renderer still works                                                               |
+| WebGPU unavailable                          | WebGL2 path remains feature-complete for core editing                                          |
 | Drag wall/opening while CSG work is pending | Preview remains responsive; exactly one semantic commit occurs; stale geometry never publishes |
 
 ### Done when
@@ -259,17 +259,17 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ### Acceptance scenarios
 
-| Scenario | Expected result |
-| --- | --- |
-| Type an incomplete or invalid length | Draft remains editable; canonical property does not change |
-| Press Escape in a quantity field | Original displayed value returns and no transaction commits |
+| Scenario                                     | Expected result                                                                     |
+| -------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Type an incomplete or invalid length         | Draft remains editable; canonical property does not change                          |
+| Press Escape in a quantity field             | Original displayed value returns and no transaction commits                         |
 | Scrub a wall height across 200 pointer moves | Proxy updates continuously; one undoable transaction is proposed at pointer release |
-| HUD is visible during canvas pan | Passive HUD area does not block pan, orbit, snapping, or context menu |
-| Press Cmd+K from the canvas | Palette opens, focus moves to search, and Escape returns focus to the invoker |
-| Press Enter while composing IME text | No command is executed |
-| Dismiss a persistent egress diagnostic | Chip may disappear, but issue remains listed and visible on the element |
-| Apply a quick fix after a remote edit | Stale result is rejected and diagnostic is re-evaluated |
-| Disable motion or use high contrast | Controls remain legible, operable, and free of nonessential animation |
+| HUD is visible during canvas pan             | Passive HUD area does not block pan, orbit, snapping, or context menu               |
+| Press Cmd+K from the canvas                  | Palette opens, focus moves to search, and Escape returns focus to the invoker       |
+| Press Enter while composing IME text         | No command is executed                                                              |
+| Dismiss a persistent egress diagnostic       | Chip may disappear, but issue remains listed and visible on the element             |
+| Apply a quick fix after a remote edit        | Stale result is rejected and diagnostic is re-evaluated                             |
+| Disable motion or use high contrast          | Controls remain legible, operable, and free of nonessential animation               |
 
 ### Done when
 
@@ -290,13 +290,13 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ### Acceptance scenarios
 
-| Scenario | Expected result |
-| --- | --- |
-| Valid opening Boolean | Accepted only after validation |
-| Coincident or invalid Boolean | Controlled error and preserved last valid model |
-| User edits source during Boolean | Prior result discarded as stale |
-| Cancel large Boolean | Job resolves as cancelled and releases resources |
-| Kernel upgrade | Fixture corpus identifies changed behaviour |
+| Scenario                         | Expected result                                  |
+| -------------------------------- | ------------------------------------------------ |
+| Valid opening Boolean            | Accepted only after validation                   |
+| Coincident or invalid Boolean    | Controlled error and preserved last valid model  |
+| User edits source during Boolean | Prior result discarded as stale                  |
+| Cancel large Boolean             | Job resolves as cancelled and releases resources |
+| Kernel upgrade                   | Fixture corpus identifies changed behaviour      |
 
 ### Done when
 
@@ -316,13 +316,13 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ### Acceptance scenarios
 
-| Scenario | Expected result |
-| --- | --- |
-| Import supported IFC wall and opening | Native semantic elements and relations created |
-| Import unsupported IFC class | Preserved/recorded according to policy, with visible diagnostic |
-| Export/import native supported model | Semantics pass golden comparison |
-| Import DXF with unsupported custom entity | Explicit unsupported warning, no silent data invention |
-| Import malformed file | Worker error, UI remains responsive, document unchanged |
+| Scenario                                  | Expected result                                                 |
+| ----------------------------------------- | --------------------------------------------------------------- |
+| Import supported IFC wall and opening     | Native semantic elements and relations created                  |
+| Import unsupported IFC class              | Preserved/recorded according to policy, with visible diagnostic |
+| Export/import native supported model      | Semantics pass golden comparison                                |
+| Import DXF with unsupported custom entity | Explicit unsupported warning, no silent data invention          |
+| Import malformed file                     | Worker error, UI remains responsive, document unchanged         |
 
 ### Done when
 
@@ -343,13 +343,13 @@ This backlog is deliberately ordered to prevent a polished renderer from becomin
 
 ### Acceptance scenarios
 
-| Scenario | Expected result |
-| --- | --- |
-| Reproduce a reported failure | Replay from command log and fixture |
-| Large import | Progress, cancellation, memory cap, no frozen UI |
-| Two users edit same host relation | Explicit conflict or lock, never silent invalid merge |
-| Cross-origin isolation cannot be enabled | Transferable-buffer mode works |
-| Visual test changes cut line style | Diff identifies it before release |
+| Scenario                                 | Expected result                                       |
+| ---------------------------------------- | ----------------------------------------------------- |
+| Reproduce a reported failure             | Replay from command log and fixture                   |
+| Large import                             | Progress, cancellation, memory cap, no frozen UI      |
+| Two users edit same host relation        | Explicit conflict or lock, never silent invalid merge |
+| Cross-origin isolation cannot be enabled | Transferable-buffer mode works                        |
+| Visual test changes cut line style       | Diff identifies it before release                     |
 
 ### Done when
 

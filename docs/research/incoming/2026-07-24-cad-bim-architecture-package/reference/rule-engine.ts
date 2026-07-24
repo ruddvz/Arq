@@ -3,11 +3,7 @@
  * This is an engine contract, not a source of building-code values.
  */
 
-export type RuleSeverity =
-  | "info"
-  | "warning"
-  | "error"
-  | "requires-professional-review";
+export type RuleSeverity = 'info' | 'warning' | 'error' | 'requires-professional-review';
 
 export interface RuleFinding {
   readonly ruleId: string;
@@ -49,13 +45,8 @@ export interface RuleEvaluationReport {
 }
 
 export class RuleEngine {
-  public evaluate(
-    context: RuleContext,
-    packs: readonly RulePack[],
-  ): RuleEvaluationReport {
-    const matchingPacks = packs.filter(
-      (pack) => pack.jurisdiction === context.jurisdiction,
-    );
+  public evaluate(context: RuleContext, packs: readonly RulePack[]): RuleEvaluationReport {
+    const matchingPacks = packs.filter((pack) => pack.jurisdiction === context.jurisdiction);
     const findings: RuleFinding[] = [];
 
     for (const pack of matchingPacks) {
@@ -69,9 +60,9 @@ export class RuleEngine {
 
     if (matchingPacks.length === 0) {
       findings.push({
-        ruleId: "ARQ-RULE-PACK-MISSING",
-        severity: "requires-professional-review",
-        message: "No approved rule pack matches this project jurisdiction.",
+        ruleId: 'ARQ-RULE-PACK-MISSING',
+        severity: 'requires-professional-review',
+        message: 'No approved rule pack matches this project jurisdiction.',
         targetIds: [],
         evidence: { jurisdiction: context.jurisdiction },
       });
@@ -79,7 +70,7 @@ export class RuleEngine {
 
     return {
       documentRevision: context.documentRevision,
-      packIds: matchingPacks.map((pack) => pack.id + "@" + pack.version),
+      packIds: matchingPacks.map((pack) => pack.id + '@' + pack.version),
       findings,
     };
   }

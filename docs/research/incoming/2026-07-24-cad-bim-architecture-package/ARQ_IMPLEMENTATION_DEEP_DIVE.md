@@ -10,17 +10,17 @@ Normative product and model decisions remain in [ARQ_MASTER_TECHNICAL_SPECIFICAT
 
 ## 1. Decision summary
 
-| Supplied idea | Accepted direction | Important correction |
-| --- | --- | --- |
-| N-pass depth peeling on hover | Use a normal one-layer semantic ID pick by default; expose a capped inspect-through stack only by explicit intent such as Option/Alt | A full N-pass viewport render and asynchronous readback on every pointer movement is an avoidable latency and battery cost |
-| GPU entity ID is the selected object | GPU returns a packet-local draw ID which is resolved through a revision-matched semantic table | Draw IDs, buffer offsets, and mesh indices are never durable BIM identities |
-| Fixed depth epsilon | Derive a bounded peel tolerance from camera projection, depth convention, document tolerance, and measured fixtures | One NDC constant cannot be reliable over all scales, projections, or camera planes |
-| Heavy Boolean runs after a hard-coded debounce | Drag produces a lightweight preview; a single semantic command commits on intentional checkpoint; a revisioned worker job derives CSG after commit | Results must be rejected when their revision or input signature is stale |
-| No modal dialogs | Use non-modal diagnostics, ghost previews, and recovery actions | An invalid state still must not be silently committed to the canonical model |
-| Tauri plus Metal backend | Treat Tauri as a desktop WebView shell for the same browser renderer | Tauri does not by itself turn a WebGPU application into a custom direct-Metal renderer |
-| Apple-grade UI | Use platform-adaptive, high-quality controls with progressive visual enhancements | Accessibility, contrast, motion preference, focus handling, and input correctness are mandatory |
-| Rust SIMD BVH sample | Require a real packed BVH or R-tree with benchmarked query methods before calling it an acceleration structure | A Vec scan is O(N), not a BVH, not SIMD, and not a ray cast |
-| Zero-cost CRDT branches | Store branch/checkpoint operation sets and render frozen comparison revisions as ghosts | CRDT convergence and branch merging still require semantic validation |
+| Supplied idea                                  | Accepted direction                                                                                                                                 | Important correction                                                                                                       |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| N-pass depth peeling on hover                  | Use a normal one-layer semantic ID pick by default; expose a capped inspect-through stack only by explicit intent such as Option/Alt               | A full N-pass viewport render and asynchronous readback on every pointer movement is an avoidable latency and battery cost |
+| GPU entity ID is the selected object           | GPU returns a packet-local draw ID which is resolved through a revision-matched semantic table                                                     | Draw IDs, buffer offsets, and mesh indices are never durable BIM identities                                                |
+| Fixed depth epsilon                            | Derive a bounded peel tolerance from camera projection, depth convention, document tolerance, and measured fixtures                                | One NDC constant cannot be reliable over all scales, projections, or camera planes                                         |
+| Heavy Boolean runs after a hard-coded debounce | Drag produces a lightweight preview; a single semantic command commits on intentional checkpoint; a revisioned worker job derives CSG after commit | Results must be rejected when their revision or input signature is stale                                                   |
+| No modal dialogs                               | Use non-modal diagnostics, ghost previews, and recovery actions                                                                                    | An invalid state still must not be silently committed to the canonical model                                               |
+| Tauri plus Metal backend                       | Treat Tauri as a desktop WebView shell for the same browser renderer                                                                               | Tauri does not by itself turn a WebGPU application into a custom direct-Metal renderer                                     |
+| Apple-grade UI                                 | Use platform-adaptive, high-quality controls with progressive visual enhancements                                                                  | Accessibility, contrast, motion preference, focus handling, and input correctness are mandatory                            |
+| Rust SIMD BVH sample                           | Require a real packed BVH or R-tree with benchmarked query methods before calling it an acceleration structure                                     | A Vec scan is O(N), not a BVH, not SIMD, and not a ray cast                                                                |
+| Zero-cost CRDT branches                        | Store branch/checkpoint operation sets and render frozen comparison revisions as ghosts                                                            | CRDT convergence and branch merging still require semantic validation                                                      |
 
 ## 2. Interaction system
 
@@ -28,17 +28,17 @@ Normative product and model decisions remain in [ARQ_MASTER_TECHNICAL_SPECIFICAT
 
 Arq has three deliberately different selection paths:
 
-| Mode | Invocation | Fast path | Result |
-| --- | --- | --- | --- |
-| Hover feedback | Pointer movement | CPU spatial index, recent GPU result, or both | A provisional semantic candidate and HUD |
-| Normal selection | Click/tap | One semantic GPU ID pass plus model-space validation | One selected target |
-| Inspect through | Explicit Option/Alt gesture, layer control, or accessibility-equivalent command | Capped, cursor-scissored depth-peel stack | Ordered list of semantic candidates under the cursor |
+| Mode             | Invocation                                                                      | Fast path                                            | Result                                               |
+| ---------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------- |
+| Hover feedback   | Pointer movement                                                                | CPU spatial index, recent GPU result, or both        | A provisional semantic candidate and HUD             |
+| Normal selection | Click/tap                                                                       | One semantic GPU ID pass plus model-space validation | One selected target                                  |
+| Inspect through  | Explicit Option/Alt gesture, layer control, or accessibility-equivalent command | Capped, cursor-scissored depth-peel stack            | Ordered list of semantic candidates under the cursor |
 
 The normal pick has a predictable first-click result. The inspect-through mode makes occlusion explicit rather than forcing invisible tab cycles. The UI must expose a keyboard-accessible control in addition to a modifier gesture.
 
 ### 2.2 Selection lifecycle
 
-~~~mermaid
+```mermaid
 sequenceDiagram
   participant UI as UI and pointer
   participant Render as Renderer
@@ -49,7 +49,7 @@ sequenceDiagram
   Render->>UI: Candidate semantic targets
   UI->>Model: Validate final semantic target and current revision
   Model->>UI: Selection accepted or changed-state diagnostic
-~~~
+```
 
 The renderer owns the draw-ID table for a render packet. The model worker owns the semantic element and checks that the target remains valid if a command follows selection. A selection result that arrives after the render revision changes is ignored.
 
@@ -64,9 +64,9 @@ For normal selection, render selectable opaque proxy geometry into:
 
 ID 0 represents no candidate. The engine must retain a table:
 
-~~~text
+```text
 draw ID -> { semantic element ID, optional semantic subelement, source render revision }
-~~~
+```
 
 The WGSL reference at [reference/selection-id-pass.wgsl](reference/selection-id-pass.wgsl) contains separate first-layer and peel fragment entry points. The TypeScript contract at [reference/picking-contract.ts](reference/picking-contract.ts) defines physical-pixel conversion, WebGPU readback alignment, stale-result handling, and semantic resolution.
 
@@ -135,7 +135,7 @@ The reference state machine is [reference/deferred-csg-session.ts](reference/def
 
 ### 3.2 Non-modal failure state
 
-~~~mermaid
+```mermaid
 stateDiagram-v2
   [*] --> Previewing
   Previewing --> Validating: Commit intent
@@ -146,7 +146,7 @@ stateDiagram-v2
   NeedsCorrection --> Previewing: User adjusts proposal
   NeedsCorrection --> [*]: User cancels
   Ready --> [*]
-~~~
+```
 
 NeedsCorrection is visible, actionable, and non-modal. It can show a ghost boundary, diagnostic chip, affected elements, suggested safe alternatives, and a return-to-valid command. The model cannot write an invalid persistent state simply because the UI chooses not to show a blocking dialog.
 
@@ -178,13 +178,13 @@ Do not promise zero-cost branches. A checkpoint and operation history can make b
 
 Browser workers are capabilities, not a guaranteed fixed number of OS threads. The authoritative model worker remains serial. Rendering in an OffscreenCanvas worker, WebAssembly threads, and SharedArrayBuffer are optional enhancements gated by browser support and cross-origin isolation.
 
-| Service | Required ownership | Optional implementation |
-| --- | --- | --- |
-| Main UI | DOM, accessibility, transient tools, presentation state | React, Solid, native desktop webview |
-| Model worker | semantic document, revisions, validation, transaction order | one dedicated worker |
-| Geometry jobs | B-Rep/procedural derivation, tessellation, sections | bounded worker queue or a single kernel worker |
-| Spatial indexes | revision-matched 2D R-tree, mesh BVH, room indexes | JS, Rust/Wasm, or kernel-owned adapters |
-| Renderer | local packets, draw IDs, GPU resources | main thread by default; OffscreenCanvas when proven |
+| Service         | Required ownership                                          | Optional implementation                             |
+| --------------- | ----------------------------------------------------------- | --------------------------------------------------- |
+| Main UI         | DOM, accessibility, transient tools, presentation state     | React, Solid, native desktop webview                |
+| Model worker    | semantic document, revisions, validation, transaction order | one dedicated worker                                |
+| Geometry jobs   | B-Rep/procedural derivation, tessellation, sections         | bounded worker queue or a single kernel worker      |
+| Spatial indexes | revision-matched 2D R-tree, mesh BVH, room indexes          | JS, Rust/Wasm, or kernel-owned adapters             |
+| Renderer        | local packets, draw IDs, GPU resources                      | main thread by default; OffscreenCanvas when proven |
 
 ### 5.1 Do not misname an O(N) scan
 
@@ -225,7 +225,7 @@ The window-vibrancy crate exposes a macOS vibrancy helper, but platform effects 
 
 An intentionally conservative configuration sketch is:
 
-~~~json
+```json
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Arq CAD",
@@ -254,7 +254,7 @@ An intentionally conservative configuration sketch is:
     }
   }
 }
-~~~
+```
 
 This is a starting shape, not a copy-paste security policy. Final content-security policy must match real asset, worker, collaboration, plugin, and WebAssembly loading requirements. The narrower wasm-unsafe-eval permission may be necessary for the chosen WebAssembly loading path; validate it in the packaged application. Do not ship broad unsafe-eval or unsafe-inline merely to make a prototype run. MDN documents both the CSP risk and the narrower WebAssembly permission in its [CSP reference](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy).
 
@@ -308,7 +308,7 @@ The palette must provide:
 
 The React, Tailwind, and motion-library examples in the supplied draft are valid implementation candidates. They should be introduced after the application selects exact versions and an accessibility test suite. Components must receive domain callbacks and accessibility state from the application rather than directly mutate walls or call the geometry kernel.
 
-~~~tsx
+```tsx
 type QuantityEditorProps = {
   readonly label: string;
   readonly draft: string;
@@ -317,7 +317,7 @@ type QuantityEditorProps = {
   readonly onCommit: () => void;
   readonly onCancel: () => void;
 };
-~~~
+```
 
 This boundary allows an identical quantity editor to work in a HUD, Inspector, command palette, web app, and desktop shell.
 
@@ -367,15 +367,15 @@ This boundary allows an identical quantity editor to work in a HUD, Inspector, c
 
 ## 10. Reference and source index
 
-| Topic | Package reference | Primary source |
-| --- | --- | --- |
-| Selection IDs, readback layout, stale results | [reference/picking-contract.ts](reference/picking-contract.ts) | [WebGPU](https://www.w3.org/TR/webgpu/) |
-| First/peel shader entry points | [reference/selection-id-pass.wgsl](reference/selection-id-pass.wgsl) | [WGSL](https://www.w3.org/TR/WGSL/) |
-| Deferred CSG revision guard | [reference/deferred-csg-session.ts](reference/deferred-csg-session.ts) | [Master transaction lifecycle](ARQ_MASTER_TECHNICAL_SPECIFICATION.md#43-transaction-lifecycle) |
-| Browser/native capability boundary | [reference/native-desktop-port.ts](reference/native-desktop-port.ts) | [Tauri v2 config](https://v2.tauri.app/reference/config/) |
-| Controlled numeric quantities | [reference/quantity-draft.ts](reference/quantity-draft.ts) | [Master unit policy](ARQ_MASTER_TECHNICAL_SPECIFICATION.md#41-persistent-document) |
-| Accessible command palette | Section 7.3 in this document | [WAI-ARIA modal-dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) |
-| Capability-gated rendering and workers | Sections 5 and 6 in this document | [MDN WebGPU API](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API), [MDN OffscreenCanvas](https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas) |
+| Topic                                         | Package reference                                                      | Primary source                                                                                                                                                         |
+| --------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Selection IDs, readback layout, stale results | [reference/picking-contract.ts](reference/picking-contract.ts)         | [WebGPU](https://www.w3.org/TR/webgpu/)                                                                                                                                |
+| First/peel shader entry points                | [reference/selection-id-pass.wgsl](reference/selection-id-pass.wgsl)   | [WGSL](https://www.w3.org/TR/WGSL/)                                                                                                                                    |
+| Deferred CSG revision guard                   | [reference/deferred-csg-session.ts](reference/deferred-csg-session.ts) | [Master transaction lifecycle](ARQ_MASTER_TECHNICAL_SPECIFICATION.md#43-transaction-lifecycle)                                                                         |
+| Browser/native capability boundary            | [reference/native-desktop-port.ts](reference/native-desktop-port.ts)   | [Tauri v2 config](https://v2.tauri.app/reference/config/)                                                                                                              |
+| Controlled numeric quantities                 | [reference/quantity-draft.ts](reference/quantity-draft.ts)             | [Master unit policy](ARQ_MASTER_TECHNICAL_SPECIFICATION.md#41-persistent-document)                                                                                     |
+| Accessible command palette                    | Section 7.3 in this document                                           | [WAI-ARIA modal-dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)                                                                                |
+| Capability-gated rendering and workers        | Sections 5 and 6 in this document                                      | [MDN WebGPU API](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API), [MDN OffscreenCanvas](https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas) |
 
 The corrected decisions for this deep dive are also recorded in [ADR-007](decision_records/ADR-007-semantic-inspect-through-selection.md), [ADR-008](decision_records/ADR-008-desktop-shell-and-native-renderer-boundary.md), and [ADR-009](decision_records/ADR-009-nonmodal-validation-and-deferred-geometry.md).
 
@@ -383,16 +383,16 @@ The corrected decisions for this deep dive are also recorded in [ADR-007](decisi
 
 The supplied React examples are useful visual sketches, but they need the following production corrections.
 
-| Supplied pattern | Correction |
-| --- | --- |
-| HUD rotate derived from absolute X position | Derive decorative tilt from actual horizontal pointer velocity, cap it, and disable it during text entry or reduced motion |
-| Position and entrance both write vertical motion | Use separate outer position and inner entrance/exit motion containers |
-| Whole floating HUD accepts pointer events | Keep the panel passive; enable pointer events only for actual controls |
-| Number input calls Number on every change | Keep a controlled editable draft; do not commit empty, invalid, non-finite, or incomplete values |
-| Palette shortcut only closes an existing palette | The root must explicitly open the palette, restore focus on close, and respect IME composition |
-| Palette rows are bare clickable containers | Use accessible dialog and navigable command controls with names, focus, and status |
-| Diagnostic auto-fix mutates in place | Create a revision-guarded typed proposal and submit it through the normal transaction gateway |
-| Universal glass and squircle styling | Provide a contrast-safe opaque fallback; use blur and corner shape only as progressive enhancements |
+| Supplied pattern                                 | Correction                                                                                                                 |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| HUD rotate derived from absolute X position      | Derive decorative tilt from actual horizontal pointer velocity, cap it, and disable it during text entry or reduced motion |
+| Position and entrance both write vertical motion | Use separate outer position and inner entrance/exit motion containers                                                      |
+| Whole floating HUD accepts pointer events        | Keep the panel passive; enable pointer events only for actual controls                                                     |
+| Number input calls Number on every change        | Keep a controlled editable draft; do not commit empty, invalid, non-finite, or incomplete values                           |
+| Palette shortcut only closes an existing palette | The root must explicitly open the palette, restore focus on close, and respect IME composition                             |
+| Palette rows are bare clickable containers       | Use accessible dialog and navigable command controls with names, focus, and status                                         |
+| Diagnostic auto-fix mutates in place             | Create a revision-guarded typed proposal and submit it through the normal transaction gateway                              |
+| Universal glass and squircle styling             | Provide a contrast-safe opaque fallback; use blur and corner shape only as progressive enhancements                        |
 
 Use [ARQ_UI_UX_SYSTEM_SPECIFICATION.md](ARQ_UI_UX_SYSTEM_SPECIFICATION.md) and its references for the corrected contracts:
 

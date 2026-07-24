@@ -18,7 +18,7 @@ Arq should make architectural work feel immediate without pretending that comple
 
 ## 2. Zero-friction experience
 
-~~~mermaid
+```mermaid
 flowchart TB
   Input["Direct manipulation or typed command"]
   Preview["Local provisional preview"]
@@ -31,7 +31,7 @@ flowchart TB
   Validate --> Product
   Validate --> Diagnose
   Diagnose --> Preview
-~~~
+```
 
 ### Contextual controls
 
@@ -64,13 +64,13 @@ It does not show a blocking modal by default, nor does it corrupt the committed 
 
 The browser engine is primary. The model worker serialises canonical state. Geometry, imports, rules, and optional renderer work are bounded asynchronous jobs. Tauri is an optional desktop shell around the same frontend, not a different canonical geometry engine or automatic direct-Metal renderer.
 
-| Stage | Outcome | Gate |
-| --- | --- | --- |
-| Web foundation | Precision-safe 2D/2.5D authoring, plan snapping, revisioned local persistence | Semantics, coordinate policy, undo, fixtures |
-| Responsive geometry | Deferred CSG, robust wall/opening products, multi-view packets | Stale-result, memory, and failure-path tests |
-| Collaboration | Semantic operation sync, comments, option overlays | Deterministic convergence and conflict diagnostics |
-| Desktop shell | File integration, native menus, optional window effects | Capability/security review and packaged-build QA |
-| Native rendering evaluation | Only if browser/WebView profiling misses an approved requirement | Measured cost and portability decision |
+| Stage                       | Outcome                                                                       | Gate                                               |
+| --------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------- |
+| Web foundation              | Precision-safe 2D/2.5D authoring, plan snapping, revisioned local persistence | Semantics, coordinate policy, undo, fixtures       |
+| Responsive geometry         | Deferred CSG, robust wall/opening products, multi-view packets                | Stale-result, memory, and failure-path tests       |
+| Collaboration               | Semantic operation sync, comments, option overlays                            | Deterministic convergence and conflict diagnostics |
+| Desktop shell               | File integration, native menus, optional window effects                       | Capability/security review and packaged-build QA   |
+| Native rendering evaluation | Only if browser/WebView profiling misses an approved requirement              | Measured cost and portability decision             |
 
 ## 4. Spatial branches and ghost overlays
 

@@ -4,7 +4,7 @@
  * and creates no command after cancel.
  */
 
-export type ScrubPrecision = "fine" | "normal" | "coarse";
+export type ScrubPrecision = 'fine' | 'normal' | 'coarse';
 
 export interface NumericDomain {
   readonly minimum: number;
@@ -29,15 +29,15 @@ export class NumericScrubSession {
   ) {
     validateDomain(domain);
     if (!Number.isFinite(initialValue)) {
-      throw new Error("initialValue must be finite.");
+      throw new Error('initialValue must be finite.');
     }
     this.initialValue = quantizeAndClamp(initialValue, domain);
   }
 
-  public previewAt(pointerX: number, precision: ScrubPrecision = "normal"): ScrubPreview {
+  public previewAt(pointerX: number, precision: ScrubPrecision = 'normal'): ScrubPreview {
     this.assertActive();
     if (!Number.isFinite(pointerX)) {
-      throw new Error("pointerX must be finite.");
+      throw new Error('pointerX must be finite.');
     }
 
     const pixelsPerStep = this.domain.pixelsPerStep ?? 8;
@@ -52,7 +52,7 @@ export class NumericScrubSession {
     return { value, changed: value !== this.initialValue };
   }
 
-  public commitAt(pointerX: number, precision: ScrubPrecision = "normal"): number {
+  public commitAt(pointerX: number, precision: ScrubPrecision = 'normal'): number {
     const value = this.previewAt(pointerX, precision).value;
     this.ended = true;
     return value;
@@ -66,7 +66,7 @@ export class NumericScrubSession {
 
   private assertActive(): void {
     if (this.ended) {
-      throw new Error("The scrub session has already ended.");
+      throw new Error('The scrub session has already ended.');
     }
   }
 }
@@ -75,17 +75,13 @@ export function quantizeAndClamp(value: number, domain: NumericDomain): number {
   return quantizeAndClampWithStep(value, domain, domain.step);
 }
 
-function quantizeAndClampWithStep(
-  value: number,
-  domain: NumericDomain,
-  step: number,
-): number {
+function quantizeAndClampWithStep(value: number, domain: NumericDomain, step: number): number {
   if (!Number.isFinite(value)) {
-    throw new Error("value must be finite.");
+    throw new Error('value must be finite.');
   }
   validateDomain(domain);
   if (!Number.isFinite(step) || step <= 0) {
-    throw new Error("Numeric quantization step must be finite and positive.");
+    throw new Error('Numeric quantization step must be finite and positive.');
   }
   const rawSteps = (value - domain.minimum) / step;
   const quantized = domain.minimum + Math.round(rawSteps) * step;
@@ -95,30 +91,30 @@ function quantizeAndClampWithStep(
 
 function precisionMultiplier(precision: ScrubPrecision): number {
   switch (precision) {
-    case "fine":
+    case 'fine':
       return 0.1;
-    case "normal":
+    case 'normal':
       return 1;
-    case "coarse":
+    case 'coarse':
       return 10;
   }
 }
 
 function validateDomain(domain: NumericDomain): void {
   if (!Number.isFinite(domain.minimum) || !Number.isFinite(domain.maximum)) {
-    throw new Error("Numeric domain bounds must be finite.");
+    throw new Error('Numeric domain bounds must be finite.');
   }
   if (domain.minimum > domain.maximum) {
-    throw new Error("Numeric domain minimum cannot exceed maximum.");
+    throw new Error('Numeric domain minimum cannot exceed maximum.');
   }
   if (!Number.isFinite(domain.step) || domain.step <= 0) {
-    throw new Error("Numeric domain step must be finite and positive.");
+    throw new Error('Numeric domain step must be finite and positive.');
   }
   if (
-    domain.pixelsPerStep !== undefined
-    && (!Number.isFinite(domain.pixelsPerStep) || domain.pixelsPerStep <= 0)
+    domain.pixelsPerStep !== undefined &&
+    (!Number.isFinite(domain.pixelsPerStep) || domain.pixelsPerStep <= 0)
   ) {
-    throw new Error("pixelsPerStep must be finite and positive when provided.");
+    throw new Error('pixelsPerStep must be finite and positive when provided.');
   }
 }
 

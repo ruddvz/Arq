@@ -28,13 +28,13 @@ Arq is a local-first, browser-native architectural design and BIM platform. It s
 
 Arq takes useful ideas from established tools without copying their limitations:
 
-| Design influence | What Arq adopts | What Arq avoids |
-| --- | --- | --- |
-| CAD | precise input, snapping, direct commands, layers and drawing discipline | renderer-as-document and ribbon-first workflow |
-| BIM | semantic elements, types, hosts, levels, schedules, properties, and exchange | monolithic file coupling and hidden derived state |
-| conceptual modelling | fast massing, site context, visual exploration | treating an approximate mesh as a valid building record |
-| collaborative canvases | presence, comments, shared review, local-first availability | raw object merge that breaks architectural constraints |
-| modern web applications | immediate interaction, background work, resilient offline behaviour | making browser capabilities a reason to weaken model correctness |
+| Design influence        | What Arq adopts                                                              | What Arq avoids                                                  |
+| ----------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| CAD                     | precise input, snapping, direct commands, layers and drawing discipline      | renderer-as-document and ribbon-first workflow                   |
+| BIM                     | semantic elements, types, hosts, levels, schedules, properties, and exchange | monolithic file coupling and hidden derived state                |
+| conceptual modelling    | fast massing, site context, visual exploration                               | treating an approximate mesh as a valid building record          |
+| collaborative canvases  | presence, comments, shared review, local-first availability                  | raw object merge that breaks architectural constraints           |
+| modern web applications | immediate interaction, background work, resilient offline behaviour          | making browser capabilities a reason to weaken model correctness |
 
 ### 1.1 What success means
 
@@ -76,13 +76,13 @@ The canvas remains central. Detailed inspectors are available, but ordinary wall
 
 When a user selects or creates an element, the HUD exposes only command-relevant controls:
 
-| Context | First controls | Secondary route |
-| --- | --- | --- |
-| Wall selected | length, thickness/type, base/top constraint, join/flip | full inspector |
-| Opening selected | host, width, height, sill/head constraints | family/type editor |
-| Level selected | elevation, name, associated views | project explorer |
-| Room selected | boundary status, area, occupancy/property set | schedule |
-| Active drawing command | numeric input, angle, constraint lock, snap state | command options |
+| Context                | First controls                                         | Secondary route    |
+| ---------------------- | ------------------------------------------------------ | ------------------ |
+| Wall selected          | length, thickness/type, base/top constraint, join/flip | full inspector     |
+| Opening selected       | host, width, height, sill/head constraints             | family/type editor |
+| Level selected         | elevation, name, associated views                      | project explorer   |
+| Room selected          | boundary status, area, occupancy/property set          | schedule           |
+| Active drawing command | numeric input, angle, constraint lock, snap state      | command options    |
 
 Rules:
 
@@ -147,7 +147,7 @@ The menu should not promise a sub-100 ms operation if the requested operation re
 
 ## 3. Governing architecture
 
-~~~mermaid
+```mermaid
 flowchart TB
   UI["UI, input and transient view state"]
   Render["WebGL2/WebGPU renderer and view caches"]
@@ -162,33 +162,33 @@ flowchart TB
   Jobs -->|"validated derived results"| Model
   Model -->|"snapshots and operation log"| Data
   Data -->|"converged semantic operations"| Model
-~~~
+```
 
 ### 3.1 Runtime ownership
 
-| Runtime area | Owns | Must not own |
-| --- | --- | --- |
-| Main thread | input, accessibility, provisional preview, UI panels, render scheduling | canonical model mutation, B-Rep native state |
-| Renderer | GPU resources, draw IDs, local buffers, visual pick acceleration | persistent semantic IDs as draw IDs, undo state |
-| Model worker | document revisions, transactions, semantic graph, indexes, validation | DOM, React state, GPU handles |
-| Geometry/import workers | kernel handles, parsing, tessellation, sectioning, rule computation | document revision assignment |
-| Persistence/sync | durable snapshots, operation delivery, permissions, published revision ordering | silent geometry repair |
+| Runtime area            | Owns                                                                            | Must not own                                    |
+| ----------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Main thread             | input, accessibility, provisional preview, UI panels, render scheduling         | canonical model mutation, B-Rep native state    |
+| Renderer                | GPU resources, draw IDs, local buffers, visual pick acceleration                | persistent semantic IDs as draw IDs, undo state |
+| Model worker            | document revisions, transactions, semantic graph, indexes, validation           | DOM, React state, GPU handles                   |
+| Geometry/import workers | kernel handles, parsing, tessellation, sectioning, rule computation             | document revision assignment                    |
+| Persistence/sync        | durable snapshots, operation delivery, permissions, published revision ordering | silent geometry repair                          |
 
 ### 3.2 Data strata
 
-| Stratum | Canonical? | Examples |
-| --- | --- | --- |
-| Semantic BIM document | Yes | wall type, level, host relation, properties, units, georeference |
-| Geometric intent | Yes | path, profiles, placements, parameters, feature inputs |
-| Derived geometry | No | B-Rep handle, section curves, tessellation, topology map |
-| Acceleration | No | R-tree, BVH, text layout, room-boundary cache |
-| Presentation | No | render object, buffer, draw ID, HUD anchor, hover state |
+| Stratum               | Canonical? | Examples                                                         |
+| --------------------- | ---------- | ---------------------------------------------------------------- |
+| Semantic BIM document | Yes        | wall type, level, host relation, properties, units, georeference |
+| Geometric intent      | Yes        | path, profiles, placements, parameters, feature inputs           |
+| Derived geometry      | No         | B-Rep handle, section curves, tessellation, topology map         |
+| Acceleration          | No         | R-tree, BVH, text layout, room-boundary cache                    |
+| Presentation          | No         | render object, buffer, draw ID, HUD anchor, hover state          |
 
 ### 3.3 The correct dual-engine model
 
 Arq has two derived engines, not two competing sources of truth:
 
-~~~mermaid
+```mermaid
 flowchart TB
   Doc["Semantic document and geometric intent"]
   Derive["Derivation and constraint services"]
@@ -201,7 +201,7 @@ flowchart TB
   Derive --> Tess
   Kernel --> Tess
   Tess --> GPU
-~~~
+```
 
 The semantic document explains what an element is. The geometry kernel explains how its advanced shape is produced. The renderer explains how it is drawn now.
 
@@ -223,12 +223,12 @@ Use metres and radians internally. Display units are presentation policy. Geogra
 
 The phrase "all elements are a DAG" is too broad. Arq uses distinct systems:
 
-| System | Examples | Cycle policy |
-| --- | --- | --- |
-| Semantic relationship graph | containment, host, type, join, references | valid cycles may exist |
-| Derivation DAG | level -> wall height -> opening cut -> section cache | cycles are errors |
-| Constraint groups | alignment, equal distance, coincident points | solve and diagnose, not topologically sort |
-| B-Rep topology | vertex/edge/coedge/loop/face adjacency | kernel-owned topology |
+| System                      | Examples                                             | Cycle policy                               |
+| --------------------------- | ---------------------------------------------------- | ------------------------------------------ |
+| Semantic relationship graph | containment, host, type, join, references            | valid cycles may exist                     |
+| Derivation DAG              | level -> wall height -> opening cut -> section cache | cycles are errors                          |
+| Constraint groups           | alignment, equal distance, coincident points         | solve and diagnose, not topologically sort |
+| B-Rep topology              | vertex/edge/coedge/loop/face adjacency               | kernel-owned topology                      |
 
 The dependency graph only schedules directed recompute. It must compute the full dirty descendant closure and evaluate only the impacted subgraph in deterministic order.
 
@@ -404,13 +404,13 @@ Adaptive quality may reduce shadows, tessellation, label density, or distant det
 
 ### 8.1 Index by purpose
 
-| Need | Index/query path | Canonical target |
-| --- | --- | --- |
-| Plan snap | 2D primitive R-tree plus analytic narrow phase | curve/profile/semantic reference |
-| 3D visible pick | GPU ID acceleration plus CPU fallback | semantic element |
-| Precise model hit | ray/work-plane plus analytic or kernel test | geometry intent/product |
-| Mesh culling | view-specific BVH or batches | transient render packet |
-| Room/adjacency lookup | semantic boundary/index service | room/spatial relation |
+| Need                  | Index/query path                               | Canonical target                 |
+| --------------------- | ---------------------------------------------- | -------------------------------- |
+| Plan snap             | 2D primitive R-tree plus analytic narrow phase | curve/profile/semantic reference |
+| 3D visible pick       | GPU ID acceleration plus CPU fallback          | semantic element                 |
+| Precise model hit     | ray/work-plane plus analytic or kernel test    | geometry intent/product          |
+| Mesh culling          | view-specific BVH or batches                   | transient render packet          |
+| Room/adjacency lookup | semantic boundary/index service                | room/spatial relation            |
 
 An R-tree is useful for plan primitives. A BVH is useful for render meshes. They are not interchangeable descriptions of every query.
 
@@ -475,13 +475,13 @@ The **semantic-operations.ts** reference demonstrates a CRDT-agnostic ordered op
 
 Examples:
 
-| Concurrent situation | Expected behaviour |
-| --- | --- |
-| Two users move same wall | Converge operations deterministically; surface compound/conflicting motion if policy cannot safely combine it |
-| One user deletes wall while another adds opening | Preserve both operations in log; resolver reports rejected/orphan opening and offers recovery |
-| Two users change a type property | Use declared field conflict rule, attribution, and revision history |
-| Concurrent host reassignment | Validate final host compatibility; require explicit conflict resolution when ambiguous |
-| Comment/presence update | Merge freely because it does not alter canonical geometry |
+| Concurrent situation                             | Expected behaviour                                                                                            |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Two users move same wall                         | Converge operations deterministically; surface compound/conflicting motion if policy cannot safely combine it |
+| One user deletes wall while another adds opening | Preserve both operations in log; resolver reports rejected/orphan opening and offers recovery                 |
+| Two users change a type property                 | Use declared field conflict rule, attribution, and revision history                                           |
+| Concurrent host reassignment                     | Validate final host compatibility; require explicit conflict resolution when ambiguous                        |
+| Comment/presence update                          | Merge freely because it does not alter canonical geometry                                                     |
 
 Never claim "zero merge conflicts" for BIM. Promise visible, recoverable semantic conflicts instead.
 
@@ -544,16 +544,16 @@ Each analysis needs its own source model, tolerances, assumptions, validity doma
 
 Do not bake volatile package versions into an architecture promise. Pin exact versions in a compatibility manifest, lock file, release notes, and benchmark record.
 
-| Layer | Direction | Guardrail |
-| --- | --- | --- |
-| UI | React is the default application-shell choice; Solid is an alternative, not a parallel default | choose one for the product shell |
-| Language | strict TypeScript | runtime validation remains mandatory |
-| Rendering | WebGL2 baseline, WebGPU enhancement, renderer adapter | no semantic dependence on renderer |
-| Geometry | procedural builders first, B-Rep adapter after evaluation | kernel licence and corpus gate |
-| Indexing | 2D R-tree plus targeted BVH/analytic indexes | revision-matched query results |
-| Collaboration | local durable storage plus Loro/other CRDT candidate | semantic resolver and server validation |
-| Rule analysis | worker-based versioned rule packs | source, edition, scope, disclaimer |
-| Persistence | IndexedDB/local durable store plus server checkpoints | migrations and corruption recovery |
+| Layer         | Direction                                                                                      | Guardrail                               |
+| ------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------- |
+| UI            | React is the default application-shell choice; Solid is an alternative, not a parallel default | choose one for the product shell        |
+| Language      | strict TypeScript                                                                              | runtime validation remains mandatory    |
+| Rendering     | WebGL2 baseline, WebGPU enhancement, renderer adapter                                          | no semantic dependence on renderer      |
+| Geometry      | procedural builders first, B-Rep adapter after evaluation                                      | kernel licence and corpus gate          |
+| Indexing      | 2D R-tree plus targeted BVH/analytic indexes                                                   | revision-matched query results          |
+| Collaboration | local durable storage plus Loro/other CRDT candidate                                           | semantic resolver and server validation |
+| Rule analysis | worker-based versioned rule packs                                                              | source, edition, scope, disclaimer      |
+| Persistence   | IndexedDB/local durable store plus server checkpoints                                          | migrations and corruption recovery      |
 
 ### 11.2 Wasm and worker policy
 
@@ -583,20 +583,20 @@ Do not bake volatile package versions into an architecture promise. Pin exact ve
 
 ## 13. Critical edge cases and required responses
 
-| Failure mode | Incorrect shortcut | Required Arq response |
-| --- | --- | --- |
-| Large-coordinate jitter | Upload world-scale float32 vertices or re-upload all vertices per camera move | float64 frame localisation, stable render chunks, optional high/low path |
-| Acute/unequal wall joins | Infinite miter, render-mesh overlap, or fixed global epsilon | semantic join policy, 2D profile validation, miter limit, deterministic fallback, diagnostic |
-| Coincident Boolean faces | Assume kernel always returns valid geometry | named tolerance policy, validation, atomic reject/retain prior product |
-| WASM heap growth | Allocate B-Rep objects on every pointer move | preview without heavy kernel, bounded worker jobs, explicit disposal and memory telemetry |
-| GPU allocation thrash | create buffers per slider event | coalesced preview, pooled allocations where measured, revisioned render packets |
-| CRDT collision | Merge raw geometry maps and declare success | converge semantic operations, rebuild/validate, conflict/recovery UI |
-| DAG cycle | Treat all relations as directed dependencies | separate derivation DAG, constraints, semantic graph, and topology |
-| Stale worker result | Let old tessellation replace a newer edit | revision + content signature check before acceptance |
-| Massive or malformed import | Parse on UI thread and partially mutate document | worker sandbox, quotas, diagnostics, isolated import transaction |
-| Rule result under wrong code edition | hard-code a generic threshold | versioned jurisdictional pack with source/applicability or review-required finding |
-| Thin/hidden GPU pick | trust one draw-ID readback | CPU semantic fallback and view-aware query |
-| Unsupported file entity | silently approximate and export as valid | preserve/report unsupported source content and publish capability matrix |
+| Failure mode                         | Incorrect shortcut                                                            | Required Arq response                                                                        |
+| ------------------------------------ | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Large-coordinate jitter              | Upload world-scale float32 vertices or re-upload all vertices per camera move | float64 frame localisation, stable render chunks, optional high/low path                     |
+| Acute/unequal wall joins             | Infinite miter, render-mesh overlap, or fixed global epsilon                  | semantic join policy, 2D profile validation, miter limit, deterministic fallback, diagnostic |
+| Coincident Boolean faces             | Assume kernel always returns valid geometry                                   | named tolerance policy, validation, atomic reject/retain prior product                       |
+| WASM heap growth                     | Allocate B-Rep objects on every pointer move                                  | preview without heavy kernel, bounded worker jobs, explicit disposal and memory telemetry    |
+| GPU allocation thrash                | create buffers per slider event                                               | coalesced preview, pooled allocations where measured, revisioned render packets              |
+| CRDT collision                       | Merge raw geometry maps and declare success                                   | converge semantic operations, rebuild/validate, conflict/recovery UI                         |
+| DAG cycle                            | Treat all relations as directed dependencies                                  | separate derivation DAG, constraints, semantic graph, and topology                           |
+| Stale worker result                  | Let old tessellation replace a newer edit                                     | revision + content signature check before acceptance                                         |
+| Massive or malformed import          | Parse on UI thread and partially mutate document                              | worker sandbox, quotas, diagnostics, isolated import transaction                             |
+| Rule result under wrong code edition | hard-code a generic threshold                                                 | versioned jurisdictional pack with source/applicability or review-required finding           |
+| Thin/hidden GPU pick                 | trust one draw-ID readback                                                    | CPU semantic fallback and view-aware query                                                   |
+| Unsupported file entity              | silently approximate and export as valid                                      | preserve/report unsupported source content and publish capability matrix                     |
 
 ## 14. Delivery roadmap and phase gates
 
@@ -706,21 +706,21 @@ No feature is complete until it has:
 
 ## 16. Production reference implementations
 
-| Reference | Purpose |
-| --- | --- |
-| **reference/dependency-graph.ts** | Dirty-closure topological evaluation for directed derivations |
-| **reference/snap-engine.ts** | Plan-view broad-phase contract and deterministic snap ranking |
-| **reference/coordinates.ts** | float64 canonical positions and local float32 packing |
-| **reference/worker-protocol.ts** | Revisioned typed worker messages and safe transferable-buffer handling |
-| **reference/webgpu-render-origin.ts** | Camera-independent render chunks and optional high/low coordinate split |
-| **reference/high-low-render-origin.wgsl** | Correctly framed optional high/low WGSL vertex path |
-| **reference/semantic-operations.ts** | CRDT-agnostic semantic operation log and deterministic rebuild boundary |
-| **reference/rule-engine.ts** | Jurisdiction/version-aware rules engine contract |
-| **reference/picking-contract.ts** | Revision-matched semantic pick resolution and WebGPU-aligned ID readback layout |
-| **reference/selection-id-pass.wgsl** | First-layer and inspect-through semantic ID shader entry points |
-| **reference/deferred-csg-session.ts** | Preview, commit, derived-job, cancellation, and stale-result state machine |
-| **reference/native-desktop-port.ts** | Browser-first desktop capability boundary with a native-shell adapter seam |
-| **reference/quantity-draft.ts** | Controlled typed quantity draft that preserves incomplete input outside canonical state |
+| Reference                                 | Purpose                                                                                 |
+| ----------------------------------------- | --------------------------------------------------------------------------------------- |
+| **reference/dependency-graph.ts**         | Dirty-closure topological evaluation for directed derivations                           |
+| **reference/snap-engine.ts**              | Plan-view broad-phase contract and deterministic snap ranking                           |
+| **reference/coordinates.ts**              | float64 canonical positions and local float32 packing                                   |
+| **reference/worker-protocol.ts**          | Revisioned typed worker messages and safe transferable-buffer handling                  |
+| **reference/webgpu-render-origin.ts**     | Camera-independent render chunks and optional high/low coordinate split                 |
+| **reference/high-low-render-origin.wgsl** | Correctly framed optional high/low WGSL vertex path                                     |
+| **reference/semantic-operations.ts**      | CRDT-agnostic semantic operation log and deterministic rebuild boundary                 |
+| **reference/rule-engine.ts**              | Jurisdiction/version-aware rules engine contract                                        |
+| **reference/picking-contract.ts**         | Revision-matched semantic pick resolution and WebGPU-aligned ID readback layout         |
+| **reference/selection-id-pass.wgsl**      | First-layer and inspect-through semantic ID shader entry points                         |
+| **reference/deferred-csg-session.ts**     | Preview, commit, derived-job, cancellation, and stale-result state machine              |
+| **reference/native-desktop-port.ts**      | Browser-first desktop capability boundary with a native-shell adapter seam              |
+| **reference/quantity-draft.ts**           | Controlled typed quantity draft that preserves incomplete input outside canonical state |
 
 These are reference contracts. Integrate them with the actual application schema rather than treating a sample type as a substitute for product modelling decisions.
 
@@ -764,17 +764,17 @@ Reconfirm package versions, browser compatibility, licensing, code editions, and
 
 The later supplied deep dives add valuable goals: non-modal work, inspect-through selection, deferred CSG previews, spatial option ghosts, native desktop packaging, and polished contextual controls. Their raw samples must be interpreted through the following accepted contracts.
 
-| Area | Accepted implementation decision |
-| --- | --- |
-| Normal selection | GPU ID picking is an optional accelerator with a CPU fallback and a revision-matched draw-ID-to-semantic-target table |
-| Inspect through | Use a capped, cursor-scissored depth-peel stack only on explicit intent. Ping-pong depth targets and resolve returned draw IDs semantically |
-| GPU readback | Obey the 256-byte WebGPU row alignment, use a bounded staging-buffer ring, and discard stale responses |
-| Dragging and CSG | Render a provisional proxy during direct manipulation; commit one semantic transaction; derive CSG asynchronously with revision/signature guards |
-| Non-modal diagnostics | Keep the user in flow with ghost guides and recovery actions, but never commit an invalid semantic document |
-| Branch overlays | Render frozen comparison revisions as labelled ghost packets; merge semantic operations through normal validation |
-| Native desktop | Treat Tauri as an optional WebView shell with capability adapters, security review, and browser fallback, not as an automatic direct-Metal renderer |
-| Contextual UI | Use platform-adaptive visuals with focus, keyboard, touch, contrast, reduced-motion, and controlled quantity-input requirements |
-| Spatial acceleration | Use a real, benchmarked R-tree or BVH by purpose. A linear Vec scan is not a BVH or ray caster |
+| Area                  | Accepted implementation decision                                                                                                                    |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Normal selection      | GPU ID picking is an optional accelerator with a CPU fallback and a revision-matched draw-ID-to-semantic-target table                               |
+| Inspect through       | Use a capped, cursor-scissored depth-peel stack only on explicit intent. Ping-pong depth targets and resolve returned draw IDs semantically         |
+| GPU readback          | Obey the 256-byte WebGPU row alignment, use a bounded staging-buffer ring, and discard stale responses                                              |
+| Dragging and CSG      | Render a provisional proxy during direct manipulation; commit one semantic transaction; derive CSG asynchronously with revision/signature guards    |
+| Non-modal diagnostics | Keep the user in flow with ghost guides and recovery actions, but never commit an invalid semantic document                                         |
+| Branch overlays       | Render frozen comparison revisions as labelled ghost packets; merge semantic operations through normal validation                                   |
+| Native desktop        | Treat Tauri as an optional WebView shell with capability adapters, security review, and browser fallback, not as an automatic direct-Metal renderer |
+| Contextual UI         | Use platform-adaptive visuals with focus, keyboard, touch, contrast, reduced-motion, and controlled quantity-input requirements                     |
+| Spatial acceleration  | Use a real, benchmarked R-tree or BVH by purpose. A linear Vec scan is not a BVH or ray caster                                                      |
 
 See [ARQ_IMPLEMENTATION_DEEP_DIVE.md](ARQ_IMPLEMENTATION_DEEP_DIVE.md), [ARQ_ULTIMATE_MASTER_SPECIFICATION.md](ARQ_ULTIMATE_MASTER_SPECIFICATION.md), and ADRs 007 through 009 for the detailed contracts.
 
@@ -782,14 +782,14 @@ See [ARQ_IMPLEMENTATION_DEEP_DIVE.md](ARQ_IMPLEMENTATION_DEEP_DIVE.md), [ARQ_ULT
 
 The supplied UI playbook correctly prioritizes cursor-local editing, inline quantity adjustment, command-driven work, non-modal diagnostics, and careful visual optics. The product must not trade semantic correctness or accessibility for animation polish.
 
-| UI concern | Required contract |
-| --- | --- |
-| Contextual HUD | Presentation-only placement with pointer-safe passive regions, viewport collision avoidance, focus freeze, and a keyboard/touch Inspector equivalent |
-| Quantity entry | Controlled string draft separated from canonical quantities; finite, domain-valid commit only; Escape cancels |
-| Numeric scrubber | Pointer previews update a proxy; pointer release produces one proposal and one possible undo record |
-| Command palette | Opens explicitly, manages focus and IME input, and returns typed proposals rather than direct model callbacks |
-| Diagnostic quick fix | Valid only at the diagnostic source revision, then routes through normal transaction validation |
-| Glass and squircle visuals | Opaque contrast-safe baseline; blur and corner-shape enhancement are capability- and performance-gated |
-| Spring and velocity tilt | Optional, capped, and disabled under reduced motion or active text editing |
+| UI concern                 | Required contract                                                                                                                                    |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Contextual HUD             | Presentation-only placement with pointer-safe passive regions, viewport collision avoidance, focus freeze, and a keyboard/touch Inspector equivalent |
+| Quantity entry             | Controlled string draft separated from canonical quantities; finite, domain-valid commit only; Escape cancels                                        |
+| Numeric scrubber           | Pointer previews update a proxy; pointer release produces one proposal and one possible undo record                                                  |
+| Command palette            | Opens explicitly, manages focus and IME input, and returns typed proposals rather than direct model callbacks                                        |
+| Diagnostic quick fix       | Valid only at the diagnostic source revision, then routes through normal transaction validation                                                      |
+| Glass and squircle visuals | Opaque contrast-safe baseline; blur and corner-shape enhancement are capability- and performance-gated                                               |
+| Spring and velocity tilt   | Optional, capped, and disabled under reduced motion or active text editing                                                                           |
 
 The detailed implementation and test gates live in [ARQ_UI_UX_SYSTEM_SPECIFICATION.md](ARQ_UI_UX_SYSTEM_SPECIFICATION.md). The associated decisions are [ADR-010](decision_records/ADR-010-unified-contextual-interaction-boundary.md) and [ADR-011](decision_records/ADR-011-progressive-accessible-surface-and-motion-system.md).

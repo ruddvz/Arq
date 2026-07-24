@@ -11,23 +11,23 @@ The supplied UI direction is strong: cursor-local controls, glass depth, visual 
 
 ## 1. Decisions at a glance
 
-| Desired experience | Required implementation rule |
-| --- | --- |
-| Cursor-local editing | HUD placement is presentation-only; it never owns canonical geometry or catches canvas input outside an actual control. |
-| Type a dimension immediately | Keep an editable draft string separate from the canonical quantity; commit only a valid, finite, domain-valid value. |
-| Drag a label to scrub a value | Pointer movement creates transient previews. Pointer release creates at most one semantic proposal. Escape cancels. |
+| Desired experience                      | Required implementation rule                                                                                                                            |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cursor-local editing                    | HUD placement is presentation-only; it never owns canonical geometry or catches canvas input outside an actual control.                                 |
+| Type a dimension immediately            | Keep an editable draft string separate from the canonical quantity; commit only a valid, finite, domain-valid value.                                    |
+| Drag a label to scrub a value           | Pointer movement creates transient previews. Pointer release creates at most one semantic proposal. Escape cancels.                                     |
 | Command everything with Cmd+K or Ctrl+K | The palette opens and closes explicitly, uses accessible dialog/list semantics, and creates typed proposals rather than calling direct model mutations. |
-| Non-blocking diagnostics | A diagnostic chip may dismiss a presentation. Its quick fix is revision-guarded and goes through the normal transaction gateway. |
-| Delicate glass surfaces | Use opaque, contrast-safe baseline surfaces. Blur, saturation, and squircle corners are progressive enhancements for small floating overlays. |
-| Responsive motion | Spring motion is opt-in and reduced-motion aware. Velocity tilt uses actual pointer velocity, is capped, and stops while an input is focused. |
-| Browse hidden objects | Default to one-layer semantic picking. The inspect-through stack remains an explicit, bounded action defined in the implementation deep dive. |
-| Compare design options | Render a named, revision-pinned option overlay. A ghost is not an unbounded or free CRDT branch. |
+| Non-blocking diagnostics                | A diagnostic chip may dismiss a presentation. Its quick fix is revision-guarded and goes through the normal transaction gateway.                        |
+| Delicate glass surfaces                 | Use opaque, contrast-safe baseline surfaces. Blur, saturation, and squircle corners are progressive enhancements for small floating overlays.           |
+| Responsive motion                       | Spring motion is opt-in and reduced-motion aware. Velocity tilt uses actual pointer velocity, is capped, and stops while an input is focused.           |
+| Browse hidden objects                   | Default to one-layer semantic picking. The inspect-through stack remains an explicit, bounded action defined in the implementation deep dive.           |
+| Compare design options                  | Render a named, revision-pinned option overlay. A ghost is not an unbounded or free CRDT branch.                                                        |
 
 ## 2. One interaction pipeline for every UI surface
 
 HUDs, scrubbers, a property inspector, radial menus, keyboard shortcuts, and the command palette must reach the model through the same command boundary. This removes a common source of CAD inconsistency: one UI path validates a wall edit while another silently mutates it.
 
-~~~mermaid
+```mermaid
 flowchart TD
   A["HUD, scrubber, palette, inspector"] --> B["Transient UI state"]
   B --> C["Typed semantic proposal"]
@@ -35,15 +35,15 @@ flowchart TD
   D --> E["Authoritative model worker"]
   E --> F["Committed revision or structured diagnostic"]
   F --> G["Derived geometry and view caches"]
-~~~
+```
 
 ### 2.1 Three states, never one ambiguous state
 
-| State | Owner | Examples | Persistence |
-| --- | --- | --- | --- |
-| Presentation state | UI process | Palette open, HUD position, selected diagnostic card | Never persisted as BIM data |
-| Provisional interaction state | Tool session | Pointer preview, scrub draft, wall drag proxy | May be replayed locally, but does not alter canonical document |
-| Semantic state | Model worker | Wall location, level constraint, opening host relationship | Transactional, revisioned, collaborative |
+| State                         | Owner        | Examples                                                   | Persistence                                                    |
+| ----------------------------- | ------------ | ---------------------------------------------------------- | -------------------------------------------------------------- |
+| Presentation state            | UI process   | Palette open, HUD position, selected diagnostic card       | Never persisted as BIM data                                    |
+| Provisional interaction state | Tool session | Pointer preview, scrub draft, wall drag proxy              | May be replayed locally, but does not alter canonical document |
+| Semantic state                | Model worker | Wall location, level constraint, opening host relationship | Transactional, revisioned, collaborative                       |
 
 The following invariant applies everywhere:
 
@@ -71,10 +71,10 @@ This sequence produces professional input behaviour before visual polish makes a
 
 The HUD has two distinct modes.
 
-| Mode | Pointer behaviour | Focus behaviour | Model effect |
-| --- | --- | --- | --- |
-| Passive preview | Tracks nearby pointer with a small offset; decorative body does not intercept canvas events | No focus | None |
-| Active edit | Anchors beside the selected geometry or tool cursor; position freezes during text input | Actual input or button receives focus | Validated proposal on commit only |
+| Mode            | Pointer behaviour                                                                           | Focus behaviour                       | Model effect                      |
+| --------------- | ------------------------------------------------------------------------------------------- | ------------------------------------- | --------------------------------- |
+| Passive preview | Tracks nearby pointer with a small offset; decorative body does not intercept canvas events | No focus                              | None                              |
+| Active edit     | Anchors beside the selected geometry or tool cursor; position freezes during text input     | Actual input or button receives focus | Validated proposal on commit only |
 
 The panel body uses pointer-events none. Individual form controls and buttons opt into pointer events auto. This prevents an invisible or oversized HUD from consuming canvas pan, orbit, snapping, or context-menu gestures.
 
@@ -93,14 +93,14 @@ This avoids conflicting animations that both write the vertical coordinate. Disa
 
 Suggested spring token for optional local overlays:
 
-~~~ts
+```ts
 export const arqOverlaySpring = {
-  type: "spring" as const,
+  type: 'spring' as const,
   stiffness: 420,
   damping: 30,
   mass: 0.7,
 };
-~~~
+```
 
 It is a token, not a mandate. Long-running camera, layout, and data-loading transitions need separate motion policy and must respect user preference.
 
@@ -121,13 +121,13 @@ Use [reference/quantity-draft.ts](reference/quantity-draft.ts) for length text p
 
 An inline label can offer scrub behaviour, but text selection and precise keyboard entry remain equally available. The required pointer contract is:
 
-| Event | UI action | Semantic action |
-| --- | --- | --- |
-| Pointer down on scrub affordance | Capture pointer; start NumericScrubSession | None |
-| Pointer move | Update visible preview and proxy geometry | None |
-| Pointer up | End session; compare preview to original | Create one proposal only if changed |
-| Escape or pointer cancel | Restore original preview | None |
-| Arrow keys / Page keys | Adjust accessible form control in declared steps | Proposal according to standard quantity commit policy |
+| Event                            | UI action                                        | Semantic action                                       |
+| -------------------------------- | ------------------------------------------------ | ----------------------------------------------------- |
+| Pointer down on scrub affordance | Capture pointer; start NumericScrubSession       | None                                                  |
+| Pointer move                     | Update visible preview and proxy geometry        | None                                                  |
+| Pointer up                       | End session; compare preview to original         | Create one proposal only if changed                   |
+| Escape or pointer cancel         | Restore original preview                         | None                                                  |
+| Arrow keys / Page keys           | Adjust accessible form control in declared steps | Proposal according to standard quantity commit policy |
 
 Shift may select fine precision and Alt or Option may select coarse precision, but the modifiers must be disclosed through tooltip, help, and keyboard alternatives. Capture only the dedicated scrub affordance, not the entire HUD.
 
@@ -152,7 +152,7 @@ The WAI-ARIA dialog pattern requires managed focus and a keyboard mechanism to c
 
 Every command receives current context and returns a proposal, or returns unavailable. It does not receive direct access to the canonical document object.
 
-~~~ts
+```ts
 export interface CommandDescriptor<Context, Proposal> {
   readonly id: string;
   readonly title: string;
@@ -161,7 +161,7 @@ export interface CommandDescriptor<Context, Proposal> {
   readonly isAvailable?: (context: Context) => boolean;
   readonly createProposal: (context: Context) => Proposal | undefined;
 }
-~~~
+```
 
 The command bridge submits the proposal to the model worker. The worker decides whether a selected wall is editable, a referenced level exists, the caller has permission, and the proposal still targets the active revision.
 
@@ -214,12 +214,12 @@ Use a one-pixel alpha border as the cross-device baseline. A half-pixel border c
 
 ### 7.3 Typography
 
-| Content | Font policy | Numeric policy |
-| --- | --- | --- |
-| Application controls | System UI font stack with platform fallbacks | Proportional unless value alignment matters |
-| Coordinates, dimensions, angles, schedules | System-compatible monospace or tabular-capable stack | tabular-nums and lining-nums |
-| Large titles | Optical review with slightly negative tracking if necessary | No special requirement |
-| Micro labels | Avoid overly tight space; use modest positive tracking and non-colour contrast | Do not use for essential content only |
+| Content                                    | Font policy                                                                    | Numeric policy                              |
+| ------------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------- |
+| Application controls                       | System UI font stack with platform fallbacks                                   | Proportional unless value alignment matters |
+| Coordinates, dimensions, angles, schedules | System-compatible monospace or tabular-capable stack                           | tabular-nums and lining-nums                |
+| Large titles                               | Optical review with slightly negative tracking if necessary                    | No special requirement                      |
+| Micro labels                               | Avoid overly tight space; use modest positive tracking and non-colour contrast | Do not use for essential content only       |
 
 Tabular digits make changing measurements less visually jittery when the selected font supports them. They do not replace stable container widths, clear labels, or correct quantity validation. Avoid presenting non-standard font smoothing settings as a universal visual guarantee.
 
@@ -228,10 +228,10 @@ Tabular digits make changing measurements less visually jittery when the selecte
 Create a small source icon set on a 24 by 24 grid with a 2-pixel safety area. Use rounded joins and caps only where the glyph design calls for them. Recommended stroke weights are a starting visual test, not a rule of nature:
 
 | Visual size | Starting stroke test |
-| --- | --- |
-| 16 pixels | 1.5 pixels |
-| 20 pixels | 1.75 pixels |
-| 24 pixels | 2 pixels |
+| ----------- | -------------------- |
+| 16 pixels   | 1.5 pixels           |
+| 20 pixels   | 1.75 pixels          |
+| 24 pixels   | 2 pixels             |
 
 Every icon-only control needs an accessible name and a hit target sized for the supported input modes. Test the glyphs at device pixel ratios 1, 2, and 3, in high contrast, and with selected, disabled, hover, focus, and pressed states.
 
@@ -257,30 +257,30 @@ Hover can show semantic target context such as wall, curtain panel, structural s
 
 The UI is ready for the first production feature only when all applicable checks pass.
 
-| Area | Minimum gate |
-| --- | --- |
-| Canvas interaction | Passive HUD regions do not block pan, orbit, selection, or context menu. |
-| Quantity entry | Empty, incomplete, invalid, non-finite, and out-of-range values cannot commit. Escape restores the original value. |
-| Scrubbing | Pointer capture ends on up, cancel, and lost capture. A drag produces at most one undoable command. |
-| HUD placement | Panel remains in safe viewport area, avoids active overlays where possible, and stops motion while editing. |
-| Command palette | Opens from its shortcut, preserves and restores focus, supports keyboard navigation, honors IME composition, and produces proposals rather than mutations. |
-| Diagnostics | Persistent issue remains discoverable after dismissal. Quick fix fails safely when stale. No colour-only meaning. |
-| Motion | Reduced-motion preference removes nonessential spring, tilt, and animated attention signals. |
-| Visual contrast | Opaque fallback is legible without backdrop blur. High-contrast and forced-colors modes remain usable. |
-| Iconography | Icon-only controls have names and adequate hit areas. Glyphs are reviewed at 1x, 2x, and 3x. |
-| Performance | HUD and palette overlays are profiled over an active 3D canvas; large blur layers are not assumed free. |
+| Area               | Minimum gate                                                                                                                                               |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Canvas interaction | Passive HUD regions do not block pan, orbit, selection, or context menu.                                                                                   |
+| Quantity entry     | Empty, incomplete, invalid, non-finite, and out-of-range values cannot commit. Escape restores the original value.                                         |
+| Scrubbing          | Pointer capture ends on up, cancel, and lost capture. A drag produces at most one undoable command.                                                        |
+| HUD placement      | Panel remains in safe viewport area, avoids active overlays where possible, and stops motion while editing.                                                |
+| Command palette    | Opens from its shortcut, preserves and restores focus, supports keyboard navigation, honors IME composition, and produces proposals rather than mutations. |
+| Diagnostics        | Persistent issue remains discoverable after dismissal. Quick fix fails safely when stale. No colour-only meaning.                                          |
+| Motion             | Reduced-motion preference removes nonessential spring, tilt, and animated attention signals.                                                               |
+| Visual contrast    | Opaque fallback is legible without backdrop blur. High-contrast and forced-colors modes remain usable.                                                     |
+| Iconography        | Icon-only controls have names and adequate hit areas. Glyphs are reviewed at 1x, 2x, and 3x.                                                               |
+| Performance        | HUD and palette overlays are profiled over an active 3D canvas; large blur layers are not assumed free.                                                    |
 
 ## 10. Reference index
 
-| Reference | Purpose |
-| --- | --- |
-| [reference/quantity-draft.ts](reference/quantity-draft.ts) | Controlled text-to-length parsing and valid commit boundary |
-| [reference/numeric-scrubber.ts](reference/numeric-scrubber.ts) | Pointer-independent numeric preview, quantization, commit, and cancel session |
-| [reference/hud-placement.ts](reference/hud-placement.ts) | Safe corner placement and capped velocity tilt |
-| [reference/command-palette-state.ts](reference/command-palette-state.ts) | Deterministic search state that returns proposals only |
-| [reference/diagnostic-actions.ts](reference/diagnostic-actions.ts) | Persistent diagnostic presentation and revision-guarded quick-fix contract |
-| [reference/arq-ui-theme.css](reference/arq-ui-theme.css) | Progressive surface, typography, contrast, and reduced-motion tokens |
-| [ARQ_IMPLEMENTATION_DEEP_DIVE.md](ARQ_IMPLEMENTATION_DEEP_DIVE.md) | GPU selection, deferred CSG, desktop boundary, and implementation corrections |
+| Reference                                                                | Purpose                                                                       |
+| ------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| [reference/quantity-draft.ts](reference/quantity-draft.ts)               | Controlled text-to-length parsing and valid commit boundary                   |
+| [reference/numeric-scrubber.ts](reference/numeric-scrubber.ts)           | Pointer-independent numeric preview, quantization, commit, and cancel session |
+| [reference/hud-placement.ts](reference/hud-placement.ts)                 | Safe corner placement and capped velocity tilt                                |
+| [reference/command-palette-state.ts](reference/command-palette-state.ts) | Deterministic search state that returns proposals only                        |
+| [reference/diagnostic-actions.ts](reference/diagnostic-actions.ts)       | Persistent diagnostic presentation and revision-guarded quick-fix contract    |
+| [reference/arq-ui-theme.css](reference/arq-ui-theme.css)                 | Progressive surface, typography, contrast, and reduced-motion tokens          |
+| [ARQ_IMPLEMENTATION_DEEP_DIVE.md](ARQ_IMPLEMENTATION_DEEP_DIVE.md)       | GPU selection, deferred CSG, desktop boundary, and implementation corrections |
 
 ## 11. Source notes
 
@@ -288,4 +288,3 @@ The UI is ready for the first production feature only when all applicable checks
 - [WAI-ARIA alert pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alert/)
 - [MDN: backdrop-filter](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/backdrop-filter)
 - [MDN: corner-shape](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/corner-shape)
-

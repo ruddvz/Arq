@@ -40,4 +40,3 @@ Every durable edit is created as a typed semantic proposal and submitted to the 
 - Escape, pointer cancel, and invalid quantity text produce no committed change.
 - The same semantic edit submitted from HUD, inspector, and command palette has equivalent transaction output.
 - A diagnostic quick fix generated for an old revision cannot mutate a newer document.
-

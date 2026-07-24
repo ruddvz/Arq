@@ -13,24 +13,24 @@ export interface OperationStamp {
 
 export type SemanticOperation =
   | (OperationStamp & {
-      readonly kind: "move-element";
+      readonly kind: 'move-element';
       readonly elementId: string;
       readonly delta: { readonly x: number; readonly y: number; readonly z: number };
     })
   | (OperationStamp & {
-      readonly kind: "set-parameter";
+      readonly kind: 'set-parameter';
       readonly elementId: string;
       readonly parameter: string;
       readonly value: unknown;
     })
   | (OperationStamp & {
-      readonly kind: "attach-host";
+      readonly kind: 'attach-host';
       readonly childId: string;
       readonly hostId: string;
       readonly localPlacement: Readonly<Record<string, unknown>>;
     })
   | (OperationStamp & {
-      readonly kind: "delete-element";
+      readonly kind: 'delete-element';
       readonly elementId: string;
     });
 
@@ -48,10 +48,7 @@ export interface RebuildResult<Model> {
 }
 
 export interface SemanticOperationResolver<Model> {
-  rebuild(
-    baseModel: Model,
-    orderedOperations: readonly SemanticOperation[],
-  ): RebuildResult<Model>;
+  rebuild(baseModel: Model, orderedOperations: readonly SemanticOperation[]): RebuildResult<Model>;
 }
 
 export class SemanticOperationLog {
@@ -86,10 +83,7 @@ export class SemanticOperationLog {
   }
 }
 
-export function compareOperations(
-  left: SemanticOperation,
-  right: SemanticOperation,
-): number {
+export function compareOperations(left: SemanticOperation, right: SemanticOperation): number {
   if (left.lamport !== right.lamport) {
     return left.lamport - right.lamport;
   }
@@ -107,6 +101,6 @@ function validateStamp(operation: OperationStamp): void {
     !Number.isSafeInteger(operation.lamport) ||
     operation.lamport < 0
   ) {
-    throw new Error("Semantic operation has an invalid causal stamp.");
+    throw new Error('Semantic operation has an invalid causal stamp.');
   }
 }

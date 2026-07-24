@@ -8,18 +8,18 @@ This plan evaluates a candidate behind the Arq GeometryKernel adapter. It does n
 
 ## 1. Candidate categories
 
-| Category | Example | Evaluate for | Do not assume |
-| --- | --- | --- | --- |
-| Full B-Rep kernel | Open CASCADE Technology | trimmed analytic geometry, STEP, sections, Booleans | easy WASM build, low memory, perfect booleans |
-| Mesh Boolean kernel | Manifold | fast solid mesh operations, reliable manifold output | analytic surfaces, NURBS, B-Rep identity |
-| Computational-geometry library | CGAL components | selected algorithms and predicates | permissive licence for every component |
-| Rust B-Rep stack | Truck or equivalent | Rust/WASM ergonomics and early web-native work | mature AEC interchange or production robustness |
+| Category                       | Example                 | Evaluate for                                         | Do not assume                                   |
+| ------------------------------ | ----------------------- | ---------------------------------------------------- | ----------------------------------------------- |
+| Full B-Rep kernel              | Open CASCADE Technology | trimmed analytic geometry, STEP, sections, Booleans  | easy WASM build, low memory, perfect booleans   |
+| Mesh Boolean kernel            | Manifold                | fast solid mesh operations, reliable manifold output | analytic surfaces, NURBS, B-Rep identity        |
+| Computational-geometry library | CGAL components         | selected algorithms and predicates                   | permissive licence for every component          |
+| Rust B-Rep stack               | Truck or equivalent     | Rust/WASM ergonomics and early web-native work       | mature AEC interchange or production robustness |
 
 ## 2. Non-negotiable adapter contract
 
 Before running a candidate, implement or stub this contract:
 
-~~~typescript
+```typescript
 interface GeometryKernel {
   build(request: BuildRequest): Promise<KernelResult>;
   boolean(request: BooleanRequest): Promise<KernelResult>;
@@ -28,7 +28,7 @@ interface GeometryKernel {
   validate(request: ValidationRequest): Promise<ValidationReport>;
   dispose(handle: GeometryHandle): Promise<void>;
 }
-~~~
+```
 
 Required behaviours:
 
@@ -95,19 +95,19 @@ Store every fixture and expected status in source control. Use small parameteris
 
 Score each candidate from tested evidence. A candidate can fail outright even with a high aggregate score if it fails any hard gate.
 
-| Dimension | What to measure |
-| --- | --- |
-| Correctness | Expected geometry/diagnostic result, valid topology, deterministic repeat |
-| Robustness | Controlled outcomes for malformed and near-degenerate input |
-| Interoperability | Required STEP/IFC geometry coverage and conversion fidelity |
-| Browser viability | Build repeatability, worker startup, supported browsers, asset size |
-| Memory | Peak and retained memory across repeated operations and disposal |
-| Latency | Cold start, common build, Boolean, tessellation, and cancellation latency |
-| Cancellation | Time to observe cancellation and cleanup resources |
-| Diagnostics | Error specificity and ability to identify source elements |
-| Maintainability | API stability, release cadence, wrapper complexity, testability |
-| Licence | Exact version terms, distribution obligations, source notices, commercial option |
-| Security | Parser surface, native code exposure, update/patch process |
+| Dimension         | What to measure                                                                  |
+| ----------------- | -------------------------------------------------------------------------------- |
+| Correctness       | Expected geometry/diagnostic result, valid topology, deterministic repeat        |
+| Robustness        | Controlled outcomes for malformed and near-degenerate input                      |
+| Interoperability  | Required STEP/IFC geometry coverage and conversion fidelity                      |
+| Browser viability | Build repeatability, worker startup, supported browsers, asset size              |
+| Memory            | Peak and retained memory across repeated operations and disposal                 |
+| Latency           | Cold start, common build, Boolean, tessellation, and cancellation latency        |
+| Cancellation      | Time to observe cancellation and cleanup resources                               |
+| Diagnostics       | Error specificity and ability to identify source elements                        |
+| Maintainability   | API stability, release cadence, wrapper complexity, testability                  |
+| Licence           | Exact version terms, distribution obligations, source notices, commercial option |
+| Security          | Parser surface, native code exposure, update/patch process                       |
 
 ## 5. Hard gates
 

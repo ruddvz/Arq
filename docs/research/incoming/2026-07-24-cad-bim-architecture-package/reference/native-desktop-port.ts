@@ -6,25 +6,23 @@
  */
 
 export type DesktopCapability =
-  | "fullscreen"
-  | "window-vibrancy"
-  | "native-file-dialog"
-  | "native-menu";
+  | 'fullscreen'
+  | 'window-vibrancy'
+  | 'native-file-dialog'
+  | 'native-menu';
 
 export interface NativeDesktopPort {
-  readonly runtime: "web" | "tauri" | "other";
+  readonly runtime: 'web' | 'tauri' | 'other';
   readonly capabilities: ReadonlySet<DesktopCapability>;
   toggleFullscreen(): Promise<void>;
 }
 
 export class WebDesktopPort implements NativeDesktopPort {
-  public readonly runtime = "web" as const;
-  public readonly capabilities: ReadonlySet<DesktopCapability> = new Set([
-    "fullscreen",
-  ]);
+  public readonly runtime = 'web' as const;
+  public readonly capabilities: ReadonlySet<DesktopCapability> = new Set(['fullscreen']);
 
   public async toggleFullscreen(): Promise<void> {
-    if (typeof document === "undefined") {
+    if (typeof document === 'undefined') {
       return;
     }
 
@@ -35,15 +33,12 @@ export class WebDesktopPort implements NativeDesktopPort {
 
     const element = document.documentElement;
     if (!element.requestFullscreen) {
-      throw new Error("Fullscreen is not supported by this web runtime.");
+      throw new Error('Fullscreen is not supported by this web runtime.');
     }
     await element.requestFullscreen();
   }
 }
 
-export function hasCapability(
-  port: NativeDesktopPort,
-  capability: DesktopCapability,
-): boolean {
+export function hasCapability(port: NativeDesktopPort, capability: DesktopCapability): boolean {
   return port.capabilities.has(capability);
 }

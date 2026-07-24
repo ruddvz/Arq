@@ -24,16 +24,13 @@ export interface HighLowVec3 {
   readonly low: Vec3;
 }
 
-export function createRenderChunk(
-  worldPositions: readonly Vec3[],
-  origin: Vec3,
-): RenderChunk {
-  assertFinite(origin, "Render origin");
+export function createRenderChunk(worldPositions: readonly Vec3[], origin: Vec3): RenderChunk {
+  assertFinite(origin, 'Render origin');
 
   const positions = new Float32Array(worldPositions.length * 3);
   for (let index = 0; index < worldPositions.length; index += 1) {
     const world = worldPositions[index];
-    assertFinite(world, "World position");
+    assertFinite(world, 'World position');
 
     // The subtraction happens as JavaScript f64 before the Float32Array cast.
     positions[index * 3] = world.x - origin.x;
@@ -48,12 +45,9 @@ export function createRenderChunk(
   };
 }
 
-export function cameraInChunk(
-  cameraWorld: Vec3,
-  chunkOrigin: Vec3,
-): Vec3 {
-  assertFinite(cameraWorld, "Camera position");
-  assertFinite(chunkOrigin, "Render origin");
+export function cameraInChunk(cameraWorld: Vec3, chunkOrigin: Vec3): Vec3 {
+  assertFinite(cameraWorld, 'Camera position');
+  assertFinite(chunkOrigin, 'Render origin');
   return {
     x: cameraWorld.x - chunkOrigin.x,
     y: cameraWorld.y - chunkOrigin.y,
@@ -66,7 +60,7 @@ export function cameraInChunk(
  * shader path. This does not make WGSL operate in native f64.
  */
 export function splitForHighLow(value: Vec3): HighLowVec3 {
-  assertFinite(value, "Coordinate");
+  assertFinite(value, 'Coordinate');
   const x = splitScalar(value.x);
   const y = splitScalar(value.y);
   const z = splitScalar(value.z);
@@ -86,11 +80,7 @@ function splitScalar(value: number): { high: number; low: number } {
 }
 
 function assertFinite(value: Vec3, label: string): void {
-  if (
-    !Number.isFinite(value.x) ||
-    !Number.isFinite(value.y) ||
-    !Number.isFinite(value.z)
-  ) {
-    throw new Error(label + " must contain finite coordinates.");
+  if (!Number.isFinite(value.x) || !Number.isFinite(value.y) || !Number.isFinite(value.z)) {
+    throw new Error(label + ' must contain finite coordinates.');
   }
 }

@@ -69,15 +69,15 @@ If a tessellation or GPU buffer is stale, discard and regenerate it. If an edit 
 
 ### Important terminology
 
-| Term | Meaning in this document |
-| --- | --- |
-| **Semantic model** | Persistent BIM/domain data such as a wall's type, base level, offsets, host, materials, and properties |
-| **Geometric intent** | Parametric definitions, sketches, curves, profiles, placements, and feature inputs that produce shape |
-| **B-Rep** | Boundary representation: topology plus supporting curves and surfaces, usually with tolerance-aware numerical operations |
-| **Render mesh** | A disposable polygonal approximation used by the GPU |
-| **Derivation dependency** | A directed dependency used to schedule recomputation |
-| **Constraint group** | An algebraic relationship that may be bidirectional and is solved, not topologically sorted |
-| **Document revision** | A monotonically increasing committed version of a model document |
+| Term                      | Meaning in this document                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Semantic model**        | Persistent BIM/domain data such as a wall's type, base level, offsets, host, materials, and properties                   |
+| **Geometric intent**      | Parametric definitions, sketches, curves, profiles, placements, and feature inputs that produce shape                    |
+| **B-Rep**                 | Boundary representation: topology plus supporting curves and surfaces, usually with tolerance-aware numerical operations |
+| **Render mesh**           | A disposable polygonal approximation used by the GPU                                                                     |
+| **Derivation dependency** | A directed dependency used to schedule recomputation                                                                     |
+| **Constraint group**      | An algebraic relationship that may be bidirectional and is solved, not topologically sorted                              |
+| **Document revision**     | A monotonically increasing committed version of a model document                                                         |
 
 ## 3. Corrections to the supplied technical premise
 
@@ -102,12 +102,12 @@ The companion audit records the detail and the implementation impact of each cor
 
 Keep the following layers separate. They evolve at different rates and have different validity rules.
 
-| Layer | Stores | Must be persistent? | Validated by |
-| --- | --- | --- | --- |
-| Semantic document | Elements, types, properties, relations, placements, formulas, command history | Yes | Schema, domain, and referential validation |
-| Geometric derivation | Profiles, curves, solids, B-Rep products, tessellation keys | Source definitions yes; generated products no | Kernel and topology validation |
-| Spatial acceleration | R-trees, BVHs, snap primitive indexes, room-boundary indexes | No | Rebuild/incremental index validation |
-| Presentation | Scene graph, GPU resources, lines, labels, selection glow, camera | No | Render and visual regression tests |
+| Layer                | Stores                                                                        | Must be persistent?                           | Validated by                               |
+| -------------------- | ----------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------ |
+| Semantic document    | Elements, types, properties, relations, placements, formulas, command history | Yes                                           | Schema, domain, and referential validation |
+| Geometric derivation | Profiles, curves, solids, B-Rep products, tessellation keys                   | Source definitions yes; generated products no | Kernel and topology validation             |
+| Spatial acceleration | R-trees, BVHs, snap primitive indexes, room-boundary indexes                  | No                                            | Rebuild/incremental index validation       |
+| Presentation         | Scene graph, GPU resources, lines, labels, selection glow, camera             | No                                            | Render and visual regression tests         |
 
 Never persist a GPU ID, a native kernel pointer, a Three.js object reference, or a screen-space coordinate as the only representation of a model fact.
 
@@ -145,7 +145,7 @@ Heavy geometry work can run in a bounded worker pool, but its result is only acc
 
 ## 5. System topology
 
-~~~mermaid
+```mermaid
 flowchart TB
   UI["React UI and input"]
   Render["Renderer and view caches"]
@@ -160,7 +160,7 @@ flowchart TB
   Kernel -->|"validated derived products"| Model
   Model -->|"command log and snapshots"| Store
   Store -->|"load, save, sync"| Model
-~~~
+```
 
 ### 5.1 Main thread responsibilities
 
@@ -201,7 +201,7 @@ flowchart TB
 
 The document root should contain the policies that make the file interpretable anywhere:
 
-~~~typescript
+```typescript
 interface ArqDocument {
   schemaVersion: number;
   documentId: string;
@@ -215,7 +215,7 @@ interface ArqDocument {
   propertySets: Record<string, PropertySetRecord>;
   commandLog: CommandEnvelope[];
 }
-~~~
+```
 
 Use metres and radians internally. Store the chosen display units and rounding policy separately. Do not use formatted strings such as "3000 mm" as numeric truth.
 
@@ -223,7 +223,7 @@ Use metres and radians internally. Store the chosen display units and rounding p
 
 Every element has a common envelope plus a strongly typed payload. The payload owns modelling intent, not the derived mesh.
 
-~~~typescript
+```typescript
 interface ElementBase {
   id: string;
   kind: ElementKind;
@@ -237,7 +237,7 @@ interface ElementBase {
 }
 
 interface WallElement extends ElementBase {
-  kind: "wall";
+  kind: 'wall';
   path: Curve2DOr3D;
   baseLevelId: string;
   baseOffset: number;
@@ -247,7 +247,7 @@ interface WallElement extends ElementBase {
   locationLine: WallLocationLine;
   joinPolicy: WallJoinPolicy;
 }
-~~~
+```
 
 A wall's openings belong in explicit host relationships or feature records. Do not encode door holes as an irreversible mutation to a wall mesh.
 
@@ -344,14 +344,14 @@ Tessellation is not one global fixed mesh. A plan view, a distant perspective, a
 
 Maintain explicit transformations:
 
-~~~text
+```text
 Georeference frame
   -> project frame
     -> building frame
       -> level / storey frame
         -> element local frame
           -> profile / feature frame
-~~~
+```
 
 The semantic document should preserve the georeference separately from working building coordinates. Most building edits happen near a stable project-local origin. Geographic Easting/Northing values should not flow through every wall vertex.
 
@@ -359,11 +359,11 @@ The semantic document should preserve the georeference separately from working b
 
 JavaScript Number and WebAssembly f64 are suitable for the canonical CPU model. GPU vertex inputs normally use float32, so subtract a carefully selected render origin in float64 before converting positions to Float32Array.
 
-| Magnitude in metres | Nearest float32 spacing | Consequence |
-| --- | ---: | --- |
-| 1 | about 0.000000119 | Fine for local rendering |
-| 10,000 | about 0.000976563 | Around 1 mm increments |
-| 1,000,000 | 0.0625 | About 6.25 cm increments |
+| Magnitude in metres | Nearest float32 spacing | Consequence              |
+| ------------------- | ----------------------: | ------------------------ |
+| 1                   |       about 0.000000119 | Fine for local rendering |
+| 10,000              |       about 0.000976563 | Around 1 mm increments   |
+| 1,000,000           |                  0.0625 | About 6.25 cm increments |
 
 Spacing is not the whole error story, but it explains why city-scale coordinates must be localised before rendering.
 
@@ -403,12 +403,12 @@ The policy must be versioned, surfaced in diagnostics, and tested against projec
 
 Arq needs four distinct graph-like structures:
 
-| Structure | Can have cycles? | Purpose | Evaluation rule |
-| --- | --- | --- |
-| Semantic relation graph | Yes | Host, containment, joins, type assignment, references | Referential validation |
-| Directed derivation graph | No | Parameter or geometry outputs derived from inputs | Dirty closure plus topological evaluation |
-| Constraint graph | Yes | Dimensions, alignment, equality, and geometric constraints | Numerical or symbolic solve group |
-| B-Rep topology graph | Yes in the adjacency sense | Vertices, edges, coedges, loops, faces, shells | Kernel-owned topology validation |
+| Structure                 | Can have cycles?           | Purpose                                                    | Evaluation rule                           |
+| ------------------------- | -------------------------- | ---------------------------------------------------------- | ----------------------------------------- |
+| Semantic relation graph   | Yes                        | Host, containment, joins, type assignment, references      | Referential validation                    |
+| Directed derivation graph | No                         | Parameter or geometry outputs derived from inputs          | Dirty closure plus topological evaluation |
+| Constraint graph          | Yes                        | Dimensions, alignment, equality, and geometric constraints | Numerical or symbolic solve group         |
+| B-Rep topology graph      | Yes in the adjacency sense | Vertices, edges, coedges, loops, faces, shells             | Kernel-owned topology validation          |
 
 The original draft treats all spatial relations as a DAG. That would reject valid modelling relationships or hide solver failures behind a simplistic sort.
 
@@ -478,7 +478,7 @@ The UI can draw a provisional drag preview, but the committed model changes only
 
 ### 10.2 Commit lifecycle
 
-~~~mermaid
+```mermaid
 flowchart TB
   Input["Command batch with base revision"]
   Stage["Stage isolated transaction"]
@@ -490,7 +490,7 @@ flowchart TB
 
   Input --> Stage --> Validate
   Validate --> Solve --> Derive --> Commit --> Publish
-~~~
+```
 
 If any required step fails, discard the staged mutation. A long-running geometry job may complete after commit only when the document can safely render an approved provisional product; otherwise the command waits or is rejected according to product semantics.
 
@@ -537,11 +537,11 @@ This keeps the UI responsive even when an exact recompute is expensive.
 
 ### 11.1 Separate the three jobs
 
-| Job | Preferred mechanism | Truth source |
-| --- | --- | --- |
-| Coarse visible-object selection | GPU ID buffer or broad-phase CPU query | Semantic element ID |
-| Precise semantic hit test | CPU spatial index plus analytic / kernel narrow phase | Geometric intent or kernel product |
-| Object snap | Active work plane plus plan/curve primitive index | Exact or tolerance-aware curve calculations |
+| Job                             | Preferred mechanism                                   | Truth source                                |
+| ------------------------------- | ----------------------------------------------------- | ------------------------------------------- |
+| Coarse visible-object selection | GPU ID buffer or broad-phase CPU query                | Semantic element ID                         |
+| Precise semantic hit test       | CPU spatial index plus analytic / kernel narrow phase | Geometric intent or kernel product          |
+| Object snap                     | Active work plane plus plan/curve primitive index     | Exact or tolerance-aware curve calculations |
 
 GPU triangle picking is useful, but it cannot replace analytic snapping or semantic references. A door opening, edge, wall centreline, or level reference may not exist as a stable render triangle.
 
@@ -702,11 +702,11 @@ The protocol is a public internal API. Version it and test it with fixtures.
 
 ### 13.3 Transferable ArrayBuffer versus SharedArrayBuffer
 
-| Mechanism | Use when | Important constraint |
-| --- | --- | --- |
-| Structured clone | Payloads are small or infrequent | Copies ordinary objects |
-| Transferable ArrayBuffer | One producer hands a finished mesh packet to one consumer | Sender loses use of the transferred buffer |
-| SharedArrayBuffer | A measured hot path needs concurrent shared memory | Requires secure, cross-origin-isolated deployment and careful Atomics discipline |
+| Mechanism                | Use when                                                  | Important constraint                                                             |
+| ------------------------ | --------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Structured clone         | Payloads are small or infrequent                          | Copies ordinary objects                                                          |
+| Transferable ArrayBuffer | One producer hands a finished mesh packet to one consumer | Sender loses use of the transferred buffer                                       |
+| SharedArrayBuffer        | A measured hot path needs concurrent shared memory        | Requires secure, cross-origin-isolated deployment and careful Atomics discipline |
 
 ArrayBuffer transfer is often the simpler fast path for render packets. Shared memory must have a normal transfer fallback. Cross-origin isolation can affect external scripts, images, iframes, analytics, and other embeds, so treat it as a deployment architecture decision.
 
@@ -725,7 +725,7 @@ WASM is appropriate for a proven geometry kernel, robust predicates, parsing, an
 
 Use a narrow adapter boundary:
 
-~~~typescript
+```typescript
 interface GeometryKernel {
   build(request: BuildRequest): Promise<KernelResult>;
   boolean(request: BooleanRequest): Promise<KernelResult>;
@@ -734,7 +734,7 @@ interface GeometryKernel {
   validate(request: ValidationRequest): Promise<ValidationReport>;
   dispose(handle: GeometryHandle): Promise<void>;
 }
-~~~
+```
 
 No other part of the application should depend on Open CASCADE, Manifold, or a future kernel's native object model.
 
@@ -756,12 +756,12 @@ Arq should own those decisions.
 
 ### 14.2 Current candidate fit
 
-| Candidate | Best fit | Benefits | Material caveat |
-| --- | --- | --- | --- |
-| Open CASCADE Technology | Advanced B-Rep, STEP, analytic surfaces, serious geometry interchange | Mature broad B-Rep capability | WASM build, memory, tolerance handling, and LGPL 2.1 plus exception obligations need deliberate review |
-| Manifold | Fast, reliable manifold triangle-mesh CSG | Small, practical mesh operations | It is mesh-based, not an analytic B-Rep or NURBS kernel |
-| CGAL | Selected rigorous computational geometry algorithms | Rich algorithms and predicates | Components are GPL/LGPL or commercial; audit each component before use |
-| Truck or another Rust geometry stack | Experimental web-oriented evaluation | Native Rust/WASM ergonomics | Ecosystem maturity and file interchange coverage must be proven with Arq fixtures |
+| Candidate                            | Best fit                                                              | Benefits                         | Material caveat                                                                                        |
+| ------------------------------------ | --------------------------------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Open CASCADE Technology              | Advanced B-Rep, STEP, analytic surfaces, serious geometry interchange | Mature broad B-Rep capability    | WASM build, memory, tolerance handling, and LGPL 2.1 plus exception obligations need deliberate review |
+| Manifold                             | Fast, reliable manifold triangle-mesh CSG                             | Small, practical mesh operations | It is mesh-based, not an analytic B-Rep or NURBS kernel                                                |
+| CGAL                                 | Selected rigorous computational geometry algorithms                   | Rich algorithms and predicates   | Components are GPL/LGPL or commercial; audit each component before use                                 |
+| Truck or another Rust geometry stack | Experimental web-oriented evaluation                                  | Native Rust/WASM ergonomics      | Ecosystem maturity and file interchange coverage must be proven with Arq fixtures                      |
 
 Licensing must be reviewed against the exact version, build method, distribution model, and modifications before code is shipped. Do not infer compliance from a table.
 
@@ -904,16 +904,16 @@ Do not log entire user geometry or project contents by default.
 
 ### 17.1 Required test layers
 
-| Layer | What to test | Examples |
-| --- | --- | --- |
-| Unit tests | Pure maths and schema rules | vector projection, units, tolerance comparisons, formula AST |
-| Property tests | Broad invariant space | transforms preserve distance, undo/redo restores canonical state |
-| Geometry integration | Kernel and procedural builder behaviour | opening cuts, wall joins, invalid inputs, section results |
-| Import/export golden tests | Semantic and serialised compatibility | IFC subset round trip, DXF layer mapping, unsupported entity report |
-| Determinism tests | Same commands produce same state | command replay across browser/worker boundaries |
-| Visual regression | Presentation quality | plan cut, section hatch, selection, line thickness, high-zoom curves |
-| Performance benchmarks | Latency and memory | pointer snapping, drag preview, large import, tessellation |
-| Fuzz and adversarial tests | Parser and geometry resilience | malformed IFC/DXF, tiny edges, near-coincident geometry, huge coordinates |
+| Layer                      | What to test                            | Examples                                                                  |
+| -------------------------- | --------------------------------------- | ------------------------------------------------------------------------- |
+| Unit tests                 | Pure maths and schema rules             | vector projection, units, tolerance comparisons, formula AST              |
+| Property tests             | Broad invariant space                   | transforms preserve distance, undo/redo restores canonical state          |
+| Geometry integration       | Kernel and procedural builder behaviour | opening cuts, wall joins, invalid inputs, section results                 |
+| Import/export golden tests | Semantic and serialised compatibility   | IFC subset round trip, DXF layer mapping, unsupported entity report       |
+| Determinism tests          | Same commands produce same state        | command replay across browser/worker boundaries                           |
+| Visual regression          | Presentation quality                    | plan cut, section hatch, selection, line thickness, high-zoom curves      |
+| Performance benchmarks     | Latency and memory                      | pointer snapping, drag preview, large import, tessellation                |
+| Fuzz and adversarial tests | Parser and geometry resilience          | malformed IFC/DXF, tiny edges, near-coincident geometry, huge coordinates |
 
 ### 17.2 Geometry invariants
 
@@ -947,13 +947,13 @@ Track the exact model revision, browser, device class, feature flags, kernel ver
 
 These are product targets to validate, not universal guarantees:
 
-| Interaction | Measure | Initial target |
-| --- | --- | --- |
-| Pointer move with cached snap index | 95th percentile synchronous main-thread work | no more than 4 ms on target desktop tier |
-| Direct drag preview | visual response | next practical frame without waiting for kernel Boolean |
-| Standard semantic edit | worker commit response | fast enough to feel immediate for normal building elements |
-| Long geometry/import operation | responsiveness | cancellable, progressive, and never blocks UI input |
-| Undo/redo | semantic state | one atomic revision with no stale render packet accepted |
+| Interaction                         | Measure                                      | Initial target                                             |
+| ----------------------------------- | -------------------------------------------- | ---------------------------------------------------------- |
+| Pointer move with cached snap index | 95th percentile synchronous main-thread work | no more than 4 ms on target desktop tier                   |
+| Direct drag preview                 | visual response                              | next practical frame without waiting for kernel Boolean    |
+| Standard semantic edit              | worker commit response                       | fast enough to feel immediate for normal building elements |
+| Long geometry/import operation      | responsiveness                               | cancellable, progressive, and never blocks UI input        |
+| Undo/redo                           | semantic state                               | one atomic revision with no stale render packet accepted   |
 
 Define target devices and scene sizes before setting release gates. Publish measured results, not a slogan such as "locked at 60 FPS."
 
@@ -1066,19 +1066,19 @@ Deliver only after evidence of demand:
 
 ## 19. Risk register
 
-| Risk | Why it matters | Mitigation | Release gate |
-| --- | --- | --- | --- |
-| Treating meshes as model truth | Edit, undo, import, and collaboration degrade | Semantic double-precision source model | No mesh-only mutation API |
-| Boolean fragility | Invalid topology and lost work | Isolated kernel adapter, validation, atomic commit, diagnostics | Adversarial Boolean corpus |
-| One DAG for all relations | Rejects valid models or hides constraint errors | Separate relation, derivation, and constraint systems | Cycle and over-constraint tests |
-| Global float32 coordinates | Jitter, z-fighting, broken picking | Explicit frames, local origins, render chunks | Large-coordinate visual test |
-| Worker race conditions | Stale geometry overwrites newer state | Base revision and content signature checks | Rapid edit/undo/cancel trace |
-| Shared-memory deployment breakage | Embedded assets or browser path fails | Transferable-buffer fallback, COOP/COEP review | Both paths tested |
-| IFC scope creep | Endless incompatible mapping work | Explicit entity/property capability matrix | Golden corpus coverage |
-| DWG promise without licence | Legal and support exposure | Separate product/SDK decision | Signed licensing plan |
-| Kernel lock-in | Expensive rewrite later | Narrow adapter and corpus-driven selection | Swap-test at spike stage |
-| Collaboration merge corruption | Geometry invariants violated remotely | Server validation and semantic conflict UI | Concurrent mutation tests |
-| Imported malicious input | Tab hangs or resource exhaustion | Worker sandboxing, quotas, cancellation, validation | Adversarial parser tests |
+| Risk                              | Why it matters                                  | Mitigation                                                      | Release gate                    |
+| --------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- | ------------------------------- |
+| Treating meshes as model truth    | Edit, undo, import, and collaboration degrade   | Semantic double-precision source model                          | No mesh-only mutation API       |
+| Boolean fragility                 | Invalid topology and lost work                  | Isolated kernel adapter, validation, atomic commit, diagnostics | Adversarial Boolean corpus      |
+| One DAG for all relations         | Rejects valid models or hides constraint errors | Separate relation, derivation, and constraint systems           | Cycle and over-constraint tests |
+| Global float32 coordinates        | Jitter, z-fighting, broken picking              | Explicit frames, local origins, render chunks                   | Large-coordinate visual test    |
+| Worker race conditions            | Stale geometry overwrites newer state           | Base revision and content signature checks                      | Rapid edit/undo/cancel trace    |
+| Shared-memory deployment breakage | Embedded assets or browser path fails           | Transferable-buffer fallback, COOP/COEP review                  | Both paths tested               |
+| IFC scope creep                   | Endless incompatible mapping work               | Explicit entity/property capability matrix                      | Golden corpus coverage          |
+| DWG promise without licence       | Legal and support exposure                      | Separate product/SDK decision                                   | Signed licensing plan           |
+| Kernel lock-in                    | Expensive rewrite later                         | Narrow adapter and corpus-driven selection                      | Swap-test at spike stage        |
+| Collaboration merge corruption    | Geometry invariants violated remotely           | Server validation and semantic conflict UI                      | Concurrent mutation tests       |
+| Imported malicious input          | Tab hangs or resource exhaustion                | Worker sandboxing, quotas, cancellation, validation             | Adversarial parser tests        |
 
 ## 20. Definition of done for an Arq engine feature
 

@@ -27,14 +27,14 @@ an earlier-stage, standalone "correct the raw blueprint" exercise:
 ADR-001 through ADR-006 restate positions this repository already holds and
 has implemented, just under different numbers/wording:
 
-| Pack ADR | Already covered by |
-| --- | --- |
-| ADR-001 semantic source of truth | `docs/adr/0002-plan-first-semantic-model.md`, `@arq/model-context` |
-| ADR-002 single authoritative model worker | `docs/architecture/SYSTEM-OVERVIEW.md`, `@arq/model-context` |
-| ADR-003 derivation DAG ≠ constraints | `docs/architecture/DERIVED-DATA-GRAPH.md` |
-| ADR-004 interchange capability boundary | `docs/adr/0011-ifc-adapter.md`, `0012-dxf-and-dwg-strategy.md`, `@arq/ifc-adapter`, `@arq/dxf-adapter` |
-| ADR-005 semantic-operation collaboration | `docs/adr/0013-collaboration-staging.md`, `docs/adr/0021-local-first-replica-sync.md`, `@arq/collaboration`, `@arq/sync-protocol` |
-| ADR-006 jurisdictional rule packs | not yet built as a dedicated package, but consistent with existing non-goals (no hard-coded global code values anywhere in the repo) |
+| Pack ADR                                  | Already covered by                                                                                                                   |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| ADR-001 semantic source of truth          | `docs/adr/0002-plan-first-semantic-model.md`, `@arq/model-context`                                                                   |
+| ADR-002 single authoritative model worker | `docs/architecture/SYSTEM-OVERVIEW.md`, `@arq/model-context`                                                                         |
+| ADR-003 derivation DAG ≠ constraints      | `docs/architecture/DERIVED-DATA-GRAPH.md`                                                                                            |
+| ADR-004 interchange capability boundary   | `docs/adr/0011-ifc-adapter.md`, `0012-dxf-and-dwg-strategy.md`, `@arq/ifc-adapter`, `@arq/dxf-adapter`                               |
+| ADR-005 semantic-operation collaboration  | `docs/adr/0013-collaboration-staging.md`, `docs/adr/0021-local-first-replica-sync.md`, `@arq/collaboration`, `@arq/sync-protocol`    |
+| ADR-006 jurisdictional rule packs         | not yet built as a dedicated package, but consistent with existing non-goals (no hard-coded global code values anywhere in the repo) |
 
 No conflict found in this group — it's confirmatory, not new information.
 

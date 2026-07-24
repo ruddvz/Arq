@@ -28,16 +28,17 @@ export function rankCommands<Context, Proposal>(
     .filter((command) => command.isAvailable?.(context) ?? true)
     .map((command) => ({ command, score: scoreCommand(command, normalizedQuery) }))
     .filter((candidate) => candidate.score !== Number.NEGATIVE_INFINITY)
-    .sort((a, b) =>
-      b.score - a.score
-      || a.command.title.localeCompare(b.command.title)
-      || a.command.id.localeCompare(b.command.id),
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        a.command.title.localeCompare(b.command.title) ||
+        a.command.id.localeCompare(b.command.id),
     );
 }
 
 export class CommandPaletteState<Context, Proposal> {
   private isOpenValue = false;
-  private queryValue = "";
+  private queryValue = '';
   private activeIndexValue = 0;
 
   public open(): void {
@@ -46,7 +47,7 @@ export class CommandPaletteState<Context, Proposal> {
 
   public close(): void {
     this.isOpenValue = false;
-    this.queryValue = "";
+    this.queryValue = '';
     this.activeIndexValue = 0;
   }
 
@@ -80,7 +81,12 @@ export class CommandPaletteState<Context, Proposal> {
   public getSnapshot(
     commands: readonly CommandDescriptor<Context, Proposal>[],
     context: Context,
-  ): { readonly isOpen: boolean; readonly query: string; readonly activeIndex: number; readonly commands: readonly RankedCommand<Context, Proposal>[] } {
+  ): {
+    readonly isOpen: boolean;
+    readonly query: string;
+    readonly activeIndex: number;
+    readonly commands: readonly RankedCommand<Context, Proposal>[];
+  } {
     const ranked = rankCommands(commands, this.queryValue, context);
     const activeIndex = Math.min(this.activeIndexValue, Math.max(0, ranked.length - 1));
     return { isOpen: this.isOpenValue, query: this.queryValue, activeIndex, commands: ranked };

@@ -40,7 +40,7 @@ export interface RenderExtent {
 
 export interface RenderPickTarget {
   readonly elementId: SemanticElementId;
-  readonly subelement?: "body" | "face" | "edge" | "opening" | "layer";
+  readonly subelement?: 'body' | 'face' | 'edge' | 'opening' | 'layer';
   readonly sourceRevision: Revision;
 }
 
@@ -83,13 +83,10 @@ function alignTo(value: number, alignment: number): number {
  */
 export function createPickReadbackLayout(layerCount: number): PickReadbackLayout {
   if (!Number.isSafeInteger(layerCount) || layerCount < 1) {
-    throw new Error("Pick layer count must be a positive safe integer.");
+    throw new Error('Pick layer count must be a positive safe integer.');
   }
 
-  const bytesPerRow = alignTo(
-    PICK_ID_BYTES,
-    WEBGPU_COPY_BYTES_PER_ROW_ALIGNMENT,
-  );
+  const bytesPerRow = alignTo(PICK_ID_BYTES, WEBGPU_COPY_BYTES_PER_ROW_ALIGNMENT);
 
   return {
     layerCount,
@@ -169,12 +166,8 @@ export function resolveSemanticPickLayers(
   return results;
 }
 
-export function acceptsPickResult(
-  request: PickRequestStamp,
-  current: CurrentPickState,
-): boolean {
+export function acceptsPickResult(request: PickRequestStamp, current: CurrentPickState): boolean {
   return (
-    request.requestId === current.requestId &&
-    request.renderRevision === current.renderRevision
+    request.requestId === current.requestId && request.renderRevision === current.renderRevision
   );
 }

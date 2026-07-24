@@ -21,12 +21,8 @@ export interface SplitVec3 {
 }
 
 export function assertFiniteVec3(value: Vec3, label: string): void {
-  if (
-    !Number.isFinite(value.x) ||
-    !Number.isFinite(value.y) ||
-    !Number.isFinite(value.z)
-  ) {
-    throw new Error(label + " contains a non-finite coordinate.");
+  if (!Number.isFinite(value.x) || !Number.isFinite(value.y) || !Number.isFinite(value.z)) {
+    throw new Error(label + ' contains a non-finite coordinate.');
   }
 }
 
@@ -52,8 +48,8 @@ export function add(a: Vec3, b: Vec3): Vec3 {
  * document.
  */
 export function localiseForRender(world: Vec3, renderOrigin: Vec3): Vec3 {
-  assertFiniteVec3(world, "World position");
-  assertFiniteVec3(renderOrigin, "Render origin");
+  assertFiniteVec3(world, 'World position');
+  assertFiniteVec3(renderOrigin, 'Render origin');
   return subtract(world, renderOrigin);
 }
 
@@ -79,7 +75,7 @@ export function packLocalPositions(
  */
 export function splitFloat64(value: number): Float32Split {
   if (!Number.isFinite(value)) {
-    throw new Error("Cannot split a non-finite coordinate.");
+    throw new Error('Cannot split a non-finite coordinate.');
   }
   const high = Math.fround(value);
   const low = Math.fround(value - high);

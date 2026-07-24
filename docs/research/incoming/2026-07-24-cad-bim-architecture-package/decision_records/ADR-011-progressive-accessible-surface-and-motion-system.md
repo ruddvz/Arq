@@ -42,4 +42,3 @@ Arq supplies a contrast-safe opaque baseline surface, semantic typography, and k
 - Opaque fallback is readable at target contrast without backdrop blur.
 - Icon controls are operable and named with keyboard and assistive technology.
 - A large model with the palette and diagnostics open meets the documented frame-time target on target hardware.
-

@@ -32,7 +32,7 @@ export interface ScreenInsets {
   readonly left: number;
 }
 
-export type HudCorner = "bottom-right" | "bottom-left" | "top-right" | "top-left";
+export type HudCorner = 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
 
 export interface HudPlacementOptions {
   readonly offset?: number;
@@ -49,12 +49,7 @@ export interface HudPlacement {
 }
 
 const DEFAULT_INSETS: ScreenInsets = { top: 8, right: 8, bottom: 8, left: 8 };
-const CORNERS: readonly HudCorner[] = [
-  "bottom-right",
-  "bottom-left",
-  "top-right",
-  "top-left",
-];
+const CORNERS: readonly HudCorner[] = ['bottom-right', 'bottom-left', 'top-right', 'top-left'];
 
 export function placeContextualHud(
   anchor: ScreenPoint,
@@ -62,13 +57,13 @@ export function placeContextualHud(
   viewport: ScreenSize,
   options: HudPlacementOptions = {},
 ): HudPlacement {
-  assertFinitePositive(panel.width, "panel.width");
-  assertFinitePositive(panel.height, "panel.height");
-  assertFinitePositive(viewport.width, "viewport.width");
-  assertFinitePositive(viewport.height, "viewport.height");
+  assertFinitePositive(panel.width, 'panel.width');
+  assertFinitePositive(panel.height, 'panel.height');
+  assertFinitePositive(viewport.width, 'viewport.width');
+  assertFinitePositive(viewport.height, 'viewport.height');
 
   const offset = options.offset ?? 16;
-  assertFiniteNonNegative(offset, "offset");
+  assertFiniteNonNegative(offset, 'offset');
   const insets: ScreenInsets = { ...DEFAULT_INSETS, ...options.insets };
   const protectedRects = options.protectedRects ?? [];
 
@@ -113,18 +108,15 @@ export interface VelocityTiltOptions {
  * Convert horizontal pointer velocity into a small visual tilt. This should be
  * applied only to a decorative inner surface, not to focusable controls.
  */
-export function velocityTilt(
-  velocityX: number,
-  options: VelocityTiltOptions = {},
-): number {
+export function velocityTilt(velocityX: number, options: VelocityTiltOptions = {}): number {
   if (!Number.isFinite(velocityX) || options.reducedMotion || options.inputFocused) {
     return 0;
   }
 
   const maxDegrees = options.maxDegrees ?? 1.5;
   const saturation = options.saturationPixelsPerSecond ?? 1_200;
-  assertFiniteNonNegative(maxDegrees, "maxDegrees");
-  assertFinitePositive(saturation, "saturationPixelsPerSecond");
+  assertFiniteNonNegative(maxDegrees, 'maxDegrees');
+  assertFinitePositive(saturation, 'saturationPixelsPerSecond');
 
   return clamp((velocityX / saturation) * maxDegrees, -maxDegrees, maxDegrees);
 }
@@ -141,13 +133,13 @@ function preferredPosition(
   const top = anchor.y - panel.height - offset;
 
   switch (corner) {
-    case "bottom-right":
+    case 'bottom-right':
       return { x: right, y: bottom };
-    case "bottom-left":
+    case 'bottom-left':
       return { x: left, y: bottom };
-    case "top-right":
+    case 'top-right':
       return { x: right, y: top };
-    case "top-left":
+    case 'top-left':
       return { x: left, y: top };
   }
 }
@@ -178,12 +170,12 @@ function clamp(value: number, minimum: number, maximum: number): number {
 
 function assertFinitePositive(value: number, name: string): void {
   if (!Number.isFinite(value) || value <= 0) {
-    throw new Error(name + " must be a finite positive number.");
+    throw new Error(name + ' must be a finite positive number.');
   }
 }
 
 function assertFiniteNonNegative(value: number, name: string): void {
   if (!Number.isFinite(value) || value < 0) {
-    throw new Error(name + " must be a finite non-negative number.");
+    throw new Error(name + ' must be a finite non-negative number.');
   }
 }

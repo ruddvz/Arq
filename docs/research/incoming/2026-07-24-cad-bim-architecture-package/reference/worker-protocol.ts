@@ -19,26 +19,26 @@ export interface MessageEnvelope {
 
 export type ModelCommand =
   | {
-      readonly kind: "create-element";
+      readonly kind: 'create-element';
       readonly element: Readonly<Record<string, unknown>>;
     }
   | {
-      readonly kind: "delete-element";
+      readonly kind: 'delete-element';
       readonly elementId: ElementId;
     }
   | {
-      readonly kind: "set-parameter";
+      readonly kind: 'set-parameter';
       readonly elementId: ElementId;
       readonly parameter: string;
       readonly value: unknown;
     }
   | {
-      readonly kind: "move-placement";
+      readonly kind: 'move-placement';
       readonly elementId: ElementId;
       readonly placement: Readonly<Record<string, unknown>>;
     }
   | {
-      readonly kind: "attach-host";
+      readonly kind: 'attach-host';
       readonly childId: ElementId;
       readonly hostId: ElementId;
       readonly localPlacement: Readonly<Record<string, unknown>>;
@@ -55,37 +55,37 @@ export interface MeshPacket {
 
 export type WorkerRequest =
   | (MessageEnvelope & {
-      readonly kind: "apply-commands";
+      readonly kind: 'apply-commands';
       readonly transactionId: TransactionId;
       readonly baseRevision: Revision;
       readonly commands: readonly ModelCommand[];
     })
   | (MessageEnvelope & {
-      readonly kind: "undo";
+      readonly kind: 'undo';
       readonly baseRevision: Revision;
     })
   | (MessageEnvelope & {
-      readonly kind: "redo";
+      readonly kind: 'redo';
       readonly baseRevision: Revision;
     })
   | (MessageEnvelope & {
-      readonly kind: "request-render-packet";
+      readonly kind: 'request-render-packet';
       readonly revision: Revision;
       readonly viewKey: string;
     })
   | (MessageEnvelope & {
-      readonly kind: "cancel-job";
+      readonly kind: 'cancel-job';
       readonly jobId: string;
     });
 
 export type DiagnosticCode =
-  | "STALE_BASE_REVISION"
-  | "VALIDATION_FAILED"
-  | "CONSTRAINT_FAILED"
-  | "CIRCULAR_DEPENDENCY"
-  | "KERNEL_FAILED"
-  | "CANCELLED"
-  | "UNSUPPORTED";
+  | 'STALE_BASE_REVISION'
+  | 'VALIDATION_FAILED'
+  | 'CONSTRAINT_FAILED'
+  | 'CIRCULAR_DEPENDENCY'
+  | 'KERNEL_FAILED'
+  | 'CANCELLED'
+  | 'UNSUPPORTED';
 
 export interface Diagnostic {
   readonly code: DiagnosticCode;
@@ -96,7 +96,7 @@ export interface Diagnostic {
 
 export type WorkerResponse =
   | (MessageEnvelope & {
-      readonly kind: "transaction-committed";
+      readonly kind: 'transaction-committed';
       readonly transactionId: TransactionId;
       readonly revision: Revision;
       readonly changedElementIds: readonly ElementId[];
@@ -104,25 +104,25 @@ export type WorkerResponse =
       readonly diagnostics: readonly Diagnostic[];
     })
   | (MessageEnvelope & {
-      readonly kind: "transaction-rejected";
+      readonly kind: 'transaction-rejected';
       readonly transactionId?: TransactionId;
       readonly currentRevision: Revision;
       readonly diagnostics: readonly Diagnostic[];
     })
   | (MessageEnvelope & {
-      readonly kind: "render-packet";
+      readonly kind: 'render-packet';
       readonly revision: Revision;
       readonly viewKey: string;
       readonly packet: MeshPacket;
     })
   | (MessageEnvelope & {
-      readonly kind: "job-progress";
+      readonly kind: 'job-progress';
       readonly jobId: string;
       readonly phase: string;
       readonly fraction?: number;
     })
   | (MessageEnvelope & {
-      readonly kind: "job-cancelled";
+      readonly kind: 'job-cancelled';
       readonly jobId: string;
     });
 
@@ -131,18 +131,16 @@ export type WorkerResponse =
  * packet. After transfer, the producing worker must not reuse these buffers.
  */
 export function transferBuffersFor(response: WorkerResponse): ArrayBuffer[] {
-  if (response.kind !== "render-packet") {
+  if (response.kind !== 'render-packet') {
     return [];
   }
 
   const buffers: ArrayBuffer[] = [];
-  const appendTransferableBuffer = (
-    view: Float32Array | Uint16Array | Uint32Array,
-  ): void => {
+  const appendTransferableBuffer = (view: Float32Array | Uint16Array | Uint32Array): void => {
     const buffer = view.buffer;
     if (!(buffer instanceof ArrayBuffer)) {
       throw new Error(
-        "Render packets sent through this transfer path must use ArrayBuffer, not shared memory.",
+        'Render packets sent through this transfer path must use ArrayBuffer, not shared memory.',
       );
     }
     buffers.push(buffer);

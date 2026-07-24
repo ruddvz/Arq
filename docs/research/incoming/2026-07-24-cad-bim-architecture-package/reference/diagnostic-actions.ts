@@ -5,7 +5,7 @@
  * pass through the same transaction gateway as any other edit.
  */
 
-export type DiagnosticSeverity = "info" | "warning" | "error";
+export type DiagnosticSeverity = 'info' | 'warning' | 'error';
 
 export interface DiagnosticFix<Proposal> {
   readonly label: string;
@@ -23,24 +23,25 @@ export interface SpatialDiagnostic<Proposal> {
 }
 
 export type DiagnosticFixResult<Proposal> =
-  | { readonly kind: "proposal"; readonly proposal: Proposal }
-  | { readonly kind: "unavailable"; readonly reason: string }
-  | { readonly kind: "stale"; readonly reason: string };
+  | { readonly kind: 'proposal'; readonly proposal: Proposal }
+  | { readonly kind: 'unavailable'; readonly reason: string }
+  | { readonly kind: 'stale'; readonly reason: string };
 
 export function createDiagnosticFixProposal<Proposal>(
   diagnostic: SpatialDiagnostic<Proposal>,
   currentRevision: number,
 ): DiagnosticFixResult<Proposal> {
   if (!diagnostic.fix) {
-    return { kind: "unavailable", reason: "No quick fix is available for this diagnostic." };
+    return { kind: 'unavailable', reason: 'No quick fix is available for this diagnostic.' };
   }
   if (diagnostic.sourceRevision !== currentRevision) {
     return {
-      kind: "stale",
-      reason: "The model changed after this diagnostic was computed. Re-evaluate before applying a fix.",
+      kind: 'stale',
+      reason:
+        'The model changed after this diagnostic was computed. Re-evaluate before applying a fix.',
     };
   }
-  return { kind: "proposal", proposal: diagnostic.fix.createProposal() };
+  return { kind: 'proposal', proposal: diagnostic.fix.createProposal() };
 }
 
 export class DiagnosticPresentationState {

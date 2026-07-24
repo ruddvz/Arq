@@ -29,11 +29,7 @@ export interface PlanViewport {
   screenDistancePx(a: Vec2, b: Vec2): number;
 }
 
-export type SnapType =
-  | "ENDPOINT"
-  | "INTERSECTION"
-  | "MIDPOINT"
-  | "NEAREST";
+export type SnapType = 'ENDPOINT' | 'INTERSECTION' | 'MIDPOINT' | 'NEAREST';
 
 export interface SnapCandidate {
   readonly point: Vec2;
@@ -63,7 +59,7 @@ export class PlanSnapEngine {
     config: SnapConfig,
   ): SnapCandidate | undefined {
     if (config.tolerancePx <= 0 || config.parallelEpsilon <= 0) {
-      throw new Error("Snap tolerances must be positive.");
+      throw new Error('Snap tolerances must be positive.');
     }
 
     const worldRadius = viewport.worldUnitsPerPixelAt(cursor) * config.tolerancePx;
@@ -79,11 +75,7 @@ export class PlanSnapEngine {
     const candidates: SnapCandidate[] = [];
     const seen = new Set<string>();
 
-    const add = (
-      point: Vec2,
-      type: SnapType,
-      targetIds: readonly string[],
-    ): void => {
+    const add = (point: Vec2, type: SnapType, targetIds: readonly string[]): void => {
       const distancePx = viewport.screenDistancePx(cursor, point);
       if (!Number.isFinite(distancePx) || distancePx > config.tolerancePx) {
         return;
@@ -93,8 +85,8 @@ export class PlanSnapEngine {
         type,
         Math.round(point.x / config.parallelEpsilon),
         Math.round(point.y / config.parallelEpsilon),
-        [...targetIds].sort().join(","),
-      ].join("|");
+        [...targetIds].sort().join(','),
+      ].join('|');
       if (seen.has(key)) {
         return;
       }
@@ -103,12 +95,12 @@ export class PlanSnapEngine {
     };
 
     for (const segment of segments) {
-      add(segment.a, "ENDPOINT", [segment.id]);
-      add(segment.b, "ENDPOINT", [segment.id]);
-      add(midpoint(segment.a, segment.b), "MIDPOINT", [segment.id]);
+      add(segment.a, 'ENDPOINT', [segment.id]);
+      add(segment.b, 'ENDPOINT', [segment.id]);
+      add(midpoint(segment.a, segment.b), 'MIDPOINT', [segment.id]);
 
       const nearest = projectPointOntoSegment(cursor, segment.a, segment.b);
-      add(nearest, "NEAREST", [segment.id]);
+      add(nearest, 'NEAREST', [segment.id]);
     }
 
     // The broad phase keeps this candidate set small. A production index can
@@ -122,7 +114,7 @@ export class PlanSnapEngine {
           config.parallelEpsilon,
         );
         if (intersection) {
-          add(intersection, "INTERSECTION", [segments[left].id, segments[right].id]);
+          add(intersection, 'INTERSECTION', [segments[left].id, segments[right].id]);
         }
       }
     }
@@ -137,8 +129,8 @@ export class PlanSnapEngine {
       if (distance !== 0) {
         return distance;
       }
-      const aKey = a.targetIds.join("|");
-      const bKey = b.targetIds.join("|");
+      const aKey = a.targetIds.join('|');
+      const bKey = b.targetIds.join('|');
       return aKey.localeCompare(bKey);
     })[0];
   }

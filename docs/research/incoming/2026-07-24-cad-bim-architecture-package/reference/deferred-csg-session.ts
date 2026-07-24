@@ -30,7 +30,7 @@ export interface SemanticCommitProposal<Input> {
 }
 
 export interface CsgBakeJob<Input> {
-  readonly kind: "bake-derived-csg";
+  readonly kind: 'bake-derived-csg';
   readonly sessionId: PreviewSessionId;
   readonly elementId: ElementId;
   readonly committedRevision: Revision;
@@ -51,7 +51,7 @@ export interface CurrentDerivedState {
   readonly inputSignature: string;
 }
 
-type SessionPhase = "previewing" | "awaiting-commit" | "baking" | "cancelled";
+type SessionPhase = 'previewing' | 'awaiting-commit' | 'baking' | 'cancelled';
 
 interface SessionState<Input> {
   readonly token: PreviewToken;
@@ -66,10 +66,10 @@ export class DeferredCsgSession<Input> {
   public constructor(initial: PreviewToken, input: Input, timestampMs: number) {
     assertTimestamp(timestampMs);
     if (!initial.sessionId || !initial.elementId || !initial.inputSignature) {
-      throw new Error("A preview token requires an ID, target, and input signature.");
+      throw new Error('A preview token requires an ID, target, and input signature.');
     }
     if (!Number.isSafeInteger(initial.baseRevision) || initial.baseRevision < 0) {
-      throw new Error("Preview base revision must be a non-negative safe integer.");
+      throw new Error('Preview base revision must be a non-negative safe integer.');
     }
     this.state = {
       token: initial,
@@ -78,24 +78,24 @@ export class DeferredCsgSession<Input> {
         inputSignature: initial.inputSignature,
         timestampMs,
       },
-      phase: "previewing",
+      phase: 'previewing',
     };
   }
 
   public get isActive(): boolean {
-    return this.state.phase === "previewing" || this.state.phase === "awaiting-commit";
+    return this.state.phase === 'previewing' || this.state.phase === 'awaiting-commit';
   }
 
   public update(update: PreviewUpdate<Input>): void {
-    if (this.state.phase !== "previewing") {
-      throw new Error("A preview can only be updated while it is actively dragging.");
+    if (this.state.phase !== 'previewing') {
+      throw new Error('A preview can only be updated while it is actively dragging.');
     }
     assertTimestamp(update.timestampMs);
     if (update.timestampMs < this.state.latest.timestampMs) {
-      throw new Error("Out-of-order preview updates are not accepted.");
+      throw new Error('Out-of-order preview updates are not accepted.');
     }
     if (!update.inputSignature) {
-      throw new Error("A preview update requires a deterministic input signature.");
+      throw new Error('A preview update requires a deterministic input signature.');
     }
     this.state = { ...this.state, latest: update };
   }
@@ -105,10 +105,10 @@ export class DeferredCsgSession<Input> {
    * authoritative model worker must validate and commit atomically.
    */
   public endInteraction(): SemanticCommitProposal<Input> {
-    if (this.state.phase !== "previewing") {
-      throw new Error("The interaction has already ended or was cancelled.");
+    if (this.state.phase !== 'previewing') {
+      throw new Error('The interaction has already ended or was cancelled.');
     }
-    this.state = { ...this.state, phase: "awaiting-commit" };
+    this.state = { ...this.state, phase: 'awaiting-commit' };
     return {
       token: this.state.token,
       finalInput: this.state.latest.input,
@@ -122,19 +122,19 @@ export class DeferredCsgSession<Input> {
    * state machine.
    */
   public createBakeJob(committedRevision: Revision): CsgBakeJob<Input> {
-    if (this.state.phase !== "awaiting-commit") {
-      throw new Error("A bake may only follow a committed semantic command.");
+    if (this.state.phase !== 'awaiting-commit') {
+      throw new Error('A bake may only follow a committed semantic command.');
     }
     if (!Number.isSafeInteger(committedRevision) || committedRevision < 0) {
-      throw new Error("Committed revision must be a non-negative safe integer.");
+      throw new Error('Committed revision must be a non-negative safe integer.');
     }
     this.state = {
       ...this.state,
-      phase: "baking",
+      phase: 'baking',
       bakeRevision: committedRevision,
     };
     return {
-      kind: "bake-derived-csg",
+      kind: 'bake-derived-csg',
       sessionId: this.state.token.sessionId,
       elementId: this.state.token.elementId,
       committedRevision,
@@ -144,7 +144,7 @@ export class DeferredCsgSession<Input> {
   }
 
   public cancel(): void {
-    this.state = { ...this.state, phase: "cancelled" };
+    this.state = { ...this.state, phase: 'cancelled' };
   }
 
   public acceptsResult<Output>(
@@ -152,7 +152,7 @@ export class DeferredCsgSession<Input> {
     current: CurrentDerivedState,
   ): boolean {
     return (
-      this.state.phase === "baking" &&
+      this.state.phase === 'baking' &&
       result.sessionId === this.state.token.sessionId &&
       result.elementId === this.state.token.elementId &&
       result.committedRevision === this.state.bakeRevision &&
@@ -165,6 +165,6 @@ export class DeferredCsgSession<Input> {
 
 function assertTimestamp(timestampMs: number): void {
   if (!Number.isFinite(timestampMs) || timestampMs < 0) {
-    throw new Error("Preview timestamps must be finite non-negative milliseconds.");
+    throw new Error('Preview timestamps must be finite non-negative milliseconds.');
   }
 }

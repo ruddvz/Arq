@@ -4,7 +4,7 @@
  * the caller's domain while the user is still typing.
  */
 
-export type LengthUnit = "m" | "cm" | "mm" | "ft" | "in";
+export type LengthUnit = 'm' | 'cm' | 'mm' | 'ft' | 'in';
 
 export interface LengthQuantity {
   readonly meters: number;
@@ -12,9 +12,9 @@ export interface LengthQuantity {
 }
 
 export type LengthParseResult =
-  | { readonly kind: "incomplete" }
-  | { readonly kind: "invalid"; readonly message: string }
-  | { readonly kind: "complete"; readonly quantity: LengthQuantity };
+  | { readonly kind: 'incomplete' }
+  | { readonly kind: 'invalid'; readonly message: string }
+  | { readonly kind: 'complete'; readonly quantity: LengthQuantity };
 
 const METRES_PER_UNIT: Readonly<Record<LengthUnit, number>> = {
   m: 1,
@@ -26,28 +26,25 @@ const METRES_PER_UNIT: Readonly<Record<LengthUnit, number>> = {
 
 const LENGTH_PATTERN = /^([+-]?(?:\d+(?:\.\d*)?|\.\d+))(?:\s*(m|cm|mm|ft|in))?$/i;
 
-export function parseLengthDraft(
-  draft: string,
-  fallbackUnit: LengthUnit,
-): LengthParseResult {
+export function parseLengthDraft(draft: string, fallbackUnit: LengthUnit): LengthParseResult {
   const normalized = draft.trim();
-  if (!normalized || normalized === "+" || normalized === "-" || normalized === ".") {
-    return { kind: "incomplete" };
+  if (!normalized || normalized === '+' || normalized === '-' || normalized === '.') {
+    return { kind: 'incomplete' };
   }
 
   const match = normalized.match(LENGTH_PATTERN);
   if (!match) {
-    return { kind: "invalid", message: "Enter a finite length such as 2500 mm or 2.5 m." };
+    return { kind: 'invalid', message: 'Enter a finite length such as 2500 mm or 2.5 m.' };
   }
 
   const numeric = Number(match[1]);
   const displayUnit = (match[2]?.toLowerCase() ?? fallbackUnit) as LengthUnit;
   const meters = numeric * METRES_PER_UNIT[displayUnit];
   if (!Number.isFinite(meters)) {
-    return { kind: "invalid", message: "Length must be finite." };
+    return { kind: 'invalid', message: 'Length must be finite.' };
   }
 
-  return { kind: "complete", quantity: { meters, displayUnit } };
+  return { kind: 'complete', quantity: { meters, displayUnit } };
 }
 
 export class LengthDraft {
@@ -74,7 +71,7 @@ export class LengthDraft {
 
   public commit(): LengthQuantity | undefined {
     const parsed = this.parse();
-    return parsed.kind === "complete" ? parsed.quantity : undefined;
+    return parsed.kind === 'complete' ? parsed.quantity : undefined;
   }
 }
 

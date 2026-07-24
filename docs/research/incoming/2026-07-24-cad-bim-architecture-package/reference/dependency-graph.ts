@@ -23,15 +23,15 @@ export class UnknownDependencyError extends Error {
     public readonly nodeId: NodeId,
     public readonly dependencyId: NodeId,
   ) {
-    super("Node " + nodeId + " depends on unknown node " + dependencyId + ".");
-    this.name = "UnknownDependencyError";
+    super('Node ' + nodeId + ' depends on unknown node ' + dependencyId + '.');
+    this.name = 'UnknownDependencyError';
   }
 }
 
 export class DependencyCycleError extends Error {
   public constructor(public readonly cycle: readonly NodeId[]) {
-    super("Circular derivation dependency: " + cycle.join(" -> "));
-    this.name = "DependencyCycleError";
+    super('Circular derivation dependency: ' + cycle.join(' -> '));
+    this.name = 'DependencyCycleError';
   }
 }
 
@@ -40,13 +40,13 @@ export class DirectedDependencyGraph<Context> {
 
   public addNode(node: DerivedNode<Context>): void {
     if (!node.id) {
-      throw new Error("A derivation node requires a non-empty id.");
+      throw new Error('A derivation node requires a non-empty id.');
     }
     if (this.nodes.has(node.id)) {
-      throw new Error("Duplicate derivation node id: " + node.id + ".");
+      throw new Error('Duplicate derivation node id: ' + node.id + '.');
     }
     if (new Set(node.dependencies).size !== node.dependencies.length) {
-      throw new Error("Node " + node.id + " declares a dependency more than once.");
+      throw new Error('Node ' + node.id + ' declares a dependency more than once.');
     }
     if (node.dependencies.includes(node.id)) {
       throw new DependencyCycleError([node.id, node.id]);
@@ -104,9 +104,7 @@ export class DirectedDependencyGraph<Context> {
       inDegree.set(nodeId, degree);
     }
 
-    const ready = [...impacted]
-      .filter((nodeId) => inDegree.get(nodeId) === 0)
-      .sort();
+    const ready = [...impacted].filter((nodeId) => inDegree.get(nodeId) === 0).sort();
     const orderedNodeIds: NodeId[] = [];
 
     while (ready.length > 0) {
@@ -167,21 +165,21 @@ export class DirectedDependencyGraph<Context> {
 
   private assertKnownNode(nodeId: NodeId): void {
     if (!this.nodes.has(nodeId)) {
-      throw new Error("Unknown derivation node: " + nodeId + ".");
+      throw new Error('Unknown derivation node: ' + nodeId + '.');
     }
   }
 
   private findCycle(impacted: ReadonlySet<NodeId>): readonly NodeId[] {
-    type Colour = "white" | "grey" | "black";
+    type Colour = 'white' | 'grey' | 'black';
     const colours = new Map<NodeId, Colour>();
     const stack: NodeId[] = [];
 
     for (const nodeId of impacted) {
-      colours.set(nodeId, "white");
+      colours.set(nodeId, 'white');
     }
 
     const visit = (nodeId: NodeId): NodeId[] | undefined => {
-      colours.set(nodeId, "grey");
+      colours.set(nodeId, 'grey');
       stack.push(nodeId);
 
       const node = this.nodes.get(nodeId)!;
@@ -189,12 +187,12 @@ export class DirectedDependencyGraph<Context> {
         if (!impacted.has(dependencyId)) {
           continue;
         }
-        const colour = colours.get(dependencyId) ?? "white";
-        if (colour === "grey") {
+        const colour = colours.get(dependencyId) ?? 'white';
+        if (colour === 'grey') {
           const cycleStart = stack.indexOf(dependencyId);
           return [...stack.slice(cycleStart), dependencyId];
         }
-        if (colour === "white") {
+        if (colour === 'white') {
           const cycle = visit(dependencyId);
           if (cycle) {
             return cycle;
@@ -203,12 +201,12 @@ export class DirectedDependencyGraph<Context> {
       }
 
       stack.pop();
-      colours.set(nodeId, "black");
+      colours.set(nodeId, 'black');
       return undefined;
     };
 
     for (const nodeId of [...impacted].sort()) {
-      if (colours.get(nodeId) === "white") {
+      if (colours.get(nodeId) === 'white') {
         const cycle = visit(nodeId);
         if (cycle) {
           return cycle;
