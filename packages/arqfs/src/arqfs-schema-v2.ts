@@ -1,4 +1,5 @@
 import type { ArqfsDriver } from './arqfs-driver';
+import { migrateArqfsCopyOnWrite, type ArqfsMigrationResult } from './arqfs-migration';
 
 /**
  * ARQ-238-adjacent: schema v2 adds provenance/import tracking on top of the
@@ -12,6 +13,13 @@ import type { ArqfsDriver } from './arqfs-driver';
  * file that needs a new required feature just calls the existing
  * `declareFeatureFlag`/adds a name to `KNOWN_FEATURE_NAMES`, with nothing new
  * to build here.
+ *
+ * FP-004: `migrateArqfsSchemaV1ToV2` below operates directly on whatever driver
+ * it is handed, inside one transaction - correct and safe only if that driver is
+ * always a throwaway copy, never a caller's only real file. This module never
+ * enforces that itself; use `migrateArqfsSchemaV1ToV2ViaCopy` (composes this
+ * transform with arqfs-migration.ts's copy-on-write helper) rather than calling
+ * `migrateArqfsSchemaV1ToV2` against a driver you don't already know is a copy.
  */
 export const ARQFS_SCHEMA_VERSION_V2 = 2;
 
@@ -131,4 +139,26 @@ export function createArqfsSchemaLatest(
   const result = migrateArqfsSchemaV1ToV2(driver);
   if (result.status === 'rejected')
     throw new Error(`Could not create latest Arq schema: ${result.reason}`);
+}
+
+/**
+ * FP-004: the safe way to run this migration against a real file. Composes
+ * arqfs-migration.ts's `migrateArqfsCopyOnWrite` (VACUUM INTO a fresh target,
+ * transform that copy, verify it reopens cleanly - the source is only ever read
+ * from) with this module's own v1-to-v2 transform, so a caller never has to
+ * hand-assemble the two pieces correctly themselves.
+ */
+export function migrateArqfsSchemaV1ToV2ViaCopy(
+  sourceDriver: ArqfsDriver,
+  targetPath: string,
+  openDriver: (path: string) => ArqfsDriver,
+): ArqfsMigrationResult {
+  return migrateArqfsCopyOnWrite(sourceDriver, targetPath, openDriver, (target) => {
+    const result = migrateArqfsSchemaV1ToV2(target);
+    if (result.status !== 'migrated') {
+      throw new Error(
+        result.status === 'already-current' ? 'target copy is already at schema v2' : result.reason,
+      );
+    }
+  });
 }
