@@ -48,6 +48,9 @@ importers:
       '@arq/editor-shell':
         specifier: workspace:*
         version: link:../../packages/editor-shell
+      '@arq/file-ingress':
+        specifier: workspace:*
+        version: link:../../packages/file-ingress
       '@arq/geometry-2d':
         specifier: workspace:*
         version: link:../../packages/geometry-2d
@@ -115,6 +118,8 @@ importers:
 
   packages/command-system: {}
 
+  packages/derived-cache: {}
+
   packages/design-system:
     dependencies:
       react:
@@ -125,7 +130,11 @@ importers:
         specifier: ^18
         version: 18.3.31
 
-  packages/dxf-adapter: {}
+  packages/dxf-adapter:
+    dependencies:
+      '@arq/file-ingress':
+        specifier: workspace:*
+        version: link:../file-ingress
 
   packages/editor-shell:
     dependencies:
@@ -135,6 +144,8 @@ importers:
       '@arq/geometry-2d':
         specifier: workspace:*
         version: link:../geometry-2d
+
+  packages/file-ingress: {}
 
   packages/geometry-2d: {}
 
@@ -176,6 +187,8 @@ importers:
       fake-indexeddb:
         specifier: ^6.2.5
         version: 6.2.5
+
+  packages/model-context: {}
 
   packages/model-renderer:
     dependencies:
@@ -223,6 +236,8 @@ importers:
 
   packages/project-format: {}
 
+  packages/project-loading: {}
+
   packages/roomplan-adapter:
     dependencies:
       '@arq/arqscript':
@@ -248,7 +263,14 @@ importers:
 
   workers/geometry-worker: {}
 
-  workers/import-export-worker: {}
+  workers/import-export-worker:
+    dependencies:
+      '@arq/dxf-adapter':
+        specifier: workspace:*
+        version: link:../../packages/dxf-adapter
+      '@arq/file-ingress':
+        specifier: workspace:*
+        version: link:../../packages/file-ingress
 
 packages:
 

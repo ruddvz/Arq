@@ -1,14 +1,11 @@
 {
-  "name": "@arq/dxf-adapter",
+  "name": "@arq/project-loading",
   "private": true,
   "version": "0.0.0",
-  "description": "DXF import/export.",
+  "description": "Monotonic staged project-open state machine and progressive representation contracts.",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@arq/file-ingress": "workspace:*"
   }
 }

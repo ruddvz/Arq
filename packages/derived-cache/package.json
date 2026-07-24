@@ -1,0 +1,11 @@
+{
+  "name": "@arq/derived-cache",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Disposable content-addressed derived-output cache contracts, freshness, invalidation and stale-generation rejection.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@arq/model-context",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Task-shaped, revision-aware model context and reversible omission contracts for AI and automation.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

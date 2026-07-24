@@ -14,6 +14,7 @@
     "@arq/bim-core": "workspace:*",
     "@arq/design-system": "workspace:*",
     "@arq/editor-shell": "workspace:*",
+    "@arq/file-ingress": "workspace:*",
     "@arq/geometry-2d": "workspace:*",
     "@arq/icons": "workspace:*",
     "@arq/operations": "workspace:*",
