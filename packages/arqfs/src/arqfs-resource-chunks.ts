@@ -35,12 +35,44 @@ function splitIntoChunks(content: Uint8Array, chunkSize: number): Uint8Array[] {
   return chunks.length > 0 ? chunks : [new Uint8Array(0)];
 }
 
+export interface ArqfsResourceContentDescriptor {
+  readonly sha256: string;
+  readonly byteLength: number;
+  readonly chunkSize: number;
+  readonly chunks: readonly Uint8Array[];
+  readonly chunkHashes: readonly string[];
+}
+
 /**
- * ARQ-199: splits whole resource content into content-addressed chunks and stores
- * the resource descriptor plus every chunk in one transaction. Each chunk carries its
- * own sha256 (verified again on assembleResource, not just trusted) so a future
- * resumable upload (ARQ-208) can verify/dedupe per chunk, not only at the
- * whole-resource level.
+ * The async half of storing a resource - hashing the whole content and every
+ * chunk - with no driver access at all, so it can run before a caller opens any
+ * transaction. Split out from `putResource` so a caller that needs to store a
+ * resource as one step of a larger atomic write (e.g. `arqfs-import-commit.ts`
+ * committing a source document alongside its preserved bytes) can compute this
+ * first, then fold the now-synchronous `putResourceDescriptor` into its own
+ * `driver.transaction()` alongside its other writes - `runArqfsLocalWrite`'s
+ * mutation callback is synchronous by design (see `arqfs-driver.ts`) and cannot
+ * itself await a hash. `chunkSize` is carried through as the caller's original
+ * splitting parameter, not re-derived from a chunk's own byte length - the last
+ * chunk (or the only chunk, for content smaller than one chunk) is legitimately
+ * shorter than `chunkSize`, so reconstructing it from `chunks[0].byteLength` would
+ * silently record the wrong value for exactly that case.
+ */
+export async function computeResourceContentDescriptor(
+  content: Uint8Array,
+  chunkSize: number,
+): Promise<ArqfsResourceContentDescriptor> {
+  const resourceSha256 = await sha256Hex(content);
+  const chunks = splitIntoChunks(content, chunkSize);
+  const chunkHashes = await Promise.all(chunks.map((chunk) => sha256Hex(chunk)));
+  return { sha256: resourceSha256, byteLength: content.byteLength, chunkSize, chunks, chunkHashes };
+}
+
+/**
+ * The synchronous half: writes an already-hashed descriptor's resource/chunk rows.
+ * Does not open its own transaction - call it from inside a caller's transaction
+ * (as `putResource` below does) so it composes atomically with a caller's other
+ * writes rather than always being its own commit boundary.
  *
  * Idempotent by design, not by accident: storing content whose sha256 already
  * exists is a no-op (caught by a fuzz test - property-based testing generated the
@@ -48,6 +80,73 @@ function splitIntoChunks(content: Uint8Array, chunkSize: number): Uint8Array[] {
  * failure before this check existed). Content-addressing's whole premise is that
  * identical bytes hash identically, so re-storing them is safe to skip rather than
  * treat as a conflict - a real caller re-uploading a shared texture must not fail.
+ */
+export function putResourceDescriptor(
+  driver: ArqfsDriver,
+  descriptor: ArqfsResourceContentDescriptor,
+  mediaType: string,
+  canonicalRole: ArqfsResourceCanonicalRole,
+  policy: ArqfsStoragePolicy = DEFAULT_ARQFS_STORAGE_POLICY,
+): { readonly sha256: string } {
+  const { sha256: resourceSha256, byteLength, chunkSize, chunks, chunkHashes } = descriptor;
+  validateResourceMetadata(mediaType, canonicalRole, policy);
+  validateResourceShape(byteLength, chunkSize, chunks.length, policy);
+
+  const existing = driver.query<{
+    readonly sha256: string;
+    readonly media_type: string;
+    readonly canonical_role: ArqfsResourceCanonicalRole;
+    readonly byte_length: number;
+    readonly chunk_size: number;
+    readonly chunk_count: number;
+  }>(
+    'SELECT sha256, media_type, canonical_role, byte_length, chunk_size, chunk_count FROM resource WHERE sha256 = ?',
+    [resourceSha256],
+  );
+  const existingDescriptor = existing[0];
+  if (existingDescriptor !== undefined) {
+    // Only fields that content addressing does NOT already determine can conflict.
+    // `media_type` and `canonical_role` are caller-supplied semantics, so a
+    // mismatch is a genuine poisoning signal; `byte_length` must follow from the
+    // bytes, so a mismatch means the stored descriptor is corrupt. `chunk_size`
+    // and `chunk_count` are physical layout of the copy already on disk - storing
+    // identical bytes under a different chunking policy is legitimate dedupe and
+    // must not be rejected, because the stored chunks are already self-consistent.
+    if (
+      existingDescriptor.media_type !== mediaType ||
+      existingDescriptor.canonical_role !== canonicalRole ||
+      existingDescriptor.byte_length !== byteLength
+    ) {
+      throw new ArqfsPolicyError(
+        'ARQ_RESOURCE_METADATA_CONFLICT',
+        'Content-addressed resource already exists with different metadata.',
+      );
+    }
+    return { sha256: resourceSha256 };
+  }
+
+  driver.run(
+    `INSERT INTO resource (sha256, media_type, canonical_role, byte_length, chunk_size, chunk_count)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [resourceSha256, mediaType, canonicalRole, byteLength, chunkSize, chunks.length],
+  );
+  chunks.forEach((chunk, index) => {
+    driver.run(
+      `INSERT INTO resource_chunk (resource_sha256, chunk_index, chunk_sha256, content)
+       VALUES (?, ?, ?, ?)`,
+      [resourceSha256, index, chunkHashes[index], chunk],
+    );
+  });
+
+  return { sha256: resourceSha256 };
+}
+
+/**
+ * ARQ-199: splits whole resource content into content-addressed chunks and stores
+ * the resource descriptor plus every chunk in one transaction. Each chunk carries its
+ * own sha256 (verified again on assembleResource, not just trusted) so a future
+ * resumable upload (ARQ-208) can verify/dedupe per chunk, not only at the
+ * whole-resource level.
  */
 export async function putResource(
   driver: ArqfsDriver,
@@ -64,59 +163,10 @@ export async function putResource(
     Math.max(1, Math.ceil(content.byteLength / chunkSize)),
     policy,
   );
-  const resourceSha256 = await sha256Hex(content);
-  const chunks = splitIntoChunks(content, chunkSize);
-  const chunkHashes = await Promise.all(chunks.map((chunk) => sha256Hex(chunk)));
-
-  driver.transaction(() => {
-    const existing = driver.query<{
-      readonly sha256: string;
-      readonly media_type: string;
-      readonly canonical_role: ArqfsResourceCanonicalRole;
-      readonly byte_length: number;
-      readonly chunk_size: number;
-      readonly chunk_count: number;
-    }>(
-      'SELECT sha256, media_type, canonical_role, byte_length, chunk_size, chunk_count FROM resource WHERE sha256 = ?',
-      [resourceSha256],
-    );
-    const existingDescriptor = existing[0];
-    if (existingDescriptor !== undefined) {
-      // Only fields that content addressing does NOT already determine can conflict.
-      // `media_type` and `canonical_role` are caller-supplied semantics, so a
-      // mismatch is a genuine poisoning signal; `byte_length` must follow from the
-      // bytes, so a mismatch means the stored descriptor is corrupt. `chunk_size`
-      // and `chunk_count` are physical layout of the copy already on disk - storing
-      // identical bytes under a different chunking policy is legitimate dedupe and
-      // must not be rejected, because the stored chunks are already self-consistent.
-      if (
-        existingDescriptor.media_type !== mediaType ||
-        existingDescriptor.canonical_role !== canonicalRole ||
-        existingDescriptor.byte_length !== content.byteLength
-      ) {
-        throw new ArqfsPolicyError(
-          'ARQ_RESOURCE_METADATA_CONFLICT',
-          'Content-addressed resource already exists with different metadata.',
-        );
-      }
-      return;
-    }
-
-    driver.run(
-      `INSERT INTO resource (sha256, media_type, canonical_role, byte_length, chunk_size, chunk_count)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [resourceSha256, mediaType, canonicalRole, content.length, chunkSize, chunks.length],
-    );
-    chunks.forEach((chunk, index) => {
-      driver.run(
-        `INSERT INTO resource_chunk (resource_sha256, chunk_index, chunk_sha256, content)
-         VALUES (?, ?, ?, ?)`,
-        [resourceSha256, index, chunkHashes[index], chunk],
-      );
-    });
-  });
-
-  return { sha256: resourceSha256 };
+  const descriptor = await computeResourceContentDescriptor(content, chunkSize);
+  return driver.transaction(() =>
+    putResourceDescriptor(driver, descriptor, mediaType, canonicalRole, policy),
+  );
 }
 
 export function getResourceChunk(

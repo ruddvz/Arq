@@ -22,6 +22,7 @@ export * from './arqfs-provenance';
 export * from './arqfs-resource-reference';
 export * from './arqfs-resource-gc';
 export * from './arqfs-import-session';
+export * from './arqfs-import-commit';
 export * from './arqfs-integrity';
 export * from './arqfs-preflight';
 export * from './arqfs-policy';
