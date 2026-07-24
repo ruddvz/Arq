@@ -20,6 +20,7 @@ import { createUndoStack } from '@arq/operations';
 import { WallIcon, DoorIcon, RoomIcon, SelectIcon, DimensionIcon, PlanIcon } from '@arq/icons';
 import { PlanCanvas } from './PlanCanvas';
 import { buildDemoWallAccessibleDescription, buildDemoWallInspectorGroups } from './inspector-data';
+import { FileOpenPanel } from './file-handling/FileOpenPanel';
 
 const TOOLS_BY_CATEGORY = {
   select: [{ id: 'select', label: 'Select', icon: <SelectIcon width={16} height={16} /> }],
@@ -94,6 +95,7 @@ export function App(): JSX.Element {
     secondary: new Set(),
   });
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [fileOpenPanelOpen, setFileOpenPanelOpen] = useState(false);
   const [cursorWorldPosition, setCursorWorldPosition] = useState<{
     readonly x: number;
     readonly y: number;
@@ -135,10 +137,12 @@ export function App(): JSX.Element {
           undoStackRef.current.redo();
           setHistoryVersion((v) => v + 1);
         }}
+        onOpenProject={() => setFileOpenPanelOpen(true)}
         onShare={() => recordDemoAction('share')}
         onOpenCommandPalette={() => setCommandPaletteOpen(true)}
         onOpenAccountMenu={() => recordDemoAction('open account menu')}
       />
+      <FileOpenPanel isOpen={fileOpenPanelOpen} onOpenChange={setFileOpenPanelOpen} />
       <div style={{ position: 'relative', flex: 1, display: 'flex', minHeight: 0 }}>
         <ToolRail
           toolsByCategory={TOOLS_BY_CATEGORY}

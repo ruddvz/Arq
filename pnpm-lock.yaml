@@ -39,6 +39,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@arq/arqfs':
+        specifier: workspace:*
+        version: link:../../packages/arqfs
       '@arq/bim-core':
         specifier: workspace:*
         version: link:../../packages/bim-core
