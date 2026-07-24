@@ -8,6 +8,9 @@
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "react-aria-components": "^1.19.0"
+  },
   "peerDependencies": {
     "react": "^18"
   },

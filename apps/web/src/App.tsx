@@ -164,24 +164,20 @@ export function App(): JSX.Element {
           selectedElementDescription={isWallSelected ? buildDemoWallAccessibleDescription() : null}
         />
         {commandPaletteOpen && (
-          <div
-            style={{
-              position: 'absolute',
-              top: 'var(--arq-space-panel)',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 2,
+          // CommandPalette now renders its own full-viewport ArqModalDialog
+          // (backdrop, centering, focus trap) internally - a positioning
+          // wrapper here would be redundant at best. It was actively wrong:
+          // its `transform: translateX(-50%)` created a new containing block,
+          // which would have made the dialog's `position: fixed` backdrop
+          // size itself to this wrapper instead of the viewport.
+          <CommandPalette
+            entries={COMMAND_ENTRIES}
+            onInvoke={(entry) => {
+              recordDemoAction(entry.label);
+              setCommandPaletteOpen(false);
             }}
-          >
-            <CommandPalette
-              entries={COMMAND_ENTRIES}
-              onInvoke={(entry) => {
-                recordDemoAction(entry.label);
-                setCommandPaletteOpen(false);
-              }}
-              onClose={() => setCommandPaletteOpen(false)}
-            />
-          </div>
+            onClose={() => setCommandPaletteOpen(false)}
+          />
         )}
       </div>
       <ContextBar

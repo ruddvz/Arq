@@ -36,6 +36,31 @@
 
   /* Section 121/section 30: iPad touch targets must be at least 44x44 CSS px. */
   --arq-touch-target-min: 44px;
+
+  /* UI-003: overlay z-index tiers. No token existed before this - the shell had
+     three ad hoc inline `zIndex: 1`/`2` literals (ipad-landscape-shell.tsx,
+     App.tsx's command-palette wrapper) with no documented relationship between
+     them. A menu/popover/toast opened from inside a modal must still out-rank
+     the modal that opened it, hence the gap between tiers rather than +1 steps -
+     leaves room for a same-tier stack (e.g. two toasts) without renumbering
+     everything above it. */
+  --arq-z-shell-raised: 10;
+  --arq-z-overlay-backdrop: 100;
+  --arq-z-overlay-surface: 110;
+  --arq-z-popover: 120;
+  --arq-z-toast: 200;
+
+  /* UI-003: the modal backdrop colour - dark enough to read as "background is
+     inert" without itself becoming the visual focus (section 18's "calm
+     professional instrument", not a heavy scrim). */
+  --arq-overlay-backdrop: rgb(0 0 0 / 40%);
+
+  /* Section 17's shadow row: "Low-opacity only, floating layers only, never
+     decorative cards" - a modal dialog is exactly the floating-layer case this
+     permits. Named here rather than written inline in modal-dialog.css, per
+     section 20's rule that no component may introduce a new shadow literal
+     without a named token first. */
+  --arq-shadow-overlay: 0 8px 24px rgb(0 0 0 / 12%);
 }
 
 @media (prefers-color-scheme: dark) {

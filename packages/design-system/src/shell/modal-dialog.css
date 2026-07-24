@@ -1,0 +1,75 @@
+/*
+ * UI-003: shared modal/dialog chrome. The backdrop, surface, entry/exit motion
+ * and stacking are the same for every dialog in the shell (confirmation,
+ * recovery, import review, ...); a dialog's own content owns everything inside
+ * `.arq-dialog` only.
+ */
+@import '../tokens.css';
+@import './shell-tokens.css';
+
+.arq-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--arq-z-overlay-backdrop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--arq-overlay-backdrop);
+}
+
+.arq-modal {
+  z-index: var(--arq-z-overlay-surface);
+}
+
+.arq-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--arq-space-panel);
+  max-width: min(90vw, 560px);
+  max-height: 90vh;
+  overflow: auto;
+  padding: var(--arq-space-panel);
+  border: 1px solid var(--arq-ui-line-default);
+  border-radius: var(--arq-radius-dialog);
+  background: var(--arq-ui-paper);
+  color: var(--arq-ui-text-primary);
+  box-shadow: var(--arq-shadow-overlay);
+  outline: none; /* React Aria moves focus onto the dialog surface itself when it has no other focusable descendant; the surface is not itself an interactive control, so no visible focus ring is needed on it specifically - focus-visible on its actual interactive children still applies normally. */
+}
+
+/* Section 18: keyboard focus must always be visible - the dialog's own focused descendants use the same shared ring as every other control. */
+.arq-dialog :focus-visible {
+  outline: 2px solid var(--arq-focus-ring);
+  outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .arq-modal-overlay[data-entering] {
+    animation: arq-overlay-fade-in 120ms ease-out;
+  }
+  .arq-modal-overlay[data-exiting] {
+    animation: arq-overlay-fade-out 120ms ease-in;
+  }
+  .arq-modal[data-entering] {
+    animation: arq-dialog-rise-in 120ms ease-out;
+  }
+}
+
+@keyframes arq-overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes arq-overlay-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes arq-dialog-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
