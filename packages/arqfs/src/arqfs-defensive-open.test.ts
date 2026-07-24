@@ -27,6 +27,28 @@ describe('applyDefensiveOpenPolicy', () => {
     expect(driver.pragma('busy_timeout')).toBe(5000);
   });
 
+  it('enables foreign_keys, so resource_chunk.resource_sha256 is actually enforced against resource', () => {
+    driver = createNodeArqfsDriver();
+    createArqfsSchemaV1(driver);
+    applyDefensiveOpenPolicy(driver, { readOnly: false });
+
+    expect(driver.pragma('foreign_keys')).toBe(1);
+    expect(() =>
+      driver.run(
+        'INSERT INTO resource_chunk (resource_sha256, chunk_index, chunk_sha256, content) VALUES (?, ?, ?, ?)',
+        ['does-not-exist', 0, 'x', new Uint8Array(0)],
+      ),
+    ).toThrow(/foreign key/i);
+  });
+
+  it('disables recursive_triggers', () => {
+    driver = createNodeArqfsDriver();
+    createArqfsSchemaV1(driver);
+
+    applyDefensiveOpenPolicy(driver, { readOnly: false });
+    expect(driver.pragma('recursive_triggers')).toBe(0);
+  });
+
   it('with readOnly: true, subsequent writes are actually rejected, not merely intended to be', () => {
     driver = createNodeArqfsDriver();
     createArqfsSchemaV1(driver);

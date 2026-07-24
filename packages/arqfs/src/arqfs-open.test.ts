@@ -1,6 +1,7 @@
 import { describe, expect, it, afterEach } from 'vitest';
 import { createNodeArqfsDriver } from './arqfs-node-driver';
 import { createArqfsSchemaV1 } from './arqfs-schema';
+import { createArqfsSchemaLatest } from './arqfs-schema-v2';
 import { openArqfs, evaluateOpenCapabilities } from './arqfs-open';
 import { ARQFS_CURRENT_FORMAT_VERSION, type ArqFormatVersion } from './arqfs-header';
 import type { ArqfsDriver } from './arqfs-driver';
@@ -12,7 +13,7 @@ describe('openArqfs', () => {
     driver?.close();
   });
 
-  it('opens a freshly created v1 database with full capabilities', () => {
+  it('opens a freshly created v1 database and reports a migration is available to the current (v2) reader', () => {
     driver = createNodeArqfsDriver();
     createArqfsSchemaV1(driver);
 
@@ -21,6 +22,25 @@ describe('openArqfs', () => {
     expect(result).toEqual({
       status: 'opened',
       header: { major: 1, minor: 0, schema: 1, minReaderMajor: 1, minWriterMajor: 1 },
+      capabilities: {
+        canRead: true,
+        canWrite: true,
+        canMigrate: true,
+        safeModeRequired: false,
+        unsupportedRequiredFeatures: [],
+      },
+    });
+  });
+
+  it('opens a freshly created latest-schema database with full capabilities and nothing to migrate', () => {
+    driver = createNodeArqfsDriver();
+    createArqfsSchemaLatest(driver, createArqfsSchemaV1);
+
+    const result = openArqfs(driver);
+
+    expect(result).toEqual({
+      status: 'opened',
+      header: { major: 1, minor: 0, schema: 2, minReaderMajor: 1, minWriterMajor: 1 },
       capabilities: {
         canRead: true,
         canWrite: true,
@@ -71,7 +91,9 @@ describe('evaluateOpenCapabilities', () => {
   };
 
   it('grants full capabilities when file and reader versions match exactly', () => {
-    expect(evaluateOpenCapabilities(v1, ARQFS_CURRENT_FORMAT_VERSION)).toEqual({
+    expect(
+      evaluateOpenCapabilities(ARQFS_CURRENT_FORMAT_VERSION, ARQFS_CURRENT_FORMAT_VERSION),
+    ).toEqual({
       canRead: true,
       canWrite: true,
       canMigrate: false,
