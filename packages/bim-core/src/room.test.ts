@@ -91,9 +91,9 @@ describe('createRoom', () => {
 
   it('rejects a non-finite calculatedArea (adversarial: non-finite values)', () => {
     expect(() => createRoom({ ...baseInput, calculatedArea: Number.NaN })).toThrow(RangeError);
-    expect(() =>
-      createRoom({ ...baseInput, calculatedArea: Number.POSITIVE_INFINITY }),
-    ).toThrow(RangeError);
+    expect(() => createRoom({ ...baseInput, calculatedArea: Number.POSITIVE_INFINITY })).toThrow(
+      RangeError,
+    );
   });
 
   it('accepts a zero calculatedArea (a too-small or degenerate room)', () => {

@@ -68,7 +68,10 @@ describe('buildIdentityPropertyGroup', () => {
   });
 
   it('resolves ifcGlobalId as imported when present, kept separate from the element id', () => {
-    const group = buildIdentityPropertyGroup({ ...baseSource, ifcGlobalId: '2O2Fr$t4X7Zf8NOew3FLOH' });
+    const group = buildIdentityPropertyGroup({
+      ...baseSource,
+      ifcGlobalId: '2O2Fr$t4X7Zf8NOew3FLOH',
+    });
     expect(group.ifcGlobalId).toEqual({
       kind: 'imported',
       value: '2O2Fr$t4X7Zf8NOew3FLOH',

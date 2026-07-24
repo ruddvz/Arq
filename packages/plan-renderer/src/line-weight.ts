@@ -69,7 +69,5 @@ export function lineWeightToDevicePixels(weight: LineWeight, devicePixelRatio: n
  */
 export function snapStrokeCenter(coordinateDevicePx: number, widthDevicePx: number): number {
   const isOddWidth = Math.round(widthDevicePx) % 2 === 1;
-  return isOddWidth
-    ? Math.round(coordinateDevicePx - 0.5) + 0.5
-    : Math.round(coordinateDevicePx);
+  return isOddWidth ? Math.round(coordinateDevicePx - 0.5) + 0.5 : Math.round(coordinateDevicePx);
 }

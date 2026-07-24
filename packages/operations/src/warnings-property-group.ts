@@ -44,7 +44,9 @@ export function buildWarningsPropertyGroup(
   allMessages: readonly ValidationMessage[],
 ): WarningsPropertyGroup {
   const relevant = allMessages.filter((message) => message.affectedElementIds.includes(elementId));
-  const ordered = [...relevant].sort((a, b) => SEVERITY_RANK[a.severity] - SEVERITY_RANK[b.severity]);
+  const ordered = [...relevant].sort(
+    (a, b) => SEVERITY_RANK[a.severity] - SEVERITY_RANK[b.severity],
+  );
   return { messages: ordered };
 }
 

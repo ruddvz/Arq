@@ -42,7 +42,11 @@ export interface RoomBoundaryGap {
 function clusterVertices<TId>(
   edges: readonly RoomBoundaryEdge<TId>[],
   tolerance: number,
-): { readonly points: WorldPoint[]; readonly degree: number[]; readonly pairs: readonly (readonly [number, number])[] } {
+): {
+  readonly points: WorldPoint[];
+  readonly degree: number[];
+  readonly pairs: readonly (readonly [number, number])[];
+} {
   const points: WorldPoint[] = [];
   const degree: number[] = [];
   const pairs: (readonly [number, number])[] = [];

@@ -57,15 +57,20 @@ describe('buildGeometryPropertyGroup', () => {
       lengthMeasurement('height', missingProperty()),
       areaMeasurement('height', missingProperty()),
     ];
-    expect(() => buildGeometryPropertyGroup(measurements)).toThrow(/duplicate geometry measurement key/);
+    expect(() => buildGeometryPropertyGroup(measurements)).toThrow(
+      /duplicate geometry measurement key/,
+    );
   });
 
   it('property: any list of measurements with distinct keys never throws', () => {
     fc.assert(
-      fc.property(fc.uniqueArray(fc.string({ minLength: 1 }), { minLength: 0, maxLength: 20 }), (keys) => {
-        const measurements = keys.map((key) => areaMeasurement(key, calculatedProperty(1)));
-        expect(() => buildGeometryPropertyGroup(measurements)).not.toThrow();
-      }),
+      fc.property(
+        fc.uniqueArray(fc.string({ minLength: 1 }), { minLength: 0, maxLength: 20 }),
+        (keys) => {
+          const measurements = keys.map((key) => areaMeasurement(key, calculatedProperty(1)));
+          expect(() => buildGeometryPropertyGroup(measurements)).not.toThrow();
+        },
+      ),
     );
   });
 

@@ -1,11 +1,22 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
-import { buildTypeAndInstancePropertyGroup, type NamedPropertyState } from './type-instance-property-group';
-import { calculatedProperty, inheritedProperty, missingProperty, overriddenProperty } from './property-state';
+import {
+  buildTypeAndInstancePropertyGroup,
+  type NamedPropertyState,
+} from './type-instance-property-group';
+import {
+  calculatedProperty,
+  inheritedProperty,
+  missingProperty,
+  overriddenProperty,
+} from './property-state';
 
 describe('buildTypeAndInstancePropertyGroup', () => {
   it('resolves type as calculated when a type reference is given', () => {
-    const group = buildTypeAndInstancePropertyGroup({ id: 'wt-1', name: 'Interior Wall 100mm' }, []);
+    const group = buildTypeAndInstancePropertyGroup(
+      { id: 'wt-1', name: 'Interior Wall 100mm' },
+      [],
+    );
     expect(group.type).toEqual({
       kind: 'calculated',
       value: { id: 'wt-1', name: 'Interior Wall 100mm' },

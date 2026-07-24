@@ -1,0 +1,15 @@
+# Generated evidence, not source - each capability-check script
+# (scripts/run-*-capability-check.mjs, scripts/run-*-benchmark.mjs) writes one
+# timestamped JSON result file here as committed proof of a real run.
+# Reformatting them is pure noise: they are data, never hand-edited, and their
+# content is defined entirely by whatever produced them.
+benchmarks/results/
+
+# pnpm's own lockfile. Reformatting it (confirmed by running `prettier --write .`
+# once and inspecting the diff before reverting) rewrites every single-line
+# `resolution: {integrity: ...}`/`engines: {...}` flow mapping onto several
+# lines - technically still valid YAML, but a ~1000-line diff on a file no
+# human ever hand-edits, that would make every future PR touching a dependency
+# noisy and conflict-prone for no benefit. pnpm itself, not prettier, owns this
+# file's formatting.
+pnpm-lock.yaml

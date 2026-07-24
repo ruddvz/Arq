@@ -50,7 +50,11 @@
 import { createCommandLifecycle, type CommandLifecycleSnapshot } from '@arq/command-system';
 import type { Viewport, WorldPoint } from '@arq/geometry-2d';
 import { closestPointOnSegment, vectorBetween, vectorLength } from '@arq/geometry-2d';
-import { createNumericOverlay, parseNumericOverlay, type NumericOverlayState } from './numeric-overlay';
+import {
+  createNumericOverlay,
+  parseNumericOverlay,
+  type NumericOverlayState,
+} from './numeric-overlay';
 import type { SegmentCandidate } from './segment-candidate';
 
 export type DoorPlacementSide = 'left' | 'right';
@@ -212,8 +216,9 @@ export function createDoorPlacementTool<TId>() {
     const overlayBefore = overlay.snapshot();
     const hasPendingFieldText =
       overlayBefore.field !== null &&
-      (overlayBefore.field === 'distance' ? overlayBefore.distanceText : overlayBefore.angleText) !==
-        '';
+      (overlayBefore.field === 'distance'
+        ? overlayBefore.distanceText
+        : overlayBefore.angleText) !== '';
     if (hasPendingFieldText) {
       overlay.escape();
       return snapshot();

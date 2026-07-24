@@ -18,7 +18,11 @@ const opening1 = openingId('opening-1');
 describe('reference constructors', () => {
   it('build each of the five reference kinds', () => {
     expect(wallReferenceLine(wall1)).toEqual({ kind: 'wall-reference-line', wallId: wall1 });
-    expect(wallFace(wall1, 'interior')).toEqual({ kind: 'wall-face', wallId: wall1, side: 'interior' });
+    expect(wallFace(wall1, 'interior')).toEqual({
+      kind: 'wall-face',
+      wallId: wall1,
+      side: 'interior',
+    });
     expect(openingCentre(opening1)).toEqual({ kind: 'opening-centre', openingId: opening1 });
     expect(openingEdge(opening1, 'start')).toEqual({
       kind: 'opening-edge',

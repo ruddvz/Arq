@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { worldPoint } from '@arq/geometry-2d';
-import { buildPlanViewport, projectPointToSheet, type SheetViewportTransform } from './sheet-viewport';
+import {
+  buildPlanViewport,
+  projectPointToSheet,
+  type SheetViewportTransform,
+} from './sheet-viewport';
 import type { PlanScene } from './plan-scene';
 
 const identityTransform: SheetViewportTransform = { scale: 1, position: { x: 0, y: 0 } };
@@ -56,7 +60,15 @@ describe('buildPlanViewport', () => {
     const transform: SheetViewportTransform = { scale: 0.01, position: { x: 20, y: 20 } };
     const result = buildPlanViewport(scene, transform);
     expect(result.primitives).toEqual([
-      { kind: 'line', elementId: 'wall-1', points: [{ x: 20, y: 20 }, { x: 30, y: 20 }], styleToken: 'default' },
+      {
+        kind: 'line',
+        elementId: 'wall-1',
+        points: [
+          { x: 20, y: 20 },
+          { x: 30, y: 20 },
+        ],
+        styleToken: 'default',
+      },
       {
         kind: 'polygon',
         elementId: 'room-1',
@@ -67,8 +79,19 @@ describe('buildPlanViewport', () => {
         ],
         styleToken: 'selected-primary',
       },
-      { kind: 'text', elementId: 'room-1', anchor: { x: 25, y: 25 }, text: 'Kitchen', styleToken: 'default' },
-      { kind: 'handle', elementId: 'room-1', point: { x: 30, y: 30 }, styleToken: 'selected-primary' },
+      {
+        kind: 'text',
+        elementId: 'room-1',
+        anchor: { x: 25, y: 25 },
+        text: 'Kitchen',
+        styleToken: 'default',
+      },
+      {
+        kind: 'handle',
+        elementId: 'room-1',
+        point: { x: 30, y: 30 },
+        styleToken: 'selected-primary',
+      },
     ]);
   });
 
@@ -86,7 +109,9 @@ describe('buildPlanViewport', () => {
   });
 
   it('rejects a negative scale', () => {
-    expect(() => buildPlanViewport(scene, { scale: -1, position: { x: 0, y: 0 } })).toThrow(/scale/);
+    expect(() => buildPlanViewport(scene, { scale: -1, position: { x: 0, y: 0 } })).toThrow(
+      /scale/,
+    );
   });
 
   it('rejects a non-finite scale', () => {

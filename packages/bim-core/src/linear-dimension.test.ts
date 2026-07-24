@@ -35,7 +35,12 @@ describe('createLinearDimension', () => {
   });
 
   it('keeps a given precision and optional fields', () => {
-    const dimension = baseDimension({ precision: 2, prefix: '~', suffix: ' mm', textOverride: 'see note' });
+    const dimension = baseDimension({
+      precision: 2,
+      prefix: '~',
+      suffix: ' mm',
+      textOverride: 'see note',
+    });
     expect(dimension.precision).toBe(2);
     expect(dimension.prefix).toBe('~');
     expect(dimension.suffix).toBe(' mm');

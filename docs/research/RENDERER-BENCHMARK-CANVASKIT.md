@@ -55,10 +55,10 @@ ARQ-118.
 Three consecutive runs (2026-07-22), full JSON in `benchmarks/results/`:
 
 | Run | avg fps | avg frame (ms) | p95 frame (ms) | max frame (ms) |
-|---|---|---|---|---|
-| 1 | 39.71 | 25.18 | 33.40 | 66.80 |
-| 2 | 42.03 | 23.79 | 33.40 | 50.00 |
-| 3 | 43.03 | 23.24 | 33.40 | 50.00 |
+| --- | ------- | -------------- | -------------- | -------------- |
+| 1   | 39.71   | 25.18          | 33.40          | 66.80          |
+| 2   | 42.03   | 23.79          | 33.40          | 50.00          |
+| 3   | 43.03   | 23.24          | 33.40          | 50.00          |
 
 Object counts matched the benchmark model exactly in every run.
 
@@ -72,7 +72,7 @@ fps, but substantially faster than PixiJS's software-WebGL result
 ## Interpreting the three-way comparison
 
 All three spikes ran on the same hardware (this sandboxed, GPU-less
-container), so the *relative* ordering among them is a real,
+container), so the _relative_ ordering among them is a real,
 reproducible signal even though none of the absolute numbers are
 certified device measurements:
 
@@ -89,7 +89,7 @@ certified device measurements:
    software emulation of the entire GPU pipeline, which is a much
    heavier tax than either of the above pays.
 
-The one-sided conclusion this environment *can* support: for this
+The one-sided conclusion this environment _can_ support: for this
 object count, going through an extra binding/sandbox boundary (WASM, or
 a fully-emulated GPU pipeline) costs real, measurable frame time
 compared to the browser's native, direct-call 2D API. It cannot support
