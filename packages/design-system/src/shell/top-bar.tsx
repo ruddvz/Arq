@@ -93,6 +93,21 @@ export function TopBar(props: TopBarProps): JSX.Element {
         gap: 'var(--arq-space-control-group)',
         padding: 'var(--arq-space-compact) var(--arq-space-panel)',
         borderBottom: '1px solid var(--arq-ui-line-subtle)',
+        /*
+         * Package 3.0 doc 36: "At compact widths, project identity and active
+         * view never disappear. Presence labels, low-priority status text and
+         * secondary collaboration actions collapse first."
+         *
+         * That collapse - secondary actions folding into an overflow menu - is
+         * not built yet. Until it is, the bar wraps rather than overflows: at
+         * 393px its controls needed 555px and pushed a horizontal scrollbar onto
+         * the whole document, which is the one outcome worse than a taller
+         * header. Wrapping keeps every control reachable and hides nothing,
+         * which matters because there is no project menu to hold the save and
+         * sync indicators if they were dropped.
+         */
+        flexWrap: 'wrap',
+        minWidth: 0,
       }}
     >
       <Logo variant="symbol" heightPx={24} />

@@ -19,6 +19,20 @@
  * a domain package from a UI-shell package).
  */
 
+/**
+ * Reconciliation with UI/UX Package 3.0 (doc 38, `workspace-tool-registry.json`):
+ * the registry organises 54 tools into *eight* groups - the blueprint's seven
+ * plus **Review** (issue, comment, model health, compare revisions). Review is
+ * appended rather than inserted so blueprint section 12's "order is fixed...
+ * and must stay stable" holds for the seven categories it named: every existing
+ * category keeps its index, and a user's muscle memory for the rail is
+ * unchanged.
+ *
+ * Review sits last for a second reason. Its tools are all gated on
+ * `CAP-collaboration`, which this repository does not enable, so the one
+ * category that is entirely unavailable today is also the one furthest from the
+ * categories that work.
+ */
 export const TOOL_RAIL_CATEGORIES = [
   'select',
   'draw',
@@ -27,6 +41,7 @@ export const TOOL_RAIL_CATEGORIES = [
   'annotate',
   'measure',
   'view',
+  'review',
 ] as const;
 
 export type ToolRailCategory = (typeof TOOL_RAIL_CATEGORIES)[number];

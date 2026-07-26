@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "commands": [
+    {
+      "id": "command-palette",
+      "label": "Open command palette",
+      "mac": "\u2318K",
+      "windows": "Ctrl+K",
+      "ipadKeyboard": "\u2318K",
+      "phone": "bottom dock > More > Commands",
+      "scope": "global"
+    },
+    {
+      "id": "save",
+      "label": "Save local project",
+      "mac": "\u2318S",
+      "windows": "Ctrl+S",
+      "ipadKeyboard": "\u2318S",
+      "phone": "automatic + project menu",
+      "scope": "project"
+    },
+    {
+      "id": "undo",
+      "label": "Undo",
+      "mac": "\u2318Z",
+      "windows": "Ctrl+Z",
+      "ipadKeyboard": "\u2318Z",
+      "phone": "top/menu or gesture only if explicit and accessible",
+      "scope": "project"
+    },
+    {
+      "id": "redo",
+      "label": "Redo",
+      "mac": "\u21e7\u2318Z",
+      "windows": "Ctrl+Y / Ctrl+Shift+Z",
+      "ipadKeyboard": "\u21e7\u2318Z",
+      "phone": "menu",
+      "scope": "project"
+    },
+    {
+      "id": "escape",
+      "label": "Cancel current tool/draft",
+      "mac": "Esc",
+      "windows": "Esc",
+      "ipadKeyboard": "Esc",
+      "phone": "Cancel/back control",
+      "scope": "tool"
+    },
+    {
+      "id": "select",
+      "label": "Select tool",
+      "mac": "V",
+      "windows": "V",
+      "ipadKeyboard": "V",
+      "phone": "bottom dock Select",
+      "scope": "design"
+    },
+    {
+      "id": "wall",
+      "label": "Wall tool",
+      "mac": "W",
+      "windows": "W",
+      "ipadKeyboard": "W",
+      "phone": "Tools > Draw > Wall",
+      "scope": "design"
+    },
+    {
+      "id": "fit",
+      "label": "Fit view",
+      "mac": "F",
+      "windows": "F",
+      "ipadKeyboard": "F",
+      "phone": "View controls > Fit",
+      "scope": "view"
+    },
+    {
+      "id": "focus-selection",
+      "label": "Focus selection",
+      "mac": "F then selection context / configurable",
+      "windows": "F then selection context / configurable",
+      "ipadKeyboard": "configurable",
+      "phone": "selection menu > Focus",
+      "scope": "view"
+    },
+    {
+      "id": "close-tab",
+      "label": "Close active view tab",
+      "mac": "\u2318W",
+      "windows": "Ctrl+W",
+      "ipadKeyboard": "\u2318W",
+      "phone": "tab menu > Close",
+      "scope": "view"
+    }
+  ],
+  "rules": [
+    "Never steal OS-reserved shortcuts.",
+    "Do not fire shortcuts during IME composition or when a text field owns the command.",
+    "Every keyboard-only action needs pointer/touch access.",
+    "Shortcut labels are platform-adapted, not hard-coded Cmd everywhere."
+  ]
+}

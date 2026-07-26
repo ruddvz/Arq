@@ -1,0 +1,92 @@
+/*
+ * Package 3.0 doc 36 ("Editor Shell Master Layout") density rules for the
+ * open-project shell, layered on top of shell-controls.css rather than
+ * replacing it.
+ *
+ * The problem this file exists to solve: shell-controls.css gives every
+ * `.arq-shell-button` a 44px minimum in both axes, which is correct and
+ * non-negotiable for touch (blueprint section 121, and doc 36's own "minimum
+ * 44px touch hit target"). But doc 36 also specifies a 40px tab strip and a
+ * 38px context bar, and a 44px control cannot fit in a 40px strip. Both numbers
+ * are right for their own input; they are simply not right at the same time.
+ *
+ * So the relaxation is scoped to `(pointer: fine)` - a mouse or trackpad, where
+ * doc 36 specifies a "Desktop icon hitbox: 36-40 px" instead. A coarse pointer
+ * never enters these blocks and keeps the full 44px, which means a touch device
+ * gets a slightly taller strip than the desktop baseline rather than a target
+ * too small to hit. That is the correct trade: the registry heights are desktop
+ * geometry, and doc 46 puts canvas-first touch layouts on a different
+ * composition anyway.
+ */
+@import '../shell/shell-controls.css';
+
+@media (pointer: fine) {
+  .arq-tab-strip .arq-shell-button,
+  .arq-mode-rail .arq-shell-button,
+  .arq-workspace__context-bar .arq-shell-button {
+    min-height: 36px;
+    min-width: 36px;
+    padding: var(--arq-space-micro) var(--arq-space-compact);
+  }
+
+  /* The close affordance is an icon-only square; keeping its padding symmetric
+     stops it stretching the tab it sits inside. */
+  .arq-tab-strip__close {
+    padding: var(--arq-space-micro);
+  }
+}
+
+/*
+ * Doc 36: "Mode icons remain visually distinct from tool categories through
+ * grouping/spacing, not a second colour system." The rail introduces no colour
+ * of its own - only a wider gutter and a divider.
+ */
+.arq-mode-rail {
+  row-gap: var(--arq-space-compact);
+}
+
+/*
+ * The active tab. `aria-selected` is the single source of truth, so the visual
+ * state cannot drift from what assistive technology is told. The underline is
+ * paired with the shared button's pressed treatment rather than replacing it:
+ * blueprint section 126's "status not colour-only" applies to selection too, so
+ * an active tab is distinguished by weight and a rule, not a tint.
+ */
+.arq-tab-strip__label[aria-selected='true'] {
+  border-bottom: 2px solid var(--arq-ui-ink);
+  border-radius: var(--arq-radius-control) var(--arq-radius-control) 0 0;
+  font-weight: 600;
+}
+
+.arq-tab-strip__label {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+/*
+ * Doc 36: "The browser and inspector have flat separators. No card shadows
+ * around core docked panels. Canvas is visually dominant."
+ */
+.arq-workspace__docked {
+  overflow: auto;
+}
+
+/*
+ * A floating panel is the one place a shadow is correct - it is above the
+ * canvas rather than beside it, and without one its edge reads as a docked
+ * separator. Reduced-motion users get the same shadow; it is depth, not motion.
+ */
+.arq-workspace__overlay {
+  box-shadow: 0 0 12px rgb(0 0 0 / 18%);
+}
+
+/*
+ * Doc 36: the status bar "is dense and low contrast. It shows status, not
+ * primary actions."
+ */
+.arq-workspace .arq-status-bar {
+  color: var(--arq-ui-text-secondary);
+}

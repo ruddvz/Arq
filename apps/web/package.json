@@ -19,6 +19,7 @@
     "@arq/icons": "workspace:*",
     "@arq/operations": "workspace:*",
     "@arq/plan-renderer": "workspace:*",
+    "@arq/workspace": "workspace:*",
     "react": "^18",
     "react-aria-components": "^1.19.0",
     "react-dom": "^18"

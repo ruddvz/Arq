@@ -1,0 +1,1476 @@
+{
+  "schemaVersion": 1,
+  "count": 147,
+  "components": [
+    {
+      "id": "W001",
+      "name": "WorkspaceRoot",
+      "category": "shell",
+      "purpose": "Owns the open-project viewport, safe-area insets, shell density and capability context.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W002",
+      "name": "GlobalProjectBar",
+      "category": "shell",
+      "purpose": "Topmost in-project bar for project identity, save/sync, undo/redo, command search, review/share and account.",
+      "states": "TopBar",
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W003",
+      "name": "ModeRail",
+      "category": "navigation",
+      "purpose": "Stable mode switcher for Design, Document, Inspect, Review and Present.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W004",
+      "name": "ProjectTabStrip",
+      "category": "navigation",
+      "purpose": "Closeable/reorderable/pinnable tabs for model views, sheets, schedules, reports and comparison views.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W005",
+      "name": "PrimaryToolRail",
+      "category": "tools",
+      "purpose": "Category-first architectural tool rail, one expanded group at a time.",
+      "states": "ToolRail",
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W006",
+      "name": "ProjectBrowserPanel",
+      "category": "panel",
+      "purpose": "Left project browser hosting model, views, sheets, schedules, families/assets and references.",
+      "states": "ModelPanel",
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W007",
+      "name": "InspectorPanel",
+      "category": "panel",
+      "purpose": "Right properties/type/relations/warnings/history inspector.",
+      "states": "InspectorShell",
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W008",
+      "name": "ContextActionBar",
+      "category": "shell",
+      "purpose": "Selection/tool-specific actions immediately above status bar.",
+      "states": "ContextBar",
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W009",
+      "name": "WorkspaceStatusBar",
+      "category": "shell",
+      "purpose": "Units, snap, level/view scale, selection count, model health, local save and sync state.",
+      "states": "StatusBar",
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W010",
+      "name": "CommandPalette",
+      "category": "floating",
+      "purpose": "Keyboard-first command/search surface that returns typed proposals.",
+      "states": "CommandPalette",
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W011",
+      "name": "ViewportHost",
+      "category": "viewport",
+      "purpose": "Hosts plan, 3D, sheet, schedule, report and comparison viewport adapters.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W012",
+      "name": "PanelDockManager",
+      "category": "shell",
+      "purpose": "Coordinates docked/collapsed/overlay panel state and persisted user layout.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W013",
+      "name": "ResponsiveWorkspaceShell",
+      "category": "shell",
+      "purpose": "Chooses desktop, compact desktop, tablet, phone layout without changing semantic tool state.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W014",
+      "name": "WorkspaceOverlayLayer",
+      "category": "floating",
+      "purpose": "Single z-index authority for menus, popovers, HUDs, dialogs, sheets, toasts and drag previews.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W015",
+      "name": "ProjectOverviewSurface",
+      "category": "surface",
+      "purpose": "Internal project landing dashboard with recent views, health, issues, activity and quick actions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W016",
+      "name": "ProjectIdentityButton",
+      "category": "navigation",
+      "purpose": "Return to project overview / open project menu.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W017",
+      "name": "ProjectBreadcrumb",
+      "category": "navigation",
+      "purpose": "Project > active mode > active view hierarchy.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W018",
+      "name": "SaveSyncCluster",
+      "category": "status",
+      "purpose": "Shows local save and remote sync as separate states.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W019",
+      "name": "UndoRedoCluster",
+      "category": "navigation",
+      "purpose": "Undo/redo with labels and disabled reasons.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W020",
+      "name": "CommandSearchButton",
+      "category": "navigation",
+      "purpose": "Opens command palette and global object/view search.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W021",
+      "name": "ReviewCluster",
+      "category": "navigation",
+      "purpose": "Issues/comments/review count and quick open actions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W022",
+      "name": "PresenceCluster",
+      "category": "collaboration",
+      "purpose": "Visible collaborators with overflow and connection status.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W023",
+      "name": "ShareButton",
+      "category": "collaboration",
+      "purpose": "Open share settings for current project/revision according to permissions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W024",
+      "name": "AccountMenuButton",
+      "category": "navigation",
+      "purpose": "Account/workspace menu.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W025",
+      "name": "TabItem",
+      "category": "navigation",
+      "purpose": "One open view/document tab with icon, dirty/pending marker, pin and close.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W026",
+      "name": "TabOverflowMenu",
+      "category": "navigation",
+      "purpose": "Lists tabs hidden by width pressure.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W027",
+      "name": "NewViewTabButton",
+      "category": "navigation",
+      "purpose": "Open new view/sheet/schedule or command picker.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W028",
+      "name": "TabContextMenu",
+      "category": "navigation",
+      "purpose": "Close, close others, pin, duplicate view, reveal in browser, split right/down when supported.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W029",
+      "name": "ModeSwitcherCompact",
+      "category": "navigation",
+      "purpose": "Compact mode menu for narrow desktop/tablet/phone.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W030",
+      "name": "BrowserSectionTabs",
+      "category": "navigation",
+      "purpose": "Switch left panel between Project, Views, Documents, Files and optional Issues.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W031",
+      "name": "BrowserSearch",
+      "category": "navigation",
+      "purpose": "Filter project tree without changing model visibility.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W032",
+      "name": "BrowserTree",
+      "category": "navigation",
+      "purpose": "Hierarchical project/model tree.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W033",
+      "name": "BrowserTreeRow",
+      "category": "navigation",
+      "purpose": "Expandable row with type icon, name, visibility/lock badges and context menu.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W034",
+      "name": "BrowserTreeInlineActions",
+      "category": "navigation",
+      "purpose": "Hover/focus actions for visibility, isolate and more menu.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W035",
+      "name": "BrowserFilterBar",
+      "category": "navigation",
+      "purpose": "Scope filters for type, level, phase/view and warning state.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W036",
+      "name": "BrowserEmptyState",
+      "category": "navigation",
+      "purpose": "Contextual empty state with safe creation action.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W037",
+      "name": "ToolCategoryButton",
+      "category": "tools",
+      "purpose": "Opens one tool category while preserving current tool when possible.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W038",
+      "name": "ToolButton",
+      "category": "tools",
+      "purpose": "Activates a typed editor tool and exposes shortcut/availability.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W039",
+      "name": "ToolFlyout",
+      "category": "tools",
+      "purpose": "Secondary variants for a tool without permanently growing the rail.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W040",
+      "name": "ToolOptionStrip",
+      "category": "tools",
+      "purpose": "Context-specific tool parameters, toggles and constraint mode.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W041",
+      "name": "ToolShortcutBadge",
+      "category": "tools",
+      "purpose": "Discoverable keyboard shortcut hint.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W042",
+      "name": "ToolAvailabilityReason",
+      "category": "tools",
+      "purpose": "Explains why a command is disabled.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W043",
+      "name": "SnapToggleCluster",
+      "category": "tools",
+      "purpose": "Endpoint/midpoint/intersection/etc active snap controls.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W044",
+      "name": "ViewNavigationCluster",
+      "category": "tools",
+      "purpose": "Pan/orbit/zoom/fit/view-mode actions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W045",
+      "name": "SelectionFilterButton",
+      "category": "tools",
+      "purpose": "Opens element-category selection filter.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W046",
+      "name": "WorkPlaneControl",
+      "category": "tools",
+      "purpose": "Shows/changes active work plane only through valid model/view commands.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W047",
+      "name": "PlanViewport",
+      "category": "viewport",
+      "purpose": "2D plan renderer surface with semantic selection and snapping.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W048",
+      "name": "ModelViewport",
+      "category": "viewport",
+      "purpose": "3D renderer surface with view cube/navigation.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W049",
+      "name": "SheetViewport",
+      "category": "viewport",
+      "purpose": "Print-geometry preserving sheet viewport.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W050",
+      "name": "ScheduleViewport",
+      "category": "viewport",
+      "purpose": "Keyboard-editable table/schedule view.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W051",
+      "name": "SplitViewport",
+      "category": "viewport",
+      "purpose": "Two coordinated viewports with explicit sync dimensions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W052",
+      "name": "ComparisonViewport",
+      "category": "viewport",
+      "purpose": "Before/after or branch/revision compare.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W053",
+      "name": "ViewCube",
+      "category": "viewport",
+      "purpose": "3D orientation control.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W054",
+      "name": "ViewportNavBar",
+      "category": "viewport",
+      "purpose": "Compact zoom/pan/orbit/fit controls.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W055",
+      "name": "SelectionOverlay",
+      "category": "viewport",
+      "purpose": "Highlight, grips, bounding/semantic reference overlay.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W056",
+      "name": "HoverOverlay",
+      "category": "viewport",
+      "purpose": "Low-cost hover target preview.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W057",
+      "name": "MarqueeSelection",
+      "category": "viewport",
+      "purpose": "Window/crossing selection rectangle with direction semantics.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W058",
+      "name": "TransformHandles",
+      "category": "viewport",
+      "purpose": "Move/rotate/resize grips tied to semantic commands.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W059",
+      "name": "CursorHUD",
+      "category": "viewport",
+      "purpose": "Near-cursor value/constraint editor that never blocks canvas outside controls.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W060",
+      "name": "NumericEntryHUD",
+      "category": "viewport",
+      "purpose": "Controlled length/angle draft with units and commit/cancel.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W061",
+      "name": "SnapGlyph",
+      "category": "viewport",
+      "purpose": "Transient snap type marker and anchor.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W062",
+      "name": "TrackingGuide",
+      "category": "viewport",
+      "purpose": "Ortho/polar/extension guide.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W063",
+      "name": "DimensionPreview",
+      "category": "viewport",
+      "purpose": "Transient dimension during draw/modify.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W064",
+      "name": "GhostGeometry",
+      "category": "viewport",
+      "purpose": "Provisional geometry for direct manipulation.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W065",
+      "name": "IssueMarker",
+      "category": "viewport",
+      "purpose": "Revision-aware issue pin/marker.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W066",
+      "name": "CommentMarker",
+      "category": "viewport",
+      "purpose": "Revision-aware comment pin.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W067",
+      "name": "DiagnosticMarker",
+      "category": "viewport",
+      "purpose": "Model-health warning/error marker.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W068",
+      "name": "RemoteCursor",
+      "category": "viewport",
+      "purpose": "Transient collaborator pointer and label.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W069",
+      "name": "RemoteSelection",
+      "category": "viewport",
+      "purpose": "Collaborator selection outline.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W070",
+      "name": "SectionBoxGizmo",
+      "category": "viewport",
+      "purpose": "3D section-box direct manipulation when supported.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W071",
+      "name": "ViewScaleControl",
+      "category": "viewport",
+      "purpose": "View-specific scale display/selector where meaningful.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W072",
+      "name": "ActiveLevelControl",
+      "category": "viewport",
+      "purpose": "Current level/storey selector.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W073",
+      "name": "ViewStyleControl",
+      "category": "viewport",
+      "purpose": "Wireframe/hidden line/shaded/rendered style selector when supported.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W074",
+      "name": "FullScreenCanvasButton",
+      "category": "viewport",
+      "purpose": "Hides nonessential chrome while preserving explicit restore control.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W075",
+      "name": "InspectorHeader",
+      "category": "inspector",
+      "purpose": "Selection summary, type icon, name, lock/visibility and overflow actions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W076",
+      "name": "InspectorTabBar",
+      "category": "inspector",
+      "purpose": "Properties, Type, Relations, Warnings, History.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W077",
+      "name": "PropertyGroup",
+      "category": "inspector",
+      "purpose": "Collapsible semantic property section.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W078",
+      "name": "PropertyRow",
+      "category": "inspector",
+      "purpose": "Label/value/unit/reset-to-type status.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W079",
+      "name": "TypeSelector",
+      "category": "inspector",
+      "purpose": "Choose compatible type with search and preview.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W080",
+      "name": "QuantityField",
+      "category": "inspector",
+      "purpose": "Controlled numeric/unit editor.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W081",
+      "name": "EnumField",
+      "category": "inspector",
+      "purpose": "Finite-choice semantic property editor.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W082",
+      "name": "ReferencePicker",
+      "category": "inspector",
+      "purpose": "Pick another semantic element/view/level as a relation target.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W083",
+      "name": "MaterialPicker",
+      "category": "inspector",
+      "purpose": "Select material/type resource when capability exists.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W084",
+      "name": "FormulaIndicator",
+      "category": "inspector",
+      "purpose": "Shows driven/formula/locked property status.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W085",
+      "name": "OverrideIndicator",
+      "category": "inspector",
+      "purpose": "Marks instance override vs type value.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W086",
+      "name": "RelationshipList",
+      "category": "inspector",
+      "purpose": "Hosts/joins/containment/references list.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W087",
+      "name": "WarningList",
+      "category": "inspector",
+      "purpose": "Selection-local diagnostics with focus/fix.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W088",
+      "name": "HistoryList",
+      "category": "inspector",
+      "purpose": "Selection change history/revisions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W089",
+      "name": "InspectorMultiSelection",
+      "category": "inspector",
+      "purpose": "Common-properties view for multi-selection.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W090",
+      "name": "InspectorNoSelection",
+      "category": "inspector",
+      "purpose": "Helpful selection-empty state.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W091",
+      "name": "InspectorReadOnlyState",
+      "category": "inspector",
+      "purpose": "Permission/revision locked property presentation.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W092",
+      "name": "InspectorBottomSheet",
+      "category": "inspector",
+      "purpose": "Tablet/phone inspector adaptation.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W093",
+      "name": "ProjectOverviewHeader",
+      "category": "dashboard",
+      "purpose": "Project name, location metadata if available, revision/save state and primary open action.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W094",
+      "name": "ContinueWorkingCard",
+      "category": "dashboard",
+      "purpose": "Recent/open views with last active view.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W095",
+      "name": "RecentViewsGrid",
+      "category": "dashboard",
+      "purpose": "View/sheet thumbnails generated from real project state.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W096",
+      "name": "ModelHealthSummary",
+      "category": "dashboard",
+      "purpose": "Errors/warnings/info plus last check and open diagnostics.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W097",
+      "name": "IssueSummary",
+      "category": "dashboard",
+      "purpose": "Open/assigned/overdue issue summaries without invented counts.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W098",
+      "name": "ActivityFeed",
+      "category": "dashboard",
+      "purpose": "Revision-safe project activity log.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W099",
+      "name": "TeamSummary",
+      "category": "dashboard",
+      "purpose": "Current project members/presence where collaboration is enabled.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W100",
+      "name": "ReferenceFilesSummary",
+      "category": "dashboard",
+      "purpose": "Linked/imported references with missing/outdated state.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W101",
+      "name": "ProjectStorageSummary",
+      "category": "dashboard",
+      "purpose": "Local file/cache size only when measured.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W102",
+      "name": "QuickActionGrid",
+      "category": "dashboard",
+      "purpose": "Open plan, 3D, sheet, import, export, recover, project settings as capability allows.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W103",
+      "name": "RecoveryStatusCard",
+      "category": "dashboard",
+      "purpose": "Latest local recovery checkpoint and restore action.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W104",
+      "name": "ProjectCapabilityNotice",
+      "category": "dashboard",
+      "purpose": "Truthful notice for unavailable/gated features.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W105",
+      "name": "DocumentNavigator",
+      "category": "document",
+      "purpose": "Views/sheets/schedules/reports hierarchy.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W106",
+      "name": "SheetThumbnailStrip",
+      "category": "document",
+      "purpose": "Sheet/view thumbnails with active state.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W107",
+      "name": "ScheduleToolbar",
+      "category": "document",
+      "purpose": "Schedule fields/filter/sort/format actions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W108",
+      "name": "SheetToolPanel",
+      "category": "document",
+      "purpose": "Sheet properties and viewport controls.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W109",
+      "name": "IssueList",
+      "category": "review",
+      "purpose": "Filterable issue list with state/assignee/revision.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W110",
+      "name": "IssueDetail",
+      "category": "review",
+      "purpose": "Issue title, state, assignee, context, attachments and actions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W111",
+      "name": "CommentThread",
+      "category": "review",
+      "purpose": "Revision/target-aware threaded comments.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W112",
+      "name": "IssueFilterBar",
+      "category": "review",
+      "purpose": "Status/assignee/author/view/revision filters.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W113",
+      "name": "ReviewModeSwitcher",
+      "category": "review",
+      "purpose": "Issues/comments/changes tabs inside review context.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W114",
+      "name": "VersionTimeline",
+      "category": "versions",
+      "purpose": "Ordered project revisions/checkpoints.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W115",
+      "name": "RevisionCard",
+      "category": "versions",
+      "purpose": "Revision metadata and actions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W116",
+      "name": "RevisionCompareControls",
+      "category": "versions",
+      "purpose": "Before/after, overlay, slider and changed-element filters.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W117",
+      "name": "BranchSelector",
+      "category": "versions",
+      "purpose": "Named branch/option selector when collaboration capability exists.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W118",
+      "name": "ConflictResolver",
+      "category": "versions",
+      "purpose": "Explicit semantic conflict resolution UI.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W119",
+      "name": "ReferenceFileList",
+      "category": "files",
+      "purpose": "Project reference files and source state.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W120",
+      "name": "ReferenceFileRow",
+      "category": "files",
+      "purpose": "Format/source/revision/status/relink actions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W121",
+      "name": "ImportReport",
+      "category": "files",
+      "purpose": "Mapped/skipped/warned import summary.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W122",
+      "name": "ExportPanel",
+      "category": "files",
+      "purpose": "Format/scope/validation/options and export action.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W123",
+      "name": "ExportReport",
+      "category": "files",
+      "purpose": "Completed/partial/failed export result.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W124",
+      "name": "AiAssistantPanel",
+      "category": "ai",
+      "purpose": "Proposal-based assistant surface, never direct model mutation.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W125",
+      "name": "AiProposalCard",
+      "category": "ai",
+      "purpose": "Intent, assumptions, operations, affected elements and confidence/limits.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W126",
+      "name": "AiProposalPreview",
+      "category": "ai",
+      "purpose": "Ghost/side-by-side proposed geometry or document changes.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W127",
+      "name": "AiValidationSummary",
+      "category": "ai",
+      "purpose": "Validation findings before Apply.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W128",
+      "name": "AiApplyBar",
+      "category": "ai",
+      "purpose": "Apply/reject/regenerate with one grouped undo boundary.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W129",
+      "name": "AnalysisPanel",
+      "category": "analysis",
+      "purpose": "Non-blocking derived analysis results with source revision.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W130",
+      "name": "DiagnosticsPanel",
+      "category": "analysis",
+      "purpose": "Project model/system diagnostics.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W131",
+      "name": "ModelHealthPanel",
+      "category": "analysis",
+      "purpose": "Health overview and find/focus actions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W132",
+      "name": "ProjectSettingsDrawer",
+      "category": "settings",
+      "purpose": "In-project settings without leaving project context.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W133",
+      "name": "KeyboardShortcutOverlay",
+      "category": "help",
+      "purpose": "Searchable contextual shortcut reference.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W134",
+      "name": "HelpPopover",
+      "category": "help",
+      "purpose": "Context help/docs link.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W135",
+      "name": "ToastRegion",
+      "category": "feedback",
+      "purpose": "Non-blocking transient confirmations/errors.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W136",
+      "name": "InlineBanner",
+      "category": "feedback",
+      "purpose": "Persistent contextual status/permission/offline banners.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W137",
+      "name": "ProgressTaskTray",
+      "category": "feedback",
+      "purpose": "Long-running imports/exports/regeneration tasks, cancellable where safe.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W138",
+      "name": "MobileProjectTopBar",
+      "category": "mobile",
+      "purpose": "Phone-safe project/view identity and back/menu actions.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W139",
+      "name": "MobileBottomDock",
+      "category": "mobile",
+      "purpose": "Primary phone actions: select/tool/view/review/more.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W140",
+      "name": "MobileToolSheet",
+      "category": "mobile",
+      "purpose": "Bottom-sheet tool picker grouped by category.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W141",
+      "name": "MobileViewSwitcher",
+      "category": "mobile",
+      "purpose": "Full-height searchable view/sheet list.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W142",
+      "name": "MobileInspectorSheet",
+      "category": "mobile",
+      "purpose": "Detented properties/selection sheet.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W143",
+      "name": "MobileReviewSheet",
+      "category": "mobile",
+      "purpose": "Issues/comments sheet while canvas remains contextual.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W144",
+      "name": "TabletFloatingToolPalette",
+      "category": "mobile",
+      "purpose": "iPad landscape floating tool categories.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W145",
+      "name": "TabletInspectorDrawer",
+      "category": "mobile",
+      "purpose": "iPad landscape right inspector drawer.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W146",
+      "name": "TabletNumericDock",
+      "category": "mobile",
+      "purpose": "Numeric/control strip above software keyboard.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    },
+    {
+      "id": "W147",
+      "name": "SafeAreaSpacer",
+      "category": "mobile",
+      "purpose": "Respects notches/home indicator/window controls.",
+      "states": ["default", "hover", "focus-visible", "disabled"],
+      "slots": [],
+      "existingRepoPrimitive": null,
+      "platformNotes": []
+    }
+  ]
+}

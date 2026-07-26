@@ -1,0 +1,606 @@
+{
+  "schemaVersion": 1,
+  "count": 30,
+  "surfaces": [
+    {
+      "id": "WS-01",
+      "name": "Project overview",
+      "family": "dashboard",
+      "purpose": "Internal project landing. Continue work, recent views, health, issues, activity, team/references and recovery.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-02",
+      "name": "Design / plan",
+      "family": "design",
+      "purpose": "Primary 2D authoring.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-03",
+      "name": "Design / 3D",
+      "family": "design",
+      "purpose": "Primary 3D authoring/navigation.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-04",
+      "name": "Design / split",
+      "family": "design",
+      "purpose": "Coordinated plan + 3D or two compatible views.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-05",
+      "name": "Document browser",
+      "family": "document",
+      "purpose": "Views, sheets, schedules and reports.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-06",
+      "name": "Sheet editing",
+      "family": "document",
+      "purpose": "Sheet composition and viewport placement.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-07",
+      "name": "Schedule editing",
+      "family": "document",
+      "purpose": "Schedule/table editing.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-08",
+      "name": "Inspect selection",
+      "family": "inspect",
+      "purpose": "Properties, relations, warnings and model context.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-09",
+      "name": "Review issues",
+      "family": "review",
+      "purpose": "Issue list + model context + issue detail/comments.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-10",
+      "name": "Review comments",
+      "family": "review",
+      "purpose": "Comment-centric review.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-11",
+      "name": "Version history",
+      "family": "review",
+      "purpose": "Project revision timeline.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-12",
+      "name": "Revision compare",
+      "family": "review",
+      "purpose": "Before/after/overlay/changed elements.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-13",
+      "name": "Conflict resolution",
+      "family": "review",
+      "purpose": "Semantic conflict resolution, capability gated.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-14",
+      "name": "Files and references",
+      "family": "files",
+      "purpose": "Imported/linked reference management.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-15",
+      "name": "Import report",
+      "family": "files",
+      "purpose": "Review mapping/warnings after import.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-16",
+      "name": "Export setup",
+      "family": "files",
+      "purpose": "Choose format/scope/options and validate.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-17",
+      "name": "Export report",
+      "family": "files",
+      "purpose": "Success/partial/failure result.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-18",
+      "name": "Model health",
+      "family": "analysis",
+      "purpose": "Model diagnostics and focus actions.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-19",
+      "name": "System diagnostics",
+      "family": "analysis",
+      "purpose": "Worker/storage/performance/system diagnostics.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-20",
+      "name": "AI proposal",
+      "family": "ai",
+      "purpose": "Proposal assumptions, operations, preview, validation and apply/reject, gated.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-21",
+      "name": "Present",
+      "family": "present",
+      "purpose": "Saved views and presentation settings with minimal chrome.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-22",
+      "name": "Project settings",
+      "family": "settings",
+      "purpose": "Project-level name/units/preferences/permissions where supported.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-23",
+      "name": "Share project",
+      "family": "collaboration",
+      "purpose": "Permissions and link/member sharing, gated by current capability.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-24",
+      "name": "Recovery",
+      "family": "recovery",
+      "purpose": "Local recovery points and restore verification.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-25",
+      "name": "Keyboard shortcuts",
+      "family": "help",
+      "purpose": "Context-aware shortcut reference.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-26",
+      "name": "Command palette",
+      "family": "help",
+      "purpose": "Global command/view/object search overlay.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-27",
+      "name": "Mobile tool picker",
+      "family": "mobile",
+      "purpose": "Phone/tablet tool selection sheet.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-28",
+      "name": "Mobile inspector",
+      "family": "mobile",
+      "purpose": "Phone/tablet selection/property sheet.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-29",
+      "name": "Mobile review",
+      "family": "mobile",
+      "purpose": "Phone/tablet issue/comment sheet.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    },
+    {
+      "id": "WS-30",
+      "name": "Fullscreen canvas",
+      "family": "mobile",
+      "purpose": "Canvas-dominant work with minimal restore chrome.",
+      "desktop": "specified",
+      "ipad": "specified",
+      "phone": "specified",
+      "states": [
+        "loading",
+        "ready",
+        "empty where meaningful",
+        "error",
+        "offline",
+        "stale",
+        "read-only/permission where meaningful",
+        "long-content",
+        "200%-zoom"
+      ]
+    }
+  ]
+}
