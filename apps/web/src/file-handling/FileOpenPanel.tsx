@@ -97,7 +97,10 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
         if (!open) reset();
         onOpenChange(open);
       }}
-      aria-label="Open project"
+      // Points at the visible <h2> rather than repeating its text as an
+      // aria-label, so the dialog's accessible name and its visible heading can
+      // never drift apart.
+      aria-labelledby="arq-file-open-title"
     >
       <div
         style={{
@@ -107,11 +110,18 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
           width: 480,
         }}
       >
-        <h2 style={{ margin: 0, font: 'inherit', fontWeight: 600 }}>Open project</h2>
+        <h2 id="arq-file-open-title" style={{ margin: 0, font: 'inherit', fontWeight: 600 }}>
+          Open project
+        </h2>
         <div
           role="button"
           tabIndex={0}
-          aria-label="Choose a file to open, or drop it here"
+          // No aria-label: the visible text below is the accessible name. An
+          // aria-label of "Choose a file to open, or drop it here" over visible
+          // text "Choose a file or drop it here" broke WCAG 2.5.3 (Label in
+          // Name) - the visible string was not contained in the accessible
+          // name, so a voice-control user speaking the label they can see would
+          // not match this control.
           onClick={() => inputRef.current?.click()}
           onKeyDown={(event) => {
             if (event.key === 'Enter' || event.key === ' ') {
@@ -149,7 +159,7 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
           aria-hidden
           tabIndex={-1}
         />
-        <div role="status" aria-live="polite">
+        <div role="status" aria-live="polite" aria-busy={busy}>
           <p
             style={{
               margin: 0,
@@ -158,7 +168,13 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
                 description.tone === 'error' ? 'var(--arq-ui-ink)' : 'var(--arq-ui-text-primary)',
             }}
           >
-            {busy && '⏳ '}
+            {/* No spinner glyph: `describeFileFlowState` already renders busy
+                states as "Reading …"/"Checking …", so an emoji added nothing
+                sighted users could not already read, while a screen reader
+                announced it as literal "hourglass" noise inside a live region.
+                `aria-busy` conveys the same state to assistive tech properly,
+                and section 18's "structure over decoration" rule prefers the
+                words to a glyph. */}
             {description.headline}
           </p>
           {description.detail !== null && (

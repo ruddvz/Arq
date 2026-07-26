@@ -168,6 +168,21 @@ async function run() {
     const STATUS = '[role="dialog"] [role="status"]';
     const fileInput = page.locator('input[type="file"]');
 
+    // WCAG 2.5.3 (Label in Name, Level A): a control's accessible name must
+    // contain its own visible text, so a voice-control user can activate it by
+    // speaking the label they can see. This regressed once already - an
+    // aria-label of "Choose a file to open, or drop it here" over visible text
+    // "Choose a file or drop it here" silently broke the match, and nothing
+    // caught it because the control still worked by mouse and keyboard.
+    const dropZone = page.locator('[role="dialog"] [role="button"]').first();
+    const dropZoneVisibleText = (await dropZone.innerText()).trim();
+    const dropZoneAccessibleName = (
+      await dropZone.evaluate((el) => el.getAttribute('aria-label') ?? el.textContent ?? '')
+    ).trim();
+    const labelInNameHolds =
+      dropZoneVisibleText.length > 0 &&
+      dropZoneAccessibleName.toLowerCase().includes(dropZoneVisibleText.toLowerCase());
+
     await fileInput.setInputFiles(truncatedPath);
     await page.waitForFunction(
       (sel) => document.querySelector(sel)?.textContent?.includes('could not be opened'),
@@ -204,6 +219,7 @@ async function run() {
       validHeadline.includes('compatible Arq project') &&
       nonArqHeadline.includes('could not be opened') &&
       nonArqDetail.includes('NOT_ARQ_SQLITE') &&
+      labelInNameHolds &&
       consoleErrors.length === 0;
 
     return {
@@ -211,6 +227,11 @@ async function run() {
       truncatedFile: { headline: truncatedHeadline, detail: truncatedDetail },
       validFile: { headline: validHeadline },
       nonArqSqliteFile: { headline: nonArqHeadline, detail: nonArqDetail },
+      accessibility: {
+        dropZoneVisibleText,
+        dropZoneAccessibleName,
+        labelInNameHolds,
+      },
       consoleErrors,
     };
   } finally {

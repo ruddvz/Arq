@@ -53,6 +53,13 @@ export function createImportSession(driver: ArqfsDriver, input: CreateImportSess
   );
 }
 
+/**
+ * Returns the number of rows actually updated - 0 means no session with that id
+ * exists. Deliberately returned rather than swallowed: `UPDATE ... WHERE id = ?`
+ * against a missing id is a silent no-op in SQLite, so a caller that treats this
+ * as void can report a lifecycle transition ("committed") that never happened.
+ * `arqfs-import-commit.ts` checks this and rejects.
+ */
 export function updateImportSession(
   driver: ArqfsDriver,
   id: string,
@@ -64,8 +71,8 @@ export function updateImportSession(
     readonly failureMessage?: string;
     readonly finishedAtUnixMs?: number;
   } = {},
-): void {
-  driver.run(
+): number {
+  const result = driver.run(
     `UPDATE import_session SET
       status = ?,
       source_document_id = COALESCE(?, source_document_id),
@@ -85,6 +92,7 @@ export function updateImportSession(
       id,
     ],
   );
+  return result.changes;
 }
 
 export function replaceImportIssues(

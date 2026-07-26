@@ -83,6 +83,26 @@ export async function commitStagedImport(
       input.source.bytes,
       input.source.chunkSize ?? DEFAULT_IMPORT_RESOURCE_CHUNK_SIZE,
     );
+
+    // The caller supplies the source fingerprint (`sourceDocument.sha256`/
+    // `byteLength`) and the bytes to preserve as two separate inputs. If they
+    // disagree, writing both would persist a provenance record that is simply
+    // false about the very resource it points at - the exact claim ARQFS-012's
+    // "source fingerprint and resource preservation" exists to make trustworthy.
+    // Verified against the real hash rather than trusted, since the hash is
+    // already computed here anyway.
+    if (resourceDescriptor.sha256 !== input.sourceDocument.sha256) {
+      return {
+        status: 'rejected',
+        reason: `source fingerprint mismatch: sourceDocument.sha256 does not match the preserved bytes (expected ${resourceDescriptor.sha256})`,
+      };
+    }
+    if (resourceDescriptor.byteLength !== input.sourceDocument.byteLength) {
+      return {
+        status: 'rejected',
+        reason: `source fingerprint mismatch: sourceDocument.byteLength ${input.sourceDocument.byteLength} does not match the preserved bytes (${resourceDescriptor.byteLength})`,
+      };
+    }
   }
 
   const writeResult = runArqfsLocalWrite(driver, () => {
@@ -118,10 +138,20 @@ export async function commitStagedImport(
 
     replaceImportIssues(driver, input.sessionId, input.issues);
 
-    updateImportSession(driver, input.sessionId, 'committed', {
+    const sessionsUpdated = updateImportSession(driver, input.sessionId, 'committed', {
       sourceDocumentId: input.sourceDocument.id,
       reportJson: input.reportJson,
     });
+    // `UPDATE ... WHERE id = ?` against a missing session is a silent SQLite
+    // no-op. Without this, a typo'd/stale sessionId still wrote the
+    // source_document, resource and mappings and reported 'committed' - the
+    // canonical data landed while the session it claimed to commit did not
+    // exist. Worse, it only ever failed loudly when `issues` was non-empty
+    // (import_issue's FK to import_session), so exactly the clean-import case
+    // stayed silent. Throwing here rolls the whole write back.
+    if (sessionsUpdated !== 1) {
+      throw new Error(`import session ${input.sessionId} does not exist`);
+    }
   });
 
   if (writeResult.status === 'rejected') {
@@ -145,7 +175,10 @@ export function cancelStagedImport(
   sessionId: string,
 ): ArqfsImportSessionUpdateResult<'cancelled'> {
   const writeResult = runArqfsLocalWrite(driver, () => {
-    updateImportSession(driver, sessionId, 'cancelled');
+    // Same silent-no-op hazard as commitStagedImport - see its comment.
+    if (updateImportSession(driver, sessionId, 'cancelled') !== 1) {
+      throw new Error(`import session ${sessionId} does not exist`);
+    }
   });
   if (writeResult.status === 'rejected') {
     return { status: 'rejected', reason: writeResult.reason };
@@ -165,10 +198,14 @@ export function failStagedImport(
   failure: ArqfsImportFailInput,
 ): ArqfsImportSessionUpdateResult<'failed'> {
   const writeResult = runArqfsLocalWrite(driver, () => {
-    updateImportSession(driver, sessionId, 'failed', {
+    const updated = updateImportSession(driver, sessionId, 'failed', {
       failureCode: failure.failureCode,
       failureMessage: failure.failureMessage,
     });
+    // Same silent-no-op hazard as commitStagedImport - see its comment.
+    if (updated !== 1) {
+      throw new Error(`import session ${sessionId} does not exist`);
+    }
   });
   if (writeResult.status === 'rejected') {
     return { status: 'rejected', reason: writeResult.reason };

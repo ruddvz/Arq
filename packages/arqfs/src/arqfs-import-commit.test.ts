@@ -12,6 +12,14 @@ import type { ArqfsDriver } from './arqfs-driver';
 
 const bytes = (text: string): Uint8Array => new TextEncoder().encode(text);
 
+/** The same digest arqfs-resource-chunks.ts computes, so a fixture's declared fingerprint can be made genuinely true of its own bytes rather than an arbitrary placeholder. */
+async function sha256Hex(content: Uint8Array): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', content as BufferSource);
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 describe('commitStagedImport (schema-v2 review-before-commit)', () => {
   let driver: ArqfsDriver;
 
@@ -37,14 +45,23 @@ describe('commitStagedImport (schema-v2 review-before-commit)', () => {
     });
   }
 
-  function sourceDocument(id: string): Omit<SourceDocumentRecord, 'sourceResourceSha256'> {
+  /**
+   * When `sourceBytes` is given, the returned record's fingerprint is the real
+   * hash/length of exactly those bytes - commitStagedImport rejects a record
+   * whose declared fingerprint disagrees with the bytes it is asked to
+   * preserve, so a fixture must be self-consistent to be realistic.
+   */
+  async function sourceDocument(
+    id: string,
+    sourceBytes?: Uint8Array,
+  ): Promise<Omit<SourceDocumentRecord, 'sourceResourceSha256'>> {
     return {
       id,
       originalName: 'floor-plan.dxf',
       mediaType: 'application/dxf',
       detectedFormat: 'dxf',
-      sha256: '1'.repeat(64),
-      byteLength: 42,
+      sha256: sourceBytes ? await sha256Hex(sourceBytes) : '1'.repeat(64),
+      byteLength: sourceBytes ? sourceBytes.byteLength : 42,
       importedAtUnixMs: 1_000,
       adapterId: 'dxf-ingress',
       adapterVersion: '1.0.0',
@@ -72,7 +89,7 @@ describe('commitStagedImport (schema-v2 review-before-commit)', () => {
 
     const result = await commitStagedImport(d, {
       sessionId: 'session-1',
-      sourceDocument: sourceDocument('doc-1'),
+      sourceDocument: await sourceDocument('doc-1', bytes('0 SECTION\n...dxf content...')),
       source: { bytes: bytes('0 SECTION\n...dxf content...'), mediaType: 'application/dxf' },
       mappings,
       issues,
@@ -135,7 +152,7 @@ describe('commitStagedImport (schema-v2 review-before-commit)', () => {
 
     const result = await commitStagedImport(d, {
       sessionId: 'session-1',
-      sourceDocument: sourceDocument('doc-1'),
+      sourceDocument: await sourceDocument('doc-1'),
       mappings: [],
       issues: [],
       reportJson: '{}',
@@ -162,7 +179,7 @@ describe('commitStagedImport (schema-v2 review-before-commit)', () => {
 
     const first = await commitStagedImport(d, {
       sessionId: 'session-1',
-      sourceDocument: sourceDocument('doc-1'),
+      sourceDocument: await sourceDocument('doc-1', bytes('first import bytes')),
       source: { bytes: bytes('first import bytes'), mediaType: 'application/dxf' },
       mappings,
       issues,
@@ -174,7 +191,10 @@ describe('commitStagedImport (schema-v2 review-before-commit)', () => {
     // so the transaction must fail and roll back completely.
     const second = await commitStagedImport(d, {
       sessionId: 'session-2',
-      sourceDocument: sourceDocument('doc-1'),
+      sourceDocument: await sourceDocument(
+        'doc-1',
+        bytes('second import bytes, different content'),
+      ),
       source: {
         bytes: bytes('second import bytes, different content'),
         mediaType: 'application/dxf',
@@ -223,7 +243,7 @@ describe('commitStagedImport (schema-v2 review-before-commit)', () => {
 
     const result = await commitStagedImport(d, {
       sessionId: 'session-1',
-      sourceDocument: sourceDocument('doc-1'),
+      sourceDocument: await sourceDocument('doc-1'),
       mappings: [],
       issues: [],
       reportJson: '{}',
@@ -279,7 +299,7 @@ describe('commitStagedImport (schema-v2 review-before-commit)', () => {
 
     const result = await commitStagedImport(driver, {
       sessionId: 'session-1',
-      sourceDocument: sourceDocument('doc-1'),
+      sourceDocument: await sourceDocument('doc-1'),
       mappings: [],
       issues: [],
       reportJson: '{}',
@@ -296,7 +316,7 @@ describe('commitStagedImport (schema-v2 review-before-commit)', () => {
 
     const first = await commitStagedImport(d, {
       sessionId: 'session-1',
-      sourceDocument: sourceDocument('doc-1'),
+      sourceDocument: await sourceDocument('doc-1', sameBytes),
       source: { bytes: sameBytes, mediaType: 'application/dxf' },
       mappings: [],
       issues: [],
@@ -304,7 +324,7 @@ describe('commitStagedImport (schema-v2 review-before-commit)', () => {
     });
     const second = await commitStagedImport(d, {
       sessionId: 'session-2',
-      sourceDocument: { ...sourceDocument('doc-2'), originalName: 'copy.dxf' },
+      sourceDocument: { ...(await sourceDocument('doc-2', sameBytes)), originalName: 'copy.dxf' },
       source: { bytes: sameBytes, mediaType: 'application/dxf' },
       mappings: [],
       issues: [],
@@ -320,5 +340,85 @@ describe('commitStagedImport (schema-v2 review-before-commit)', () => {
     // One resource row, two references - dedupe did not lose either owner.
     expect(d.query('SELECT COUNT(*) AS count FROM resource')[0]).toEqual({ count: 1 });
     expect(listResourceReferences(d, docs[0]!.source_resource_sha256)).toHaveLength(2);
+  });
+
+  /**
+   * `UPDATE import_session ... WHERE id = ?` against a missing id is a silent
+   * no-op in SQLite. Before this was checked, a commit with a typo'd or stale
+   * sessionId wrote the source_document, resource and mappings and returned
+   * 'committed' while the session it claimed to commit did not exist. It only
+   * failed loudly when `issues` happened to be non-empty (import_issue's FK to
+   * import_session), so the clean-import case - the common one - stayed silent.
+   */
+  it('rejects a commit against a non-existent session and writes nothing', async () => {
+    const d = freshDriver();
+    // No queueSession call - the session genuinely does not exist.
+
+    const result = await commitStagedImport(d, {
+      sessionId: 'session-that-does-not-exist',
+      sourceDocument: await sourceDocument('doc-1'),
+      mappings: [],
+      issues: [],
+      reportJson: '{}',
+    });
+
+    expect(result).toMatchObject({ status: 'rejected' });
+    expect(result.status === 'rejected' && result.reason).toMatch(/does not exist/);
+    expect(d.query('SELECT COUNT(*) AS count FROM source_document')[0]).toEqual({ count: 0 });
+    expect(readWorkingCopyState(d)).toMatchObject({ localRevision: 0 });
+  });
+
+  it('rejects cancel and fail against a non-existent session too', () => {
+    const d = freshDriver();
+
+    expect(cancelStagedImport(d, 'nope')).toMatchObject({ status: 'rejected' });
+    expect(failStagedImport(d, 'nope', { failureCode: 'X', failureMessage: 'y' })).toMatchObject({
+      status: 'rejected',
+    });
+  });
+
+  /**
+   * The caller supplies the source fingerprint and the bytes to preserve as two
+   * separate inputs. Persisting both when they disagree would store a
+   * provenance record that is false about the very resource it points at -
+   * exactly what ARQFS-012's "source fingerprint and resource preservation"
+   * exists to make trustworthy.
+   */
+  it('rejects a sourceDocument whose declared sha256 does not match the preserved bytes', async () => {
+    const d = freshDriver();
+    queueSession(d, 'session-1');
+
+    const result = await commitStagedImport(d, {
+      sessionId: 'session-1',
+      sourceDocument: { ...(await sourceDocument('doc-1')), sha256: 'a'.repeat(64) },
+      source: { bytes: bytes('the real content'), mediaType: 'application/dxf' },
+      mappings: [],
+      issues: [],
+      reportJson: '{}',
+    });
+
+    expect(result).toMatchObject({ status: 'rejected' });
+    expect(result.status === 'rejected' && result.reason).toMatch(/fingerprint mismatch/);
+    expect(d.query('SELECT COUNT(*) AS count FROM source_document')[0]).toEqual({ count: 0 });
+    expect(d.query('SELECT COUNT(*) AS count FROM resource')[0]).toEqual({ count: 0 });
+  });
+
+  it('rejects a sourceDocument whose declared byteLength does not match the preserved bytes', async () => {
+    const d = freshDriver();
+    queueSession(d, 'session-1');
+    const realBytes = bytes('the real content');
+
+    const result = await commitStagedImport(d, {
+      sessionId: 'session-1',
+      sourceDocument: { ...(await sourceDocument('doc-1', realBytes)), byteLength: 999_999 },
+      source: { bytes: realBytes, mediaType: 'application/dxf' },
+      mappings: [],
+      issues: [],
+      reportJson: '{}',
+    });
+
+    expect(result).toMatchObject({ status: 'rejected' });
+    expect(result.status === 'rejected' && result.reason).toMatch(/fingerprint mismatch/);
+    expect(d.query('SELECT COUNT(*) AS count FROM source_document')[0]).toEqual({ count: 0 });
   });
 });
