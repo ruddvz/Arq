@@ -123,8 +123,14 @@ export function App(): JSX.Element {
         projectName={projectName}
         onRenameProject={setProjectName}
         activeViewName="Level 1 - Plan"
-        saveState="saved"
-        syncState="synced"
+        // Honest, not decorative: this shell has no save pipeline and no sync
+        // backend wired up (see FileOpenPanel's own doc comment - the file-open
+        // gate reports compatibility but nothing opens a project yet). Claiming
+        // "Saved"/"Synced" here would be exactly the fabricated status the
+        // project's own rules forbid, and would also collapse save and sync
+        // into one false reassurance.
+        saveState="no-project"
+        syncState="offline"
         canUndo={undoStackRef.current.canUndo()}
         canRedo={undoStackRef.current.canRedo()}
         lastUndoActionLabel={null}
@@ -202,7 +208,7 @@ export function App(): JSX.Element {
         pixelsPerUnit={pixelsPerUnit}
         modelHealth={{ errorCount: 0, warningCount: 0 }}
         localJournalStateLabel="Journal current"
-        syncState="synced"
+        syncState="offline"
         supportModeEnabled={false}
       />
       <p
