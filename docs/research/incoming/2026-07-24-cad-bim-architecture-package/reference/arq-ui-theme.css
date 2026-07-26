@@ -1,0 +1,129 @@
+/*
+ * Arq UI surface tokens.
+ *
+ * Baseline surfaces are opaque enough to preserve contrast and performance.
+ * Blur and squircle corners are progressive enhancements, not requirements.
+ * Do not place large, continuously animating blur layers over a canvas.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --arq-font-ui: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --arq-font-mono: ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
+
+  --arq-surface: rgb(250 250 252 / 0.96);
+  --arq-surface-elevated: rgb(255 255 255 / 0.98);
+  --arq-border: rgb(20 20 25 / 0.15);
+  --arq-text: rgb(24 24 30);
+  --arq-text-secondary: rgb(84 84 94);
+  --arq-accent: rgb(0 122 255);
+  --arq-danger: rgb(214 45 32);
+  --arq-warning: rgb(161 96 0);
+  --arq-shadow: 0 12px 36px rgb(0 0 0 / 0.14);
+  --arq-rim: inset 0 1px 0 rgb(255 255 255 / 0.4);
+
+  --arq-motion-fast: 120ms;
+  --arq-motion-standard: 180ms;
+  --arq-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root[data-theme='dark'] {
+  --arq-surface: rgb(26 26 32 / 0.96);
+  --arq-surface-elevated: rgb(34 34 42 / 0.98);
+  --arq-border: rgb(255 255 255 / 0.16);
+  --arq-text: rgb(245 245 248);
+  --arq-text-secondary: rgb(190 190 202);
+  --arq-warning: rgb(255 190 84);
+  --arq-shadow: 0 16px 48px rgb(0 0 0 / 0.42);
+  --arq-rim: inset 0 1px 0 rgb(255 255 255 / 0.15);
+}
+
+.arq-surface {
+  background: var(--arq-surface);
+  border: 1px solid var(--arq-border);
+  border-radius: 20px;
+  box-shadow: var(--arq-rim), var(--arq-shadow);
+  color: var(--arq-text);
+}
+
+.arq-surface--glass {
+  background: color-mix(in srgb, var(--arq-surface) 68%, transparent);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .arq-surface--glass {
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(24px) saturate(160%);
+  }
+}
+
+@supports (corner-shape: squircle) {
+  .arq-surface--squircle {
+    border-radius: 22px;
+    corner-shape: squircle;
+  }
+}
+
+.arq-ui {
+  font-family: var(--arq-font-ui);
+}
+
+.arq-numeric {
+  font-family: var(--arq-font-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.arq-micro-label {
+  font-size: 0.625rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.arq-interactive {
+  transition:
+    transform var(--arq-motion-fast) var(--arq-ease-standard),
+    background-color var(--arq-motion-fast) var(--arq-ease-standard),
+    border-color var(--arq-motion-fast) var(--arq-ease-standard);
+}
+
+.arq-interactive:hover {
+  transform: scale(1.015);
+}
+
+.arq-interactive:active {
+  transform: scale(0.98);
+}
+
+.arq-focus-ring:focus-visible {
+  outline: 2px solid var(--arq-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-contrast: more) {
+  .arq-surface,
+  .arq-surface--glass {
+    background: var(--arq-surface-elevated);
+    border-color: currentcolor;
+    box-shadow: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .arq-surface {
+    forced-color-adjust: auto;
+    border-color: CanvasText;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

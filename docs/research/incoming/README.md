@@ -99,3 +99,20 @@ with ADR-0008, which is about the _2D_ renderer.)
 This decision has not been made unilaterally - it needs the user's
 explicit go-ahead, since it discards real, tested work and adds a new
 toolchain dependency.
+
+## 2026-07-24 upload: "Arq CAD/BIM Architecture Package"
+
+A separate, later upload (`arq_cad_bim_architecture_package.zip`) is filed
+in `2026-07-24-cad-bim-architecture-package/` with its own triage README.
+It is **not** part of the "v4.0 CORE" lineage above - it's a standalone
+"correct the raw blueprint" engineering package (master spec, ultimate
+spec, implementation deep dive, UI/UX system spec, 11 ADRs, 17 reference
+contracts, a generic Epic-based backlog). Summary: ADR-001 through 006
+restate positions this repo already holds under different numbers -
+nothing new there. ADR-007 through 011 and most of the `reference/*.ts`
+contracts (GPU inspect-through selection, deferred-CSG session, desktop
+shell port, HUD/quantity-draft/numeric-scrubber interaction primitives,
+float64 render-origin localisation, a rule-pack engine) describe real gaps
+not yet built anywhere in this repo - see the subfolder's README for the
+file-by-file check and recommended follow-ups. Nothing from it has been
+applied to `packages/` or `docs/adr/`.
