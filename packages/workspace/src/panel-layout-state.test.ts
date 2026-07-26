@@ -156,6 +156,44 @@ describe('reconcileDockedPanels', () => {
     },
   );
 
+  /**
+   * The band closing a panel is a presentation decision, not the user's. A
+   * desktop user who drags their window narrow enough to cross the tablet band
+   * and back must find the panels as they left them.
+   */
+  it('restores the docking preference after a round trip through a touch band', () => {
+    const desktop = { viewportWidthPx: 1536, slots: DESKTOP_1536, platform: 'desktop' } as const;
+    const tablet = {
+      viewportWidthPx: 834,
+      slots: LAYOUT_SLOTS.ipadPortrait834x1194!,
+      platform: 'tablet-portrait',
+    } as const;
+
+    const onTouch = reconcileDockedPanels(INITIAL_PANEL_LAYOUT_STATE, tablet);
+    expect(onTouch.inspector.open).toBe(false);
+    expect(onTouch.inspector.dockedPreferenceOpen).toBe(true);
+
+    const backOnDesktop = reconcileDockedPanels(onTouch, desktop);
+    expect(backOnDesktop.inspector.open).toBe(true);
+    expect(backOnDesktop['project-browser'].open).toBe(true);
+    expect(backOnDesktop.inspector.mode).toBe('docked');
+  });
+
+  it('does not resurrect a panel the user closed deliberately', () => {
+    const desktop = { viewportWidthPx: 1536, slots: DESKTOP_1536, platform: 'desktop' } as const;
+    const tablet = {
+      viewportWidthPx: 834,
+      slots: LAYOUT_SLOTS.ipadPortrait834x1194!,
+      platform: 'tablet-portrait',
+    } as const;
+
+    const userClosed = togglePanel(INITIAL_PANEL_LAYOUT_STATE, 'inspector');
+    expect(userClosed.inspector.dockedPreferenceOpen).toBe(false);
+
+    const roundTrip = reconcileDockedPanels(reconcileDockedPanels(userClosed, tablet), desktop);
+    expect(roundTrip.inspector.open).toBe(false);
+  });
+
   it('keeps the browser docked but floats the inspector on compact desktop', () => {
     const next = reconcileDockedPanels(INITIAL_PANEL_LAYOUT_STATE, {
       viewportWidthPx: 1024,

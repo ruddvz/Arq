@@ -8,6 +8,11 @@ import {
   ContextBar,
   CommandPalette,
   ProjectTabStrip,
+  CompactViewControl,
+  PhoneProjectBar,
+  ViewSwitcherList,
+  InspectorPanel,
+  ProjectBrowserPanel,
   ProjectOverviewSurface,
   WorkspaceRoot,
   buildToolRailModel,
@@ -23,24 +28,46 @@ import {
   type ToolRailCategory,
 } from '@arq/design-system';
 import {
+  CLOSED_SHEET_STATE,
   DEFAULT_WORKSPACE_CAPABILITIES,
   EMPTY_VIEW_TABS_STATE,
+  INITIAL_BROWSER_PANEL_STATE,
+  INITIAL_INSPECTOR_TABS_STATE,
   INITIAL_PANEL_LAYOUT_STATE,
   INITIAL_TOOL_STATE,
   activateAdjacentTab,
   activateTab,
   activateTool,
   cancelTool,
+  capabilityUnavailableReason,
+  closeSheet,
+  closeOtherTabs,
   closeTab,
+  closeTabsToRight,
+  collapseSheet,
+  duplicateTab,
+  expandSheet,
+  handleSystemBack,
   initialModeState,
   isUnmodifiedLetterShortcut,
+  moveTab,
   openTab,
+  reconcileBrowserSection,
+  setDetent,
+  reconcileInspectorTab,
+  selectInspectorTab,
   reconcileDockedPanels,
+  resizePanel,
+  selectBrowserSection,
   resolveLayoutSlots,
+  resolveShortcutDialect,
   resolveWorkspacePlatform,
+  shortcutLabel,
   shouldHandleShortcut,
   switchModeIfAvailable,
+  toggleSheet,
   togglePin,
+  toolContract,
   type ProjectOverviewData,
   type ViewportProbe,
   type WorkspaceProjectContext,
@@ -165,6 +192,19 @@ const MODEL_TREE: readonly ModelPanelNode[] = [
                 hidden: false,
               },
               { id: 'demo-room', displayName: 'Room 4.20 x 3.60', nodeType: 'Room', hidden: false },
+              /*
+               * Doc 39's stated performance case: "expanding a 5,000-element
+               * model must not render every row". A synthetic level of that
+               * size is the only way this build can exercise the virtualiser -
+               * it is fixture data for the tree, clearly named as such, not a
+               * claim that the project contains these elements.
+               */
+              ...Array.from({ length: 5000 }, (_, index) => ({
+                id: `fixture-wall-${index}`,
+                displayName: `Fixture wall ${index + 1}`,
+                nodeType: 'Wall',
+                hidden: false,
+              })),
             ],
           },
         ],
@@ -173,10 +213,18 @@ const MODEL_TREE: readonly ModelPanelNode[] = [
   },
 ];
 
-const COMMAND_ENTRIES: readonly CommandPaletteEntry[] = [
+/**
+ * `workspace-keyboard-map.json` ids where one exists, so the palette can show
+ * the platform-adapted binding beside the command rather than a second,
+ * hand-written shortcut vocabulary.
+ */
+const COMMAND_ENTRIES: readonly Omit<CommandPaletteEntry, 'shortcutLabel'>[] = [
+  { id: 'select', label: 'Select tool', category: 'Select', synonyms: ['pick'] },
   { id: 'wall', label: 'Wall draw', category: 'Draw', synonyms: ['wall'] },
   { id: 'door', label: 'Insert door', category: 'Build', synonyms: ['door'] },
   { id: 'room-boundary', label: 'Insert room', category: 'Build', synonyms: ['room'] },
+  { id: 'fit', label: 'Fit view', category: 'View', synonyms: ['zoom extents'] },
+  { id: 'close-tab', label: 'Close active view', category: 'View', synonyms: ['close tab'] },
   {
     id: 'export-dxf',
     label: 'Export DXF',
@@ -184,6 +232,17 @@ const COMMAND_ENTRIES: readonly CommandPaletteEntry[] = [
     disabledReason: 'No project open yet',
   },
 ];
+
+/*
+ * Honest, not decorative: this shell has no save pipeline and no sync backend,
+ * so claiming "Saved"/"Synced" would be exactly the fabricated status the
+ * project's own rules forbid. Named once and shared by the desktop and phone
+ * bars - two literals drifted apart the moment the phone bar was added, and the
+ * layout capability check caught the phone claiming "Unsaved changes" for a
+ * project that was never open.
+ */
+const DEMO_SAVE_STATE = 'no-project' as const;
+const DEMO_SYNC_STATE = 'offline' as const;
 
 const INITIAL_PROBE: ViewportProbe = { widthPx: 1536, heightPx: 864, coarsePointer: false };
 
@@ -214,6 +273,9 @@ export function App(): JSX.Element {
   const [tabs, setTabs] = useState(INITIAL_TABS);
   const [panels, setPanels] = useState(INITIAL_PANEL_LAYOUT_STATE);
   const [toolState, setToolState] = useState(INITIAL_TOOL_STATE);
+  const [sheet, setSheet] = useState(CLOSED_SHEET_STATE);
+  const [browserPanel, setBrowserPanel] = useState(INITIAL_BROWSER_PANEL_STATE);
+  const [inspectorTabs, setInspectorTabs] = useState(INITIAL_INSPECTOR_TABS_STATE);
   const [toolRailState, setToolRailState] = useState(INITIAL_TOOL_RAIL_STATE);
   const [modelSelection, setModelSelection] = useState<ModelPanelSelectionState>({
     primary: null,
@@ -257,6 +319,20 @@ export function App(): JSX.Element {
       }),
     );
   }, [probe.widthPx, slots, railsWidthPx, platform]);
+
+  /*
+   * Doc 34: each mode leads with the browser section it is about, unless the
+   * user has chosen one themselves - see reconcileBrowserSection.
+   */
+  useEffect(() => {
+    setBrowserPanel((current) =>
+      reconcileBrowserSection(
+        current,
+        modeState.mode,
+        DEFAULT_WORKSPACE_CAPABILITIES['CAP-collaboration'],
+      ),
+    );
+  }, [modeState.mode]);
 
   const recordDemoAction = useCallback((label: string) => {
     undoStackRef.current.push({ forward: label, inverse: `Undo ${label}` });
@@ -304,6 +380,13 @@ export function App(): JSX.Element {
       }
 
       if (event.key === 'Escape') {
+        // Doc 47 gestures and the registry's `escape` command: overlays first,
+        // then the tool's own draft. Closing the sheet and cancelling a wall in
+        // one keypress would lose work the user only meant to un-cover.
+        if (sheet.openSheet !== null) {
+          setSheet(closeSheet());
+          return;
+        }
         setToolState(cancelTool);
         setCommandPaletteOpen(false);
         return;
@@ -315,26 +398,123 @@ export function App(): JSX.Element {
         return;
       }
 
+      // Registry `close-tab`: Cmd/Ctrl+W. The browser owns this combination for
+      // its own tab, so preventDefault is what makes it ours - and it is only
+      // claimed when there is actually a closeable view to close, otherwise the
+      // user's expectation that Cmd+W closes something is simply wrong here.
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'w') {
+        const active = tabs.tabs.find((tab) => tab.id === tabs.activeId);
+        if (active?.closeable === true) {
+          event.preventDefault();
+          setTabs((state) => closeTab(state, active.id));
+        }
+        return;
+      }
+
       if (!isUnmodifiedLetterShortcut(probeEvent)) {
         return;
       }
-      if (event.key.toLowerCase() === 'v') {
+      // Registry `select`, `wall`, `fit`.
+      const letter = event.key.toLowerCase();
+      if (letter === 'v') {
         handleActivateTool('select');
-      } else if (event.key.toLowerCase() === 'w') {
+      } else if (letter === 'w') {
         handleActivateTool('wall');
+      } else if (letter === 'f') {
+        handleActivateTool('fit');
       }
     }
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [handleActivateTool]);
+  }, [handleActivateTool, sheet.openSheet, tabs]);
 
   const isWallSelected = modelSelection.primary === 'demo-wall-1';
+  /*
+   * Doc 40. warningCount is 0 because no model-health engine runs in this
+   * build - not because the wall is known to be clean. historyCapability is
+   * off for the same reason CAP-collaboration is: nothing produces revisions.
+   */
+  const inspectorContext = useMemo(
+    () => ({
+      selectionCount: modelSelection.primary === null ? 0 : 1,
+      warningCount: 0,
+      mode: modeState.mode,
+      historyCapabilityEnabled: false,
+    }),
+    [modelSelection.primary, modeState.mode],
+  );
+
+  /*
+   * Doc 34: default to the most relevant tab for the context, while preserving
+   * a tab the user picked themselves - reconcileInspectorTab holds both halves.
+   */
+  useEffect(() => {
+    setInspectorTabs((current) => reconcileInspectorTab(current, inspectorContext));
+  }, [inspectorContext]);
   const activeTab = tabs.tabs.find((tab) => tab.id === tabs.activeId) ?? null;
   const railModel = useMemo(
     () => buildToolRailModel(modeState.mode, (toolId) => TOOL_ICONS[toolId] ?? null),
     [modeState.mode],
   );
+
+  /*
+   * Doc 47 > Gestures: "system back closes overlays first." On Android the back
+   * gesture arrives as a history `popstate`, so a pushed entry is what gives the
+   * workspace something to pop. `handleSystemBack` reports whether it consumed
+   * the gesture - when it did not, the entry is not re-pushed and the next back
+   * leaves the app, which is what stops the user being trapped here.
+   */
+  useEffect(() => {
+    if (sheet.openSheet === null) {
+      return;
+    }
+    window.history.pushState({ arqSheet: sheet.openSheet }, '');
+    const onPopState = (): void => {
+      setSheet((current) => handleSystemBack(current).state);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [sheet.openSheet]);
+
+  /*
+   * `workspace-keyboard-map.json` rule 4: "Shortcut labels are platform-adapted,
+   * not hard-coded Cmd everywhere." The dialect is resolved once from the same
+   * probe that drives layout, then every command that has a registry binding
+   * carries its label into the palette.
+   */
+  const shortcutDialect = useMemo(
+    () =>
+      resolveShortcutDialect(
+        platform,
+        typeof navigator === 'undefined' ? false : /Mac|iPhone|iPad/.test(navigator.platform),
+        !probe.coarsePointer,
+      ),
+    [platform, probe.coarsePointer],
+  );
+
+  const commandEntries = useMemo<readonly CommandPaletteEntry[]>(
+    () =>
+      COMMAND_ENTRIES.map((entry) => {
+        const label = shortcutLabel(entry.id, shortcutDialect);
+        return label === null ? entry : { ...entry, shortcutLabel: label };
+      }),
+    [shortcutDialect],
+  );
+
+  const activeToolLabel = useMemo(() => {
+    const contract = toolContract(toolState.activeToolId);
+    return contract === null ? null : contract.name;
+  }, [toolState.activeToolId]);
+
+  /*
+   * Doc 47 lists Review in the phone dock, but its surfaces are gated on
+   * CAP-collaboration, which this build does not enable. The control stays
+   * visible with the reason rather than vanishing - the same rule the tool rail
+   * follows for the 43 designed-but-unbuilt tools.
+   */
+  const reviewDisabledReason =
+    capabilityUnavailableReason(DEFAULT_WORKSPACE_CAPABILITIES, 'CAP-collaboration') ?? undefined;
 
   /*
    * Doc 35: only the sections this build can actually answer. `recentViews` is
@@ -375,6 +555,76 @@ export function App(): JSX.Element {
         onSelectMode={(mode) => setModeState((state) => switchModeIfAvailable(state, mode))}
         probe={probe}
         panels={panels}
+        sheet={sheet}
+        onToggleSheet={(id) => setSheet((state) => toggleSheet(state, id))}
+        onCloseSheet={() => setSheet(closeSheet())}
+        onExpandSheet={() => setSheet(expandSheet)}
+        onCollapseSheet={() => setSheet(collapseSheet)}
+        onSheetDragToDetent={(detent) => setSheet((state) => setDetent(state, detent))}
+        onResizePanel={(panel, width) => setPanels((current) => resizePanel(current, panel, width))}
+        onSelectPointerTool={() => handleActivateTool('select')}
+        activeToolLabel={activeToolLabel}
+        phoneProjectBar={
+          <PhoneProjectBar
+            projectName={projectName}
+            saveState={DEMO_SAVE_STATE}
+            syncState={DEMO_SYNC_STATE}
+            onBackToProjects={() => setFileOpenPanelOpen(true)}
+            menuItems={[
+              {
+                id: 'undo',
+                label: 'Undo',
+                onActivate: () => {
+                  undoStackRef.current.undo();
+                  setHistoryVersion((v) => v + 1);
+                },
+                ...(undoStackRef.current.canUndo() ? {} : { disabledReason: 'Nothing to undo' }),
+              },
+              {
+                id: 'redo',
+                label: 'Redo',
+                onActivate: () => {
+                  undoStackRef.current.redo();
+                  setHistoryVersion((v) => v + 1);
+                },
+                ...(undoStackRef.current.canRedo() ? {} : { disabledReason: 'Nothing to redo' }),
+              },
+              { id: 'open', label: 'Open project…', onActivate: () => setFileOpenPanelOpen(true) },
+              {
+                id: 'commands',
+                label: 'Search commands',
+                onActivate: () => setCommandPaletteOpen(true),
+              },
+              {
+                id: 'share',
+                label: 'Share',
+                onActivate: () => recordDemoAction('share'),
+                ...(reviewDisabledReason === undefined
+                  ? {}
+                  : { disabledReason: reviewDisabledReason }),
+              },
+            ]}
+          />
+        }
+        compactViewControl={
+          <CompactViewControl
+            state={tabs}
+            viewSwitcherOpen={sheet.openSheet === 'view-switcher'}
+            onOpenViewSwitcher={() => setSheet((state) => toggleSheet(state, 'view-switcher'))}
+          />
+        }
+        viewSwitcherSheet={
+          <ViewSwitcherList
+            state={tabs}
+            onActivateTab={(id) => {
+              setTabs((state) => activateTab(state, id));
+              // Doc 47: "Tap switches and closes sheet."
+              setSheet(closeSheet());
+            }}
+            onCloseTab={(id) => setTabs((state) => closeTab(state, id))}
+          />
+        }
+        {...(reviewDisabledReason === undefined ? {} : { reviewDisabledReason })}
         projectBar={
           <TopBar
             projectName={projectName}
@@ -386,8 +636,8 @@ export function App(): JSX.Element {
             // claiming "Saved"/"Synced" would be exactly the fabricated status
             // the project's own rules forbid - and would collapse save and sync
             // into one false reassurance.
-            saveState="no-project"
-            syncState="offline"
+            saveState={DEMO_SAVE_STATE}
+            syncState={DEMO_SYNC_STATE}
             canUndo={undoStackRef.current.canUndo()}
             canRedo={undoStackRef.current.canRedo()}
             lastUndoActionLabel={null}
@@ -416,6 +666,21 @@ export function App(): JSX.Element {
             onCloseTab={(id) => setTabs((state) => closeTab(state, id))}
             onTogglePin={(id) => setTabs((state) => togglePin(state, id))}
             onActivateAdjacent={(delta) => setTabs((state) => activateAdjacentTab(state, delta))}
+            onMoveTab={(id, toIndex) => setTabs((state) => moveTab(state, id, toIndex))}
+            contextMenuActions={{
+              onTogglePin: (id) => setTabs((state) => togglePin(state, id)),
+              onDuplicate: (id) =>
+                setTabs((state) => duplicateTab(state, id, `${id}-copy-${state.tabs.length}`)),
+              onRevealInBrowser: (id) => {
+                // Doc 37: "Reveal in browser" is navigation, not mutation - it
+                // opens the browser at the Views section and selects nothing.
+                setBrowserPanel((current) => selectBrowserSection(current, 'views'));
+                setTabs((state) => activateTab(state, id));
+              },
+              onClose: (id) => setTabs((state) => closeTab(state, id)),
+              onCloseOthers: (id) => setTabs((state) => closeOtherTabs(state, id)),
+              onCloseToRight: (id) => setTabs((state) => closeTabsToRight(state, id)),
+            }}
           />
         }
         toolRail={
@@ -430,19 +695,66 @@ export function App(): JSX.Element {
           />
         }
         projectBrowser={
-          <ModelPanel
-            tree={MODEL_TREE}
-            selection={modelSelection}
-            onSelectNode={(nodeId) => setModelSelection({ primary: nodeId, secondary: new Set() })}
+          <ProjectBrowserPanel
+            state={browserPanel}
+            mode={modeState.mode}
+            reviewCapabilityEnabled={DEFAULT_WORKSPACE_CAPABILITIES['CAP-collaboration']}
+            onSelectSection={(section) =>
+              setBrowserPanel((current) => selectBrowserSection(current, section))
+            }
+            sections={{
+              /*
+               * Only Project has real content: the semantic tree is the one
+               * thing this build can actually enumerate. Views, Documents and
+               * Files render their own empty state rather than a fabricated
+               * list - doc 35's "never invent" rule is not specific to the
+               * overview.
+               */
+              project: (
+                <ModelPanel
+                  tree={MODEL_TREE}
+                  selection={modelSelection}
+                  onSelectNode={(nodeId) =>
+                    setModelSelection({ primary: nodeId, secondary: new Set() })
+                  }
+                />
+              ),
+              views: (
+                <ViewSwitcherList
+                  state={tabs}
+                  onActivateTab={(id) => setTabs((state) => activateTab(state, id))}
+                  onCloseTab={(id) => setTabs((state) => closeTab(state, id))}
+                />
+              ),
+            }}
           />
         }
         viewport={viewport}
         inspector={
-          <InspectorShell
-            groups={isWallSelected ? buildDemoWallInspectorGroups() : buildEmptyInspectorGroups()}
-            selectedElementDescription={
-              isWallSelected ? buildDemoWallAccessibleDescription() : null
-            }
+          <InspectorPanel
+            state={inspectorTabs}
+            context={inspectorContext}
+            commonTypeName={isWallSelected ? 'Interior Wall 100mm' : null}
+            onSelectTab={(tab) => setInspectorTabs((current) => selectInspectorTab(current, tab))}
+            tabs={{
+              /*
+               * Doc 40: the existing InspectorShell renders exactly what the
+               * Properties tab is specified to contain, so it becomes that
+               * tab's body rather than being replaced. Type, Relations,
+               * Warnings and History have no data source in this build and
+               * render their own honest empty state.
+               */
+              properties: (
+                <InspectorShell
+                  groups={
+                    isWallSelected ? buildDemoWallInspectorGroups() : buildEmptyInspectorGroups()
+                  }
+                  selectedElementDescription={
+                    isWallSelected ? buildDemoWallAccessibleDescription() : null
+                  }
+                />
+              ),
+            }}
           />
         }
         contextBar={
@@ -489,9 +801,22 @@ export function App(): JSX.Element {
           }}
         >
           <CommandPalette
-            entries={COMMAND_ENTRIES}
+            entries={commandEntries}
             onInvoke={(entry) => {
-              handleActivateTool(entry.id);
+              /*
+               * The palette carries both tool activations and view commands, so
+               * it dispatches by id rather than assuming everything is a tool -
+               * before this, invoking "Close active view" silently did nothing
+               * because handleActivateTool had no such tool to arm.
+               */
+              if (entry.id === 'close-tab') {
+                const active = tabs.tabs.find((tab) => tab.id === tabs.activeId);
+                if (active?.closeable === true) {
+                  setTabs((state) => closeTab(state, active.id));
+                }
+              } else {
+                handleActivateTool(entry.id);
+              }
               recordDemoAction(entry.label);
               setCommandPaletteOpen(false);
             }}

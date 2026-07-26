@@ -179,10 +179,6 @@ export const WORKSPACE_STATE_MACHINES: Readonly<Record<string, readonly string[]
 
 export const WORKSPACE_INVARIANTS: readonly string[] = stateMachinesJson.invariants;
 
-const TAB_KINDS_BY_KIND = new Map<string, TabKindContract>(
-  TAB_KIND_CONTRACTS.map((contract) => [contract.kind, contract]),
-);
-
 const TOOLS_BY_ID = new Map<string, ToolContract>(TOOL_CONTRACTS.map((tool) => [tool.id, tool]));
 
 const PANELS_BY_ID = new Map<string, PanelContract>(
@@ -215,9 +211,4 @@ export function keyboardCommand(commandId: string): KeyboardCommandContract | nu
 
 export function capabilityGate(gateId: string): CapabilityGateContract | null {
   return CAPABILITY_GATES.find((gate) => gate.id === gateId) ?? null;
-}
-
-/** Exposed for the registry integrity test and the validation script. */
-export function tabKindIds(): readonly string[] {
-  return [...TAB_KINDS_BY_KIND.keys()];
 }

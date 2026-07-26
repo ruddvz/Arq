@@ -90,3 +90,36 @@
 .arq-workspace .arq-status-bar {
   color: var(--arq-ui-text-secondary);
 }
+
+/*
+ * Doc 51 / WCAG 2.4.1 skip link. Visually hidden until focused, then pinned
+ * over the project bar so a keyboard user can see where the focus went. Not
+ * `display: none` - that would remove it from the Tab order and defeat the
+ * whole point.
+ */
+.arq-skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  padding: var(--arq-space-compact) var(--arq-space-panel);
+  background: var(--arq-ui-paper);
+  border: 1px solid var(--arq-ui-line-strong);
+  border-radius: 0 0 var(--arq-radius-control) 0;
+  color: var(--arq-ui-text-primary);
+  transform: translateY(-120%);
+}
+
+.arq-skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/*
+ * Respects a reduced-motion preference: the link still appears, it simply does
+ * not slide. Blueprint accessibility baseline - motion is never the mechanism.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .arq-skip-link {
+    transition: transform 120ms ease-out;
+  }
+}

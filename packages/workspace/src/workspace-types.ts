@@ -30,8 +30,6 @@ export const WORKSPACE_MODES: readonly WorkspaceMode[] = [
 export type WorkspacePlatform =
   'desktop' | 'compact-desktop' | 'tablet-landscape' | 'tablet-portrait' | 'phone';
 
-export type DockSide = 'left' | 'right' | 'bottom' | 'overlay';
-
 /** Layer 3. `workspace-tab-registry.json` > `tabKinds[].kind`. */
 export type WorkspaceViewKind =
   | 'project-overview'
@@ -62,10 +60,6 @@ export interface WorkspaceViewTab {
   readonly pinned: boolean;
   readonly closeable: boolean;
 }
-
-/** Layer 3 tab lifecycle, `workspace-state-machines.json` > `machines.tab`. */
-export type TabLifecycle =
-  'closed' | 'opening' | 'ready' | 'background-stale' | 'active' | 'closing' | 'failed';
 
 export interface WorkspaceSelection {
   readonly primaryId: string | null;
@@ -113,26 +107,4 @@ export interface WorkspaceProjectContext {
   readonly openState: WorkspaceOpenState;
   readonly saveSync: SaveSyncState;
   readonly readOnly: boolean;
-}
-
-/**
- * Package 3.0 `workspace-actions.ts`: "Model-changing actions create typed
- * proposals. Pure presentation actions may run locally." `kind` is the
- * discriminant that keeps the two apart at the call site instead of relying on
- * a handler to remember which it is.
- */
-export type WorkspaceActionKind = 'presentation' | 'proposal';
-
-export interface WorkspaceAction {
-  readonly id: string;
-  readonly label: string;
-  readonly category: string;
-  readonly icon: string;
-  readonly kind: WorkspaceActionKind;
-  /**
-   * Doc 38 / execution prompt §3: "No mystery icons... every action must map to
-   * an enabled/disabled reason." A disabled action carries the reason with it so
-   * the UI never renders a greyed control it cannot explain.
-   */
-  readonly disabledReason?: string;
 }

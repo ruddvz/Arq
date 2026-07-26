@@ -8,7 +8,7 @@
  * reducer here can reach the model.
  */
 
-import { panelContract, PANEL_CONTRACTS } from './registry';
+import { panelContract } from './registry';
 import type { LayoutSlotContract } from './registry';
 import {
   panelDockingPolicy,
@@ -36,6 +36,18 @@ export interface PanelState {
   readonly open: boolean;
   readonly mode: PanelPresentation;
   readonly widthPx: number;
+  /**
+   * What the user last chose on a *docking* band.
+   *
+   * The touch bands close both panels - doc 46 calls them "transient drawers",
+   * and a drawer open before the user asked for it is a column with a shadow.
+   * But closing them is a presentation decision made by the band, not by the
+   * user, so it must not be mistaken for one. Without this field, dragging a
+   * desktop window narrow enough to cross the tablet band and back left the
+   * browser and inspector shut, silently discarding a preference the user had
+   * expressed by leaving them open.
+   */
+  readonly dockedPreferenceOpen: boolean;
 }
 
 export type PanelLayoutState = Readonly<Record<PanelId, PanelState>>;
@@ -94,24 +106,67 @@ export const INITIAL_PANEL_LAYOUT_STATE: PanelLayoutState = Object.freeze({
     open: true,
     mode: 'docked',
     widthPx: panelWidthBounds('project-browser').defaultWidth,
+    dockedPreferenceOpen: true,
   },
-  inspector: { open: true, mode: 'docked', widthPx: panelWidthBounds('inspector').defaultWidth },
-  review: { open: false, mode: 'overlay', widthPx: panelWidthBounds('review').defaultWidth },
-  ai: { open: false, mode: 'overlay', widthPx: panelWidthBounds('ai').defaultWidth },
+  inspector: {
+    open: true,
+    mode: 'docked',
+    widthPx: panelWidthBounds('inspector').defaultWidth,
+    dockedPreferenceOpen: true,
+  },
+  review: {
+    open: false,
+    mode: 'overlay',
+    widthPx: panelWidthBounds('review').defaultWidth,
+    dockedPreferenceOpen: false,
+  },
+  ai: {
+    open: false,
+    mode: 'overlay',
+    widthPx: panelWidthBounds('ai').defaultWidth,
+    dockedPreferenceOpen: false,
+  },
   diagnostics: {
     open: false,
     mode: 'overlay',
     widthPx: panelWidthBounds('diagnostics').defaultWidth,
+    dockedPreferenceOpen: false,
   },
-  tasks: { open: false, mode: 'overlay', widthPx: panelWidthBounds('tasks').defaultWidth },
+  tasks: {
+    open: false,
+    mode: 'overlay',
+    widthPx: panelWidthBounds('tasks').defaultWidth,
+    dockedPreferenceOpen: false,
+  },
 });
 
+/**
+ * A *user* opening or closing a panel. Records the docking preference too,
+ * which is what separates this from the band-driven close in
+ * `reconcileDockedPanels` - only one of the two is the user's opinion.
+ */
 export function togglePanel(state: PanelLayoutState, panel: PanelId): PanelLayoutState {
   const current = state[panel];
-  return { ...state, [panel]: { ...current, open: !current.open } };
+  const open = !current.open;
+  return { ...state, [panel]: { ...current, open, dockedPreferenceOpen: open } };
 }
 
 export function setPanelOpen(
+  state: PanelLayoutState,
+  panel: PanelId,
+  open: boolean,
+): PanelLayoutState {
+  const current = state[panel];
+  return current.open === open && current.dockedPreferenceOpen === open
+    ? state
+    : { ...state, [panel]: { ...current, open, dockedPreferenceOpen: open } };
+}
+
+/**
+ * Closes a panel *because the band demands it*, leaving the user's docking
+ * preference untouched so returning to a docking band can restore it.
+ */
+function setPanelOpenForBand(
   state: PanelLayoutState,
   panel: PanelId,
   open: boolean,
@@ -186,12 +241,19 @@ export function reconcileDockedPanels(
   const policy = panelDockingPolicy(input.platform);
 
   if (policy === 'drawers-only') {
-    const drawered = (['project-browser', 'inspector'] as const).reduce(
-      (next, panel) => setPanelOpen(setPanelPresentation(next, panel, 'overlay'), panel, false),
+    return (['project-browser', 'inspector'] as const).reduce(
+      (next, panel) =>
+        setPanelOpenForBand(setPanelPresentation(next, panel, 'overlay'), panel, false),
       state,
     );
-    return drawered;
   }
+
+  // Back on a docking band: restore what the user last chose, not what the
+  // touch band imposed on the way through.
+  state = (['project-browser', 'inspector'] as const).reduce(
+    (next, panel) => setPanelOpenForBand(next, panel, next[panel].dockedPreferenceOpen),
+    state,
+  );
 
   const probe: CanvasWidthInput = {
     viewportWidthPx: input.viewportWidthPx,
@@ -240,9 +302,4 @@ export function reconcileDockedPanels(
 export function occupiesLayoutWidth(state: PanelLayoutState, panel: PanelId): boolean {
   const panelState = state[panel];
   return panelState.open && panelState.mode === 'docked';
-}
-
-/** Exposed for the registry-integrity test. */
-export function registryPanelIdsInOrder(): readonly string[] {
-  return PANEL_CONTRACTS.map((panel) => panel.id);
 }

@@ -23,6 +23,15 @@ export interface CommandPaletteEntry {
   readonly category: string;
   readonly synonyms?: readonly string[];
   readonly disabledReason?: string;
+  /**
+   * Platform-adapted shortcut label, e.g. `⌘K` or `Ctrl+K`, from
+   * `shortcutLabel` in @arq/workspace. The palette is where a user *discovers*
+   * shortcuts, so showing the binding beside the command is how they graduate
+   * from searching to typing it - `workspace-keyboard-map.json`'s own rule is
+   * that labels are "platform-adapted, not hard-coded Cmd everywhere", so this
+   * is passed in already resolved rather than derived here.
+   */
+  readonly shortcutLabel?: string;
 }
 
 export interface CommandPaletteMatch {
