@@ -49,7 +49,11 @@ describe('validateOpeningOverlaps', () => {
   });
 
   it('returns one message per overlapping pair among three openings', () => {
-    const a = createOpening({ ...baseInput, offsetFromWallStart: length(0, 'mm'), width: length(1000, 'mm') });
+    const a = createOpening({
+      ...baseInput,
+      offsetFromWallStart: length(0, 'mm'),
+      width: length(1000, 'mm'),
+    });
     const b = createOpening({
       ...baseInput,
       id: openingId('o-2'),

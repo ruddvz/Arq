@@ -1,0 +1,24 @@
+# Files Prettier must not rewrite.
+#
+# Everything here is *generated*. Formatting a generated file is churn at best:
+# the tool that produces it writes it back in its own style on the next run, so
+# the file oscillates and `pnpm format:check` fails again for reasons no human
+# can act on.
+#
+# pnpm-lock.yaml is the clearest case - it is pnpm's output, pnpm rewrites it on
+# every dependency change, and a Prettier pass over it would be undone by the
+# next `pnpm install`.
+
+pnpm-lock.yaml
+
+# Timestamped benchmark output. These are measurement records, appended to by
+# scripts/run-*-benchmark.mjs; reformatting them edits recorded evidence.
+benchmarks/results/
+
+# Build output.
+**/dist/
+**/coverage/
+
+# Rust build artifacts and generated wasm bindings.
+rust/target/
+packages/*/wasm/

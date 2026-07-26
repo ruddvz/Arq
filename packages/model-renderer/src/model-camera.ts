@@ -63,7 +63,9 @@ function validateFrustumInputs(aspect: number, viewSize: number, near: number, f
 }
 
 /** Builds a THREE.OrthographicCamera sized from `aspect`/`viewSize`, positioned at a conventional default architectural view angle looking at the origin. */
-export function createOrthographicCamera(options: OrthographicCameraOptions): THREE.OrthographicCamera {
+export function createOrthographicCamera(
+  options: OrthographicCameraOptions,
+): THREE.OrthographicCamera {
   const viewSize = options.viewSize ?? DEFAULT_VIEW_SIZE;
   const near = options.near ?? DEFAULT_NEAR;
   const far = options.far ?? DEFAULT_FAR;
@@ -71,7 +73,14 @@ export function createOrthographicCamera(options: OrthographicCameraOptions): TH
 
   const halfHeight = viewSize / 2;
   const halfWidth = halfHeight * options.aspect;
-  const camera = new THREE.OrthographicCamera(-halfWidth, halfWidth, halfHeight, -halfHeight, near, far);
+  const camera = new THREE.OrthographicCamera(
+    -halfWidth,
+    halfWidth,
+    halfHeight,
+    -halfHeight,
+    near,
+    far,
+  );
   camera.position.copy(DEFAULT_POSITION);
   camera.lookAt(0, 0, 0);
   return camera;

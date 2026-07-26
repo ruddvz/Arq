@@ -18,11 +18,11 @@ export interface ArqResourceDescriptor {
   readonly sha256: string;
   readonly mediaType: string;
   readonly canonicalRole:
-    | "source-underlay"
-    | "source-import"
-    | "authoritative-geometry"
-    | "user-texture"
-    | "portable-preview";
+    | 'source-underlay'
+    | 'source-import'
+    | 'authoritative-geometry'
+    | 'user-texture'
+    | 'portable-preview';
   readonly byteLength: number;
   readonly chunkSize: number;
   readonly chunkCount: number;
@@ -33,7 +33,7 @@ export interface ArqWorkingCopy {
   readonly localRevision: number;
   readonly serverRevision?: number;
   readonly linkedExternalPath?: string;
-  readonly localCommitState: "clean" | "writing" | "failed";
-  readonly syncState: "offline" | "syncing" | "synced" | "conflict";
-  readonly publicationState: "not-linked" | "current" | "pending" | "failed";
+  readonly localCommitState: 'clean' | 'writing' | 'failed';
+  readonly syncState: 'offline' | 'syncing' | 'synced' | 'conflict';
+  readonly publicationState: 'not-linked' | 'current' | 'pending' | 'failed';
 }

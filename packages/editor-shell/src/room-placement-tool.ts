@@ -141,7 +141,10 @@ export function createRoomPlacementTool<TId>() {
    */
   function finish(): RoomPlacement<TId> | null {
     const isValid =
-      seedPoint !== null && preview !== null && preview.status === 'valid' && name.trim().length > 0;
+      seedPoint !== null &&
+      preview !== null &&
+      preview.status === 'valid' &&
+      name.trim().length > 0;
     lifecycle.commit(isValid);
     if (!isValid || seedPoint === null || preview === null) {
       return null;

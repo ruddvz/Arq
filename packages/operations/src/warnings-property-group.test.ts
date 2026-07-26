@@ -6,7 +6,9 @@ import type { ValidationMessage } from './validation-result';
 const wall1 = elementId('wall-1');
 const wall2 = elementId('wall-2');
 
-function message(overrides: Partial<ValidationMessage> & Pick<ValidationMessage, 'id' | 'severity'>): ValidationMessage {
+function message(
+  overrides: Partial<ValidationMessage> & Pick<ValidationMessage, 'id' | 'severity'>,
+): ValidationMessage {
   return {
     code: 'TEST_CODE',
     title: 'Test message',

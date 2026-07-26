@@ -81,7 +81,12 @@ function wallOpeningPanels(
     const openingStart = opening.offsetFromWallStart;
     const openingEnd = openingStart + opening.width;
     if (openingStart > cursor) {
-      panels.push({ lengthStart: cursor, lengthEnd: openingStart, elevationStart: 0, elevationEnd: wallHeight });
+      panels.push({
+        lengthStart: cursor,
+        lengthEnd: openingStart,
+        elevationStart: 0,
+        elevationEnd: wallHeight,
+      });
     }
     if (opening.sillHeight > 0) {
       panels.push({
@@ -103,7 +108,12 @@ function wallOpeningPanels(
     cursor = Math.max(cursor, openingEnd);
   }
   if (cursor < wallLength) {
-    panels.push({ lengthStart: cursor, lengthEnd: wallLength, elevationStart: 0, elevationEnd: wallHeight });
+    panels.push({
+      lengthStart: cursor,
+      lengthEnd: wallLength,
+      elevationStart: 0,
+      elevationEnd: wallHeight,
+    });
   }
   return panels;
 }
@@ -146,7 +156,12 @@ export function generateWallOpeningMeshes(
     }
     const panelStart = translatePoint(centerline.start, scaleVector(direction, panel.lengthStart));
     const panelEnd = translatePoint(centerline.start, scaleVector(direction, panel.lengthEnd));
-    const outline = faceLineCorners({ start: panelStart, end: panelEnd }, thickness, alignment, tolerance);
+    const outline = faceLineCorners(
+      { start: panelStart, end: panelEnd },
+      thickness,
+      alignment,
+      tolerance,
+    );
     if (!outline) {
       return null;
     }

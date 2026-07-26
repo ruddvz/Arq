@@ -12,7 +12,7 @@ is the Canvas 2D half.
 - Scene: a synthetic plan generated deterministically to match
   `benchmarks/PERFORMANCE-BUDGETS.json`'s `benchmarkModel` object counts
   exactly - 150 walls, 80 doors/windows, 60 rooms, 200 annotations (a
-  10x6 grid of 4m x 3m rooms, not a real floor plan; the object *count*
+  10x6 grid of 4m x 3m rooms, not a real floor plan; the object _count_
   is what stresses per-frame draw-call volume, not the layout's realism).
   Generator: `packages/plan-renderer/benchmarks/canvas-2d/scene.js`
   (shared unchanged with the PixiJS spike, ARQ-116).
@@ -37,10 +37,10 @@ is the Canvas 2D half.
 Three consecutive runs (2026-07-22), full JSON in `benchmarks/results/`:
 
 | Run | avg fps | avg frame (ms) | p95 frame (ms) | max frame (ms) |
-|---|---|---|---|---|
-| 1 | 60.00 | 16.67 | 16.80 | 16.80 |
-| 2 | 60.00 | 16.67 | 16.70 | 16.80 |
-| 3 | 59.35 | 16.85 | 16.80 | 33.40 |
+| --- | ------- | -------------- | -------------- | -------------- |
+| 1   | 60.00   | 16.67          | 16.80          | 16.80          |
+| 2   | 60.00   | 16.67          | 16.70          | 16.80          |
+| 3   | 59.35   | 16.85          | 16.80          | 33.40          |
 
 Object counts produced by the generator matched the benchmark model
 exactly in every run (150 walls, 60 rooms, 80 openings, 200 annotations).
