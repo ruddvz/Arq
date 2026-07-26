@@ -7,6 +7,7 @@ import {
   resolveWorkspacePlatform,
   viewSwitcherHeightPx,
   type PanelLayoutState,
+  type SheetDetent,
   type SheetId,
   type SheetState,
   type ViewportProbe,
@@ -91,6 +92,8 @@ export interface WorkspaceRootProps {
   readonly onCloseSheet?: () => void;
   readonly onExpandSheet?: () => void;
   readonly onCollapseSheet?: () => void;
+  /** Doc 47's drag gesture, layered on top of the grabber button. */
+  readonly onSheetDragToDetent?: (detent: SheetDetent) => void;
   /** Doc 47: the dock's Select entry activates the tool rather than opening a sheet. */
   readonly onSelectPointerTool?: () => void;
   readonly activeToolLabel?: string | null;
@@ -222,6 +225,7 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
     onCloseSheet,
     onExpandSheet,
     onCollapseSheet,
+    onSheetDragToDetent,
     onSelectPointerTool,
     activeToolLabel = null,
     toolsSheet,
@@ -437,6 +441,7 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
           onClose={onCloseSheet ?? (() => undefined)}
           onExpand={onExpandSheet ?? (() => undefined)}
           onCollapse={onCollapseSheet ?? (() => undefined)}
+          {...(onSheetDragToDetent === undefined ? {} : { onDragToDetent: onSheetDragToDetent })}
         >
           {sheetBody(openSheetId)}
         </WorkspaceSheet>

@@ -1,5 +1,10 @@
-import { useEffect, useRef, type ReactNode } from 'react';
-import { sheetHeightPx, type SheetDetent, type WorkspacePlatform } from '@arq/workspace';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  detentForDraggedHeight,
+  sheetHeightPx,
+  type SheetDetent,
+  type WorkspacePlatform,
+} from '@arq/workspace';
 
 export interface WorkspaceSheetProps {
   readonly title: string;
@@ -9,6 +14,8 @@ export interface WorkspaceSheetProps {
   readonly onClose: () => void;
   readonly onExpand: () => void;
   readonly onCollapse: () => void;
+  /** Doc 47's drag gesture. Given the detent the drag settled on. */
+  readonly onDragToDetent?: (detent: SheetDetent) => void;
   readonly children: ReactNode;
 }
 
@@ -38,10 +45,71 @@ const DETENT_LABEL: Readonly<Record<Exclude<SheetDetent, 'closed'>, string>> = {
  * `sheetDetents`. Nothing here invents a number.
  */
 export function WorkspaceSheet(props: WorkspaceSheetProps): JSX.Element {
-  const { title, platform, detent, viewportHeightPx, onClose, onExpand, onCollapse, children } =
-    props;
+  const {
+    title,
+    platform,
+    detent,
+    viewportHeightPx,
+    onClose,
+    onExpand,
+    onCollapse,
+    onDragToDetent,
+    children,
+  } = props;
   const sheetRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ readonly startY: number; readonly startHeight: number } | null>(null);
+  const [dragHeightPx, setDragHeightPx] = useState<number | null>(null);
   const modal = detent === 'full';
+
+  const settledHeightPx = sheetHeightPx(platform, detent, viewportHeightPx);
+
+  /*
+   * Doc 47 lists a drag gesture for the sheet. It is built *on top of* the
+   * grabber button rather than replacing it: a sheet whose only path between
+   * detents is a drag is unreachable by keyboard, switch device or voice
+   * control, so the button remains the contract and this is the accelerator.
+   *
+   * Which detent a drag lands on is decided by `detentForDraggedHeight` in
+   * @arq/workspace, so the snapping rule is testable without a pointer.
+   */
+  const onGrabberPointerDown = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      if (onDragToDetent === undefined || event.button !== 0) {
+        return;
+      }
+      event.currentTarget.setPointerCapture(event.pointerId);
+      dragRef.current = { startY: event.clientY, startHeight: settledHeightPx };
+    },
+    [onDragToDetent, settledHeightPx],
+  );
+
+  const onGrabberPointerMove = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
+    const drag = dragRef.current;
+    if (drag === null) {
+      return;
+    }
+    // Dragging up (negative delta) makes the sheet taller.
+    setDragHeightPx(Math.max(0, drag.startHeight - (event.clientY - drag.startY)));
+  }, []);
+
+  const endDrag = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      const drag = dragRef.current;
+      dragRef.current = null;
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+      const height = dragHeightPx;
+      setDragHeightPx(null);
+      // A tap produces a pointerdown/up with no movement; leave it to onClick so
+      // the button keeps working as a button.
+      if (drag === null || height === null || onDragToDetent === undefined) {
+        return;
+      }
+      onDragToDetent(detentForDraggedHeight(platform, height, viewportHeightPx));
+    },
+    [dragHeightPx, onDragToDetent, platform, viewportHeightPx],
+  );
 
   useEffect(() => {
     const node = sheetRef.current;
@@ -59,7 +127,8 @@ export function WorkspaceSheet(props: WorkspaceSheetProps): JSX.Element {
     return <></>;
   }
 
-  const heightPx = sheetHeightPx(platform, detent, viewportHeightPx);
+  // While dragging, follow the pointer; otherwise sit at the settled detent.
+  const heightPx = dragHeightPx ?? settledHeightPx;
 
   return (
     <div
@@ -105,6 +174,11 @@ export function WorkspaceSheet(props: WorkspaceSheetProps): JSX.Element {
         <button
           type="button"
           className="arq-shell-button arq-sheet__grabber"
+          onPointerDown={onGrabberPointerDown}
+          onPointerMove={onGrabberPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          style={{ touchAction: 'none', cursor: onDragToDetent === undefined ? undefined : 'grab' }}
           aria-label={
             detent === 'full'
               ? `${title}: collapse sheet. Currently ${DETENT_LABEL[detent]}.`

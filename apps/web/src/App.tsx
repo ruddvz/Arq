@@ -50,8 +50,10 @@ import {
   handleSystemBack,
   initialModeState,
   isUnmodifiedLetterShortcut,
+  moveTab,
   openTab,
   reconcileBrowserSection,
+  setDetent,
   reconcileInspectorTab,
   selectInspectorTab,
   reconcileDockedPanels,
@@ -190,6 +192,19 @@ const MODEL_TREE: readonly ModelPanelNode[] = [
                 hidden: false,
               },
               { id: 'demo-room', displayName: 'Room 4.20 x 3.60', nodeType: 'Room', hidden: false },
+              /*
+               * Doc 39's stated performance case: "expanding a 5,000-element
+               * model must not render every row". A synthetic level of that
+               * size is the only way this build can exercise the virtualiser -
+               * it is fixture data for the tree, clearly named as such, not a
+               * claim that the project contains these elements.
+               */
+              ...Array.from({ length: 5000 }, (_, index) => ({
+                id: `fixture-wall-${index}`,
+                displayName: `Fixture wall ${index + 1}`,
+                nodeType: 'Wall',
+                hidden: false,
+              })),
             ],
           },
         ],
@@ -545,6 +560,7 @@ export function App(): JSX.Element {
         onCloseSheet={() => setSheet(closeSheet())}
         onExpandSheet={() => setSheet(expandSheet)}
         onCollapseSheet={() => setSheet(collapseSheet)}
+        onSheetDragToDetent={(detent) => setSheet((state) => setDetent(state, detent))}
         onResizePanel={(panel, width) => setPanels((current) => resizePanel(current, panel, width))}
         onSelectPointerTool={() => handleActivateTool('select')}
         activeToolLabel={activeToolLabel}
@@ -650,6 +666,7 @@ export function App(): JSX.Element {
             onCloseTab={(id) => setTabs((state) => closeTab(state, id))}
             onTogglePin={(id) => setTabs((state) => togglePin(state, id))}
             onActivateAdjacent={(delta) => setTabs((state) => activateAdjacentTab(state, delta))}
+            onMoveTab={(id, toIndex) => setTabs((state) => moveTab(state, id, toIndex))}
             contextMenuActions={{
               onTogglePin: (id) => setTabs((state) => togglePin(state, id)),
               onDuplicate: (id) =>

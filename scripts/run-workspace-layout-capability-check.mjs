@@ -189,8 +189,12 @@ async function measure(page) {
       activeTabVisible:
         document.querySelector('.arq-tab-strip [role="tab"][aria-selected="true"]') !== null ||
         document.querySelector('.arq-compact-view-control button') !== null,
-      // The fixture check is "save and sync separately visible or available in
-      // the project menu" - both must be nameable, never merged into one word.
+      // The fixture check is "save and sync separately visible **or available
+      // in the project menu**" - both must be nameable, never merged into one
+      // word, but doc 36 explicitly allows the low-priority status text to
+      // collapse into the overflow menu at compact widths. So a collapsed slot
+      // counts as satisfied; a missing one does not.
+      collapsedSlots: document.querySelector('.arq-top-bar')?.dataset.collapsedSlots ?? '',
       saveAndSyncLegible:
         /No project open|Saved|Saving|Unsaved|Recovered/.test(text) &&
         /Synced|Syncing|Offline|Sync error/.test(text),
@@ -245,8 +249,17 @@ function checkViewport(viewport, m, consoleErrors) {
   if (!m.activeTabVisible) {
     failures.push('active view is not identifiable without opening a menu');
   }
-  if (!m.saveAndSyncLegible) {
-    failures.push('save and sync are not both legible');
+  const collapsed = new Set(m.collapsedSlots.split(',').filter(Boolean));
+  const saveReachable = m.saveAndSyncLegible || collapsed.has('save-state');
+  const syncReachable = m.saveAndSyncLegible || collapsed.has('sync-state');
+  if (!saveReachable || !syncReachable) {
+    failures.push('save and sync are neither visible nor in the project menu');
+  }
+  // Doc 36's protected pair may never collapse, at any width.
+  for (const protectedSlot of ['project-identity', 'active-view']) {
+    if (collapsed.has(protectedSlot)) {
+      failures.push(`${protectedSlot} collapsed, but doc 36 says it never disappears`);
+    }
   }
   if (consoleErrors.length > 0) {
     failures.push(`console errors: ${consoleErrors.join(' | ')}`);

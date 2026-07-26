@@ -116,6 +116,42 @@ export function handleSystemBack(state: SheetState): {
 }
 
 /**
+ * The detent a drag should settle on, given the height the user has dragged
+ * the sheet to. Doc 47 lists a drag gesture; this is the "which detent did they
+ * mean" half of it, kept here rather than in the component so it is testable
+ * without a pointer.
+ *
+ * Nearest-detent rather than direction-based, because a drag that overshoots
+ * and comes back should land where the sheet visibly *is*, not where the
+ * gesture started. Dragging below the peek height by more than half its own
+ * height dismisses - the same "drag it away" gesture every sheet already
+ * teaches, and the reason `'closed'` is in the returned union.
+ */
+export function detentForDraggedHeight(
+  platform: WorkspacePlatform,
+  draggedHeightPx: number,
+  viewportHeightPx: number,
+): SheetDetent {
+  const candidates: readonly Exclude<SheetDetent, 'closed'>[] = ['peek', 'half', 'full'];
+  const peekHeight = sheetHeightPx(platform, 'peek', viewportHeightPx);
+  if (draggedHeightPx < peekHeight / 2) {
+    return 'closed';
+  }
+  let best: SheetDetent = 'peek';
+  let bestDistance = Number.POSITIVE_INFINITY;
+  for (const candidate of candidates) {
+    const distance = Math.abs(
+      sheetHeightPx(platform, candidate, viewportHeightPx) - draggedHeightPx,
+    );
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = candidate;
+    }
+  }
+  return best;
+}
+
+/**
  * Sheet height in CSS px for a detent, from the layout registry's own
  * `sheetDetents` / `bottomInspectorDetents` arrays. Falls back to fractions of
  * the viewport when a layout declares none (the landscape tablet, whose panels

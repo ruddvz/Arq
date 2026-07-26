@@ -26,6 +26,13 @@ export interface ProjectTabStripProps {
    * menu is offered rather than an empty one appearing.
    */
   readonly contextMenuActions?: TabContextMenuActions;
+  /**
+   * Doc 37: "Pointer drag or keyboard move command; persist user tab order as
+   * UI preference, not project geometry." Both paths are wired when this is
+   * supplied; when it is not, the strip is simply not reorderable rather than
+   * offering a drag that silently does nothing.
+   */
+  readonly onMoveTab?: (tabId: string, toIndex: number) => void;
 }
 
 function tabLabel(tab: WorkspaceViewTab): string {
@@ -69,9 +76,11 @@ export function ProjectTabStrip(props: ProjectTabStripProps): JSX.Element {
     onTogglePin,
     onActivateAdjacent,
     contextMenuActions,
+    onMoveTab,
   } = props;
   const [overflowOpen, setOverflowOpen] = useState(false);
   const [menuTabId, setMenuTabId] = useState<string | null>(null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
   const { visible, overflow } = partitionTabsForOverflow(state, visibleSlots);
 
   /**
@@ -130,13 +139,46 @@ export function ProjectTabStrip(props: ProjectTabStripProps): JSX.Element {
                */
               role="presentation"
               className="arq-tab-strip__tab"
-              style={{ display: 'inline-flex', alignItems: 'center', position: 'relative' }}
               onContextMenu={(event) => {
                 if (contextMenuActions === undefined) {
                   return;
                 }
                 event.preventDefault();
                 openMenuFor(tab.id);
+              }}
+              draggable={onMoveTab !== undefined}
+              onDragStart={(event) => {
+                if (onMoveTab === undefined) {
+                  return;
+                }
+                setDraggingId(tab.id);
+                event.dataTransfer.effectAllowed = 'move';
+                // Firefox refuses to start a drag without payload.
+                event.dataTransfer.setData('text/plain', tab.id);
+              }}
+              onDragEnd={() => setDraggingId(null)}
+              onDragOver={(event) => {
+                if (onMoveTab !== undefined && draggingId !== null && draggingId !== tab.id) {
+                  event.preventDefault();
+                  event.dataTransfer.dropEffect = 'move';
+                }
+              }}
+              onDrop={(event) => {
+                if (onMoveTab === undefined || draggingId === null) {
+                  return;
+                }
+                event.preventDefault();
+                const toIndex = state.tabs.findIndex((candidate) => candidate.id === tab.id);
+                if (toIndex !== -1 && draggingId !== tab.id) {
+                  onMoveTab(draggingId, toIndex);
+                }
+                setDraggingId(null);
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                position: 'relative',
+                opacity: draggingId === tab.id ? 0.5 : 1,
               }}
               onAuxClick={(event) => {
                 // Doc 37: "middle click may close on desktop", never as the
@@ -173,6 +215,23 @@ export function ProjectTabStrip(props: ProjectTabStripProps): JSX.Element {
                   if ((event.key === 'Delete' || event.key === 'Backspace') && tab.closeable) {
                     event.preventDefault();
                     onCloseTab(tab.id);
+                    return;
+                  }
+                  /*
+                   * Doc 37's keyboard move command. Ctrl/Cmd+Shift+Arrow rather
+                   * than a bare Arrow, which already moves between tabs - a
+                   * reorder must not be something a user does by accident while
+                   * navigating.
+                   */
+                  if (
+                    onMoveTab !== undefined &&
+                    event.shiftKey &&
+                    (event.ctrlKey || event.metaKey) &&
+                    (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
+                  ) {
+                    event.preventDefault();
+                    const from = state.tabs.findIndex((candidate) => candidate.id === tab.id);
+                    onMoveTab(tab.id, from + (event.key === 'ArrowRight' ? 1 : -1));
                   }
                 }}
               >

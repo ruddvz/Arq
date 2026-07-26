@@ -4,6 +4,7 @@ import {
   SHEET_IDS,
   closeSheet,
   collapseSheet,
+  detentForDraggedHeight,
   expandSheet,
   handleSystemBack,
   initialDetentFor,
@@ -126,6 +127,34 @@ describe('sheetHeightPx', () => {
 
   it('is zero when closed', () => {
     expect(sheetHeightPx('phone', 'closed', 852)).toBe(0);
+  });
+});
+
+describe('detentForDraggedHeight', () => {
+  // iphone393x852 declares sheetDetents [300, 620, 790].
+  it('snaps to the nearest declared detent', () => {
+    expect(detentForDraggedHeight('phone', 310, 852)).toBe('peek');
+    expect(detentForDraggedHeight('phone', 500, 852)).toBe('half');
+    // 700 sits 80 from half and 90 from full, so it snaps back to half.
+    expect(detentForDraggedHeight('phone', 700, 852)).toBe('half');
+    expect(detentForDraggedHeight('phone', 750, 852)).toBe('full');
+    expect(detentForDraggedHeight('phone', 900, 852)).toBe('full');
+  });
+
+  /** Dragging a sheet most of the way off the bottom dismisses it. */
+  it('dismisses below half the peek height', () => {
+    expect(detentForDraggedHeight('phone', 149, 852)).toBe('closed');
+    expect(detentForDraggedHeight('phone', 151, 852)).toBe('peek');
+  });
+
+  /**
+   * Nearest rather than direction-based: a drag that overshoots and comes back
+   * lands where the sheet visibly is, not where the gesture began.
+   */
+  it('is decided by where the sheet ended, not which way it moved', () => {
+    const midway = (620 + 790) / 2;
+    expect(detentForDraggedHeight('phone', midway - 10, 852)).toBe('half');
+    expect(detentForDraggedHeight('phone', midway + 10, 852)).toBe('full');
   });
 });
 

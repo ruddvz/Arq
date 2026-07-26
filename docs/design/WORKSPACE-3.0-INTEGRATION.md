@@ -217,6 +217,30 @@ and 1536 canvases clear their registry floors (900 and 620).
   `(pointer: fine)` only. A coarse pointer keeps the full 44px and a slightly
   taller strip.
 
+## Responsive and touch behaviour
+
+- **Doc 36's collapse priority is implemented, not approximated.**
+  `planTopBarLayout` measures the rendered controls and folds the
+  lowest-priority ones into an overflow menu in the order doc 36 states —
+  presence, then low-priority status text, then secondary collaboration
+  actions — while project identity and active view are structurally protected
+  and never collapse. Measured rather than guessed from breakpoints, because
+  every guess here has been wrong: this bar previously wrapped to three rows and
+  173px at phone width.
+- **A band closing a panel is not mistaken for the user closing it.**
+  `PanelState.dockedPreferenceOpen` records what the user last chose on a
+  docking band, so dragging a window narrow enough to cross the tablet band and
+  back restores the panels — while a panel the user closed deliberately stays
+  closed.
+- **Sheet detents have both a button and a drag.** The button is the contract,
+  because a drag-only sheet is unreachable by keyboard, switch device or voice
+  control; `detentForDraggedHeight` adds doc 47's gesture on top, snapping to the
+  nearest registry detent so an overshoot lands where the sheet visibly is.
+- **The tree is virtualised** (doc 39): a collapsed branch costs one row, and the
+  window renders ~30 rows of a 5,000-element level while `aria-setsize` reports
+  the real total. The focused row is always kept mounted — unmounting it drops
+  focus to `<body>` and silently ejects a keyboard user from the tree.
+
 ## Accessibility
 
 Enforced, and several decisions were made because of it:
@@ -242,33 +266,36 @@ Enforced, and several decisions were made because of it:
   unreachable by keyboard and by touch.
 - The 44px touch minimum holds on coarse pointers; it relaxes to doc 36's
   36–40px desktop hitbox under `(pointer: fine)` only.
+- **Every gesture has a keyboard equivalent.** Tab reorder is Ctrl/Cmd+Shift+
+  Arrow as well as a pointer drag — and a bare Arrow still navigates, so a
+  reorder cannot happen by accident. Panel resize is Arrow/Home/End as well as a
+  drag. Sheet detents are a button as well as a drag. Tab close is Delete, the
+  context menu, Cmd/Ctrl+W and the palette.
 
 ## Known gaps
 
-- 27 of 30 surfaces, 43 of 54 tools, 175 of 215 icons and 133 of 147 components
-  are specified only.
-- A desktop user who drags their window down through the tablet band and back
-  finds the browser and inspector closed. `reconcileDockedPanels` closes them on
-  a `'drawers-only'` band and does not restore the previous open state on the way
-  back, because panel state carries no separate record of the desktop preference.
-- Doc 36's compact-width collapse is built for the **phone** (`PhoneProjectBar`
-  moves undo, redo, open, share and commands into a More menu) but not for
-  compact desktop, where the top bar and status bar still wrap rather than
-  collapsing by priority.
-- Sheet detents change through a button, not a drag. Doc 47 describes a drag
-  gesture; the button is what makes detents reachable by keyboard and switch
-  device, and the drag is not built on top of it yet.
-- The browser's Documents and Files sections, and the inspector's Type,
-  Relations, Warnings and History tabs, render honest empty states — nothing in
-  this build produces sheets, references, relations, diagnostics or revisions.
-- Doc 39's tree virtualisation ("expanding a 5,000-element model must not render
-  every row") is not implemented; the model panel renders every node.
-- Tab reordering, splitting and the view-tab context menu exist as reducers
-  (`moveTab`, `duplicateTab`, `closeOtherTabs`, `closeTabsToRight`) with no UI
-  attached.
-- The visual-refinement layer added by Package 4.0 (docs 55–58 and the seven
-  workspace boards) is a target for the shell's appearance. This integration
-  delivers the structure those boards describe, not their finish.
+Everything below is _specification without an implementation path in this
+build_ — not shell behaviour left half-finished. Each one needs a system that
+does not exist yet, and building the UI for it would mean inventing the data.
+
+- **27 of 30 surfaces, 43 of 54 tools, 175 of 215 icons and 133 of 147
+  components are specified only.** The tools appear in the rail, disabled, with
+  the reason; the icons are not drawn because a generated placeholder is not ARQ
+  artwork.
+- **The browser's Documents and Files sections, and the inspector's Type,
+  Relations, Warnings and History tabs, render honest empty states.** Nothing in
+  this build produces sheets, references, relations, diagnostics or revisions, so
+  each says what would be there rather than showing a fabricated list.
+- **Split view.** `workspace-tab-registry.json` marks several kinds
+  `supportsSplit`, but there is no split viewport host, so the context menu omits
+  Split right and Split down entirely rather than offering a disabled control for
+  a capability that does not exist.
+- **Doc 39's full row anatomy** — disclosure chevron, per-row visibility and lock
+  actions, inline rename, the row More menu. The tree flattens with every branch
+  expanded; the virtualiser is correct either way, but the controls are unbuilt.
+- **The Package 4.0 visual-refinement layer** (docs 55–58 and the seven boards)
+  is a target for the shell's appearance. This integration delivers the structure
+  those boards describe, not their finish.
 
 ## Verification
 
