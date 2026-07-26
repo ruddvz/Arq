@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "menus": {
+    "canvas-empty": [
+      "Paste when valid",
+      "Zoom to fit",
+      "Show all",
+      "View settings",
+      "New issue/comment when review capability enabled"
+    ],
+    "element": [
+      "Open properties",
+      "Focus",
+      "Hide in view",
+      "Isolate",
+      "Select similar",
+      "Copy",
+      "Move",
+      "Delete",
+      "Add issue/comment when enabled",
+      "Reveal in project browser"
+    ],
+    "view-tab": [
+      "Pin/Unpin",
+      "Duplicate view when supported",
+      "Split right",
+      "Split down",
+      "Reveal in browser",
+      "Close",
+      "Close others",
+      "Close tabs to right"
+    ],
+    "browser-node": [
+      "Open",
+      "Rename where valid",
+      "Duplicate where valid",
+      "Visibility",
+      "Lock where supported",
+      "New child where valid",
+      "Delete with dependency-aware confirmation",
+      "Properties"
+    ],
+    "issue-marker": [
+      "Open issue",
+      "Resolve/Reopen according to permission",
+      "Copy link when share capability exists"
+    ],
+    "sheet-viewport": [
+      "Activate viewport",
+      "Edit view",
+      "Move/resize viewport where valid",
+      "Remove from sheet"
+    ]
+  },
+  "rules": [
+    "Menu order is stable by context.",
+    "Destructive action separated and labelled.",
+    "Unavailable action stays visible with reason when discoverability matters.",
+    "Touch equivalent uses long-press only as secondary access; primary path remains discoverable."
+  ]
+}

@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { worldPoint, type RoomBoundaryEdge } from '@arq/geometry-2d';
 import { createRoomPlacementTool } from './room-placement-tool';
 
-function edge(id: string, sx: number, sy: number, ex: number, ey: number): RoomBoundaryEdge<string> {
+function edge(
+  id: string,
+  sx: number,
+  sy: number,
+  ex: number,
+  ey: number,
+): RoomBoundaryEdge<string> {
   return { id, start: worldPoint(sx, sy), end: worldPoint(ex, ey) };
 }
 

@@ -41,7 +41,8 @@ async function main() {
 
     const report = {
       timestamp: new Date().toISOString(),
-      environment: 'headless Chromium, sandboxed container (not a certified benchmark device - see docs/research/RENDERER-BENCHMARK-CANVAS-2D.md)',
+      environment:
+        'headless Chromium, sandboxed container (not a certified benchmark device - see docs/research/RENDERER-BENCHMARK-CANVAS-2D.md)',
       benchmarkModel: budgets.benchmarkModel,
       measuredObjectCounts: result.counts,
       frameCount: result.frameCount,

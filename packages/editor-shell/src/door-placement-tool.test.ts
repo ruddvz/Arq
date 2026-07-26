@@ -32,7 +32,12 @@ describe('createDoorPlacementTool: happy path', () => {
 
     tool.placeOnHost(wallA, preview.offsetFromWallStart);
     const placement = tool.finish()!;
-    expect(placement).toEqual({ hostId: 'wall-a', offsetFromWallStart: 4, side: 'right', hand: 'right' });
+    expect(placement).toEqual({
+      hostId: 'wall-a',
+      offsetFromWallStart: 4,
+      side: 'right',
+      hand: 'right',
+    });
     expect(tool.snapshot().lifecycle.state).toBe('committed');
   });
 
@@ -51,7 +56,7 @@ describe('createDoorPlacementTool: happy path', () => {
     expect(preview.hostId).toBe('wall-b');
   });
 
-  it("finishing before any host is placed commits nothing (invalid input leaves nothing to act on)", () => {
+  it('finishing before any host is placed commits nothing (invalid input leaves nothing to act on)', () => {
     const tool = createDoorPlacementTool<string>();
     tool.arm();
     expect(tool.finish()).toBeNull();

@@ -19,6 +19,9 @@ jobs:
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
+      # Package 3.0/4.0 workspace registries: integrity fails the build,
+      # designed-vs-built coverage is printed for the log only.
+      - run: pnpm check:workspace-registries
 
   dependency-licence-scan:
     runs-on: ubuntu-latest

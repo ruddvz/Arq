@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { worldPoint } from './coordinate-system';
 import { traceRoomBoundary, type RoomBoundaryEdge } from './room-boundary-graph';
 
-function edge(id: string, sx: number, sy: number, ex: number, ey: number): RoomBoundaryEdge<string> {
+function edge(
+  id: string,
+  sx: number,
+  sy: number,
+  ex: number,
+  ey: number,
+): RoomBoundaryEdge<string> {
   return { id, start: worldPoint(sx, sy), end: worldPoint(ex, ey) };
 }
 

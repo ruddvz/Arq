@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "tabKinds": [
+    {
+      "kind": "project-overview",
+      "label": "Project overview",
+      "icon": "ProjectOverviewIcon",
+      "closeable": false,
+      "duplicable": false,
+      "supportsPin": true,
+      "supportsSplit": false,
+      "notes": ["Dashboard landing, not canonical model view."]
+    },
+    {
+      "kind": "plan",
+      "label": "Plan",
+      "icon": "PlanIcon",
+      "closeable": true,
+      "duplicable": true,
+      "supportsPin": true,
+      "supportsSplit": true,
+      "notes": ["2D authoring view."]
+    },
+    {
+      "kind": "3d",
+      "label": "3D",
+      "icon": "Model3dIcon",
+      "closeable": true,
+      "duplicable": true,
+      "supportsPin": true,
+      "supportsSplit": true,
+      "notes": ["3D model view."]
+    },
+    {
+      "kind": "section",
+      "label": "Section",
+      "icon": "SectionIcon",
+      "closeable": true,
+      "duplicable": true,
+      "supportsPin": true,
+      "supportsSplit": true,
+      "notes": ["Section view."]
+    },
+    {
+      "kind": "elevation",
+      "label": "Elevation",
+      "icon": "ElevationIcon",
+      "closeable": true,
+      "duplicable": true,
+      "supportsPin": true,
+      "supportsSplit": true,
+      "notes": ["Elevation view."]
+    },
+    {
+      "kind": "sheet",
+      "label": "Sheet",
+      "icon": "SheetIcon",
+      "closeable": true,
+      "duplicable": true,
+      "supportsPin": true,
+      "supportsSplit": true,
+      "notes": ["Print/document sheet."]
+    },
+    {
+      "kind": "schedule",
+      "label": "Schedule",
+      "icon": "ScheduleIcon",
+      "closeable": true,
+      "duplicable": true,
+      "supportsPin": true,
+      "supportsSplit": false,
+      "notes": ["Structured table view."]
+    },
+    {
+      "kind": "report",
+      "label": "Report",
+      "icon": "ReportIcon",
+      "closeable": true,
+      "duplicable": false,
+      "supportsPin": true,
+      "supportsSplit": false,
+      "notes": ["Derived/report surface."]
+    },
+    {
+      "kind": "issues",
+      "label": "Issues",
+      "icon": "IssueIcon",
+      "closeable": false,
+      "duplicable": false,
+      "supportsPin": true,
+      "supportsSplit": false,
+      "notes": ["Review surface."]
+    },
+    {
+      "kind": "compare",
+      "label": "Compare",
+      "icon": "CompareIcon",
+      "closeable": false,
+      "duplicable": false,
+      "supportsPin": true,
+      "supportsSplit": false,
+      "notes": ["Revision/option comparison."]
+    },
+    {
+      "kind": "model-health",
+      "label": "Model health",
+      "icon": "ModelHealthIcon",
+      "closeable": false,
+      "duplicable": false,
+      "supportsPin": true,
+      "supportsSplit": false,
+      "notes": ["Diagnostics derived surface."]
+    },
+    {
+      "kind": "ai-proposal",
+      "label": "AI proposal",
+      "icon": "ProposalIcon",
+      "closeable": false,
+      "duplicable": false,
+      "supportsPin": true,
+      "supportsSplit": false,
+      "notes": ["Proposal review surface, capability-gated."]
+    }
+  ],
+  "behaviors": {
+    "activation": "Selecting a tab changes view state only; never mutates model data.",
+    "close": "Closing a tab closes the view instance, not the semantic view definition unless explicit Delete is chosen elsewhere.",
+    "dirtyMarker": "Use for unsent local UI draft only; local canonical save and cloud sync are displayed separately in SaveSyncCluster.",
+    "overflow": "Pinned first, active always visible, remaining tabs in ordered overflow menu.",
+    "reorder": "Pointer drag or keyboard move command; persist user tab order as UI preference, not project geometry."
+  }
+}

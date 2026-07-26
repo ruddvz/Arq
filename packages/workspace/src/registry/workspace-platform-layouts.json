@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "platforms": {
+    "web-desktop-macos": {
+      "shell": "full desktop",
+      "pointer": "mouse/trackpad",
+      "keyboard": "macOS glyphs",
+      "panels": "docked/resizable",
+      "tabs": "full",
+      "toolRail": "docked",
+      "notes": [
+        "Browser-first application; do not fake native titlebar unless actual shell exists."
+      ]
+    },
+    "web-desktop-windows": {
+      "shell": "full desktop",
+      "pointer": "mouse/trackpad",
+      "keyboard": "Windows labels",
+      "panels": "docked/resizable",
+      "tabs": "full",
+      "toolRail": "docked",
+      "notes": ["Reserve width for browser/window scaling and 125-150% OS text/display scaling."]
+    },
+    "web-ipad-landscape": {
+      "shell": "canvas-first tablet",
+      "pointer": "touch/Pencil/trackpad optional",
+      "keyboard": "external keyboard optional",
+      "panels": "drawers",
+      "tabs": "scrollable/overflow",
+      "toolRail": "floating category palette",
+      "notes": ["Pencil and touch are separate input intents. Do not require hover."]
+    },
+    "web-ipad-portrait": {
+      "shell": "canvas-first layered",
+      "pointer": "touch/Pencil",
+      "panels": "bottom sheets",
+      "tabs": "scrollable",
+      "toolRail": "top/bottom category strip",
+      "notes": ["Numeric editor stays above software keyboard."]
+    },
+    "web-ios-phone": {
+      "shell": "single-task layered",
+      "pointer": "touch",
+      "panels": "bottom/full-height sheets",
+      "tabs": "compact view switcher",
+      "toolRail": "bottom dock + tool sheet",
+      "notes": [
+        "No desktop three-column squeeze. Full authoring may be capability-gated, but project inspection/review/navigation design is complete."
+      ]
+    },
+    "web-android-phone": {
+      "shell": "single-task layered",
+      "pointer": "touch",
+      "panels": "bottom/full-height sheets",
+      "tabs": "compact view switcher",
+      "toolRail": "bottom dock + tool sheet",
+      "notes": ["Respect system back and gesture edges."]
+    },
+    "future-native-shells": {
+      "shell": "same information architecture",
+      "notes": [
+        "Package 3.0 defines visual/input adaptation only. It does not authorize Tauri/native iPad/iPhone/Android implementation without repository decision."
+      ]
+    }
+  }
+}

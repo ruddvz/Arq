@@ -92,7 +92,11 @@ export function orbitBy(
   return {
     ...state,
     azimuthRadians: state.azimuthRadians + deltaAzimuthRadians,
-    polarRadians: clamp(state.polarRadians + deltaPolarRadians, MIN_POLAR_RADIANS, MAX_POLAR_RADIANS),
+    polarRadians: clamp(
+      state.polarRadians + deltaPolarRadians,
+      MIN_POLAR_RADIANS,
+      MAX_POLAR_RADIANS,
+    ),
   };
 }
 

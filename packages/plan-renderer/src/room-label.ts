@@ -39,12 +39,16 @@ export interface RoomLabelSource<TId> {
 }
 
 /** "Room name" or "number Room name" (section 49 gives no separator convention of its own, so a single space is used). */
-export function roomLabelNameLine<TId>(source: Pick<RoomLabelSource<TId>, 'name' | 'number'>): string {
+export function roomLabelNameLine<TId>(
+  source: Pick<RoomLabelSource<TId>, 'name' | 'number'>,
+): string {
   return source.number === undefined ? source.name : `${source.number} ${source.name}`;
 }
 
 /** Area formatted to one decimal place, in square metres - matching room-area.ts's (ARQ-114) own unit. */
-export function roomLabelAreaLine<TId>(source: Pick<RoomLabelSource<TId>, 'areaSquareMetres'>): string {
+export function roomLabelAreaLine<TId>(
+  source: Pick<RoomLabelSource<TId>, 'areaSquareMetres'>,
+): string {
   return `${source.areaSquareMetres.toFixed(1)} m²`;
 }
 

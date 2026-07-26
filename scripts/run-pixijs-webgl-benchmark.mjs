@@ -34,7 +34,10 @@ const budgetsPath = path.join(repoRoot, 'benchmarks/PERFORMANCE-BUDGETS.json');
 let pixiPackageRoot = path.dirname(require.resolve('pixi.js'));
 function isPixiPackageRoot(dir) {
   const packageJsonPath = path.join(dir, 'package.json');
-  return existsSync(packageJsonPath) && JSON.parse(readFileSync(packageJsonPath, 'utf8')).name === 'pixi.js';
+  return (
+    existsSync(packageJsonPath) &&
+    JSON.parse(readFileSync(packageJsonPath, 'utf8')).name === 'pixi.js'
+  );
 }
 while (pixiPackageRoot !== path.dirname(pixiPackageRoot) && !isPixiPackageRoot(pixiPackageRoot)) {
   pixiPackageRoot = path.dirname(pixiPackageRoot);

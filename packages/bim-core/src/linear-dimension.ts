@@ -100,7 +100,10 @@ export function createLinearDimension(input: CreateLinearDimensionInput): Linear
 }
 
 /** The dimension's actual measured length between its two resolved endpoints - never affected by textOverride. See this module's doc comment for the mm-per-world-unit provisional stance. */
-export function measuredLinearDimensionLength(startPoint: WorldPoint, endPoint: WorldPoint): Length {
+export function measuredLinearDimensionLength(
+  startPoint: WorldPoint,
+  endPoint: WorldPoint,
+): Length {
   return length(vectorLength(vectorBetween(startPoint, endPoint)), 'mm');
 }
 
@@ -121,10 +124,7 @@ export function linearDimensionIsDetached(
  * function - marking is a display concern), otherwise
  * prefix + the measured value formatted to `precision` decimal places + suffix.
  */
-export function linearDimensionDisplayText(
-  dimension: LinearDimension,
-  measured: Length,
-): string {
+export function linearDimensionDisplayText(dimension: LinearDimension, measured: Length): string {
   if (dimension.textOverride !== undefined) {
     return dimension.textOverride;
   }

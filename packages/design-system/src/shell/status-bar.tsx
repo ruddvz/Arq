@@ -66,6 +66,17 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
         borderTop: '1px solid var(--arq-ui-line-subtle)',
         color: 'var(--arq-ui-text-secondary)',
         fontSize: '0.875em',
+        /*
+         * Wraps rather than overflows at narrow widths, for the same reason as
+         * top-bar.tsx: at 393px these fields ran to 494px and pushed a
+         * horizontal scrollbar onto the document. Package 3.0 doc 36 allows
+         * "low-priority status text" to collapse first, but dropping it here
+         * would take the local-save and sync state with it, and doc 46's phone
+         * layout has no bottom dock built yet to move them into. Two short
+         * lines of status beats hiding whether the user's work is saved.
+         */
+        flexWrap: 'wrap',
+        rowGap: 'var(--arq-space-micro)',
       }}
     >
       <span>{unitLabel}</span>

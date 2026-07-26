@@ -42,7 +42,6 @@ No planning document can predict every geometric edge case, browser defect, impo
 
 That approach is used throughout this blueprint.
 
-
 # Part I. Product definition
 
 ## 1. Product thesis
@@ -150,7 +149,6 @@ Arq must not become:
 - an AI demo that cannot explain or undo its work;
 - a “Revit clone” with the same hidden relationships and vague errors.
 
-
 ## 7. Scope map
 
 ### Release 1: dependable authoring
@@ -239,7 +237,6 @@ Excluded:
 - advanced rendering integrations;
 - selected analysis integrations.
 
-
 # Part II. User research and product evidence
 
 ## 8. Known qualitative complaints
@@ -317,7 +314,6 @@ Record:
 - Keep quotes with permission and context.
 - Do not publish confidential project details.
 - Revisit the same participants after the clickable prototype.
-
 
 # Part III. Product experience architecture
 
@@ -571,7 +567,6 @@ Keyboard and trackpad:
 
 Web support must use capability detection. It must not assume native Pencil APIs.
 
-
 # Part IV. Visual design system
 
 ## 14. Visual direction
@@ -628,17 +623,17 @@ JetBrains Mono:
 
 ### Tokens
 
-| Token | Size | Line height | Weight |
-|---|---:|---:|---:|
-| `meta` | 11 px | 16 px | 500 |
-| `caption` | 12 px | 16 px | 400 |
-| `body` | 13 px | 18 px | 400 |
-| `control` | 14 px | 20 px | 500 |
-| `panel-title` | 16 px | 22 px | 600 |
-| `dialog-title` | 20 px | 28 px | 600 |
-| `page-title` | 28 px | 36 px | 600 |
-| `numeric-small` | 12 px | 16 px | 500 mono |
-| `numeric` | 14 px | 20 px | 500 mono |
+| Token           |  Size | Line height |   Weight |
+| --------------- | ----: | ----------: | -------: |
+| `meta`          | 11 px |       16 px |      500 |
+| `caption`       | 12 px |       16 px |      400 |
+| `body`          | 13 px |       18 px |      400 |
+| `control`       | 14 px |       20 px |      500 |
+| `panel-title`   | 16 px |       22 px |      600 |
+| `dialog-title`  | 20 px |       28 px |      600 |
+| `page-title`    | 28 px |       36 px |      600 |
+| `numeric-small` | 12 px |       16 px | 500 mono |
+| `numeric`       | 14 px |       20 px | 500 mono |
 
 Requirements:
 
@@ -650,19 +645,19 @@ Requirements:
 
 ## 17. Colour tokens
 
-| Token | Value | Use |
-|---|---|---|
-| `paper` | `#FFFFFF` | Primary panel and sheet |
-| `surface-1` | `#FAFAFA` | App background |
-| `surface-2` | `#F4F4F4` | Secondary controls |
-| `surface-3` | `#ECECEC` | Selected neutral fill |
-| `line-subtle` | `#E2E2E2` | Dividers |
-| `line-default` | `#C7C7C7` | Inputs |
-| `line-strong` | `#737373` | Strong boundaries |
-| `text-muted` | `#737373` | Secondary information |
-| `text-secondary` | `#555555` | Supporting text |
-| `text-primary` | `#151515` | Primary text |
-| `ink` | `#000000` | Critical contrast and active geometry |
+| Token            | Value     | Use                                   |
+| ---------------- | --------- | ------------------------------------- |
+| `paper`          | `#FFFFFF` | Primary panel and sheet               |
+| `surface-1`      | `#FAFAFA` | App background                        |
+| `surface-2`      | `#F4F4F4` | Secondary controls                    |
+| `surface-3`      | `#ECECEC` | Selected neutral fill                 |
+| `line-subtle`    | `#E2E2E2` | Dividers                              |
+| `line-default`   | `#C7C7C7` | Inputs                                |
+| `line-strong`    | `#737373` | Strong boundaries                     |
+| `text-muted`     | `#737373` | Secondary information                 |
+| `text-secondary` | `#555555` | Supporting text                       |
+| `text-primary`   | `#151515` | Primary text                          |
+| `ink`            | `#000000` | Critical contrast and active geometry |
 
 Status may later use accessible accents, but no status may rely on hue alone.
 
@@ -795,7 +790,6 @@ First 40:
 - no mandatory animation for understanding;
 - reduced motion respected;
 - AI proposal animation must pause when generation is complete.
-
 
 # Part V. Interaction system
 
@@ -1004,7 +998,6 @@ Requirements:
 - accessible active-descendant handling;
 - fast open under 100 ms target.
 
-
 # Part VI. Semantic building model
 
 ## 31. Internal model principles
@@ -1162,7 +1155,7 @@ interface WallType {
   name: string;
   thickness: Length;
   defaultHeight: Length;
-  function: "exterior" | "interior" | "unknown";
+  function: 'exterior' | 'interior' | 'unknown';
 }
 
 interface Wall {
@@ -1171,7 +1164,7 @@ interface Wall {
   levelId: LevelId;
   start: Point2;
   end: Point2;
-  alignment: "centre" | "interior" | "exterior";
+  alignment: 'centre' | 'interior' | 'exterior';
   heightOverride?: Length;
   joinStart: WallJoinIntent;
   joinEnd: WallJoinIntent;
@@ -1181,7 +1174,7 @@ interface Wall {
 interface Opening {
   id: OpeningId;
   hostWallId: WallId;
-  kind: "door" | "window" | "void";
+  kind: 'door' | 'window' | 'void';
   offsetFromWallStart: Length;
   width: Length;
   sillHeight: Length;
@@ -1197,10 +1190,9 @@ interface Room {
   boundaryElementIds: ElementId[];
   calculatedBoundary: Polygon2;
   calculatedArea: Area;
-  status: "valid" | "not-enclosed" | "overlapping" | "invalid";
+  status: 'valid' | 'not-enclosed' | 'overlapping' | 'invalid';
 }
 ```
-
 
 # Part VII. Geometry engine
 
@@ -1395,7 +1387,6 @@ Treatment:
 - imported polyline with duplicate points;
 - non-finite values;
 - transform round-trip drift.
-
 
 # Part VIII. Architectural components
 
@@ -1669,7 +1660,6 @@ Deferred editing, but data model should reserve:
 
 Release 1 may use neutral default materials.
 
-
 # Part IX. Documentation system
 
 ## 55. Dimensions
@@ -1802,7 +1792,6 @@ Vector linework, not a canvas screenshot.
 - line weight comparison;
 - no clipped notes;
 - no rasterised primary plan.
-
 
 # Part X. Rendering
 
@@ -1969,7 +1958,6 @@ Prohibited:
 - shared operation history;
 - independent view undo only for camera if required.
 
-
 # Part XI. State, operations, undo and recovery
 
 ## 66. State boundaries
@@ -2019,7 +2007,7 @@ interface ModelOperation<TPayload, TResult> {
 }
 
 interface OperationResult<TResult> {
-  status: "applied" | "rejected";
+  status: 'applied' | 'rejected';
   result?: TResult;
   affectedElementIds: ElementId[];
   invalidations: DerivedInvalidation[];
@@ -2185,7 +2173,6 @@ Each migration has:
 - rollback or original archive retention.
 
 Never overwrite the only copy during migration.
-
 
 # Part XII. Backend and cloud architecture
 
@@ -2365,7 +2352,6 @@ Requirements:
 - no duplicate project mutation;
 - user-visible failure reason.
 
-
 # Part XIII. Collaboration
 
 ## 82. Collaboration sequence
@@ -2477,7 +2463,6 @@ Default monochrome may use:
 - badges.
 
 Optional accessible colour accents can be enabled later.
-
 
 # Part XIV. Interoperability
 
@@ -2709,7 +2694,6 @@ Use only for:
 
 Not the primary building exchange format.
 
-
 # Part XV. AI and ArqScript
 
 ## 97. AI principle
@@ -2889,7 +2873,6 @@ Reference:
 
 Do not embed GPL OpenSCAD into a proprietary core without legal review.
 
-
 # Part XVI. Native platforms and capture
 
 ## 105. Web first
@@ -3005,7 +2988,6 @@ After web editor:
 
 Do not rewrite the complete interface natively without benchmark evidence.
 
-
 # Part XVII. Open-source technology assessment
 
 ## 112. Classification policy
@@ -3018,54 +3000,54 @@ Do not rewrite the complete interface natively without benchmark evidence.
 
 ## 113. Matrix
 
-| Project | Role | Licence observed | Treatment | Notes |
-|---|---|---:|---|---|
-| Three.js | 3D rendering | MIT | Adopt | WebGL first, WebGPU optional |
-| PixiJS | 2D GPU renderer | MIT | Spike | Useful, but technical line quality and WebGPU bugs require tests |
-| CanvasKit | 2D WASM renderer | BSD-style Skia ecosystem | Spike | Strong quality, heavier integration |
-| Fabric.js | Interactive Canvas | MIT | Reference | Useful prototype, not preferred CAD core |
-| Konva | Canvas interaction | MIT | Reference | Useful interaction patterns |
-| Paper.js | Vector geometry | MIT | Reference | Older release cadence, avoid core dependency without review |
-| Lucide | Generic icons | ISC and inherited MIT files | Adopt temporarily | Custom technical icons remain Arq-owned |
-| React Aria Components | Accessible UI | Apache-2.0 | Spike to adopt | Preferred accessibility foundation |
-| Radix Primitives | Accessible UI | MIT | Alternative | Do not mix complete primitive systems |
-| Floating UI | Overlay positioning | MIT | Adopt | Popovers and tooltips |
-| Dexie | IndexedDB | Apache-2.0 | Adopt | First local store |
-| SQLite WASM | Local SQL | Apache-2.0 | Spike later | OPFS and Worker constraints |
-| PGlite | Browser Postgres | Apache-2.0 and PostgreSQL | Reference | Not needed initially |
-| Yjs | CRDT | MIT | Spike | Presence and comments |
-| Automerge | CRDT | MIT | Alternative | Choose one collaboration base |
-| Hocuspocus | Yjs backend | MIT | Spike later | Collaboration service option |
-| OpenCascade.js | Exact CAD kernel | LGPL-2.1 | Isolate and spike | Do not make core model kernel-specific |
-| RepliCAD | Browser code CAD | MIT | Reference or spike | Higher-level OpenCascade abstraction |
-| FreeCAD | Parametric CAD | LGPL-2.1 | Reference | Object model, transactions, OpenCascade lessons |
-| OpenSCAD | Script CAD | GPL-2.0 | Reference | ArqScript lessons, avoid direct proprietary integration |
-| JSCAD | Browser code CAD | MIT | Reference | Parametric workflow and CSG |
-| LibreCAD | 2D CAD | GPL-2.0 | Reference | Drafting behaviour and DXF cases |
-| QCAD community | 2D CAD | GPL-3.0 | Reference | Scripting and drafting behaviour |
-| SolveSpace | Constraint CAD | GPL-3.0 | Reference | Constraint UX; web build described as experimental |
-| KittyCAD/ezpz | Constraint solver | MIT | Spike | Rust and WASM, early project |
-| CAD Sketcher | Constraint CAD in Blender | GPL-3.0 | Reference | Interaction research |
-| text-to-cad | Agent CAD workflows | MIT | Reference and compatible patterns | Skills and benchmarks |
-| GenCAD | Image-conditioned CAD research | unclear in inspected repo | Avoid reuse | Read paper only until licences confirmed |
-| RevitLookup | BIM inspection | MIT | Reference and compatible patterns | Inspector and relationship navigation |
-| web-ifc | IFC read/write | MPL-2.0 | Isolate and spike | Adapter and modification obligations |
-| That Open Components | BIM viewer components | inspect current repo terms | Spike | Use current stack, not deprecated viewer |
-| web-ifc-viewer | Old BIM viewer | deprecated | Avoid new dependency | Upstream directs users to Components |
-| IfcOpenShell | IFC toolkit | LGPL-3.0 | Isolate server-side | Broad capability |
-| Bonsai | BIM authoring in Blender | GPL-3.0 | Reference | Native IFC workflows |
-| xeokit-sdk | BIM viewer | AGPL-3.0 or commercial | Avoid core unless licensed | Commercial option possible |
-| Speckle | AEC data and connectors | mixed | Integrate later after component review | Do not assume whole platform is Apache |
-| dxfjs/parser | DXF parser | MIT | Spike | Browser import |
-| dxf-parser-writer | DXF parser/writer | MIT | Spike | Exchange prototype |
-| ezdxf | DXF Python toolkit | MIT | Spike server-side | Rich DXF support |
-| LibreDWG | DWG | GPL-3.0 | Avoid core | Modern write limitations |
-| libdxfrw | DXF/DWG | GPL-2.0 | Avoid proprietary core | Reference only |
-| pdf-lib | PDF | MIT | Adopt with tests | Vector output, text-layout work needed |
-| Keycloak | IAM | Apache-2.0 | Later enterprise option | Operationally heavy |
-| Auth.js | Authentication | Open source | Spike | Early product option |
-| Better Auth | TypeScript auth | inspect current package terms | Spike | Useful organisations and providers |
-| OpenTelemetry JS | Observability | Apache-2.0 | Adopt carefully | Browser support needs targeted testing |
+| Project               | Role                           |              Licence observed | Treatment                              | Notes                                                            |
+| --------------------- | ------------------------------ | ----------------------------: | -------------------------------------- | ---------------------------------------------------------------- |
+| Three.js              | 3D rendering                   |                           MIT | Adopt                                  | WebGL first, WebGPU optional                                     |
+| PixiJS                | 2D GPU renderer                |                           MIT | Spike                                  | Useful, but technical line quality and WebGPU bugs require tests |
+| CanvasKit             | 2D WASM renderer               |      BSD-style Skia ecosystem | Spike                                  | Strong quality, heavier integration                              |
+| Fabric.js             | Interactive Canvas             |                           MIT | Reference                              | Useful prototype, not preferred CAD core                         |
+| Konva                 | Canvas interaction             |                           MIT | Reference                              | Useful interaction patterns                                      |
+| Paper.js              | Vector geometry                |                           MIT | Reference                              | Older release cadence, avoid core dependency without review      |
+| Lucide                | Generic icons                  |   ISC and inherited MIT files | Adopt temporarily                      | Custom technical icons remain Arq-owned                          |
+| React Aria Components | Accessible UI                  |                    Apache-2.0 | Spike to adopt                         | Preferred accessibility foundation                               |
+| Radix Primitives      | Accessible UI                  |                           MIT | Alternative                            | Do not mix complete primitive systems                            |
+| Floating UI           | Overlay positioning            |                           MIT | Adopt                                  | Popovers and tooltips                                            |
+| Dexie                 | IndexedDB                      |                    Apache-2.0 | Adopt                                  | First local store                                                |
+| SQLite WASM           | Local SQL                      |                    Apache-2.0 | Spike later                            | OPFS and Worker constraints                                      |
+| PGlite                | Browser Postgres               |     Apache-2.0 and PostgreSQL | Reference                              | Not needed initially                                             |
+| Yjs                   | CRDT                           |                           MIT | Spike                                  | Presence and comments                                            |
+| Automerge             | CRDT                           |                           MIT | Alternative                            | Choose one collaboration base                                    |
+| Hocuspocus            | Yjs backend                    |                           MIT | Spike later                            | Collaboration service option                                     |
+| OpenCascade.js        | Exact CAD kernel               |                      LGPL-2.1 | Isolate and spike                      | Do not make core model kernel-specific                           |
+| RepliCAD              | Browser code CAD               |                           MIT | Reference or spike                     | Higher-level OpenCascade abstraction                             |
+| FreeCAD               | Parametric CAD                 |                      LGPL-2.1 | Reference                              | Object model, transactions, OpenCascade lessons                  |
+| OpenSCAD              | Script CAD                     |                       GPL-2.0 | Reference                              | ArqScript lessons, avoid direct proprietary integration          |
+| JSCAD                 | Browser code CAD               |                           MIT | Reference                              | Parametric workflow and CSG                                      |
+| LibreCAD              | 2D CAD                         |                       GPL-2.0 | Reference                              | Drafting behaviour and DXF cases                                 |
+| QCAD community        | 2D CAD                         |                       GPL-3.0 | Reference                              | Scripting and drafting behaviour                                 |
+| SolveSpace            | Constraint CAD                 |                       GPL-3.0 | Reference                              | Constraint UX; web build described as experimental               |
+| KittyCAD/ezpz         | Constraint solver              |                           MIT | Spike                                  | Rust and WASM, early project                                     |
+| CAD Sketcher          | Constraint CAD in Blender      |                       GPL-3.0 | Reference                              | Interaction research                                             |
+| text-to-cad           | Agent CAD workflows            |                           MIT | Reference and compatible patterns      | Skills and benchmarks                                            |
+| GenCAD                | Image-conditioned CAD research |     unclear in inspected repo | Avoid reuse                            | Read paper only until licences confirmed                         |
+| RevitLookup           | BIM inspection                 |                           MIT | Reference and compatible patterns      | Inspector and relationship navigation                            |
+| web-ifc               | IFC read/write                 |                       MPL-2.0 | Isolate and spike                      | Adapter and modification obligations                             |
+| That Open Components  | BIM viewer components          |    inspect current repo terms | Spike                                  | Use current stack, not deprecated viewer                         |
+| web-ifc-viewer        | Old BIM viewer                 |                    deprecated | Avoid new dependency                   | Upstream directs users to Components                             |
+| IfcOpenShell          | IFC toolkit                    |                      LGPL-3.0 | Isolate server-side                    | Broad capability                                                 |
+| Bonsai                | BIM authoring in Blender       |                       GPL-3.0 | Reference                              | Native IFC workflows                                             |
+| xeokit-sdk            | BIM viewer                     |        AGPL-3.0 or commercial | Avoid core unless licensed             | Commercial option possible                                       |
+| Speckle               | AEC data and connectors        |                         mixed | Integrate later after component review | Do not assume whole platform is Apache                           |
+| dxfjs/parser          | DXF parser                     |                           MIT | Spike                                  | Browser import                                                   |
+| dxf-parser-writer     | DXF parser/writer              |                           MIT | Spike                                  | Exchange prototype                                               |
+| ezdxf                 | DXF Python toolkit             |                           MIT | Spike server-side                      | Rich DXF support                                                 |
+| LibreDWG              | DWG                            |                       GPL-3.0 | Avoid core                             | Modern write limitations                                         |
+| libdxfrw              | DXF/DWG                        |                       GPL-2.0 | Avoid proprietary core                 | Reference only                                                   |
+| pdf-lib               | PDF                            |                           MIT | Adopt with tests                       | Vector output, text-layout work needed                           |
+| Keycloak              | IAM                            |                    Apache-2.0 | Later enterprise option                | Operationally heavy                                              |
+| Auth.js               | Authentication                 |                   Open source | Spike                                  | Early product option                                             |
+| Better Auth           | TypeScript auth                | inspect current package terms | Spike                                  | Useful organisations and providers                               |
+| OpenTelemetry JS      | Observability                  |                    Apache-2.0 | Adopt carefully                        | Browser support needs targeted testing                           |
 
 ## 114. Licence rules
 
@@ -3082,7 +3064,6 @@ Do not rewrite the complete interface natively without benchmark evidence.
 - Review every Speckle directory or package used.
 - Do not copy competitor UI, icons, documentation or brand assets.
 - Legal review before commercial distribution.
-
 
 # Part XVIII. Security and privacy
 
@@ -3195,7 +3176,6 @@ Expected outcome:
 - no project mutation;
 - diagnostic code;
 - no executable content.
-
 
 # Part XIX. Reliability, performance and observability
 
@@ -3314,7 +3294,6 @@ Every error has:
 - support detail;
 - retry policy.
 
-
 # Part XX. Accessibility
 
 ## 126. Baseline
@@ -3360,7 +3339,6 @@ Do not claim full screen-reader authoring until tested with users.
 - reduced motion;
 - high contrast;
 - external accessibility review before broad launch.
-
 
 # Part XXI. Testing
 
@@ -3510,7 +3488,6 @@ A feature is complete only when:
 - docs updated;
 - licence impact recorded.
 
-
 # Part XXII. Product copy and diagnostics
 
 ## 138. Error-writing rules
@@ -3555,7 +3532,6 @@ Use explicit language:
 - Recovered
 
 Never show a single ambiguous “Saved” state when cloud sync has not completed.
-
 
 # Part XXIII. Repository governance
 
@@ -3619,7 +3595,6 @@ Initial:
 16. Authentication
 17. Licensing policy
 18. Analytics privacy
-
 
 # Part XXIV. Execution roadmap
 
@@ -3744,531 +3719,355 @@ No known data-loss defect in protected workflow.
 - offline;
 - capture research.
 
-
 # Part XXV. Ordered implementation backlog
-
 
 The following backlog is ordered broadly by dependency. Issue details must include acceptance criteria from the relevant section.
 
-
 1. `docs: add complete blueprint v1.0`
-
 
 2. `docs: add ADR template`
 
-
 3. `docs: add dependency and licence policy`
-
 
 4. `research: create architect interview guide`
 
-
 5. `research: create workflow synthesis template`
-
 
 6. `research: conduct first six architect interviews`
 
-
 7. `research: conduct second six architect interviews`
-
 
 8. `research: map competitor residential plan workflow`
 
-
 9. `research: document browser and iPad support matrix`
-
 
 10. `legal: complete Arq working-name clearance`
 
-
 11. `chore: initialise pnpm monorepo`
-
 
 12. `chore: enable TypeScript strict mode`
 
-
 13. `chore: configure formatting and linting`
-
 
 14. `chore: configure unit and property test runners`
 
-
 15. `chore: add pull request and issue templates`
-
 
 16. `chore: add SBOM and licence scan`
 
-
 17. `chore: add dependency update automation`
-
 
 18. `design: create monochrome tokens`
 
-
 19. `design: create typography tokens`
-
 
 20. `design: create icon package`
 
-
 21. `design: draw first 20 technical icons`
-
 
 22. `design: draw remaining first 40 technical icons`
 
-
 23. `design: build top bar`
-
 
 24. `design: build tool rail`
 
-
 25. `design: build model panel`
-
 
 26. `design: build inspector shell`
 
-
 27. `design: build status bar`
-
 
 28. `design: build context bar`
 
-
 29. `design: build command palette shell`
-
 
 30. `design: prototype iPad landscape shell`
 
-
 31. `design: prototype iPad portrait shell`
-
 
 32. `editor: define coordinate systems`
 
-
 33. `editor: implement pan and zoom`
-
 
 34. `editor: implement fit view`
 
-
 35. `editor: implement pointer input abstraction`
-
 
 36. `editor: implement touch input abstraction`
 
-
 37. `editor: implement keyboard input abstraction`
-
 
 38. `editor: define command lifecycle state machine`
 
-
 39. `editor: implement selection hit-test interface`
-
 
 40. `editor: implement point selection`
 
-
 41. `editor: implement window selection`
-
 
 42. `editor: implement crossing selection`
 
-
 43. `editor: implement candidate cycling`
-
 
 44. `editor: implement selection filters`
 
-
 45. `editor: define snap result contract`
-
 
 46. `editor: implement endpoint snap`
 
-
 47. `editor: implement midpoint snap`
-
 
 48. `editor: implement intersection snap`
 
-
 49. `editor: implement perpendicular snap`
-
 
 50. `editor: implement grid snap`
 
-
 51. `editor: implement extension snap`
-
 
 52. `editor: implement snap tie-break`
 
-
 53. `editor: implement numeric overlay`
-
 
 54. `editor: support metric numeric input`
 
-
 55. `editor: support imperial numeric input`
-
 
 56. `editor: implement undo command stack`
 
-
 57. `editor: implement redo`
-
 
 58. `core: select canonical unit representation`
 
-
 59. `core: define typed unit library`
-
 
 60. `core: define ID types`
 
-
 61. `core: define project schema v0`
-
 
 62. `core: define level schema`
 
-
 63. `core: define element base schema`
-
 
 64. `core: define type and instance property states`
 
-
 65. `operations: define operation contract`
-
 
 66. `operations: define validation result contract`
 
-
 67. `operations: implement create element operation`
-
 
 68. `operations: implement update property operation`
 
-
 69. `operations: implement delete element operation`
-
 
 70. `operations: implement inverse operation tests`
 
-
 71. `storage: add Dexie project database`
-
 
 72. `storage: implement local journal`
 
-
 73. `storage: implement snapshots`
-
 
 74. `storage: implement quota handling`
 
-
 75. `storage: implement abnormal-exit recovery`
-
 
 76. `format: define arq manifest`
 
-
 77. `format: implement archive checksums`
-
 
 78. `format: implement arq export`
 
-
 79. `format: implement arq import`
-
 
 80. `format: implement migration framework`
 
-
 81. `geometry: define tolerance policy`
-
 
 82. `geometry: implement point and vector primitives`
 
-
 83. `geometry: implement segment intersections`
-
 
 84. `geometry: implement nearest point`
 
-
 85. `geometry: implement polygon area and winding`
-
 
 86. `geometry: evaluate robust predicates`
 
-
 87. `geometry: evaluate polygon clipping`
-
 
 88. `geometry: evaluate RBush`
 
-
 89. `geometry: evaluate earcut`
-
 
 90. `geometry: build geometry adversarial fixtures`
 
-
 91. `bim: define wall type`
-
 
 92. `bim: define wall instance`
 
-
 93. `geometry: implement wall outline`
-
 
 94. `editor: implement wall drawing tool`
 
-
 95. `geometry: implement butt join`
-
 
 96. `geometry: implement mitre join`
 
-
 97. `geometry: implement T join`
-
 
 98. `geometry: implement cross join`
 
-
 99. `editor: implement trim wall`
-
 
 100. `editor: implement extend wall`
 
-
 101. `editor: implement split wall`
-
 
 102. `editor: implement offset wall`
 
-
 103. `bim: define hosted opening`
-
 
 104. `bim: define door type and instance`
 
-
 105. `editor: implement door placement`
-
 
 106. `editor: implement door flip controls`
 
-
 107. `bim: define window type and instance`
-
 
 108. `editor: implement window placement`
 
-
 109. `editor: implement opening overlap validation`
-
 
 110. `bim: define room schema`
 
-
 111. `geometry: implement room boundary graph`
-
 
 112. `editor: implement room placement`
 
-
 113. `editor: implement zoom to room gap`
-
 
 114. `bim: implement room area`
 
-
 115. `renderer: benchmark Canvas 2D`
-
 
 116. `renderer: benchmark PixiJS WebGL`
 
-
 117. `renderer: evaluate CanvasKit fallback`
-
 
 118. `renderer: select 2D renderer through ADR`
 
-
 119. `renderer: implement plan scene abstraction`
-
 
 120. `renderer: implement stable line weights`
 
-
 121. `renderer: implement selection rendering`
-
 
 122. `renderer: implement snap glyph rendering`
 
-
 123. `renderer: add Three.js WebGL scene`
-
 
 124. `renderer: generate wall meshes`
 
-
 125. `renderer: generate opening meshes`
-
 
 126. `renderer: implement orthographic camera`
 
-
 127. `renderer: implement orbit and fit`
-
 
 128. `renderer: implement 2D and 3D shared selection`
 
-
 129. `renderer: implement hide and isolate`
-
 
 130. `inspect: build identity property group`
 
-
 131. `inspect: build geometry property group`
-
 
 132. `inspect: build type and instance group`
 
-
 133. `inspect: build relationships group`
-
 
 134. `inspect: build warnings group`
 
-
 135. `inspect: build history group`
-
 
 136. `docs: define dimension reference model`
 
-
 137. `docs: implement linear dimension`
-
 
 138. `docs: implement room label`
 
-
 139. `docs: implement text note`
-
 
 140. `docs: define sheet schema`
 
-
 141. `docs: build one plan viewport`
-
 
 142. `pdf: prototype pdf-lib vector export`
 
-
 143. `pdf: implement font embedding tests`
-
 
 144. `pdf: implement scale validation`
 
-
 145. `pdf: add export metadata`
-
 
 146. `reliability: implement corrupt cache recovery`
 
-
 147. `reliability: implement safe mode`
-
 
 148. `performance: define benchmark hardware`
 
-
 149. `performance: add selection benchmark`
-
 
 150. `performance: add room rebuild benchmark`
 
-
 151. `performance: add render frame benchmark`
-
 
 152. `accessibility: complete keyboard-only workflow`
 
-
 153. `accessibility: add VoiceOver labels`
-
 
 154. `accessibility: test 200 percent zoom`
 
-
 155. `security: create threat model`
-
 
 156. `security: fuzz arq archive`
 
-
 157. `security: add file size and complexity limits`
-
 
 158. `exchange: prototype DXF parser`
 
-
 159. `exchange: define DXF support matrix`
-
 
 160. `exchange: prototype web-ifc viewer`
 
-
 161. `exchange: define IFC mapping report`
-
 
 162. `collaboration: prototype presence only`
 
-
 163. `collaboration: implement comments`
-
 
 164. `collaboration: implement issues`
 
-
 165. `collaboration: implement revision snapshots`
-
 
 166. `ai: define ArqScript grammar v0`
 
-
 167. `ai: implement ArqScript parser`
-
 
 168. `ai: add ten deterministic benchmarks`
 
-
 169. `ai: prototype explain selection`
-
 
 170. `ai: prototype one-step wall edit proposal`
 
-
 171. `ipad: test Pencil web input`
-
 
 172. `ipad: prototype native hover`
 
-
 173. `ipad: prototype RoomPlan conversion`
-
 
 # Part XXVI. Go or no-go gates
 
@@ -4307,7 +4106,6 @@ Native iPad work continues only where it is measurably better than the browser.
 ## 162. Trust gate
 
 The user can download and reopen an `.arq` archive without the cloud.
-
 
 # Part XXVII. Critical critiques of the earlier plans
 
@@ -4401,7 +4199,6 @@ Correction:
 
 Every unresolved choice receives a spike, gate, owner and evidence requirement.
 
-
 # Part XXVIII. Immediate actions
 
 1. Add this file at `docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md`.
@@ -4416,7 +4213,6 @@ Every unresolved choice receives a spike, gate, owner and evidence requirement.
 10. Review every dependency licence before code reuse.
 11. Do not promise launch dates before Phase 0 exits.
 12. Do not describe Arq publicly as a Revit or AutoCAD replacement yet.
-
 
 # Part XXIX. Research source catalogue
 
@@ -4516,7 +4312,6 @@ Qualitative discussions reviewed in communities including:
 
 Community posts are treated as qualitative evidence, not statistical market research.
 
-
 # Final direction
 
 Arq should become broad only after it becomes dependable.
@@ -4536,6 +4331,7 @@ The first proof is a small architectural project in which:
 - the codebase remains legally and technically maintainable.
 
 Collaboration, IFC, AI, LiDAR, native apps and deeper BIM features should extend that foundation. They must not replace it.
+
 # Part XXVII. Instant-everywhere architecture and the native Arq file system
 
 ## 27.1 Product-level correction

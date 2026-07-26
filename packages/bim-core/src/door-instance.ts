@@ -105,14 +105,22 @@ export function flipHand(door: Door): Door {
 }
 
 /** The door's effective width as a PropertyState: Inherited while its Opening's width still matches the DoorType's current default, Overridden once it doesn't. */
-export function resolveDoorWidth(door: Door, doorType: DoorType, opening: Opening): PropertyState<Length> {
+export function resolveDoorWidth(
+  door: Door,
+  doorType: DoorType,
+  opening: Opening,
+): PropertyState<Length> {
   return lengthsAreEqual(opening.width, doorType.defaultWidth)
     ? inheritedProperty(doorType.defaultWidth, doorType.id)
     : overriddenProperty(opening.width, doorType.id);
 }
 
 /** The door's effective height as a PropertyState: Inherited while its Opening's height still matches the DoorType's current default, Overridden once it doesn't. */
-export function resolveDoorHeight(door: Door, doorType: DoorType, opening: Opening): PropertyState<Length> {
+export function resolveDoorHeight(
+  door: Door,
+  doorType: DoorType,
+  opening: Opening,
+): PropertyState<Length> {
   return lengthsAreEqual(opening.height, doorType.defaultHeight)
     ? inheritedProperty(doorType.defaultHeight, doorType.id)
     : overriddenProperty(opening.height, doorType.id);

@@ -1,10 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { worldPoint } from '@arq/geometry-2d';
-import { snapGlyphPrimitives, SNAP_GLYPH_LABEL, type SnapGlyphSource } from './snap-glyph-rendering';
+import {
+  snapGlyphPrimitives,
+  SNAP_GLYPH_LABEL,
+  type SnapGlyphSource,
+} from './snap-glyph-rendering';
 
 describe('snapGlyphPrimitives', () => {
   it('builds a square marker centred on the snap point', () => {
-    const { marker } = snapGlyphPrimitives({ source: 'endpoint', point: worldPoint(10, 20) }, 'glyph-1', 2);
+    const { marker } = snapGlyphPrimitives(
+      { source: 'endpoint', point: worldPoint(10, 20) },
+      'glyph-1',
+      2,
+    );
     expect(marker.kind).toBe('polygon');
     expect(marker.points).toEqual([
       worldPoint(8, 18),

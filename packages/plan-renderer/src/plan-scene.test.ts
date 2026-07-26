@@ -58,7 +58,12 @@ describe('buildPlanScene', () => {
   };
 
   it('resolves each input to a styled primitive, preserving order', () => {
-    const scene = buildPlanScene([line, polygon, text], new Set(), { primary: null, secondary: new Set() }, new Set());
+    const scene = buildPlanScene(
+      [line, polygon, text],
+      new Set(),
+      { primary: null, secondary: new Set() },
+      new Set(),
+    );
     expect(scene.primitives).toHaveLength(3);
     expect(scene.primitives[0]).toEqual({ ...line, styleToken: 'default' });
     expect(scene.primitives[1]).toEqual({ ...polygon, styleToken: 'default' });
