@@ -7,4 +7,5 @@ export * from './mode-state';
 export * from './tool-state';
 export * from './capability-gates';
 export * from './project-overview';
+export * from './sheet-state';
 export * from './keyboard-map';

@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
 import {
+  CLOSED_SHEET_STATE,
   occupiesLayoutWidth,
   panelDockingPolicy,
   resolveLayoutSlots,
   resolveWorkspacePlatform,
   viewSwitcherHeightPx,
   type PanelLayoutState,
+  type SheetId,
+  type SheetState,
   type ViewportProbe,
   type WorkspaceMode,
   type WorkspacePlatform,
@@ -13,6 +16,9 @@ import {
 } from '@arq/workspace';
 import { ModeRail, MODE_RAIL_WIDTH_PX } from './mode-rail';
 import { TOOL_RAIL_WIDTH_PX } from '../shell/tool-rail';
+import { WorkspaceSheet } from './workspace-sheet';
+import { PhoneDock } from './phone-dock';
+import { TabletDrawerBar } from './tablet-drawer-bar';
 
 /**
  * The width the two vertical rails actually occupy in this shell, for the
@@ -21,7 +27,7 @@ import { TOOL_RAIL_WIDTH_PX } from '../shell/tool-rail';
  * `modeRail + toolRail` describes an icon-only rail pair this repository does
  * not render, and using it would leave the floor optimistic by ~150px.
  *
- * Zero at the phone band, where `WorkspaceRoot` renders no rails at all.
+ * Zero on the touch bands, where `WorkspaceRoot` renders no rails at all.
  */
 export const WORKSPACE_RAILS_WIDTH_PX = MODE_RAIL_WIDTH_PX + TOOL_RAIL_WIDTH_PX;
 
@@ -46,30 +52,72 @@ export interface WorkspaceRootProps {
    * it is not permission to delete them and rebuild from screenshots".
    */
   readonly projectBar: ReactNode;
+  /**
+   * Doc 47's phone top bar: "Back/Projects, project name, active view, status
+   * chip, More." Rendered instead of `projectBar` at the phone band. The
+   * desktop bar is not a narrow phone bar - measured at 393px it wrapped to
+   * three rows and 173px against the registry's 48px - so a host targeting
+   * phones should pass this. Falls back to `projectBar` when absent.
+   */
+  readonly phoneProjectBar?: ReactNode;
   readonly tabStrip: ReactNode;
+  /**
+   * Doc 34: "on phone, tabs become a compact current-view control plus a
+   * full-height View Switcher." Rendered instead of `tabStrip` at the phone
+   * band. Falls back to `tabStrip` when a host does not supply one, so nothing
+   * disappears - but the strip is the wrong composition there, so hosts that
+   * target phones should pass this.
+   */
+  readonly compactViewControl?: ReactNode;
   readonly toolRail: ReactNode;
   readonly projectBrowser: ReactNode;
   readonly viewport: ReactNode;
   readonly inspector: ReactNode;
   readonly contextBar: ReactNode;
   readonly statusBar: ReactNode;
+
+  /**
+   * Touch presentation. On a `'drawers-only'` band the browser and inspector
+   * are closed by `reconcileDockedPanels`, so without these the user has no way
+   * to summon them back - a panel that cannot be opened does not exist.
+   *
+   * Defaults to a closed sheet with no handlers, which renders the shell
+   * exactly as it did before this existed. A host that only targets desktop
+   * need not pass any of it.
+   */
+  readonly sheet?: SheetState;
+  readonly onToggleSheet?: (sheet: SheetId) => void;
+  readonly onCloseSheet?: () => void;
+  readonly onExpandSheet?: () => void;
+  readonly onCollapseSheet?: () => void;
+  /** Doc 47: the dock's Select entry activates the tool rather than opening a sheet. */
+  readonly onSelectPointerTool?: () => void;
+  readonly activeToolLabel?: string | null;
+  readonly toolsSheet?: ReactNode;
+  readonly viewSwitcherSheet?: ReactNode;
+  readonly reviewSheet?: ReactNode;
+  readonly reviewDisabledReason?: string;
 }
 
 function OverlayPanel(props: {
   readonly side: 'left' | 'right';
   readonly widthPx: number;
+  readonly label?: string;
   readonly children: ReactNode;
 }): JSX.Element {
-  const { side, widthPx, children } = props;
+  const { side, widthPx, label, children } = props;
   return (
     <div
       className={`arq-workspace__overlay arq-workspace__overlay--${side}`}
+      role={label === undefined ? undefined : 'dialog'}
+      aria-label={label}
       style={{
         position: 'absolute',
         top: 0,
         bottom: 0,
         [side]: 0,
         width: widthPx,
+        maxWidth: '100%',
         zIndex: 2,
         borderLeft: side === 'right' ? '1px solid var(--arq-ui-line-default)' : undefined,
         borderRight: side === 'left' ? '1px solid var(--arq-ui-line-default)' : undefined,
@@ -81,6 +129,14 @@ function OverlayPanel(props: {
     </div>
   );
 }
+
+const SHEET_TITLE: Readonly<Record<SheetId, string>> = {
+  tools: 'Tools',
+  'view-switcher': 'Views',
+  'project-browser': 'Project browser',
+  inspector: 'Inspector',
+  review: 'Review',
+};
 
 /**
  * Package 3.0 doc 33 ("Project Workspace Operating Model") and doc 36 ("Editor
@@ -96,7 +152,7 @@ function OverlayPanel(props: {
  * WorkspaceStatusBar
  * ```
  *
- * Two behaviours are the reason this is a component rather than a CSS file:
+ * Three behaviours are the reason this is a component rather than a CSS file:
  *
  * 1. **Docked versus floating panels.** A panel whose state is `'overlay'` is
  *    absolutely positioned over the canvas instead of taking width from it -
@@ -107,9 +163,12 @@ function OverlayPanel(props: {
  *    shrink desktop three-column UI onto a phone", and iPad portrait gets "No
  *    left+right desktop columns." On every band whose docking policy is
  *    `'drawers-only'` - phone *and* both tablet bands - the rails and docked
- *    columns are not rendered at all. The canvas takes the full width and the
- *    browser, inspector and tools are reached through drawers and sheets the
- *    host presents.
+ *    columns are not rendered at all.
+ * 3. **Each touch band gets the presentation its own doc specifies.** Landscape
+ *    tablet uses side drawers ("Browser drawer, Inspector drawer", doc 46);
+ *    portrait tablet and phone use bottom sheets ("Browser and inspector are
+ *    sheets"). One `SheetState` drives both - the band picks the presentation,
+ *    so there is a single source of truth for what is open.
  *
  * The context action bar's slot is always reserved on desktop even when empty.
  * Doc 36: "its insertion must not shift the canvas by surprise during pointer
@@ -124,26 +183,61 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
     probe,
     panels,
     projectBar,
+    phoneProjectBar,
     tabStrip,
+    compactViewControl,
     toolRail,
     projectBrowser,
     viewport,
     inspector,
     contextBar,
     statusBar,
+    sheet = CLOSED_SHEET_STATE,
+    onToggleSheet,
+    onCloseSheet,
+    onExpandSheet,
+    onCollapseSheet,
+    onSelectPointerTool,
+    activeToolLabel = null,
+    toolsSheet,
+    viewSwitcherSheet,
+    reviewSheet,
+    reviewDisabledReason,
   } = props;
 
   const platform: WorkspacePlatform = resolveWorkspacePlatform(probe);
   const slots = resolveLayoutSlots(probe);
   const canvasFirst = panelDockingPolicy(platform) === 'drawers-only';
   const phone = platform === 'phone';
+  // Doc 46: landscape tablet keeps side drawers; portrait tablet and phone use
+  // bottom sheets. Sheets are also what a phone's software keyboard can push
+  // against without stranding a numeric field off-screen.
+  const usesBottomSheets = phone || platform === 'tablet-portrait';
+  const touchControlsAvailable = canvasFirst && onToggleSheet !== undefined;
 
   const browserDocked = !canvasFirst && occupiesLayoutWidth(panels, 'project-browser');
   const inspectorDocked = !canvasFirst && occupiesLayoutWidth(panels, 'inspector');
-  // A drawer still renders when the user has opened it - it simply floats over
-  // the canvas rather than taking width from it.
-  const browserFloating = panels['project-browser'].open && !browserDocked;
-  const inspectorFloating = panels.inspector.open && !inspectorDocked;
+  // On the docking bands a panel the floor pushed out still renders - it simply
+  // floats over the canvas rather than taking width from it.
+  const browserFloating = !canvasFirst && panels['project-browser'].open && !browserDocked;
+  const inspectorFloating = !canvasFirst && panels.inspector.open && !inspectorDocked;
+
+  function sheetBody(id: SheetId): ReactNode {
+    switch (id) {
+      case 'project-browser':
+        return projectBrowser;
+      case 'inspector':
+        return inspector;
+      case 'tools':
+        return toolsSheet ?? toolRail;
+      case 'view-switcher':
+        return viewSwitcherSheet ?? tabStrip;
+      case 'review':
+        return reviewSheet;
+    }
+  }
+
+  const openSheetId = touchControlsAvailable ? sheet.openSheet : null;
 
   return (
     <div
@@ -152,8 +246,19 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
       data-workspace-open-state={project.openState}
       style={{ display: 'flex', flexDirection: 'column', height: '100vh', minHeight: 0 }}
     >
-      <div style={{ minHeight: slots.topBar, flex: '0 0 auto' }}>{projectBar}</div>
-      <div style={{ minHeight: viewSwitcherHeightPx(slots), flex: '0 0 auto' }}>{tabStrip}</div>
+      <div style={{ minHeight: slots.topBar, flex: '0 0 auto' }}>
+        {phone ? (phoneProjectBar ?? projectBar) : projectBar}
+      </div>
+      <div style={{ minHeight: viewSwitcherHeightPx(slots), flex: '0 0 auto' }}>
+        {phone ? (compactViewControl ?? tabStrip) : tabStrip}
+      </div>
+      {touchControlsAvailable && !phone && (
+        <TabletDrawerBar
+          openSheet={sheet.openSheet}
+          onToggleSheet={onToggleSheet}
+          {...(reviewDisabledReason === undefined ? {} : { reviewDisabledReason })}
+        />
+      )}
 
       <div style={{ position: 'relative', flex: 1, display: 'flex', minHeight: 0 }}>
         {!canvasFirst && (
@@ -197,6 +302,36 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
             {inspector}
           </OverlayPanel>
         )}
+
+        {/* Landscape tablet: side drawers, per doc 46. */}
+        {openSheetId !== null && !usesBottomSheets && (
+          <OverlayPanel
+            side={openSheetId === 'inspector' ? 'right' : 'left'}
+            widthPx={
+              openSheetId === 'inspector'
+                ? panels.inspector.widthPx
+                : panels['project-browser'].widthPx
+            }
+            label={SHEET_TITLE[openSheetId]}
+          >
+            {sheetBody(openSheetId)}
+          </OverlayPanel>
+        )}
+
+        {/* Portrait tablet and phone: bottom sheets with detents, per doc 47. */}
+        {openSheetId !== null && usesBottomSheets && (
+          <WorkspaceSheet
+            title={SHEET_TITLE[openSheetId]}
+            platform={platform}
+            detent={sheet.detent}
+            viewportHeightPx={probe.heightPx}
+            onClose={onCloseSheet ?? (() => undefined)}
+            onExpand={onExpandSheet ?? (() => undefined)}
+            onCollapse={onCollapseSheet ?? (() => undefined)}
+          >
+            {sheetBody(openSheetId)}
+          </WorkspaceSheet>
+        )}
       </div>
 
       {!phone && (
@@ -210,6 +345,15 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
       <div style={{ minHeight: slots.statusBar ?? slots.statusMinimal ?? 0, flex: '0 0 auto' }}>
         {statusBar}
       </div>
+      {touchControlsAvailable && phone && (
+        <PhoneDock
+          openSheet={sheet.openSheet}
+          activeToolLabel={activeToolLabel}
+          onSelectTool={onSelectPointerTool ?? (() => undefined)}
+          onToggleSheet={onToggleSheet}
+          {...(reviewDisabledReason === undefined ? {} : { reviewDisabledReason })}
+        />
+      )}
     </div>
   );
 }

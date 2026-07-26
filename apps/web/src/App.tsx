@@ -8,6 +8,9 @@ import {
   ContextBar,
   CommandPalette,
   ProjectTabStrip,
+  CompactViewControl,
+  PhoneProjectBar,
+  ViewSwitcherList,
   ProjectOverviewSurface,
   WorkspaceRoot,
   buildToolRailModel,
@@ -23,6 +26,7 @@ import {
   type ToolRailCategory,
 } from '@arq/design-system';
 import {
+  CLOSED_SHEET_STATE,
   DEFAULT_WORKSPACE_CAPABILITIES,
   EMPTY_VIEW_TABS_STATE,
   INITIAL_PANEL_LAYOUT_STATE,
@@ -31,7 +35,12 @@ import {
   activateTab,
   activateTool,
   cancelTool,
+  capabilityUnavailableReason,
+  closeSheet,
   closeTab,
+  collapseSheet,
+  expandSheet,
+  handleSystemBack,
   initialModeState,
   isUnmodifiedLetterShortcut,
   openTab,
@@ -40,7 +49,9 @@ import {
   resolveWorkspacePlatform,
   shouldHandleShortcut,
   switchModeIfAvailable,
+  toggleSheet,
   togglePin,
+  toolContract,
   type ProjectOverviewData,
   type ViewportProbe,
   type WorkspaceProjectContext,
@@ -214,6 +225,7 @@ export function App(): JSX.Element {
   const [tabs, setTabs] = useState(INITIAL_TABS);
   const [panels, setPanels] = useState(INITIAL_PANEL_LAYOUT_STATE);
   const [toolState, setToolState] = useState(INITIAL_TOOL_STATE);
+  const [sheet, setSheet] = useState(CLOSED_SHEET_STATE);
   const [toolRailState, setToolRailState] = useState(INITIAL_TOOL_RAIL_STATE);
   const [modelSelection, setModelSelection] = useState<ModelPanelSelectionState>({
     primary: null,
@@ -337,6 +349,39 @@ export function App(): JSX.Element {
   );
 
   /*
+   * Doc 47 > Gestures: "system back closes overlays first." On Android the back
+   * gesture arrives as a history `popstate`, so a pushed entry is what gives the
+   * workspace something to pop. `handleSystemBack` reports whether it consumed
+   * the gesture - when it did not, the entry is not re-pushed and the next back
+   * leaves the app, which is what stops the user being trapped here.
+   */
+  useEffect(() => {
+    if (sheet.openSheet === null) {
+      return;
+    }
+    window.history.pushState({ arqSheet: sheet.openSheet }, '');
+    const onPopState = (): void => {
+      setSheet((current) => handleSystemBack(current).state);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [sheet.openSheet]);
+
+  const activeToolLabel = useMemo(() => {
+    const contract = toolContract(toolState.activeToolId);
+    return contract === null ? null : contract.name;
+  }, [toolState.activeToolId]);
+
+  /*
+   * Doc 47 lists Review in the phone dock, but its surfaces are gated on
+   * CAP-collaboration, which this build does not enable. The control stays
+   * visible with the reason rather than vanishing - the same rule the tool rail
+   * follows for the 43 designed-but-unbuilt tools.
+   */
+  const reviewDisabledReason =
+    capabilityUnavailableReason(DEFAULT_WORKSPACE_CAPABILITIES, 'CAP-collaboration') ?? undefined;
+
+  /*
    * Doc 35: only the sections this build can actually answer. `recentViews` is
    * real - it is the open tab list. Model health, issues, activity and recovery
    * are omitted entirely rather than passed as zeros, so the overview shows
@@ -375,6 +420,74 @@ export function App(): JSX.Element {
         onSelectMode={(mode) => setModeState((state) => switchModeIfAvailable(state, mode))}
         probe={probe}
         panels={panels}
+        sheet={sheet}
+        onToggleSheet={(id) => setSheet((state) => toggleSheet(state, id))}
+        onCloseSheet={() => setSheet(closeSheet())}
+        onExpandSheet={() => setSheet(expandSheet)}
+        onCollapseSheet={() => setSheet(collapseSheet)}
+        onSelectPointerTool={() => handleActivateTool('select')}
+        activeToolLabel={activeToolLabel}
+        phoneProjectBar={
+          <PhoneProjectBar
+            projectName={projectName}
+            saveState="unsaved-changes"
+            syncState="offline"
+            onBackToProjects={() => setFileOpenPanelOpen(true)}
+            menuItems={[
+              {
+                id: 'undo',
+                label: 'Undo',
+                onActivate: () => {
+                  undoStackRef.current.undo();
+                  setHistoryVersion((v) => v + 1);
+                },
+                ...(undoStackRef.current.canUndo() ? {} : { disabledReason: 'Nothing to undo' }),
+              },
+              {
+                id: 'redo',
+                label: 'Redo',
+                onActivate: () => {
+                  undoStackRef.current.redo();
+                  setHistoryVersion((v) => v + 1);
+                },
+                ...(undoStackRef.current.canRedo() ? {} : { disabledReason: 'Nothing to redo' }),
+              },
+              { id: 'open', label: 'Open project…', onActivate: () => setFileOpenPanelOpen(true) },
+              {
+                id: 'commands',
+                label: 'Search commands',
+                onActivate: () => setCommandPaletteOpen(true),
+              },
+              {
+                id: 'share',
+                label: 'Share',
+                onActivate: () => recordDemoAction('share'),
+                ...(reviewDisabledReason === undefined
+                  ? {}
+                  : { disabledReason: reviewDisabledReason }),
+              },
+            ]}
+          />
+        }
+        compactViewControl={
+          <CompactViewControl
+            state={tabs}
+            viewSwitcherOpen={sheet.openSheet === 'view-switcher'}
+            onOpenViewSwitcher={() => setSheet((state) => toggleSheet(state, 'view-switcher'))}
+          />
+        }
+        viewSwitcherSheet={
+          <ViewSwitcherList
+            state={tabs}
+            onActivateTab={(id) => {
+              setTabs((state) => activateTab(state, id));
+              // Doc 47: "Tap switches and closes sheet."
+              setSheet(closeSheet());
+            }}
+            onCloseTab={(id) => setTabs((state) => closeTab(state, id))}
+          />
+        }
+        {...(reviewDisabledReason === undefined ? {} : { reviewDisabledReason })}
         projectBar={
           <TopBar
             projectName={projectName}
