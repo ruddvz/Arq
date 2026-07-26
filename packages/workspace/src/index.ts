@@ -3,6 +3,8 @@ export * from './registry';
 export * from './responsive';
 export * from './view-tabs-state';
 export * from './panel-layout-state';
+export * from './browser-panel-state';
+export * from './inspector-tabs-state';
 export * from './mode-state';
 export * from './tool-state';
 export * from './capability-gates';

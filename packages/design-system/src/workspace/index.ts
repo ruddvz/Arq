@@ -3,6 +3,8 @@ export * from './tool-rail-adapter';
 export * from './project-tab-strip';
 export * from './compact-view-control';
 export * from './view-switcher-list';
+export * from './project-browser-panel';
+export * from './inspector-panel';
 export * from './project-overview-surface';
 export * from './workspace-root';
 export * from './workspace-sheet';

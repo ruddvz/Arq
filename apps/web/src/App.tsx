@@ -11,6 +11,8 @@ import {
   CompactViewControl,
   PhoneProjectBar,
   ViewSwitcherList,
+  InspectorPanel,
+  ProjectBrowserPanel,
   ProjectOverviewSurface,
   WorkspaceRoot,
   buildToolRailModel,
@@ -29,6 +31,8 @@ import {
   CLOSED_SHEET_STATE,
   DEFAULT_WORKSPACE_CAPABILITIES,
   EMPTY_VIEW_TABS_STATE,
+  INITIAL_BROWSER_PANEL_STATE,
+  INITIAL_INSPECTOR_TABS_STATE,
   INITIAL_PANEL_LAYOUT_STATE,
   INITIAL_TOOL_STATE,
   activateAdjacentTab,
@@ -44,7 +48,11 @@ import {
   initialModeState,
   isUnmodifiedLetterShortcut,
   openTab,
+  reconcileBrowserSection,
+  reconcileInspectorTab,
+  selectInspectorTab,
   reconcileDockedPanels,
+  selectBrowserSection,
   resolveLayoutSlots,
   resolveWorkspacePlatform,
   shouldHandleShortcut,
@@ -226,6 +234,8 @@ export function App(): JSX.Element {
   const [panels, setPanels] = useState(INITIAL_PANEL_LAYOUT_STATE);
   const [toolState, setToolState] = useState(INITIAL_TOOL_STATE);
   const [sheet, setSheet] = useState(CLOSED_SHEET_STATE);
+  const [browserPanel, setBrowserPanel] = useState(INITIAL_BROWSER_PANEL_STATE);
+  const [inspectorTabs, setInspectorTabs] = useState(INITIAL_INSPECTOR_TABS_STATE);
   const [toolRailState, setToolRailState] = useState(INITIAL_TOOL_RAIL_STATE);
   const [modelSelection, setModelSelection] = useState<ModelPanelSelectionState>({
     primary: null,
@@ -269,6 +279,20 @@ export function App(): JSX.Element {
       }),
     );
   }, [probe.widthPx, slots, railsWidthPx, platform]);
+
+  /*
+   * Doc 34: each mode leads with the browser section it is about, unless the
+   * user has chosen one themselves - see reconcileBrowserSection.
+   */
+  useEffect(() => {
+    setBrowserPanel((current) =>
+      reconcileBrowserSection(
+        current,
+        modeState.mode,
+        DEFAULT_WORKSPACE_CAPABILITIES['CAP-collaboration'],
+      ),
+    );
+  }, [modeState.mode]);
 
   const recordDemoAction = useCallback((label: string) => {
     undoStackRef.current.push({ forward: label, inverse: `Undo ${label}` });
@@ -342,6 +366,28 @@ export function App(): JSX.Element {
   }, [handleActivateTool]);
 
   const isWallSelected = modelSelection.primary === 'demo-wall-1';
+  /*
+   * Doc 40. warningCount is 0 because no model-health engine runs in this
+   * build - not because the wall is known to be clean. historyCapability is
+   * off for the same reason CAP-collaboration is: nothing produces revisions.
+   */
+  const inspectorContext = useMemo(
+    () => ({
+      selectionCount: modelSelection.primary === null ? 0 : 1,
+      warningCount: 0,
+      mode: modeState.mode,
+      historyCapabilityEnabled: false,
+    }),
+    [modelSelection.primary, modeState.mode],
+  );
+
+  /*
+   * Doc 34: default to the most relevant tab for the context, while preserving
+   * a tab the user picked themselves - reconcileInspectorTab holds both halves.
+   */
+  useEffect(() => {
+    setInspectorTabs((current) => reconcileInspectorTab(current, inspectorContext));
+  }, [inspectorContext]);
   const activeTab = tabs.tabs.find((tab) => tab.id === tabs.activeId) ?? null;
   const railModel = useMemo(
     () => buildToolRailModel(modeState.mode, (toolId) => TOOL_ICONS[toolId] ?? null),
@@ -543,19 +589,66 @@ export function App(): JSX.Element {
           />
         }
         projectBrowser={
-          <ModelPanel
-            tree={MODEL_TREE}
-            selection={modelSelection}
-            onSelectNode={(nodeId) => setModelSelection({ primary: nodeId, secondary: new Set() })}
+          <ProjectBrowserPanel
+            state={browserPanel}
+            mode={modeState.mode}
+            reviewCapabilityEnabled={DEFAULT_WORKSPACE_CAPABILITIES['CAP-collaboration']}
+            onSelectSection={(section) =>
+              setBrowserPanel((current) => selectBrowserSection(current, section))
+            }
+            sections={{
+              /*
+               * Only Project has real content: the semantic tree is the one
+               * thing this build can actually enumerate. Views, Documents and
+               * Files render their own empty state rather than a fabricated
+               * list - doc 35's "never invent" rule is not specific to the
+               * overview.
+               */
+              project: (
+                <ModelPanel
+                  tree={MODEL_TREE}
+                  selection={modelSelection}
+                  onSelectNode={(nodeId) =>
+                    setModelSelection({ primary: nodeId, secondary: new Set() })
+                  }
+                />
+              ),
+              views: (
+                <ViewSwitcherList
+                  state={tabs}
+                  onActivateTab={(id) => setTabs((state) => activateTab(state, id))}
+                  onCloseTab={(id) => setTabs((state) => closeTab(state, id))}
+                />
+              ),
+            }}
           />
         }
         viewport={viewport}
         inspector={
-          <InspectorShell
-            groups={isWallSelected ? buildDemoWallInspectorGroups() : buildEmptyInspectorGroups()}
-            selectedElementDescription={
-              isWallSelected ? buildDemoWallAccessibleDescription() : null
-            }
+          <InspectorPanel
+            state={inspectorTabs}
+            context={inspectorContext}
+            commonTypeName={isWallSelected ? 'Interior Wall 100mm' : null}
+            onSelectTab={(tab) => setInspectorTabs((current) => selectInspectorTab(current, tab))}
+            tabs={{
+              /*
+               * Doc 40: the existing InspectorShell renders exactly what the
+               * Properties tab is specified to contain, so it becomes that
+               * tab's body rather than being replaced. Type, Relations,
+               * Warnings and History have no data source in this build and
+               * render their own honest empty state.
+               */
+              properties: (
+                <InspectorShell
+                  groups={
+                    isWallSelected ? buildDemoWallInspectorGroups() : buildEmptyInspectorGroups()
+                  }
+                  selectedElementDescription={
+                    isWallSelected ? buildDemoWallAccessibleDescription() : null
+                  }
+                />
+              ),
+            }}
           />
         }
         contextBar={
