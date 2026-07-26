@@ -42,9 +42,20 @@ export function planOrphanedResources(
       readonly byte_length: number;
       readonly reference_count: number;
     }>(
+      // `resource_reference` is not the only thing in the schema that owns a
+      // resource: `source_document.source_resource_sha256` is a real foreign key
+      // to `resource(sha256)` with no ON DELETE clause. Ignoring it made GC both
+      // wrong and self-blocking - it listed a preserved import source as
+      // orphaned (so a "reclaim N bytes" UI would offer space that cannot be
+      // reclaimed), and then the DELETE hit the foreign key and rejected the
+      // whole batch, so one such resource stopped every other legitimate
+      // collection from ever running.
       `SELECT r.sha256, r.media_type, r.byte_length, COUNT(rr.resource_sha256) AS reference_count
          FROM resource r
          LEFT JOIN resource_reference rr ON rr.resource_sha256 = r.sha256
+        WHERE NOT EXISTS (
+          SELECT 1 FROM source_document sd WHERE sd.source_resource_sha256 = r.sha256
+        )
         GROUP BY r.sha256, r.media_type, r.byte_length
         HAVING COUNT(rr.resource_sha256) = 0
         ORDER BY r.sha256`,
@@ -86,9 +97,21 @@ export function collectOrphanedResources(
   try {
     driver.transaction(() => {
       for (const resource of selected) {
+        // Re-checked inside the transaction against both owning tables, for the
+        // same reason planOrphanedResources consults both: a reference acquired
+        // between planning and deleting must win, and a source_document FK
+        // would otherwise abort the entire transaction rather than skip one row.
+        // Two plain `?` placeholders with the value bound twice, not `?1` reused:
+        // ArqfsDriver binds positionally (`.all(...params)`), and better-sqlite3
+        // rejects a reused numbered parameter that way with "Too many parameter
+        // values were provided" - which would also differ under the sqlite-wasm
+        // driver, so positional is the portable form for this interface.
         const stillUnreferenced = driver.query<{ readonly count: number }>(
-          'SELECT COUNT(*) AS count FROM resource_reference WHERE resource_sha256 = ?',
-          [resource.sha256],
+          `SELECT
+             (SELECT COUNT(*) FROM resource_reference WHERE resource_sha256 = ?)
+             + (SELECT COUNT(*) FROM source_document WHERE source_resource_sha256 = ?)
+             AS count`,
+          [resource.sha256, resource.sha256],
         )[0];
         if (Number(stillUnreferenced?.count ?? 0) !== 0) continue;
         driver.run('DELETE FROM resource_chunk WHERE resource_sha256 = ?', [resource.sha256]);

@@ -4,6 +4,7 @@ import { createArqfsSchemaV1 } from './arqfs-schema';
 import { createArqfsSchemaLatest } from './arqfs-schema-v2';
 import { putResource, assembleResource } from './arqfs-resource-chunks';
 import { putResourceReference } from './arqfs-resource-reference';
+import { putSourceDocument } from './arqfs-provenance';
 import { planOrphanedResources, collectOrphanedResources } from './arqfs-resource-gc';
 import type { ArqfsDriver } from './arqfs-driver';
 
@@ -154,5 +155,64 @@ describe('arqfs-resource-gc (reference-aware collection)', () => {
     const result = collectOrphanedResources(d);
     expect(result).toEqual({ status: 'collected', resources: [], bytesFreed: 0 });
     expect((await assembleResource(d, sha256)).status).toBe('assembled');
+  });
+
+  /**
+   * `resource_reference` is not the only owner of a resource:
+   * `source_document.source_resource_sha256` is a real foreign key to
+   * `resource(sha256)` with no ON DELETE clause. When GC consulted only
+   * `resource_reference`, a preserved import source was listed as orphaned -
+   * so a "reclaim N bytes" surface offered space that could not be reclaimed -
+   * and the DELETE then hit the foreign key and rejected the *whole batch*,
+   * meaning a single such resource permanently blocked all other collection.
+   */
+  it('does not treat a resource owned only by source_document as orphaned', async () => {
+    const d = freshV2Driver();
+    const sha256 = await putTexture(d, 'preserved import source');
+    // The FK reference, deliberately with no resource_reference row alongside it.
+    putSourceDocument(d, {
+      id: 'doc-1',
+      originalName: 'f.dxf',
+      detectedFormat: 'dxf',
+      sha256: '1'.repeat(64),
+      byteLength: 23,
+      importedAtUnixMs: 1,
+      adapterId: 'a',
+      adapterVersion: '1',
+      fidelity: 'structured',
+      sourceResourceSha256: sha256,
+    });
+
+    const plan = planOrphanedResources(d);
+    expect(plan.status === 'ready' ? plan.resources : null).toEqual([]);
+    expect((await assembleResource(d, sha256)).status).toBe('assembled');
+  });
+
+  it('collects a genuinely orphaned resource even when another resource is owned by a source_document', async () => {
+    const d = freshV2Driver();
+    const kept = await putTexture(d, 'preserved import source');
+    const orphan = await putTexture(d, 'genuinely orphaned');
+    putSourceDocument(d, {
+      id: 'doc-1',
+      originalName: 'f.dxf',
+      detectedFormat: 'dxf',
+      sha256: '1'.repeat(64),
+      byteLength: 23,
+      importedAtUnixMs: 1,
+      adapterId: 'a',
+      adapterVersion: '1',
+      fidelity: 'structured',
+      sourceResourceSha256: kept,
+    });
+
+    const result = collectOrphanedResources(d);
+
+    // Before the fix this rejected with "FOREIGN KEY constraint failed" and
+    // collected nothing at all - one protected resource blocked the batch.
+    expect(result.status).toBe('collected');
+    if (result.status !== 'collected') return;
+    expect(result.resources.map((r) => r.sha256)).toEqual([orphan]);
+    expect((await assembleResource(d, kept)).status).toBe('assembled');
+    expect((await assembleResource(d, orphan)).status).toBe('rejected');
   });
 });
