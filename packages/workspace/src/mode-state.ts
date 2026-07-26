@@ -44,15 +44,6 @@ export const MODE_TOOL_GROUPS: Readonly<Record<WorkspaceMode, readonly ToolGroup
   present: ['View'],
 };
 
-/** Doc 34: which view kinds each mode leads with when opening a new surface. */
-export const MODE_PRIMARY_VIEW_KINDS: Readonly<Record<WorkspaceMode, readonly string[]>> = {
-  design: ['plan', '3d', 'section', 'elevation'],
-  document: ['sheet', 'schedule', 'report'],
-  inspect: ['plan', '3d', 'model-health'],
-  review: ['issues', 'compare'],
-  present: ['plan', '3d'],
-};
-
 export function initialModeState(
   project: WorkspaceProjectContext,
   mode: WorkspaceMode = 'design',

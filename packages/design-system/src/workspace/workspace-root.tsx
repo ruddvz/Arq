@@ -110,14 +110,32 @@ function OverlayPanel(props: {
   readonly side: 'left' | 'right';
   readonly widthPx: number;
   readonly label?: string;
+  /** Present only for the tablet drawers, which are dismissable dialogs. */
+  readonly onDismiss?: () => void;
   readonly children: ReactNode;
 }): JSX.Element {
-  const { side, widthPx, label, children } = props;
+  const { side, widthPx, label, onDismiss, children } = props;
   return (
     <div
       className={`arq-workspace__overlay arq-workspace__overlay--${side}`}
       role={label === undefined ? undefined : 'dialog'}
       aria-label={label}
+      /*
+       * A drawer that announces itself as a dialog must be dismissable by
+       * keyboard. It is deliberately not `aria-modal`: the canvas beside it
+       * stays visible and usable on a landscape tablet, which is the whole
+       * point of a drawer rather than a sheet.
+       */
+      onKeyDown={
+        onDismiss === undefined
+          ? undefined
+          : (event) => {
+              if (event.key === 'Escape') {
+                event.stopPropagation();
+                onDismiss();
+              }
+            }
+      }
       style={{
         position: 'absolute',
         top: 0,
@@ -246,143 +264,182 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
   }
 
   const openSheetId = touchControlsAvailable ? sheet.openSheet : null;
+  /*
+   * A `full` bottom sheet covers the canvas completely, so WorkspaceSheet marks
+   * itself `aria-modal`. That claim is only honest if what is behind is
+   * genuinely unreachable - otherwise a screen-reader user can virtual-cursor
+   * into a shell they cannot see. `inert` is what makes it true, and because
+   * inert content is not focusable it also removes the need for a hand-rolled
+   * focus trap. At `peek` and `half` the canvas is deliberately still usable,
+   * so nothing is inert and nothing claims modality.
+   */
+  const shellInert = openSheetId !== null && usesBottomSheets && sheet.detent === 'full';
 
   return (
     <div
       className={`arq-workspace arq-workspace--${platform}`}
       data-workspace-mode={activeMode}
       data-workspace-open-state={project.openState}
-      style={{ display: 'flex', flexDirection: 'column', height: '100vh', minHeight: 0 }}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        minHeight: 0,
+        position: 'relative',
+      }}
     >
-      <div style={{ minHeight: slots.topBar, flex: '0 0 auto' }}>
-        {phone ? (phoneProjectBar ?? projectBar) : projectBar}
-      </div>
-      <div style={{ minHeight: viewSwitcherHeightPx(slots), flex: '0 0 auto' }}>
-        {phone ? (compactViewControl ?? tabStrip) : tabStrip}
-      </div>
-      {touchControlsAvailable && !phone && (
-        <TabletDrawerBar
-          openSheet={sheet.openSheet}
-          onToggleSheet={onToggleSheet}
-          {...(reviewDisabledReason === undefined ? {} : { reviewDisabledReason })}
-        />
-      )}
+      {/*
+       * Doc 51 / WCAG 2.4.1. Without this a keyboard user crosses the project
+       * bar, tab strip, mode rail and tool rail - over twenty stops, measured -
+       * before reaching the drawing they came to work on.
+       */}
+      <a href="#arq-workspace-canvas" className="arq-skip-link">
+        Skip to canvas
+      </a>
 
-      <div style={{ position: 'relative', flex: 1, display: 'flex', minHeight: 0 }}>
-        {!canvasFirst && (
-          <ModeRail project={project} activeMode={activeMode} onSelectMode={onSelectMode} />
-        )}
-        {!canvasFirst && toolRail}
-
-        {browserDocked && (
-          <>
-            <div
-              className="arq-workspace__docked arq-workspace__docked--left"
-              style={{ width: panels['project-browser'].widthPx, flex: '0 0 auto', minWidth: 0 }}
-            >
-              {projectBrowser}
-            </div>
-            {onResizePanel !== undefined && (
-              <PanelResizeHandle
-                panel="project-browser"
-                label="project browser"
-                side="left"
-                widthPx={panels['project-browser'].widthPx}
-                onResize={(width) => onResizePanel('project-browser', width)}
-              />
-            )}
-          </>
-        )}
-
-        <main
-          className="arq-workspace__viewport"
-          aria-label="Canvas"
-          style={{ flex: 1, minWidth: 0, position: 'relative' }}
-        >
-          {viewport}
-        </main>
-
-        {inspectorDocked && (
-          <>
-            {onResizePanel !== undefined && (
-              <PanelResizeHandle
-                panel="inspector"
-                label="inspector"
-                side="right"
-                widthPx={panels.inspector.widthPx}
-                onResize={(width) => onResizePanel('inspector', width)}
-              />
-            )}
-            <div
-              className="arq-workspace__docked arq-workspace__docked--right"
-              style={{ width: panels.inspector.widthPx, flex: '0 0 auto', minWidth: 0 }}
-            >
-              {inspector}
-            </div>
-          </>
-        )}
-
-        {browserFloating && (
-          <OverlayPanel side="left" widthPx={panels['project-browser'].widthPx}>
-            {projectBrowser}
-          </OverlayPanel>
-        )}
-        {inspectorFloating && (
-          <OverlayPanel side="right" widthPx={panels.inspector.widthPx}>
-            {inspector}
-          </OverlayPanel>
-        )}
-
-        {/* Landscape tablet: side drawers, per doc 46. */}
-        {openSheetId !== null && !usesBottomSheets && (
-          <OverlayPanel
-            side={openSheetId === 'inspector' ? 'right' : 'left'}
-            widthPx={
-              openSheetId === 'inspector'
-                ? panels.inspector.widthPx
-                : panels['project-browser'].widthPx
-            }
-            label={SHEET_TITLE[openSheetId]}
-          >
-            {sheetBody(openSheetId)}
-          </OverlayPanel>
-        )}
-
-        {/* Portrait tablet and phone: bottom sheets with detents, per doc 47. */}
-        {openSheetId !== null && usesBottomSheets && (
-          <WorkspaceSheet
-            title={SHEET_TITLE[openSheetId]}
-            platform={platform}
-            detent={sheet.detent}
-            viewportHeightPx={probe.heightPx}
-            onClose={onCloseSheet ?? (() => undefined)}
-            onExpand={onExpandSheet ?? (() => undefined)}
-            onCollapse={onCollapseSheet ?? (() => undefined)}
-          >
-            {sheetBody(openSheetId)}
-          </WorkspaceSheet>
-        )}
-      </div>
-
-      {!phone && (
-        <div
-          className="arq-workspace__context-bar"
-          style={{ minHeight: slots.contextBar ?? 0, flex: '0 0 auto' }}
-        >
-          {contextBar}
+      {/*
+       * The shell is one element so a full-detent sheet can make it `inert` in
+       * a single place. The sheet is rendered as a sibling below, precisely so
+       * it stays interactive while everything behind it does not.
+       */}
+      <div
+        className="arq-workspace__shell"
+        {...(shellInert ? { inert: '' } : {})}
+        style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}
+      >
+        <div style={{ minHeight: slots.topBar, flex: '0 0 auto' }}>
+          {phone ? (phoneProjectBar ?? projectBar) : projectBar}
         </div>
-      )}
-      <div style={{ minHeight: slots.statusBar ?? slots.statusMinimal ?? 0, flex: '0 0 auto' }}>
-        {statusBar}
+        <div style={{ minHeight: viewSwitcherHeightPx(slots), flex: '0 0 auto' }}>
+          {phone ? (compactViewControl ?? tabStrip) : tabStrip}
+        </div>
+        {touchControlsAvailable && !phone && (
+          <TabletDrawerBar
+            openSheet={sheet.openSheet}
+            onToggleSheet={onToggleSheet}
+            {...(reviewDisabledReason === undefined ? {} : { reviewDisabledReason })}
+          />
+        )}
+
+        <div style={{ position: 'relative', flex: 1, display: 'flex', minHeight: 0 }}>
+          {!canvasFirst && (
+            <ModeRail project={project} activeMode={activeMode} onSelectMode={onSelectMode} />
+          )}
+          {!canvasFirst && toolRail}
+
+          {browserDocked && (
+            <>
+              <div
+                className="arq-workspace__docked arq-workspace__docked--left"
+                style={{ width: panels['project-browser'].widthPx, flex: '0 0 auto', minWidth: 0 }}
+              >
+                {projectBrowser}
+              </div>
+              {onResizePanel !== undefined && (
+                <PanelResizeHandle
+                  panel="project-browser"
+                  label="project browser"
+                  side="left"
+                  widthPx={panels['project-browser'].widthPx}
+                  onResize={(width) => onResizePanel('project-browser', width)}
+                />
+              )}
+            </>
+          )}
+
+          <main
+            id="arq-workspace-canvas"
+            tabIndex={-1}
+            className="arq-workspace__viewport"
+            aria-label="Canvas"
+            style={{ flex: 1, minWidth: 0, position: 'relative' }}
+          >
+            {viewport}
+          </main>
+
+          {inspectorDocked && (
+            <>
+              {onResizePanel !== undefined && (
+                <PanelResizeHandle
+                  panel="inspector"
+                  label="inspector"
+                  side="right"
+                  widthPx={panels.inspector.widthPx}
+                  onResize={(width) => onResizePanel('inspector', width)}
+                />
+              )}
+              <div
+                className="arq-workspace__docked arq-workspace__docked--right"
+                style={{ width: panels.inspector.widthPx, flex: '0 0 auto', minWidth: 0 }}
+              >
+                {inspector}
+              </div>
+            </>
+          )}
+
+          {browserFloating && (
+            <OverlayPanel side="left" widthPx={panels['project-browser'].widthPx}>
+              {projectBrowser}
+            </OverlayPanel>
+          )}
+          {inspectorFloating && (
+            <OverlayPanel side="right" widthPx={panels.inspector.widthPx}>
+              {inspector}
+            </OverlayPanel>
+          )}
+
+          {/* Landscape tablet: side drawers, per doc 46. */}
+          {openSheetId !== null && !usesBottomSheets && (
+            <OverlayPanel
+              side={openSheetId === 'inspector' ? 'right' : 'left'}
+              widthPx={
+                openSheetId === 'inspector'
+                  ? panels.inspector.widthPx
+                  : panels['project-browser'].widthPx
+              }
+              label={SHEET_TITLE[openSheetId]}
+              onDismiss={onCloseSheet ?? (() => undefined)}
+            >
+              {sheetBody(openSheetId)}
+            </OverlayPanel>
+          )}
+        </div>
+
+        {!phone && (
+          <div
+            className="arq-workspace__context-bar"
+            style={{ minHeight: slots.contextBar ?? 0, flex: '0 0 auto' }}
+          >
+            {contextBar}
+          </div>
+        )}
+        <div style={{ minHeight: slots.statusBar ?? slots.statusMinimal ?? 0, flex: '0 0 auto' }}>
+          {statusBar}
+        </div>
+        {touchControlsAvailable && phone && (
+          <PhoneDock
+            openSheet={sheet.openSheet}
+            activeToolLabel={activeToolLabel}
+            onSelectTool={onSelectPointerTool ?? (() => undefined)}
+            onToggleSheet={onToggleSheet}
+            {...(reviewDisabledReason === undefined ? {} : { reviewDisabledReason })}
+          />
+        )}
       </div>
-      {touchControlsAvailable && phone && (
-        <PhoneDock
-          openSheet={sheet.openSheet}
-          activeToolLabel={activeToolLabel}
-          onSelectTool={onSelectPointerTool ?? (() => undefined)}
-          onToggleSheet={onToggleSheet}
-          {...(reviewDisabledReason === undefined ? {} : { reviewDisabledReason })}
-        />
+
+      {/* Portrait tablet and phone: bottom sheets with detents, per doc 47. */}
+      {openSheetId !== null && usesBottomSheets && (
+        <WorkspaceSheet
+          title={SHEET_TITLE[openSheetId]}
+          platform={platform}
+          detent={sheet.detent}
+          viewportHeightPx={probe.heightPx}
+          onClose={onCloseSheet ?? (() => undefined)}
+          onExpand={onExpandSheet ?? (() => undefined)}
+          onCollapse={onCollapseSheet ?? (() => undefined)}
+        >
+          {sheetBody(openSheetId)}
+        </WorkspaceSheet>
       )}
     </div>
   );

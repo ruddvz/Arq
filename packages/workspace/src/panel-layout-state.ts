@@ -8,7 +8,7 @@
  * reducer here can reach the model.
  */
 
-import { panelContract, PANEL_CONTRACTS } from './registry';
+import { panelContract } from './registry';
 import type { LayoutSlotContract } from './registry';
 import {
   panelDockingPolicy,
@@ -240,9 +240,4 @@ export function reconcileDockedPanels(
 export function occupiesLayoutWidth(state: PanelLayoutState, panel: PanelId): boolean {
   const panelState = state[panel];
   return panelState.open && panelState.mode === 'docked';
-}
-
-/** Exposed for the registry-integrity test. */
-export function registryPanelIdsInOrder(): readonly string[] {
-  return PANEL_CONTRACTS.map((panel) => panel.id);
 }

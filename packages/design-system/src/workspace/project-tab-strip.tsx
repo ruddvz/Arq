@@ -31,7 +31,10 @@ export interface ProjectTabStripProps {
 function tabLabel(tab: WorkspaceViewTab): string {
   const kind = tabKindContract(tab.kind);
   const kindLabel = kind === null ? tab.kind : kind.label;
-  return tab.pinned ? `${tab.title}, ${kindLabel}, pinned` : `${tab.title}, ${kindLabel}`;
+  const identity = tab.pinned ? `${tab.title}, ${kindLabel}, pinned` : `${tab.title}, ${kindLabel}`;
+  // The close control is intentionally outside the Tab order, so the keyboard
+  // path has to be announced or it does not exist for the people who need it.
+  return tab.closeable ? `${identity}. Press Delete to close.` : identity;
 }
 
 /**
@@ -121,6 +124,11 @@ export function ProjectTabStrip(props: ProjectTabStripProps): JSX.Element {
           return (
             <span
               key={tab.id}
+              /*
+               * Presentational: an ARIA `tablist` owns `tab` children, and this
+               * span exists only to position the close control beside its tab.
+               */
+              role="presentation"
               className="arq-tab-strip__tab"
               style={{ display: 'inline-flex', alignItems: 'center', position: 'relative' }}
               onContextMenu={(event) => {
@@ -154,6 +162,17 @@ export function ProjectTabStrip(props: ProjectTabStripProps): JSX.Element {
                   if (event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) {
                     event.preventDefault();
                     openMenuFor(tab.id);
+                    return;
+                  }
+                  /*
+                   * Delete closes the focused tab - the keyboard path doc 37
+                   * requires alongside middle-click. Without it the only
+                   * keyboard close was Tab-ing onto the ✕, which is why that
+                   * button used to sit in the Tab order at all.
+                   */
+                  if ((event.key === 'Delete' || event.key === 'Backspace') && tab.closeable) {
+                    event.preventDefault();
+                    onCloseTab(tab.id);
                   }
                 }}
               >
@@ -164,6 +183,20 @@ export function ProjectTabStrip(props: ProjectTabStripProps): JSX.Element {
                 <button
                   type="button"
                   className="arq-shell-button arq-tab-strip__close"
+                  /*
+                   * Out of the Tab order entirely, which is the WAI-ARIA tabs
+                   * contract: a `tablist` is one stop, and every closeable tab
+                   * used to add a second - a project with ten views cost twenty
+                   * Tab presses to cross.
+                   *
+                   * Closing stays reachable by keyboard four other ways, so this
+                   * costs nothing: Delete on the focused tab, the context menu
+                   * (Shift+F10 or the Menu key), Cmd/Ctrl+W, and the command
+                   * palette's "Close active view". The tab's own accessible name
+                   * names the Delete path so it is discoverable rather than
+                   * folklore.
+                   */
+                  tabIndex={-1}
                   aria-label={`Close ${tab.title}`}
                   /*
                    * Doc 33: "Closing a view tab does not delete the view

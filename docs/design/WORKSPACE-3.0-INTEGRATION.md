@@ -37,7 +37,7 @@ writing:
 | -------------------- | ----------------------- | ---------- |
 | Tool commands        | 54                      | 11         |
 | Icon glyphs          | 215                     | 40         |
-| Workspace components | 147                     | 4          |
+| Workspace components | 147                     | 14         |
 | Workspace surfaces   | 30                      | see below  |
 
 These gaps are the expected state and the check never fails on them. A
@@ -91,8 +91,16 @@ capability-gated regardless (see below).
 
 ### Components
 
-Four of the 147 workspace components exist as code: `WorkspaceRoot`,
-`ModeRail`, `ProjectTabStrip`, `ProjectOverviewSurface`. The rest of the shell
+Fourteen of the 147 workspace components exist as code:
+
+- **Shell** — `WorkspaceRoot`, `ModeRail`, `ProjectTabStrip`, `PanelResizeHandle`,
+  `TabContextMenu`.
+- **Panels** — `ProjectBrowserPanel` (doc 39's four sections),
+  `InspectorPanel` (doc 40's five tabs), `ProjectOverviewSurface`.
+- **Touch** — `WorkspaceSheet`, `PhoneDock`, `PhoneProjectBar`,
+  `TabletDrawerBar`, `CompactViewControl`, `ViewSwitcherList`.
+
+The rest of the shell
 is served by converging the repository's **existing** components rather than
 duplicating them — Package 3.0's execution prompt §0 is explicit that it
 "extends/converges those contracts; it is not permission to delete them and
@@ -209,29 +217,73 @@ and 1536 canvases clear their registry floors (900 and 620).
   `(pointer: fine)` only. A coarse pointer keeps the full 44px and a slightly
   taller strip.
 
+## Accessibility
+
+Enforced, and several decisions were made because of it:
+
+- **One Tab stop per tablist.** The view-tab strip, browser sections and
+  inspector tabs are all roving-tabindex tablists. The tab close control is
+  deliberately _outside_ the Tab order — every closeable tab used to add a second
+  stop, so ten views cost twenty Tab presses. Closing stays reachable four other
+  ways (Delete on the focused tab, the context menu via Shift+F10 or the Menu
+  key, Cmd/Ctrl+W, and the palette's "Close active view"), and the tab's
+  accessible name announces the Delete path so it is discoverable.
+- **Skip link** to the canvas, because a keyboard user otherwise crosses more
+  than twenty controls to reach the drawing.
+- **`aria-modal` is never claimed without `inert`.** The bottom sheet is modal
+  only at its `full` detent, where it genuinely covers the canvas; the shell
+  behind it is then `inert`, which both makes the claim true for a screen reader
+  and removes the need for a hand-rolled focus trap. At `peek` and `half` the
+  canvas stays usable and nothing claims modality. The landscape tablet drawer is
+  a dismissable `dialog` and deliberately not modal — the canvas beside it is the
+  point.
+- **Menus move focus in and restore it out.** Every disabled control puts its
+  reason in the accessible name rather than only a `title`, since a tooltip is
+  unreachable by keyboard and by touch.
+- The 44px touch minimum holds on coarse pointers; it relaxes to doc 36's
+  36–40px desktop hitbox under `(pointer: fine)` only.
+
 ## Known gaps
 
-- 27 of 30 surfaces, 43 of 54 tools, 175 of 215 icons and 143 of 147 components
+- 27 of 30 surfaces, 43 of 54 tools, 175 of 215 icons and 133 of 147 components
   are specified only.
-- The touch bands are canvas-first and no longer squeeze, but the drawer, sheet,
-  bottom-dock and floating-tool-palette presentations doc 46/47 describe are not
-  built: on those bands the browser and inspector are simply closed, and there is
-  no control yet to summon them.
 - A desktop user who drags their window down through the tablet band and back
   finds the browser and inspector closed. `reconcileDockedPanels` closes them on
   a `'drawers-only'` band and does not restore the previous open state on the way
   back, because panel state carries no separate record of the desktop preference.
-- Doc 36's compact-width collapse ("presence labels, low-priority status text and
-  secondary collaboration actions collapse first") is not built. The top bar and
-  status bar **wrap** at narrow widths instead — nothing is hidden, which matters
-  because there is no project menu or phone bottom dock yet to hold the save and
-  sync indicators if they were dropped.
+- Doc 36's compact-width collapse is built for the **phone** (`PhoneProjectBar`
+  moves undo, redo, open, share and commands into a More menu) but not for
+  compact desktop, where the top bar and status bar still wrap rather than
+  collapsing by priority.
+- Sheet detents change through a button, not a drag. Doc 47 describes a drag
+  gesture; the button is what makes detents reachable by keyboard and switch
+  device, and the drag is not built on top of it yet.
+- The browser's Documents and Files sections, and the inspector's Type,
+  Relations, Warnings and History tabs, render honest empty states — nothing in
+  this build produces sheets, references, relations, diagnostics or revisions.
+- Doc 39's tree virtualisation ("expanding a 5,000-element model must not render
+  every row") is not implemented; the model panel renders every node.
 - Tab reordering, splitting and the view-tab context menu exist as reducers
   (`moveTab`, `duplicateTab`, `closeOtherTabs`, `closeTabsToRight`) with no UI
   attached.
 - The visual-refinement layer added by Package 4.0 (docs 55–58 and the seven
   workspace boards) is a target for the shell's appearance. This integration
   delivers the structure those boards describe, not their finish.
-- `pnpm test` is not currently a CI job in `.github/workflows/ci.yml`, so the
-  tests added here are not gated on pull requests. That predates this work and
-  is left as-is rather than changed unasked.
+
+## Verification
+
+`pnpm benchmark:workspace-layout` drives the production bundle in headless
+Chromium at all eight `workspace-qa-fixtures.json` viewports and asserts band
+resolution, the registry canvas floor, absence of horizontal overflow, that
+touch bands are canvas-first _and_ offer a control to summon panels back, and
+that save and sync stay separately legible. It runs in CI beside the existing
+browser capability checks.
+
+That check is not decoration — it caught `PhoneProjectBar` hardcoding
+"Unsaved changes · Offline" for a project that was never open while the desktop
+bar honestly said "No project open". Three earlier defects were found the same
+way and could not have been caught otherwise: the app never imported
+`shell-controls.css` so the shell rendered unstyled; the canvas floor used the
+registry's 48px tool rail while the rendered rail is 200px; and the tablet bands
+rendered two docked columns, reducing an 834px iPad to a zero-width canvas. All
+three passed typecheck and the full unit suite.
