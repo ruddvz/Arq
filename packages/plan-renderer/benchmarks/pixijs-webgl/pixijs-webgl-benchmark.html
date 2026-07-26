@@ -1,143 +1,147 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<title>ARQ-116 PixiJS WebGL benchmark</title>
-<style>
-  html, body { margin: 0; padding: 0; background: #eee; }
-</style>
-</head>
-<body>
-<script src="../canvas-2d/scene.js"></script>
-<script>
-  /**
-   * Runs the same protected-benchmark scene and pan workload as
-   * canvas-2d-benchmark.html (ARQ-115), but through PixiJS's retained
-   * WebGL display list instead of an immediate-mode Canvas 2D redraw:
-   * the scene's Graphics/Text objects are built ONCE, and each frame
-   * only moves the container's x/y before calling render() - the
-   * natural way a retained-mode 2D GPU renderer is used (unlike Canvas
-   * 2D, which has no retained scene and must redraw everything every
-   * frame). This is intentional and matches section 61's own framing of
-   * each technology's shape, not an inconsistency between the two
-   * benchmarks.
-   *
-   * PIXI itself is injected by run-pixijs-webgl-benchmark.mjs
-   * (Playwright's addScriptTag, from node_modules directly) rather than
-   * vendored into this file - see that script and
-   * docs/research/RENDERER-BENCHMARK-PIXIJS-WEBGL.md.
-   *
-   * window.runArqPixiBenchmark(), called once PIXI is present, returns
-   * a Promise resolving to the same result shape
-   * canvas-2d-benchmark.html exposes on window.__ARQ_BENCHMARK_RESULT__,
-   * for a direct side-by-side comparison.
-   */
-  window.runArqPixiBenchmark = async function runArqPixiBenchmark() {
-    const scene = window.ArqBenchmarkScene.buildScene();
-    const counts = window.ArqBenchmarkScene.countsOf(scene);
-
-    const app = new PIXI.Application();
-    await app.init({
-      width: 1280,
-      height: 800,
-      backgroundColor: 0xffffff,
-      preference: 'webgl',
-    });
-    document.body.appendChild(app.canvas);
-
-    const scale =
-      Math.min(1280 / scene.worldWidth, 800 / scene.worldHeight) * 0.9;
-
-    const world = new PIXI.Container();
-    world.scale.set(scale, scale);
-    app.stage.addChild(world);
-
-    const roomsGraphics = new PIXI.Graphics();
-    for (const room of scene.rooms) {
-      const points = room.polygon.flatMap((p) => [p.x, p.y]);
-      roomsGraphics.poly(points, true).fill({ color: 0xbed7fa, alpha: 0.5 });
-    }
-    world.addChild(roomsGraphics);
-
-    const wallsGraphics = new PIXI.Graphics();
-    for (const wall of scene.walls) {
-      wallsGraphics.rect(wall.x, wall.y, wall.w, wall.h).fill(0x3a3a3a);
-    }
-    world.addChild(wallsGraphics);
-
-    const openingsGraphics = new PIXI.Graphics();
-    for (const opening of scene.openings) {
-      openingsGraphics.rect(opening.x, opening.y, opening.w, opening.h).fill(0xffffff);
-    }
-    world.addChild(openingsGraphics);
-
-    for (const room of scene.rooms) {
-      const label = new PIXI.Text({
-        text: room.label,
-        style: { fontSize: 14 / scale, fill: 0x111111 },
-        x: room.labelX,
-        y: room.labelY,
-      });
-      world.addChild(label);
-    }
-    for (const annotation of scene.annotations) {
-      const label = new PIXI.Text({
-        text: annotation.text,
-        style: { fontSize: 10 / scale, fill: 0x555555 },
-        x: annotation.x,
-        y: annotation.y,
-      });
-      world.addChild(label);
-    }
-
-    // The first WARMUP_FRAMES are rendered but excluded from timing:
-    // WebGL context setup and shader compilation are a one-time,
-    // cold-start expense (section 120's separate "local project
-    // interactive under 2 seconds" budget), not part of ongoing
-    // pan/zoom frame rate. Applied identically in
-    // canvas-2d-benchmark.html (ARQ-115) for a fair comparison.
-    const WARMUP_FRAMES = 30;
-    const TARGET_FRAMES = 180;
-    const frameTimes = [];
-    let framesRendered = 0;
-    let lastTime = null;
-    let panX = 40;
-
-    return new Promise((resolve) => {
-      function frame(now) {
-        if (lastTime !== null && framesRendered >= WARMUP_FRAMES) {
-          frameTimes.push(now - lastTime);
-        }
-        lastTime = now;
-        framesRendered += 1;
-        panX += 4;
-        world.x = panX;
-        world.y = 40;
-        app.renderer.render(app.stage);
-
-        if (frameTimes.length < TARGET_FRAMES) {
-          requestAnimationFrame(frame);
-        } else {
-          const total = frameTimes.reduce((sum, t) => sum + t, 0);
-          const avg = total / frameTimes.length;
-          const sorted = [...frameTimes].sort((a, b) => a - b);
-          const p95 = sorted[Math.floor(sorted.length * 0.95)];
-          const max = sorted[sorted.length - 1];
-          const result = {
-            counts,
-            frameCount: frameTimes.length,
-            avgFrameMs: avg,
-            avgFps: 1000 / avg,
-            p95FrameMs: p95,
-            maxFrameMs: max,
-          };
-          window.__ARQ_BENCHMARK_RESULT__ = result;
-          resolve(result);
-        }
+  <head>
+    <meta charset="utf-8" />
+    <title>ARQ-116 PixiJS WebGL benchmark</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #eee;
       }
-      requestAnimationFrame(frame);
-    });
-  };
-</script>
-</body>
+    </style>
+  </head>
+  <body>
+    <script src="../canvas-2d/scene.js"></script>
+    <script>
+      /**
+       * Runs the same protected-benchmark scene and pan workload as
+       * canvas-2d-benchmark.html (ARQ-115), but through PixiJS's retained
+       * WebGL display list instead of an immediate-mode Canvas 2D redraw:
+       * the scene's Graphics/Text objects are built ONCE, and each frame
+       * only moves the container's x/y before calling render() - the
+       * natural way a retained-mode 2D GPU renderer is used (unlike Canvas
+       * 2D, which has no retained scene and must redraw everything every
+       * frame). This is intentional and matches section 61's own framing of
+       * each technology's shape, not an inconsistency between the two
+       * benchmarks.
+       *
+       * PIXI itself is injected by run-pixijs-webgl-benchmark.mjs
+       * (Playwright's addScriptTag, from node_modules directly) rather than
+       * vendored into this file - see that script and
+       * docs/research/RENDERER-BENCHMARK-PIXIJS-WEBGL.md.
+       *
+       * window.runArqPixiBenchmark(), called once PIXI is present, returns
+       * a Promise resolving to the same result shape
+       * canvas-2d-benchmark.html exposes on window.__ARQ_BENCHMARK_RESULT__,
+       * for a direct side-by-side comparison.
+       */
+      window.runArqPixiBenchmark = async function runArqPixiBenchmark() {
+        const scene = window.ArqBenchmarkScene.buildScene();
+        const counts = window.ArqBenchmarkScene.countsOf(scene);
+
+        const app = new PIXI.Application();
+        await app.init({
+          width: 1280,
+          height: 800,
+          backgroundColor: 0xffffff,
+          preference: 'webgl',
+        });
+        document.body.appendChild(app.canvas);
+
+        const scale = Math.min(1280 / scene.worldWidth, 800 / scene.worldHeight) * 0.9;
+
+        const world = new PIXI.Container();
+        world.scale.set(scale, scale);
+        app.stage.addChild(world);
+
+        const roomsGraphics = new PIXI.Graphics();
+        for (const room of scene.rooms) {
+          const points = room.polygon.flatMap((p) => [p.x, p.y]);
+          roomsGraphics.poly(points, true).fill({ color: 0xbed7fa, alpha: 0.5 });
+        }
+        world.addChild(roomsGraphics);
+
+        const wallsGraphics = new PIXI.Graphics();
+        for (const wall of scene.walls) {
+          wallsGraphics.rect(wall.x, wall.y, wall.w, wall.h).fill(0x3a3a3a);
+        }
+        world.addChild(wallsGraphics);
+
+        const openingsGraphics = new PIXI.Graphics();
+        for (const opening of scene.openings) {
+          openingsGraphics.rect(opening.x, opening.y, opening.w, opening.h).fill(0xffffff);
+        }
+        world.addChild(openingsGraphics);
+
+        for (const room of scene.rooms) {
+          const label = new PIXI.Text({
+            text: room.label,
+            style: { fontSize: 14 / scale, fill: 0x111111 },
+            x: room.labelX,
+            y: room.labelY,
+          });
+          world.addChild(label);
+        }
+        for (const annotation of scene.annotations) {
+          const label = new PIXI.Text({
+            text: annotation.text,
+            style: { fontSize: 10 / scale, fill: 0x555555 },
+            x: annotation.x,
+            y: annotation.y,
+          });
+          world.addChild(label);
+        }
+
+        // The first WARMUP_FRAMES are rendered but excluded from timing:
+        // WebGL context setup and shader compilation are a one-time,
+        // cold-start expense (section 120's separate "local project
+        // interactive under 2 seconds" budget), not part of ongoing
+        // pan/zoom frame rate. Applied identically in
+        // canvas-2d-benchmark.html (ARQ-115) for a fair comparison.
+        const WARMUP_FRAMES = 30;
+        const TARGET_FRAMES = 180;
+        const frameTimes = [];
+        let framesRendered = 0;
+        let lastTime = null;
+        let panX = 40;
+
+        return new Promise((resolve) => {
+          function frame(now) {
+            if (lastTime !== null && framesRendered >= WARMUP_FRAMES) {
+              frameTimes.push(now - lastTime);
+            }
+            lastTime = now;
+            framesRendered += 1;
+            panX += 4;
+            world.x = panX;
+            world.y = 40;
+            app.renderer.render(app.stage);
+
+            if (frameTimes.length < TARGET_FRAMES) {
+              requestAnimationFrame(frame);
+            } else {
+              const total = frameTimes.reduce((sum, t) => sum + t, 0);
+              const avg = total / frameTimes.length;
+              const sorted = [...frameTimes].sort((a, b) => a - b);
+              const p95 = sorted[Math.floor(sorted.length * 0.95)];
+              const max = sorted[sorted.length - 1];
+              const result = {
+                counts,
+                frameCount: frameTimes.length,
+                avgFrameMs: avg,
+                avgFps: 1000 / avg,
+                p95FrameMs: p95,
+                maxFrameMs: max,
+              };
+              window.__ARQ_BENCHMARK_RESULT__ = result;
+              resolve(result);
+            }
+          }
+          requestAnimationFrame(frame);
+        });
+      };
+    </script>
+  </body>
 </html>

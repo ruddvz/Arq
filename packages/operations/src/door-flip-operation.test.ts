@@ -70,7 +70,12 @@ describe('buildFlipDoorSideOperation / applyUpdateProperty', () => {
       ...params,
       door,
     });
-    const { elements } = applyUpdateProperty<Door, 'side'>([door], operation, operationId('inv'), 1);
+    const { elements } = applyUpdateProperty<Door, 'side'>(
+      [door],
+      operation,
+      operationId('inv'),
+      1,
+    );
     expect(elements[0]?.hand).toBe(door.hand);
     expect(elements[0]?.id).toBe(door.id);
     expect(elements[0]?.openingId).toBe(door.openingId);
@@ -118,7 +123,12 @@ describe('buildFlipDoorHandOperation / applyUpdateProperty', () => {
       ...params,
       door,
     });
-    const { elements } = applyUpdateProperty<Door, 'hand'>([door], operation, operationId('inv'), 1);
+    const { elements } = applyUpdateProperty<Door, 'hand'>(
+      [door],
+      operation,
+      operationId('inv'),
+      1,
+    );
     expect(elements[0]?.hand).toBe('left');
   });
 
@@ -128,7 +138,12 @@ describe('buildFlipDoorHandOperation / applyUpdateProperty', () => {
       ...params,
       door,
     });
-    const { elements } = applyUpdateProperty<Door, 'hand'>([door], operation, operationId('inv'), 1);
+    const { elements } = applyUpdateProperty<Door, 'hand'>(
+      [door],
+      operation,
+      operationId('inv'),
+      1,
+    );
     expect(elements[0]?.side).toBe(door.side);
   });
 
@@ -153,7 +168,11 @@ describe('buildFlipDoorHandOperation / applyUpdateProperty', () => {
     const first = buildFlipDoorHandOperation({ id: operationId('op-1'), ...params, door });
     const afterFirst = applyUpdateProperty<Door, 'hand'>([door], first, operationId('inv-1'), 1);
     const flippedDoor = afterFirst.elements[0]!;
-    const second = buildFlipDoorHandOperation({ id: operationId('op-2'), ...params, door: flippedDoor });
+    const second = buildFlipDoorHandOperation({
+      id: operationId('op-2'),
+      ...params,
+      door: flippedDoor,
+    });
     const afterSecond = applyUpdateProperty<Door, 'hand'>(
       afterFirst.elements,
       second,

@@ -100,10 +100,7 @@ export function createOpening(input: CreateOpeningInput): Opening {
   if (!Number.isFinite(input.sillHeight.value) || input.sillHeight.value < 0) {
     throw new RangeError('sillHeight must be a non-negative finite length');
   }
-  if (
-    !Number.isFinite(input.offsetFromWallStart.value) ||
-    input.offsetFromWallStart.value < 0
-  ) {
+  if (!Number.isFinite(input.offsetFromWallStart.value) || input.offsetFromWallStart.value < 0) {
     throw new RangeError('offsetFromWallStart must be a non-negative finite length');
   }
   return {

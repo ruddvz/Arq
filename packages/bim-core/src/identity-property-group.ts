@@ -77,8 +77,13 @@ export function buildIdentityPropertyGroup(source: IdentitySource): IdentityProp
     name: resolveIdentityName(source),
     levelId: source.levelId === undefined ? missingProperty() : calculatedProperty(source.levelId),
     ifcGlobalId:
-      source.ifcGlobalId === undefined ? missingProperty() : importedProperty(source.ifcGlobalId, 'ifc'),
-    dxfHandle: source.dxfHandle === undefined ? missingProperty() : importedProperty(source.dxfHandle, 'dxf'),
+      source.ifcGlobalId === undefined
+        ? missingProperty()
+        : importedProperty(source.ifcGlobalId, 'ifc'),
+    dxfHandle:
+      source.dxfHandle === undefined
+        ? missingProperty()
+        : importedProperty(source.dxfHandle, 'dxf'),
   };
 }
 
@@ -88,5 +93,7 @@ function resolveIdentityName(source: IdentitySource): PropertyState<string> {
       ? inheritedProperty(source.type.name, source.type.id)
       : overriddenProperty(source.nameOverride, source.type.id);
   }
-  return source.nameOverride === undefined ? missingProperty() : calculatedProperty(source.nameOverride);
+  return source.nameOverride === undefined
+    ? missingProperty()
+    : calculatedProperty(source.nameOverride);
 }

@@ -49,12 +49,7 @@ import type { ElementId, LevelId, RoomId } from './ids';
 import type { WorldPoint } from '@arq/geometry-2d';
 
 export type RoomStatus =
-  | 'valid'
-  | 'not-enclosed'
-  | 'overlapping'
-  | 'too-small'
-  | 'invalid-polygon'
-  | 'stale';
+  'valid' | 'not-enclosed' | 'overlapping' | 'too-small' | 'invalid-polygon' | 'stale';
 
 export interface Room {
   readonly id: RoomId;
@@ -100,7 +95,9 @@ export function createRoom(input: CreateRoomInput): Room {
     throw new RangeError('calculatedArea must be a non-negative finite number');
   }
   if (input.status === 'valid' && input.calculatedBoundary.length < 3) {
-    throw new RangeError("a room with status 'valid' must have a calculatedBoundary of at least 3 points");
+    throw new RangeError(
+      "a room with status 'valid' must have a calculatedBoundary of at least 3 points",
+    );
   }
   const room: Room = {
     id: input.id,

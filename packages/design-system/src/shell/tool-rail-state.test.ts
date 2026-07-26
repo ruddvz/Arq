@@ -9,8 +9,8 @@ import {
 } from './tool-rail-state';
 
 describe('TOOL_RAIL_CATEGORIES', () => {
-  it('has exactly the seven blueprint categories, in the fixed order', () => {
-    expect(TOOL_RAIL_CATEGORIES).toEqual([
+  it('keeps the seven blueprint categories at their fixed indices', () => {
+    expect(TOOL_RAIL_CATEGORIES.slice(0, 7)).toEqual([
       'select',
       'draw',
       'build',
@@ -19,6 +19,15 @@ describe('TOOL_RAIL_CATEGORIES', () => {
       'measure',
       'view',
     ]);
+  });
+
+  /**
+   * Package 3.0 `workspace-tool-registry.json` adds a Review group. It is
+   * appended, never inserted, so the blueprint's fixed order survives.
+   */
+  it('appends the Package 3.0 Review group last', () => {
+    expect(TOOL_RAIL_CATEGORIES).toHaveLength(8);
+    expect(TOOL_RAIL_CATEGORIES.at(-1)).toBe('review');
   });
 });
 

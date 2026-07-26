@@ -77,15 +77,13 @@ describe('createOpening', () => {
   });
 
   it('rejects a negative sillHeight', () => {
-    expect(() => createOpening({ ...baseInput, sillHeight: length(-1, 'mm') })).toThrow(
-      RangeError,
-    );
+    expect(() => createOpening({ ...baseInput, sillHeight: length(-1, 'mm') })).toThrow(RangeError);
   });
 
   it('rejects a negative offsetFromWallStart', () => {
-    expect(() =>
-      createOpening({ ...baseInput, offsetFromWallStart: length(-1, 'mm') }),
-    ).toThrow(RangeError);
+    expect(() => createOpening({ ...baseInput, offsetFromWallStart: length(-1, 'mm') })).toThrow(
+      RangeError,
+    );
   });
 
   it('rejects non-finite dimensions (adversarial: non-finite values)', () => {
@@ -175,7 +173,11 @@ describe('openingsOverlap', () => {
   });
 
   it('is true for two openings on the same wall whose spans genuinely intersect', () => {
-    const a = createOpening({ ...baseInput, offsetFromWallStart: length(500, 'mm'), width: length(900, 'mm') });
+    const a = createOpening({
+      ...baseInput,
+      offsetFromWallStart: length(500, 'mm'),
+      width: length(900, 'mm'),
+    });
     const b = createOpening({
       ...baseInput,
       id: openingId('o-2'),
@@ -186,7 +188,11 @@ describe('openingsOverlap', () => {
   });
 
   it('is false for two openings that only touch end-to-end (adversarial: two openings touching, blueprint section 42)', () => {
-    const a = createOpening({ ...baseInput, offsetFromWallStart: length(500, 'mm'), width: length(900, 'mm') });
+    const a = createOpening({
+      ...baseInput,
+      offsetFromWallStart: length(500, 'mm'),
+      width: length(900, 'mm'),
+    });
     const b = createOpening({
       ...baseInput,
       id: openingId('o-2'),
@@ -203,7 +209,11 @@ describe('openingsOverlap', () => {
   });
 
   it('is symmetric regardless of argument order', () => {
-    const a = createOpening({ ...baseInput, offsetFromWallStart: length(500, 'mm'), width: length(900, 'mm') });
+    const a = createOpening({
+      ...baseInput,
+      offsetFromWallStart: length(500, 'mm'),
+      width: length(900, 'mm'),
+    });
     const b = createOpening({
       ...baseInput,
       id: openingId('o-2'),

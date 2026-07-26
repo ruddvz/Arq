@@ -111,11 +111,7 @@ export function extrudePolygonMesh(
   if (outline.length < 3) {
     return null;
   }
-  if (
-    !Number.isFinite(baseElevation) ||
-    !Number.isFinite(height) ||
-    height <= 0
-  ) {
+  if (!Number.isFinite(baseElevation) || !Number.isFinite(height) || height <= 0) {
     return null;
   }
   for (const point of outline) {

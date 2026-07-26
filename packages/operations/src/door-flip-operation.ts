@@ -37,7 +37,10 @@
 import { flipHand, flipSide, type Door } from '@arq/bim-core';
 import type { ProjectId } from '@arq/bim-core';
 import type { ModelOperation, OperationId } from './operation';
-import { buildUpdatePropertyOperation, type UpdatePropertyPayload } from './update-property-operation';
+import {
+  buildUpdatePropertyOperation,
+  type UpdatePropertyPayload,
+} from './update-property-operation';
 
 export interface BuildFlipDoorParams {
   readonly id: OperationId;

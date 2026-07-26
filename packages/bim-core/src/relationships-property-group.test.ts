@@ -58,10 +58,13 @@ describe('buildRelationshipsPropertyGroup', () => {
 
   it('property: any list of entries with distinct keys never throws', () => {
     fc.assert(
-      fc.property(fc.uniqueArray(fc.string({ minLength: 1 }), { minLength: 0, maxLength: 20 }), (keys) => {
-        const entries = keys.map((key) => relationshipEntry(key, 'references', []));
-        expect(() => buildRelationshipsPropertyGroup(entries)).not.toThrow();
-      }),
+      fc.property(
+        fc.uniqueArray(fc.string({ minLength: 1 }), { minLength: 0, maxLength: 20 }),
+        (keys) => {
+          const entries = keys.map((key) => relationshipEntry(key, 'references', []));
+          expect(() => buildRelationshipsPropertyGroup(entries)).not.toThrow();
+        },
+      ),
     );
   });
 });
@@ -79,6 +82,8 @@ describe('findRelationshipEntry', () => {
   });
 
   it('returns undefined when the key is absent', () => {
-    expect(findRelationshipEntry(buildRelationshipsPropertyGroup([]), 'hostedOpenings')).toBeUndefined();
+    expect(
+      findRelationshipEntry(buildRelationshipsPropertyGroup([]), 'hostedOpenings'),
+    ).toBeUndefined();
   });
 });

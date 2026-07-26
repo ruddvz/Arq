@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "panels": [
+    {
+      "id": "P-left-browser",
+      "name": "Project Browser",
+      "desktop": {
+        "defaultWidth": 268,
+        "min": 232,
+        "max": 384,
+        "dock": "left"
+      },
+      "tabs": ["Project", "Views", "Documents", "Files"],
+      "phone": "full-height sheet via View/Project action",
+      "tablet": "overlay or drawer; never permanently steal narrow canvas"
+    },
+    {
+      "id": "P-right-inspector",
+      "name": "Inspector",
+      "desktop": {
+        "defaultWidth": 292,
+        "min": 248,
+        "max": 420,
+        "dock": "right"
+      },
+      "tabs": ["Properties", "Type", "Relations", "Warnings", "History"],
+      "phone": "bottom sheet 36/68/92% detents",
+      "tablet": "right drawer landscape; bottom sheet portrait"
+    },
+    {
+      "id": "P-review",
+      "name": "Review rail",
+      "desktop": {
+        "defaultWidth": 328,
+        "min": 280,
+        "max": 420,
+        "dock": "left-or-right depending mode"
+      },
+      "tabs": ["Issues", "Comments", "Changes"],
+      "phone": "full-height sheet with canvas peek"
+    },
+    {
+      "id": "P-tasks",
+      "name": "Task tray",
+      "desktop": {
+        "defaultWidth": 360,
+        "dock": "bottom-right-overlay"
+      },
+      "tabs": ["Tasks"],
+      "phone": "bottom sheet"
+    },
+    {
+      "id": "P-ai",
+      "name": "AI proposal",
+      "desktop": {
+        "defaultWidth": 360,
+        "min": 320,
+        "max": 480,
+        "dock": "right-overlay or replace inspector"
+      },
+      "tabs": ["Proposal", "Assumptions", "Validation"],
+      "phone": "full-height review sheet; apply bar sticky"
+    },
+    {
+      "id": "P-diagnostics",
+      "name": "Diagnostics",
+      "desktop": {
+        "defaultWidth": 420,
+        "min": 360,
+        "max": 560,
+        "dock": "right-overlay"
+      },
+      "tabs": ["Model", "System", "Performance"],
+      "phone": "full-height sheet"
+    }
+  ]
+}

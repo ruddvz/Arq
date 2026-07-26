@@ -82,9 +82,9 @@ describe('fitBoundingSphere', () => {
     expect(() => fitBoundingSphere(DEFAULT_ORBIT_CAMERA_STATE, { x: 0, y: 0, z: 0 }, 0, 1)).toThrow(
       RangeError,
     );
-    expect(() => fitBoundingSphere(DEFAULT_ORBIT_CAMERA_STATE, { x: 0, y: 0, z: 0 }, 10, 0)).toThrow(
-      RangeError,
-    );
+    expect(() =>
+      fitBoundingSphere(DEFAULT_ORBIT_CAMERA_STATE, { x: 0, y: 0, z: 0 }, 10, 0),
+    ).toThrow(RangeError);
     expect(() =>
       fitBoundingSphere(DEFAULT_ORBIT_CAMERA_STATE, { x: 0, y: 0, z: 0 }, 10, 1, 0),
     ).toThrow(RangeError);

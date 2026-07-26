@@ -59,18 +59,18 @@ export function buildHistoryPropertyGroup(
   const relevant = appliedLog.filter(
     ({ result }) => result.status === 'applied' && result.affectedElementIds.includes(elementId),
   );
-  const entries = relevant.map(
-    ({ operation }): HistoryEntry => ({
-      operationId: operation.id,
-      type: operation.type,
-      actorId: operation.actorId,
-      timestamp: operation.timestamp,
-    }),
-  );
+  const entries = relevant.map(({ operation }): HistoryEntry => ({
+    operationId: operation.id,
+    type: operation.type,
+    actorId: operation.actorId,
+    timestamp: operation.timestamp,
+  }));
   return { entries: stableSortDescendingByTimestamp(entries) };
 }
 
-function stableSortDescendingByTimestamp(entries: readonly HistoryEntry[]): readonly HistoryEntry[] {
+function stableSortDescendingByTimestamp(
+  entries: readonly HistoryEntry[],
+): readonly HistoryEntry[] {
   return entries
     .map((entry, index) => ({ entry, index }))
     .sort((a, b) => {

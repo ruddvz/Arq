@@ -39,9 +39,7 @@ describe('lineWeightToDevicePixels', () => {
 
   it('rejects a non-finite devicePixelRatio (adversarial: non-finite values)', () => {
     expect(() => lineWeightToDevicePixels('regular', Number.NaN)).toThrow(RangeError);
-    expect(() => lineWeightToDevicePixels('regular', Number.POSITIVE_INFINITY)).toThrow(
-      RangeError,
-    );
+    expect(() => lineWeightToDevicePixels('regular', Number.POSITIVE_INFINITY)).toThrow(RangeError);
   });
 });
 

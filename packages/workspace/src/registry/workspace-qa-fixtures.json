@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "fixtures": [
+    {
+      "id": "layout-1536x864",
+      "viewport": "1536x864",
+      "checks": [
+        "no clipped primary action",
+        "canvas minimum maintained or panels become overlays",
+        "tab active state visible",
+        "save and sync separately visible or available in project menu",
+        "focus order follows visual order",
+        "no hover-only essential action"
+      ]
+    },
+    {
+      "id": "layout-1920x1080",
+      "viewport": "1920x1080",
+      "checks": [
+        "no clipped primary action",
+        "canvas minimum maintained or panels become overlays",
+        "tab active state visible",
+        "save and sync separately visible or available in project menu",
+        "focus order follows visual order",
+        "no hover-only essential action"
+      ]
+    },
+    {
+      "id": "layout-1366x768",
+      "viewport": "1366x768",
+      "checks": [
+        "no clipped primary action",
+        "canvas minimum maintained or panels become overlays",
+        "tab active state visible",
+        "save and sync separately visible or available in project menu",
+        "focus order follows visual order",
+        "no hover-only essential action"
+      ]
+    },
+    {
+      "id": "layout-1024x768",
+      "viewport": "1024x768",
+      "checks": [
+        "no clipped primary action",
+        "canvas minimum maintained or panels become overlays",
+        "tab active state visible",
+        "save and sync separately visible or available in project menu",
+        "focus order follows visual order",
+        "no hover-only essential action"
+      ]
+    },
+    {
+      "id": "layout-1194x834",
+      "viewport": "1194x834",
+      "checks": [
+        "no clipped primary action",
+        "canvas minimum maintained or panels become overlays",
+        "tab active state visible",
+        "save and sync separately visible or available in project menu",
+        "focus order follows visual order",
+        "no hover-only essential action"
+      ]
+    },
+    {
+      "id": "layout-834x1194",
+      "viewport": "834x1194",
+      "checks": [
+        "no clipped primary action",
+        "canvas minimum maintained or panels become overlays",
+        "tab active state visible",
+        "save and sync separately visible or available in project menu",
+        "focus order follows visual order",
+        "no hover-only essential action"
+      ]
+    },
+    {
+      "id": "layout-393x852",
+      "viewport": "393x852",
+      "checks": [
+        "no clipped primary action",
+        "canvas minimum maintained or panels become overlays",
+        "tab active state visible",
+        "save and sync separately visible or available in project menu",
+        "focus order follows visual order",
+        "no hover-only essential action"
+      ]
+    },
+    {
+      "id": "layout-412x915",
+      "viewport": "412x915",
+      "checks": [
+        "no clipped primary action",
+        "canvas minimum maintained or panels become overlays",
+        "tab active state visible",
+        "save and sync separately visible or available in project menu",
+        "focus order follows visual order",
+        "no hover-only essential action"
+      ]
+    }
+  ],
+  "contentStress": [
+    "project name 80 chars",
+    "view name 100 chars",
+    "10+ open tabs",
+    "1000 browser nodes virtualised",
+    "200+ issues",
+    "4-digit warning counts",
+    "offline + failed local save",
+    "read-only project",
+    "200% browser zoom",
+    "reduced motion",
+    "forced colours/high contrast",
+    "IME active",
+    "software keyboard visible"
+  ]
+}

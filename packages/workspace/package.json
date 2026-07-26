@@ -1,0 +1,11 @@
+{
+  "name": "@arq/workspace",
+  "private": true,
+  "version": "0.0.0",
+  "description": "The open-project workspace contract - modes, view tabs, panel docking, tool taxonomy and capability gates, driven by the UI/UX Package 3.0/4.0 registries.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

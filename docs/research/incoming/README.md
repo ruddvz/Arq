@@ -92,9 +92,9 @@ tested Dexie/IndexedDB implementation (`database.ts`, `journal-append.ts`,
 or discarding that package, and adding an entirely new Rust/WASM
 toolchain to the monorepo's build. (The earlier note in this file about
 a WebGLRenderer conflict was a misreading: the pack's ADR-0025 is about
-the *3D* renderer, Three.js `WebGLRenderer` vs `WebGPURenderer` - which
+the _3D_ renderer, Three.js `WebGLRenderer` vs `WebGPURenderer` - which
 matches what `@arq/model-renderer` already uses. It does not conflict
-with ADR-0008, which is about the *2D* renderer.)
+with ADR-0008, which is about the _2D_ renderer.)
 
 This decision has not been made unilaterally - it needs the user's
 explicit go-ahead, since it discards real, tested work and adds a new

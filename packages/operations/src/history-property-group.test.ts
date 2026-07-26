@@ -7,7 +7,9 @@ import { operationId } from './operation';
 const wall1 = elementId('wall-1');
 const wall2 = elementId('wall-2');
 
-function operation(overrides: Partial<ModelOperation> & Pick<ModelOperation, 'id'>): ModelOperation {
+function operation(
+  overrides: Partial<ModelOperation> & Pick<ModelOperation, 'id'>,
+): ModelOperation {
   return {
     type: 'UPDATE_PROPERTY',
     actorId: 'user-1',
@@ -43,7 +45,12 @@ describe('buildHistoryPropertyGroup', () => {
     };
     const group = buildHistoryPropertyGroup(wall1, [forWall1, forWall2]);
     expect(group.entries).toEqual([
-      { operationId: 'op-1', type: 'UPDATE_PROPERTY', actorId: 'user-1', timestamp: '2026-01-01T00:00:00.000Z' },
+      {
+        operationId: 'op-1',
+        type: 'UPDATE_PROPERTY',
+        actorId: 'user-1',
+        timestamp: '2026-01-01T00:00:00.000Z',
+      },
     ]);
   });
 

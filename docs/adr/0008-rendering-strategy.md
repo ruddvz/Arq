@@ -43,11 +43,11 @@ redraw of the scene, panning, 30 warm-up frames excluded, 180 frames
 measured), in this container (headless Chromium, no real GPU - software
 WebGL via SwiftShader). Three runs each:
 
-| Renderer | avg fps (3 runs) | Meets 60 fps target here? |
-|---|---|---|
-| Canvas 2D (ARQ-115) | 59.3-60.0 | Yes |
-| PixiJS WebGL (ARQ-116) | 16.4-17.3 | No |
-| CanvasKit / Skia-via-WASM, SW rasteriser (ARQ-117) | 39.7-43.0 | No |
+| Renderer                                           | avg fps (3 runs) | Meets 60 fps target here? |
+| -------------------------------------------------- | ---------------- | ------------------------- |
+| Canvas 2D (ARQ-115)                                | 59.3-60.0        | Yes                       |
+| PixiJS WebGL (ARQ-116)                             | 16.4-17.3        | No                        |
+| CanvasKit / Skia-via-WASM, SW rasteriser (ARQ-117) | 39.7-43.0        | No                        |
 
 Full methodology and results: `docs/research/RENDERER-BENCHMARK-CANVAS-2D.md`,
 `RENDERER-BENCHMARK-PIXIJS-WEBGL.md`, `RENDERER-BENCHMARK-CANVASKIT.md`.
@@ -57,7 +57,7 @@ technologies are inferior in general** - this container has no GPU, so
 PixiJS's WebGL path and a WebGL-backed CanvasKit surface can only be
 measured through a full software GPU-pipeline emulation, which both
 research docs flag explicitly as an unfair, non-representative
-condition for a GPU-accelerated technology. What the evidence *does*
+condition for a GPU-accelerated technology. What the evidence _does_
 support, honestly: for the protected benchmark's specific object count,
 run in this environment, Canvas 2D alone already clears the pan/zoom
 target, with none of the added integration cost (WASM payload, custom
@@ -106,7 +106,7 @@ Rollback.
   (BSD-3-Clause) stay recorded in `open-source/TECHNOLOGY-MATRIX.csv`/
   `.json` as spiked-but-not-yet-adopted, available for the upgrade path
   below without a fresh licence review.
-- **Migration difficulty if this changes:** Low-to-medium, *if* the
+- **Migration difficulty if this changes:** Low-to-medium, _if_ the
   renderer abstraction (blueprint section 60, ARQ-119) is actually
   built as a real seam (plan primitives/annotation primitives/visibility
   state/selection state/style tokens, consumed by a swappable renderer)
@@ -125,7 +125,7 @@ Rollback.
   spikes on an actual device from section 121's supported device
   matrix (real GPU). `benchmarks/PERFORMANCE-BUDGETS.json` itself
   states targets are "planning targets until measured" - this ADR does
-  not change that; it is the best decision the *available* evidence
+  not change that; it is the best decision the _available_ evidence
   supports, not a claim that hardware validation is unnecessary.
 - Package specification: `packages/plan-renderer`'s README should be
   updated to reflect "Canvas 2D first backend, behind a renderer

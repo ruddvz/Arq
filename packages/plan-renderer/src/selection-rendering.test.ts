@@ -109,8 +109,18 @@ describe('withSelectionHandles', () => {
   it('handles a scene with multiple selected-primary primitives (only one should really occur in practice, but must not crash)', () => {
     const scene: PlanScene<string> = {
       primitives: [
-        { kind: 'line', elementId: 'a', points: [worldPoint(0, 0)], styleToken: 'selected-primary' },
-        { kind: 'line', elementId: 'b', points: [worldPoint(1, 1)], styleToken: 'selected-primary' },
+        {
+          kind: 'line',
+          elementId: 'a',
+          points: [worldPoint(0, 0)],
+          styleToken: 'selected-primary',
+        },
+        {
+          kind: 'line',
+          elementId: 'b',
+          points: [worldPoint(1, 1)],
+          styleToken: 'selected-primary',
+        },
       ],
     };
     const result = withSelectionHandles(scene);

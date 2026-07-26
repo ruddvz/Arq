@@ -45,7 +45,10 @@ export function createVisibilityState<TId>(): VisibilityState<TId> {
 }
 
 /** Adds `ids` to the persistent hidden set - "hide" (section 62). Leaves isolate state untouched. */
-export function hideElements<TId>(state: VisibilityState<TId>, ids: Iterable<TId>): VisibilityState<TId> {
+export function hideElements<TId>(
+  state: VisibilityState<TId>,
+  ids: Iterable<TId>,
+): VisibilityState<TId> {
   const hidden = new Set(state.hidden);
   for (const id of ids) {
     hidden.add(id);
@@ -54,7 +57,10 @@ export function hideElements<TId>(state: VisibilityState<TId>, ids: Iterable<TId
 }
 
 /** Removes `ids` from the persistent hidden set (the un-hide/"show" counterpart to hideElements). Leaves isolate state untouched. */
-export function showElements<TId>(state: VisibilityState<TId>, ids: Iterable<TId>): VisibilityState<TId> {
+export function showElements<TId>(
+  state: VisibilityState<TId>,
+  ids: Iterable<TId>,
+): VisibilityState<TId> {
   const hidden = new Set(state.hidden);
   for (const id of ids) {
     hidden.delete(id);
@@ -63,7 +69,10 @@ export function showElements<TId>(state: VisibilityState<TId>, ids: Iterable<TId
 }
 
 /** Enters isolate mode: only `ids` remain visible (subject to `hidden` still applying on top) - "isolate" (section 62). Replaces any previous isolate set rather than combining with it. */
-export function isolateElements<TId>(state: VisibilityState<TId>, ids: Iterable<TId>): VisibilityState<TId> {
+export function isolateElements<TId>(
+  state: VisibilityState<TId>,
+  ids: Iterable<TId>,
+): VisibilityState<TId> {
   return { ...state, isolated: new Set(ids) };
 }
 

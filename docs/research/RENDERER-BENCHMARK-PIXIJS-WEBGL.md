@@ -32,7 +32,7 @@ the protected benchmark before selecting a 2D renderer via ADR
   (`node_modules/pixi.js/dist/pixi.min.js`) is injected directly via
   `page.addScriptTag` rather than vendored into the repo. Chromium is
   launched with `--use-gl=swiftshader --enable-webgl
-  --ignore-gpu-blocklist`, since this container has no real GPU -
+--ignore-gpu-blocklist`, since this container has no real GPU -
   without these flags WebGL is unavailable at all in this environment.
 
 ## Results
@@ -40,10 +40,10 @@ the protected benchmark before selecting a 2D renderer via ADR
 Three consecutive runs (2026-07-22), full JSON in `benchmarks/results/`:
 
 | Run | avg fps | avg frame (ms) | p95 frame (ms) | max frame (ms) |
-|---|---|---|---|---|
-| 1 | 16.39 | 61.02 | 83.30 | 83.40 |
-| 2 | 17.34 | 57.68 | 83.40 | 83.40 |
-| 3 | 16.54 | 60.46 | 83.40 | 133.30 |
+| --- | ------- | -------------- | -------------- | -------------- |
+| 1   | 16.39   | 61.02          | 83.30          | 83.40          |
+| 2   | 17.34   | 57.68          | 83.40          | 83.40          |
+| 3   | 16.54   | 60.46          | 83.40          | 133.30         |
 
 Object counts matched the benchmark model exactly in every run.
 

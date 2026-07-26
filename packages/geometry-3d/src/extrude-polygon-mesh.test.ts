@@ -53,7 +53,7 @@ describe('extrudePolygonMesh', () => {
     expect(Math.max(...yValues)).toBeCloseTo(8, 9);
   });
 
-  it('maps a 2D outline point (x, y) to 3D (x, elevation-ish, y) - x/z match the plan, per model-scene.ts\'s coordinate convention', () => {
+  it("maps a 2D outline point (x, y) to 3D (x, elevation-ish, y) - x/z match the plan, per model-scene.ts's coordinate convention", () => {
     const mesh = extrudePolygonMesh(ccwUnitSquare, 0, 1)!;
     const xValues = new Set<number>();
     const zValues = new Set<number>();

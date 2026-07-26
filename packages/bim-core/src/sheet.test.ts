@@ -73,9 +73,9 @@ describe('createSheet', () => {
   });
 
   it('rejects a non-positive viewport scale', () => {
-    expect(() =>
-      createSheet({ ...baseInput, viewport: { ...baseViewport, scale: 0 } }),
-    ).toThrow(/scale/);
+    expect(() => createSheet({ ...baseInput, viewport: { ...baseViewport, scale: 0 } })).toThrow(
+      /scale/,
+    );
   });
 
   it('rejects a non-finite viewport scale', () => {
