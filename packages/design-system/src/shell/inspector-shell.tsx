@@ -47,7 +47,15 @@ export function InspectorShell(props: InspectorShellProps): JSX.Element {
       style={{
         borderLeft: '1px solid var(--arq-ui-line-subtle)',
         padding: 'var(--arq-space-panel)',
-        width: 280,
+        /*
+         * Fills its dock. `workspace-panel-registry.json` owns inspector width
+         * (292px default, 248-420 resizable) and WorkspaceRoot applies it; a
+         * fixed 280 here would fight that and break resizing.
+         */
+        width: '100%',
+        height: '100%',
+        boxSizing: 'border-box',
+        overflow: 'auto',
       }}
     >
       <p>{selectedElementDescription}</p>

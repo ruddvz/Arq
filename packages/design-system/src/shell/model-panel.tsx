@@ -83,7 +83,14 @@ export function ModelPanel(props: ModelPanelProps): JSX.Element {
     <nav
       className="arq-model-panel arq-shell-panel"
       aria-label="Model"
-      style={{ width: 240, borderRight: '1px solid var(--arq-ui-line-subtle)' }}
+      /*
+       * Fills its dock rather than setting its own width. Package 3.0 puts
+       * panel sizing in `workspace-panel-registry.json` (268px default, 232-384
+       * resizable), and WorkspaceRoot applies it - a second width here would
+       * leave a dead strip inside the docked slot and quietly defeat the user's
+       * drag-to-resize.
+       */
+      style={{ width: '100%', height: '100%', borderRight: '1px solid var(--arq-ui-line-subtle)' }}
     >
       <input
         aria-label="Search model"

@@ -1,15 +1,28 @@
-# Generated evidence, not source - each capability-check script
-# (scripts/run-*-capability-check.mjs, scripts/run-*-benchmark.mjs) writes one
-# timestamped JSON result file here as committed proof of a real run.
-# Reformatting them is pure noise: they are data, never hand-edited, and their
-# content is defined entirely by whatever produced them.
+# Files Prettier must not rewrite.
+#
+# Everything here is *generated*. Formatting a generated file is churn at best:
+# the tool that produces it writes it back in its own style on the next run, so
+# the file oscillates and `pnpm format:check` fails again for reasons no human
+# can act on.
+#
+# pnpm-lock.yaml is the clearest case - it is pnpm's output, pnpm rewrites it on
+# every dependency change, and a Prettier pass over it would be undone by the
+# next `pnpm install`. Confirmed empirically: running `prettier --write .` over
+# it once rewrote every single-line `resolution: {integrity: ...}`/`engines: {...}`
+# flow mapping onto several lines - a ~1000-line diff on a file no human edits,
+# which would make every future dependency-touching PR noisy and conflict-prone.
+pnpm-lock.yaml
+
+# Timestamped benchmark and capability-check output. These are measurement
+# records written by scripts/run-*-benchmark.mjs and
+# scripts/run-*-capability-check.mjs as committed proof of a real run;
+# reformatting them edits recorded evidence.
 benchmarks/results/
 
-# pnpm's own lockfile. Reformatting it (confirmed by running `prettier --write .`
-# once and inspecting the diff before reverting) rewrites every single-line
-# `resolution: {integrity: ...}`/`engines: {...}` flow mapping onto several
-# lines - technically still valid YAML, but a ~1000-line diff on a file no
-# human ever hand-edits, that would make every future PR touching a dependency
-# noisy and conflict-prone for no benefit. pnpm itself, not prettier, owns this
-# file's formatting.
-pnpm-lock.yaml
+# Build output.
+**/dist/
+**/coverage/
+
+# Rust build artifacts and generated wasm bindings.
+rust/target/
+packages/*/wasm/

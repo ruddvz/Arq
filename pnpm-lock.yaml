@@ -66,6 +66,9 @@ importers:
       '@arq/plan-renderer':
         specifier: workspace:*
         version: link:../../packages/plan-renderer
+      '@arq/workspace':
+        specifier: workspace:*
+        version: link:../../packages/workspace
       react:
         specifier: ^18
         version: 18.3.1
@@ -125,6 +128,9 @@ importers:
 
   packages/design-system:
     dependencies:
+      '@arq/workspace':
+        specifier: workspace:*
+        version: link:../workspace
       react:
         specifier: ^18
         version: 18.3.1
@@ -257,6 +263,8 @@ importers:
   packages/test-models: {}
 
   packages/validation: {}
+
+  packages/workspace: {}
 
   workers/arqfs-worker:
     dependencies:

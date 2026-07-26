@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "gates": [
+    {
+      "id": "CAP-core-plan",
+      "status": "current/protected-path",
+      "surfaces": ["WS-02"],
+      "rule": "May be implemented against current semantic/tool contracts."
+    },
+    {
+      "id": "CAP-3d",
+      "status": "current/derived",
+      "surfaces": ["WS-03", "WS-04"],
+      "rule": "Derived renderer only; no canonical mesh mutation."
+    },
+    {
+      "id": "CAP-document",
+      "status": "current-or-near-term",
+      "surfaces": ["WS-05", "WS-06", "WS-07"],
+      "rule": "Use truthful available document/sheet/export capabilities."
+    },
+    {
+      "id": "CAP-collaboration",
+      "status": "gated-until-current-repo-evidence",
+      "surfaces": ["WS-09", "WS-10", "WS-13", "WS-23"],
+      "rule": "Design is complete; hidden/disabled/preview states must not pretend server capability."
+    },
+    {
+      "id": "CAP-ai",
+      "status": "gated-until-current-repo-evidence",
+      "surfaces": ["WS-20"],
+      "rule": "Proposal UX may be built behind flag; no direct mutation; no capability claim without backend evidence."
+    },
+    {
+      "id": "CAP-native",
+      "status": "architecture-decision-required",
+      "surfaces": ["future native shells"],
+      "rule": "Do not add Tauri/native mobile packaging from this UI package alone."
+    },
+    {
+      "id": "CAP-broad-exchange",
+      "status": "format-capability-matrix-required",
+      "surfaces": ["WS-14", "WS-15", "WS-16", "WS-17"],
+      "rule": "Only expose formats/operations backed by current tested adapters."
+    }
+  ]
+}

@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@arq/workspace": "workspace:*",
     "react-aria-components": "^1.19.0"
   },
   "peerDependencies": {

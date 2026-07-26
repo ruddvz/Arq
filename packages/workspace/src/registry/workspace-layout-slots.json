@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "layouts": {
+    "desktop1536": {
+      "viewport": "1536x864",
+      "topBar": 64,
+      "tabStrip": 40,
+      "modeRail": 48,
+      "toolRail": 48,
+      "leftPanel": 268,
+      "rightPanel": 292,
+      "contextBar": 38,
+      "statusBar": 30,
+      "canvasMinWidth": 620,
+      "notes": [
+        "TopBar + tabs are denser than marketing/account headers.",
+        "Mode rail may merge with tool rail visually but remains semantically separate."
+      ]
+    },
+    "wide1920": {
+      "viewport": "1920x1080",
+      "topBar": 64,
+      "tabStrip": 40,
+      "modeRail": 48,
+      "toolRail": 48,
+      "leftPanel": 292,
+      "rightPanel": 320,
+      "contextBar": 38,
+      "statusBar": 30,
+      "canvasMinWidth": 900
+    },
+    "compact1366": {
+      "viewport": "1366x768",
+      "topBar": 60,
+      "tabStrip": 38,
+      "modeRail": 44,
+      "toolRail": 44,
+      "leftPanel": 244,
+      "rightPanel": 264,
+      "contextBar": 36,
+      "statusBar": 28,
+      "collapsePriority": [
+        "presence labels",
+        "low-priority status text",
+        "right inspector to overlay before canvas <560px"
+      ]
+    },
+    "desktop1024": {
+      "viewport": "1024x768",
+      "topBar": 56,
+      "tabStrip": 38,
+      "modeRail": 44,
+      "toolRail": 44,
+      "leftPanel": 220,
+      "rightPanel": "overlay",
+      "contextBar": 36,
+      "statusBar": 28,
+      "rule": "Only one secondary side panel docked; canvas first."
+    },
+    "ipadLandscape1194x834": {
+      "topBar": 54,
+      "tabStrip": 38,
+      "floatingToolPalette": 56,
+      "inspectorDrawer": 320,
+      "contextNumericDock": 48,
+      "statusMinimal": 28,
+      "safeInset": 12,
+      "rule": "Canvas first; browser and inspector are transient drawers; Pencil can draw while touch pans/zooms by configured gesture policy."
+    },
+    "ipadPortrait834x1194": {
+      "topBar": 52,
+      "tabStrip": 36,
+      "toolCategoryStrip": 52,
+      "bottomInspectorDetents": [320, 650, 980],
+      "numericDock": 52,
+      "rule": "No left+right desktop columns. Browser and inspector are sheets."
+    },
+    "iphone393x852": {
+      "topBar": 48,
+      "viewTabBar": 36,
+      "bottomDock": 56,
+      "sheetDetents": [300, 620, 790],
+      "rule": "One primary task at a time. Canvas, inspector, project browser, review and tool picker are layered states, never squeezed side by side."
+    },
+    "android412x915": {
+      "topBar": 48,
+      "viewTabBar": 36,
+      "bottomDock": 60,
+      "sheetDetents": [320, 680, 850],
+      "rule": "Same information architecture as phone web/iOS. Respect back gesture/system bars and avoid edge-only destructive gestures."
+    }
+  }
+}
