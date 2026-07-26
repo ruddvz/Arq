@@ -111,18 +111,18 @@ follow-ups are:
    `picking-contract.ts` and `selection-id-pass.wgsl` describe a capped,
    revision-matched depth-peel design worth evaluating against whatever
    `packages/model-renderer` looks like at that time.
-3. A Tauri desktop shell (ADR-008) is a hard-to-reverse platform decision —
-   raise it with the user explicitly before starting, same as the
-   SQLite-WASM-vs-Dexie conflict already flagged in the parent
-   `docs/research/incoming/README.md`. Note that `@arq/workspace` reaches the
-   same conclusion independently: its
-   `registry/workspace-capability-gates.json` carries the rule "Do not add
-   Tauri/native mobile packaging from this UI package alone," and
-   `registry/workspace-platform-layouts.json` states that visual/input
-   adaptation "does not authorize Tauri/native iPad/iPhone/Android
-   implementation without repository decision." Those are the only Tauri
-   mentions in the repo, and both are prohibitions — not an existing
-   integration.
+3. A Tauri desktop shell (ADR-008) is now a decided question: **deferred**
+   by this repo's `docs/adr/0027-desktop-shell-deferral.md` (D-024 in the
+   decision register), which records browser-first delivery and the explicit
+   gates that would justify revisiting. `@arq/workspace` reaches the same
+   conclusion independently: its `registry/workspace-capability-gates.json`
+   carries the rule "Do not add Tauri/native mobile packaging from this UI
+   package alone," and `registry/workspace-platform-layouts.json` states
+   that visual/input adaptation "does not authorize Tauri/native
+   iPad/iPhone/Android implementation without repository decision" —
+   ADR-0027 is that repository decision. If a gate ever passes, this pack's
+   ADR-008 and `reference/native-desktop-port.ts` remain the starting
+   material for the capability-port design.
 4. `arq-ui-theme.css` should be diffed against
    `packages/design-system/src/tokens.css` and `src/shell/shell-tokens.css`
    before reuse, since no automated comparison was done here.

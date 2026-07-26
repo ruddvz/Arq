@@ -74,31 +74,44 @@ state (not just skimmed by directory name). Findings:
    adopting them would mean discarding or duplicating 190+ already-
    shipped, tested issues rather than extending them.
 
-## The one real, unresolved architectural conflict
+## The SQLite-vs-Dexie conflict: since resolved
 
-The pack's own `docs/product/SOURCE-OF-TRUTH.md` (filed in
-`blueprint-revisions/`) explicitly states its current source includes
-"ADR-0019 and later" and lists **"Dexie project database"** and
-**"generic IndexedDB ADR-0006"** under "Historical or superseded."
-ADR-0019/0021/0024 (now in `docs/adr/`) propose a SQLite-WASM +
-OPFS-backed `.arq` file format instead, and ADR-0020 proposes a shared
-Rust core compiled to WebAssembly.
+An earlier revision of this file flagged one real, hard-to-reverse
+conflict: the pack's `SOURCE-OF-TRUTH.md` listed the shipped
+Dexie/IndexedDB `@arq/local-storage` package as "superseded" in favour of
+a SQLite-WASM + OPFS `.arq` format (ADR-0019/0021/0024), and this file
+said that decision "needs the user's explicit go-ahead."
 
-This is a real, deliberate, hard-to-reverse conflict with what is
-already shipped and tested here: `@arq/local-storage` is a working,
-tested Dexie/IndexedDB implementation (`database.ts`, `journal-append.ts`,
-`journal-recovery.ts`, `snapshot.ts`, `archive-export.ts`, `quota-error.ts`,
-`recovery-report.ts`). Adopting the pack's direction would mean rewriting
-or discarding that package, and adding an entirely new Rust/WASM
-toolchain to the monorepo's build. (The earlier note in this file about
-a WebGLRenderer conflict was a misreading: the pack's ADR-0025 is about
-the _3D_ renderer, Three.js `WebGLRenderer` vs `WebGPURenderer` - which
-matches what `@arq/model-renderer` already uses. It does not conflict
-with ADR-0008, which is about the _2D_ renderer.)
+That conflict has since been resolved - do not re-raise it as open. The
+resolution is recorded in `docs/product/DECISION-REGISTER.csv`:
 
-This decision has not been made unilaterally - it needs the user's
-explicit go-ahead, since it discards real, tested work and adds a new
-toolchain dependency.
+- **D-007 (superseded)**: Dexie's role narrowed to the device-local
+  derived/index/view-state cache tier only (ADR-0022) - which
+  `packages/local-storage/src/derived-cache.ts` already implements. The
+  remaining `@arq/local-storage` modules stay in place, real and in use,
+  pending a separately-numbered cutover issue once `packages/arqfs` is
+  proven; nothing was discarded.
+- **D-015 / D-020 / D-023**: the SQLite `.arq` file is the canonical live
+  project file (application ID `0x41525131`, versioned schema), run
+  through SQLite WASM in a dedicated worker over opfs-sahpool, with the
+  zip archive retained as the portable export container.
+
+The direction is no longer paper: `packages/arqfs` (17 test files,
+including fuzz, migration, recovery and clean-export coverage),
+`workers/arqfs-worker`, and OPFS capability benchmarks under
+`benchmarks/results/` all shipped, and `.zeus/FAST-KERNEL.md` makes the
+versioned-SQLite `.arq` file a non-negotiable. The user additionally gave
+a general go-ahead on 2026-07-26 to settle the flagged decisions.
+
+(The earlier note in this file about a WebGLRenderer conflict was a
+misreading: the pack's ADR-0025 is about the _3D_ renderer, Three.js
+`WebGLRenderer` vs `WebGPURenderer` - which matches what
+`@arq/model-renderer` already uses. It does not conflict with ADR-0008,
+which is about the _2D_ renderer.)
+
+The related Tauri desktop-shell question raised by the 2026-07-24 pack is
+also now decided: deferred by ADR-0027 / D-024, with explicit revisit
+gates. See `docs/adr/0027-desktop-shell-deferral.md`.
 
 ## 2026-07-24 upload: "Arq CAD/BIM Architecture Package"
 
