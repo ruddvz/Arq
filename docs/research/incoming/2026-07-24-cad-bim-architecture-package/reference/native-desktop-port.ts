@@ -6,10 +6,7 @@
  */
 
 export type DesktopCapability =
-  | 'fullscreen'
-  | 'window-vibrancy'
-  | 'native-file-dialog'
-  | 'native-menu';
+  'fullscreen' | 'window-vibrancy' | 'native-file-dialog' | 'native-menu';
 
 export interface NativeDesktopPort {
   readonly runtime: 'web' | 'tauri' | 'other';
