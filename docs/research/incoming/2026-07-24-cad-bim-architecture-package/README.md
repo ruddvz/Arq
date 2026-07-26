@@ -71,10 +71,11 @@ nothing). Confirmed against current implementation state:
   scrubber (`numeric-scrubber.ts`'s pointer-capture session). `grep` for
   "quantity draft", "NumericScrub", "hud-placement" across `packages/`
   returned no hits outside the palette files.
-- **Progressive surface/motion system (ADR-011, `arq-ui-theme.css`)** — no
-  matching design token file found under `packages/design-system`; worth a
-  side-by-side compare against that package's existing token source before
-  any adoption, since the two may already diverge in naming.
+- **Progressive surface/motion system (ADR-011, `arq-ui-theme.css`)** — the
+  repo has its own token sources (`packages/design-system/src/tokens.css` and
+  `src/shell/shell-tokens.css`); the pack's file is not one of them. Diff it
+  against those two before any adoption — they may already diverge in naming,
+  and the repo's versions are the ones the shipped shell actually consumes.
 - **Render-origin localisation (`webgpu-render-origin.ts`,
   `high-low-render-origin.wgsl`, `coordinates.ts`)** — `packages/model-renderer`
   has no float64→float32 chunk-origin localisation step yet (`grep` for
@@ -113,7 +114,15 @@ follow-ups are:
 3. A Tauri desktop shell (ADR-008) is a hard-to-reverse platform decision —
    raise it with the user explicitly before starting, same as the
    SQLite-WASM-vs-Dexie conflict already flagged in the parent
-   `docs/research/incoming/README.md`.
+   `docs/research/incoming/README.md`. Note that `@arq/workspace` reaches the
+   same conclusion independently: its
+   `registry/workspace-capability-gates.json` carries the rule "Do not add
+   Tauri/native mobile packaging from this UI package alone," and
+   `registry/workspace-platform-layouts.json` states that visual/input
+   adaptation "does not authorize Tauri/native iPad/iPhone/Android
+   implementation without repository decision." Those are the only Tauri
+   mentions in the repo, and both are prohibitions — not an existing
+   integration.
 4. `arq-ui-theme.css` should be diffed against
-   `packages/design-system`'s actual token source before reuse, since no
-   automated comparison was done here.
+   `packages/design-system/src/tokens.css` and `src/shell/shell-tokens.css`
+   before reuse, since no automated comparison was done here.
