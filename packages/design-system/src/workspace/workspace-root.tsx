@@ -19,6 +19,7 @@ import { TOOL_RAIL_WIDTH_PX } from '../shell/tool-rail';
 import { WorkspaceSheet } from './workspace-sheet';
 import { PhoneDock } from './phone-dock';
 import { TabletDrawerBar } from './tablet-drawer-bar';
+import { PanelResizeHandle } from './panel-resize-handle';
 
 /**
  * The width the two vertical rails actually occupy in this shell, for the
@@ -97,6 +98,12 @@ export interface WorkspaceRootProps {
   readonly viewSwitcherSheet?: ReactNode;
   readonly reviewSheet?: ReactNode;
   readonly reviewDisabledReason?: string;
+  /**
+   * Doc 36: the docked panels are resizable within the registry's bounds.
+   * Omitted means no handle is rendered - a handle that reports a width nobody
+   * stores is worse than none.
+   */
+  readonly onResizePanel?: (panel: 'project-browser' | 'inspector', widthPx: number) => void;
 }
 
 function OverlayPanel(props: {
@@ -203,6 +210,7 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
     viewSwitcherSheet,
     reviewSheet,
     reviewDisabledReason,
+    onResizePanel,
   } = props;
 
   const platform: WorkspacePlatform = resolveWorkspacePlatform(probe);
@@ -267,12 +275,23 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
         {!canvasFirst && toolRail}
 
         {browserDocked && (
-          <div
-            className="arq-workspace__docked arq-workspace__docked--left"
-            style={{ width: panels['project-browser'].widthPx, flex: '0 0 auto', minWidth: 0 }}
-          >
-            {projectBrowser}
-          </div>
+          <>
+            <div
+              className="arq-workspace__docked arq-workspace__docked--left"
+              style={{ width: panels['project-browser'].widthPx, flex: '0 0 auto', minWidth: 0 }}
+            >
+              {projectBrowser}
+            </div>
+            {onResizePanel !== undefined && (
+              <PanelResizeHandle
+                panel="project-browser"
+                label="project browser"
+                side="left"
+                widthPx={panels['project-browser'].widthPx}
+                onResize={(width) => onResizePanel('project-browser', width)}
+              />
+            )}
+          </>
         )}
 
         <main
@@ -284,12 +303,23 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
         </main>
 
         {inspectorDocked && (
-          <div
-            className="arq-workspace__docked arq-workspace__docked--right"
-            style={{ width: panels.inspector.widthPx, flex: '0 0 auto', minWidth: 0 }}
-          >
-            {inspector}
-          </div>
+          <>
+            {onResizePanel !== undefined && (
+              <PanelResizeHandle
+                panel="inspector"
+                label="inspector"
+                side="right"
+                widthPx={panels.inspector.widthPx}
+                onResize={(width) => onResizePanel('inspector', width)}
+              />
+            )}
+            <div
+              className="arq-workspace__docked arq-workspace__docked--right"
+              style={{ width: panels.inspector.widthPx, flex: '0 0 auto', minWidth: 0 }}
+            >
+              {inspector}
+            </div>
+          </>
         )}
 
         {browserFloating && (

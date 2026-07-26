@@ -41,8 +41,11 @@ import {
   cancelTool,
   capabilityUnavailableReason,
   closeSheet,
+  closeOtherTabs,
   closeTab,
+  closeTabsToRight,
   collapseSheet,
+  duplicateTab,
   expandSheet,
   handleSystemBack,
   initialModeState,
@@ -52,9 +55,12 @@ import {
   reconcileInspectorTab,
   selectInspectorTab,
   reconcileDockedPanels,
+  resizePanel,
   selectBrowserSection,
   resolveLayoutSlots,
+  resolveShortcutDialect,
   resolveWorkspacePlatform,
+  shortcutLabel,
   shouldHandleShortcut,
   switchModeIfAvailable,
   toggleSheet,
@@ -192,10 +198,18 @@ const MODEL_TREE: readonly ModelPanelNode[] = [
   },
 ];
 
-const COMMAND_ENTRIES: readonly CommandPaletteEntry[] = [
+/**
+ * `workspace-keyboard-map.json` ids where one exists, so the palette can show
+ * the platform-adapted binding beside the command rather than a second,
+ * hand-written shortcut vocabulary.
+ */
+const COMMAND_ENTRIES: readonly Omit<CommandPaletteEntry, 'shortcutLabel'>[] = [
+  { id: 'select', label: 'Select tool', category: 'Select', synonyms: ['pick'] },
   { id: 'wall', label: 'Wall draw', category: 'Draw', synonyms: ['wall'] },
   { id: 'door', label: 'Insert door', category: 'Build', synonyms: ['door'] },
   { id: 'room-boundary', label: 'Insert room', category: 'Build', synonyms: ['room'] },
+  { id: 'fit', label: 'Fit view', category: 'View', synonyms: ['zoom extents'] },
+  { id: 'close-tab', label: 'Close active view', category: 'View', synonyms: ['close tab'] },
   {
     id: 'export-dxf',
     label: 'Export DXF',
@@ -203,6 +217,17 @@ const COMMAND_ENTRIES: readonly CommandPaletteEntry[] = [
     disabledReason: 'No project open yet',
   },
 ];
+
+/*
+ * Honest, not decorative: this shell has no save pipeline and no sync backend,
+ * so claiming "Saved"/"Synced" would be exactly the fabricated status the
+ * project's own rules forbid. Named once and shared by the desktop and phone
+ * bars - two literals drifted apart the moment the phone bar was added, and the
+ * layout capability check caught the phone claiming "Unsaved changes" for a
+ * project that was never open.
+ */
+const DEMO_SAVE_STATE = 'no-project' as const;
+const DEMO_SYNC_STATE = 'offline' as const;
 
 const INITIAL_PROBE: ViewportProbe = { widthPx: 1536, heightPx: 864, coarsePointer: false };
 
@@ -340,6 +365,13 @@ export function App(): JSX.Element {
       }
 
       if (event.key === 'Escape') {
+        // Doc 47 gestures and the registry's `escape` command: overlays first,
+        // then the tool's own draft. Closing the sheet and cancelling a wall in
+        // one keypress would lose work the user only meant to un-cover.
+        if (sheet.openSheet !== null) {
+          setSheet(closeSheet());
+          return;
+        }
         setToolState(cancelTool);
         setCommandPaletteOpen(false);
         return;
@@ -351,19 +383,36 @@ export function App(): JSX.Element {
         return;
       }
 
+      // Registry `close-tab`: Cmd/Ctrl+W. The browser owns this combination for
+      // its own tab, so preventDefault is what makes it ours - and it is only
+      // claimed when there is actually a closeable view to close, otherwise the
+      // user's expectation that Cmd+W closes something is simply wrong here.
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'w') {
+        const active = tabs.tabs.find((tab) => tab.id === tabs.activeId);
+        if (active?.closeable === true) {
+          event.preventDefault();
+          setTabs((state) => closeTab(state, active.id));
+        }
+        return;
+      }
+
       if (!isUnmodifiedLetterShortcut(probeEvent)) {
         return;
       }
-      if (event.key.toLowerCase() === 'v') {
+      // Registry `select`, `wall`, `fit`.
+      const letter = event.key.toLowerCase();
+      if (letter === 'v') {
         handleActivateTool('select');
-      } else if (event.key.toLowerCase() === 'w') {
+      } else if (letter === 'w') {
         handleActivateTool('wall');
+      } else if (letter === 'f') {
+        handleActivateTool('fit');
       }
     }
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [handleActivateTool]);
+  }, [handleActivateTool, sheet.openSheet, tabs]);
 
   const isWallSelected = modelSelection.primary === 'demo-wall-1';
   /*
@@ -412,6 +461,31 @@ export function App(): JSX.Element {
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, [sheet.openSheet]);
+
+  /*
+   * `workspace-keyboard-map.json` rule 4: "Shortcut labels are platform-adapted,
+   * not hard-coded Cmd everywhere." The dialect is resolved once from the same
+   * probe that drives layout, then every command that has a registry binding
+   * carries its label into the palette.
+   */
+  const shortcutDialect = useMemo(
+    () =>
+      resolveShortcutDialect(
+        platform,
+        typeof navigator === 'undefined' ? false : /Mac|iPhone|iPad/.test(navigator.platform),
+        !probe.coarsePointer,
+      ),
+    [platform, probe.coarsePointer],
+  );
+
+  const commandEntries = useMemo<readonly CommandPaletteEntry[]>(
+    () =>
+      COMMAND_ENTRIES.map((entry) => {
+        const label = shortcutLabel(entry.id, shortcutDialect);
+        return label === null ? entry : { ...entry, shortcutLabel: label };
+      }),
+    [shortcutDialect],
+  );
 
   const activeToolLabel = useMemo(() => {
     const contract = toolContract(toolState.activeToolId);
@@ -471,13 +545,14 @@ export function App(): JSX.Element {
         onCloseSheet={() => setSheet(closeSheet())}
         onExpandSheet={() => setSheet(expandSheet)}
         onCollapseSheet={() => setSheet(collapseSheet)}
+        onResizePanel={(panel, width) => setPanels((current) => resizePanel(current, panel, width))}
         onSelectPointerTool={() => handleActivateTool('select')}
         activeToolLabel={activeToolLabel}
         phoneProjectBar={
           <PhoneProjectBar
             projectName={projectName}
-            saveState="unsaved-changes"
-            syncState="offline"
+            saveState={DEMO_SAVE_STATE}
+            syncState={DEMO_SYNC_STATE}
             onBackToProjects={() => setFileOpenPanelOpen(true)}
             menuItems={[
               {
@@ -545,8 +620,8 @@ export function App(): JSX.Element {
             // claiming "Saved"/"Synced" would be exactly the fabricated status
             // the project's own rules forbid - and would collapse save and sync
             // into one false reassurance.
-            saveState="no-project"
-            syncState="offline"
+            saveState={DEMO_SAVE_STATE}
+            syncState={DEMO_SYNC_STATE}
             canUndo={undoStackRef.current.canUndo()}
             canRedo={undoStackRef.current.canRedo()}
             lastUndoActionLabel={null}
@@ -575,6 +650,20 @@ export function App(): JSX.Element {
             onCloseTab={(id) => setTabs((state) => closeTab(state, id))}
             onTogglePin={(id) => setTabs((state) => togglePin(state, id))}
             onActivateAdjacent={(delta) => setTabs((state) => activateAdjacentTab(state, delta))}
+            contextMenuActions={{
+              onTogglePin: (id) => setTabs((state) => togglePin(state, id)),
+              onDuplicate: (id) =>
+                setTabs((state) => duplicateTab(state, id, `${id}-copy-${state.tabs.length}`)),
+              onRevealInBrowser: (id) => {
+                // Doc 37: "Reveal in browser" is navigation, not mutation - it
+                // opens the browser at the Views section and selects nothing.
+                setBrowserPanel((current) => selectBrowserSection(current, 'views'));
+                setTabs((state) => activateTab(state, id));
+              },
+              onClose: (id) => setTabs((state) => closeTab(state, id)),
+              onCloseOthers: (id) => setTabs((state) => closeOtherTabs(state, id)),
+              onCloseToRight: (id) => setTabs((state) => closeTabsToRight(state, id)),
+            }}
           />
         }
         toolRail={
@@ -695,9 +784,22 @@ export function App(): JSX.Element {
           }}
         >
           <CommandPalette
-            entries={COMMAND_ENTRIES}
+            entries={commandEntries}
             onInvoke={(entry) => {
-              handleActivateTool(entry.id);
+              /*
+               * The palette carries both tool activations and view commands, so
+               * it dispatches by id rather than assuming everything is a tool -
+               * before this, invoking "Close active view" silently did nothing
+               * because handleActivateTool had no such tool to arm.
+               */
+              if (entry.id === 'close-tab') {
+                const active = tabs.tabs.find((tab) => tab.id === tabs.activeId);
+                if (active?.closeable === true) {
+                  setTabs((state) => closeTab(state, active.id));
+                }
+              } else {
+                handleActivateTool(entry.id);
+              }
               recordDemoAction(entry.label);
               setCommandPaletteOpen(false);
             }}

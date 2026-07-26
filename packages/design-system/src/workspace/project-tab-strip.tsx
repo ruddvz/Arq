@@ -5,6 +5,7 @@ import {
   type ViewTabsState,
   type WorkspaceViewTab,
 } from '@arq/workspace';
+import { TabContextMenu, type TabContextMenuActions } from './tab-context-menu';
 
 export interface ProjectTabStripProps {
   readonly state: ViewTabsState;
@@ -19,6 +20,12 @@ export interface ProjectTabStripProps {
   readonly onCloseTab: (tabId: string) => void;
   readonly onTogglePin: (tabId: string) => void;
   readonly onActivateAdjacent: (delta: -1 | 1) => void;
+  /**
+   * Doc 37's per-tab actions. Optional so a surface that only needs a read-only
+   * strip is not forced to implement six handlers - when absent, no context
+   * menu is offered rather than an empty one appearing.
+   */
+  readonly contextMenuActions?: TabContextMenuActions;
 }
 
 function tabLabel(tab: WorkspaceViewTab): string {
@@ -51,9 +58,30 @@ function tabLabel(tab: WorkspaceViewTab): string {
  * fourteen views to reach the canvas.
  */
 export function ProjectTabStrip(props: ProjectTabStripProps): JSX.Element {
-  const { state, visibleSlots, onActivateTab, onCloseTab, onTogglePin, onActivateAdjacent } = props;
+  const {
+    state,
+    visibleSlots,
+    onActivateTab,
+    onCloseTab,
+    onTogglePin,
+    onActivateAdjacent,
+    contextMenuActions,
+  } = props;
   const [overflowOpen, setOverflowOpen] = useState(false);
+  const [menuTabId, setMenuTabId] = useState<string | null>(null);
   const { visible, overflow } = partitionTabsForOverflow(state, visibleSlots);
+
+  /**
+   * Doc 37 lists middle click as a close path but requires "keyboard/menu
+   * equivalents". The context menu is that equivalent, reachable three ways:
+   * right-click, the Menu/ContextMenu key, and Shift+F10 - the two keyboard
+   * paths every desktop platform already teaches.
+   */
+  function openMenuFor(tabId: string): void {
+    if (contextMenuActions !== undefined) {
+      setMenuTabId(tabId);
+    }
+  }
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
     if (event.key === 'ArrowRight') {
@@ -94,7 +122,22 @@ export function ProjectTabStrip(props: ProjectTabStripProps): JSX.Element {
             <span
               key={tab.id}
               className="arq-tab-strip__tab"
-              style={{ display: 'inline-flex', alignItems: 'center' }}
+              style={{ display: 'inline-flex', alignItems: 'center', position: 'relative' }}
+              onContextMenu={(event) => {
+                if (contextMenuActions === undefined) {
+                  return;
+                }
+                event.preventDefault();
+                openMenuFor(tab.id);
+              }}
+              onAuxClick={(event) => {
+                // Doc 37: "middle click may close on desktop", never as the
+                // only path - the close button and this menu are the others.
+                if (event.button === 1 && tab.closeable) {
+                  event.preventDefault();
+                  onCloseTab(tab.id);
+                }
+              }}
             >
               <button
                 type="button"
@@ -107,6 +150,12 @@ export function ProjectTabStrip(props: ProjectTabStripProps): JSX.Element {
                 aria-label={tabLabel(tab)}
                 onClick={() => onActivateTab(tab.id)}
                 onDoubleClick={() => onTogglePin(tab.id)}
+                onKeyDown={(event) => {
+                  if (event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) {
+                    event.preventDefault();
+                    openMenuFor(tab.id);
+                  }
+                }}
               >
                 {tab.pinned && <span aria-hidden="true">📌</span>}
                 {tab.title}
@@ -126,6 +175,20 @@ export function ProjectTabStrip(props: ProjectTabStripProps): JSX.Element {
                 >
                   <span aria-hidden="true">✕</span>
                 </button>
+              )}
+              {menuTabId === tab.id && contextMenuActions !== undefined && (
+                <TabContextMenu
+                  tab={tab}
+                  {...contextMenuActions}
+                  hasOtherClosableTabs={state.tabs.some((t) => t.id !== tab.id && t.closeable)}
+                  hasClosableTabsToRight={state.tabs
+                    .slice(state.tabs.findIndex((t) => t.id === tab.id) + 1)
+                    .some((t) => t.closeable)}
+                  onDismiss={() => {
+                    setMenuTabId(null);
+                    document.getElementById(`arq-tab-${tab.id}`)?.focus();
+                  }}
+                />
               )}
             </span>
           );

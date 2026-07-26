@@ -62,6 +62,11 @@ jobs:
       - run: pnpm benchmark:arqfs-project-isolation
       - run: pnpm benchmark:design-system-dialog
       - run: pnpm benchmark:file-open
+      # Doc 52's workspace visual QA protocol, asserted rather than eyeballed:
+      # band, canvas floor, no horizontal overflow, touch bands canvas-first
+      # with a way to summon panels back, and save/sync separately legible, at
+      # all eight workspace-qa-fixtures.json viewports.
+      - run: pnpm benchmark:workspace-layout
       - uses: actions/upload-artifact@v4
         if: always()
         with:

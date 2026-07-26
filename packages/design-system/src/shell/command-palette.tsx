@@ -141,8 +141,17 @@ export function CommandPalette(props: CommandPaletteProps): JSX.Element {
                 }}
               >
                 <span>{match.entry.label}</span>
-                <span style={{ color: 'var(--arq-ui-text-muted)' }}>
-                  {disabled ? match.entry.disabledReason : match.entry.category}
+                <span
+                  style={{
+                    color: 'var(--arq-ui-text-muted)',
+                    display: 'inline-flex',
+                    gap: 'var(--arq-space-control-group)',
+                  }}
+                >
+                  <span>{disabled ? match.entry.disabledReason : match.entry.category}</span>
+                  {!disabled && match.entry.shortcutLabel !== undefined && (
+                    <kbd style={{ fontFamily: 'inherit' }}>{match.entry.shortcutLabel}</kbd>
+                  )}
                 </span>
               </li>
             );
