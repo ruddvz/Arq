@@ -10,6 +10,7 @@ export * from './status-bar-state';
 export * from './status-bar';
 export * from './context-bar-state';
 export * from './context-bar';
+export * from './modal-dialog';
 export * from './command-palette-search';
 export * from './command-palette';
 export * from './ipad-shell-state';

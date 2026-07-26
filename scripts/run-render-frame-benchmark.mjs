@@ -16,9 +16,27 @@
  */
 
 import { chromium } from 'playwright';
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+
+/**
+ * `/opt/pw-browsers/chromium` is this development sandbox's own pre-installed
+ * browser path (see PLAYWRIGHT_BROWSERS_PATH) - real, but not portable to a
+ * plain CI runner, where `npx playwright install --with-deps chromium`
+ * installs to Playwright's own default cache instead. Using the sandbox path
+ * unconditionally meant this script had never actually been exercised
+ * outside this sandbox until it was first wired into CI, where it failed
+ * immediately: "Failed to launch chromium because executable doesn't exist
+ * at /opt/pw-browsers/chromium". Falling back to `undefined` (Playwright's
+ * own resolution) when that specific path is absent fixes both environments
+ * without special-casing CI.
+ */
+function resolveChromiumExecutablePath() {
+  if (process.env.PLAYWRIGHT_CHROMIUM_PATH) return process.env.PLAYWRIGHT_CHROMIUM_PATH;
+  if (existsSync('/opt/pw-browsers/chromium')) return '/opt/pw-browsers/chromium';
+  return undefined;
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
@@ -32,7 +50,7 @@ async function main() {
   const budgets = JSON.parse(readFileSync(budgetsPath, 'utf8'));
 
   const browser = await chromium.launch({
-    executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || '/opt/pw-browsers/chromium',
+    executablePath: resolveChromiumExecutablePath(),
     headless: true,
   });
   try {

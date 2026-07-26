@@ -22,6 +22,7 @@ export interface TopBarProps {
   readonly lastRedoActionLabel: string | null;
   readonly onUndo: () => void;
   readonly onRedo: () => void;
+  readonly onOpenProject: () => void;
   readonly onShare: () => void;
   readonly onOpenCommandPalette: () => void;
   readonly onOpenAccountMenu: () => void;
@@ -55,6 +56,7 @@ export function TopBar(props: TopBarProps): JSX.Element {
     lastRedoActionLabel,
     onUndo,
     onRedo,
+    onOpenProject,
     onShare,
     onOpenCommandPalette,
     onOpenAccountMenu,
@@ -161,6 +163,9 @@ export function TopBar(props: TopBarProps): JSX.Element {
 
       <div style={{ flex: 1 }} />
 
+      <button type="button" className="arq-shell-button" onClick={onOpenProject}>
+        Open
+      </button>
       <button type="button" className="arq-shell-button" onClick={onShare}>
         Share
       </button>

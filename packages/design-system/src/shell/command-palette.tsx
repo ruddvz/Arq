@@ -1,5 +1,6 @@
 import { useMemo, useState, type KeyboardEvent } from 'react';
 import { searchCommandPaletteEntries, type CommandPaletteEntry } from './command-palette-search';
+import { ArqModalDialog } from './modal-dialog';
 
 export interface CommandPaletteProps {
   readonly entries: readonly CommandPaletteEntry[];
@@ -27,6 +28,14 @@ export interface CommandPaletteProps {
  * Escape closes the palette (section 30: "keyboard-first"). iPad touch:
  * each result is also a real tap target rendered at the same 44px minimum
  * as every other shell control, via `.arq-shell-button`.
+ *
+ * UI-003: the outer chrome (backdrop, focus trap, outside-click close, opener
+ * focus restoration on every close path) comes from `ArqModalDialog` - before
+ * this wrapping, the palette was `role="dialog"` on a plain `<div>` with none
+ * of that: Tab could escape into the background shell, and closing it never
+ * returned focus to whatever button opened it. The palette's own
+ * active-descendant combobox behaviour inside is unchanged - `ArqModalDialog`
+ * only owns the boundary around it.
  */
 export function CommandPalette(props: CommandPaletteProps): JSX.Element {
   const { entries, onInvoke, onClose } = props;
@@ -76,65 +85,71 @@ export function CommandPalette(props: CommandPaletteProps): JSX.Element {
   }
 
   return (
-    <div
-      role="dialog"
-      aria-label="Command palette"
-      className="arq-command-palette arq-shell-panel"
-      style={{
-        borderRadius: 'var(--arq-radius-menu)',
-        border: '1px solid var(--arq-ui-line-default)',
-        padding: 'var(--arq-space-compact)',
-        width: 480,
+    <ArqModalDialog
+      isOpen
+      onOpenChange={(open) => {
+        if (!open) onClose();
       }}
+      aria-label="Command palette"
     >
-      <input
-        autoFocus
-        role="combobox"
-        aria-expanded="true"
-        aria-controls="arq-command-palette-listbox"
-        aria-activedescendant={activeDescendantId}
-        aria-label="Search commands"
-        value={query}
-        onChange={(event) => {
-          setQuery(event.target.value);
-          setHighlightedIndex(0);
+      <div
+        className="arq-command-palette arq-shell-panel"
+        style={{
+          borderRadius: 'var(--arq-radius-menu)',
+          border: '1px solid var(--arq-ui-line-default)',
+          padding: 'var(--arq-space-compact)',
+          width: 480,
         }}
-        onKeyDown={handleKeyDown}
-        style={{ width: '100%' }}
-      />
-      <ul
-        id="arq-command-palette-listbox"
-        role="listbox"
-        aria-label="Command results"
-        style={{ listStyle: 'none', margin: 0, padding: 0 }}
       >
-        {matches.map((match, index) => {
-          const disabled = match.entry.disabledReason !== undefined;
-          return (
-            <li
-              key={match.entry.id}
-              id={`arq-command-palette-option-${match.entry.id}`}
-              role="option"
-              aria-selected={index === clampedIndex}
-              aria-disabled={disabled}
-              className="arq-shell-button"
-              style={{ width: '100%', justifyContent: 'space-between' }}
-              onMouseEnter={() => setHighlightedIndex(index)}
-              onClick={() => {
-                if (!disabled) {
-                  onInvoke(match.entry);
-                }
-              }}
-            >
-              <span>{match.entry.label}</span>
-              <span style={{ color: 'var(--arq-ui-text-muted)' }}>
-                {disabled ? match.entry.disabledReason : match.entry.category}
-              </span>
-            </li>
-          );
-        })}
-        {matches.length === 0 && <li role="presentation">No results</li>}
-      </ul>
-    </div>
+        <input
+          autoFocus
+          role="combobox"
+          aria-expanded="true"
+          aria-controls="arq-command-palette-listbox"
+          aria-activedescendant={activeDescendantId}
+          aria-label="Search commands"
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setHighlightedIndex(0);
+          }}
+          onKeyDown={handleKeyDown}
+          style={{ width: '100%' }}
+        />
+        <ul
+          id="arq-command-palette-listbox"
+          role="listbox"
+          aria-label="Command results"
+          style={{ listStyle: 'none', margin: 0, padding: 0 }}
+        >
+          {matches.map((match, index) => {
+            const disabled = match.entry.disabledReason !== undefined;
+            return (
+              <li
+                key={match.entry.id}
+                id={`arq-command-palette-option-${match.entry.id}`}
+                role="option"
+                aria-selected={index === clampedIndex}
+                aria-disabled={disabled}
+                className="arq-shell-button"
+                style={{ width: '100%', justifyContent: 'space-between' }}
+                onMouseEnter={() => setHighlightedIndex(index)}
+                onClick={() => {
+                  if (!disabled) {
+                    onInvoke(match.entry);
+                  }
+                }}
+              >
+                <span>{match.entry.label}</span>
+                <span style={{ color: 'var(--arq-ui-text-muted)' }}>
+                  {disabled ? match.entry.disabledReason : match.entry.category}
+                </span>
+              </li>
+            );
+          })}
+          {matches.length === 0 && <li role="presentation">No results</li>}
+        </ul>
+      </div>
+    </ArqModalDialog>
   );
 }

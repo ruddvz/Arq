@@ -50,6 +50,37 @@ COOP/COEP's own compatibility costs (it breaks some third-party embeds/popups).
   `release()`, and receives both `writer-acquired` and `writer-released`
   `BroadcastChannel` notifications for real.
 
+## Finding 3: a fixed OPFS filename is a real cross-project data collision, and project-scoped filenames genuinely fix it
+
+Until this check existed, `arqfs-worker-entry.ts` opened every project through the
+same fixed OPFS filename (`/arqfs-prototype.sqlite3`). OPFS storage is shared at the
+_origin_, not per-`Worker` instance, so "one dedicated Worker per project" (ADR-0024's
+own framing) did not by itself give two projects separate files - two different
+projects opened in the same browser origin would silently read and write the same
+underlying database.
+
+`scripts/run-arqfs-project-isolation-capability-check.mjs`
+(`npm run benchmark:arqfs-project-isolation`) proves both the bug and the fix, in a
+real headless Chromium run rather than by inspection of the source:
+
+- **Reproduced the bug directly**: temporarily reverting the check's own throwaway
+  worker script to ignore its `projectId` and reuse one fixed filename (matching the
+  pre-fix `arqfs-worker-entry.ts` exactly) made the check fail with real
+  cross-contamination - reading project A back returned _both_ projects' rows, and
+  so did reading project B. This is what makes the fix a proven regression fix, not
+  an asserted one.
+- **Confirmed the fix**: writing a distinct value to `project-a` and `project-b`
+  through separate `Worker` instances (each constructed with `?project=<id>` in its
+  URL, exactly as `arqfs-worker-client.ts` documents), then a full `page.reload()`,
+  then reading each project back - each project sees only its own value,
+  `noCrossContamination: true`.
+
+`workers/arqfs-worker/src/arqfs-project-filename.ts` now derives
+`/arq-projects/<projectId>.sqlite3` for every project, validated through
+`@arq/arqfs`'s `validateArqfsProjectId` (rejects empty ids, path separators, `..`
+and control characters, so a project id can never be crafted to address a file
+outside its own directory).
+
 ## What this does not prove
 
 - **Real multi-tab user behaviour, real Safari, real iPad OPFS quota behaviour**:
@@ -81,3 +112,14 @@ COOP/COEP's own compatibility costs (it breaks some third-party embeds/popups).
 - `packages/arqfs/src/arqfs-single-writer-lock.ts`: the real single-writer lock
   module (Web Locks API + `BroadcastChannel`), verified via the two-page capability
   check above.
+- `workers/arqfs-worker/src/arqfs-project-filename.ts`: pure, side-effect-free
+  project-id validation and OPFS filename derivation, shared between
+  `arqfs-worker-entry.ts` (choosing which file to open) and a future main-thread
+  caller (choosing the URL to construct the Worker with) - unit-tested in Node
+  (`arqfs-project-filename.test.ts`); the isolation _mechanism itself_ is what
+  Finding 3's browser check verifies, since filename derivation alone cannot prove
+  OPFS honours it.
+- `packages/arqfs/src/arqfs-worker-client.ts`: now also listens for the Worker
+  `error` and `messageerror` events, rejecting every pending request and refusing
+  further ones on this client - `arqfs-worker-client.test.ts` covers this against a
+  fake Worker; not yet exercised against a real Worker crash in a browser.

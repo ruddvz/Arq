@@ -80,6 +80,7 @@ import {
 } from '@arq/icons';
 import { PlanCanvas } from './PlanCanvas';
 import { buildDemoWallAccessibleDescription, buildDemoWallInspectorGroups } from './inspector-data';
+import { FileOpenPanel } from './file-handling/FileOpenPanel';
 
 /**
  * Package 3.0 doc 33: an open project is one persistent workspace, not a set of
@@ -219,6 +220,7 @@ export function App(): JSX.Element {
     secondary: new Set(),
   });
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [fileOpenPanelOpen, setFileOpenPanelOpen] = useState(false);
   const [cursorWorldPosition, setCursorWorldPosition] = useState<{
     readonly x: number;
     readonly y: number;
@@ -378,8 +380,14 @@ export function App(): JSX.Element {
             projectName={projectName}
             onRenameProject={setProjectName}
             activeViewName={activeTab?.title ?? 'No view open'}
-            saveState="saved"
-            syncState="synced"
+            // Honest, not decorative: this shell has no save pipeline and no
+            // sync backend wired up. FileOpenPanel's gate reports whether a
+            // file is safe to open, but nothing opens a project yet, so
+            // claiming "Saved"/"Synced" would be exactly the fabricated status
+            // the project's own rules forbid - and would collapse save and sync
+            // into one false reassurance.
+            saveState="no-project"
+            syncState="offline"
             canUndo={undoStackRef.current.canUndo()}
             canRedo={undoStackRef.current.canRedo()}
             lastUndoActionLabel={null}
@@ -392,6 +400,7 @@ export function App(): JSX.Element {
               undoStackRef.current.redo();
               setHistoryVersion((v) => v + 1);
             }}
+            onOpenProject={() => setFileOpenPanelOpen(true)}
             onShare={() => recordDemoAction('share')}
             onOpenCommandPalette={() => setCommandPaletteOpen(true)}
             onOpenAccountMenu={() => recordDemoAction('open account menu')}
@@ -463,7 +472,7 @@ export function App(): JSX.Element {
             pixelsPerUnit={pixelsPerUnit}
             modelHealth={{ errorCount: 0, warningCount: 0 }}
             localJournalStateLabel="Journal current"
-            syncState="synced"
+            syncState="offline"
             supportModeEnabled={false}
           />
         }
@@ -490,6 +499,10 @@ export function App(): JSX.Element {
           />
         </div>
       )}
+
+      {/* Renders its own full-viewport ArqModalDialog (backdrop, focus trap),
+          so it sits beside WorkspaceRoot rather than inside a layout slot. */}
+      <FileOpenPanel isOpen={fileOpenPanelOpen} onOpenChange={setFileOpenPanelOpen} />
 
       {historyVersion > 0 && (
         <p

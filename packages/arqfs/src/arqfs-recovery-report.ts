@@ -1,6 +1,8 @@
 import type { ArqfsDriver } from './arqfs-driver';
 import { openArqfs, type ArqfsOpenResult } from './arqfs-open';
 import { listArchiveEntryPaths } from './arqfs-archive-store';
+import { checkArqfsIntegrity, type ArqfsIntegrityReport } from './arqfs-integrity';
+import { readWorkingCopyState } from './arqfs-working-copy';
 
 /**
  * ARQ-202: the canonical-tier counterpart to @arq/local-storage's recovery-report.ts
@@ -17,6 +19,10 @@ export interface ArqfsRecoveryReport {
   /** Only meaningful when openResult.status === 'opened' - required entries this file is missing, structurally detected (not present in archive_entry), not by re-validating their content. */
   readonly missingRequiredEntries: readonly string[];
   readonly presentEntryCount: number;
+  /** SQLite page/foreign-key health. Optional to preserve compatibility with callers constructing reports in tests. */
+  readonly integrity?: ArqfsIntegrityReport;
+  /** True when the durable marker shows a crash between write start and commit. */
+  readonly interruptedWrite?: boolean;
 }
 
 /**
@@ -34,8 +40,47 @@ export function buildArqfsRecoveryReport(driver: ArqfsDriver): ArqfsRecoveryRepo
     };
   }
 
-  const present = new Set(listArchiveEntryPaths(driver));
+  let present = new Set<string>();
+  let listingFailed = false;
+  try {
+    present = new Set(listArchiveEntryPaths(driver));
+  } catch {
+    listingFailed = true;
+  }
   const missingRequiredEntries = REQUIRED_ARCHIVE_ENTRIES.filter((entry) => !present.has(entry));
 
-  return { openResult, missingRequiredEntries, presentEntryCount: present.size };
+  let integrity: ArqfsIntegrityReport | undefined;
+  try {
+    integrity = checkArqfsIntegrity(driver);
+  } catch {
+    integrity = {
+      ok: false,
+      quickCheck: ['integrity check could not be completed'],
+      foreignKeyViolations: [],
+    };
+  }
+  if (listingFailed) {
+    integrity = {
+      ...(integrity ?? { quickCheck: [], foreignKeyViolations: [] }),
+      ok: false,
+    };
+  }
+  let interruptedWrite = false;
+  try {
+    interruptedWrite = readWorkingCopyState(driver)?.localCommitState === 'writing';
+  } catch {
+    // A malformed working-copy row is already represented by the failed integrity
+    // result when the connection can still execute PRAGMAs.
+    integrity = {
+      ...(integrity ?? { quickCheck: [], foreignKeyViolations: [] }),
+      ok: false,
+    };
+  }
+  return {
+    openResult,
+    missingRequiredEntries,
+    presentEntryCount: present.size,
+    integrity,
+    interruptedWrite,
+  };
 }

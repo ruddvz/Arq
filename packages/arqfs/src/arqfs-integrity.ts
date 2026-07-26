@@ -17,8 +17,12 @@ export interface ArqfsIntegrityReport {
 }
 
 export function checkArqfsIntegrity(driver: ArqfsDriver): ArqfsIntegrityReport {
-  const quickRows = driver.query<{ readonly integrity_check: string }>('PRAGMA quick_check');
-  const quickCheck = quickRows.map((row) => String(row.integrity_check));
+  // SQLite names this result column after the pragma that produced it: `quick_check`
+  // here, `integrity_check` for the slower full check. Reading a fixed column name
+  // silently yields `undefined` on every row and makes a healthy file look corrupt,
+  // so take the row's single value positionally instead.
+  const quickRows = driver.query('PRAGMA quick_check');
+  const quickCheck = quickRows.map((row) => String(Object.values(row)[0]));
   const foreignKeyViolations = driver.query('PRAGMA foreign_key_check') as readonly Readonly<
     Record<string, unknown>
   >[];

@@ -17,12 +17,23 @@
  * ("later" per the blueprint's own bullet list).
  */
 
-export type SaveState = 'saved' | 'saving' | 'unsaved-changes' | 'recovered';
+/**
+ * `no-project` exists because every other member of this union asserts something
+ * about a project's stored state, and a shell with no project open cannot
+ * truthfully assert any of them - least of all `saved`, which claims a save
+ * happened. Without it a caller has no honest value to pass, which is exactly
+ * how apps/web ended up hard-coding `saved` while no save pipeline existed at
+ * all (section 118 / this repository's "no fake state in a production surface"
+ * rule).
+ */
+export type SaveState = 'no-project' | 'saved' | 'saving' | 'unsaved-changes' | 'recovered';
 export type SyncState = 'synced' | 'syncing' | 'offline' | 'sync-error';
 
 /** Section 126 ("Baseline"): "status not colour-only" - always a real word, never a colour swatch alone. */
 export function describeSaveState(state: SaveState): string {
   switch (state) {
+    case 'no-project':
+      return 'No project open';
     case 'saved':
       return 'Saved';
     case 'saving':

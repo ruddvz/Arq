@@ -11,6 +11,10 @@ import {
 
 describe('describeSaveState', () => {
   const cases: ReadonlyArray<readonly [SaveState, string]> = [
+    // A shell with no project open must have an honest value to render; before
+    // this state existed, apps/web passed 'saved' and the top bar permanently
+    // claimed a save that had never happened.
+    ['no-project', 'No project open'],
     ['saved', 'Saved'],
     ['saving', 'Saving…'],
     ['unsaved-changes', 'Unsaved changes'],

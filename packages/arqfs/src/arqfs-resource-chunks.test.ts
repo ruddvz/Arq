@@ -116,4 +116,53 @@ describe('arqfs-resource-chunks', () => {
       reason: expect.stringContaining('integrity check'),
     });
   });
+
+  /**
+   * Chunk size is a storage-layout choice, not part of content identity. Storing
+   * identical bytes again under a different chunking policy must dedupe to the copy
+   * already on disk - treating it as a metadata conflict rejected legitimate writes
+   * (including every zero-length resource, which hashes the same at any chunk size).
+   */
+  it('dedupes identical content re-stored with a different chunk size', async () => {
+    const d = freshDriver();
+    const content = new TextEncoder().encode('same bytes, different chunking');
+
+    const first = await putResource(d, content, 'text/plain', 'user-texture', 4);
+    const second = await putResource(d, content, 'text/plain', 'user-texture', 64);
+
+    expect(second.sha256).toBe(first.sha256);
+    // The originally stored layout is kept; the resource still assembles exactly.
+    expect(await assembleResource(d, first.sha256)).toEqual({ status: 'assembled', content });
+    expect(
+      d.query('SELECT COUNT(*) AS count FROM resource WHERE sha256 = ?', [first.sha256]),
+    ).toEqual([{ count: 1 }]);
+  });
+
+  it('dedupes a zero-length resource across chunk sizes', async () => {
+    const d = freshDriver();
+    const empty = new Uint8Array(0);
+
+    const first = await putResource(d, empty, 'application/octet-stream', 'user-texture', 1);
+    const second = await putResource(d, empty, 'application/octet-stream', 'user-texture', 200);
+
+    expect(second.sha256).toBe(first.sha256);
+    expect(await assembleResource(d, first.sha256)).toEqual({
+      status: 'assembled',
+      content: empty,
+    });
+  });
+
+  /**
+   * Media type and canonical role are caller-supplied semantics that content
+   * addressing cannot verify, so a mismatch on the same hash is still a conflict.
+   */
+  it('rejects the same content re-stored under a different canonical role', async () => {
+    const d = freshDriver();
+    const content = new TextEncoder().encode('contested bytes');
+    await putResource(d, content, 'text/plain', 'user-texture', 100);
+
+    await expect(putResource(d, content, 'text/plain', 'source-import', 100)).rejects.toMatchObject(
+      { code: 'ARQ_RESOURCE_METADATA_CONFLICT' },
+    );
+  });
 });

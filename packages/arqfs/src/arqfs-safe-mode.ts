@@ -16,6 +16,8 @@ import type { ArqfsRecoveryReport } from './arqfs-recovery-report';
  */
 export type ArqfsSafeModePlanKind =
   | 'unreadable'
+  | 'corrupt'
+  | 'interrupted-write'
   | 'reader-too-old-to-write'
   | 'missing-required-entries'
   | 'safe-mode-required'
@@ -50,6 +52,26 @@ export function resolveArqfsSafeModePlan(report: ArqfsRecoveryReport): ArqfsSafe
       openReadOnly: true,
       missingRequiredEntries: report.missingRequiredEntries,
       reason: "reader format version is below this file's minReaderMajor",
+    };
+  }
+
+  if (report.integrity !== undefined && !report.integrity.ok) {
+    return {
+      kind: 'corrupt',
+      canOpen: false,
+      openReadOnly: true,
+      missingRequiredEntries: report.missingRequiredEntries,
+      reason: 'SQLite integrity checks failed',
+    };
+  }
+
+  if (report.interruptedWrite === true) {
+    return {
+      kind: 'interrupted-write',
+      canOpen: true,
+      openReadOnly: true,
+      missingRequiredEntries: report.missingRequiredEntries,
+      reason: 'a previous local write did not reach commit',
     };
   }
 

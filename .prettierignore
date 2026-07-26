@@ -7,12 +7,16 @@
 #
 # pnpm-lock.yaml is the clearest case - it is pnpm's output, pnpm rewrites it on
 # every dependency change, and a Prettier pass over it would be undone by the
-# next `pnpm install`.
-
+# next `pnpm install`. Confirmed empirically: running `prettier --write .` over
+# it once rewrote every single-line `resolution: {integrity: ...}`/`engines: {...}`
+# flow mapping onto several lines - a ~1000-line diff on a file no human edits,
+# which would make every future dependency-touching PR noisy and conflict-prone.
 pnpm-lock.yaml
 
-# Timestamped benchmark output. These are measurement records, appended to by
-# scripts/run-*-benchmark.mjs; reformatting them edits recorded evidence.
+# Timestamped benchmark and capability-check output. These are measurement
+# records written by scripts/run-*-benchmark.mjs and
+# scripts/run-*-capability-check.mjs as committed proof of a real run;
+# reformatting them edits recorded evidence.
 benchmarks/results/
 
 # Build output.

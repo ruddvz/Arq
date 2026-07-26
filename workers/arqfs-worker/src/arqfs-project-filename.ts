@@ -1,0 +1,44 @@
+import { validateArqfsProjectId } from '@arq/arqfs';
+
+/**
+ * Where a project's canonical file lives inside this origin's OPFS root. One
+ * dedicated Worker per project (ADR-0024) only actually isolates projects if each
+ * Worker also opens a project-scoped filename: OPFS storage is shared at the
+ * origin, not per-Worker, so two projects opened through the same fixed filename
+ * would silently read and write the same underlying file.
+ *
+ * Pure and side-effect-free on purpose - both `arqfs-worker-entry.ts` (inside the
+ * Worker, deriving the filename to open) and a future main-thread Worker-construction
+ * call (deriving the URL to construct the Worker with) need this without either
+ * loading sqlite-wasm as a side effect of importing it.
+ */
+const OPFS_PROJECT_DIRECTORY = '/arq-projects';
+
+export function opfsFilenameForProject(projectId: string): string {
+  validateArqfsProjectId(projectId);
+  return `${OPFS_PROJECT_DIRECTORY}/${projectId}.sqlite3`;
+}
+
+/**
+ * The query string a dedicated Worker for this project must be constructed with
+ * (`new Worker(workerScriptUrl + arqfsWorkerUrlSearch(projectId))`), so
+ * `arqfs-worker-entry.ts` can select the right OPFS file before its first request
+ * can arrive - reading the project id from a first postMessage instead would leave
+ * a window where the Worker exists but has not yet chosen which file it owns.
+ */
+export function arqfsWorkerUrlSearch(projectId: string): string {
+  validateArqfsProjectId(projectId);
+  return `?project=${encodeURIComponent(projectId)}`;
+}
+
+/** The inverse of `arqfsWorkerUrlSearch` - what `arqfs-worker-entry.ts` reads back out of its own `self.location.search`. */
+export function readProjectIdFromWorkerSearch(search: string): string {
+  const projectId = new URLSearchParams(search).get('project');
+  if (projectId === null) {
+    throw new Error(
+      'arqfs Worker requires a project id: construct it with "?project=<id>" in its URL',
+    );
+  }
+  validateArqfsProjectId(projectId);
+  return projectId;
+}
