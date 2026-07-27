@@ -116,6 +116,7 @@ import {
   WindowSelectIcon,
 } from '@arq/icons';
 import { PlanCanvas } from './PlanCanvas';
+import { ModelCanvas } from './ModelCanvas';
 import {
   buildDemoWallAccessibleDescription,
   buildDemoWallInspectorGroups,
@@ -268,11 +269,14 @@ function highestWallIdSuffix(walls: readonly DrawnWall[]): number {
 const INITIAL_PROBE: ViewportProbe = { widthPx: 1536, heightPx: 864, coarsePointer: false };
 
 const INITIAL_TABS = openTab(
-  openTab(EMPTY_VIEW_TABS_STATE, {
-    id: 'overview',
-    kind: 'project-overview',
-    title: 'Project overview',
-  }),
+  openTab(
+    openTab(EMPTY_VIEW_TABS_STATE, {
+      id: 'overview',
+      kind: 'project-overview',
+      title: 'Project overview',
+    }),
+    { id: 'model-3d', kind: '3d', title: '3D', semanticViewId: 'view-3d' },
+  ),
   { id: 'plan-level-1', kind: 'plan', title: 'Level 1 Plan', semanticViewId: 'view-plan-level-1' },
 );
 
@@ -782,7 +786,15 @@ export function App(): JSX.Element {
   );
 
   const viewport =
-    activeTab?.kind === 'project-overview' ? (
+    activeTab?.kind === '3d' ? (
+      <ModelCanvas
+        walls={drawnWalls}
+        selection={modelSelection}
+        onSelectElement={(elementId) =>
+          setModelSelection({ primary: elementId, secondary: new Set() })
+        }
+      />
+    ) : activeTab?.kind === 'project-overview' ? (
       <ProjectOverviewSurface
         data={overviewData}
         capabilities={DEFAULT_WORKSPACE_CAPABILITIES}

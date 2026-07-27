@@ -14,8 +14,8 @@ const ENTRIES: readonly {
 }[] = [
   {
     date: '2026-07-27',
-    title: 'Public site and interactive canvas wiring',
-    body: 'This website ships as a static, no-JavaScript-required build with every public page from the site specification. In the workspace, the plan canvas gains real interaction: pan and zoom, wall drawing with snapping, and selection - wired to the previously library-only editor tools.',
+    title: 'Public site; interactive canvas; validation; local persistence; basic 3D',
+    body: 'This website ships as a static, no-JavaScript-required build with every public page from the site specification. In the workspace, the plan canvas gains real interaction (pan, zoom, wall drawing with snapping, point and marquee selection, hover), every commit is checked by the new validation rules with plain-language messages, edits are journalled to browser storage and recovered on reload with honest save states, and a 3D tab renders drawn walls as extruded solids with orbit, fit, and selection shared with the plan.',
   },
   {
     date: '2026-07-26',

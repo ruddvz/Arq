@@ -33,9 +33,18 @@ checks, weekly render benchmark).
   phone/tablet touch compositions - running on a demo project context and
   honestly reporting `no-project` / `offline`.
 - **Interactive plan canvas** (`apps/web/src/PlanCanvas.tsx`): pan, zoom
-  (wheel/pinch), wall drawing with snapping (endpoint/midpoint/grid),
-  hit-test selection, fit; typed undoable operations over an in-memory plan
-  document. No persistence yet - that lands with the open-project pipeline.
+  (wheel/pinch), wall drawing with snapping (endpoint/midpoint/grid), point
+  and marquee (window/crossing) selection, hover, fit; typed undoable
+  operations validated by `@arq/validation` before commit, with live
+  model-health counts in the status bar.
+- **Local persistence** (`apps/web/src/canvas/plan-journal.ts` over
+  `@arq/local-storage`): edits are journalled to IndexedDB and recovered on
+  start-up; the shell's save state reports the journal's real condition
+  (`saved`/`saving`/`recovered`/`unsaved-changes`).
+- **3D view** (`apps/web/src/ModelCanvas.tsx` over `@arq/model-renderer` +
+  `@arq/geometry-3d`): the 3D tab renders drawn walls as extruded solids in
+  real WebGL with orbit/pan/zoom/fit and raycast picking; selection is
+  shared with the plan view, so the two views cannot disagree.
 - **Editor libraries** (`packages/editor-shell`, `geometry-2d`,
   `plan-renderer`, `command-system`, `operations`): implemented and
   thoroughly tested; door/window/room tools and region selection exist but
@@ -56,10 +65,10 @@ checks, weekly render benchmark).
    the OPFS worker is never constructed (`workers/arqfs-worker`).
 2. No import/export reachable from the UI (adapters are library-only;
    `ifc` routes to an adapter id that does not exist yet).
-3. `@arq/validation` and `apps/api` are `export {}` stubs; sync has
-   protocol logic but no transport or backend.
-4. Five data-layer libraries have zero consumers (local-storage,
-   derived-cache, project-loading, collaboration, model-context).
+3. `apps/api` is an `export {}` stub; sync has protocol logic but no
+   transport or backend.
+4. Three data-layer libraries still have zero consumers (derived-cache,
+   project-loading, collaboration, model-context is near-zero).
 5. Component coverage: ~25 of 84 spec'd components, 40 of 215 icons,
    11 of 54 tool commands (tracked by `scripts/check-workspace-registries.mjs`,
    report-only by design).
