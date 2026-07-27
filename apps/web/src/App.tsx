@@ -72,6 +72,7 @@ import {
   type ViewportProbe,
   type WorkspaceProjectContext,
 } from '@arq/workspace';
+import type { WorldPoint } from '@arq/geometry-2d';
 import { createUndoStack, hasErrors, type ValidationMessage } from '@arq/operations';
 import { validateUniqueElementIds, validateWallSegments } from '@arq/validation';
 import {
@@ -81,6 +82,7 @@ import {
   type DrawnWall,
   type WorkspaceOperation,
 } from './canvas/plan-document';
+import { createPlanJournal, type PlanJournal } from './canvas/plan-journal';
 import {
   AlignIcon,
   CommentIcon,
@@ -247,15 +249,21 @@ const COMMAND_ENTRIES: readonly Omit<CommandPaletteEntry, 'shortcutLabel'>[] = [
 ];
 
 /*
- * Honest, not decorative: this shell has no save pipeline and no sync backend,
- * so claiming "Saved"/"Synced" would be exactly the fabricated status the
- * project's own rules forbid. Named once and shared by the desktop and phone
- * bars - two literals drifted apart the moment the phone bar was added, and the
- * layout capability check caught the phone claiming "Unsaved changes" for a
- * project that was never open.
+ * Sync has no backend, so 'offline' stays the only honest sync state. Save
+ * state, by contrast, is now real: edits are journalled to IndexedDB
+ * (canvas/plan-journal.ts) and recovered on start-up, so the bars report
+ * the journal's actual condition instead of a demo constant.
  */
-const DEMO_SAVE_STATE = 'no-project' as const;
 const DEMO_SYNC_STATE = 'offline' as const;
+const PLAN_PROJECT_ID = 'demo-project';
+
+/** Highest numeric suffix among recovered wall ids, so new ids never collide. */
+function highestWallIdSuffix(walls: readonly DrawnWall[]): number {
+  return walls.reduce((max, wall) => {
+    const match = /^drawn-wall-(\d+)$/.exec(wall.id);
+    return match === null ? max : Math.max(max, Number(match[1]));
+  }, 0);
+}
 
 const INITIAL_PROBE: ViewportProbe = { widthPx: 1536, heightPx: 864, coarsePointer: false };
 
@@ -282,6 +290,77 @@ export function App(): JSX.Element {
   const [drawnWalls, setDrawnWalls] = useState<readonly DrawnWall[]>([]);
   const drawnWallsRef = useRef<readonly DrawnWall[]>([]);
   drawnWallsRef.current = drawnWalls;
+
+  /*
+   * Real local persistence: the journal is opened once, recovery replays it
+   * into the document before the first edit, and every applied geometry
+   * operation (including applied undo/redo inverses) is appended. Save
+   * state reports what actually happened - 'recovered' after a non-empty
+   * replay, 'saving' while an append is in flight, 'unsaved-changes' when
+   * the journal cannot take writes (quota, eviction, no IndexedDB).
+   */
+  const journalRef = useRef<PlanJournal | null>(null);
+  const wallIdCounterRef = useRef(0);
+  const [saveState, setSaveState] = useState<
+    'no-project' | 'saved' | 'saving' | 'unsaved-changes' | 'recovered'
+  >('no-project');
+  const [journalLabel, setJournalLabel] = useState('Journal opening…');
+
+  useEffect(() => {
+    const journal = createPlanJournal();
+    journalRef.current = journal;
+    let cancelled = false;
+    journal
+      .recover(PLAN_PROJECT_ID)
+      .then(({ walls, recoveredOperationCount }) => {
+        if (cancelled) {
+          return;
+        }
+        setDrawnWalls(walls);
+        wallIdCounterRef.current = highestWallIdSuffix(walls);
+        setSaveState(recoveredOperationCount > 0 ? 'recovered' : 'saved');
+        setJournalLabel(
+          recoveredOperationCount > 0
+            ? `Journal current · ${recoveredOperationCount} operation(s) recovered`
+            : 'Journal current',
+        );
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setSaveState('unsaved-changes');
+          setJournalLabel('Journal unavailable');
+        }
+      });
+    const unsubscribe = journal.onUnavailable(() => {
+      setSaveState('unsaved-changes');
+      setJournalLabel('Journal unavailable');
+    });
+    return () => {
+      cancelled = true;
+      unsubscribe();
+      journal.close();
+      journalRef.current = null;
+    };
+  }, []);
+
+  const journalOperation = useCallback((operation: WorkspaceOperation) => {
+    const journal = journalRef.current;
+    if (journal === null || operation.kind === 'note') {
+      return;
+    }
+    setSaveState('saving');
+    void journal.append(PLAN_PROJECT_ID, operation).then((state) => {
+      if (state.status === 'ready') {
+        setSaveState('saved');
+        setJournalLabel('Journal current');
+      } else {
+        setSaveState('unsaved-changes');
+        setJournalLabel(
+          state.status === 'unavailable' ? 'Journal unavailable' : 'Journal write failed',
+        );
+      }
+    });
+  }, []);
 
   const [projectName, setProjectName] = useState('Untitled project');
   const [modeState, setModeState] = useState(() =>
@@ -359,32 +438,38 @@ export function App(): JSX.Element {
     );
   }, [modeState.mode]);
 
-  /** Applies a typed operation to the plan document and records its real inverse. */
-  const performOperation = useCallback((operation: WorkspaceOperation) => {
-    const current = drawnWallsRef.current;
-    undoStackRef.current.push({
-      forward: operation,
-      inverse: invertOperation(current, operation),
-    });
-    setDrawnWalls(applyOperation(current, operation));
-    setHistoryVersion((v) => v + 1);
-  }, []);
+  /** Applies a typed operation to the plan document, records its real inverse, journals it. */
+  const performOperation = useCallback(
+    (operation: WorkspaceOperation) => {
+      const current = drawnWallsRef.current;
+      undoStackRef.current.push({
+        forward: operation,
+        inverse: invertOperation(current, operation),
+      });
+      setDrawnWalls(applyOperation(current, operation));
+      setHistoryVersion((v) => v + 1);
+      journalOperation(operation);
+    },
+    [journalOperation],
+  );
 
   const handleUndo = useCallback(() => {
     const inverse = undoStackRef.current.undo();
     if (inverse !== null) {
       setDrawnWalls(applyOperation(drawnWallsRef.current, inverse));
+      journalOperation(inverse);
     }
     setHistoryVersion((v) => v + 1);
-  }, []);
+  }, [journalOperation]);
 
   const handleRedo = useCallback(() => {
     const forward = undoStackRef.current.redo();
     if (forward !== null) {
       setDrawnWalls(applyOperation(drawnWallsRef.current, forward));
+      journalOperation(forward);
     }
     setHistoryVersion((v) => v + 1);
-  }, []);
+  }, [journalOperation]);
 
   const recordDemoAction = useCallback(
     (label: string) => {
@@ -402,8 +487,19 @@ export function App(): JSX.Element {
    */
   const [validationNotice, setValidationNotice] = useState<ValidationMessage | null>(null);
 
-  const handleCommitWalls = useCallback(
-    (walls: readonly DrawnWall[]) => {
+  const handleCommitWallSegments = useCallback(
+    (segments: readonly { readonly start: WorldPoint; readonly end: WorldPoint }[]) => {
+      // Identity is the document's concern, not the canvas's: ids are
+      // allocated here, above the counter recovery seeded, so recovered and
+      // new walls can never collide.
+      const walls: DrawnWall[] = segments.map((segment) => {
+        wallIdCounterRef.current += 1;
+        return {
+          id: `drawn-wall-${wallIdCounterRef.current}`,
+          start: segment.start,
+          end: segment.end,
+        };
+      });
       const messages = validateWallSegments(walls, drawnWallsRef.current);
       if (hasErrors(messages)) {
         setValidationNotice(messages.find((m) => m.severity === 'error') ?? null);
@@ -707,7 +803,7 @@ export function App(): JSX.Element {
             secondary: new Set(elementIds.slice(1)),
           })
         }
-        onCommitWalls={handleCommitWalls}
+        onCommitWalls={handleCommitWallSegments}
         onFitCompleted={() => handleActivateTool('select')}
         onActiveSnapChange={setActiveSnapLabel}
         onPointerWorldPositionChange={setCursorWorldPosition}
@@ -735,7 +831,7 @@ export function App(): JSX.Element {
         phoneProjectBar={
           <PhoneProjectBar
             projectName={projectName}
-            saveState={DEMO_SAVE_STATE}
+            saveState={saveState}
             syncState={DEMO_SYNC_STATE}
             onBackToProjects={() => setFileOpenPanelOpen(true)}
             menuItems={[
@@ -792,13 +888,11 @@ export function App(): JSX.Element {
             projectName={projectName}
             onRenameProject={setProjectName}
             activeViewName={activeTab?.title ?? 'No view open'}
-            // Honest, not decorative: this shell has no save pipeline and no
-            // sync backend wired up. FileOpenPanel's gate reports whether a
-            // file is safe to open, but nothing opens a project yet, so
-            // claiming "Saved"/"Synced" would be exactly the fabricated status
-            // the project's own rules forbid - and would collapse save and sync
-            // into one false reassurance.
-            saveState={DEMO_SAVE_STATE}
+            // Save state is real: it tracks the IndexedDB operation journal
+            // (recover on boot, append per edit). Sync stays 'offline'
+            // because no sync backend exists - the two are reported
+            // separately, per the copy principles.
+            saveState={saveState}
             syncState={DEMO_SYNC_STATE}
             canUndo={undoStackRef.current.canUndo()}
             canRedo={undoStackRef.current.canRedo()}
@@ -977,7 +1071,7 @@ export function App(): JSX.Element {
             currentLevelName="Level 1"
             pixelsPerUnit={pixelsPerUnit}
             modelHealth={modelHealth}
-            localJournalStateLabel="Journal current"
+            localJournalStateLabel={journalLabel}
             syncState="offline"
             supportModeEnabled={false}
           />

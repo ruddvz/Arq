@@ -77,8 +77,10 @@ export interface PlanCanvasProps {
   readonly onSelectElement: (elementId: string | null) => void;
   /** Marquee drag selected zero or more elements (window/crossing, ARQ-041). */
   readonly onSelectMany: (elementIds: readonly string[]) => void;
-  /** A finished wall chain to commit as an undoable operation. */
-  readonly onCommitWalls: (walls: readonly DrawnWall[]) => void;
+  /** A finished wall chain's segments - the document allocates ids and commits. */
+  readonly onCommitWalls: (
+    segments: readonly { readonly start: WorldPoint; readonly end: WorldPoint }[],
+  ) => void;
   /** Fit completed - the canvas asks the shell to return to Select. */
   readonly onFitCompleted: () => void;
   /** Live snap feedback for the status bar (null when not snapping). */
@@ -354,15 +356,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     }
     const segments = tool.finish();
     if (segments.length > 0) {
-      const committed: DrawnWall[] = segments.map((segment) => {
-        wallCounterRef.current += 1;
-        return {
-          id: `drawn-wall-${wallCounterRef.current}`,
-          start: segment.start,
-          end: segment.end,
-        };
-      });
-      onCommitWalls(committed);
+      onCommitWalls(segments);
     }
     // The wall tool stays active after a chain commits - re-arm a fresh
     // lifecycle so the next click starts the next chain (before this, the
