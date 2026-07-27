@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 3,
+  "purpose": "Links user-facing assertions to canonical claim states. This registry is an audit contract, not a second implementation source.",
+  "bindingRules": {
+    "currentRequiresCurrentClaim": true,
+    "plannedRequiresScopeMarker": true,
+    "conflictedCannotBePresentedAsCurrent": true,
+    "libraryOnlyRequiresReachabilityQualification": true,
+    "prohibitedMayAppearOnlyAsClearNegationOrDisclaimer": true,
+    "publicInventoryMustClassifyEveryContentSource": true,
+    "volatilePublicClaimRequiresBuildAndLiveProof": true
+  },
+  "bindings": [
+    {
+      "id": "pub-home-native-file",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/home.ts",
+      "claimId": "native-arq-open",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Use compatibility and preflight language until an opening pipeline is tested."
+    },
+    {
+      "id": "pub-home-local-persistence",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/home.ts",
+      "claimId": "local-journal-persistence",
+      "assertionMode": "current",
+      "requiredRepair": "Name the local journal rather than a portable-file write."
+    },
+    {
+      "id": "pub-home-semantic-tools",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/home.ts",
+      "claimId": "current-door-window-room-authoring",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Do not present library-only door, window or room authoring as a current wired canvas workflow."
+    },
+    {
+      "id": "pub-product-3d",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/product.ts",
+      "claimId": "3d-current",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Do not assert current 3D reachability until the status conflict is resolved."
+    },
+    {
+      "id": "pub-product-volatile-count",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/product.ts",
+      "claimId": "test-counts",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Remove exact implementation counts or derive them from a fresh, provenance-labelled build artifact."
+    },
+    {
+      "id": "pub-architects-wall-workflow",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/architects.ts",
+      "claimId": "current-wall-authoring",
+      "assertionMode": "current",
+      "requiredRepair": "Keep current workflow language limited to the tested wall-authoring path."
+    },
+    {
+      "id": "pub-architects-lifetime",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/architects.ts",
+      "claimId": "lifetime-local-access",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Describe the current local-first architecture without guaranteeing access if payment stops or Arq ceases to exist."
+    },
+    {
+      "id": "pub-architects-model-integrity",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/architects.ts",
+      "claimId": "semantic-model-integrity",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Do not present library or validation rules as a current end-to-end modelling guarantee."
+    },
+    {
+      "id": "pub-student-hardware",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/students.ts",
+      "claimId": "browser-hardware-minimum",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Use named benchmark evidence or remove the universal hardware statement."
+    },
+    {
+      "id": "pub-student-semantic-tools",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/students.ts",
+      "claimId": "current-door-window-room-authoring",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Do not describe door, opening and room workflows as current without user-reachable evidence."
+    },
+    {
+      "id": "pub-student-pricing",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/students.ts",
+      "claimId": "pricing",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Keep future affordability as research intent, not a current commercial commitment."
+    },
+    {
+      "id": "pub-collaboration-roadmap",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/collaboration.ts",
+      "claimId": "sharing-comments-issues",
+      "assertionMode": "planned",
+      "requiredRepair": "Use explicit release-scope wording and do not imply current sharing or co-authoring."
+    },
+    {
+      "id": "pub-collaboration-current",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/collaboration.ts",
+      "claimId": "collaboration-current",
+      "assertionMode": "planned",
+      "requiredRepair": "Describe gated contracts as unavailable in the current build until a user-reachable data source exists."
+    },
+    {
+      "id": "pub-ai-current",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/ai.ts",
+      "claimId": "current-ai-authoring",
+      "assertionMode": "planned",
+      "requiredRepair": "Keep current AI capability explicitly absent and describe guardrails as the required future contract."
+    },
+    {
+      "id": "pub-interop-end-to-end",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/interoperability.ts",
+      "claimId": "current-import-export-e2e",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Distinguish tested adapters from a reachable import or export flow."
+    },
+    {
+      "id": "pub-interop-fidelity",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/interoperability.ts",
+      "claimId": "lossless-exchange",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Use Arq fidelity categories instead of a universal statement about all CAD or BIM exchange."
+    },
+    {
+      "id": "pub-ipad-touch-layout",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/ipad.ts",
+      "claimId": "ipad-touch-layout",
+      "assertionMode": "current",
+      "requiredRepair": "State the tested browser layout and its supported environment without implying native capabilities."
+    },
+    {
+      "id": "pub-ipad-native-features",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/ipad.ts",
+      "claimId": "ipad-native-features",
+      "assertionMode": "planned",
+      "requiredRepair": "Keep Files, Pencil, RoomPlan and LiDAR scope visibly planned and capability-gated."
+    },
+    {
+      "id": "pub-ipad-file-reachability",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/ipad.ts",
+      "claimId": "native-arq-open",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Do not state that the same project file opens across devices until the opening path is tested."
+    },
+    {
+      "id": "pub-pricing-status",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/pricing.ts",
+      "claimId": "pricing",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "State that pricing is not committed or cite the current approved commercial decision."
+    },
+    {
+      "id": "pub-pricing-lifetime",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/pricing.ts",
+      "claimId": "lifetime-local-access",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Remove the claim that stopping payment can never affect archive access."
+    },
+    {
+      "id": "pub-security-network",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/security.ts",
+      "claimId": "no-network-data-transfer",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Scope transport claims to verified behaviour and approved privacy policy."
+    },
+    {
+      "id": "pub-docs-repository",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/docs-index.ts",
+      "claimId": "repository-documentation",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Link to the current revision or say that the repository contains the cited documents at the reviewed revision."
+    },
+    {
+      "id": "pub-docs-help-centre",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/docs-index.ts",
+      "claimId": "hosted-help-centre",
+      "assertionMode": "planned",
+      "requiredRepair": "Describe the hosted help centre as planned and avoid implying a shipping support surface."
+    },
+    {
+      "id": "pub-changelog-evidence",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/changelog.ts",
+      "claimId": "development-changelog-status",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Each entry must cite or link the reviewed commit, test artifact or release evidence; summary prose cannot promote a claim by itself."
+    },
+    {
+      "id": "pub-changelog-3d",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/changelog.ts",
+      "claimId": "3d-current",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Do not publish 3D availability as a settled fact while the source conflict is active."
+    },
+    {
+      "id": "pub-changelog-native-open",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/changelog.ts",
+      "claimId": "native-arq-open",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Describe file compatibility and preflight separately from an opened working project."
+    },
+    {
+      "id": "pub-status-hosted-service",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/status.ts",
+      "claimId": "hosted-service-status",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Bind current service status to the deployed revision and do not let it imply a lifetime availability property."
+    },
+    {
+      "id": "pub-status-lifetime",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/status.ts",
+      "claimId": "lifetime-local-access",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Remove the statement that an Arq outage can never affect a reader."
+    },
+    {
+      "id": "pub-contact-channels",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/contact.ts",
+      "claimId": "repository-support-channels",
+      "assertionMode": "current",
+      "requiredRepair": "Name the issue and advisory routes, their current scope and the absence of any unstated response-time commitment."
+    },
+    {
+      "id": "pub-privacy-current",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/privacy.ts",
+      "claimId": "website-privacy-practice",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Use a build and live resource audit plus an approved privacy scope before making current cookie, analytics or network assertions."
+    },
+    {
+      "id": "pub-privacy-notice",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/privacy.ts",
+      "claimId": "formal-privacy-notice",
+      "assertionMode": "planned",
+      "requiredRepair": "Keep a future legal notice clearly planned until approved and published."
+    },
+    {
+      "id": "pub-terms-current",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/terms.ts",
+      "claimId": "pre-release-terms",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Do not present provisional copy as approved legal terms; state the precise legal status."
+    },
+    {
+      "id": "pub-terms-future",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/terms.ts",
+      "claimId": "pricing",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Do not promise the content or timing of future paid-plan terms before commercial and legal decisions are approved."
+    },
+    {
+      "id": "pub-open-source-notices",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/open-source.ts",
+      "claimId": "open-source-notices",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "Generate the notice set from the exact deployed build and publish the evidence revision with it."
+    }
+  ]
+}

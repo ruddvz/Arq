@@ -1,0 +1,545 @@
+{
+  "schemaVersion": 3,
+  "sourcePaths": [
+    "packages/workspace/src/registry/workspace-state-machines.json",
+    "packages/workspace/src/workspace-types.ts",
+    "packages/arqfs/src/arqfs-safe-mode.ts",
+    "apps/web/src/file-handling/file-state-machine.ts",
+    "apps/web/src/file-handling/describe-file-flow-state.ts",
+    "apps/web/src/App.tsx",
+    "apps/web/src/canvas/plan-journal.ts",
+    "packages/design-system/src/shell/top-bar-state.ts"
+  ],
+  "entryContract": {
+    "required": ["internal", "exposure"],
+    "visibleStateRequires": ["label-or-labelTemplate", "explain-or-machinePolicy"],
+    "allowedExposure": ["product", "diagnostic", "internal"],
+    "labelInvariant": "A label or labelTemplate names one exact state. It never collapses compatibility into opening, journal persistence into portable-file publication, or local save into sync."
+  },
+  "machinePolicies": {
+    "tab": "Opening, ready, stale and failed are view-instance states; never imply semantic project mutation from a tab action.",
+    "tool": "Preview is temporary, committing is not completed, and rejected means no project change was applied.",
+    "selection": "Selection identifies current interaction context; it does not grant permission or imply ownership.",
+    "issue": "Issue state belongs to review context and must not imply model validity or professional approval.",
+    "long-task": "Progress, pause, cancellation and partial-result wording must be backed by actual task telemetry.",
+    "save": "The persistence target must be named when ambiguity is possible.",
+    "sync": "Remote status is always independent of local save/journal status.",
+    "workspace-open": "Project ready requires a usable project context, not a compatible file.",
+    "arqfs-safe-mode": "Translate the underlying file condition before exposing read-only handling.",
+    "file-flow": "Compatibility, migration, staging and opened project states are distinct.",
+    "ai-proposal": "Apply requires current base revision and no blocking validation errors.",
+    "web-plan-journal-status": "The web build's saveState union reports the local IndexedDB operation journal for the demo plan. A label here never implies that a portable .arq file was written, that a user project was opened, or that anything was synced."
+  },
+  "machines": {
+    "workspace-open": [
+      {
+        "internal": "project-loading",
+        "label": "Opening project",
+        "explain": "The project is being loaded. Do not present the editor as ready yet.",
+        "exposure": "product"
+      },
+      {
+        "internal": "project-ready",
+        "label": "Project ready",
+        "explain": "Project is open for its allowed operations. Usually no success toast is needed.",
+        "exposure": "product"
+      },
+      {
+        "internal": "project-offline-ready",
+        "label": "Offline · project available locally",
+        "explain": "Network is unavailable but the local project remains usable.",
+        "exposure": "product"
+      },
+      {
+        "internal": "project-read-only",
+        "label": "Read-only",
+        "explain": "The project can be inspected but current session/build/permission does not allow edits.",
+        "exposure": "product"
+      },
+      {
+        "internal": "project-recovery-required",
+        "label": "Recovery required",
+        "explain": "Arq detected a recoverable interrupted/local state that requires explicit recovery handling.",
+        "exposure": "product"
+      },
+      {
+        "internal": "project-fatal-error",
+        "label": "Project could not be opened",
+        "explain": "The project cannot enter a usable workspace. Give reason and safe next actions.",
+        "exposure": "product"
+      }
+    ],
+    "tab": [
+      {
+        "internal": "closed",
+        "label": "Closed",
+        "exposure": "diagnostic",
+        "explain": "No visible tab instance exists."
+      },
+      {
+        "internal": "opening",
+        "label": "Opening view…",
+        "exposure": "product"
+      },
+      {
+        "internal": "ready",
+        "label": "View ready",
+        "exposure": "diagnostic"
+      },
+      {
+        "internal": "background-stale",
+        "label": "View needs refresh",
+        "exposure": "product",
+        "explain": "The view is older than the current project state and must not be presented as current."
+      },
+      {
+        "internal": "active",
+        "label": "Active view",
+        "exposure": "diagnostic"
+      },
+      {
+        "internal": "closing",
+        "label": "Closing view…",
+        "exposure": "diagnostic"
+      },
+      {
+        "internal": "failed",
+        "label": "View could not be opened",
+        "exposure": "product"
+      }
+    ],
+    "tool": [
+      {
+        "internal": "inactive",
+        "label": "Inactive",
+        "exposure": "diagnostic"
+      },
+      {
+        "internal": "hover-discoverable",
+        "label": "Available",
+        "exposure": "diagnostic"
+      },
+      {
+        "internal": "armed",
+        "label": "{tool} active",
+        "exposure": "product",
+        "explain": "The tool is active but has not committed a project change."
+      },
+      {
+        "internal": "previewing",
+        "label": "Previewing {tool}",
+        "exposure": "product",
+        "explain": "Preview is temporary and not canonical project data."
+      },
+      {
+        "internal": "awaiting-numeric-input",
+        "label": "Enter a value",
+        "exposure": "product"
+      },
+      {
+        "internal": "committing",
+        "label": "Applying {tool}…",
+        "exposure": "product"
+      },
+      {
+        "internal": "complete",
+        "label": "{result}",
+        "exposure": "product",
+        "explain": "Prefer the exact result over a generic Complete label."
+      },
+      {
+        "internal": "rejected",
+        "label": "Change not applied",
+        "exposure": "product",
+        "explain": "Follow with the validation reason and next action."
+      },
+      {
+        "internal": "cancelled",
+        "label": "Cancelled",
+        "exposure": "product",
+        "explain": "Use only when cancellation itself needs confirmation."
+      }
+    ],
+    "panel": [
+      {
+        "internal": "docked",
+        "label": "Docked",
+        "exposure": "diagnostic"
+      },
+      {
+        "internal": "collapsed",
+        "label": "Collapsed",
+        "exposure": "diagnostic"
+      },
+      {
+        "internal": "overlay-open",
+        "label": "Open",
+        "exposure": "diagnostic"
+      },
+      {
+        "internal": "overlay-peek",
+        "label": "Peek",
+        "exposure": "diagnostic"
+      },
+      {
+        "internal": "resizing",
+        "label": "Resizing",
+        "exposure": "diagnostic"
+      },
+      {
+        "internal": "hidden",
+        "label": "Hidden",
+        "exposure": "diagnostic"
+      }
+    ],
+    "save": [
+      {
+        "internal": "saved-local",
+        "label": "Saved locally",
+        "explain": "Current committed local state has been persisted to the local persistence target.",
+        "exposure": "product"
+      },
+      {
+        "internal": "saving-local",
+        "label": "Saving locally…",
+        "explain": "A local persistence write is in progress.",
+        "exposure": "product"
+      },
+      {
+        "internal": "local-save-failed",
+        "label": "Local save failed",
+        "explain": "Current changes may not be durably persisted locally. Never describe this as a sync error.",
+        "exposure": "product"
+      }
+    ],
+    "sync": [
+      {
+        "internal": "not-configured",
+        "label": "Sync not configured",
+        "explain": "No remote sync is configured.",
+        "exposure": "product"
+      },
+      {
+        "internal": "offline",
+        "label": "Offline",
+        "explain": "Remote sync cannot run. Pair with local-save state when data safety matters.",
+        "exposure": "product"
+      },
+      {
+        "internal": "queued",
+        "label": "Changes queued for sync",
+        "explain": "Local changes are waiting for remote sync.",
+        "exposure": "product"
+      },
+      {
+        "internal": "syncing",
+        "label": "Syncing…",
+        "explain": "Remote synchronisation is in progress.",
+        "exposure": "product"
+      },
+      {
+        "internal": "synced",
+        "label": "Synced",
+        "explain": "Remote synchronisation is current for the relevant revision.",
+        "exposure": "product"
+      },
+      {
+        "internal": "conflict",
+        "label": "Sync conflict",
+        "explain": "Local/remote operations or revisions require explicit resolution.",
+        "exposure": "product"
+      },
+      {
+        "internal": "sync-failed",
+        "label": "Sync failed",
+        "explain": "Remote synchronisation failed; state local-save status separately.",
+        "exposure": "product"
+      }
+    ],
+    "selection": [
+      {
+        "internal": "none",
+        "label": "No selection",
+        "exposure": "product"
+      },
+      {
+        "internal": "hover",
+        "label": "Hover target",
+        "exposure": "diagnostic"
+      },
+      {
+        "internal": "single",
+        "label": "1 selected",
+        "exposure": "product"
+      },
+      {
+        "internal": "multi",
+        "label": "{count} selected",
+        "exposure": "product"
+      },
+      {
+        "internal": "locked-target",
+        "label": "Locked object",
+        "exposure": "product"
+      },
+      {
+        "internal": "remote-selected",
+        "label": "Selected by another collaborator",
+        "exposure": "product",
+        "explain": "Use only when collaboration is actually current and identity disclosure is permitted."
+      }
+    ],
+    "issue": [
+      {
+        "internal": "open",
+        "label": "Open",
+        "exposure": "product"
+      },
+      {
+        "internal": "in-progress",
+        "label": "In progress",
+        "exposure": "product"
+      },
+      {
+        "internal": "resolved",
+        "label": "Resolved",
+        "exposure": "product"
+      },
+      {
+        "internal": "reopened",
+        "label": "Reopened",
+        "exposure": "product"
+      },
+      {
+        "internal": "stale-context",
+        "label": "Context changed",
+        "explain": "Issue anchor/context is stale relative to current project state.",
+        "exposure": "product"
+      }
+    ],
+    "ai-proposal": [
+      {
+        "internal": "idle",
+        "label": "No proposal",
+        "exposure": "product"
+      },
+      {
+        "internal": "generating",
+        "label": "Generating proposal…",
+        "exposure": "product"
+      },
+      {
+        "internal": "proposal-ready",
+        "label": "Proposal ready",
+        "exposure": "product"
+      },
+      {
+        "internal": "validation-running",
+        "label": "Checking proposal…",
+        "exposure": "product"
+      },
+      {
+        "internal": "validation-failed",
+        "label": "Proposal has blocking errors",
+        "exposure": "product"
+      },
+      {
+        "internal": "ready-to-apply",
+        "label": "Ready to apply",
+        "exposure": "product"
+      },
+      {
+        "internal": "applying",
+        "label": "Applying proposal…",
+        "exposure": "product"
+      },
+      {
+        "internal": "applied",
+        "label": "Proposal applied",
+        "exposure": "product"
+      },
+      {
+        "internal": "rejected",
+        "label": "Proposal rejected",
+        "exposure": "product"
+      },
+      {
+        "internal": "stale",
+        "label": "Proposal is stale",
+        "explain": "Project revision changed since proposal generation.",
+        "exposure": "product"
+      }
+    ],
+    "long-task": [
+      {
+        "internal": "queued",
+        "label": "Queued",
+        "exposure": "product"
+      },
+      {
+        "internal": "running",
+        "label": "Running",
+        "exposure": "product"
+      },
+      {
+        "internal": "paused-if-supported",
+        "label": "Paused",
+        "exposure": "product"
+      },
+      {
+        "internal": "cancel-requested",
+        "label": "Cancelling…",
+        "exposure": "product"
+      },
+      {
+        "internal": "cancelled",
+        "label": "Cancelled",
+        "exposure": "product"
+      },
+      {
+        "internal": "partial",
+        "label": "Completed with partial results",
+        "exposure": "product"
+      },
+      {
+        "internal": "succeeded",
+        "label": "Completed",
+        "exposure": "product"
+      },
+      {
+        "internal": "failed",
+        "label": "Failed",
+        "exposure": "product"
+      }
+    ],
+    "arqfs-safe-mode": [
+      {
+        "internal": "unreadable",
+        "label": "Project file cannot be opened",
+        "explain": "File cannot be read as a supported Arq project. Diagnostics should state the specific reason.",
+        "exposure": "product"
+      },
+      {
+        "internal": "corrupt",
+        "label": "Project file failed integrity checks",
+        "explain": "Do not open as a normal writable project.",
+        "exposure": "product"
+      },
+      {
+        "internal": "interrupted-write",
+        "label": "Previous write was interrupted",
+        "explain": "Offer read-only/recovery actions supported by the implementation.",
+        "exposure": "product"
+      },
+      {
+        "internal": "reader-too-old-to-write",
+        "label": "Open read-only",
+        "explain": "This build can read the project but cannot safely write its format.",
+        "exposure": "product"
+      },
+      {
+        "internal": "missing-required-entries",
+        "label": "Project data is incomplete",
+        "explain": "Required project entries are missing; open read-only only if the safe-mode plan allows it.",
+        "exposure": "product"
+      },
+      {
+        "internal": "safe-mode-required",
+        "label": "Open read-only",
+        "explain": "A compatibility condition requires read-only handling.",
+        "exposure": "product"
+      },
+      {
+        "internal": "healthy",
+        "label": "Compatible project",
+        "explain": "Compatibility is not the same as a live project being loaded.",
+        "exposure": "product"
+      }
+    ],
+    "file-flow": [
+      {
+        "internal": "idle",
+        "label": "Choose a file to open",
+        "exposure": "product"
+      },
+      {
+        "internal": "acquiring",
+        "labelTemplate": "Reading {name}…",
+        "exposure": "product"
+      },
+      {
+        "internal": "detecting",
+        "labelTemplate": "Checking {name}…",
+        "exposure": "product"
+      },
+      {
+        "internal": "native-opening",
+        "labelTemplate": "{name} is a compatible Arq project",
+        "explain": "Do not say opened until the live project pipeline has actually loaded it.",
+        "exposure": "product"
+      },
+      {
+        "internal": "import-options",
+        "labelTemplate": "{name} needs conversion before it can be opened",
+        "exposure": "product"
+      },
+      {
+        "internal": "importing",
+        "labelTemplate": "Converting {name}… {percent}%",
+        "exposure": "product"
+      },
+      {
+        "internal": "staged-review",
+        "labelTemplate": "{name} is staged for review",
+        "exposure": "product"
+      },
+      {
+        "internal": "migrating",
+        "labelTemplate": "Migrating {name}… {percent}%",
+        "exposure": "product"
+      },
+      {
+        "internal": "read-only-safe-mode",
+        "labelTemplate": "{name} opened read-only",
+        "exposure": "product"
+      },
+      {
+        "internal": "failed",
+        "labelTemplate": "{name} could not be opened",
+        "exposure": "product"
+      }
+    ],
+    "web-plan-journal-status": [
+      {
+        "internal": "no-project",
+        "label": "No project open",
+        "explain": "No user project has been opened. The demo plan context is not a portable project and must not be described as one.",
+        "exposure": "product"
+      },
+      {
+        "internal": "saving",
+        "label": "Saving locally…",
+        "explain": "An append to the local operation journal is in progress. It is not a portable .arq write and not a sync.",
+        "exposure": "product"
+      },
+      {
+        "internal": "saved",
+        "label": "Saved locally",
+        "explain": "The local operation journal reports ready. The portable .arq file on disk is unchanged.",
+        "exposure": "product"
+      },
+      {
+        "internal": "unsaved-changes",
+        "label": "Unsaved changes",
+        "explain": "The local journal is unavailable or a journal write failed, so current edits may not be persisted. Name the journal condition in the status detail; never present this as a sync error.",
+        "exposure": "product"
+      },
+      {
+        "internal": "recovered",
+        "label": "Recovered locally",
+        "explain": "State was replayed from the local operation journal on start-up. State what was recovered; nothing was read from or written to a portable .arq file.",
+        "exposure": "product"
+      }
+    ]
+  }
+}

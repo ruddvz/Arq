@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 4,
+  "domains": [
+    {
+      "id": "tool-name",
+      "triggers": ["workspace-tool-registry.json"],
+      "update": [
+        "command labels",
+        "tool rail",
+        "command palette",
+        "keyboard help",
+        "onboarding",
+        "docs",
+        "aliases",
+        "support"
+      ],
+      "gate": "registry/state coverage and public-help review"
+    },
+    {
+      "id": "view-panel-name",
+      "triggers": ["workspace-tab-registry.json", "workspace-panel-registry.json"],
+      "update": [
+        "tab strip",
+        "view switcher",
+        "panels",
+        "docs",
+        "accessibility labels",
+        "support aliases"
+      ],
+      "gate": "registry/state coverage"
+    },
+    {
+      "id": "workspace-state",
+      "triggers": [
+        "workspace-state-machines.json",
+        "workspace-types.ts",
+        "apps/web/src/App.tsx",
+        "apps/web/src/file-handling",
+        "plan-journal.ts"
+      ],
+      "update": [
+        "state-language-map",
+        "state-adapter map",
+        "status UI",
+        "errors",
+        "support",
+        "accessibility"
+      ],
+      "gate": "state coverage plus adapter coverage"
+    },
+    {
+      "id": "current-reachability",
+      "triggers": [
+        "STATUS.md",
+        "apps/web/src/App.tsx",
+        "PlanCanvas.tsx",
+        "ModelCanvas.tsx",
+        "pages.test.ts"
+      ],
+      "update": ["claim registry", "conflicts", "marketing", "support", "AI context"],
+      "gate": "fresh context, claim binding and current-claim evidence review"
+    },
+    {
+      "id": "persistence",
+      "triggers": [
+        "arqfs-open.ts",
+        "plan-journal.ts",
+        "packages/local-storage/src",
+        "relevant ADR"
+      ],
+      "update": ["file messages", "recovery", "state adapters", "marketing", "support"],
+      "gate": "persistence-tier and conflict verification"
+    },
+    {
+      "id": "format-support",
+      "triggers": ["FORMAT-SUPPORT-MATRIX.md", "adapter reachability", "import/export UI"],
+      "update": [
+        "format-language-map",
+        "fidelity reports",
+        "marketing",
+        "support",
+        "claim registry"
+      ],
+      "gate": "format matrix freshness plus rendered claim review"
+    },
+    {
+      "id": "ai-boundary",
+      "triggers": ["AI-GUARDRAILS.md", "AI ADRs", "CAP-ai"],
+      "update": ["AI proposal language", "marketing AI", "support AI", "future context"],
+      "gate": "AI claim and stale-apply verification"
+    },
+    {
+      "id": "privacy-security",
+      "triggers": ["SECURITY.md", "EVENT-DICTIONARY.csv", "network evidence"],
+      "update": ["privacy copy", "support diagnostics", "claim registry"],
+      "gate": "privacy transport evidence review"
+    },
+    {
+      "id": "hardware-performance",
+      "triggers": ["benchmark results", "browser capability tests"],
+      "update": ["student copy", "support compatibility", "claim registry"],
+      "gate": "named environment evidence review"
+    },
+    {
+      "id": "pricing",
+      "triggers": ["approved pricing decision"],
+      "update": ["pricing page", "billing", "student copy", "support"],
+      "gate": "UNKNOWN pricing claim may change only with canonical evidence"
+    },
+    {
+      "id": "public-copy-editorial",
+      "triggers": [
+        "apps/marketing/src/content",
+        "editorial-authenticity-policy.json",
+        "public-copy-inventory.json"
+      ],
+      "update": [
+        "public-copy inventory",
+        "claim bindings",
+        "standalone headings/cards",
+        "rendered-page tests",
+        "editorial review acknowledgement"
+      ],
+      "gate": "public-copy inventory, editorial policy and rendered-page review"
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 3,
+  "rule": "An unresolved conflict blocks promotion of the stronger dependent claim. Engineering sources remain authoritative for resolution; the language system records impact and release controls.",
+  "activeStatuses": [
+    "unresolved",
+    "unresolved-decision",
+    "dependent-copy-drift",
+    "evidence-insufficient"
+  ],
+  "conflicts": [
+    {
+      "id": "CONFLICT-3D-CURRENT-STATUS",
+      "status": "unresolved",
+      "severity": "critical",
+      "domain": "current-reachability",
+      "summary": "STATUS.md says a wired ModelCanvas with shared selection is current, then says the 3D stack has zero consumers and no 3D surface exists.",
+      "sourceIds": ["status", "web-app", "code-tests"],
+      "affectedClaimIds": ["3d-current"],
+      "blockedSurfaces": ["public", "support", "product-ai", "documentation"],
+      "downstreamRule": "Do not market or answer disputed 3D reachability as settled.",
+      "resolution": {
+        "requires": [
+          "Correct the stale STATUS statement.",
+          "Run the relevant 3D/browser capability test.",
+          "Refresh generated language context."
+        ],
+        "cannotAutoResolve": true
+      }
+    },
+    {
+      "id": "DECISION-PERSISTENCE-TIERS",
+      "status": "unresolved-decision",
+      "severity": "critical",
+      "domain": "files-storage-recovery",
+      "summary": "The repository records unresolved overlap between the SQLite-WASM/OPFS native direction and the tested Dexie/IndexedDB implementation used by the demo journal.",
+      "sourceIds": ["status", "plan-journal", "local-storage", "adr"],
+      "affectedClaimIds": ["portable-arq-publication"],
+      "blockedSurfaces": ["public", "support", "product-ai", "files"],
+      "downstreamRule": "Name the concrete persistence tier. A journal write never implies portable-file publication.",
+      "resolution": {
+        "requires": [
+          "An ADR resolving the persistence relationship.",
+          "A tested open/write flow for the chosen portable-file claim.",
+          "Updated status and message adapters."
+        ],
+        "cannotAutoResolve": true
+      }
+    },
+    {
+      "id": "DRIFT-NATIVE-OPEN-MARKETING",
+      "status": "dependent-copy-drift",
+      "severity": "critical",
+      "domain": "files-storage-recovery",
+      "summary": "Public home copy describes a local .arq file that opens in the browser, while FileOpenPanel deliberately stops at compatibility preflight.",
+      "sourceIds": ["marketing", "file-open-ui", "status"],
+      "affectedClaimIds": ["native-arq-open"],
+      "blockedSurfaces": ["public", "support", "documentation"],
+      "downstreamRule": "Use compatible/preflight wording until a live open pipeline is user-reachable.",
+      "resolution": {
+        "requires": [
+          "Correct rendered public copy.",
+          "Add the rendered claim-binding test.",
+          "Promote only after a browser opening-path test."
+        ],
+        "cannotAutoResolve": false
+      }
+    },
+    {
+      "id": "DRIFT-SEMANTIC-TOOLS-MARKETING",
+      "status": "dependent-copy-drift",
+      "severity": "high",
+      "domain": "current-reachability",
+      "summary": "Public copy can read as though door, window and room authoring are current while STATUS says these tools are not wired to the canvas.",
+      "sourceIds": ["marketing", "status", "tool-registry", "web-app"],
+      "affectedClaimIds": ["current-door-window-room-authoring"],
+      "blockedSurfaces": ["public", "support"],
+      "downstreamRule": "Distinguish implemented libraries or designed controls from user-reachable authoring.",
+      "resolution": {
+        "requires": [
+          "Correct current-state copy or wire and test the tools.",
+          "Refresh the claim binding."
+        ],
+        "cannotAutoResolve": false
+      }
+    },
+    {
+      "id": "DRIFT-INTEROP-USER-REACHABILITY",
+      "status": "dependent-copy-drift",
+      "severity": "high",
+      "domain": "interoperability",
+      "summary": "Public interoperability copy says every import produces a report while STATUS says no import/export path is reachable end-to-end in the product.",
+      "sourceIds": ["marketing", "status", "interop-adapters", "format-matrix"],
+      "affectedClaimIds": ["current-import-export-e2e"],
+      "blockedSurfaces": ["public", "support", "documentation"],
+      "downstreamRule": "Describe tested adapters and the required future report contract separately from a shipped flow.",
+      "resolution": {
+        "requires": [
+          "Correct the public statement.",
+          "Add UI integration and fidelity-report tests before promotion."
+        ],
+        "cannotAutoResolve": false
+      }
+    },
+    {
+      "id": "DRIFT-HARDWARE-EVIDENCE",
+      "status": "evidence-insufficient",
+      "severity": "high",
+      "domain": "performance-hardware",
+      "summary": "Student copy says a modest laptop is enough without named hardware/browser benchmark evidence.",
+      "sourceIds": ["marketing", "benchmarks"],
+      "affectedClaimIds": ["browser-hardware-minimum"],
+      "blockedSurfaces": ["public", "support"],
+      "downstreamRule": "Use tested environments or remove the broad device claim.",
+      "resolution": {
+        "requires": ["Published named benchmark profiles and thresholds, or revised copy."],
+        "cannotAutoResolve": false
+      }
+    },
+    {
+      "id": "DRIFT-PRIVACY-TRANSPORT-ABSOLUTE",
+      "status": "evidence-insufficient",
+      "severity": "high",
+      "domain": "privacy-transport",
+      "summary": "Security copy says the development build sends nothing anywhere, an absolute transport claim not bound to an approved network-observation evidence source.",
+      "sourceIds": ["marketing", "security", "telemetry", "code-tests"],
+      "affectedClaimIds": ["no-network-data-transfer"],
+      "blockedSurfaces": ["public", "support"],
+      "downstreamRule": "Scope the statement to verified behaviour and approved policy; do not use an absolute without proof.",
+      "resolution": {
+        "requires": ["Network-observation test and approved privacy statement, or revised copy."],
+        "cannotAutoResolve": false
+      }
+    },
+    {
+      "id": "DRIFT-AI-CURRENT-ENFORCEMENT",
+      "status": "dependent-copy-drift",
+      "severity": "medium",
+      "domain": "ai",
+      "summary": "AI marketing can describe guardrails as a currently enforced kernel capability while no AI-driven product feature is current.",
+      "sourceIds": ["marketing", "ai-guardrails", "capability-gates", "release-scope"],
+      "affectedClaimIds": ["current-ai-authoring"],
+      "blockedSurfaces": ["public", "support"],
+      "downstreamRule": "State the contract as a requirement for future AI capability, not as a current shipped feature.",
+      "resolution": {
+        "requires": ["Correct wording or ship a tested proposal flow."],
+        "cannotAutoResolve": false
+      }
+    },
+    {
+      "id": "DRIFT-VOLATILE-PUBLIC-COUNTS",
+      "status": "dependent-copy-drift",
+      "severity": "medium",
+      "domain": "evidence",
+      "summary": "Public copy includes exact or loose test counts without a generated evidence artifact.",
+      "sourceIds": ["marketing", "code-tests"],
+      "affectedClaimIds": ["test-counts"],
+      "blockedSurfaces": ["public"],
+      "downstreamRule": "Remove counts or render them from a CI-generated, freshness-checked artifact.",
+      "resolution": {
+        "requires": ["Generated evidence artifact or revised copy."],
+        "cannotAutoResolve": false
+      }
+    }
+  ]
+}

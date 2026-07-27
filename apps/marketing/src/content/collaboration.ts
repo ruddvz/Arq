@@ -3,8 +3,12 @@ import { html } from '../html.js';
 import type { Page } from '../site.js';
 
 /**
- * PUB-005. Viewing, comments, issues and later co-authoring — in that order,
+ * PUB-005. Viewing, comments, issues and later co-authoring, in that order,
  * because that is the order the release scope commits to.
+ *
+ * Claim bindings: pub-collaboration-roadmap (sharing-comments-issues, PLANNED)
+ * and pub-collaboration-current (collaboration-current, DESIGNED_GATED). Both
+ * are bound in planned mode: a designed data model is not a feature.
  */
 export const collaborationPage: Page = {
   meta: {
@@ -12,41 +16,46 @@ export const collaborationPage: Page = {
     route: '/collaboration',
     title: 'Collaboration',
     description:
-      'How collaboration arrives in Arq: share links and review first, comments and issues next, co-authoring only when it can be done without corrupting anyone’s model.',
+      'How collaboration is scoped to arrive in Arq: share links and review first, comments and issues next, co-authoring later. The current build has no sharing backend.',
   },
   render: () => html`
     ${hero({
       heading: 'Review first. Co-authoring when it is safe.',
-      lede: 'Most architectural collaboration is one person drawing and several people reacting. Arq builds that reality first, and treats simultaneous editing as the hard problem it is.',
+      lede: 'Most architectural collaboration is one person drawing and several people reacting. Arq is scoped to build that first, and treats simultaneous editing as the hard problem it is.',
     })}
     ${notes([
       {
         title: 'The order of arrival',
         body: html`
+          <p>
+            Everything in this list is release scope. None of it is available in the current
+            development build.
+          </p>
           ${specList([
             {
               term: 'Share links',
               detail:
-                'Release 2 - a controlled, revocable link to view a project without installing anything.',
+                'Release 2 scope: a controlled, revocable link to view a project without installing anything.',
             },
             {
               term: 'Comments',
               detail:
-                'Release 2 - anchored to model elements and sheets, resolvable, never silently deleted.',
+                'Release 2 scope: anchored to model elements and sheets, resolvable, never silently deleted.',
             },
             {
               term: 'Issues',
               detail:
-                'Release 2 - actionable design problems with a state, distinct from conversation.',
+                'Release 2 scope: actionable design problems with a state, distinct from conversation.',
             },
             {
               term: 'Revision comparison',
-              detail: 'Release 2 - see what changed between two revisions before acting on it.',
+              detail:
+                'Release 2 scope: see what changed between two revisions before acting on it.',
             },
             {
               term: 'Co-authoring',
               detail:
-                'Later, because it is hard: concurrent geometry editing is explicitly deferred until it cannot corrupt a model. The data structures for it (CRDT-based) are already being tested in the repository.',
+                'Later, because it is hard. Concurrent geometry editing is deferred until it cannot corrupt a model. CRDT-based data structures for it are being tested as libraries in the repository, which is not the same as a working feature.',
             },
           ])}
         `,
@@ -55,10 +64,10 @@ export const collaborationPage: Page = {
         title: 'Local first does not mean alone',
         body: html`
           <p>
-            Collaboration in Arq is layered on top of the local file, never instead of it. Your copy
-            of the project remains complete and openable offline; sync and sharing move operations
-            between copies. A dropped connection degrades to exactly what you already have: a
-            working local project.
+            The design intent is that collaboration layers on top of the local file rather than
+            replacing it: your copy of the project stays complete, and sync moves operations between
+            copies. That is the architecture the sync protocol is being written against. It has no
+            transport and no backend yet, so none of it is running.
           </p>
         `,
       },
@@ -66,10 +75,10 @@ export const collaborationPage: Page = {
         title: 'What exists today',
         body: html`
           <p>
-            Today there is no sharing backend, and this page will say so until there is. The comment
-            and issue data models exist with passing tests; the review-mode surfaces are designed
-            and gated off in the development build until a real data source exists — the build shows
-            why a control is unavailable rather than pretending it works.
+            There is no sharing backend, and this page will say so until there is. The comment and
+            issue data models exist with passing tests. The review-mode surfaces are designed and
+            gated off in the development build until a real data source exists, and the build shows
+            why a control is unavailable rather than presenting it as working.
           </p>
         `,
       },

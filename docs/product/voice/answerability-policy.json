@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 3,
+  "states": {
+    "ANSWER": "Fresh authoritative evidence supports the scoped answer.",
+    "QUALIFY": "Evidence exists but the capability is planned, gated, library-only, volatile or otherwise scope-limited.",
+    "CONFLICT": "Authoritative sources disagree or dependent copy conflicts with stronger evidence. State the boundary and do not choose the stronger answer.",
+    "UNKNOWN": "No approved current source establishes the fact.",
+    "REFUSE_AUTHORITY": "The requested statement would imply professional, safety, compliance, permission or AI authority Arq does not have."
+  },
+  "decisionOrder": [
+    "check professional/security/permission boundary",
+    "resolve canonical object and user context",
+    "verify generated source freshness",
+    "evaluate each atomic assertion",
+    "check conflict registry",
+    "check claim state and reachability",
+    "choose response disposition",
+    "answer using canonical visible language"
+  ],
+  "requiredEvidenceEnvelope": [
+    "answerabilityOutcome",
+    "responseDisposition",
+    "claimIds",
+    "sourceIds",
+    "conflictIds",
+    "sourceDigest",
+    "languageContractVersion",
+    "assertionScope",
+    "redactionLevel"
+  ],
+  "neverInfer": [
+    "shipping capability from package existence",
+    "shipping capability from design-registry status",
+    "end-to-end import/export from parser/adapter tests alone",
+    "sync from local persistence",
+    "portable-file publication from a journal write",
+    "professional safety from file/model validation",
+    "pricing from research intent",
+    "release date from release number",
+    "compatibility from a file extension alone",
+    "a project is open from compatibility preflight",
+    "permission from a visible control alone",
+    "hardware support from browser availability alone",
+    "privacy transport from product aspiration alone"
+  ]
+}

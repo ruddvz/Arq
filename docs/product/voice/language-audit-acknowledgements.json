@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 2,
+  "purpose": "Temporary review acknowledgements for review-required language findings. Each acknowledgement is narrow, evidence-backed, role-owned and removed when the underlying copy is corrected.",
+  "requiredFields": ["ruleId", "sourcePath", "reason", "evidencePath", "reviewerRole", "expiresOn"],
+  "maximumLifetimeDays": 30,
+  "acknowledgements": []
+}

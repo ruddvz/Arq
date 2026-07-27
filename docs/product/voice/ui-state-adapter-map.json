@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Maps visible implementation-specific states to canonical language without pretending that two persistence layers are the same thing.",
+  "adapters": [
+    {
+      "id": "web-plan-journal-status",
+      "sourcePath": "apps/web/src/App.tsx",
+      "sourceType": "saveState union",
+      "persistenceTier": "indexeddb-journal",
+      "states": [
+        {
+          "internal": "no-project",
+          "canonicalMessageId": "file.compatible-not-open",
+          "exposure": "diagnostic",
+          "meaning": "No user project has been opened; the demo context must not be presented as a portable project."
+        },
+        {
+          "internal": "saved",
+          "canonicalMessageId": "persistence.journal-saved",
+          "exposure": "product",
+          "meaning": "The current demo-plan operation journal reports ready. It is not proof of portable .arq publication."
+        },
+        {
+          "internal": "saving",
+          "canonicalMessageId": "persistence.journal-saved",
+          "exposure": "product",
+          "meaning": "A local journal append is in progress."
+        },
+        {
+          "internal": "unsaved-changes",
+          "canonicalMessageId": "persistence.journal-saved",
+          "exposure": "product",
+          "meaning": "The local journal is unavailable or a write failed; current edits may not be persisted in that journal."
+        },
+        {
+          "internal": "recovered",
+          "canonicalMessageId": "persistence.journal-recovered",
+          "exposure": "product",
+          "meaning": "The current demo-plan state was replayed from the local journal."
+        }
+      ]
+    },
+    {
+      "id": "file-open-preflight",
+      "sourcePath": "apps/web/src/file-handling/describe-file-flow-state.ts",
+      "sourceType": "FileFlowState",
+      "persistenceTier": "none",
+      "states": [
+        {
+          "internal": "native-opening",
+          "canonicalMessageId": "file.compatible-not-open",
+          "exposure": "product",
+          "meaning": "The file passed compatibility preflight; it is not a live open project in the current implementation."
+        },
+        {
+          "internal": "read-only-safe-mode",
+          "canonicalMessageId": "file.project-ready",
+          "exposure": "product",
+          "meaning": "Use only if a readable project session was actually created. Otherwise describe the compatibility or recovery outcome instead."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 3,
+  "rule": "The source contract is the authoritative tracked-source list. This map describes required downstream review, not a second liveness list.",
+  "dependencies": [
+    {
+      "sourceSet": "accepted-adrs",
+      "domain": "architecture",
+      "dependents": [
+        "source precedence",
+        "claims",
+        "conflicts",
+        "support",
+        "product AI",
+        "documentation"
+      ]
+    },
+    {
+      "sourceSet": "status",
+      "domain": "current-status",
+      "dependents": ["current claims", "conflicts", "support", "marketing", "generated context"]
+    },
+    {
+      "sourceSet": "workspace-registries",
+      "domain": "canonical interface names and states",
+      "dependents": [
+        "ontology",
+        "state map",
+        "tool UI",
+        "command palette",
+        "accessibility",
+        "support"
+      ]
+    },
+    {
+      "sourceSet": "file-open-ui",
+      "domain": "file opening/recovery reachability",
+      "dependents": ["file messages", "state adapters", "marketing", "support", "AI context"]
+    },
+    {
+      "sourceSet": "plan-journal",
+      "domain": "current local journal",
+      "dependents": ["persistence messages", "state adapters", "recovery copy", "support"]
+    },
+    {
+      "sourceSet": "local-storage",
+      "domain": "IndexedDB journal implementation",
+      "dependents": ["persistence claims", "conflict registry", "privacy and recovery language"]
+    },
+    {
+      "sourceSet": "marketing-content",
+      "domain": "public claims",
+      "dependents": ["claim bindings", "rendered-site tests", "conflict register", "public audit"]
+    },
+    {
+      "sourceSet": "marketing-claims-tests",
+      "domain": "rendered public claim gate",
+      "dependents": ["claim test fragment", "CI audit"]
+    },
+    {
+      "sourceSet": "format-matrix",
+      "domain": "interoperability",
+      "dependents": ["format language", "claims", "marketing", "support", "fidelity reports"]
+    },
+    {
+      "sourceSet": "ai-guardrails",
+      "domain": "AI boundary",
+      "dependents": ["AI proposal language", "claims", "support", "future AI context"]
+    },
+    {
+      "sourceSet": "rbac",
+      "domain": "permissions",
+      "dependents": ["roles", "disabled reasons", "sharing UI", "support"]
+    },
+    {
+      "sourceSet": "telemetry",
+      "domain": "diagnostics/privacy",
+      "dependents": ["privacy copy", "support evidence request", "AI telemetry wording"]
+    }
+  ]
+}

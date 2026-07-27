@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 3,
+  "contractVersion": "4.1.0",
+  "minimumConsumerVersion": "4.1.0",
+  "compatibility": {
+    "sameMajor": "A consumer may read additive optional fields.",
+    "higherMajor": "A consumer must not answer from an unsupported contract version.",
+    "deprecatedIds": "Must resolve to a replacement ID until the declared major-version removal."
+  },
+  "requiredContextSections": [
+    "system",
+    "states",
+    "claims",
+    "conflicts",
+    "sources",
+    "answerability",
+    "responseDisposition",
+    "messageContract",
+    "stateAdapters",
+    "editorialAuthenticity",
+    "publicCopyInventory",
+    "deployedSiteContract"
+  ],
+  "breakingChangeTriggers": [
+    "canonical-id-removal",
+    "state-meaning-change",
+    "required-message-slot-change",
+    "answerability-outcome-change",
+    "source-precedence-change",
+    "editorial-policy-required-section-change",
+    "public-copy-inventory-classification-change",
+    "deployed-site-proof-contract-change"
+  ]
+}

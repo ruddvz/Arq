@@ -1,0 +1,1087 @@
+{
+  "schemaVersion": 2,
+  "snapshotDate": "2026-07-27",
+  "note": "Mirror only. Canonical source is repository registries. Refresh/verify after registry changes.",
+  "modes": [
+    "Design",
+    "Document",
+    "Inspect",
+    "Review",
+    "Present"
+  ],
+  "toolGroups": [
+    "Select",
+    "Draw",
+    "Build",
+    "Modify",
+    "Annotate",
+    "Measure",
+    "View",
+    "Review"
+  ],
+  "tools": [
+    {
+      "id": "select",
+      "name": "Select",
+      "group": "Select"
+    },
+    {
+      "id": "window-select",
+      "name": "Window select",
+      "group": "Select"
+    },
+    {
+      "id": "crossing-select",
+      "name": "Crossing select",
+      "group": "Select"
+    },
+    {
+      "id": "selection-filter",
+      "name": "Selection filter",
+      "group": "Select"
+    },
+    {
+      "id": "select-similar",
+      "name": "Select similar",
+      "group": "Select"
+    },
+    {
+      "id": "wall",
+      "name": "Wall",
+      "group": "Draw"
+    },
+    {
+      "id": "room-boundary",
+      "name": "Room boundary",
+      "group": "Draw"
+    },
+    {
+      "id": "reference-line",
+      "name": "Reference line",
+      "group": "Draw"
+    },
+    {
+      "id": "grid",
+      "name": "Grid",
+      "group": "Draw"
+    },
+    {
+      "id": "door",
+      "name": "Door",
+      "group": "Build"
+    },
+    {
+      "id": "window",
+      "name": "Window",
+      "group": "Build"
+    },
+    {
+      "id": "opening",
+      "name": "Opening",
+      "group": "Build"
+    },
+    {
+      "id": "column",
+      "name": "Column",
+      "group": "Build"
+    },
+    {
+      "id": "slab",
+      "name": "Slab",
+      "group": "Build"
+    },
+    {
+      "id": "roof",
+      "name": "Roof",
+      "group": "Build"
+    },
+    {
+      "id": "stair",
+      "name": "Stair",
+      "group": "Build"
+    },
+    {
+      "id": "railing",
+      "name": "Railing",
+      "group": "Build"
+    },
+    {
+      "id": "furniture-component",
+      "name": "Furniture/component",
+      "group": "Build"
+    },
+    {
+      "id": "move",
+      "name": "Move",
+      "group": "Modify"
+    },
+    {
+      "id": "copy",
+      "name": "Copy",
+      "group": "Modify"
+    },
+    {
+      "id": "rotate",
+      "name": "Rotate",
+      "group": "Modify"
+    },
+    {
+      "id": "mirror",
+      "name": "Mirror",
+      "group": "Modify"
+    },
+    {
+      "id": "offset",
+      "name": "Offset",
+      "group": "Modify"
+    },
+    {
+      "id": "align",
+      "name": "Align",
+      "group": "Modify"
+    },
+    {
+      "id": "trim",
+      "name": "Trim",
+      "group": "Modify"
+    },
+    {
+      "id": "extend",
+      "name": "Extend",
+      "group": "Modify"
+    },
+    {
+      "id": "join",
+      "name": "Join",
+      "group": "Modify"
+    },
+    {
+      "id": "split",
+      "name": "Split",
+      "group": "Modify"
+    },
+    {
+      "id": "array",
+      "name": "Array",
+      "group": "Modify"
+    },
+    {
+      "id": "delete",
+      "name": "Delete",
+      "group": "Modify"
+    },
+    {
+      "id": "dimension",
+      "name": "Dimension",
+      "group": "Annotate"
+    },
+    {
+      "id": "text-note",
+      "name": "Text note",
+      "group": "Annotate"
+    },
+    {
+      "id": "tag",
+      "name": "Tag",
+      "group": "Annotate"
+    },
+    {
+      "id": "spot-elevation",
+      "name": "Spot elevation",
+      "group": "Annotate"
+    },
+    {
+      "id": "section-marker",
+      "name": "Section marker",
+      "group": "Annotate"
+    },
+    {
+      "id": "elevation-marker",
+      "name": "Elevation marker",
+      "group": "Annotate"
+    },
+    {
+      "id": "distance",
+      "name": "Distance",
+      "group": "Measure"
+    },
+    {
+      "id": "angle",
+      "name": "Angle",
+      "group": "Measure"
+    },
+    {
+      "id": "area",
+      "name": "Area",
+      "group": "Measure"
+    },
+    {
+      "id": "pan",
+      "name": "Pan",
+      "group": "View"
+    },
+    {
+      "id": "orbit",
+      "name": "Orbit",
+      "group": "View"
+    },
+    {
+      "id": "zoom",
+      "name": "Zoom",
+      "group": "View"
+    },
+    {
+      "id": "fit",
+      "name": "Fit",
+      "group": "View"
+    },
+    {
+      "id": "perspective",
+      "name": "Perspective",
+      "group": "View"
+    },
+    {
+      "id": "orthographic",
+      "name": "Orthographic",
+      "group": "View"
+    },
+    {
+      "id": "section-box",
+      "name": "Section box",
+      "group": "View"
+    },
+    {
+      "id": "hide",
+      "name": "Hide",
+      "group": "View"
+    },
+    {
+      "id": "isolate",
+      "name": "Isolate",
+      "group": "View"
+    },
+    {
+      "id": "unhide",
+      "name": "Unhide",
+      "group": "View"
+    },
+    {
+      "id": "view-style",
+      "name": "View style",
+      "group": "View"
+    },
+    {
+      "id": "issue",
+      "name": "Issue",
+      "group": "Review"
+    },
+    {
+      "id": "comment",
+      "name": "Comment",
+      "group": "Review"
+    },
+    {
+      "id": "model-health",
+      "name": "Model health",
+      "group": "Review"
+    },
+    {
+      "id": "compare-revisions",
+      "name": "Compare revisions",
+      "group": "Review"
+    }
+  ],
+  "panels": [
+    {
+      "id": "P-left-browser",
+      "name": "Project Browser",
+      "tabs": [
+        "Project",
+        "Views",
+        "Documents",
+        "Files"
+      ]
+    },
+    {
+      "id": "P-right-inspector",
+      "name": "Inspector",
+      "tabs": [
+        "Properties",
+        "Type",
+        "Relations",
+        "Warnings",
+        "History"
+      ]
+    },
+    {
+      "id": "P-review",
+      "name": "Review rail",
+      "tabs": [
+        "Issues",
+        "Comments",
+        "Changes"
+      ]
+    },
+    {
+      "id": "P-tasks",
+      "name": "Task tray",
+      "tabs": [
+        "Tasks"
+      ]
+    },
+    {
+      "id": "P-ai",
+      "name": "AI proposal",
+      "tabs": [
+        "Proposal",
+        "Assumptions",
+        "Validation"
+      ]
+    },
+    {
+      "id": "P-diagnostics",
+      "name": "Diagnostics",
+      "tabs": [
+        "Model",
+        "System",
+        "Performance"
+      ]
+    }
+  ],
+  "viewKinds": [
+    {
+      "kind": "project-overview",
+      "label": "Project overview"
+    },
+    {
+      "kind": "plan",
+      "label": "Plan"
+    },
+    {
+      "kind": "3d",
+      "label": "3D"
+    },
+    {
+      "kind": "section",
+      "label": "Section"
+    },
+    {
+      "kind": "elevation",
+      "label": "Elevation"
+    },
+    {
+      "kind": "sheet",
+      "label": "Sheet"
+    },
+    {
+      "kind": "schedule",
+      "label": "Schedule"
+    },
+    {
+      "kind": "report",
+      "label": "Report"
+    },
+    {
+      "kind": "issues",
+      "label": "Issues"
+    },
+    {
+      "kind": "compare",
+      "label": "Compare"
+    },
+    {
+      "kind": "model-health",
+      "label": "Model health"
+    },
+    {
+      "kind": "ai-proposal",
+      "label": "AI proposal"
+    }
+  ],
+  "keyboardCommands": [
+    {
+      "id": "command-palette",
+      "label": "Open command palette"
+    },
+    {
+      "id": "save",
+      "label": "Save local project"
+    },
+    {
+      "id": "undo",
+      "label": "Undo"
+    },
+    {
+      "id": "redo",
+      "label": "Redo"
+    },
+    {
+      "id": "escape",
+      "label": "Cancel current tool/draft"
+    },
+    {
+      "id": "select",
+      "label": "Select tool"
+    },
+    {
+      "id": "wall",
+      "label": "Wall tool"
+    },
+    {
+      "id": "fit",
+      "label": "Fit view"
+    },
+    {
+      "id": "focus-selection",
+      "label": "Focus selection"
+    },
+    {
+      "id": "close-tab",
+      "label": "Close active view tab"
+    }
+  ],
+  "workspaceSurfaces": [
+    {
+      "id": "WS-01",
+      "name": "Project overview",
+      "family": "dashboard"
+    },
+    {
+      "id": "WS-02",
+      "name": "Design / plan",
+      "family": "design"
+    },
+    {
+      "id": "WS-03",
+      "name": "Design / 3D",
+      "family": "design"
+    },
+    {
+      "id": "WS-04",
+      "name": "Design / split",
+      "family": "design"
+    },
+    {
+      "id": "WS-05",
+      "name": "Document browser",
+      "family": "document"
+    },
+    {
+      "id": "WS-06",
+      "name": "Sheet editing",
+      "family": "document"
+    },
+    {
+      "id": "WS-07",
+      "name": "Schedule editing",
+      "family": "document"
+    },
+    {
+      "id": "WS-08",
+      "name": "Inspect selection",
+      "family": "inspect"
+    },
+    {
+      "id": "WS-09",
+      "name": "Review issues",
+      "family": "review"
+    },
+    {
+      "id": "WS-10",
+      "name": "Review comments",
+      "family": "review"
+    },
+    {
+      "id": "WS-11",
+      "name": "Version history",
+      "family": "review"
+    },
+    {
+      "id": "WS-12",
+      "name": "Revision compare",
+      "family": "review"
+    },
+    {
+      "id": "WS-13",
+      "name": "Conflict resolution",
+      "family": "review"
+    },
+    {
+      "id": "WS-14",
+      "name": "Files and references",
+      "family": "files"
+    },
+    {
+      "id": "WS-15",
+      "name": "Import report",
+      "family": "files"
+    },
+    {
+      "id": "WS-16",
+      "name": "Export setup",
+      "family": "files"
+    },
+    {
+      "id": "WS-17",
+      "name": "Export report",
+      "family": "files"
+    },
+    {
+      "id": "WS-18",
+      "name": "Model health",
+      "family": "analysis"
+    },
+    {
+      "id": "WS-19",
+      "name": "System diagnostics",
+      "family": "analysis"
+    },
+    {
+      "id": "WS-20",
+      "name": "AI proposal",
+      "family": "ai"
+    },
+    {
+      "id": "WS-21",
+      "name": "Present",
+      "family": "present"
+    },
+    {
+      "id": "WS-22",
+      "name": "Project settings",
+      "family": "settings"
+    },
+    {
+      "id": "WS-23",
+      "name": "Share project",
+      "family": "collaboration"
+    },
+    {
+      "id": "WS-24",
+      "name": "Recovery",
+      "family": "recovery"
+    },
+    {
+      "id": "WS-25",
+      "name": "Keyboard shortcuts",
+      "family": "help"
+    },
+    {
+      "id": "WS-26",
+      "name": "Command palette",
+      "family": "help"
+    },
+    {
+      "id": "WS-27",
+      "name": "Mobile tool picker",
+      "family": "mobile"
+    },
+    {
+      "id": "WS-28",
+      "name": "Mobile inspector",
+      "family": "mobile"
+    },
+    {
+      "id": "WS-29",
+      "name": "Mobile review",
+      "family": "mobile"
+    },
+    {
+      "id": "WS-30",
+      "name": "Fullscreen canvas",
+      "family": "mobile"
+    }
+  ],
+  "routeSurfaces": [
+    {
+      "id": "PUB-001",
+      "name": "Marketing home",
+      "route": "/",
+      "access": "public"
+    },
+    {
+      "id": "PUB-002",
+      "name": "Product overview",
+      "route": "/product",
+      "access": "public"
+    },
+    {
+      "id": "PUB-003",
+      "name": "For architects",
+      "route": "/architects",
+      "access": "public"
+    },
+    {
+      "id": "PUB-004",
+      "name": "For students",
+      "route": "/students",
+      "access": "public"
+    },
+    {
+      "id": "PUB-005",
+      "name": "Collaboration",
+      "route": "/collaboration",
+      "access": "public"
+    },
+    {
+      "id": "PUB-006",
+      "name": "AI",
+      "route": "/ai",
+      "access": "public"
+    },
+    {
+      "id": "PUB-007",
+      "name": "Interoperability",
+      "route": "/interoperability",
+      "access": "public"
+    },
+    {
+      "id": "PUB-008",
+      "name": "iPad",
+      "route": "/ipad",
+      "access": "public"
+    },
+    {
+      "id": "PUB-009",
+      "name": "Pricing",
+      "route": "/pricing",
+      "access": "public"
+    },
+    {
+      "id": "PUB-010",
+      "name": "Security",
+      "route": "/security",
+      "access": "public"
+    },
+    {
+      "id": "PUB-011",
+      "name": "Documentation index",
+      "route": "/docs",
+      "access": "public"
+    },
+    {
+      "id": "PUB-012",
+      "name": "Changelog",
+      "route": "/changelog",
+      "access": "public"
+    },
+    {
+      "id": "PUB-013",
+      "name": "Status",
+      "route": "/status",
+      "access": "public"
+    },
+    {
+      "id": "PUB-014",
+      "name": "Contact and support",
+      "route": "/contact",
+      "access": "public"
+    },
+    {
+      "id": "PUB-015",
+      "name": "Privacy notice",
+      "route": "/legal/privacy",
+      "access": "public"
+    },
+    {
+      "id": "PUB-016",
+      "name": "Terms",
+      "route": "/legal/terms",
+      "access": "public"
+    },
+    {
+      "id": "PUB-017",
+      "name": "Open-source notices",
+      "route": "/legal/open-source",
+      "access": "public"
+    },
+    {
+      "id": "AUTH-001",
+      "name": "Sign in",
+      "route": "/sign-in",
+      "access": "anonymous"
+    },
+    {
+      "id": "AUTH-002",
+      "name": "Sign up",
+      "route": "/sign-up",
+      "access": "anonymous"
+    },
+    {
+      "id": "AUTH-003",
+      "name": "Verify email",
+      "route": "/verify-email",
+      "access": "anonymous"
+    },
+    {
+      "id": "AUTH-004",
+      "name": "Forgot password",
+      "route": "/forgot-password",
+      "access": "anonymous"
+    },
+    {
+      "id": "AUTH-005",
+      "name": "Reset password",
+      "route": "/reset-password",
+      "access": "anonymous"
+    },
+    {
+      "id": "APP-001",
+      "name": "Recent projects",
+      "route": "/app",
+      "access": "signed-in"
+    },
+    {
+      "id": "APP-002",
+      "name": "Shared with me",
+      "route": "/app/shared",
+      "access": "signed-in"
+    },
+    {
+      "id": "APP-003",
+      "name": "Templates",
+      "route": "/app/templates",
+      "access": "signed-in"
+    },
+    {
+      "id": "APP-004",
+      "name": "Archived projects",
+      "route": "/app/archived",
+      "access": "signed-in"
+    },
+    {
+      "id": "APP-005",
+      "name": "New project",
+      "route": "/app/new",
+      "access": "signed-in"
+    },
+    {
+      "id": "APP-006",
+      "name": "Import project",
+      "route": "/app/import",
+      "access": "signed-in"
+    },
+    {
+      "id": "APP-007",
+      "name": "Workspace members",
+      "route": "/app/workspace/members",
+      "access": "administrator"
+    },
+    {
+      "id": "APP-008",
+      "name": "Workspace settings",
+      "route": "/app/workspace/settings",
+      "access": "administrator"
+    },
+    {
+      "id": "APP-009",
+      "name": "Account settings",
+      "route": "/app/account",
+      "access": "signed-in"
+    },
+    {
+      "id": "APP-010",
+      "name": "Billing",
+      "route": "/app/billing",
+      "access": "owner"
+    },
+    {
+      "id": "PROJ-001",
+      "name": "Plan editor",
+      "route": "/app/projects/:id/plan/:viewId",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-002",
+      "name": "3D editor",
+      "route": "/app/projects/:id/3d/:viewId",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-003",
+      "name": "Split view",
+      "route": "/app/projects/:id/split",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-004",
+      "name": "Sheet editor",
+      "route": "/app/projects/:id/sheets/:sheetId",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-005",
+      "name": "Inspect mode",
+      "route": "/app/projects/:id/inspect",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-006",
+      "name": "Document mode",
+      "route": "/app/projects/:id/document",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-007",
+      "name": "Review mode",
+      "route": "/app/projects/:id/review",
+      "access": "commenter"
+    },
+    {
+      "id": "PROJ-008",
+      "name": "Present mode",
+      "route": "/app/projects/:id/present",
+      "access": "viewer"
+    },
+    {
+      "id": "PROJ-009",
+      "name": "Comments",
+      "route": "/app/projects/:id/comments",
+      "access": "commenter"
+    },
+    {
+      "id": "PROJ-010",
+      "name": "Issues",
+      "route": "/app/projects/:id/issues",
+      "access": "commenter"
+    },
+    {
+      "id": "PROJ-011",
+      "name": "Version history",
+      "route": "/app/projects/:id/history",
+      "access": "viewer"
+    },
+    {
+      "id": "PROJ-012",
+      "name": "Revision compare",
+      "route": "/app/projects/:id/compare/:a/:b",
+      "access": "viewer"
+    },
+    {
+      "id": "PROJ-013",
+      "name": "Import report",
+      "route": "/app/projects/:id/imports/:importId",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-014",
+      "name": "Export dialog",
+      "route": "/app/projects/:id/export",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-015",
+      "name": "Export report",
+      "route": "/app/projects/:id/exports/:exportId",
+      "access": "viewer"
+    },
+    {
+      "id": "PROJ-016",
+      "name": "Project settings",
+      "route": "/app/projects/:id/settings",
+      "access": "administrator"
+    },
+    {
+      "id": "PROJ-017",
+      "name": "Share project",
+      "route": "/app/projects/:id/share",
+      "access": "administrator"
+    },
+    {
+      "id": "PROJ-018",
+      "name": "Recovery",
+      "route": "/app/recovery/:projectId",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-019",
+      "name": "Sync conflict",
+      "route": "/app/projects/:id/conflict",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-020",
+      "name": "Diagnostics",
+      "route": "/app/projects/:id/diagnostics",
+      "access": "administrator"
+    },
+    {
+      "id": "PROJ-021",
+      "name": "Command palette",
+      "route": "overlay",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-022",
+      "name": "Keyboard shortcuts",
+      "route": "overlay",
+      "access": "signed-in"
+    },
+    {
+      "id": "PROJ-023",
+      "name": "Onboarding project",
+      "route": "/app/onboarding",
+      "access": "signed-in"
+    },
+    {
+      "id": "PROJ-024",
+      "name": "Model health",
+      "route": "panel",
+      "access": "editor"
+    },
+    {
+      "id": "PROJ-025",
+      "name": "AI proposal",
+      "route": "panel",
+      "access": "editor"
+    }
+  ],
+  "stateMachines": {
+    "workspace-open": [
+      "project-loading",
+      "project-ready",
+      "project-offline-ready",
+      "project-read-only",
+      "project-recovery-required",
+      "project-fatal-error"
+    ],
+    "tab": [
+      "closed",
+      "opening",
+      "ready",
+      "background-stale",
+      "active",
+      "closing",
+      "failed"
+    ],
+    "tool": [
+      "inactive",
+      "hover-discoverable",
+      "armed",
+      "previewing",
+      "awaiting-numeric-input",
+      "committing",
+      "complete",
+      "rejected",
+      "cancelled"
+    ],
+    "panel": [
+      "docked",
+      "collapsed",
+      "overlay-open",
+      "overlay-peek",
+      "resizing",
+      "hidden"
+    ],
+    "save": [
+      "saved-local",
+      "saving-local",
+      "local-save-failed"
+    ],
+    "sync": [
+      "not-configured",
+      "offline",
+      "queued",
+      "syncing",
+      "synced",
+      "conflict",
+      "sync-failed"
+    ],
+    "selection": [
+      "none",
+      "hover",
+      "single",
+      "multi",
+      "locked-target",
+      "remote-selected"
+    ],
+    "issue": [
+      "open",
+      "in-progress",
+      "resolved",
+      "reopened",
+      "stale-context"
+    ],
+    "ai-proposal": [
+      "idle",
+      "generating",
+      "proposal-ready",
+      "validation-running",
+      "validation-failed",
+      "ready-to-apply",
+      "applying",
+      "applied",
+      "rejected",
+      "stale"
+    ],
+    "long-task": [
+      "queued",
+      "running",
+      "paused-if-supported",
+      "cancel-requested",
+      "cancelled",
+      "partial",
+      "succeeded",
+      "failed"
+    ]
+  },
+  "workspaceInvariants": [
+    "Local save and remote sync are separate machines.",
+    "View/tab close never deletes model data by implication.",
+    "Tool preview never becomes canonical until transaction commit.",
+    "Stale asynchronous results never overwrite newer document revision."
+  ],
+  "capabilityGates": [
+    {
+      "id": "CAP-core-plan",
+      "status": "current/protected-path"
+    },
+    {
+      "id": "CAP-3d",
+      "status": "current/derived"
+    },
+    {
+      "id": "CAP-document",
+      "status": "current-or-near-term"
+    },
+    {
+      "id": "CAP-collaboration",
+      "status": "gated-until-current-repo-evidence"
+    },
+    {
+      "id": "CAP-ai",
+      "status": "gated-until-current-repo-evidence"
+    },
+    {
+      "id": "CAP-native",
+      "status": "architecture-decision-required"
+    },
+    {
+      "id": "CAP-broad-exchange",
+      "status": "format-capability-matrix-required"
+    }
+  ],
+  "externalStateMachines": {
+    "arqfs-safe-mode": [
+      "unreadable",
+      "corrupt",
+      "interrupted-write",
+      "reader-too-old-to-write",
+      "missing-required-entries",
+      "safe-mode-required",
+      "healthy"
+    ],
+    "file-flow": [
+      "idle",
+      "acquiring",
+      "detecting",
+      "native-opening",
+      "import-options",
+      "importing",
+      "staged-review",
+      "migrating",
+      "read-only-safe-mode",
+      "failed"
+    ]
+  }
+}

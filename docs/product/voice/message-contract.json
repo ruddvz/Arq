@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Stable semantic message IDs for high-risk product copy. UI components may style these messages but may not erase their required distinctions.",
+  "messages": [
+    {
+      "id": "file.compatible-not-open",
+      "surface": "files",
+      "requiredSlots": ["fileName", "compatibilityResult", "openingBoundary"],
+      "forbiddenPhrases": ["opened", "project ready"],
+      "defaultLabel": "{fileName} is a compatible Arq project.",
+      "detailRule": "State that the current build has not opened a live project unless a real opening state exists."
+    },
+    {
+      "id": "file.project-ready",
+      "surface": "files",
+      "requiredSlots": ["projectName", "openState"],
+      "defaultLabel": "Project ready",
+      "detailRule": "Use only after a usable project context exists."
+    },
+    {
+      "id": "persistence.journal-saved",
+      "surface": "status-notification",
+      "requiredSlots": ["persistenceTarget"],
+      "defaultLabel": "Saved in the local journal",
+      "detailRule": "Do not imply portable .arq publication or sync."
+    },
+    {
+      "id": "persistence.journal-recovered",
+      "surface": "recovery",
+      "requiredSlots": ["recoverySource", "recoveredScope"],
+      "defaultLabel": "Recovered from the local journal",
+      "detailRule": "State what was recovered and what was not updated."
+    },
+    {
+      "id": "persistence.portable-file-updated",
+      "surface": "files",
+      "requiredSlots": ["fileName", "destination"],
+      "defaultLabel": "Portable .arq file updated",
+      "detailRule": "Use only after a verified native-file write."
+    },
+    {
+      "id": "sync.current",
+      "surface": "status-notification",
+      "requiredSlots": ["revision"],
+      "defaultLabel": "Synced",
+      "detailRule": "Never infer this from local persistence."
+    },
+    {
+      "id": "permission.required-role",
+      "surface": "permissions",
+      "requiredSlots": ["action", "requiredRole"],
+      "defaultLabel": "You need {requiredRole} access to {action}.",
+      "detailRule": "Separate role restriction from unavailable capability."
+    },
+    {
+      "id": "ai.proposal-stale",
+      "surface": "ai",
+      "requiredSlots": ["baseRevision", "currentRevision"],
+      "defaultLabel": "Proposal is stale",
+      "detailRule": "Disable Apply and offer regenerate or review."
+    },
+    {
+      "id": "ai.blocking-validation",
+      "surface": "ai",
+      "requiredSlots": ["blockingErrorCount"],
+      "defaultLabel": "Proposal has blocking errors",
+      "detailRule": "No apply action while errors remain."
+    }
+  ],
+  "localisationRules": {
+    "messageIdsAreStable": true,
+    "variablesAreTyped": true,
+    "doNotConcatenateTranslatedFragments": true,
+    "visibleLabelMustRemainInAccessibleName": true
+  }
+}

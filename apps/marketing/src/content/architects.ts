@@ -3,9 +3,15 @@ import { html } from '../html.js';
 import type { Page } from '../site.js';
 
 /**
- * PUB-003. The residential and small-practice workflow. The SEO brief for
- * this sheet prohibits "works for every project" — the copy takes the
- * opposite position on purpose: Arq is for a specific kind of practice.
+ * PUB-003. The residential and small-practice workflow. The SEO brief for this
+ * sheet prohibits "works for every project".
+ *
+ * Claim bindings: pub-architects-wall-workflow (current-wall-authoring,
+ * CURRENT), pub-architects-lifetime (lifetime-local-access, PROHIBITED) and
+ * pub-architects-model-integrity (semantic-model-integrity, LIBRARY_ONLY).
+ * Present-tense workflow language stays on the tested wall path; the archive
+ * paragraph describes the format and says what has not been decided instead of
+ * guaranteeing future access.
  */
 export const architectsPage: Page = {
   meta: {
@@ -13,12 +19,12 @@ export const architectsPage: Page = {
     route: '/architects',
     title: 'For architects',
     description:
-      'Arq is being built for residential projects and small practices: measured plans, dependable drawings and files that stay on your machine.',
+      'Arq is being developed for residential projects and small practices: measured plans, a documented local project format, and a development build whose current state is published rather than implied.',
   },
   render: () => html`
     ${hero({
       heading: 'Built for the practice of two, not the firm of two thousand.',
-      lede: 'Arq is aimed at residential work and small practices: extensions, renovations, single dwellings. Not every project — that would be a lie — but these projects, done carefully.',
+      lede: 'Arq is aimed at residential work and small practices: extensions, renovations, single dwellings. It is being developed for those projects specifically, and it is still pre-release.',
     })}
     ${notes([
       {
@@ -27,8 +33,12 @@ export const architectsPage: Page = {
           <p>
             Start from a site measure or an image underlay. Draw the existing walls, then the
             proposal: doors, windows, rooms. Dimension what matters, note what needs saying, and set
-            a plan on a sheet. Export a vector PDF a builder can read. That loop — measure, draw,
-            dimension, issue — is the benchmark workflow every Arq release is tested against.
+            a plan on a sheet. Export a vector PDF a builder can read.
+          </p>
+          <p>
+            That loop is the benchmark workflow every Arq release is tested against. In the current
+            development build the wall step is the part you can actually do: drawing, snapping,
+            selection and validated edits in the plan canvas. The rest is Release 1 scope.
           </p>
         `,
       },
@@ -36,10 +46,16 @@ export const architectsPage: Page = {
         title: 'Your file, your office',
         body: html`
           <p>
-            Small practices cannot gamble their archive on a subscription's goodwill. An Arq project
-            is one file on your disk, in a documented format built on SQLite, with journalled
-            changes and a recovery path designed before any cloud feature. If you stop paying — or
-            Arq stops existing — your drawings still open.
+            An Arq project is one file on your disk, in a documented format built on SQLite, with
+            journalled changes and a recovery path designed before any cloud feature. The format
+            layer is built and tested. Reading an existing <code>.arq</code> file back into a live
+            browser project is not wired yet.
+          </p>
+          <p>
+            What Arq can commit to today is the shape of the format and the fact that it is
+            documented in the repository. Commercial terms are not set, so this page makes no
+            promise about what happens to your archive if you stop paying or if the project ends.
+            See <a href="/pricing">pricing</a> for the state of that decision.
           </p>
         `,
       },
@@ -47,10 +63,15 @@ export const architectsPage: Page = {
         title: 'Drawings you can stand behind',
         body: html`
           <p>
-            Arq does not check building codes, does not certify structures and will not pretend to.
-            What it does is keep the model consistent — a door cannot sit outside its wall, a
-            dimension cannot drift from the geometry it measures — and explain every refusal in
-            plain language: what happened, why, what was affected, what remains safe.
+            Arq does not check building codes and does not certify structures. Its intended job is
+            to keep the model consistent, so that a door cannot sit outside its wall and a dimension
+            cannot drift from the geometry it measures, and to explain every refusal in plain
+            language: what happened, why, what was affected, what remains safe.
+          </p>
+          <p>
+            The validation rules and the element libraries behind that behaviour are implemented and
+            tested. They apply end to end only where the tools are wired to the canvas, which today
+            means walls.
           </p>
         `,
       },
@@ -59,9 +80,9 @@ export const architectsPage: Page = {
         body: html`
           <p>
             Arq is pre-release. The workspace, file format and drawing libraries exist and are
-            tested; the full drawing loop is being wired together in the open. If you want to
-            evaluate it for your practice, the <a href="/changelog">changelog</a> shows exactly what
-            works today, and <a href="/contact">contact</a> explains how to reach the project.
+            tested, and the drawing loop is being connected in the open. If you want to evaluate it
+            for your practice, the <a href="/changelog">changelog</a> shows what has been built and
+            when, and <a href="/contact">contact</a> explains how to reach the project.
           </p>
         `,
       },

@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 2,
+  "deprecated": true,
+  "replacement": "02-canonical/snapshots/repo-facts-2026-07-27.json",
+  "reason": "Current repo facts are snapshots, not canonical language authority. Use refresh/freshness tooling after integration."
+}

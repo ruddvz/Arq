@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 2,
+  "rule": "This map routes questions to authoritative Arq sources. It is a retrieval map, not a duplicate fact database.",
+  "domains": [
+    {
+      "id": "product-definition",
+      "topics": ["what Arq is", "target users", "anti-goals", "protected workflow"],
+      "sources": ["README.md", "docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md"]
+    },
+    {
+      "id": "current-reachability",
+      "topics": ["what works now", "wired UI", "shipping capability"],
+      "sources": [
+        "working code and tests",
+        "packages/workspace/src/registry/workspace-capability-gates.json",
+        "STATUS.md"
+      ],
+      "rule": "Code/tests outrank summary copy for works-today claims. Preserve conflicts until resolved."
+    },
+    {
+      "id": "release-roadmap",
+      "topics": ["release 1", "release 2", "release 3", "release 4", "deferred"],
+      "sources": ["docs/product/RELEASE-SCOPE.md", "approved ADRs"]
+    },
+    {
+      "id": "workspace-interface",
+      "topics": [
+        "modes",
+        "views",
+        "tabs",
+        "panels",
+        "tools",
+        "commands",
+        "shortcuts",
+        "responsive layout"
+      ],
+      "sources": [
+        "packages/workspace/src/registry/*.json",
+        "packages/workspace/src/workspace-types.ts"
+      ]
+    },
+    {
+      "id": "semantic-model",
+      "topics": [
+        "project objects",
+        "wall",
+        "door",
+        "window",
+        "room",
+        "level",
+        "view",
+        "sheet",
+        "revision",
+        "operation"
+      ],
+      "sources": [
+        "packages/bim-core",
+        "docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md",
+        "approved ADRs"
+      ]
+    },
+    {
+      "id": "geometry-validation",
+      "topics": ["snapping", "selection", "geometry tolerance", "validation", "blocking errors"],
+      "sources": [
+        "packages/geometry-2d",
+        "packages/geometry-3d",
+        "packages/validation",
+        "packages/operations",
+        "approved ADRs"
+      ]
+    },
+    {
+      "id": "files-storage-recovery",
+      "topics": [
+        ".arq",
+        "open",
+        "working copy",
+        "local journal",
+        "migration",
+        "integrity",
+        "recovery",
+        "read-only"
+      ],
+      "sources": [
+        "packages/arqfs",
+        "packages/local-storage",
+        "apps/web/src/file-handling",
+        "approved file/storage ADRs"
+      ]
+    },
+    {
+      "id": "interoperability",
+      "topics": ["PDF", "DXF", "IFC", "DWG", "RVT", "underlay", "import", "export", "fidelity"],
+      "sources": [
+        "docs/interoperability/FORMAT-SUPPORT-MATRIX.md",
+        "adapter code/tests",
+        "docs/product/RELEASE-SCOPE.md"
+      ]
+    },
+    {
+      "id": "review-collaboration",
+      "topics": ["comments", "issues", "sharing", "revision compare", "co-authoring", "sync"],
+      "sources": [
+        "packages/workspace/src/registry/workspace-capability-gates.json",
+        "collaboration packages/tests",
+        "docs/product/RELEASE-SCOPE.md"
+      ]
+    },
+    {
+      "id": "permissions",
+      "topics": ["roles", "who can edit", "who can share", "who can delete"],
+      "sources": ["security/RBAC-MATRIX.csv", "authorisation code/tests"]
+    },
+    {
+      "id": "ai",
+      "topics": ["AI proposal", "assumptions", "apply", "validation", "AI authority", "training"],
+      "sources": [
+        "docs/ai/AI-GUARDRAILS.md",
+        "AI ADRs",
+        "typed-operation schemas",
+        "current capability evidence"
+      ]
+    },
+    {
+      "id": "security-privacy",
+      "topics": [
+        "security",
+        "private project",
+        "vulnerability",
+        "data flow",
+        "training",
+        "support data"
+      ],
+      "sources": [
+        "SECURITY.md",
+        "security threat models",
+        "privacy notice",
+        "docs/ai/AI-GUARDRAILS.md"
+      ]
+    },
+    {
+      "id": "telemetry",
+      "topics": ["analytics", "events", "diagnostics collection"],
+      "sources": ["analytics/EVENT-DICTIONARY.csv", "telemetry implementation"]
+    },
+    {
+      "id": "pricing-entitlements",
+      "topics": ["price", "plans", "student pricing", "billing", "entitlements"],
+      "sources": [
+        "approved pricing decision",
+        "billing/entitlement implementation",
+        "apps/marketing/src/content/pricing.ts"
+      ],
+      "rule": "If no approved decision exists, answer unknown rather than infer a plan."
+    },
+    {
+      "id": "platforms-input",
+      "topics": ["browser", "desktop", "iPad", "phone", "Pencil", "touch", "keyboard"],
+      "sources": [
+        "workspace platform/input registries",
+        "capability tests",
+        "docs/product/RELEASE-SCOPE.md"
+      ]
+    },
+    {
+      "id": "accessibility",
+      "topics": [
+        "keyboard access",
+        "focus",
+        "screen reader",
+        "zoom",
+        "touch target",
+        "accessible name"
+      ],
+      "sources": [
+        "design-system tests",
+        "page specs",
+        "workspace registries",
+        "accessibility acceptance tests"
+      ]
+    },
+    {
+      "id": "support-contact",
+      "topics": ["support", "security report", "contact", "sales", "press"],
+      "sources": ["apps/marketing/src/content/contact.ts", "SECURITY.md"]
+    },
+    {
+      "id": "professional-use",
+      "topics": [
+        "code compliance",
+        "structural safety",
+        "approval",
+        "constructability",
+        "design correctness"
+      ],
+      "sources": [
+        "README.md professional-use boundary",
+        "business/LAUNCH-CLAIMS-CHECKLIST.md",
+        "docs/ai/AI-GUARDRAILS.md"
+      ]
+    }
+  ]
+}

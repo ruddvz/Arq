@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 3,
+  "purpose": "Future support bot intent vocabulary. This file does not implement a bot.",
+  "intents": [
+    {
+      "id": "open-project",
+      "examples": ["I can't open my file", "project won't open"],
+      "sources": ["file-flow", "arqfs-safe-mode"],
+      "sensitive": true
+    },
+    {
+      "id": "read-only",
+      "examples": ["why can't I edit", "opened read only"],
+      "sources": ["workspace-open", "arqfs-safe-mode", "roles-permissions"],
+      "sensitive": true
+    },
+    {
+      "id": "local-save",
+      "examples": ["is my work saved", "save failed"],
+      "sources": ["save"],
+      "sensitive": true
+    },
+    {
+      "id": "sync",
+      "examples": ["sync failed", "offline", "conflict"],
+      "sources": ["sync"],
+      "sensitive": true
+    },
+    {
+      "id": "recovery",
+      "examples": ["Arq recovered work", "crash recovery"],
+      "sources": ["files-storage-recovery"],
+      "sensitive": true
+    },
+    {
+      "id": "import",
+      "examples": ["can I import DXF", "what got omitted"],
+      "sources": ["format-language-map", "release-and-claim-state"],
+      "sensitive": false
+    },
+    {
+      "id": "export",
+      "examples": ["export PDF", "export failed"],
+      "sources": ["format-language-map"],
+      "sensitive": false
+    },
+    {
+      "id": "tool-help",
+      "examples": ["how do I draw a wall", "where is fit"],
+      "sources": ["tool registry", "keyboard map"],
+      "sensitive": false
+    },
+    {
+      "id": "permissions",
+      "examples": ["why can't I share", "who can delete project"],
+      "sources": ["roles-permissions"],
+      "sensitive": false
+    },
+    {
+      "id": "ai",
+      "examples": ["can AI redesign this", "why proposal blocked"],
+      "sources": ["AI guardrails", "AI state map", "claim registry"],
+      "sensitive": true
+    },
+    {
+      "id": "pricing",
+      "examples": ["how much is Arq", "student price"],
+      "sources": ["claim registry"],
+      "sensitive": false
+    },
+    {
+      "id": "compatibility",
+      "examples": ["does it open Revit", "DWG support"],
+      "sources": ["format-language-map", "claim registry"],
+      "sensitive": false
+    },
+    {
+      "id": "bug-report",
+      "examples": ["this looks broken", "unexpected behaviour"],
+      "sources": ["status", "surface contract", "error code"],
+      "sensitive": true
+    },
+    {
+      "id": "security-report",
+      "examples": ["I found a vulnerability"],
+      "sources": ["SECURITY.md"],
+      "sensitive": true,
+      "routing": "private-security-channel-only"
+    },
+    {
+      "id": "validation",
+      "examples": ["why was my change rejected", "wall will not place"],
+      "sources": ["error taxonomy", "validation messages"],
+      "sensitive": false
+    },
+    {
+      "id": "model-health",
+      "examples": ["what does model health mean", "why is there a warning"],
+      "sources": ["state map", "validation"],
+      "sensitive": false
+    },
+    {
+      "id": "selection-navigation",
+      "examples": ["I cannot select this", "how do I orbit", "fit my plan"],
+      "sources": ["tool registry", "view registry", "keyboard map"],
+      "sensitive": false
+    },
+    {
+      "id": "views-tabs",
+      "examples": ["did closing the tab delete my view", "duplicate view"],
+      "sources": ["tab registry", "workspace types"],
+      "sensitive": false
+    },
+    {
+      "id": "units-precision",
+      "examples": ["change to imperial", "why did this round"],
+      "sources": ["units standard", "project settings"],
+      "sensitive": false
+    },
+    {
+      "id": "project-format",
+      "examples": ["what is an arq file", "is arq a zip"],
+      "sources": ["arqfs", "format language map"],
+      "sensitive": false
+    },
+    {
+      "id": "migration",
+      "examples": ["why is my project being migrated", "can I keep the original"],
+      "sources": ["arqfs migration", "files standard"],
+      "sensitive": true
+    },
+    {
+      "id": "file-integrity",
+      "examples": ["file is corrupt", "integrity check failed"],
+      "sources": ["arqfs recovery report", "safe-mode mapping"],
+      "sensitive": true
+    },
+    {
+      "id": "offline",
+      "examples": ["can I work offline", "internet went down"],
+      "sources": ["workspace-open", "save", "sync"],
+      "sensitive": true
+    },
+    {
+      "id": "collaboration",
+      "examples": ["can someone review this", "share a project"],
+      "sources": ["capability gates", "roles permissions", "claim registry"],
+      "sensitive": false
+    },
+    {
+      "id": "comments-issues",
+      "examples": ["difference between comment and issue", "reopen issue"],
+      "sources": ["terminology", "issue state map"],
+      "sensitive": false
+    },
+    {
+      "id": "revision-history",
+      "examples": ["what changed", "compare two revisions"],
+      "sources": ["tab registry", "claim registry"],
+      "sensitive": false
+    },
+    {
+      "id": "diagnostics",
+      "examples": ["create support bundle", "performance problem"],
+      "sources": ["surface contracts", "privacy telemetry", "error taxonomy"],
+      "sensitive": true
+    },
+    {
+      "id": "performance",
+      "examples": ["Arq is slow", "lag while drawing"],
+      "sources": ["diagnostics", "benchmarks"],
+      "sensitive": true
+    },
+    {
+      "id": "browser-device",
+      "examples": ["does Arq work on iPad", "which browser"],
+      "sources": ["capability evidence", "claim registry"],
+      "sensitive": false
+    },
+    {
+      "id": "account-auth",
+      "examples": ["cannot sign in", "reset password"],
+      "sources": ["route map", "security policy"],
+      "sensitive": true
+    },
+    {
+      "id": "privacy-data",
+      "examples": ["where is my project stored", "does Arq train on my file"],
+      "sources": ["security", "privacy", "AI guardrails", "claim registry"],
+      "sensitive": true
+    },
+    {
+      "id": "professional-boundary",
+      "examples": ["does Arq check code", "is this structurally safe"],
+      "sources": ["professional-use boundary", "launch claims"],
+      "sensitive": true
+    },
+    {
+      "id": "release-status",
+      "examples": ["when is IFC coming", "is this feature available"],
+      "sources": ["release scope", "capability gates", "claim registry", "fresh repo context"],
+      "sensitive": false
+    },
+    {
+      "id": "documentation",
+      "examples": ["where is the shortcut list", "how does wall snapping work"],
+      "sources": ["docs index", "command registry", "tool registry"],
+      "sensitive": false
+    },
+    {
+      "id": "conflicting-information",
+      "examples": ["the website says something different", "which 3D status is correct"],
+      "sources": ["conflict registry", "fresh repo context", "claim registry"],
+      "sensitive": false,
+      "routing": "conflict-explanation-no-stronger-claim"
+    },
+    {
+      "id": "persistence-tier",
+      "examples": ["did it save to my arq file", "what does saved locally mean"],
+      "sources": ["state adapters", "file language", "claim registry"],
+      "sensitive": true
+    },
+    {
+      "id": "claim-evidence",
+      "examples": ["how do you know this works", "is this feature really available"],
+      "sources": ["claim registry", "source registry", "fresh repo context"],
+      "sensitive": false
+    },
+    {
+      "id": "accessibility-localisation",
+      "examples": ["screen reader label is different", "this translation changes the meaning"],
+      "sources": ["message contract", "localisation standard", "surface contracts"],
+      "sensitive": false
+    }
+  ],
+  "supportRule": "Determine the canonical concept and current claim state before answering. Store the required evidence envelope, choose a permitted response disposition, and request only the minimum diagnostic data."
+}
