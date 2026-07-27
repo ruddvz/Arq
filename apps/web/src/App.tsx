@@ -74,6 +74,13 @@ import {
 } from '@arq/workspace';
 import { createUndoStack } from '@arq/operations';
 import {
+  applyOperation,
+  invertOperation,
+  wallLength,
+  type DrawnWall,
+  type WorkspaceOperation,
+} from './canvas/plan-document';
+import {
   AlignIcon,
   CommentIcon,
   CopyIcon,
@@ -106,7 +113,12 @@ import {
   WindowSelectIcon,
 } from '@arq/icons';
 import { PlanCanvas } from './PlanCanvas';
-import { buildDemoWallAccessibleDescription, buildDemoWallInspectorGroups } from './inspector-data';
+import {
+  buildDemoWallAccessibleDescription,
+  buildDemoWallInspectorGroups,
+  buildDrawnWallAccessibleDescription,
+  buildDrawnWallInspectorGroups,
+} from './inspector-data';
 import { FileOpenPanel } from './file-handling/FileOpenPanel';
 
 /**
@@ -256,8 +268,19 @@ const INITIAL_TABS = openTab(
 );
 
 export function App(): JSX.Element {
-  const undoStackRef = useRef(createUndoStack<string>());
+  const undoStackRef = useRef(createUndoStack<WorkspaceOperation>());
   const [historyVersion, setHistoryVersion] = useState(0);
+
+  /*
+   * The one mutable plan document this build edits (see
+   * canvas/plan-document.ts for why it is in-memory scope). A ref mirrors
+   * the state so operation inverses are computed against the definitely-
+   * current wall list, not a stale closure - and so StrictMode's double-
+   * invoked updaters can never double-push onto the undo stack.
+   */
+  const [drawnWalls, setDrawnWalls] = useState<readonly DrawnWall[]>([]);
+  const drawnWallsRef = useRef<readonly DrawnWall[]>([]);
+  drawnWallsRef.current = drawnWalls;
 
   const [projectName, setProjectName] = useState('Untitled project');
   const [modeState, setModeState] = useState(() =>
@@ -283,6 +306,7 @@ export function App(): JSX.Element {
   });
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [fileOpenPanelOpen, setFileOpenPanelOpen] = useState(false);
+  const [activeSnapLabel, setActiveSnapLabel] = useState<string | null>(null);
   const [cursorWorldPosition, setCursorWorldPosition] = useState<{
     readonly x: number;
     readonly y: number;
@@ -334,10 +358,39 @@ export function App(): JSX.Element {
     );
   }, [modeState.mode]);
 
-  const recordDemoAction = useCallback((label: string) => {
-    undoStackRef.current.push({ forward: label, inverse: `Undo ${label}` });
+  /** Applies a typed operation to the plan document and records its real inverse. */
+  const performOperation = useCallback((operation: WorkspaceOperation) => {
+    const current = drawnWallsRef.current;
+    undoStackRef.current.push({
+      forward: operation,
+      inverse: invertOperation(current, operation),
+    });
+    setDrawnWalls(applyOperation(current, operation));
     setHistoryVersion((v) => v + 1);
   }, []);
+
+  const handleUndo = useCallback(() => {
+    const inverse = undoStackRef.current.undo();
+    if (inverse !== null) {
+      setDrawnWalls(applyOperation(drawnWallsRef.current, inverse));
+    }
+    setHistoryVersion((v) => v + 1);
+  }, []);
+
+  const handleRedo = useCallback(() => {
+    const forward = undoStackRef.current.redo();
+    if (forward !== null) {
+      setDrawnWalls(applyOperation(drawnWallsRef.current, forward));
+    }
+    setHistoryVersion((v) => v + 1);
+  }, []);
+
+  const recordDemoAction = useCallback(
+    (label: string) => {
+      performOperation({ kind: 'note', label });
+    },
+    [performOperation],
+  );
 
   const handleActivateTool = useCallback(
     (toolId: string) => {
@@ -428,6 +481,58 @@ export function App(): JSX.Element {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [handleActivateTool, sheet.openSheet, tabs]);
+
+  /*
+   * The semantic tree gains the walls the user has actually drawn, named by
+   * their real measured length - the same honesty rule as everywhere else:
+   * the panel lists what exists, and labels the fixture data as fixture.
+   */
+  const modelTree = useMemo<readonly ModelPanelNode[]>(() => {
+    if (drawnWalls.length === 0) {
+      return MODEL_TREE;
+    }
+    const drawnNodes: ModelPanelNode[] = drawnWalls.map((wall) => ({
+      id: wall.id,
+      displayName: `Wall ${Math.round(wallLength(wall))} mm (drawn)`,
+      nodeType: 'Wall',
+      hidden: false,
+    }));
+    const site = MODEL_TREE[0]!;
+    const building = site.children![0]!;
+    const level = building.children![0]!;
+    return [
+      {
+        ...site,
+        children: [
+          {
+            ...building,
+            children: [{ ...level, children: [...drawnNodes, ...(level.children ?? [])] }],
+          },
+        ],
+      },
+    ];
+  }, [drawnWalls]);
+
+  const selectedDrawnWall = useMemo(
+    () => drawnWalls.find((wall) => wall.id === modelSelection.primary) ?? null,
+    [drawnWalls, modelSelection.primary],
+  );
+
+  /*
+   * Undo/redo can remove the selected wall out from under the selection;
+   * a selection pointing at a no-longer-existing element would leave the
+   * status bar claiming "1 selected" of nothing. Reconcile on every wall
+   * change - fixture ids (demo-*, fixture-*) always exist and are exempt.
+   */
+  useEffect(() => {
+    setModelSelection((current) => {
+      const isDangling =
+        current.primary !== null &&
+        current.primary.startsWith('drawn-wall-') &&
+        !drawnWalls.some((wall) => wall.id === current.primary);
+      return isDangling ? { primary: null, secondary: new Set() } : current;
+    });
+  }, [drawnWalls]);
 
   const isWallSelected = modelSelection.primary === 'demo-wall-1';
   /*
@@ -542,6 +647,15 @@ export function App(): JSX.Element {
       />
     ) : (
       <PlanCanvas
+        activeToolId={toolState.activeToolId}
+        walls={drawnWalls}
+        selection={modelSelection}
+        onSelectElement={(elementId) =>
+          setModelSelection({ primary: elementId, secondary: new Set() })
+        }
+        onCommitWalls={(walls) => performOperation({ kind: 'add-walls', walls })}
+        onFitCompleted={() => handleActivateTool('select')}
+        onActiveSnapChange={setActiveSnapLabel}
         onPointerWorldPositionChange={setCursorWorldPosition}
         onViewportPixelsPerUnitChange={setPixelsPerUnit}
       />
@@ -574,19 +688,13 @@ export function App(): JSX.Element {
               {
                 id: 'undo',
                 label: 'Undo',
-                onActivate: () => {
-                  undoStackRef.current.undo();
-                  setHistoryVersion((v) => v + 1);
-                },
+                onActivate: handleUndo,
                 ...(undoStackRef.current.canUndo() ? {} : { disabledReason: 'Nothing to undo' }),
               },
               {
                 id: 'redo',
                 label: 'Redo',
-                onActivate: () => {
-                  undoStackRef.current.redo();
-                  setHistoryVersion((v) => v + 1);
-                },
+                onActivate: handleRedo,
                 ...(undoStackRef.current.canRedo() ? {} : { disabledReason: 'Nothing to redo' }),
               },
               { id: 'open', label: 'Open project…', onActivate: () => setFileOpenPanelOpen(true) },
@@ -642,14 +750,8 @@ export function App(): JSX.Element {
             canRedo={undoStackRef.current.canRedo()}
             lastUndoActionLabel={null}
             lastRedoActionLabel={null}
-            onUndo={() => {
-              undoStackRef.current.undo();
-              setHistoryVersion((v) => v + 1);
-            }}
-            onRedo={() => {
-              undoStackRef.current.redo();
-              setHistoryVersion((v) => v + 1);
-            }}
+            onUndo={handleUndo}
+            onRedo={handleRedo}
             onOpenProject={() => setFileOpenPanelOpen(true)}
             onShare={() => recordDemoAction('share')}
             onOpenCommandPalette={() => setCommandPaletteOpen(true)}
@@ -712,7 +814,7 @@ export function App(): JSX.Element {
                */
               project: (
                 <ModelPanel
-                  tree={MODEL_TREE}
+                  tree={modelTree}
                   selection={modelSelection}
                   onSelectNode={(nodeId) =>
                     setModelSelection({ primary: nodeId, secondary: new Set() })
@@ -734,7 +836,13 @@ export function App(): JSX.Element {
           <InspectorPanel
             state={inspectorTabs}
             context={inspectorContext}
-            commonTypeName={isWallSelected ? 'Interior Wall 100mm' : null}
+            commonTypeName={
+              selectedDrawnWall !== null
+                ? 'Wall (drawn)'
+                : isWallSelected
+                  ? 'Interior Wall 100mm'
+                  : null
+            }
             onSelectTab={(tab) => setInspectorTabs((current) => selectInspectorTab(current, tab))}
             tabs={{
               /*
@@ -747,10 +855,24 @@ export function App(): JSX.Element {
               properties: (
                 <InspectorShell
                   groups={
-                    isWallSelected ? buildDemoWallInspectorGroups() : buildEmptyInspectorGroups()
+                    selectedDrawnWall !== null
+                      ? buildDrawnWallInspectorGroups(
+                          selectedDrawnWall.id,
+                          wallLength(selectedDrawnWall),
+                        )
+                      : isWallSelected
+                        ? buildDemoWallInspectorGroups()
+                        : buildEmptyInspectorGroups()
                   }
                   selectedElementDescription={
-                    isWallSelected ? buildDemoWallAccessibleDescription() : null
+                    selectedDrawnWall !== null
+                      ? buildDrawnWallAccessibleDescription(
+                          selectedDrawnWall.id,
+                          wallLength(selectedDrawnWall),
+                        )
+                      : isWallSelected
+                        ? buildDemoWallAccessibleDescription()
+                        : null
                   }
                 />
               ),
@@ -762,15 +884,30 @@ export function App(): JSX.Element {
             activeToolId={toolState.activeToolId}
             selectionCount={modelSelection.primary === null ? 0 : 1}
             actions={
-              isWallSelected
+              selectedDrawnWall !== null
                 ? [
                     {
                       id: 'delete',
                       label: 'Delete',
-                      onActivate: () => recordDemoAction('delete wall'),
+                      // A real, undoable deletion of a really-drawn wall.
+                      onActivate: () => {
+                        performOperation({
+                          kind: 'remove-walls',
+                          wallIds: [selectedDrawnWall.id],
+                        });
+                        setModelSelection({ primary: null, secondary: new Set() });
+                      },
                     },
                   ]
-                : []
+                : isWallSelected
+                  ? [
+                      {
+                        id: 'delete',
+                        label: 'Delete',
+                        onActivate: () => recordDemoAction('delete wall'),
+                      },
+                    ]
+                  : []
             }
           />
         }
@@ -778,7 +915,7 @@ export function App(): JSX.Element {
           <StatusBar
             unitLabel="mm"
             cursorWorldPosition={cursorWorldPosition}
-            activeSnapLabel={null}
+            activeSnapLabel={activeSnapLabel}
             selectionCount={modelSelection.primary === null ? 0 : 1}
             currentLevelName="Level 1"
             pixelsPerUnit={pixelsPerUnit}
@@ -840,7 +977,7 @@ export function App(): JSX.Element {
             color: 'var(--arq-ui-text-muted)',
           }}
         >
-          {historyVersion} demo action(s) recorded
+          {historyVersion} action(s) recorded
         </p>
       )}
     </>

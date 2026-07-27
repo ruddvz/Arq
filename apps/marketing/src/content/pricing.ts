@@ -26,21 +26,21 @@ export const pricingPage: Page = {
         title: 'Decided now',
         body: html`
           ${specList([
-              {
-                term: 'Pre-release is free',
-                detail: 'The development build costs nothing to use while Arq is pre-release.',
-              },
-              {
-                term: 'Your file stays yours',
-                detail:
-                  'Whatever pricing becomes, projects are local files in a documented format. Stopping payment can never lock you out of your own archive.',
-              },
-              {
-                term: 'No dark patterns',
-                detail:
-                  'The page specs for this site prohibit manipulative call-to-action copy, and the checkout will be held to the same rule.',
-              },
-            ])}
+            {
+              term: 'Pre-release is free',
+              detail: 'The development build costs nothing to use while Arq is pre-release.',
+            },
+            {
+              term: 'Your file stays yours',
+              detail:
+                'Whatever pricing becomes, projects are local files in a documented format. Stopping payment can never lock you out of your own archive.',
+            },
+            {
+              term: 'No dark patterns',
+              detail:
+                'The page specs for this site prohibit manipulative call-to-action copy, and the checkout will be held to the same rule.',
+            },
+          ])}
         `,
       },
       {

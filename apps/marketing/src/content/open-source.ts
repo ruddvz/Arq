@@ -51,8 +51,8 @@ export function openSourcePage(sbom: Sbom): Page {
               <div class="note-body">
                 <ul class="notice-list">
                   ${group.packages.map(
-                      (pkg) => html`<li><code>${pkg.name}@${pkg.version}</code></li>`,
-                    )}
+                    (pkg) => html`<li><code>${pkg.name}@${pkg.version}</code></li>`,
+                  )}
                 </ul>
               </div>
             </section>

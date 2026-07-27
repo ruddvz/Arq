@@ -25,31 +25,31 @@ export const collaborationPage: Page = {
         title: 'The order of arrival',
         body: html`
           ${specList([
-              {
-                term: 'Share links',
-                detail:
-                  'Release 2 - a controlled, revocable link to view a project without installing anything.',
-              },
-              {
-                term: 'Comments',
-                detail:
-                  'Release 2 - anchored to model elements and sheets, resolvable, never silently deleted.',
-              },
-              {
-                term: 'Issues',
-                detail:
-                  'Release 2 - actionable design problems with a state, distinct from conversation.',
-              },
-              {
-                term: 'Revision comparison',
-                detail: 'Release 2 - see what changed between two revisions before acting on it.',
-              },
-              {
-                term: 'Co-authoring',
-                detail:
-                  'Later, and honestly hard: concurrent geometry editing is explicitly deferred until it cannot corrupt a model. The data structures for it (CRDT-based) are already being tested in the repository.',
-              },
-            ])}
+            {
+              term: 'Share links',
+              detail:
+                'Release 2 - a controlled, revocable link to view a project without installing anything.',
+            },
+            {
+              term: 'Comments',
+              detail:
+                'Release 2 - anchored to model elements and sheets, resolvable, never silently deleted.',
+            },
+            {
+              term: 'Issues',
+              detail:
+                'Release 2 - actionable design problems with a state, distinct from conversation.',
+            },
+            {
+              term: 'Revision comparison',
+              detail: 'Release 2 - see what changed between two revisions before acting on it.',
+            },
+            {
+              term: 'Co-authoring',
+              detail:
+                'Later, and honestly hard: concurrent geometry editing is explicitly deferred until it cannot corrupt a model. The data structures for it (CRDT-based) are already being tested in the repository.',
+            },
+          ])}
         `,
       },
       {

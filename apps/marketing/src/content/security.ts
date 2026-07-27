@@ -39,31 +39,31 @@ export const securityPage: Page = {
             These commitments are recorded in the repository's security policy and threat model:
           </p>
           ${specList([
-              {
-                term: 'Authorisation',
-                detail:
-                  'Server-side authorisation for any hosted feature; private projects by default.',
-              },
-              {
-                term: 'File handling',
-                detail:
-                  'Short-lived signed URLs, size and complexity limits, sandboxed or isolated import processing.',
-              },
-              { term: 'Your content', detail: 'No training on private project data by default.' },
-              {
-                term: 'Accountability',
-                detail: 'Audit events for sharing, export and permission changes.',
-              },
-              {
-                term: 'Recovery',
-                detail: 'Recovery paths that do not expose private project content.',
-              },
-              {
-                term: 'Supply chain',
-                detail:
-                  'Dependency licence policy enforced in CI with a generated SBOM — published on this site under open-source notices.',
-              },
-            ])}
+            {
+              term: 'Authorisation',
+              detail:
+                'Server-side authorisation for any hosted feature; private projects by default.',
+            },
+            {
+              term: 'File handling',
+              detail:
+                'Short-lived signed URLs, size and complexity limits, sandboxed or isolated import processing.',
+            },
+            { term: 'Your content', detail: 'No training on private project data by default.' },
+            {
+              term: 'Accountability',
+              detail: 'Audit events for sharing, export and permission changes.',
+            },
+            {
+              term: 'Recovery',
+              detail: 'Recovery paths that do not expose private project content.',
+            },
+            {
+              term: 'Supply chain',
+              detail:
+                'Dependency licence policy enforced in CI with a generated SBOM — published on this site under open-source notices.',
+            },
+          ])}
         `,
       },
       {

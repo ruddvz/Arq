@@ -37,19 +37,19 @@ export const ipadPage: Page = {
         title: 'Native, when it can be real',
         body: html`
           ${specList([
-              { term: 'Files integration', detail: 'Release 4 - .arq projects in the Files app.' },
-              {
-                term: 'Pencil hover and squeeze',
-                detail:
-                  'Release 4 - on hardware that supports them; capability-checked, not assumed.',
-              },
-              { term: 'Haptic snapping', detail: 'Release 4 - feel a snap engage.' },
-              {
-                term: 'RoomPlan and LiDAR',
-                detail:
-                  'Release 4 - as a prototype for capturing existing rooms. Captured geometry is a starting point to verify against a tape measure, not a survey.',
-              },
-            ])}
+            { term: 'Files integration', detail: 'Release 4 - .arq projects in the Files app.' },
+            {
+              term: 'Pencil hover and squeeze',
+              detail:
+                'Release 4 - on hardware that supports them; capability-checked, not assumed.',
+            },
+            { term: 'Haptic snapping', detail: 'Release 4 - feel a snap engage.' },
+            {
+              term: 'RoomPlan and LiDAR',
+              detail:
+                'Release 4 - as a prototype for capturing existing rooms. Captured geometry is a starting point to verify against a tape measure, not a survey.',
+            },
+          ])}
         `,
       },
       {

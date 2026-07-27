@@ -1,14 +1,19 @@
 # @arq/plan-renderer
 
-2D plan/section/elevation renderer producing crisp technical linework.
+2D plan rendering: the renderer-neutral `PlanScene` abstraction (ARQ-119) and
+the Canvas 2D backend chosen by ADR-0008 (see
+docs/adr/0008-rendering-strategy.md; PixiJS WebGL remains the documented
+upgrade path, with benchmark evidence under docs/research/ and standalone
+harnesses under benchmarks/ in this directory).
 
-Not yet implemented - placeholder created while aligning the workspace with
-docs/architecture/REPOSITORY-STRUCTURE.md and docs/architecture/PACKAGE-BOUNDARIES.md.
+Implemented: `buildPlanScene` (visibility/selection/lock resolved into style
+tokens), `paintPlanScene` (Canvas 2D painting with device-pixel-ratio-aware
+line weights), selection handle rendering (ARQ-121), snap glyphs and labels
+(ARQ-120), room labels, sheet viewports, line-weight mapping, and a
+benchmark-regression test against `benchmarks/PERFORMANCE-BUDGETS.json`.
+Consumed by `apps/web`'s interactive `PlanCanvas`.
 
-Renderer choice: see docs/adr/0008-rendering-strategy.md (ARQ-118) -
-Canvas 2D is the decided v1 backend, behind a renderer abstraction
-(ARQ-119, not yet implemented); PixiJS WebGL is the documented upgrade
-path. Benchmark spikes and evidence: docs/research/RENDERER-BENCHMARK-CANVAS-2D.md,
-RENDERER-BENCHMARK-PIXIJS-WEBGL.md, RENDERER-BENCHMARK-CANVASKIT.md.
-Standalone benchmark harnesses (not part of this package's build) live
-under benchmarks/ in this directory.
+Known limits: the Canvas 2D style-token palette resolves the brand colours
+only - hover/warning/error/imported/proposed currently paint as default (see
+`canvas2d-paint.ts`); no builder exists yet from `@arq/bim-core` elements to
+`PlanScene` (callers hand-assemble primitive inputs).

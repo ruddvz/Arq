@@ -41,27 +41,27 @@ export const productPage: Page = {
             this ladder only when the one below it holds.
           </p>
           ${specList([
-              {
-                term: 'Release 1',
-                detail:
-                  'New project, units, levels, image underlay, straight walls, doors, windows, rooms, linear dimensions, text notes, floor plan, basic orthographic 3D, selection sync, inspector, undo/redo, local journal, recovery, .arq archive, one plan sheet, vector PDF.',
-              },
-              {
-                term: 'Release 2',
-                detail:
-                  'DXF linework exchange, IFC viewing and property inspection, import reports, share links, comments, issues, revision comparison.',
-              },
-              {
-                term: 'Release 3',
-                detail:
-                  'ArqScript, explain selection, single-step AI modifications, basic schedules, a controlled IFC export subset, sections and elevations after quality gates.',
-              },
-              {
-                term: 'Release 4',
-                detail:
-                  'Native iPad features: Files integration, Pencil hover, double tap, squeeze on supported hardware, haptic snap feedback, a RoomPlan and LiDAR prototype.',
-              },
-            ])}
+            {
+              term: 'Release 1',
+              detail:
+                'New project, units, levels, image underlay, straight walls, doors, windows, rooms, linear dimensions, text notes, floor plan, basic orthographic 3D, selection sync, inspector, undo/redo, local journal, recovery, .arq archive, one plan sheet, vector PDF.',
+            },
+            {
+              term: 'Release 2',
+              detail:
+                'DXF linework exchange, IFC viewing and property inspection, import reports, share links, comments, issues, revision comparison.',
+            },
+            {
+              term: 'Release 3',
+              detail:
+                'ArqScript, explain selection, single-step AI modifications, basic schedules, a controlled IFC export subset, sections and elevations after quality gates.',
+            },
+            {
+              term: 'Release 4',
+              detail:
+                'Native iPad features: Files integration, Pencil hover, double tap, squeeze on supported hardware, haptic snap feedback, a RoomPlan and LiDAR prototype.',
+            },
+          ])}
         `,
       },
       {

@@ -27,27 +27,27 @@ export const termsPage: Page = {
         title: 'Using the pre-release build',
         body: html`
           ${specList([
-              {
-                term: 'As-is',
-                detail:
-                  'Pre-release software changes and breaks. Use it for real work only with the caution you would give any beta - and keep exports of anything you cannot lose.',
-              },
-              {
-                term: 'Your content',
-                detail:
-                  'Drawings and projects you create are yours. Arq claims no rights over your work, now or in any future terms.',
-              },
-              {
-                term: 'No service commitments',
-                detail:
-                  'There is no uptime promise, no support commitment and no data-hosting relationship - the build runs locally and hosts nothing.',
-              },
-              {
-                term: 'Licences',
-                detail:
-                  'Third-party software in Arq is listed under open-source notices. The licence for Arq itself is not yet decided and is recorded in the repository as an open decision.',
-              },
-            ])}
+            {
+              term: 'As-is',
+              detail:
+                'Pre-release software changes and breaks. Use it for real work only with the caution you would give any beta - and keep exports of anything you cannot lose.',
+            },
+            {
+              term: 'Your content',
+              detail:
+                'Drawings and projects you create are yours. Arq claims no rights over your work, now or in any future terms.',
+            },
+            {
+              term: 'No service commitments',
+              detail:
+                'There is no uptime promise, no support commitment and no data-hosting relationship - the build runs locally and hosts nothing.',
+            },
+            {
+              term: 'Licences',
+              detail:
+                'Third-party software in Arq is listed under open-source notices. The licence for Arq itself is not yet decided and is recorded in the repository as an open decision.',
+            },
+          ])}
         `,
       },
       {

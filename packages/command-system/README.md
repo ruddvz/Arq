@@ -1,6 +1,10 @@
 # @arq/command-system
 
-Command palette and keyboard-shortcut system shared across desktop and touch input.
+The command lifecycle state machine (ARQ-038): armed → previewing →
+awaiting-input → committed/failed-safely, with the three-tier Escape rule and
+the "commits only a valid preview" contract every drawing tool builds on (see
+`@arq/editor-shell`'s wall/door/window/room tools).
 
-Not yet implemented - placeholder created while aligning the workspace with
-docs/architecture/REPOSITORY-STRUCTURE.md and docs/architecture/PACKAGE-BOUNDARIES.md.
+The command _palette_ UI lives in `@arq/design-system` and the keyboard map
+in `@arq/workspace` - this package is deliberately just the lifecycle
+contract, which is why its name is currently wider than its contents.

@@ -27,27 +27,27 @@ export const contactPage: Page = {
         title: 'By enquiry',
         body: html`
           ${specList([
-              {
-                term: 'Product and support',
-                detail:
-                  'Open an issue in the Arq repository. Issues are read by the people building the product; a reproducible description gets the fastest answer.',
-              },
-              {
-                term: 'Security',
-                detail:
-                  'Create a private security advisory on the repository. Never report an unpatched vulnerability in a public issue - the security policy explains the process.',
-              },
-              {
-                term: 'Sales and pricing',
-                detail:
-                  'There is nothing to sell yet. Pricing questions are welcome as repository issues and inform the published pricing research.',
-              },
-              {
-                term: 'Press',
-                detail:
-                  'Please describe Arq as pre-release software. Claims on this site are deliberately conservative; quoting them keeps you accurate.',
-              },
-            ])}
+            {
+              term: 'Product and support',
+              detail:
+                'Open an issue in the Arq repository. Issues are read by the people building the product; a reproducible description gets the fastest answer.',
+            },
+            {
+              term: 'Security',
+              detail:
+                'Create a private security advisory on the repository. Never report an unpatched vulnerability in a public issue - the security policy explains the process.',
+            },
+            {
+              term: 'Sales and pricing',
+              detail:
+                'There is nothing to sell yet. Pricing questions are welcome as repository issues and inform the published pricing research.',
+            },
+            {
+              term: 'Press',
+              detail:
+                'Please describe Arq as pre-release software. Claims on this site are deliberately conservative; quoting them keeps you accurate.',
+            },
+          ])}
         `,
       },
       {

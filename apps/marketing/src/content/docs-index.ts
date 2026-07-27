@@ -27,32 +27,32 @@ export const docsIndexPage: Page = {
         title: 'Technical documentation, in the repository today',
         body: html`
           ${specList([
-              {
-                term: 'Product blueprint',
-                detail:
-                  'docs/product/ - the complete engineering blueprint, requirements, release scope and feature matrix.',
-              },
-              {
-                term: 'Decisions',
-                detail:
-                  'docs/adr/ - numbered architecture decision records; live decisions outrank any older document.',
-              },
-              {
-                term: 'File format',
-                detail:
-                  'docs/architecture/ and packages/arqfs/ - the .arq SQLite container, migration and recovery rules.',
-              },
-              {
-                term: 'Exchange plans',
-                detail:
-                  'docs/interoperability/ - per-format plans and the support matrix this site mirrors.',
-              },
-              {
-                term: 'Surfaces',
-                detail:
-                  'docs/pages/ - a specification for all 57 product and site surfaces, including this page.',
-              },
-            ])}
+            {
+              term: 'Product blueprint',
+              detail:
+                'docs/product/ - the complete engineering blueprint, requirements, release scope and feature matrix.',
+            },
+            {
+              term: 'Decisions',
+              detail:
+                'docs/adr/ - numbered architecture decision records; live decisions outrank any older document.',
+            },
+            {
+              term: 'File format',
+              detail:
+                'docs/architecture/ and packages/arqfs/ - the .arq SQLite container, migration and recovery rules.',
+            },
+            {
+              term: 'Exchange plans',
+              detail:
+                'docs/interoperability/ - per-format plans and the support matrix this site mirrors.',
+            },
+            {
+              term: 'Surfaces',
+              detail:
+                'docs/pages/ - a specification for all 57 product and site surfaces, including this page.',
+            },
+          ])}
         `,
       },
       {

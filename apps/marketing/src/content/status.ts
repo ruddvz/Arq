@@ -26,17 +26,17 @@ export const statusPage: Page = {
         title: 'Current state',
         body: html`
           ${specList([
-              {
-                term: 'Hosted services',
-                detail: 'None operating. No accounts, no sync, no shared links yet.',
-              },
-              { term: 'This website', detail: 'Static files. If you can read this, it is up.' },
-              {
-                term: 'The development build',
-                detail:
-                  'Runs locally in your browser; its availability is your device’s. Your projects are unaffected by anything on our side - that is the point of local first.',
-              },
-            ])}
+            {
+              term: 'Hosted services',
+              detail: 'None operating. No accounts, no sync, no shared links yet.',
+            },
+            { term: 'This website', detail: 'Static files. If you can read this, it is up.' },
+            {
+              term: 'The development build',
+              detail:
+                'Runs locally in your browser; its availability is your device’s. Your projects are unaffected by anything on our side - that is the point of local first.',
+            },
+          ])}
         `,
       },
       {

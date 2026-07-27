@@ -31,23 +31,23 @@ export const aiPage: Page = {
             capability ships only as a proposal with all five parts:
           </p>
           ${specList([
-              { term: 'Intent', detail: 'What you asked, restated so you can catch a misreading.' },
-              {
-                term: 'Assumptions',
-                detail: 'What the model had to guess, listed — not buried.',
-              },
-              {
-                term: 'Operations',
-                detail:
-                  'The exact typed edits it wants to make, the same operations your own tools produce.',
-              },
-              {
-                term: 'Preview and validation',
-                detail:
-                  'A diff against the current model, checked by the same validation as any manual edit.',
-              },
-              { term: 'Undo', detail: 'One step back, always, like any other operation.' },
-            ])}
+            { term: 'Intent', detail: 'What you asked, restated so you can catch a misreading.' },
+            {
+              term: 'Assumptions',
+              detail: 'What the model had to guess, listed — not buried.',
+            },
+            {
+              term: 'Operations',
+              detail:
+                'The exact typed edits it wants to make, the same operations your own tools produce.',
+            },
+            {
+              term: 'Preview and validation',
+              detail:
+                'A diff against the current model, checked by the same validation as any manual edit.',
+            },
+            { term: 'Undo', detail: 'One step back, always, like any other operation.' },
+          ])}
         `,
       },
       {

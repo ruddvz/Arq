@@ -60,22 +60,22 @@ export const homePage: Page = {
             targets the drawings below and nothing more.
           </p>
           ${specList([
-              {
-                term: 'Release 1',
-                detail:
-                  'Walls, doors, windows, rooms, dimensions, notes, floor plans, basic 3D, one plan sheet, vector PDF, local journal and recovery.',
-              },
-              {
-                term: 'Release 2',
-                detail:
-                  'DXF linework exchange, IFC viewing and inspection, import reports, share links, comments, issues.',
-              },
-              {
-                term: 'Deliberately out',
-                detail:
-                  'Curved walls, complex roofs, family editor, photorealistic rendering, structural and MEP.',
-              },
-            ])}
+            {
+              term: 'Release 1',
+              detail:
+                'Walls, doors, windows, rooms, dimensions, notes, floor plans, basic 3D, one plan sheet, vector PDF, local journal and recovery.',
+            },
+            {
+              term: 'Release 2',
+              detail:
+                'DXF linework exchange, IFC viewing and inspection, import reports, share links, comments, issues.',
+            },
+            {
+              term: 'Deliberately out',
+              detail:
+                'Curved walls, complex roofs, family editor, photorealistic rendering, structural and MEP.',
+            },
+          ])}
         `,
       },
     ])}

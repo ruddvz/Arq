@@ -111,6 +111,91 @@ export function buildDemoWallAccessibleDescription(): string {
   return describeSelectedElementForAccessibility(identity, geometry, warnings);
 }
 
+/**
+ * Inspector groups for a user-drawn wall: the same real property-group
+ * builders, fed by the wall's actual geometry. Level and category are real
+ * (the canvas draws on Level 1); the length is calculated from the drawn
+ * segment, rounded to the millimetre precision the status bar reports.
+ */
+export function buildDrawnWallInspectorGroups(
+  wallId: string,
+  lengthMm: number,
+): readonly InspectorGroup[] {
+  const identity = buildIdentityPropertyGroup({
+    id: elementId(wallId),
+    category: 'Wall',
+    levelId: 'level-1',
+  });
+  const geometry = buildGeometryPropertyGroup([
+    lengthMeasurement('length', calculatedProperty(makeLength(Math.round(lengthMm), 'mm'))),
+  ]);
+  const warnings = buildWarningsPropertyGroup(elementId(wallId), []);
+  const history = buildHistoryPropertyGroup(elementId(wallId), []);
+
+  const groupById = new Map(buildEmptyInspectorGroups().map((group) => [group.id, group]));
+  groupById.set('identity', {
+    id: 'identity',
+    label: 'Identity',
+    content: {
+      kind: 'fields',
+      fields: [
+        propertyStateToInspectorField('id', 'ID', identity.id, (v) => v),
+        propertyStateToInspectorField('category', 'Category', identity.category, (v) => v),
+      ],
+    },
+  });
+  groupById.set('geometry', {
+    id: 'geometry',
+    label: 'Geometry',
+    content: {
+      kind: 'fields',
+      fields: geometry.measurements.map((measurement) =>
+        measurement.quantity === 'length'
+          ? propertyStateToInspectorField(
+              measurement.key,
+              measurement.key,
+              measurement.state,
+              formatLength,
+            )
+          : propertyStateToInspectorField(
+              measurement.key,
+              measurement.key,
+              measurement.state,
+              formatNumber,
+            ),
+      ),
+    },
+  });
+  groupById.set('warnings', {
+    id: 'warnings',
+    label: 'Warnings',
+    content: { kind: 'lines', lines: warnings.messages.map((m) => `${m.severity}: ${m.title}`) },
+  });
+  groupById.set('history', {
+    id: 'history',
+    label: 'History',
+    content: {
+      kind: 'lines',
+      lines: history.entries.map((entry) => `${entry.type} (${entry.timestamp})`),
+    },
+  });
+  return Array.from(groupById.values());
+}
+
+/** Screen-reader description for a drawn wall, from the same groups. */
+export function buildDrawnWallAccessibleDescription(wallId: string, lengthMm: number): string {
+  const identity = buildIdentityPropertyGroup({
+    id: elementId(wallId),
+    category: 'Wall',
+    levelId: 'level-1',
+  });
+  const geometry = buildGeometryPropertyGroup([
+    lengthMeasurement('length', calculatedProperty(makeLength(Math.round(lengthMm), 'mm'))),
+  ]);
+  const warnings = buildWarningsPropertyGroup(elementId(wallId), []);
+  return describeSelectedElementForAccessibility(identity, geometry, warnings);
+}
+
 export function buildDemoWallInspectorGroups(): readonly InspectorGroup[] {
   const { identity, geometry, typeAndInstance, relationships, warnings, history } =
     buildDemoWallPropertyGroups();

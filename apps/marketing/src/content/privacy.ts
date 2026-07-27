@@ -28,46 +28,46 @@ export const privacyPage: Page = {
         title: 'This website',
         body: html`
           ${specList([
-              { term: 'Cookies', detail: 'None set.' },
-              {
-                term: 'Analytics',
-                detail: 'None running. No page-view tracking, no third-party scripts.',
-              },
-              {
-                term: 'Requests',
-                detail:
-                  'Static files served from this site’s own origin - fonts, styles and images included. No third-party resource is loaded.',
-              },
-              {
-                term: 'Forms',
-                detail: 'There are none. Nothing you do here is recorded by us.',
-              },
-            ])}
+            { term: 'Cookies', detail: 'None set.' },
+            {
+              term: 'Analytics',
+              detail: 'None running. No page-view tracking, no third-party scripts.',
+            },
+            {
+              term: 'Requests',
+              detail:
+                'Static files served from this site’s own origin - fonts, styles and images included. No third-party resource is loaded.',
+            },
+            {
+              term: 'Forms',
+              detail: 'There are none. Nothing you do here is recorded by us.',
+            },
+          ])}
         `,
       },
       {
         title: 'The development build',
         body: html`
           ${specList([
-              {
-                term: 'Your projects',
-                detail:
-                  'Stored on your device (browser storage or files you choose). Never uploaded - there is no server to upload to.',
-              },
-              {
-                term: 'Accounts',
-                detail: 'None exist. Nothing to sign up for, nothing to profile.',
-              },
-              {
-                term: 'Telemetry',
-                detail: 'None is sent. The development build reports nothing back.',
-              },
-              {
-                term: 'AI training',
-                detail:
-                  'Committed policy for any future service: no training on private project data by default.',
-              },
-            ])}
+            {
+              term: 'Your projects',
+              detail:
+                'Stored on your device (browser storage or files you choose). Never uploaded - there is no server to upload to.',
+            },
+            {
+              term: 'Accounts',
+              detail: 'None exist. Nothing to sign up for, nothing to profile.',
+            },
+            {
+              term: 'Telemetry',
+              detail: 'None is sent. The development build reports nothing back.',
+            },
+            {
+              term: 'AI training',
+              detail:
+                'Committed policy for any future service: no training on private project data by default.',
+            },
+          ])}
         `,
       },
       {
