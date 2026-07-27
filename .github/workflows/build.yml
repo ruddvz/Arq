@@ -1,0 +1,25 @@
+# The explicit build gate ci.yml never had: apps/web previously only built as
+# a side effect of capability-check scripts, and apps/marketing's static-site
+# build (which also regenerates the SBOM for its open-source notices page)
+# was not exercised at all. Replaces the echo-only "Quality template".
+name: Build
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      # The marketing site's own acceptance tests run in the main test suite;
+      # here we only prove the rendered output exists and is non-trivial.
+      - run: test -f apps/marketing/dist/index.html && test -f apps/marketing/dist/404.html
+      - run: test -f apps/web/dist/index.html

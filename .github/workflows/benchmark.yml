@@ -1,0 +1,31 @@
+# Runs the deterministic render-frame benchmark against
+# benchmarks/PERFORMANCE-BUDGETS.json in real headless Chromium. Weekly and
+# on demand rather than per-PR: shared-runner timings are too noisy to gate
+# merges on, and pretending otherwise would be a flaky gate, not a budget.
+# Replaces the echo-only "Benchmark template". GPU-bound benchmarks
+# (pixijs/canvaskit) remain manual on controlled hardware - see
+# scripts/run-*-benchmark.mjs.
+name: Benchmark
+
+on:
+  workflow_dispatch:
+  schedule: [{ cron: '0 5 * * 1' }]
+
+jobs:
+  render-frame:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: npx playwright install --with-deps chromium
+      - run: pnpm benchmark:render-frame
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: render-frame-benchmark-results
+          path: benchmarks/results/

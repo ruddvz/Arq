@@ -16,10 +16,12 @@ file in the same change._
 
 ## What is real today
 
-Verified by `pnpm typecheck` (36/36 packages), `pnpm test`
-(230+ files, ~2,000 tests) and CI (`.github/workflows/ci.yml`: format,
-typecheck, tests, workspace-registry check, licence/SBOM gate, Rust
-fmt/clippy/test, six headless-Chromium capability checks).
+Verified by `pnpm typecheck` (36/36 packages plus `contracts/`),
+`pnpm lint` (real eslint gate over the whole repository), `pnpm test`
+(230+ files, ~2,000 tests) and CI (`.github/workflows/`: format, lint,
+typecheck, tests, workspace-registry check, licence/SBOM gate, secret scan,
+explicit build gate, Rust fmt/clippy/test, six headless-Chromium capability
+checks, weekly render benchmark).
 
 - **`.arq` file format** (`packages/arqfs`): schema v1/v2, capability-gated
   open, byte preflight, copy-on-write migration with reopen+integrity
@@ -58,9 +60,7 @@ fmt/clippy/test, six headless-Chromium capability checks).
    protocol logic but no transport or backend.
 4. Five data-layer libraries have zero consumers (local-storage,
    derived-cache, project-loading, collaboration, model-context).
-5. Lint gate is a no-op (eslint has no rules and no package has a lint
-   script); benchmark/quality/security template workflows are echo stubs.
-6. Component coverage: ~25 of 84 spec'd components, 40 of 215 icons,
+5. Component coverage: ~25 of 84 spec'd components, 40 of 215 icons,
    11 of 54 tool commands (tracked by `scripts/check-workspace-registries.mjs`,
    report-only by design).
 

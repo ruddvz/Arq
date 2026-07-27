@@ -114,7 +114,7 @@ describe('room rebuild benchmark (ARQ-150)', () => {
     }
 
     const medianMs = median(durationsMs);
-    // eslint-disable-next-line no-console
+
     console.log(
       `room rebuild benchmark: median ${medianMs.toFixed(4)}ms over ${TRIAL_COUNT} trials (${walls.length}-wall grid, one room retraced)`,
     );

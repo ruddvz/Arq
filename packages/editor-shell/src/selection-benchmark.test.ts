@@ -104,7 +104,7 @@ describe('selection benchmark (ARQ-149)', () => {
     }
 
     const medianMs = median(durationsMs);
-    // eslint-disable-next-line no-console
+
     console.log(
       `selection benchmark: median ${medianMs.toFixed(4)}ms over ${TRIAL_COUNT} trials (~1,000 candidates, worst-case miss)`,
     );
