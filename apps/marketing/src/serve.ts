@@ -12,6 +12,11 @@ import { fileURLToPath } from 'node:url';
 
 const dist = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
 const port = Number(process.env['PORT'] ?? 4173);
+/** Mirror the build's SITE_BASE_PATH so a subpath deployment can be previewed faithfully. */
+const basePath = ((raw) =>
+  raw === undefined || raw === '' || raw === '/'
+    ? ''
+    : `${raw.startsWith('/') ? '' : '/'}${raw}`.replace(/\/$/, ''))(process.env['SITE_BASE_PATH']);
 
 const MIME: Readonly<Record<string, string>> = {
   '.html': 'text/html; charset=utf-8',
@@ -48,7 +53,16 @@ function resolveFile(urlPath: string): { readonly path: string; readonly status:
 
 createServer((request, response) => {
   const url = new URL(request.url ?? '/', 'http://localhost');
-  const file = resolveFile(url.pathname);
+  let pathname = url.pathname;
+  if (basePath !== '') {
+    if (pathname === basePath || pathname.startsWith(`${basePath}/`)) {
+      pathname = pathname.slice(basePath.length) || '/';
+    } else {
+      // Outside the base path there is no site - mirror the host's 404.
+      pathname = '/definitely-not-a-page';
+    }
+  }
+  const file = resolveFile(pathname);
   try {
     const body = readFileSync(file.path);
     response.writeHead(file.status, {

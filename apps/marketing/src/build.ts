@@ -1,5 +1,13 @@
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderDocument } from './layout.js';
@@ -14,15 +22,60 @@ import { findRepoRoot, loadSbom } from './open-source-data.js';
  * copied from brand/ (the single source of truth - nothing is duplicated
  * into this app), fonts from assets/fonts/, and robots.txt is generated.
  *
- * No sitemap is emitted deliberately: a sitemap requires absolute URLs, and
- * the project has not cleared a domain yet (remaining/REMAINING-WORK.md).
- * Set SITE_ORIGIN, e.g. "https://example.com", once a domain exists.
+ * Hosting knobs (both optional):
+ * - SITE_BASE_PATH, e.g. "/Arq" - for hosts that serve the site under a
+ *   subpath (GitHub Pages project sites). Pages are authored with
+ *   root-absolute internal URLs; applyBasePath prefixes every one at build
+ *   time. This is sound precisely because the site's tests forbid external
+ *   resources: every `="/..."` attribute is provably internal.
+ * - SITE_ORIGIN, e.g. "https://ruddvz.github.io" - enables sitemap.xml, the
+ *   robots Sitemap line, and absolute og:image/og:url values (Open Graph
+ *   consumers require absolute URLs).
  */
 
 const here = dirname(fileURLToPath(import.meta.url));
 const appRoot = join(here, '..');
 const repoRoot = findRepoRoot(here);
 const dist = join(appRoot, 'dist');
+
+/** Validates and normalises a base path: '' or '/like-this' (no trailing slash). */
+export function normaliseBasePath(raw: string | undefined): string {
+  if (raw === undefined || raw === '' || raw === '/') {
+    return '';
+  }
+  const withLead = raw.startsWith('/') ? raw : `/${raw}`;
+  return withLead.endsWith('/') ? withLead.slice(0, -1) : withLead;
+}
+
+/**
+ * Prefixes every root-absolute internal URL attribute with the base path.
+ * Matches only the attribute forms this renderer emits (href/src/srcset/
+ * content followed by `="/`); protocol-relative (`//`) is excluded, and the
+ * no-external-resources test guarantees nothing else needs distinguishing.
+ */
+export function applyBasePath(html: string, basePath: string): string {
+  if (basePath === '') {
+    return html;
+  }
+  return html.replace(/(href|src|srcset|content)="\/(?!\/)/g, `$1="${basePath}/`);
+}
+
+/**
+ * Makes og:image absolute and adds og:url once an origin is known - Open
+ * Graph consumers require absolute URLs. Runs AFTER applyBasePath, so the
+ * paths it absolutises already carry the base.
+ */
+export function absolutiseOpenGraph(
+  html: string,
+  origin: string,
+  canonicalPathWithBase: string,
+): string {
+  const withImage = html.replace(/(property="og:image" content=")(\/[^"]*)"/, `$1${origin}$2"`);
+  return withImage.replace(
+    /<meta property="og:image"/,
+    `<meta property="og:url" content="${origin}${canonicalPathWithBase}" />\n        <meta property="og:image"`,
+  );
+}
 
 function ensureSbom(): void {
   if (existsSync(join(repoRoot, 'dependency-sbom.json'))) {
@@ -59,12 +112,21 @@ export function buildSite(): { readonly pages: number; readonly outDir: string }
   ensureSbom();
   const sbom = loadSbom();
   const pages = allPages(sbom);
+  const basePath = normaliseBasePath(process.env['SITE_BASE_PATH']);
+  const origin = process.env['SITE_ORIGIN'];
+  const hasOrigin = origin !== undefined && origin !== '';
 
   rmSync(dist, { recursive: true, force: true });
   mkdirSync(dist, { recursive: true });
 
   for (const page of pages) {
-    writePage(page.meta.route, renderDocument(page.meta, page.render()));
+    let html = applyBasePath(renderDocument(page.meta, page.render()), basePath);
+    if (hasOrigin) {
+      const canonicalPath =
+        page.meta.route === '/' ? `${basePath}/` : `${basePath}${page.meta.route}/`;
+      html = absolutiseOpenGraph(html, origin, canonicalPath);
+    }
+    writePage(page.meta.route, html);
   }
 
   // Stylesheet and self-hosted fonts.
@@ -79,13 +141,28 @@ export function buildSite(): { readonly pages: number; readonly outDir: string }
     'favicon.ico',
     'favicon.svg',
     'apple-touch-icon.png',
-    'site.webmanifest',
     'android-chrome-192x192.png',
     'android-chrome-512x512.png',
     'maskable-icon-512x512.png',
   ]) {
     copyFileSync(join(brandWeb, name), join(dist, name));
   }
+  // The brand manifest uses root-absolute URLs; under a base path its
+  // start_url and icon paths must carry the prefix too.
+  const manifest = JSON.parse(readFileSync(join(brandWeb, 'site.webmanifest'), 'utf8')) as {
+    start_url?: string;
+    icons?: { src: string }[];
+  };
+  if (basePath !== '') {
+    manifest.start_url = `${basePath}/`;
+    if (manifest.icons !== undefined) {
+      manifest.icons = manifest.icons.map((icon) => ({
+        ...icon,
+        src: icon.src.startsWith('/') ? `${basePath}${icon.src}` : icon.src,
+      }));
+    }
+  }
+  writeFileSync(join(dist, 'site.webmanifest'), `${JSON.stringify(manifest, null, 2)}\n`);
   mkdirSync(join(dist, 'assets', 'brand'), { recursive: true });
   copyFileSync(
     join(brandWeb, 'ARQ_OpenGraph_Green_1200x630.png'),
@@ -95,15 +172,19 @@ export function buildSite(): { readonly pages: number; readonly outDir: string }
     copyFileSync(join(repoRoot, 'brand', '01_VECTOR', name), join(dist, 'assets', 'brand', name));
   }
 
-  writeFileSync(join(dist, 'robots.txt'), 'User-agent: *\nAllow: /\n');
+  // GitHub Pages runs Jekyll unless told not to; Jekyll would drop or
+  // mangle nothing here today, but .nojekyll makes the output contract
+  // explicit: serve these files exactly as built.
+  writeFileSync(join(dist, '.nojekyll'), '');
 
-  const origin = process.env['SITE_ORIGIN'];
-  if (origin !== undefined && origin !== '') {
+  const robotsLines = ['User-agent: *', 'Allow: /'];
+  if (hasOrigin) {
+    robotsLines.push(`Sitemap: ${origin}${basePath}/sitemap.xml`);
     const urls = pages
       .filter((page) => page.meta.route !== '/404')
       .map(
         (page) =>
-          `  <url><loc>${origin}${page.meta.route === '/' ? '' : page.meta.route}/</loc></url>`,
+          `  <url><loc>${origin}${basePath}${page.meta.route === '/' ? '' : page.meta.route}/</loc></url>`,
       )
       .join('\n');
     writeFileSync(
@@ -111,6 +192,7 @@ export function buildSite(): { readonly pages: number; readonly outDir: string }
       `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
     );
   }
+  writeFileSync(join(dist, 'robots.txt'), `${robotsLines.join('\n')}\n`);
 
   return { pages: pages.length, outDir: dist };
 }

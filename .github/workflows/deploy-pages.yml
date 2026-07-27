@@ -1,0 +1,61 @@
+# Deploys the public website (apps/marketing) to GitHub Pages.
+#
+# The site builds with SITE_BASE_PATH=/Arq because a project Pages site is
+# served under https://<owner>.github.io/Arq/ - every internal URL is
+# prefixed at build time (see apps/marketing/src/build.ts's applyBasePath).
+# SITE_ORIGIN enables sitemap.xml, the robots Sitemap line and absolute
+# Open Graph URLs.
+#
+# Triggers: pushes that touch the site (on the default branch and on the
+# audit/completion branch so the site is visible before that PR merges -
+# trim the extra branch once merged) plus manual dispatch.
+name: Deploy website
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - claude/arq-cad-platform-research-ba8rav
+      - claude/repo-audit-completion-bzolr3
+    paths:
+      - 'apps/marketing/**'
+      - 'brand/**'
+      - '.github/workflows/deploy-pages.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One live site; a newer deploy supersedes an in-flight one.
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @arq/marketing build
+        env:
+          SITE_BASE_PATH: /Arq
+          SITE_ORIGIN: https://ruddvz.github.io
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/marketing/dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

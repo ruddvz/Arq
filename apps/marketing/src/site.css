@@ -16,7 +16,7 @@
 
 @font-face {
   font-family: 'Plus Jakarta Sans';
-  src: url('/assets/fonts/PlusJakartaSans-Variable.woff2') format('woff2');
+  src: url('fonts/PlusJakartaSans-Variable.woff2') format('woff2');
   font-weight: 200 800;
   font-style: normal;
   font-display: swap;
@@ -24,7 +24,7 @@
 
 @font-face {
   font-family: 'Plus Jakarta Sans';
-  src: url('/assets/fonts/PlusJakartaSans-Italic-Variable.woff2') format('woff2');
+  src: url('fonts/PlusJakartaSans-Italic-Variable.woff2') format('woff2');
   font-weight: 200 800;
   font-style: italic;
   font-display: swap;
@@ -32,7 +32,7 @@
 
 @font-face {
   font-family: 'JetBrains Mono';
-  src: url('/assets/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+  src: url('fonts/JetBrainsMono-Variable.woff2') format('woff2');
   font-weight: 100 800;
   font-style: normal;
   font-display: swap;
@@ -40,7 +40,7 @@
 
 @font-face {
   font-family: 'JetBrains Mono';
-  src: url('/assets/fonts/JetBrainsMono-Italic-Variable.woff2') format('woff2');
+  src: url('fonts/JetBrainsMono-Italic-Variable.woff2') format('woff2');
   font-weight: 100 800;
   font-style: italic;
   font-display: swap;
