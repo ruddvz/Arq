@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { worldPoint, type Viewport } from '@arq/geometry-2d';
+import { boundsFromCorners } from '@arq/editor-shell';
 import {
   GRID_SPACING_MM,
   computeSnap,
   contentBounds,
   pickElementAt,
+  selectWallsInRegion,
   wheelZoomFactor,
   type PlanContent,
 } from './canvas-interaction';
@@ -111,6 +113,38 @@ describe('contentBounds', () => {
       min: worldPoint(-1000, 0),
       max: worldPoint(4200, 5000),
     });
+  });
+});
+
+describe('selectWallsInRegion', () => {
+  const wallA: DrawnWall = {
+    id: 'w-a',
+    start: worldPoint(1000, 1000),
+    end: worldPoint(2000, 1000),
+  };
+  const wallB: DrawnWall = { id: 'w-b', start: worldPoint(1500, 500), end: worldPoint(1500, 2500) };
+
+  it('window mode selects only fully-contained walls', () => {
+    const region = boundsFromCorners(worldPoint(900, 900), worldPoint(2100, 1100));
+    expect(selectWallsInRegion(content([wallA, wallB]), region, 'window')).toEqual(['w-a']);
+  });
+
+  it('crossing mode also selects walls that merely touch the region', () => {
+    const region = boundsFromCorners(worldPoint(900, 900), worldPoint(2100, 1100));
+    expect(selectWallsInRegion(content([wallA, wallB]), region, 'crossing')).toEqual([
+      'w-a',
+      'w-b',
+    ]);
+  });
+
+  it('crossing mode catches a wall that spans the region with both endpoints outside', () => {
+    const region = boundsFromCorners(worldPoint(1400, 900), worldPoint(1600, 1100));
+    expect(selectWallsInRegion(content([wallB]), region, 'crossing')).toEqual(['w-b']);
+  });
+
+  it('never selects the room fixture', () => {
+    const everything = boundsFromCorners(worldPoint(-10000, -10000), worldPoint(10000, 10000));
+    expect(selectWallsInRegion(content([wallA]), everything, 'window')).toEqual(['w-a']);
   });
 });
 

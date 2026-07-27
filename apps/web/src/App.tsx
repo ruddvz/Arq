@@ -72,7 +72,8 @@ import {
   type ViewportProbe,
   type WorkspaceProjectContext,
 } from '@arq/workspace';
-import { createUndoStack } from '@arq/operations';
+import { createUndoStack, hasErrors, type ValidationMessage } from '@arq/operations';
+import { validateUniqueElementIds, validateWallSegments } from '@arq/validation';
 import {
   applyOperation,
   invertOperation,
@@ -392,6 +393,45 @@ export function App(): JSX.Element {
     [performOperation],
   );
 
+  /*
+   * §4.3 gate on the one committing edit this build has: a finished wall
+   * chain is validated against @arq/validation's rules before it becomes
+   * an operation. Errors block the commit and surface as a plain-language
+   * notice; warnings (e.g. an exact duplicate wall) commit but tell the
+   * user what happened. Rejected input leaves committed state unchanged.
+   */
+  const [validationNotice, setValidationNotice] = useState<ValidationMessage | null>(null);
+
+  const handleCommitWalls = useCallback(
+    (walls: readonly DrawnWall[]) => {
+      const messages = validateWallSegments(walls, drawnWallsRef.current);
+      if (hasErrors(messages)) {
+        setValidationNotice(messages.find((m) => m.severity === 'error') ?? null);
+        return;
+      }
+      performOperation({ kind: 'add-walls', walls });
+      setValidationNotice(messages[0] ?? null);
+    },
+    [performOperation],
+  );
+
+  /*
+   * The status bar's model-health counts are computed from the committed
+   * model on every change - real rule evaluation, not a hardcoded zero.
+   * (Error-severity states cannot normally be reached, because the commit
+   * gate above refuses them - which is exactly what makes 0 honest.)
+   */
+  const modelHealth = useMemo(() => {
+    const messages = [
+      ...validateWallSegments(drawnWalls),
+      ...validateUniqueElementIds(drawnWalls.map((wall) => wall.id)),
+    ];
+    return {
+      errorCount: messages.filter((m) => m.severity === 'error').length,
+      warningCount: messages.filter((m) => m.severity === 'warning').length,
+    };
+  }, [drawnWalls]);
+
   const handleActivateTool = useCallback(
     (toolId: string) => {
       setToolState((current) => activateTool(current, toolId, modeState.mode));
@@ -526,28 +566,36 @@ export function App(): JSX.Element {
    */
   useEffect(() => {
     setModelSelection((current) => {
-      const isDangling =
-        current.primary !== null &&
-        current.primary.startsWith('drawn-wall-') &&
-        !drawnWalls.some((wall) => wall.id === current.primary);
-      return isDangling ? { primary: null, secondary: new Set() } : current;
+      const exists = (id: string): boolean =>
+        !id.startsWith('drawn-wall-') || drawnWalls.some((wall) => wall.id === id);
+      const primaryDangling = current.primary !== null && !exists(current.primary);
+      const liveSecondary = [...current.secondary].filter(exists);
+      if (!primaryDangling && liveSecondary.length === current.secondary.size) {
+        return current;
+      }
+      // Promote a surviving secondary if the primary vanished, so a
+      // multi-select undo degrades to "fewer selected", not "none".
+      const primary = primaryDangling ? (liveSecondary[0] ?? null) : current.primary;
+      const secondary = new Set(liveSecondary.filter((id) => id !== primary));
+      return { primary, secondary };
     });
   }, [drawnWalls]);
 
   const isWallSelected = modelSelection.primary === 'demo-wall-1';
+  const selectionCount = modelSelection.primary === null ? 0 : 1 + modelSelection.secondary.size;
   /*
-   * Doc 40. warningCount is 0 because no model-health engine runs in this
-   * build - not because the wall is known to be clean. historyCapability is
-   * off for the same reason CAP-collaboration is: nothing produces revisions.
+   * Doc 40. warningCount comes from the real model-health evaluation below;
+   * historyCapability is off for the same reason CAP-collaboration is:
+   * nothing produces revisions.
    */
   const inspectorContext = useMemo(
     () => ({
-      selectionCount: modelSelection.primary === null ? 0 : 1,
+      selectionCount,
       warningCount: 0,
       mode: modeState.mode,
       historyCapabilityEnabled: false,
     }),
-    [modelSelection.primary, modeState.mode],
+    [selectionCount, modeState.mode],
   );
 
   /*
@@ -653,7 +701,13 @@ export function App(): JSX.Element {
         onSelectElement={(elementId) =>
           setModelSelection({ primary: elementId, secondary: new Set() })
         }
-        onCommitWalls={(walls) => performOperation({ kind: 'add-walls', walls })}
+        onSelectMany={(elementIds) =>
+          setModelSelection({
+            primary: elementIds[0] ?? null,
+            secondary: new Set(elementIds.slice(1)),
+          })
+        }
+        onCommitWalls={handleCommitWalls}
         onFitCompleted={() => handleActivateTool('select')}
         onActiveSnapChange={setActiveSnapLabel}
         onPointerWorldPositionChange={setCursorWorldPosition}
@@ -882,19 +936,22 @@ export function App(): JSX.Element {
         contextBar={
           <ContextBar
             activeToolId={toolState.activeToolId}
-            selectionCount={modelSelection.primary === null ? 0 : 1}
+            selectionCount={selectionCount}
             actions={
               selectedDrawnWall !== null
                 ? [
                     {
                       id: 'delete',
-                      label: 'Delete',
-                      // A real, undoable deletion of a really-drawn wall.
+                      label: selectionCount > 1 ? `Delete ${selectionCount} walls` : 'Delete',
+                      // A real, undoable deletion of every selected drawn
+                      // wall - one operation, one undo step.
                       onActivate: () => {
-                        performOperation({
-                          kind: 'remove-walls',
-                          wallIds: [selectedDrawnWall.id],
-                        });
+                        const drawnIds = new Set(drawnWalls.map((wall) => wall.id));
+                        const selectedIds = [
+                          modelSelection.primary,
+                          ...modelSelection.secondary,
+                        ].filter((id): id is string => id !== null && drawnIds.has(id));
+                        performOperation({ kind: 'remove-walls', wallIds: selectedIds });
                         setModelSelection({ primary: null, secondary: new Set() });
                       },
                     },
@@ -916,10 +973,10 @@ export function App(): JSX.Element {
             unitLabel="mm"
             cursorWorldPosition={cursorWorldPosition}
             activeSnapLabel={activeSnapLabel}
-            selectionCount={modelSelection.primary === null ? 0 : 1}
+            selectionCount={selectionCount}
             currentLevelName="Level 1"
             pixelsPerUnit={pixelsPerUnit}
-            modelHealth={{ errorCount: 0, warningCount: 0 }}
+            modelHealth={modelHealth}
             localJournalStateLabel="Journal current"
             syncState="offline"
             supportModeEnabled={false}
@@ -965,6 +1022,45 @@ export function App(): JSX.Element {
       {/* Renders its own full-viewport ArqModalDialog (backdrop, focus trap),
           so it sits beside WorkspaceRoot rather than inside a layout slot. */}
       <FileOpenPanel isOpen={fileOpenPanelOpen} onOpenChange={setFileOpenPanelOpen} />
+
+      {validationNotice !== null && (
+        <div
+          role="status"
+          style={{
+            position: 'fixed',
+            bottom: '2.5rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 9,
+            maxWidth: '36rem',
+            padding: '0.625rem 0.875rem',
+            background: 'var(--arq-ui-surface, #fff)',
+            border: `1px solid ${
+              validationNotice.severity === 'error'
+                ? 'var(--arq-ui-text, #000)'
+                : 'var(--arq-ui-border, #888)'
+            }`,
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+            fontSize: '0.8125rem',
+            display: 'flex',
+            gap: '0.75rem',
+            alignItems: 'baseline',
+          }}
+        >
+          <span>
+            <strong>{validationNotice.title}.</strong> {validationNotice.explanation}{' '}
+            {validationNotice.suggestedActions[0]}
+          </span>
+          <button
+            type="button"
+            onClick={() => setValidationNotice(null)}
+            aria-label="Dismiss message"
+            style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '1em' }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {historyVersion > 0 && (
         <p

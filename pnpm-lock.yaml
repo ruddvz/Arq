@@ -76,6 +76,9 @@ importers:
       '@arq/plan-renderer':
         specifier: workspace:*
         version: link:../../packages/plan-renderer
+      '@arq/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
       '@arq/workspace':
         specifier: workspace:*
         version: link:../../packages/workspace
@@ -272,7 +275,17 @@ importers:
 
   packages/test-models: {}
 
-  packages/validation: {}
+  packages/validation:
+    dependencies:
+      '@arq/bim-core':
+        specifier: workspace:*
+        version: link:../bim-core
+      '@arq/geometry-2d':
+        specifier: workspace:*
+        version: link:../geometry-2d
+      '@arq/operations':
+        specifier: workspace:*
+        version: link:../operations
 
   packages/workspace: {}
 

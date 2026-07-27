@@ -2,6 +2,7 @@ import {
   closestPointOnSegment,
   screenPoint,
   screenToWorld,
+  segmentIntersection,
   worldPoint,
   type Viewport,
   type WorldPoint,
@@ -13,8 +14,12 @@ import {
   findMidpointSnaps,
   pickAt,
   pickBestSnap,
+  selectInRegion,
   type HitCandidate,
+  type RegionCandidate,
+  type RegionSelectionMode,
   type SnapResult,
+  type WorldBounds,
 } from '@arq/editor-shell';
 import type { DrawnWall } from './plan-document';
 
@@ -99,6 +104,57 @@ export function pickElementAt(
   viewport: Viewport,
 ): string | null {
   return pickAt(buildHitCandidates(content), point, viewport)?.id ?? null;
+}
+
+function pointInBounds(point: WorldPoint, bounds: WorldBounds): boolean {
+  return (
+    point.x >= bounds.min.x &&
+    point.x <= bounds.max.x &&
+    point.y >= bounds.min.y &&
+    point.y <= bounds.max.y
+  );
+}
+
+function segmentIntersectsBounds(start: WorldPoint, end: WorldPoint, bounds: WorldBounds): boolean {
+  if (pointInBounds(start, bounds) || pointInBounds(end, bounds)) {
+    return true;
+  }
+  const corners = [
+    worldPoint(bounds.min.x, bounds.min.y),
+    worldPoint(bounds.max.x, bounds.min.y),
+    worldPoint(bounds.max.x, bounds.max.y),
+    worldPoint(bounds.min.x, bounds.max.y),
+  ];
+  for (let i = 0; i < 4; i += 1) {
+    const edge = { start: corners[i]!, end: corners[(i + 1) % 4]! };
+    if (segmentIntersection({ start, end }, edge, 1e-9) !== null) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function wallRegionCandidate(wall: DrawnWall): RegionCandidate<string> {
+  return {
+    id: wall.id,
+    isContainedBy: (region) => pointInBounds(wall.start, region) && pointInBounds(wall.end, region),
+    intersectsRegion: (region) => segmentIntersectsBounds(wall.start, wall.end, region),
+  };
+}
+
+/**
+ * Marquee selection over the drawn walls, using the editor-shell
+ * window/crossing contract (ARQ-041). The room fixture is deliberately not
+ * region-selectable: a marquee over the plan almost always encloses the
+ * fixture, and "everything you dragged over plus the demo room" is never
+ * what the drag meant.
+ */
+export function selectWallsInRegion(
+  content: PlanContent,
+  region: WorldBounds,
+  mode: RegionSelectionMode,
+): readonly string[] {
+  return selectInRegion(content.walls.map(wallRegionCandidate), region, mode);
 }
 
 /** World-space bounds of everything visible, for the fit tool. */

@@ -14,6 +14,7 @@ import {
   type WorldPoint,
 } from '@arq/geometry-2d';
 import {
+  boundsFromCorners,
   createWallDrawTool,
   fitToBounds,
   panByScreenDelta,
@@ -34,6 +35,7 @@ import {
   computeSnap,
   contentBounds,
   pickElementAt,
+  selectWallsInRegion,
   wheelZoomFactor,
   type PlanContent,
 } from './canvas/canvas-interaction';
@@ -73,6 +75,8 @@ export interface PlanCanvasProps {
   readonly selection: PlanSelectionState<string>;
   /** Canvas click selected an element (null = clicked empty space). */
   readonly onSelectElement: (elementId: string | null) => void;
+  /** Marquee drag selected zero or more elements (window/crossing, ARQ-041). */
+  readonly onSelectMany: (elementIds: readonly string[]) => void;
   /** A finished wall chain to commit as an undoable operation. */
   readonly onCommitWalls: (walls: readonly DrawnWall[]) => void;
   /** Fit completed - the canvas asks the shell to return to Select. */
@@ -106,6 +110,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     walls,
     selection,
     onSelectElement,
+    onSelectMany,
     onCommitWalls,
     onFitCompleted,
     onActiveSnapChange,
@@ -128,6 +133,16 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   const spaceHeldRef = useRef(false);
   const pointerPositionsRef = useRef(new Map<number, { x: number; y: number }>());
   const wallCounterRef = useRef(0);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  /** In-progress marquee drag (select tool): anchor and live corner in world space. */
+  const [marquee, setMarquee] = useState<{
+    readonly pointerId: number;
+    readonly anchor: WorldPoint;
+    readonly corner: WorldPoint;
+    readonly anchorScreenX: number;
+    readonly anchorScreenY: number;
+    readonly moved: boolean;
+  } | null>(null);
 
   const content: PlanContent = useMemo(
     () => ({ roomId: DEMO_ROOM_ID, roomPolygon: DEMO_ROOM_POLYGON, walls }),
@@ -189,7 +204,21 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     ];
 
     const scene = buildPlanScene(inputs, EMPTY_SET, selection, EMPTY_SET);
-    let painted = withSelectionHandles(scene);
+    // Hover is live pointer state, not project state, so it is applied on
+    // top of the resolved scene (plan-scene.ts's own note: hover comes from
+    // the caller). Selection outranks hover; only a default-styled primitive
+    // takes the hover treatment.
+    const hovered =
+      hoveredId === null
+        ? scene
+        : {
+            primitives: scene.primitives.map((primitive) =>
+              primitive.elementId === hoveredId && primitive.styleToken === 'default'
+                ? { ...primitive, styleToken: 'hover' as const }
+                : primitive,
+            ),
+          };
+    let painted = withSelectionHandles(hovered);
 
     // Draft chain + live preview segment, painted in the active-tool style.
     const draftPrimitives: PlanPrimitiveInput<string>[] = [];
@@ -227,7 +256,25 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     paintPlanScene(ctx, currentViewport, devicePixelRatio, painted);
-  }, [viewport, walls, selection, draftPoints, previewPoint, snapPoint]);
+
+    // The marquee is view furniture like the grid: CAD convention, solid
+    // edge for a window (left-to-right) drag, dashed for crossing.
+    if (marquee !== null && marquee.moved) {
+      const a = worldToScreen(currentViewport, marquee.anchor);
+      const b = worldToScreen(currentViewport, marquee.corner);
+      const crossing = marquee.corner.x < marquee.anchor.x;
+      ctx.strokeStyle = 'rgba(11, 107, 80, 0.9)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash(crossing ? [4 * devicePixelRatio, 4 * devicePixelRatio] : []);
+      ctx.strokeRect(
+        Math.min(a.x, b.x),
+        Math.min(a.y, b.y),
+        Math.abs(b.x - a.x),
+        Math.abs(b.y - a.y),
+      );
+      ctx.setLineDash([]);
+    }
+  }, [viewport, walls, selection, draftPoints, previewPoint, snapPoint, hoveredId, marquee]);
 
   useEffect(() => {
     paint();
@@ -295,6 +342,8 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     setDraftPoints([]);
     setPreviewPoint(null);
     setSnapPoint(null);
+    setHoveredId(null);
+    setMarquee(null);
     onActiveSnapChange?.(null);
   }, [onActiveSnapChange]);
 
@@ -315,8 +364,16 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       });
       onCommitWalls(committed);
     }
-    clearDraft();
-  }, [clearDraft, onCommitWalls]);
+    // The wall tool stays active after a chain commits - re-arm a fresh
+    // lifecycle so the next click starts the next chain (before this, the
+    // second chain in one tool session silently did nothing).
+    const next = createWallDrawTool();
+    next.arm();
+    next.beginPreview();
+    wallToolRef.current = next;
+    setDraftPoints([]);
+    setPreviewPoint(null);
+  }, [onCommitWalls]);
 
   // Arm the wall tool when it becomes active; discard any draft when the
   // active tool changes away (switching tools cancels, per the command
@@ -511,6 +568,13 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         return;
       }
       const snapped = computeSnap(world, content, viewport)?.point ?? world;
+      // Double-click-to-finish arrives as two pointerdowns at the same spot;
+      // placing both would leave a zero-length trailing segment for
+      // validation to reject. A repeat of the last point is a no-op instead.
+      const last = tool.snapshot().points.at(-1);
+      if (last !== undefined && Math.hypot(snapped.x - last.x, snapped.y - last.y) < 0.5) {
+        return;
+      }
       tool.placePoint(snapped);
       // The lifecycle parks in awaiting-input after a placement; re-enter
       // previewing so the next pointer move rubber-bands from this point.
@@ -521,7 +585,17 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     }
 
     if (activeToolId === 'select' || activeToolId === null) {
-      onSelectElement(pickElementAt(content, world, viewport));
+      // Selection commits on pointerup: a still click point-selects, a drag
+      // becomes a window/crossing marquee (ARQ-041). Starting the marquee
+      // here, unconditionally, lets pointerup decide which one happened.
+      setMarquee({
+        pointerId: event.pointerId,
+        anchor: world,
+        corner: world,
+        anchorScreenX: event.clientX,
+        anchorScreenY: event.clientY,
+        moved: false,
+      });
     }
   }
 
@@ -584,12 +658,26 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     }
     onPointerWorldPositionChange?.({ x: world.x, y: world.y });
 
+    if (marquee !== null && marquee.pointerId === event.pointerId) {
+      const movedPx = Math.hypot(
+        event.clientX - marquee.anchorScreenX,
+        event.clientY - marquee.anchorScreenY,
+      );
+      setMarquee({ ...marquee, corner: world, moved: marquee.moved || movedPx > 4 });
+      return;
+    }
+
     if (activeToolId === 'wall' && wallToolRef.current !== null) {
       const snap = computeSnap(world, content, viewport);
       const snapped = snap?.point ?? world;
       setSnapPoint(snap === undefined ? null : { point: snap.point, source: snap.source });
       onActiveSnapChange?.(snap === undefined ? null : SNAP_GLYPH_LABEL[snap.source]);
       setPreviewPoint(draftPoints.length > 0 ? snapped : null);
+      return;
+    }
+
+    if (activeToolId === 'select' || activeToolId === null) {
+      setHoveredId(pickElementAt(content, world, viewport));
     }
   }
 
@@ -601,6 +689,25 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     const pinch = pinchRef.current;
     if (pinch !== null && pinch.pointerIds.includes(event.pointerId)) {
       pinchRef.current = null;
+    }
+    if (marquee !== null && marquee.pointerId === event.pointerId) {
+      setMarquee(null);
+      if (event.type === 'pointercancel') {
+        return;
+      }
+      if (!marquee.moved) {
+        // A still click: ordinary point selection.
+        if (viewport !== null) {
+          onSelectElement(pickElementAt(content, marquee.anchor, viewport));
+        }
+        return;
+      }
+      // CAD convention: rightward drag selects fully-contained (window),
+      // leftward selects touched (crossing) - decided by drag direction.
+      const mode = marquee.corner.x < marquee.anchor.x ? 'crossing' : 'window';
+      onSelectMany(
+        selectWallsInRegion(content, boundsFromCorners(marquee.anchor, marquee.corner), mode),
+      );
     }
   }
 
@@ -624,6 +731,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       onPointerLeave={() => {
         onPointerWorldPositionChange?.(null);
         onActiveSnapChange?.(null);
+        setHoveredId(null);
       }}
       style={{ width: '100%', height: '100%', display: 'block', cursor, touchAction: 'none' }}
       aria-label="Plan canvas"
