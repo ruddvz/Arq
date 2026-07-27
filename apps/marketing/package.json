@@ -2,10 +2,15 @@
   "name": "@arq/marketing",
   "private": true,
   "version": "0.0.0",
-  "description": "Public marketing website and documentation.",
+  "description": "Public marketing website - static HTML rendered from typed page modules.",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
+    "build": "tsc -p tsconfig.build.json && node dist-build/build.js",
+    "dev": "pnpm build && node dist-build/serve.js",
     "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
   }
 }

@@ -35,7 +35,11 @@ importers:
 
   apps/api: {}
 
-  apps/marketing: {}
+  apps/marketing:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.20.1
 
   apps/web:
     dependencies:
