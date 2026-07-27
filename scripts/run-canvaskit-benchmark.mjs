@@ -58,7 +58,7 @@ const budgetsPath = path.join(repoRoot, 'benchmarks/PERFORMANCE-BUDGETS.json');
 const benchDir = path.join(repoRoot, 'packages/plan-renderer/benchmarks/canvaskit');
 const sceneDir = path.join(repoRoot, 'packages/plan-renderer/benchmarks/canvas-2d');
 
-let ckPackageRoot = path.dirname(require.resolve('canvaskit-wasm/package.json'));
+const ckPackageRoot = path.dirname(require.resolve('canvaskit-wasm/package.json'));
 const ckDir = path.join(ckPackageRoot, 'bin');
 
 const FONT_PATH = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf';

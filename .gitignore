@@ -17,6 +17,7 @@ node_modules/
 
 # Build artifacts
 dist/
+dist-build/
 build/
 coverage/
 *.log

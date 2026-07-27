@@ -3372,16 +3372,18 @@
     "number": 174,
     "title": "product: approve complete route map and page ownership",
     "area": "product",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: product;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/174-product-approve-complete-route-map-and-page-ownership.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3389,16 +3391,18 @@
     "number": 175,
     "title": "design: design all public and application page states",
     "area": "design",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: design;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/175-design-design-all-public-and-application-page-states.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3406,16 +3410,18 @@
     "number": 176,
     "title": "design: review and refine draft SVG technical icons",
     "area": "design",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: design;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/176-design-review-and-refine-draft-svg-technical-icons.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3423,16 +3429,18 @@
     "number": 177,
     "title": "design: build component test harness",
     "area": "design",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: design;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/177-design-build-component-test-harness.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3440,16 +3448,18 @@
     "number": 178,
     "title": "api: review and approve OpenAPI draft",
     "area": "api",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: api;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/178-api-review-and-approve-openapi-draft.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3457,16 +3467,18 @@
     "number": 179,
     "title": "database: review PostgreSQL schema and tenancy model",
     "area": "database",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: database;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/179-database-review-postgresql-schema-and-tenancy-model.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3474,16 +3486,18 @@
     "number": 180,
     "title": "architecture: approve TypeScript public contracts",
     "area": "architecture",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: architecture;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/180-architecture-approve-typescript-public-contracts.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3491,16 +3505,18 @@
     "number": 181,
     "title": "prototype: usability test static product shell",
     "area": "prototype",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: prototype;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/181-prototype-usability-test-static-product-shell.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3508,16 +3524,18 @@
     "number": 182,
     "title": "quality: triage anticipated bug catalogue into release gates",
     "area": "quality",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: quality;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/182-quality-triage-anticipated-bug-catalogue-into-release-gates.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3525,16 +3543,18 @@
     "number": 183,
     "title": "quality: import QA test catalogue into test management",
     "area": "quality",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: quality;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/183-quality-import-qa-test-catalogue-into-test-management.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3542,16 +3562,18 @@
     "number": 184,
     "title": "security: approve RBAC matrix and authorisation tests",
     "area": "security",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: security;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/184-security-approve-rbac-matrix-and-authorisation-tests.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3559,16 +3581,18 @@
     "number": 185,
     "title": "analytics: approve event dictionary and privacy properties",
     "area": "analytics",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: analytics;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/185-analytics-approve-event-dictionary-and-privacy-properties.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3576,16 +3600,18 @@
     "number": 186,
     "title": "legal: complete privacy terms acceptable use and AI review",
     "area": "legal",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: legal;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/186-legal-complete-privacy-terms-acceptable-use-and-ai-review.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3593,16 +3619,18 @@
     "number": 187,
     "title": "business: conduct pricing and entitlement research",
     "area": "business",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: business;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/187-business-conduct-pricing-and-entitlement-research.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3610,16 +3638,18 @@
     "number": 188,
     "title": "operations: approve backup retention support and incident plans",
     "area": "operations",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: operations;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/188-operations-approve-backup-retention-support-and-incident-plans.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3627,16 +3657,18 @@
     "number": 189,
     "title": "platform: complete browser and device validation matrix",
     "area": "platform",
-    "phase": "Phase 0",
-    "epic": "All-in-one completion",
+    "phase": "Phase 0 or relevant gated phase",
+    "epic": "",
     "priority": "high",
-    "labels": "type: research;area: platform;priority: high;state: ready",
+    "labels": "",
     "dependencies": "",
     "file": "backlog/issues/189-platform-complete-browser-and-device-validation-matrix.md",
     "acceptanceCriteria": [
       "Relevant files are reviewed.",
-      "Contradictions are resolved.",
-      "Owners and evidence are recorded."
+      "Contradictions are resolved through ADR or decision register.",
+      "Owners and evidence are recorded.",
+      "Resulting implementation issues are created.",
+      "Security, accessibility, performance and licence effects are considered."
     ]
   },
   {
@@ -3651,9 +3683,9 @@
     "dependencies": "ARQ-177",
     "file": "backlog/issues/190-design-differentiate-component-doc-content-per-component.md",
     "acceptanceCriteria": [
-      "No two component docs are byte-identical after Purpose unless genuinely identical controls.",
-      "Required states reflect what actually applies to each component.",
-      "component-harness/components.js is regenerated from the corrected docs and still renders without errors."
+      "No two component docs are byte-identical after \"Purpose\" unless they are",
+      "Required states reflect what actually applies to each component, not a",
+      "`component-harness/components.js` states arrays are regenerated from the"
     ]
   },
   {
@@ -3664,13 +3696,1035 @@
     "phase": "Phase 1",
     "epic": "Editor interaction",
     "priority": "high",
-    "labels": "type: feature;area: editor;priority: high;state: ready",
-    "dependencies": "ARQ-052",
+    "labels": "type: feature;area: editor;priority: high;state: done",
+    "dependencies": "ARQ-052;ARQ-192",
     "file": "backlog/issues/191-editor-implement-centre-and-nearest-snap.md",
     "acceptanceCriteria": [
-      "Nearest snap is implemented against SegmentCandidate with tests.",
-      "Centre snap either ships against an existing closed-shape candidate type or is explicitly re-scoped/split if none exists yet.",
-      "Escape and Enter behaviour is defined, matching the other six snap sources."
+      "The scope and non-goals are documented.",
+      "Nearest snap is implemented against `SegmentCandidate` with tests.",
+      "Circular candidate geometry is split into ARQ-192.",
+      "Centre snap is implemented against `CircularCandidate` with tests.",
+      "Escape and Enter behaviour matches the other snap sources.",
+      "Invalid input produces no snap preview and leaves committed state unchanged."
+    ]
+  },
+  {
+    "id": "ARQ-192",
+    "number": 192,
+    "title": "editor: define circular snap candidate",
+    "area": "editor",
+    "phase": "Phase 1",
+    "epic": "Editor interaction",
+    "priority": "high",
+    "labels": "type: feature;area: editor;priority: high;state: done",
+    "dependencies": "ARQ-045",
+    "file": "backlog/issues/192-editor-define-circular-snap-candidate.md",
+    "acceptanceCriteria": [
+      "`CircularCandidate` supports circle and arc candidates.",
+      "Invalid candidates are detectable without mutating project state.",
+      "The contract is exported by `@arq/editor-shell`.",
+      "Centre snap consumes it without renderer or BIM dependencies.",
+      "Focused type and runtime checks pass."
+    ]
+  },
+  {
+    "id": "ARQ-193",
+    "number": 193,
+    "title": "file-system: approve SQLite based .arq format",
+    "area": "file-system",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/193-file-system-approve-sqlite-based-arq-format.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-194",
+    "number": 194,
+    "title": "file-system: reserve application ID and define format header",
+    "area": "file-system",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/194-file-system-reserve-application-id-and-define-format-header.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-195",
+    "number": 195,
+    "title": "file-system: implement native arqfs schema v1 prototype",
+    "area": "file-system",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/195-file-system-implement-native-arqfs-schema-v1-prototype.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-196",
+    "number": 196,
+    "title": "file-system: implement SQLite WASM OPFS prototype",
+    "area": "file-system",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/196-file-system-implement-sqlite-wasm-opfs-prototype.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-197",
+    "number": 197,
+    "title": "file-system: implement clean export through backup API",
+    "area": "file-system",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/197-file-system-implement-clean-export-through-backup-api.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-198",
+    "number": 198,
+    "title": "file-system: implement working copy and linked document states",
+    "area": "file-system",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/198-file-system-implement-working-copy-and-linked-document-states.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-199",
+    "number": 199,
+    "title": "file-system: implement content addressed resource chunks",
+    "area": "file-system",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/199-file-system-implement-content-addressed-resource-chunks.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-200",
+    "number": 200,
+    "title": "file-system: implement semantic project hashing",
+    "area": "file-system",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/200-file-system-implement-semantic-project-hashing.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-201",
+    "number": 201,
+    "title": "file-system: implement copy on write migrations",
+    "area": "file-system",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/201-file-system-implement-copy-on-write-migrations.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-202",
+    "number": 202,
+    "title": "file-system: implement safe mode and recovery report",
+    "area": "file-system",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/202-file-system-implement-safe-mode-and-recovery-report.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-203",
+    "number": 203,
+    "title": "core: create shared Rust arq-core workspace",
+    "area": "core",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/203-core-create-shared-rust-arq-core-workspace.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-204",
+    "number": 204,
+    "title": "core: compile arq-core to WebAssembly Worker",
+    "area": "core",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/204-core-compile-arq-core-to-webassembly-worker.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-205",
+    "number": 205,
+    "title": "core: define iPad and desktop FFI boundary",
+    "area": "core",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/205-core-define-ipad-and-desktop-ffi-boundary.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-206",
+    "number": 206,
+    "title": "sync: define operation envelope and server sequence",
+    "area": "sync",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/206-sync-define-operation-envelope-and-server-sequence.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-207",
+    "number": 207,
+    "title": "sync: implement idempotent operation upload",
+    "area": "sync",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/207-sync-implement-idempotent-operation-upload.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-208",
+    "number": 208,
+    "title": "sync: implement resumable resource chunk upload",
+    "area": "sync",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/208-sync-implement-resumable-resource-chunk-upload.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-209",
+    "number": 209,
+    "title": "sync: implement safe rebase and conflict classes",
+    "area": "sync",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/209-sync-implement-safe-rebase-and-conflict-classes.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-210",
+    "number": 210,
+    "title": "performance: implement progressive project opening",
+    "area": "performance",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/210-performance-implement-progressive-project-opening.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-211",
+    "number": 211,
+    "title": "performance: implement viewport first entity queries",
+    "area": "performance",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/211-performance-implement-viewport-first-entity-queries.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-212",
+    "number": 212,
+    "title": "performance: implement adaptive device capability tiers",
+    "area": "performance",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/212-performance-implement-adaptive-device-capability-tiers.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-213",
+    "number": 213,
+    "title": "performance: protect main thread 50 ms budget",
+    "area": "performance",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/213-performance-protect-main-thread-50-ms-budget.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-214",
+    "number": 214,
+    "title": "performance: add cross platform semantic determinism tests",
+    "area": "performance",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/214-performance-add-cross-platform-semantic-determinism-tests.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-215",
+    "number": 215,
+    "title": "platform: implement browser OPFS quota diagnostics",
+    "area": "platform",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/215-platform-implement-browser-opfs-quota-diagnostics.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-216",
+    "number": 216,
+    "title": "platform: implement coordinated external document publication",
+    "area": "platform",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/216-platform-implement-coordinated-external-document-publication.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-217",
+    "number": 217,
+    "title": "security: fuzz untrusted arq reader and migrations",
+    "area": "security",
+    "phase": "File-system and instant architecture foundation",
+    "epic": "",
+    "priority": "critical",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/217-security-fuzz-untrusted-arq-reader-and-migrations.md",
+    "acceptanceCriteria": [
+      "Follows ADR-0019 through ADR-0023.",
+      "Does not synchronise raw SQLite database bytes.",
+      "Preserves canonical model semantics.",
+      "Has deterministic tests across native and WASM where applicable.",
+      "Has crash, quota and malformed-file tests.",
+      "Documents performance and security effects.",
+      "Does not require derived caches to open a project."
+    ]
+  },
+  {
+    "id": "ARQ-218",
+    "number": 218,
+    "title": "architecture: remove active storage and archive contradictions",
+    "area": "architecture",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/218-architecture-remove-active-storage-and-archive-contradictions.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-219",
+    "number": 219,
+    "title": "file-system: run direct SQLite Worker VFS benchmark",
+    "area": "file-system",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/219-file-system-run-direct-sqlite-worker-vfs-benchmark.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-220",
+    "number": 220,
+    "title": "file-system: implement browser single-writer project lock",
+    "area": "file-system",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/220-file-system-implement-browser-single-writer-project-lock.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-221",
+    "number": 221,
+    "title": "file-system: implement feature flag compatibility matrix",
+    "area": "file-system",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/221-file-system-implement-feature-flag-compatibility-matrix.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-222",
+    "number": 222,
+    "title": "file-system: implement canonical semantic hashing test oracle",
+    "area": "file-system",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/222-file-system-implement-canonical-semantic-hashing-test-oracle.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-223",
+    "number": 223,
+    "title": "file-system: validate clean export has no sidecars",
+    "area": "file-system",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/223-file-system-validate-clean-export-has-no-sidecars.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-224",
+    "number": 224,
+    "title": "core: implement canonical numeric normalisation",
+    "area": "core",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/224-core-implement-canonical-numeric-normalisation.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-225",
+    "number": 225,
+    "title": "core: implement deterministic record ordering",
+    "area": "core",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/225-core-implement-deterministic-record-ordering.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-226",
+    "number": 226,
+    "title": "commands: implement shared command lifecycle state machine",
+    "area": "commands",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/226-commands-implement-shared-command-lifecycle-state-machine.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-227",
+    "number": 227,
+    "title": "commands: generate typed command registry from catalogue",
+    "area": "commands",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/227-commands-generate-typed-command-registry-from-catalogue.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-228",
+    "number": 228,
+    "title": "entities: generate model types from entity catalogue",
+    "area": "entities",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/228-entities-generate-model-types-from-entity-catalogue.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-229",
+    "number": 229,
+    "title": "ux: implement separate local sync and publication states",
+    "area": "ux",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/229-ux-implement-separate-local-sync-and-publication-states.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-230",
+    "number": 230,
+    "title": "ux: build canvas accessibility parallel interfaces",
+    "area": "ux",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/230-ux-build-canvas-accessibility-parallel-interfaces.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-231",
+    "number": 231,
+    "title": "performance: enforce route and editor bundle budgets",
+    "area": "performance",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/231-performance-enforce-route-and-editor-bundle-budgets.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-232",
+    "number": 232,
+    "title": "performance: implement Worker backpressure and stale result cancellation",
+    "area": "performance",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/232-performance-implement-worker-backpressure-and-stale-result-cancellation.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-233",
+    "number": 233,
+    "title": "performance: run Tier A through D device lab",
+    "area": "performance",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/233-performance-run-tier-a-through-d-device-lab.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-234",
+    "number": 234,
+    "title": "quality: import master bug fix register",
+    "area": "quality",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/234-quality-import-master-bug-fix-register.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-235",
+    "number": 235,
+    "title": "quality: create regression fixture for every critical bug risk",
+    "area": "quality",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/235-quality-create-regression-fixture-for-every-critical-bug-risk.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-236",
+    "number": 236,
+    "title": "quality: run source of truth contradiction check in CI",
+    "area": "quality",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/236-quality-run-source-of-truth-contradiction-check-in-ci.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-237",
+    "number": 237,
+    "title": "security: configure SQLite defensive open policy",
+    "area": "security",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/237-security-configure-sqlite-defensive-open-policy.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-238",
+    "number": 238,
+    "title": "security: implement resource size and expansion limits",
+    "area": "security",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/238-security-implement-resource-size-and-expansion-limits.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-239",
+    "number": 239,
+    "title": "security: redact support bundles and share tokens",
+    "area": "security",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/239-security-redact-support-bundles-and-share-tokens.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-240",
+    "number": 240,
+    "title": "research: validate complete command catalogue with architects",
+    "area": "research",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/240-research-validate-complete-command-catalogue-with-architects.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-241",
+    "number": 241,
+    "title": "product: approve full platform feature catalogue stages",
+    "area": "product",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/241-product-approve-full-platform-feature-catalogue-stages.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
+    ]
+  },
+  {
+    "id": "ARQ-242",
+    "number": 242,
+    "title": "prototype: review component lab at all responsive breakpoints",
+    "area": "prototype",
+    "phase": "",
+    "epic": "v3 execution readiness",
+    "priority": "critical or high",
+    "labels": "",
+    "dependencies": "",
+    "file": "backlog/issues/242-prototype-review-component-lab-at-all-responsive-breakpoints.md",
+    "acceptanceCriteria": [
+      "Current v2.0 blueprint and approved ADRs are followed.",
+      "Contradictory older text is not copied into implementation.",
+      "Normal, failure, recovery, accessibility and performance evidence exists.",
+      "New dependency and licence effects are recorded.",
+      "Deterministic regression coverage is added where applicable."
     ]
   }
 ]

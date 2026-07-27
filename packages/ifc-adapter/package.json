@@ -2,13 +2,14 @@
   "name": "@arq/ifc-adapter",
   "private": true,
   "version": "0.0.0",
-  "description": "IFC import/export via web-ifc, plus the canonical IFC <-> Arq entity mapping. MPL-2.0 - keep isolated per §19.",
+  "description": "IFC import/export via web-ifc, plus the canonical IFC <-> Arq entity mapping. MPL-2.0 - keep isolated per \u00a719.",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@arq/file-ingress": "workspace:*",
     "web-ifc": "^0.0.77"
   }
 }

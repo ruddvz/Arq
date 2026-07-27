@@ -1,6 +1,6 @@
 # @arq/dxf-adapter
 
-DXF import/export.
+DXF reading - an import-side prototype parser; DXF export is not built yet.
 
 `parseDxf` (ARQ-158) is a prototype reader for DXF's ASCII form, covering
 `docs/interoperability/DXF-PLAN.md`'s Stage 1 entity list: LINE, LWPOLYLINE,

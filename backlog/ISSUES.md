@@ -1,5 +1,10 @@
 # Ordered issue backlog
 
+242 issues, regenerated from `backlog/issues/` by
+`node scripts/generate-backlog-index.mjs` - edit the issue files, not this index.
+Completion state is deliberately not tracked here: merged work references its
+ARQ-### id in git history, which is the record of what is done.
+
 1. [docs: add complete blueprint v1.0](issues/001-docs-add-complete-blueprint-v1-0.md) - Phase 0 - critical
 2. [docs: add ADR template](issues/002-docs-add-adr-template.md) - Phase 0 - critical
 3. [docs: add dependency and licence policy](issues/003-docs-add-dependency-and-licence-policy.md) - Phase 0 - critical
@@ -173,19 +178,72 @@
 171. [ipad: test Pencil web input](issues/171-ipad-test-pencil-web-input.md) - Phase 8 - normal
 172. [ipad: prototype native hover](issues/172-ipad-prototype-native-hover.md) - Phase 8 - normal
 173. [ipad: prototype RoomPlan conversion](issues/173-ipad-prototype-roomplan-conversion.md) - Phase 8 - normal
-174. [product: approve complete route map and page ownership](issues/174-product-approve-complete-route-map-and-page-ownership.md) - Phase 0 - high
-175. [design: design all public and application page states](issues/175-design-design-all-public-and-application-page-states.md) - Phase 0 - high
-176. [design: review and refine draft SVG technical icons](issues/176-design-review-and-refine-draft-svg-technical-icons.md) - Phase 0 - high
-177. [design: build component test harness](issues/177-design-build-component-test-harness.md) - Phase 0 - high
-178. [api: review and approve OpenAPI draft](issues/178-api-review-and-approve-openapi-draft.md) - Phase 0 - high
-179. [database: review PostgreSQL schema and tenancy model](issues/179-database-review-postgresql-schema-and-tenancy-model.md) - Phase 0 - high
-180. [architecture: approve TypeScript public contracts](issues/180-architecture-approve-typescript-public-contracts.md) - Phase 0 - high
-181. [prototype: usability test static product shell](issues/181-prototype-usability-test-static-product-shell.md) - Phase 0 - high
-182. [quality: triage anticipated bug catalogue into release gates](issues/182-quality-triage-anticipated-bug-catalogue-into-release-gates.md) - Phase 0 - high
-183. [quality: import QA test catalogue into test management](issues/183-quality-import-qa-test-catalogue-into-test-management.md) - Phase 0 - high
-184. [security: approve RBAC matrix and authorisation tests](issues/184-security-approve-rbac-matrix-and-authorisation-tests.md) - Phase 0 - high
-185. [analytics: approve event dictionary and privacy properties](issues/185-analytics-approve-event-dictionary-and-privacy-properties.md) - Phase 0 - high
-186. [legal: complete privacy terms acceptable use and AI review](issues/186-legal-complete-privacy-terms-acceptable-use-and-ai-review.md) - Phase 0 - high
-187. [business: conduct pricing and entitlement research](issues/187-business-conduct-pricing-and-entitlement-research.md) - Phase 0 - high
-188. [operations: approve backup retention support and incident plans](issues/188-operations-approve-backup-retention-support-and-incident-plans.md) - Phase 0 - high
-189. [platform: complete browser and device validation matrix](issues/189-platform-complete-browser-and-device-validation-matrix.md) - Phase 0 - high
+174. [product: approve complete route map and page ownership](issues/174-product-approve-complete-route-map-and-page-ownership.md) - Phase 0 or relevant gated phase - high
+175. [design: design all public and application page states](issues/175-design-design-all-public-and-application-page-states.md) - Phase 0 or relevant gated phase - high
+176. [design: review and refine draft SVG technical icons](issues/176-design-review-and-refine-draft-svg-technical-icons.md) - Phase 0 or relevant gated phase - high
+177. [design: build component test harness](issues/177-design-build-component-test-harness.md) - Phase 0 or relevant gated phase - high
+178. [api: review and approve OpenAPI draft](issues/178-api-review-and-approve-openapi-draft.md) - Phase 0 or relevant gated phase - high
+179. [database: review PostgreSQL schema and tenancy model](issues/179-database-review-postgresql-schema-and-tenancy-model.md) - Phase 0 or relevant gated phase - high
+180. [architecture: approve TypeScript public contracts](issues/180-architecture-approve-typescript-public-contracts.md) - Phase 0 or relevant gated phase - high
+181. [prototype: usability test static product shell](issues/181-prototype-usability-test-static-product-shell.md) - Phase 0 or relevant gated phase - high
+182. [quality: triage anticipated bug catalogue into release gates](issues/182-quality-triage-anticipated-bug-catalogue-into-release-gates.md) - Phase 0 or relevant gated phase - high
+183. [quality: import QA test catalogue into test management](issues/183-quality-import-qa-test-catalogue-into-test-management.md) - Phase 0 or relevant gated phase - high
+184. [security: approve RBAC matrix and authorisation tests](issues/184-security-approve-rbac-matrix-and-authorisation-tests.md) - Phase 0 or relevant gated phase - high
+185. [analytics: approve event dictionary and privacy properties](issues/185-analytics-approve-event-dictionary-and-privacy-properties.md) - Phase 0 or relevant gated phase - high
+186. [legal: complete privacy terms acceptable use and AI review](issues/186-legal-complete-privacy-terms-acceptable-use-and-ai-review.md) - Phase 0 or relevant gated phase - high
+187. [business: conduct pricing and entitlement research](issues/187-business-conduct-pricing-and-entitlement-research.md) - Phase 0 or relevant gated phase - high
+188. [operations: approve backup retention support and incident plans](issues/188-operations-approve-backup-retention-support-and-incident-plans.md) - Phase 0 or relevant gated phase - high
+189. [platform: complete browser and device validation matrix](issues/189-platform-complete-browser-and-device-validation-matrix.md) - Phase 0 or relevant gated phase - high
+190. [design: differentiate component doc content per component](issues/190-design-differentiate-component-doc-content-per-component.md) - Phase 0 - high
+191. [editor: implement centre and nearest snap](issues/191-editor-implement-centre-and-nearest-snap.md) - Phase 1 - high
+192. [editor: define circular snap candidate](issues/192-editor-define-circular-snap-candidate.md) - Phase 1 - high
+193. [file-system: approve SQLite based .arq format](issues/193-file-system-approve-sqlite-based-arq-format.md) - File-system and instant architecture foundation - critical
+194. [file-system: reserve application ID and define format header](issues/194-file-system-reserve-application-id-and-define-format-header.md) - File-system and instant architecture foundation - critical
+195. [file-system: implement native arqfs schema v1 prototype](issues/195-file-system-implement-native-arqfs-schema-v1-prototype.md) - File-system and instant architecture foundation - critical
+196. [file-system: implement SQLite WASM OPFS prototype](issues/196-file-system-implement-sqlite-wasm-opfs-prototype.md) - File-system and instant architecture foundation - critical
+197. [file-system: implement clean export through backup API](issues/197-file-system-implement-clean-export-through-backup-api.md) - File-system and instant architecture foundation - critical
+198. [file-system: implement working copy and linked document states](issues/198-file-system-implement-working-copy-and-linked-document-states.md) - File-system and instant architecture foundation - critical
+199. [file-system: implement content addressed resource chunks](issues/199-file-system-implement-content-addressed-resource-chunks.md) - File-system and instant architecture foundation - critical
+200. [file-system: implement semantic project hashing](issues/200-file-system-implement-semantic-project-hashing.md) - File-system and instant architecture foundation - critical
+201. [file-system: implement copy on write migrations](issues/201-file-system-implement-copy-on-write-migrations.md) - File-system and instant architecture foundation - critical
+202. [file-system: implement safe mode and recovery report](issues/202-file-system-implement-safe-mode-and-recovery-report.md) - File-system and instant architecture foundation - critical
+203. [core: create shared Rust arq-core workspace](issues/203-core-create-shared-rust-arq-core-workspace.md) - File-system and instant architecture foundation - critical
+204. [core: compile arq-core to WebAssembly Worker](issues/204-core-compile-arq-core-to-webassembly-worker.md) - File-system and instant architecture foundation - critical
+205. [core: define iPad and desktop FFI boundary](issues/205-core-define-ipad-and-desktop-ffi-boundary.md) - File-system and instant architecture foundation - critical
+206. [sync: define operation envelope and server sequence](issues/206-sync-define-operation-envelope-and-server-sequence.md) - File-system and instant architecture foundation - critical
+207. [sync: implement idempotent operation upload](issues/207-sync-implement-idempotent-operation-upload.md) - File-system and instant architecture foundation - critical
+208. [sync: implement resumable resource chunk upload](issues/208-sync-implement-resumable-resource-chunk-upload.md) - File-system and instant architecture foundation - critical
+209. [sync: implement safe rebase and conflict classes](issues/209-sync-implement-safe-rebase-and-conflict-classes.md) - File-system and instant architecture foundation - critical
+210. [performance: implement progressive project opening](issues/210-performance-implement-progressive-project-opening.md) - File-system and instant architecture foundation - critical
+211. [performance: implement viewport first entity queries](issues/211-performance-implement-viewport-first-entity-queries.md) - File-system and instant architecture foundation - critical
+212. [performance: implement adaptive device capability tiers](issues/212-performance-implement-adaptive-device-capability-tiers.md) - File-system and instant architecture foundation - critical
+213. [performance: protect main thread 50 ms budget](issues/213-performance-protect-main-thread-50-ms-budget.md) - File-system and instant architecture foundation - critical
+214. [performance: add cross platform semantic determinism tests](issues/214-performance-add-cross-platform-semantic-determinism-tests.md) - File-system and instant architecture foundation - critical
+215. [platform: implement browser OPFS quota diagnostics](issues/215-platform-implement-browser-opfs-quota-diagnostics.md) - File-system and instant architecture foundation - critical
+216. [platform: implement coordinated external document publication](issues/216-platform-implement-coordinated-external-document-publication.md) - File-system and instant architecture foundation - critical
+217. [security: fuzz untrusted arq reader and migrations](issues/217-security-fuzz-untrusted-arq-reader-and-migrations.md) - File-system and instant architecture foundation - critical
+218. [architecture: remove active storage and archive contradictions](issues/218-architecture-remove-active-storage-and-archive-contradictions.md) - critical or high
+219. [file-system: run direct SQLite Worker VFS benchmark](issues/219-file-system-run-direct-sqlite-worker-vfs-benchmark.md) - critical or high
+220. [file-system: implement browser single-writer project lock](issues/220-file-system-implement-browser-single-writer-project-lock.md) - critical or high
+221. [file-system: implement feature flag compatibility matrix](issues/221-file-system-implement-feature-flag-compatibility-matrix.md) - critical or high
+222. [file-system: implement canonical semantic hashing test oracle](issues/222-file-system-implement-canonical-semantic-hashing-test-oracle.md) - critical or high
+223. [file-system: validate clean export has no sidecars](issues/223-file-system-validate-clean-export-has-no-sidecars.md) - critical or high
+224. [core: implement canonical numeric normalisation](issues/224-core-implement-canonical-numeric-normalisation.md) - critical or high
+225. [core: implement deterministic record ordering](issues/225-core-implement-deterministic-record-ordering.md) - critical or high
+226. [commands: implement shared command lifecycle state machine](issues/226-commands-implement-shared-command-lifecycle-state-machine.md) - critical or high
+227. [commands: generate typed command registry from catalogue](issues/227-commands-generate-typed-command-registry-from-catalogue.md) - critical or high
+228. [entities: generate model types from entity catalogue](issues/228-entities-generate-model-types-from-entity-catalogue.md) - critical or high
+229. [ux: implement separate local sync and publication states](issues/229-ux-implement-separate-local-sync-and-publication-states.md) - critical or high
+230. [ux: build canvas accessibility parallel interfaces](issues/230-ux-build-canvas-accessibility-parallel-interfaces.md) - critical or high
+231. [performance: enforce route and editor bundle budgets](issues/231-performance-enforce-route-and-editor-bundle-budgets.md) - critical or high
+232. [performance: implement Worker backpressure and stale result cancellation](issues/232-performance-implement-worker-backpressure-and-stale-result-cancellation.md) - critical or high
+233. [performance: run Tier A through D device lab](issues/233-performance-run-tier-a-through-d-device-lab.md) - critical or high
+234. [quality: import master bug fix register](issues/234-quality-import-master-bug-fix-register.md) - critical or high
+235. [quality: create regression fixture for every critical bug risk](issues/235-quality-create-regression-fixture-for-every-critical-bug-risk.md) - critical or high
+236. [quality: run source of truth contradiction check in CI](issues/236-quality-run-source-of-truth-contradiction-check-in-ci.md) - critical or high
+237. [security: configure SQLite defensive open policy](issues/237-security-configure-sqlite-defensive-open-policy.md) - critical or high
+238. [security: implement resource size and expansion limits](issues/238-security-implement-resource-size-and-expansion-limits.md) - critical or high
+239. [security: redact support bundles and share tokens](issues/239-security-redact-support-bundles-and-share-tokens.md) - critical or high
+240. [research: validate complete command catalogue with architects](issues/240-research-validate-complete-command-catalogue-with-architects.md) - critical or high
+241. [product: approve full platform feature catalogue stages](issues/241-product-approve-full-platform-feature-catalogue-stages.md) - critical or high
+242. [prototype: review component lab at all responsive breakpoints](issues/242-prototype-review-component-lab-at-all-responsive-breakpoints.md) - critical or high

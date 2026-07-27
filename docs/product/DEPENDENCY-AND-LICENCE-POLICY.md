@@ -21,6 +21,9 @@ added without further review:
 - CC0-1.0
 - Python-2.0
 - Zlib
+- BlueOak-1.0.0 (the Blue Oak Model License is a modern MIT-class permissive
+  licence with no copyleft or field-of-use terms; added 2026-07-27 when
+  eslint's dependency tree brought in `minimatch@10`, which relicensed to it)
 
 A compound "OR" expression (e.g. `(MIT OR Apache-2.0)`, `(BSD-2-Clause OR MIT
 OR Apache-2.0)`) is allowed if **at least one** of its branches is on this

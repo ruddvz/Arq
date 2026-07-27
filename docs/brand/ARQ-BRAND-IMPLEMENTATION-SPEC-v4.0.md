@@ -2,9 +2,10 @@
 
 ## Canonical identity assets
 
-The only canonical production logo files are under:
-
-`brand/ARQ-Logo-Essentials-FINAL/`
+The only canonical production logo files are under `brand/`, laid out as
+`00_GUIDE/` (usage PDFs), `01_VECTOR/` (SVG/PDF masters), `02_4K_PNG/`,
+`03_WEB/` (favicons, PWA icons, Open Graph), `04_APP_ICONS/` and
+`05_PRINT/`:
 
 Primary colours:
 

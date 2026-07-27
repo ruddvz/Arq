@@ -72,7 +72,17 @@ import {
   type ViewportProbe,
   type WorkspaceProjectContext,
 } from '@arq/workspace';
-import { createUndoStack } from '@arq/operations';
+import type { WorldPoint } from '@arq/geometry-2d';
+import { createUndoStack, hasErrors, type ValidationMessage } from '@arq/operations';
+import { validateUniqueElementIds, validateWallSegments } from '@arq/validation';
+import {
+  applyOperation,
+  invertOperation,
+  wallLength,
+  type DrawnWall,
+  type WorkspaceOperation,
+} from './canvas/plan-document';
+import { createPlanJournal, type PlanJournal } from './canvas/plan-journal';
 import {
   AlignIcon,
   CommentIcon,
@@ -106,7 +116,13 @@ import {
   WindowSelectIcon,
 } from '@arq/icons';
 import { PlanCanvas } from './PlanCanvas';
-import { buildDemoWallAccessibleDescription, buildDemoWallInspectorGroups } from './inspector-data';
+import { ModelCanvas } from './ModelCanvas';
+import {
+  buildDemoWallAccessibleDescription,
+  buildDemoWallInspectorGroups,
+  buildDrawnWallAccessibleDescription,
+  buildDrawnWallInspectorGroups,
+} from './inspector-data';
 import { FileOpenPanel } from './file-handling/FileOpenPanel';
 
 /**
@@ -234,30 +250,121 @@ const COMMAND_ENTRIES: readonly Omit<CommandPaletteEntry, 'shortcutLabel'>[] = [
 ];
 
 /*
- * Honest, not decorative: this shell has no save pipeline and no sync backend,
- * so claiming "Saved"/"Synced" would be exactly the fabricated status the
- * project's own rules forbid. Named once and shared by the desktop and phone
- * bars - two literals drifted apart the moment the phone bar was added, and the
- * layout capability check caught the phone claiming "Unsaved changes" for a
- * project that was never open.
+ * Sync has no backend, so 'offline' stays the only honest sync state. Save
+ * state, by contrast, is now real: edits are journalled to IndexedDB
+ * (canvas/plan-journal.ts) and recovered on start-up, so the bars report
+ * the journal's actual condition instead of a demo constant.
  */
-const DEMO_SAVE_STATE = 'no-project' as const;
 const DEMO_SYNC_STATE = 'offline' as const;
+const PLAN_PROJECT_ID = 'demo-project';
+
+/** Highest numeric suffix among recovered wall ids, so new ids never collide. */
+function highestWallIdSuffix(walls: readonly DrawnWall[]): number {
+  return walls.reduce((max, wall) => {
+    const match = /^drawn-wall-(\d+)$/.exec(wall.id);
+    return match === null ? max : Math.max(max, Number(match[1]));
+  }, 0);
+}
 
 const INITIAL_PROBE: ViewportProbe = { widthPx: 1536, heightPx: 864, coarsePointer: false };
 
 const INITIAL_TABS = openTab(
-  openTab(EMPTY_VIEW_TABS_STATE, {
-    id: 'overview',
-    kind: 'project-overview',
-    title: 'Project overview',
-  }),
+  openTab(
+    openTab(EMPTY_VIEW_TABS_STATE, {
+      id: 'overview',
+      kind: 'project-overview',
+      title: 'Project overview',
+    }),
+    { id: 'model-3d', kind: '3d', title: '3D', semanticViewId: 'view-3d' },
+  ),
   { id: 'plan-level-1', kind: 'plan', title: 'Level 1 Plan', semanticViewId: 'view-plan-level-1' },
 );
 
 export function App(): JSX.Element {
-  const undoStackRef = useRef(createUndoStack<string>());
+  const undoStackRef = useRef(createUndoStack<WorkspaceOperation>());
   const [historyVersion, setHistoryVersion] = useState(0);
+
+  /*
+   * The one mutable plan document this build edits (see
+   * canvas/plan-document.ts for why it is in-memory scope). A ref mirrors
+   * the state so operation inverses are computed against the definitely-
+   * current wall list, not a stale closure - and so StrictMode's double-
+   * invoked updaters can never double-push onto the undo stack.
+   */
+  const [drawnWalls, setDrawnWalls] = useState<readonly DrawnWall[]>([]);
+  const drawnWallsRef = useRef<readonly DrawnWall[]>([]);
+  drawnWallsRef.current = drawnWalls;
+
+  /*
+   * Real local persistence: the journal is opened once, recovery replays it
+   * into the document before the first edit, and every applied geometry
+   * operation (including applied undo/redo inverses) is appended. Save
+   * state reports what actually happened - 'recovered' after a non-empty
+   * replay, 'saving' while an append is in flight, 'unsaved-changes' when
+   * the journal cannot take writes (quota, eviction, no IndexedDB).
+   */
+  const journalRef = useRef<PlanJournal | null>(null);
+  const wallIdCounterRef = useRef(0);
+  const [saveState, setSaveState] = useState<
+    'no-project' | 'saved' | 'saving' | 'unsaved-changes' | 'recovered'
+  >('no-project');
+  const [journalLabel, setJournalLabel] = useState('Journal opening…');
+
+  useEffect(() => {
+    const journal = createPlanJournal();
+    journalRef.current = journal;
+    let cancelled = false;
+    journal
+      .recover(PLAN_PROJECT_ID)
+      .then(({ walls, recoveredOperationCount }) => {
+        if (cancelled) {
+          return;
+        }
+        setDrawnWalls(walls);
+        wallIdCounterRef.current = highestWallIdSuffix(walls);
+        setSaveState(recoveredOperationCount > 0 ? 'recovered' : 'saved');
+        setJournalLabel(
+          recoveredOperationCount > 0
+            ? `Journal current · ${recoveredOperationCount} operation(s) recovered`
+            : 'Journal current',
+        );
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setSaveState('unsaved-changes');
+          setJournalLabel('Journal unavailable');
+        }
+      });
+    const unsubscribe = journal.onUnavailable(() => {
+      setSaveState('unsaved-changes');
+      setJournalLabel('Journal unavailable');
+    });
+    return () => {
+      cancelled = true;
+      unsubscribe();
+      journal.close();
+      journalRef.current = null;
+    };
+  }, []);
+
+  const journalOperation = useCallback((operation: WorkspaceOperation) => {
+    const journal = journalRef.current;
+    if (journal === null || operation.kind === 'note') {
+      return;
+    }
+    setSaveState('saving');
+    void journal.append(PLAN_PROJECT_ID, operation).then((state) => {
+      if (state.status === 'ready') {
+        setSaveState('saved');
+        setJournalLabel('Journal current');
+      } else {
+        setSaveState('unsaved-changes');
+        setJournalLabel(
+          state.status === 'unavailable' ? 'Journal unavailable' : 'Journal write failed',
+        );
+      }
+    });
+  }, []);
 
   const [projectName, setProjectName] = useState('Untitled project');
   const [modeState, setModeState] = useState(() =>
@@ -283,6 +390,7 @@ export function App(): JSX.Element {
   });
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [fileOpenPanelOpen, setFileOpenPanelOpen] = useState(false);
+  const [activeSnapLabel, setActiveSnapLabel] = useState<string | null>(null);
   const [cursorWorldPosition, setCursorWorldPosition] = useState<{
     readonly x: number;
     readonly y: number;
@@ -334,10 +442,95 @@ export function App(): JSX.Element {
     );
   }, [modeState.mode]);
 
-  const recordDemoAction = useCallback((label: string) => {
-    undoStackRef.current.push({ forward: label, inverse: `Undo ${label}` });
+  /** Applies a typed operation to the plan document, records its real inverse, journals it. */
+  const performOperation = useCallback(
+    (operation: WorkspaceOperation) => {
+      const current = drawnWallsRef.current;
+      undoStackRef.current.push({
+        forward: operation,
+        inverse: invertOperation(current, operation),
+      });
+      setDrawnWalls(applyOperation(current, operation));
+      setHistoryVersion((v) => v + 1);
+      journalOperation(operation);
+    },
+    [journalOperation],
+  );
+
+  const handleUndo = useCallback(() => {
+    const inverse = undoStackRef.current.undo();
+    if (inverse !== null) {
+      setDrawnWalls(applyOperation(drawnWallsRef.current, inverse));
+      journalOperation(inverse);
+    }
     setHistoryVersion((v) => v + 1);
-  }, []);
+  }, [journalOperation]);
+
+  const handleRedo = useCallback(() => {
+    const forward = undoStackRef.current.redo();
+    if (forward !== null) {
+      setDrawnWalls(applyOperation(drawnWallsRef.current, forward));
+      journalOperation(forward);
+    }
+    setHistoryVersion((v) => v + 1);
+  }, [journalOperation]);
+
+  const recordDemoAction = useCallback(
+    (label: string) => {
+      performOperation({ kind: 'note', label });
+    },
+    [performOperation],
+  );
+
+  /*
+   * §4.3 gate on the one committing edit this build has: a finished wall
+   * chain is validated against @arq/validation's rules before it becomes
+   * an operation. Errors block the commit and surface as a plain-language
+   * notice; warnings (e.g. an exact duplicate wall) commit but tell the
+   * user what happened. Rejected input leaves committed state unchanged.
+   */
+  const [validationNotice, setValidationNotice] = useState<ValidationMessage | null>(null);
+
+  const handleCommitWallSegments = useCallback(
+    (segments: readonly { readonly start: WorldPoint; readonly end: WorldPoint }[]) => {
+      // Identity is the document's concern, not the canvas's: ids are
+      // allocated here, above the counter recovery seeded, so recovered and
+      // new walls can never collide.
+      const walls: DrawnWall[] = segments.map((segment) => {
+        wallIdCounterRef.current += 1;
+        return {
+          id: `drawn-wall-${wallIdCounterRef.current}`,
+          start: segment.start,
+          end: segment.end,
+        };
+      });
+      const messages = validateWallSegments(walls, drawnWallsRef.current);
+      if (hasErrors(messages)) {
+        setValidationNotice(messages.find((m) => m.severity === 'error') ?? null);
+        return;
+      }
+      performOperation({ kind: 'add-walls', walls });
+      setValidationNotice(messages[0] ?? null);
+    },
+    [performOperation],
+  );
+
+  /*
+   * The status bar's model-health counts are computed from the committed
+   * model on every change - real rule evaluation, not a hardcoded zero.
+   * (Error-severity states cannot normally be reached, because the commit
+   * gate above refuses them - which is exactly what makes 0 honest.)
+   */
+  const modelHealth = useMemo(() => {
+    const messages = [
+      ...validateWallSegments(drawnWalls),
+      ...validateUniqueElementIds(drawnWalls.map((wall) => wall.id)),
+    ];
+    return {
+      errorCount: messages.filter((m) => m.severity === 'error').length,
+      warningCount: messages.filter((m) => m.severity === 'warning').length,
+    };
+  }, [drawnWalls]);
 
   const handleActivateTool = useCallback(
     (toolId: string) => {
@@ -429,20 +622,80 @@ export function App(): JSX.Element {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [handleActivateTool, sheet.openSheet, tabs]);
 
-  const isWallSelected = modelSelection.primary === 'demo-wall-1';
   /*
-   * Doc 40. warningCount is 0 because no model-health engine runs in this
-   * build - not because the wall is known to be clean. historyCapability is
-   * off for the same reason CAP-collaboration is: nothing produces revisions.
+   * The semantic tree gains the walls the user has actually drawn, named by
+   * their real measured length - the same honesty rule as everywhere else:
+   * the panel lists what exists, and labels the fixture data as fixture.
+   */
+  const modelTree = useMemo<readonly ModelPanelNode[]>(() => {
+    if (drawnWalls.length === 0) {
+      return MODEL_TREE;
+    }
+    const drawnNodes: ModelPanelNode[] = drawnWalls.map((wall) => ({
+      id: wall.id,
+      displayName: `Wall ${Math.round(wallLength(wall))} mm (drawn)`,
+      nodeType: 'Wall',
+      hidden: false,
+    }));
+    const site = MODEL_TREE[0]!;
+    const building = site.children![0]!;
+    const level = building.children![0]!;
+    return [
+      {
+        ...site,
+        children: [
+          {
+            ...building,
+            children: [{ ...level, children: [...drawnNodes, ...(level.children ?? [])] }],
+          },
+        ],
+      },
+    ];
+  }, [drawnWalls]);
+
+  const selectedDrawnWall = useMemo(
+    () => drawnWalls.find((wall) => wall.id === modelSelection.primary) ?? null,
+    [drawnWalls, modelSelection.primary],
+  );
+
+  /*
+   * Undo/redo can remove the selected wall out from under the selection;
+   * a selection pointing at a no-longer-existing element would leave the
+   * status bar claiming "1 selected" of nothing. Reconcile on every wall
+   * change - fixture ids (demo-*, fixture-*) always exist and are exempt.
+   */
+  useEffect(() => {
+    setModelSelection((current) => {
+      const exists = (id: string): boolean =>
+        !id.startsWith('drawn-wall-') || drawnWalls.some((wall) => wall.id === id);
+      const primaryDangling = current.primary !== null && !exists(current.primary);
+      const liveSecondary = [...current.secondary].filter(exists);
+      if (!primaryDangling && liveSecondary.length === current.secondary.size) {
+        return current;
+      }
+      // Promote a surviving secondary if the primary vanished, so a
+      // multi-select undo degrades to "fewer selected", not "none".
+      const primary = primaryDangling ? (liveSecondary[0] ?? null) : current.primary;
+      const secondary = new Set(liveSecondary.filter((id) => id !== primary));
+      return { primary, secondary };
+    });
+  }, [drawnWalls]);
+
+  const isWallSelected = modelSelection.primary === 'demo-wall-1';
+  const selectionCount = modelSelection.primary === null ? 0 : 1 + modelSelection.secondary.size;
+  /*
+   * Doc 40. warningCount comes from the real model-health evaluation below;
+   * historyCapability is off for the same reason CAP-collaboration is:
+   * nothing produces revisions.
    */
   const inspectorContext = useMemo(
     () => ({
-      selectionCount: modelSelection.primary === null ? 0 : 1,
+      selectionCount,
       warningCount: 0,
       mode: modeState.mode,
       historyCapabilityEnabled: false,
     }),
-    [modelSelection.primary, modeState.mode],
+    [selectionCount, modeState.mode],
   );
 
   /*
@@ -533,7 +786,15 @@ export function App(): JSX.Element {
   );
 
   const viewport =
-    activeTab?.kind === 'project-overview' ? (
+    activeTab?.kind === '3d' ? (
+      <ModelCanvas
+        walls={drawnWalls}
+        selection={modelSelection}
+        onSelectElement={(elementId) =>
+          setModelSelection({ primary: elementId, secondary: new Set() })
+        }
+      />
+    ) : activeTab?.kind === 'project-overview' ? (
       <ProjectOverviewSurface
         data={overviewData}
         capabilities={DEFAULT_WORKSPACE_CAPABILITIES}
@@ -542,6 +803,21 @@ export function App(): JSX.Element {
       />
     ) : (
       <PlanCanvas
+        activeToolId={toolState.activeToolId}
+        walls={drawnWalls}
+        selection={modelSelection}
+        onSelectElement={(elementId) =>
+          setModelSelection({ primary: elementId, secondary: new Set() })
+        }
+        onSelectMany={(elementIds) =>
+          setModelSelection({
+            primary: elementIds[0] ?? null,
+            secondary: new Set(elementIds.slice(1)),
+          })
+        }
+        onCommitWalls={handleCommitWallSegments}
+        onFitCompleted={() => handleActivateTool('select')}
+        onActiveSnapChange={setActiveSnapLabel}
         onPointerWorldPositionChange={setCursorWorldPosition}
         onViewportPixelsPerUnitChange={setPixelsPerUnit}
       />
@@ -567,26 +843,20 @@ export function App(): JSX.Element {
         phoneProjectBar={
           <PhoneProjectBar
             projectName={projectName}
-            saveState={DEMO_SAVE_STATE}
+            saveState={saveState}
             syncState={DEMO_SYNC_STATE}
             onBackToProjects={() => setFileOpenPanelOpen(true)}
             menuItems={[
               {
                 id: 'undo',
                 label: 'Undo',
-                onActivate: () => {
-                  undoStackRef.current.undo();
-                  setHistoryVersion((v) => v + 1);
-                },
+                onActivate: handleUndo,
                 ...(undoStackRef.current.canUndo() ? {} : { disabledReason: 'Nothing to undo' }),
               },
               {
                 id: 'redo',
                 label: 'Redo',
-                onActivate: () => {
-                  undoStackRef.current.redo();
-                  setHistoryVersion((v) => v + 1);
-                },
+                onActivate: handleRedo,
                 ...(undoStackRef.current.canRedo() ? {} : { disabledReason: 'Nothing to redo' }),
               },
               { id: 'open', label: 'Open project…', onActivate: () => setFileOpenPanelOpen(true) },
@@ -630,26 +900,18 @@ export function App(): JSX.Element {
             projectName={projectName}
             onRenameProject={setProjectName}
             activeViewName={activeTab?.title ?? 'No view open'}
-            // Honest, not decorative: this shell has no save pipeline and no
-            // sync backend wired up. FileOpenPanel's gate reports whether a
-            // file is safe to open, but nothing opens a project yet, so
-            // claiming "Saved"/"Synced" would be exactly the fabricated status
-            // the project's own rules forbid - and would collapse save and sync
-            // into one false reassurance.
-            saveState={DEMO_SAVE_STATE}
+            // Save state is real: it tracks the IndexedDB operation journal
+            // (recover on boot, append per edit). Sync stays 'offline'
+            // because no sync backend exists - the two are reported
+            // separately, per the copy principles.
+            saveState={saveState}
             syncState={DEMO_SYNC_STATE}
             canUndo={undoStackRef.current.canUndo()}
             canRedo={undoStackRef.current.canRedo()}
             lastUndoActionLabel={null}
             lastRedoActionLabel={null}
-            onUndo={() => {
-              undoStackRef.current.undo();
-              setHistoryVersion((v) => v + 1);
-            }}
-            onRedo={() => {
-              undoStackRef.current.redo();
-              setHistoryVersion((v) => v + 1);
-            }}
+            onUndo={handleUndo}
+            onRedo={handleRedo}
             onOpenProject={() => setFileOpenPanelOpen(true)}
             onShare={() => recordDemoAction('share')}
             onOpenCommandPalette={() => setCommandPaletteOpen(true)}
@@ -712,7 +974,7 @@ export function App(): JSX.Element {
                */
               project: (
                 <ModelPanel
-                  tree={MODEL_TREE}
+                  tree={modelTree}
                   selection={modelSelection}
                   onSelectNode={(nodeId) =>
                     setModelSelection({ primary: nodeId, secondary: new Set() })
@@ -734,7 +996,13 @@ export function App(): JSX.Element {
           <InspectorPanel
             state={inspectorTabs}
             context={inspectorContext}
-            commonTypeName={isWallSelected ? 'Interior Wall 100mm' : null}
+            commonTypeName={
+              selectedDrawnWall !== null
+                ? 'Wall (drawn)'
+                : isWallSelected
+                  ? 'Interior Wall 100mm'
+                  : null
+            }
             onSelectTab={(tab) => setInspectorTabs((current) => selectInspectorTab(current, tab))}
             tabs={{
               /*
@@ -747,10 +1015,24 @@ export function App(): JSX.Element {
               properties: (
                 <InspectorShell
                   groups={
-                    isWallSelected ? buildDemoWallInspectorGroups() : buildEmptyInspectorGroups()
+                    selectedDrawnWall !== null
+                      ? buildDrawnWallInspectorGroups(
+                          selectedDrawnWall.id,
+                          wallLength(selectedDrawnWall),
+                        )
+                      : isWallSelected
+                        ? buildDemoWallInspectorGroups()
+                        : buildEmptyInspectorGroups()
                   }
                   selectedElementDescription={
-                    isWallSelected ? buildDemoWallAccessibleDescription() : null
+                    selectedDrawnWall !== null
+                      ? buildDrawnWallAccessibleDescription(
+                          selectedDrawnWall.id,
+                          wallLength(selectedDrawnWall),
+                        )
+                      : isWallSelected
+                        ? buildDemoWallAccessibleDescription()
+                        : null
                   }
                 />
               ),
@@ -760,17 +1042,35 @@ export function App(): JSX.Element {
         contextBar={
           <ContextBar
             activeToolId={toolState.activeToolId}
-            selectionCount={modelSelection.primary === null ? 0 : 1}
+            selectionCount={selectionCount}
             actions={
-              isWallSelected
+              selectedDrawnWall !== null
                 ? [
                     {
                       id: 'delete',
-                      label: 'Delete',
-                      onActivate: () => recordDemoAction('delete wall'),
+                      label: selectionCount > 1 ? `Delete ${selectionCount} walls` : 'Delete',
+                      // A real, undoable deletion of every selected drawn
+                      // wall - one operation, one undo step.
+                      onActivate: () => {
+                        const drawnIds = new Set(drawnWalls.map((wall) => wall.id));
+                        const selectedIds = [
+                          modelSelection.primary,
+                          ...modelSelection.secondary,
+                        ].filter((id): id is string => id !== null && drawnIds.has(id));
+                        performOperation({ kind: 'remove-walls', wallIds: selectedIds });
+                        setModelSelection({ primary: null, secondary: new Set() });
+                      },
                     },
                   ]
-                : []
+                : isWallSelected
+                  ? [
+                      {
+                        id: 'delete',
+                        label: 'Delete',
+                        onActivate: () => recordDemoAction('delete wall'),
+                      },
+                    ]
+                  : []
             }
           />
         }
@@ -778,12 +1078,12 @@ export function App(): JSX.Element {
           <StatusBar
             unitLabel="mm"
             cursorWorldPosition={cursorWorldPosition}
-            activeSnapLabel={null}
-            selectionCount={modelSelection.primary === null ? 0 : 1}
+            activeSnapLabel={activeSnapLabel}
+            selectionCount={selectionCount}
             currentLevelName="Level 1"
             pixelsPerUnit={pixelsPerUnit}
-            modelHealth={{ errorCount: 0, warningCount: 0 }}
-            localJournalStateLabel="Journal current"
+            modelHealth={modelHealth}
+            localJournalStateLabel={journalLabel}
             syncState="offline"
             supportModeEnabled={false}
           />
@@ -829,6 +1129,45 @@ export function App(): JSX.Element {
           so it sits beside WorkspaceRoot rather than inside a layout slot. */}
       <FileOpenPanel isOpen={fileOpenPanelOpen} onOpenChange={setFileOpenPanelOpen} />
 
+      {validationNotice !== null && (
+        <div
+          role="status"
+          style={{
+            position: 'fixed',
+            bottom: '2.5rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 9,
+            maxWidth: '36rem',
+            padding: '0.625rem 0.875rem',
+            background: 'var(--arq-ui-surface, #fff)',
+            border: `1px solid ${
+              validationNotice.severity === 'error'
+                ? 'var(--arq-ui-text, #000)'
+                : 'var(--arq-ui-border, #888)'
+            }`,
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+            fontSize: '0.8125rem',
+            display: 'flex',
+            gap: '0.75rem',
+            alignItems: 'baseline',
+          }}
+        >
+          <span>
+            <strong>{validationNotice.title}.</strong> {validationNotice.explanation}{' '}
+            {validationNotice.suggestedActions[0]}
+          </span>
+          <button
+            type="button"
+            onClick={() => setValidationNotice(null)}
+            aria-label="Dismiss message"
+            style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '1em' }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {historyVersion > 0 && (
         <p
           style={{
@@ -840,7 +1179,7 @@ export function App(): JSX.Element {
             color: 'var(--arq-ui-text-muted)',
           }}
         >
-          {historyVersion} demo action(s) recorded
+          {historyVersion} action(s) recorded
         </p>
       )}
     </>

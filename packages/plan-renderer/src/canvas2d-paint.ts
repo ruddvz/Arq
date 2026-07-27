@@ -6,15 +6,16 @@
  * worldToScreen, ARQ-032). This module is that backend, built for real.
  *
  * Colour resolution is limited to the two colours design/tokens/brand.v4.json
- * actually defines (black, phthalo green): section 18's hover/warning/error/
- * imported/proposed states have no assigned colour yet, so they fall back to
- * the default (black) stroke rather than inventing an unapproved hex value -
- * a documented gap, not an oversight.
+ * actually defines (black, phthalo green). Every other state distinction
+ * follows docs/design/DESIGN-SYSTEM.md's rule - "Status must use icon, text,
+ * pattern and line treatment. Hue cannot be the only signal." - so section
+ * 18's states are differentiated by line weight and dash pattern
+ * (lineTreatmentForToken below), monochrome by design rather than by gap.
  */
 
 import { worldToScreen, type Viewport, type WorldPoint } from '@arq/geometry-2d';
 import type { PlanPrimitive, PlanScene, StyleToken } from './plan-scene';
-import { lineWeightToDevicePixels } from './line-weight';
+import { lineWeightToDevicePixels, type LineWeight } from './line-weight';
 
 /** The subset of CanvasRenderingContext2D this backend actually uses - lets tests pass a plain recording fake instead of a real DOM canvas. */
 export type Canvas2dPaintTarget = Pick<
@@ -43,6 +44,7 @@ function strokeColorForToken(token: StyleToken): string {
     case 'selected-primary':
     case 'selected-secondary':
     case 'active-tool':
+    case 'proposed':
       return BRAND_PHTHALO_GREEN;
     case 'default':
     case 'hover':
@@ -50,14 +52,48 @@ function strokeColorForToken(token: StyleToken): string {
     case 'warning':
     case 'error':
     case 'imported':
-    case 'proposed':
       return BRAND_BLACK;
   }
 }
 
-/** Section 18: selected-primary is a solid outline, selected-secondary is dashed. */
-function isDashedToken(token: StyleToken): boolean {
-  return token === 'selected-secondary';
+export interface LineTreatment {
+  readonly weight: LineWeight;
+  /** Dash pattern in CSS pixels (scaled by devicePixelRatio at paint time); empty = solid. */
+  readonly dashCssPx: readonly number[];
+}
+
+/**
+ * Section 18's state language rendered per DESIGN-SYSTEM.md's monochrome
+ * rule: each state is legible from weight + pattern alone. Selection keeps
+ * its familiar pair (primary solid/medium, secondary dashed); status states
+ * are black with distinct patterns - warning dash-dot, error heavy short
+ * dash, imported a fine provenance dash, locked a long quiet dash; hover is
+ * a weight change only; proposed (an uncommitted AI/preview state) is
+ * dotted, in the same green as the other not-yet-committed treatments.
+ */
+export function lineTreatmentForToken(token: StyleToken): LineTreatment {
+  switch (token) {
+    case 'default':
+      return { weight: 'regular', dashCssPx: [] };
+    case 'hover':
+      return { weight: 'medium', dashCssPx: [] };
+    case 'active-tool':
+      return { weight: 'regular', dashCssPx: [] };
+    case 'selected-primary':
+      return { weight: 'medium', dashCssPx: [] };
+    case 'selected-secondary':
+      return { weight: 'regular', dashCssPx: [4, 4] };
+    case 'locked':
+      return { weight: 'hairline', dashCssPx: [8, 4] };
+    case 'warning':
+      return { weight: 'medium', dashCssPx: [6, 3, 1.5, 3] };
+    case 'error':
+      return { weight: 'heavy', dashCssPx: [3, 3] };
+    case 'imported':
+      return { weight: 'hairline', dashCssPx: [2, 2] };
+    case 'proposed':
+      return { weight: 'regular', dashCssPx: [1, 3] };
+  }
 }
 
 function strokeWorldPolyline(
@@ -93,11 +129,10 @@ function paintPrimitive<TId>(
   switch (primitive.kind) {
     case 'line':
     case 'polygon': {
+      const treatment = lineTreatmentForToken(primitive.styleToken);
       target.strokeStyle = strokeColorForToken(primitive.styleToken);
-      target.lineWidth = lineWeightToDevicePixels('regular', devicePixelRatio);
-      target.setLineDash(
-        isDashedToken(primitive.styleToken) ? [4 * devicePixelRatio, 4 * devicePixelRatio] : [],
-      );
+      target.lineWidth = lineWeightToDevicePixels(treatment.weight, devicePixelRatio);
+      target.setLineDash(treatment.dashCssPx.map((dash) => dash * devicePixelRatio));
       strokeWorldPolyline(target, viewport, primitive.points, primitive.kind === 'polygon');
       break;
     }

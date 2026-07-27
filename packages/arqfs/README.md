@@ -50,11 +50,16 @@ Worker/OPFS/WASM runtime as a separate `ArqfsDriver` behind the same interface -
   uses a throwaway schema, kept separate on purpose as a minimal, no-bundler-needed
   proof of the underlying sqlite-wasm/OPFS mechanics.
 
+Since first written this package has also gained (see the hardening commit and
+its tests): copy-on-write migration execution verified by reopen plus
+integrity check (`arqfs-migration.ts`, with a proof test), byte preflight and
+PRAGMA-defensive open, recovery reporting/safe mode, and fast-check fuzzing of
+untrusted input (`arqfs-fuzz.test.ts`, ARQ-217).
+
 ## What this does not do yet
 
-- No copy-on-write migration execution beyond the registry already in
-  `@arq/project-format` (ARQ-201).
-- No fuzzing of untrusted input yet (ARQ-217) - `arqfs-node-driver.ts` is a thin,
-  trusted wrapper, not a hardened boundary.
 - No real network sync (ARQ-206 onward) - `working_copy_state`'s `syncState`/
   `publicationState` are placeholders for it, not an implementation of it.
+- Not reachable from the product: `apps/web`'s file-open flow runs the byte
+  preflight but never constructs the OPFS worker, so no `.arq` file opens
+  into the workspace yet (see `STATUS.md`).

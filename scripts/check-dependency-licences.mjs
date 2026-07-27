@@ -32,6 +32,7 @@ const ALLOWED_LICENCES = new Set([
   'CC0-1.0',
   'Python-2.0',
   'Zlib',
+  'BlueOak-1.0.0',
 ]);
 
 /** docs/product/DEPENDENCY-AND-LICENCE-POLICY.md's "Reviewed exceptions" table - keep in sync with that file. */
