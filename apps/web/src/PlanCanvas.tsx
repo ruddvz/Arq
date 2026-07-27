@@ -406,6 +406,24 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     onFitCompleted();
   }, [activeToolId, content, onFitCompleted, updateViewport]);
 
+  // Escape cancels an in-progress marquee before anything else - the
+  // region-selection contract's own rule - on capture, so the shell's
+  // Escape handling never sees the press.
+  useEffect(() => {
+    if (marquee === null) {
+      return;
+    }
+    function onKeyDown(event: KeyboardEvent): void {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        setMarquee(null);
+      }
+    }
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => window.removeEventListener('keydown', onKeyDown, true);
+  }, [marquee]);
+
   // Escape/Enter for the wall draft, on capture so the draft consumes the
   // key before the workspace shell's own Escape handling closes overlays.
   useEffect(() => {
@@ -524,6 +542,10 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         lastMidY: (a.y + b.y) / 2,
       };
       panRef.current = null;
+      // The first finger may have started a marquee before the second
+      // arrived; a pinch is navigation, and letting the marquee survive it
+      // would fire a phantom point-selection when the fingers lift.
+      setMarquee(null);
     }
   }
 

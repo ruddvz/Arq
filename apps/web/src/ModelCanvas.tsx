@@ -45,11 +45,19 @@ const DEMO_ROOM_POLYGON: readonly { readonly x: number; readonly y: number }[] =
   { x: 0, y: 3600 },
 ];
 
-/** Monochrome material colours per style token - hue only ever accompanies the selection treatments, matching the 2D backend. */
-const TOKEN_COLOR: Readonly<Partial<Record<StyleToken, number>>> = {
-  'selected-primary': 0x0b6b50,
-  'selected-secondary': 0x2e8a70,
-  hover: 0x4a4a4a,
+/**
+ * Material treatment per style token, brand-compliant: the only hue is
+ * phthalo green (design/tokens/brand.v4.css), with secondary selection
+ * distinguished by opacity - a treatment, not an invented colour - the
+ * same rule the 2D backend's line treatments follow. Greys are part of
+ * the monochrome scale, not hues.
+ */
+const TOKEN_TREATMENT: Readonly<
+  Partial<Record<StyleToken, { readonly color: number; readonly opacity: number }>>
+> = {
+  'selected-primary': { color: 0x0b6b50, opacity: 1 },
+  'selected-secondary': { color: 0x0b6b50, opacity: 0.55 },
+  hover: { color: 0x4a4a4a, opacity: 1 },
 };
 const DEFAULT_WALL_COLOR = 0x8a8a8a;
 
@@ -229,9 +237,11 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
     for (const object of byId.values()) {
       if (object instanceof THREE.Mesh) {
         const token = object.userData['styleToken'] as StyleToken | undefined;
-        (object.material as THREE.MeshLambertMaterial).color.setHex(
-          (token !== undefined ? TOKEN_COLOR[token] : undefined) ?? DEFAULT_WALL_COLOR,
-        );
+        const treatment = token !== undefined ? TOKEN_TREATMENT[token] : undefined;
+        const material = object.material as THREE.MeshLambertMaterial;
+        material.color.setHex(treatment?.color ?? DEFAULT_WALL_COLOR);
+        material.opacity = treatment?.opacity ?? 1;
+        material.transparent = (treatment?.opacity ?? 1) < 1;
       }
     }
     renderNow();
