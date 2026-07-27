@@ -1,0 +1,8 @@
+{
+  "classification": {
+    "required_evidence": ["format", "unit"],
+    "manual_review_required": false
+  },
+  "jobs": { "format": "success", "unit": "success" },
+  "expected": { "decision": "pass" }
+}

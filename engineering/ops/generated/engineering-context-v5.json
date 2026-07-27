@@ -1,0 +1,815 @@
+{
+  "schema_version": 1,
+  "system": "ARQ Engineering OS",
+  "version": "5.0.0",
+  "hash_algorithm": "sha256",
+  "repository_bound": true,
+  "source_hash": "b3d59ad70e69a07d45152d570cac67e9dd251ae063a90fb9c4905295daabb4eb",
+  "source_records": [
+    {
+      "scope": "package",
+      "path": "00-audit/ARQ_REPOSITORY_AND_SITE_AUDIT_2026-07-27.md",
+      "sha256": "36dc4566f4d29145257144c760de0883145e1b42c0cbeab457fcb72e80e7af25"
+    },
+    {
+      "scope": "package",
+      "path": "00-audit/CURRENT_TRUTH_CONFLICTS.md",
+      "sha256": "a09b688850ecc703fb0ce99cee3fe21f5539c412748fdb6d849e8a7784757b85"
+    },
+    {
+      "scope": "package",
+      "path": "30_ZEUS_AND_ENGINEERING_AUTHORITY.md",
+      "sha256": "9ec36100069c960227eabf57ab77a25543649fea827b660872ee5e4137303055"
+    },
+    {
+      "scope": "package",
+      "path": "31_PUBLIC_SITE_AND_LANGUAGE_INTERLOCK.md",
+      "sha256": "efda4b56b06d4496c2d6367dde3ddbbd902597134493048dd4607a188df50a7a"
+    },
+    {
+      "scope": "package",
+      "path": "32_PROOF_GAPS_AND_CLOSURE_PLAN.md",
+      "sha256": "60bc092855dc1922a2d844d4d3b3bf0755ab4125a527bb2d3ee9dc5cf4d272ea"
+    },
+    {
+      "scope": "package",
+      "path": "33_IMPLEMENTATION_HANDOFF.md",
+      "sha256": "4d123fa7708669ca9d9480af33024e31f0f781dffa8da154b41cc8e6c1775d4e"
+    },
+    {
+      "scope": "package",
+      "path": "34_LIMITS_AND_OWNER_DECISIONS.md",
+      "sha256": "7da53cb96ac269d34672403fc23f8bebce4aa478efb993ae45320d387ff3ebcd"
+    },
+    {
+      "scope": "package",
+      "path": "35_PRODUCT_AND_UIUX_REMEDIATION.md",
+      "sha256": "62b736f77fd4df88ed0416dbef30c7e3351af6e6830386d3b1ebd85b6ee033cc"
+    },
+    {
+      "scope": "package",
+      "path": "ops/active-surface-register.v5.json",
+      "sha256": "7e30c287ddf5201ed65df6b0465ce2f7bc2c4a2545d8fa56b0734c883172be68"
+    },
+    {
+      "scope": "package",
+      "path": "ops/change-map.v5.json",
+      "sha256": "4d5755be9fbff3ff8ab23bce9f15cb525a010b8668861d1f0b800369150e08d3"
+    },
+    {
+      "scope": "package",
+      "path": "ops/conflict-registry.v5.json",
+      "sha256": "6a84cfa2f993e6146c5e67691dd321ab80d60597d7d67eae8dfeb74f84124d12"
+    },
+    {
+      "scope": "package",
+      "path": "ops/critical-contracts.v5.json",
+      "sha256": "690d0029769cd110fdbaaa06121eb5539ec78c7caf69be53b4ade5687e88039a"
+    },
+    {
+      "scope": "package",
+      "path": "ops/engineering-policy.v5.json",
+      "sha256": "0f5616aa4c0295dcd8762b52d4deee9b8b9c7497834976a59ab0debe18ed19c2"
+    },
+    {
+      "scope": "package",
+      "path": "ops/evidence-catalog.v5.json",
+      "sha256": "aa740ed6eadf3db8f9cd0f39127042c5d8a4835818e09bee102fa5e8cfdc9d96"
+    },
+    {
+      "scope": "package",
+      "path": "ops/repo-baseline.v5.json",
+      "sha256": "6b926dfb5c3069432f02b8c8b28cdedad6c8a6ad1595d3629d6d9ceed23ed0d0"
+    },
+    {
+      "scope": "repository",
+      "path": ".github/CODEOWNERS",
+      "sha256": "437230062191616eab82157656f33f20be4050977dd72875059fe122b457edb6"
+    },
+    {
+      "scope": "repository",
+      "path": ".github/workflows/ci.yml",
+      "sha256": "f8ace406c94c731d684b3d58f35763ff7677cfce551491506fb5fb1e030c2e13"
+    },
+    {
+      "scope": "repository",
+      "path": ".github/workflows/deploy-pages.yml",
+      "sha256": "29ec14b0687d1e14c77272ee07d051ddb2b0bbc14cab553ed6039e7d83a735e3"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/build.ts",
+      "sha256": "6d394f5be57616f7c5e7c641f020b3d8d6ae3925eaa148ecce0a12a814d938e7"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/ai.ts",
+      "sha256": "0c663eabeaf02f0d73aa8fa34911328cdd5824744997387aa39b996e35d8198c"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/architects.ts",
+      "sha256": "8e0371c319f29760e585e14bc3cec2f597fe319ac3bc71acca373b337baee30a"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/changelog.ts",
+      "sha256": "cad1bdd23e7d698d875e3b7e2ec02afe62fecab0b64d45563c77fca5fd629915"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/collaboration.ts",
+      "sha256": "91c31fa7bf5f51cb24144f7f99505ed3e1357d1ce2d4fed313d7c026bc6a310b"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/contact.ts",
+      "sha256": "154ee478effc4f7a0d24fcc81ee90666acb5c78e8f82558a772f53752a7d487d"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/docs-index.ts",
+      "sha256": "7b59899853948f8532b20d9ccbcf9cc81ffbc5206dba12b52031262daac75292"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/home.ts",
+      "sha256": "a4bb10a1712920bac78bfcbb80f8410cadecbaebd0d48add0fe780bbddc1db95"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/interoperability.ts",
+      "sha256": "4741da913fe39f1a9d648b47c44ff1f831b17c9a22b9b7e97fdaf09f89a0bbba"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/ipad.ts",
+      "sha256": "b11543e33d817330cffd0fe70ac4f9ebcbee25170d1080ff9bb5e38311488908"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/not-found.ts",
+      "sha256": "5f38be91da4bd0f970b8dbdc161ff19b2433a66a63b14e3435d0a7d42e55518c"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/open-source.ts",
+      "sha256": "fea6e7d32f4377d1a8ee753fd0555477a0399431e5816b3b8539a62adef3173a"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/pricing.ts",
+      "sha256": "7ee132a8793f4a19ade93863a23d92b3e8136879a4a81441621876ac2048ab85"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/privacy.ts",
+      "sha256": "a2d31f4fb0bf754271dc00a7021fc6a12e7bbe11392f406afce29be29086030e"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/product.ts",
+      "sha256": "e8b0c12a52ad9c6ff918ae707dd198073237c22815ea522d19073e7a8f72a304"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/security.ts",
+      "sha256": "6006edaa919fb617e7e2432f60acbec4150a89ba28c1dae7f6afc11689f7e806"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/status.ts",
+      "sha256": "452c66d27ebf90a3a9f91fd48abfd9728c0deabf92c01aee6e7fd5da2bb13b2a"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/students.ts",
+      "sha256": "e76cc168eeeb8774e562aa9ed09ee08ebda2c9439b1417e14ea57b7d297f3b17"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/content/terms.ts",
+      "sha256": "8d859557476534fab8ad9677c1ba2c376615e9c2b0152de707b4bdc0d968d409"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/marketing/src/routes.ts",
+      "sha256": "aed1e388d1f45aad30a01286492a4433e9bd4cc4f4b3a8879ebd4118262fc2ee"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/web/src/App.tsx",
+      "sha256": "07efd402d6ffc37bdcdf5f0789e2b5f3e8b472d84fc276e31d211ca64aed86fa"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/web/src/canvas/plan-journal.ts",
+      "sha256": "58b5158adc809a86128585a2f0b25b15da9c435e72b542e147a9c36bc8a7d355"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
+      "sha256": "fc475a584b2a500b93253fb64863462bff707075eda79ba29b52fc09ef862296"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/web/src/ModelCanvas.tsx",
+      "sha256": "4799613f1ef01c0cbc293b045c486b6a16fe009ded99afe3df7c1a2fa57a4221"
+    },
+    {
+      "scope": "repository",
+      "path": "apps/web/src/PlanCanvas.tsx",
+      "sha256": "ec005021bce9c802d17ecc37e54f87d5798943248abe96cc43410cd0b44d0ad7"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0000-adr-template.md",
+      "sha256": "3f75275631c2d75827049f63be8b9e1c31debab4e7e60030d0f011b89aa2c472"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0001-web-first-editor.md",
+      "sha256": "97a7e711e95df2a2a65101eb808e2706787b1704dfd7ec068f474e339fe3e709"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0002-plan-first-semantic-model.md",
+      "sha256": "a620d01fac1bee7e4b25f4244dbd25398c5ed9445e6e2777cccfefb193348ece"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0003-modular-monolith.md",
+      "sha256": "8ee2885c347763c19f6eb05f237e1a1c7cf9f6fda892b5c04cae1bd0bfc95514"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0004-units-and-numeric-representation.md",
+      "sha256": "828a40b95bbc1cf0773ebcc0603a59ba6d87985dac4f341f08cd46b2f1a93524"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0005-typed-operations.md",
+      "sha256": "d5d77adca1883b4d4205132a66ed04e90cdc85ba15750b6e2de5154dc83f378d"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0006-snapshots-and-local-journal.md",
+      "sha256": "21e75456b11b907535507c17655cdfabf1a4f829691c168be54c7408d411b761"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0007-purpose-built-planar-geometry.md",
+      "sha256": "bd3807edf85244bd0f904730d0034b0ff84e3ace1a223218bc591752daebebd6"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0008-rendering-strategy.md",
+      "sha256": "0de1342f230eefa0060f60c583a9da8cb8e615b957c4a5ebcc7d067d2a4067a1"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0009-opencascade-boundary.md",
+      "sha256": "957532dfa017489b6dc7ba706f01a3ceb68a582e184e1bb96e44fd028de47f03"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0010-arq-archive.md",
+      "sha256": "93fc18892b17c1b8cb1841177085c51c2c8150b9a898f8ee801734efe2b4961d"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0011-ifc-adapter.md",
+      "sha256": "92f0e6699fd8242577054eb1465eb89bec585c8d0ef1fbdf04f0ffb1c2d4867c"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0012-dxf-and-dwg-strategy.md",
+      "sha256": "3d1cec19d4f8f262d5a9efedfc029d67adcd1f8eb80894e7eb429eeec328baf5"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0013-collaboration-staging.md",
+      "sha256": "9b255ec595f7d2a61bd249013e1416dab03492b7abe034f4ee0335d734a24436"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0014-ai-operation-model.md",
+      "sha256": "681af8611d69504b24e5bdce10c734b93d891289d576b5caf4de2a95c995cca5"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0015-native-ipad-strategy.md",
+      "sha256": "b64941abd2e195ad6d55223ca7ae546b9abc1340e21d7252ba5d13b8368f0451"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0016-authentication-strategy.md",
+      "sha256": "0439abe5814c159bea7086bafb48d284bab51d7a27a753673359dd0d3a2a4f5a"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0017-dependency-and-licensing-policy.md",
+      "sha256": "bc4266ce7e6c8f296d07f41b766e0a87838e2ed18c9ee5264d003df0e4e6e968"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0018-analytics-and-privacy.md",
+      "sha256": "bbcd57e0649c12df4c14c5314f70f32644a52da17f900eeb0246ca857cba6739"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0019-arq-native-sqlite-file-format.md",
+      "sha256": "3755bf8e4dc6bd335ffbd14765806e78884111f4a5a4c8df8a784ee5a94c4de6"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0020-shared-rust-core.md",
+      "sha256": "bc56c50419104f0d7ffc156138c0a3c043480a38169e2c074c62fcb9d6036518"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0021-local-first-replica-sync.md",
+      "sha256": "70a692f0b875835ce0747059f9879ad95ee37d2fe671ec90c735e104594cdc8f"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0022-canonical-derived-data-separation.md",
+      "sha256": "6736dc23a9824a5fb4681d4cecf7ef1a1894a4da3d804e2a6d3c85efe914836d"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0023-progressive-project-opening.md",
+      "sha256": "d03e603894b00d561ba72909b38fbc7b89b28e7b875d81ceb20d8b4b311ded3d"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0024-sqlite-wasm-worker-and-opfs.md",
+      "sha256": "de90ac4d0420976d31032b07cca4afe1d9b9777631e74075a605f0701e7b92fb"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0025-webgl-production-webgpu-lab.md",
+      "sha256": "2a731a5cd174e3f08e9d83eea71413b9ea69e61fe844bafef690f63db9906299"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0026-accessible-component-foundation.md",
+      "sha256": "b047aeb8c513df019f95f740030af7908d93cbda202c0ac2cb67b1bcfa3a85f2"
+    },
+    {
+      "scope": "repository",
+      "path": "package.json",
+      "sha256": "9b49cb0bfc2f58e87fdb926368fbd2ac36979379283fddd2c39da0cec6ed56cd"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-archive-store.test.ts",
+      "sha256": "9ba309fe9d42c37f03d2d06ad33d290880f5637b3bf153b855fbf3c95a569ce7"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-archive-store.ts",
+      "sha256": "67d6faf771f294f977aafdd75b51d09e24ff617e585fc91539a71608ed0e3797"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-capabilities.test.ts",
+      "sha256": "47e19b89d6b7781a1d814b623ebe74f7b0677d3f3fcd8726cd3c0876aa3fb16a"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-clean-export.test.ts",
+      "sha256": "8aa5bd40a4eb14fe75340dec95b06e0211cbcd31efb7e1b98cdd13843105da3f"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-clean-export.ts",
+      "sha256": "040333ddbb5ed2056aac1216e17c33721f68cbc10ffea18ce772147cce8770f6"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-defensive-open.test.ts",
+      "sha256": "420dfb868404a7a410357245f95d364b66f0d810a700f8ee5ab10c9b8e761f5e"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-defensive-open.ts",
+      "sha256": "e1db32f4bec6df216ded392e26ec6b75d20fa860055ab4d155b4ac2e40d30835"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-driver.ts",
+      "sha256": "f9e83fc800974f4e7318c181035b6e115e46516197f1c3347f847e5ff0dffe84"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-feature-flags.test.ts",
+      "sha256": "2a50d6c8387ced0d2b50474eeadb6fa3259042ecc41f487ecf238981337076e9"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-feature-flags.ts",
+      "sha256": "96ece8be1bfcf0d7b411c79ba126055394985ae3c8c520e2ee7e7d2983d0383a"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-fuzz.test.ts",
+      "sha256": "b6d5b0e104f85554b74992ad17f420471dd1bc34456712d3470f751802794f6d"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-header.ts",
+      "sha256": "94b893e230be6b3aeb4b84cbdb224c0e13a6f04acc1bb5d65f2e3b8d5997f841"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-import-commit.test.ts",
+      "sha256": "3a556c79e37fc9ea386f5d94672fe8b5a56bcaed22c92c854dcc68cdcd787314"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-import-commit.ts",
+      "sha256": "4839ce0f1bc52f06251a5ebc068c1d2d516a1e1f41aecaf77df90773769a7950"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-import-session.ts",
+      "sha256": "e26ee7bdd5953447e4a9bb595112b0c554a5377ae8bf0325dc62275cae9fd2db"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-integrity.test.ts",
+      "sha256": "577f6b4af5526cc57de39767d39f43e93e64df539b7fda019d131d1ba33ac2aa"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-integrity.ts",
+      "sha256": "ddc1c032aecc5e98a42b3bedd0ecac96ee28ea155e1d715dd140e9f2c513f24e"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-local-write.test.ts",
+      "sha256": "cbee2f460a2b55f6f142c3d43ea44cc16711e6ef15ddf383288fb10b941920ed"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-migration-proof.test.ts",
+      "sha256": "067b467311993c6b2e1e47af3f1958b02025383be463a297cf240c64e24d3703"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-migration.test.ts",
+      "sha256": "9a28cbf956d554cef163a39adc1de4d3318aa1cd9299d71ba87a3225f3e71b34"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-migration.ts",
+      "sha256": "1c7d29c309fb565d5b6e9655c51363e31aa23829360a3ea93b3aa91236238bd6"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-node-atomic-swap.test.ts",
+      "sha256": "1b76822389b9976fc9bf49eeda5c002615853213b6182ac84afb9c00499d6063"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-node-atomic-swap.ts",
+      "sha256": "36c6d0622099943fb707b3aed1bac7812f3841efb3daf73157f6502e06745c39"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-node-driver.ts",
+      "sha256": "77b0105713737dc0597ceddb59057462280603675e9244aef19d84a377b3fb28"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-open.test.ts",
+      "sha256": "f212d34fdffd1bbf387a5ece5e4d2d51cd6d2752ef714af427b656a5a56dfc8b"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-open.ts",
+      "sha256": "0e5b73b4c3341c07aa11528f8ccb1a96ed0d0733eb87cbf13a225d6bc1f1a171"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-policy.test.ts",
+      "sha256": "0efbb78be93e0553d2e6fd145ec34659d482e3fcc6749c377096804315f9c0b2"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-policy.ts",
+      "sha256": "9f852541db7f97255d4a00ffef2a733f95b03be66e9055b9d8d9ad9d33645c60"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-preflight-fixtures.test.ts",
+      "sha256": "d86802536e62c00b213bd9cc0ff707c7caa3687a047634f728b85cc67c49504f"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-preflight.test.ts",
+      "sha256": "120d5c221b7a409ae6aa62f72db722e1321c42a0e21c2537ca8a6750e7f2096b"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-preflight.ts",
+      "sha256": "c7a9c5506f3021cee11f6e221f9145574c72a3cc90c6ac9c1d52ad41128be266"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-provenance.ts",
+      "sha256": "03a2b67c025332bc33877d84e8a504db31c996030aae8a1cad6cbdfbb32b8188"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-recovery-report.test.ts",
+      "sha256": "0e8c320e23135a162712f71253b2a006d76bd39875fbe7d68dbd1c3579586964"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-recovery-report.ts",
+      "sha256": "8482133c585830a044e71ff3ae64ea5a780826f6e27677b8f5e7d3c1f976e530"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-resource-chunks.test.ts",
+      "sha256": "d581dcfc394f15a51ee07d0080e81a409bc0dcd5c5a4238c7d635279452c3600"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-resource-chunks.ts",
+      "sha256": "6797356b41f3166ee2f7d826e28764d2c71ed60e595fef0cbc8fbe343bb68104"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-resource-gc.test.ts",
+      "sha256": "bb43bfa17b23bedc0ceca25a305b9f9e7c3a1c65486647f591c63f8523d956df"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-resource-gc.ts",
+      "sha256": "3ec46d0813cafb276abc47f674eb8a65d0475bb277d72743ff743e70c8a643e9"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-resource-reference.test.ts",
+      "sha256": "bfd23571f1e860f73644bbdb28fd49c95a81458cc6978a250239f6fc39fa0e90"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-resource-reference.ts",
+      "sha256": "21b04a90e19553f215994362a2049a89d08c4e79512db4bc33a6fe3a1047e00d"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-safe-mode.test.ts",
+      "sha256": "2a322345f95f74ae4eeb7530e42454392bdeb0f943c7cefdea255abe46233f3a"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-safe-mode.ts",
+      "sha256": "0b3e1b3b8d5e7ac1580096372422e8fd54ac1719a3e3c30728af0fa50651bff9"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-schema-v2.test.ts",
+      "sha256": "a75b564090a844c2e8f193e9bb84dee04ac6d909a247c7ae3b9f036033431644"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-schema-v2.ts",
+      "sha256": "bddde64fdf5da6850f5f1ed538d1fb852d7ecb02779c427cd8b25b7cfbaf7705"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-schema.test.ts",
+      "sha256": "b8c4ac57bb92263e55d8c850a47b3f5e914dfd9a704778c4d4a80159d3497a16"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-schema.ts",
+      "sha256": "5e68c8977d6e14e13530f6cbd9a0d559efb90fc8d2ec70e803094023100d7aff"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-semantic-hash.test.ts",
+      "sha256": "e111d543312c31d85800bc0da9551c04e4ded23bbe1a1db52ea12ca4e3cdbf89"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-semantic-hash.ts",
+      "sha256": "f9faf6103643ba2c01dcf8eca27af44a8b605e6f1541771c0c211d25f9585e6b"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-single-writer-lock.ts",
+      "sha256": "be9b4b7e3950665e5e0781266544c234c06bbf93176764b37742878050ed0b8f"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-worker-client.test.ts",
+      "sha256": "ea321d8bf77e1bc5feb60b5e5e1dccbe2a79a3553e083fccf73612d9777c7f4c"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-worker-client.ts",
+      "sha256": "0e74f6a492f28efbc92bd0c1c0a67296a298a2fef7bd5cbb216d3966d8a5d084"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-worker-handler.test.ts",
+      "sha256": "6c70f38024e15a9cdb49787ffb1374a614c378e7c3f4249e8009cac195070558"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-worker-handler.ts",
+      "sha256": "e2753b67651eea4e03c85db132a17cd78282e978f0fa1f3a4d51f0336240b5ef"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-worker-protocol.ts",
+      "sha256": "df929394c97ef3fcf46337dbf140db034d5b6e29be8529298a9cb15e40095c4f"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-working-copy.test.ts",
+      "sha256": "13696e8b01973417b879fb9ebccc063644c5d90128ce01a1e2e08d090c0b2e96"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-working-copy.ts",
+      "sha256": "0f4c8e43ca5f7ff6b96ae5434aee51647b2bed7879c88ad98b0796f8f839d7a4"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/index.ts",
+      "sha256": "ad8cff8ff767c17c62bb1ae72e5d4bf32b2e4b573c5b056e5ec76b91d27ea495"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/archive-export.test.ts",
+      "sha256": "49f0986c0122fe936f7dc7dd60bc751427e21ea7f22eea63f9929c21920c64d4"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/archive-export.ts",
+      "sha256": "1c67cc9862da7fc02929fe38d40a9d4991629b87d53b0668e7236176a860dadb"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/database.test.ts",
+      "sha256": "805e2af94050d6198cb898597943752c644e4fb7e7cad666b3b85222d5417591"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/database.ts",
+      "sha256": "ab688714b4f2f485e1ab0ca63134ccf45e0d2124c38b1de916113ef6aaa3f58a"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/derived-cache.test.ts",
+      "sha256": "7604991020f643339e64983280a8acc0ef9fe00f1ee4eb01476c0090606cf030"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/derived-cache.ts",
+      "sha256": "315def9c7ac89ce5e78da4fda887f5d60c2115b89dca027d87a3ee7833faf1e0"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/index.ts",
+      "sha256": "56aaf74a3130a0ecd9c29a1a4fb6449887745fed44d08c2df480b65be72395e1"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/journal-append.test.ts",
+      "sha256": "92557fb5ee64360c66b6a45ef637dbd723e1dad6c23463dad8380a1282c43fea"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/journal-append.ts",
+      "sha256": "41d9be376e4252b6ee566f6e6128fa62a7f149e5e86cdc90338b8f4892f9a76f"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/journal-recovery.test.ts",
+      "sha256": "fd245535366d2177f612d1a823177e9e8aae0ca221d5a8d7ed3db76e5af16834"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/journal-recovery.ts",
+      "sha256": "b70831f3616dea496e6c5bae28ae76a05a5bf1d8cc4cf8ebbedcdc06271ac6ae"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/quota-error.test.ts",
+      "sha256": "f96971a28b29ea91dfa1623761448fa6b8052efd94a3e83ec64ea8bf13cc64de"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/quota-error.ts",
+      "sha256": "b0f1ade602347159fdea0c8a6701cbd5a5c07e5f276af20a3456300d21112a73"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/recovery-report.test.ts",
+      "sha256": "37fdbb52d7daa00b573d24aceadb7169340fee6479e9ce3e7ad9c199ea1976be"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/recovery-report.ts",
+      "sha256": "8007ccaa14c17c37b07426199ad2734f2ea3d09617dc8027f40b7d3aa95c886d"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/safe-mode.test.ts",
+      "sha256": "27f071e328202c1d2784b953937d44c12277b47f206eb96652d3490087a632ca"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/safe-mode.ts",
+      "sha256": "4d8149ade7e5f616096ed9274da0e9e8b3118e8ef3e918d4fa6376691aa772a1"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/snapshot.test.ts",
+      "sha256": "f4aceb41bfa725b7ac18dee620aa99bb1dbb4966e0ae73cd6b790f0e4b86be34"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/snapshot.ts",
+      "sha256": "696a12e3fd52047f6108ac7f4c85cd8b36512f22c1bf0cfb80b0bf495b862f63"
+    },
+    {
+      "scope": "repository",
+      "path": "pnpm-workspace.yaml",
+      "sha256": "4a03f3f232422c4b941a766a38286ea61854e61fcd111823fcbf0b451f99933c"
+    },
+    {
+      "scope": "repository",
+      "path": "SECURITY.md",
+      "sha256": "8ec7d06138c7e78be02ae3f001287e150eb944cc82bd6bb2134b7c4260c01962"
+    },
+    {
+      "scope": "repository",
+      "path": "STATUS.md",
+      "sha256": "5041873e0517387611359e86e85b5347c7beee9eb030e19780bc7ebc7c03e019"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/arqfs-worker/src/arqfs-opfs-driver.ts",
+      "sha256": "8cd5380f8115b67ba44fc70917878bd0f28f6103b98815bcfa9c1a854d255993"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/arqfs-worker/src/arqfs-project-filename.test.ts",
+      "sha256": "c9de26ca87fe790d916a3d2760e7e48d764a54e580f7ae30d6339d763735dbd1"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/arqfs-worker/src/arqfs-project-filename.ts",
+      "sha256": "14376950beed8e00015e9776213b3f7ea3fc9a08533317b15124a328fc967592"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/arqfs-worker/src/arqfs-worker-entry.ts",
+      "sha256": "87df375eb6a86f050eafc2f93e4ea0fe4c7c26f1c1da13ecce44fba83db9f3e8"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/arqfs-worker/src/index.ts",
+      "sha256": "9025822dae600708ebf1f59068237751678b40e22109f0a85c7e336a0847f5a1"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/import-export-worker/src/default-registry.ts",
+      "sha256": "5f58eb8026f2e948df430fb509294d4bfb072571cc497297985ebd74bcf0dc49"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/import-export-worker/src/handler.test.ts",
+      "sha256": "39ef0128151077b7cdfb51a1398d67a925258f6ad9211e4c1a64bd406e31665a"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/import-export-worker/src/handler.ts",
+      "sha256": "4f9918e70ffd9516c27df85615d117f2bdf23106784c7bdddc55e1027c71897e"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/import-export-worker/src/index.ts",
+      "sha256": "0f9855cf5e174b3e9d7b12b34da7cf6cc9a608446254923589a239104b77f4cc"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/import-export-worker/src/protocol.ts",
+      "sha256": "d80630e7ab2709524618cc8c5c21b36a869819c9b8a11985e0fdb5bbbe83b3d9"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/import-export-worker/src/worker-runtime.ts",
+      "sha256": "e04e00518826b808212213833973d7ef9cdfb78d31152efff69b43c14d421bb7"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "files": ["apps/web/src/ModelCanvas.tsx"],
+  "expected": {
+    "lane": "L3",
+    "impactsInclude": ["rendering", "geometry", "interaction", "performance"],
+    "evidenceInclude": ["render_frame", "browser_model_canvas"]
+  }
+}

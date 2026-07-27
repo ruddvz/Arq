@@ -1,0 +1,296 @@
+{
+  "schemaVersion": 1,
+  "version": "5.0.0",
+  "default": {
+    "nonExecutableLane": "L1",
+    "unknownExecutableLane": "L3",
+    "unknownExecutableImpacts": ["unknown_runtime_surface"],
+    "unknownExecutableEvidence": ["format", "lint", "typecheck", "unit", "build"]
+  },
+  "rules": [
+    {
+      "id": "documentation",
+      "globs": ["README.md", "docs/**/*.md", "docs/**/*.mdx"],
+      "minLane": "L1",
+      "impacts": ["documentation"],
+      "evidence": []
+    },
+    {
+      "id": "product-truth-documents",
+      "globs": [
+        "STATUS.md",
+        "SECURITY.md",
+        "docs/adr/**/*.md",
+        "docs/product/**/*.md",
+        "docs/release/**/*.md"
+      ],
+      "minLane": "L2",
+      "impacts": ["product_truth", "public_claim"],
+      "evidence": ["language_contract"]
+    },
+    {
+      "id": "tests-and-fixtures",
+      "globs": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "**/__fixtures__/**",
+        "**/fixtures/**"
+      ],
+      "minLane": "L2",
+      "impacts": ["test_integrity"],
+      "evidence": ["unit"]
+    },
+    {
+      "id": "editor-shell-and-accessibility",
+      "globs": [
+        "apps/web/src/App.tsx",
+        "apps/web/src/components/**",
+        "packages/editor-shell/**",
+        "packages/design-system/**",
+        "packages/workspace/**",
+        "packages/input-system/**",
+        "packages/command-system/**"
+      ],
+      "minLane": "L2",
+      "impacts": ["ui", "interaction", "accessibility"],
+      "evidence": ["unit", "browser_workspace_layout"]
+    },
+    {
+      "id": "plan-and-model-editing",
+      "globs": [
+        "apps/web/src/PlanCanvas.tsx",
+        "apps/web/src/canvas/**",
+        "packages/plan-renderer/**",
+        "packages/bim-core/**",
+        "packages/operations/**",
+        "packages/validation/**",
+        "packages/geometry-2d/**",
+        "packages/model-context/**"
+      ],
+      "minLane": "L3",
+      "impacts": ["interaction", "geometry", "document", "persistence", "rendering"],
+      "evidence": ["unit", "browser_canvas2d", "browser_workspace_layout", "render_frame"]
+    },
+    {
+      "id": "model-canvas-and-rendering",
+      "globs": [
+        "apps/web/src/ModelCanvas.tsx",
+        "packages/model-renderer/**",
+        "packages/geometry-3d/**",
+        "packages/geometry-occt/**",
+        "packages/derived-cache/**"
+      ],
+      "minLane": "L3",
+      "impacts": ["rendering", "geometry", "interaction", "performance"],
+      "evidence": ["unit", "render_frame", "browser_model_canvas"]
+    },
+    {
+      "id": "journal-and-working-copy",
+      "globs": [
+        "apps/web/src/canvas/plan-journal.ts",
+        "packages/local-storage/**",
+        "packages/project-format/**"
+      ],
+      "minLane": "L4",
+      "impacts": ["document", "persistence", "recovery", "security"],
+      "evidence": ["unit", "browser_journal_recovery", "protected_l4_approval"]
+    },
+    {
+      "id": "native-arqfs-and-project-opening",
+      "globs": [
+        "packages/arqfs/**",
+        "workers/arqfs-worker/**",
+        "packages/project-loading/**",
+        "packages/file-ingress/**",
+        "apps/web/src/file-handling/**"
+      ],
+      "minLane": "L4",
+      "impacts": [
+        "document",
+        "persistence",
+        "recovery",
+        "worker_wasm",
+        "security",
+        "import_export"
+      ],
+      "evidence": [
+        "unit",
+        "browser_arqfs_opfs",
+        "browser_file_open",
+        "e2e_arq_open",
+        "protected_l4_approval"
+      ]
+    },
+    {
+      "id": "import-export-and-untrusted-files",
+      "globs": [
+        "workers/import-export-worker/**",
+        "packages/dxf-adapter/**",
+        "packages/ifc-adapter/**",
+        "packages/pdf-export/**",
+        "packages/roomplan-adapter/**"
+      ],
+      "minLane": "L4",
+      "impacts": ["import_export", "document", "security", "worker_wasm", "performance"],
+      "evidence": ["unit", "browser_file_open", "e2e_import_export", "protected_l4_approval"]
+    },
+    {
+      "id": "worker-and-rust-core",
+      "globs": [
+        "rust/**",
+        "packages/arqscript/**",
+        "workers/geometry-worker/**",
+        "workers/**/src/**"
+      ],
+      "minLane": "L3",
+      "impacts": ["worker_wasm", "geometry", "performance", "security"],
+      "evidence": ["unit", "rust", "wasm_parity", "worker_core"]
+    },
+    {
+      "id": "collaboration-auth-api",
+      "globs": [
+        "apps/api/**",
+        "packages/collaboration/**",
+        "packages/sync-protocol/**",
+        "docs/adr/0013-*.md",
+        "docs/adr/0016-*.md",
+        "docs/adr/0021-*.md"
+      ],
+      "minLane": "L4",
+      "impacts": ["sync_collaboration", "security", "privacy", "persistence"],
+      "evidence": ["unit", "protected_l4_approval"]
+    },
+    {
+      "id": "telemetry-and-privacy",
+      "globs": ["packages/telemetry/**", "docs/adr/0018-*.md"],
+      "minLane": "L3",
+      "impacts": ["observability", "privacy", "security"],
+      "evidence": ["unit", "protected_l4_approval"]
+    },
+    {
+      "id": "marketing-content",
+      "globs": [
+        "apps/marketing/src/content/**",
+        "apps/marketing/src/routes.ts",
+        "apps/marketing/src/site.ts"
+      ],
+      "minLane": "L2",
+      "impacts": ["public_claim", "ui", "deployment"],
+      "evidence": ["marketing_build", "language_contract", "rendered_public_site"]
+    },
+    {
+      "id": "marketing-build-and-pages",
+      "globs": [
+        "apps/marketing/src/build.ts",
+        "apps/marketing/src/**/*.css",
+        "apps/marketing/public/**",
+        "brand/**",
+        ".github/workflows/deploy-pages.yml"
+      ],
+      "minLane": "L3",
+      "impacts": ["public_claim", "deployment", "security"],
+      "evidence": ["marketing_build", "rendered_public_site"]
+    },
+    {
+      "id": "dependency-and-toolchain",
+      "globs": [
+        "package.json",
+        "pnpm-lock.yaml",
+        "pnpm-workspace.yaml",
+        "Cargo.toml",
+        "Cargo.lock",
+        "**/package.json",
+        "**/Cargo.toml"
+      ],
+      "minLane": "L3",
+      "impacts": ["dependencies", "security", "build", "performance"],
+      "evidence": ["workspace_registry", "dependency_licence", "unit", "build"]
+    },
+    {
+      "id": "control-plane",
+      "globs": [
+        ".github/workflows/**",
+        ".github/actions/**",
+        ".github/CODEOWNERS",
+        "scripts/check-*.mjs",
+        "scripts/zeus-*.mjs",
+        ".zeus/**",
+        "engineering/ops/**",
+        "engineering/tools/**",
+        "engineering/fixtures/**"
+      ],
+      "minLane": "L4",
+      "impacts": ["ci_control", "deployment", "security"],
+      "evidence": [
+        "classifier_fixtures",
+        "policy_validation",
+        "repository_binding",
+        "protected_l4_approval"
+      ]
+    },
+    {
+      "id": "static-configuration",
+      "globs": [
+        "**/*.json",
+        "**/*.yml",
+        "**/*.yaml",
+        "**/*.toml",
+        "**/*.config.ts",
+        "**/*.config.mjs"
+      ],
+      "minLane": "L3",
+      "impacts": ["configuration", "security", "deployment"],
+      "evidence": ["format", "lint", "typecheck", "unit", "build"]
+    }
+  ],
+  "dependencyEdges": [
+    {
+      "id": "operations-to-document-and-recovery",
+      "triggerGlobs": ["packages/operations/**", "packages/bim-core/**"],
+      "addsImpacts": ["document", "persistence", "recovery"],
+      "minLane": "L3",
+      "evidence": ["unit", "browser_canvas2d"]
+    },
+    {
+      "id": "app-shell-to-journal-state",
+      "triggerGlobs": ["apps/web/src/App.tsx"],
+      "addsImpacts": ["persistence", "recovery", "product_truth"],
+      "minLane": "L3",
+      "evidence": ["unit", "browser_journal_recovery"]
+    },
+    {
+      "id": "geometry-to-project-semantics",
+      "triggerGlobs": [
+        "packages/geometry-2d/**",
+        "packages/geometry-3d/**",
+        "packages/geometry-occt/**"
+      ],
+      "addsImpacts": ["document", "validation"],
+      "minLane": "L3",
+      "evidence": ["unit", "render_frame"]
+    },
+    {
+      "id": "file-ingress-to-security",
+      "triggerGlobs": ["packages/file-ingress/**", "apps/web/src/file-handling/**"],
+      "addsImpacts": ["security", "import_export", "document"],
+      "minLane": "L4",
+      "evidence": ["unit", "browser_file_open", "protected_l4_approval"]
+    },
+    {
+      "id": "marketing-route-to-deployment-proof",
+      "triggerGlobs": ["apps/marketing/src/routes.ts", "apps/marketing/src/content/**"],
+      "addsImpacts": ["deployment", "public_claim"],
+      "minLane": "L2",
+      "evidence": ["language_contract", "rendered_public_site"]
+    },
+    {
+      "id": "workflow-to-control-plane",
+      "triggerGlobs": [".github/**", "engineering/tools/**", "engineering/ops/**"],
+      "addsImpacts": ["ci_control", "security"],
+      "minLane": "L4",
+      "evidence": ["classifier_fixtures", "policy_validation", "protected_l4_approval"]
+    }
+  ]
+}

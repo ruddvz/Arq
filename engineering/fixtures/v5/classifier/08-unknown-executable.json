@@ -1,0 +1,10 @@
+{
+  "files": ["packages/new-kernel/src/engine.k"],
+  "expected": {
+    "lane": "L3",
+    "confidence": "low",
+    "impactsInclude": ["unknown_runtime_surface"],
+    "unknownFilesInclude": ["packages/new-kernel/src/engine.k"],
+    "evidenceInclude": ["format", "lint", "typecheck", "unit", "build"]
+  }
+}

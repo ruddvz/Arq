@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "policy": "A conflict blocks a current-tense product claim in support, product AI, documentation, marketing, and release notes until a designated owner resolves it with source evidence.",
+  "conflicts": [
+    {
+      "id": "3d-surface-status",
+      "status": "CONFLICT",
+      "sources": [
+        {
+          "path": "apps/web/src/ModelCanvas.tsx",
+          "claim": "A ModelCanvas implementation and shared selection code exist."
+        },
+        {
+          "path": "STATUS.md",
+          "claim": "A later status statement says the 3D stack has zero consumers and no 3D surface exists."
+        }
+      ],
+      "prohibitedClaims": [
+        "Arq currently has a released 3D view.",
+        "Arq has no 3D surface at all."
+      ],
+      "resolutionRequired": "Reconcile the implementation, consumer wiring, test coverage, and status record in one reviewed change. Add browser-level proof before publishing a current capability claim.",
+      "owner": "UNASSIGNED"
+    },
+    {
+      "id": "persistence-authority",
+      "status": "QUALIFY",
+      "sources": [
+        {
+          "path": "apps/web/src/canvas/plan-journal.ts",
+          "claim": "Current edits are journaled through IndexedDB recovery storage."
+        },
+        {
+          "path": "docs/adr/0019-arq-native-sqlite-file-format.md",
+          "claim": "The intended native .arq format is SQLite based."
+        },
+        {
+          "path": "docs/adr/0024-sqlite-wasm-worker-and-opfs.md",
+          "claim": "SQLite WASM with OPFS is approved for prototype work."
+        }
+      ],
+      "prohibitedClaims": [
+        "Saved locally means the portable .arq file was updated.",
+        "The native .arq opening and save lifecycle is current product behavior."
+      ],
+      "resolutionRequired": "Name the journal and project-file states separately in code and UI. Close the persistence decision only with end-to-end native file evidence.",
+      "owner": "UNASSIGNED"
+    },
+    {
+      "id": "file-open-state",
+      "status": "QUALIFY",
+      "sources": [
+        {
+          "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
+          "claim": "The flow distinguishes compatible and safe-to-open from actually open."
+        },
+        { "path": "STATUS.md", "claim": "The open-project pipeline remains incomplete." }
+      ],
+      "prohibitedClaims": [
+        "Selecting a compatible .arq project opens it in the current browser app."
+      ],
+      "resolutionRequired": "Wire and test the Worker and OPFS opening pipeline, then promote the user-facing state only after proof.",
+      "owner": "UNASSIGNED"
+    },
+    {
+      "id": "security-current-vs-target",
+      "status": "QUALIFY",
+      "sources": [
+        {
+          "path": "SECURITY.md",
+          "claim": "The document describes future server authorization and project-protection expectations."
+        },
+        { "path": "apps/api", "claim": "The current API surface is a stub." }
+      ],
+      "prohibitedClaims": [
+        "Current hosted Arq enforces the described server authorization baseline."
+      ],
+      "resolutionRequired": "Label target architecture as target architecture until a deployed API, authorization tests, and operational controls exist.",
+      "owner": "UNASSIGNED"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "files": ["packages/arqfs/src/open-project.ts"],
+  "expected": {
+    "lane": "L4",
+    "manualReviewRequired": true,
+    "impactsInclude": ["document", "persistence", "worker_wasm", "security"],
+    "evidenceInclude": ["browser_arqfs_opfs", "browser_file_open", "e2e_arq_open"]
+  }
+}

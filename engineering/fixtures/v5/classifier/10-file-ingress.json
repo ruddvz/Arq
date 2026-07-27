@@ -1,0 +1,10 @@
+{
+  "files": ["apps/web/src/file-handling/FileOpenPanel.tsx"],
+  "expected": {
+    "lane": "L4",
+    "manualReviewRequired": true,
+    "impactsInclude": ["security", "document", "import_export"],
+    "evidenceInclude": ["browser_file_open", "protected_l4_approval"],
+    "dependencyEdgesInclude": ["file-ingress-to-security"]
+  }
+}

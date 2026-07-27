@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "system": "ARQ Engineering OS",
+  "version": "5.0.0",
+  "policyStatus": "integration-ready",
+  "principles": [
+    "Deterministic classification establishes the minimum risk lane.",
+    "Semantic review may add impact but may never remove a deterministic impact.",
+    "A missing or unproven check is not a passing check.",
+    "Current product claims must be distinguishable from intended architecture.",
+    "Protected approval is evidence, not an informal comment."
+  ],
+  "lanes": {
+    "L1": {
+      "name": "bounded documentation",
+      "minimumReview": "author",
+      "protectedApproval": false
+    },
+    "L2": {
+      "name": "product-facing or interaction change",
+      "minimumReview": "peer",
+      "protectedApproval": false
+    },
+    "L3": {
+      "name": "shared runtime or release change",
+      "minimumReview": "senior reviewer",
+      "protectedApproval": false
+    },
+    "L4": {
+      "name": "critical data, security, deployment, or control-plane change",
+      "minimumReview": "designated owner",
+      "protectedApproval": true
+    }
+  },
+  "unknownExecutableMinimumLane": "L3",
+  "requireBaseToHeadDiff": true,
+  "forbidDeterministicDowngrade": true,
+  "manualEvidenceDecision": "needs_review",
+  "staleContextDecision": "fail",
+  "placeholderPolicy": {
+    "forbiddenTokensInExecutableFiles": ["REPLACE_AFTER_AUDIT", "TODO_OWNER", "TBD_OWNER"],
+    "allowInAuditRecords": true
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "evidence": [
+    {
+      "id": "format",
+      "kind": "command",
+      "command": "pnpm format:check",
+      "packageScript": "format:check",
+      "state": "available"
+    },
+    {
+      "id": "lint",
+      "kind": "command",
+      "command": "pnpm lint",
+      "packageScript": "lint",
+      "state": "available"
+    },
+    {
+      "id": "typecheck",
+      "kind": "command",
+      "command": "pnpm typecheck",
+      "packageScript": "typecheck",
+      "state": "available"
+    },
+    {
+      "id": "unit",
+      "kind": "command",
+      "command": "pnpm test",
+      "packageScript": "test",
+      "state": "available"
+    },
+    {
+      "id": "build",
+      "kind": "command",
+      "command": "pnpm build",
+      "packageScript": "build",
+      "state": "available"
+    },
+    {
+      "id": "workspace_registry",
+      "kind": "command",
+      "command": "pnpm check:workspace-registries",
+      "packageScript": "check:workspace-registries",
+      "state": "available"
+    },
+    {
+      "id": "dependency_licence",
+      "kind": "command",
+      "command": "pnpm check:dependency-licences",
+      "packageScript": "check:dependency-licences",
+      "state": "available"
+    },
+    {
+      "id": "rust",
+      "kind": "command",
+      "command": "pnpm rust:fmt-check && pnpm rust:clippy && pnpm rust:test",
+      "packageScript": "rust:test",
+      "state": "available"
+    },
+    {
+      "id": "wasm_parity",
+      "kind": "command",
+      "command": "pnpm rust:verify-wasm-parity",
+      "packageScript": "rust:verify-wasm-parity",
+      "state": "available"
+    },
+    {
+      "id": "browser_canvas2d",
+      "kind": "command",
+      "command": "pnpm benchmark:canvas2d",
+      "packageScript": "benchmark:canvas2d",
+      "state": "available"
+    },
+    {
+      "id": "browser_workspace_layout",
+      "kind": "command",
+      "command": "pnpm benchmark:workspace-layout",
+      "packageScript": "benchmark:workspace-layout",
+      "state": "available"
+    },
+    {
+      "id": "browser_arqfs_opfs",
+      "kind": "command",
+      "command": "pnpm benchmark:arqfs-opfs",
+      "packageScript": "benchmark:arqfs-opfs",
+      "state": "available"
+    },
+    {
+      "id": "browser_file_open",
+      "kind": "command",
+      "command": "pnpm benchmark:file-open",
+      "packageScript": "benchmark:file-open",
+      "state": "available"
+    },
+    {
+      "id": "render_frame",
+      "kind": "command",
+      "command": "pnpm benchmark:render-frame",
+      "packageScript": "benchmark:render-frame",
+      "state": "available"
+    },
+    {
+      "id": "worker_core",
+      "kind": "command",
+      "command": "pnpm benchmark:arq-core-worker",
+      "packageScript": "benchmark:arq-core-worker",
+      "state": "available"
+    },
+    {
+      "id": "marketing_build",
+      "kind": "command",
+      "command": "pnpm --filter @arq/marketing build",
+      "state": "available"
+    },
+    {
+      "id": "classifier_fixtures",
+      "kind": "command",
+      "command": "pnpm engineering:fixtures",
+      "packageScript": "engineering:fixtures",
+      "state": "available"
+    },
+    {
+      "id": "policy_validation",
+      "kind": "command",
+      "command": "pnpm engineering:policy",
+      "packageScript": "engineering:policy",
+      "state": "available"
+    },
+    {
+      "id": "repository_binding",
+      "kind": "command",
+      "command": "pnpm engineering:bindings",
+      "packageScript": "engineering:bindings",
+      "state": "available"
+    },
+    {
+      "id": "language_contract",
+      "kind": "command",
+      "command": "pnpm arq:language:verify",
+      "state": "requires-language-system-4.1"
+    },
+    {
+      "id": "rendered_public_site",
+      "kind": "command",
+      "command": "pnpm arq:language:site:build:verify --site-root apps/marketing/dist",
+      "state": "requires-language-system-4.1"
+    },
+    {
+      "id": "deployed_public_site",
+      "kind": "command",
+      "command": "pnpm arq:language:site:live:verify",
+      "state": "requires-language-system-4.1"
+    },
+    {
+      "id": "browser_journal_recovery",
+      "kind": "proof-gap",
+      "state": "missing",
+      "closure": "Add a browser test that edits, restarts the app, confirms recovery, and distinguishes journal recovery from project-file save."
+    },
+    {
+      "id": "e2e_arq_open",
+      "kind": "proof-gap",
+      "state": "missing",
+      "closure": "Wire a real browser Worker and OPFS project-opening flow, then test valid, old-reader, corrupt, and read-only outcomes."
+    },
+    {
+      "id": "browser_model_canvas",
+      "kind": "proof-gap",
+      "state": "missing",
+      "closure": "Add an explicit browser test that opens the 3D surface, validates shared selection, and captures a visual fixture."
+    },
+    {
+      "id": "e2e_import_export",
+      "kind": "proof-gap",
+      "state": "missing",
+      "closure": "Add a user-facing import and export flow with supported, approximated, opaque, and rejected data fixtures."
+    },
+    {
+      "id": "conflict_resolution_3d",
+      "kind": "manual-record",
+      "state": "missing",
+      "closure": "A designated owner must reconcile STATUS.md and active consumers in a reviewed source-of-truth change."
+    },
+    {
+      "id": "protected_l4_approval",
+      "kind": "protected-approval",
+      "state": "requires-github-environment",
+      "closure": "Configure a protected GitHub Environment with designated reviewers. The final gate must receive a successful approval job, not a comment."
+    }
+  ]
+}

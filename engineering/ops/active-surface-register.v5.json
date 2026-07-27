@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-07-27",
+  "surfaces": [
+    {
+      "id": "workspace-shell",
+      "status": "current-demo",
+      "sourcePaths": ["apps/web/src/App.tsx", "packages/workspace", "packages/editor-shell"],
+      "userSafeDescription": "The web workspace shell is present and running as a demo surface."
+    },
+    {
+      "id": "plan-canvas",
+      "status": "current-demo",
+      "sourcePaths": [
+        "apps/web/src/PlanCanvas.tsx",
+        "apps/web/src/canvas",
+        "packages/plan-renderer"
+      ],
+      "userSafeDescription": "The plan canvas supports the current interactive drawing workflow."
+    },
+    {
+      "id": "local-journal-recovery",
+      "status": "current-demo-not-project-file",
+      "sourcePaths": ["apps/web/src/canvas/plan-journal.ts", "packages/local-storage"],
+      "userSafeDescription": "Edits are journaled locally for recovery. This does not itself prove that a portable .arq project file was written."
+    },
+    {
+      "id": "native-arqfs",
+      "status": "library-not-open-pipeline",
+      "sourcePaths": ["packages/arqfs", "workers/arqfs-worker"],
+      "userSafeDescription": "Native .arq and OPFS capabilities exist in library and worker code, but the browser open-project pipeline is not established as a current product flow."
+    },
+    {
+      "id": "file-ingress",
+      "status": "preflight-only",
+      "sourcePaths": ["apps/web/src/file-handling/FileOpenPanel.tsx"],
+      "userSafeDescription": "The current file flow can classify a compatible project as safe to open. It does not establish that the project is now open."
+    },
+    {
+      "id": "model-canvas",
+      "status": "conflicted",
+      "sourcePaths": ["apps/web/src/ModelCanvas.tsx", "STATUS.md"],
+      "userSafeDescription": "Source facts about the current 3D surface conflict. Do not publish a resolved claim until the conflict record is closed."
+    },
+    {
+      "id": "import-export",
+      "status": "library-only",
+      "sourcePaths": [
+        "workers/import-export-worker",
+        "packages/dxf-adapter",
+        "packages/ifc-adapter"
+      ],
+      "userSafeDescription": "Import and export capability exists in code, without an evidenced end-to-end product flow."
+    },
+    {
+      "id": "sync-collaboration",
+      "status": "not-current",
+      "sourcePaths": ["docs/adr/0021-local-first-replica-sync.md", "apps/api"],
+      "userSafeDescription": "Sync and collaboration are not current product capabilities."
+    },
+    {
+      "id": "public-site",
+      "status": "current-static-site",
+      "sourcePaths": ["apps/marketing/src", ".github/workflows/deploy-pages.yml"],
+      "userSafeDescription": "The public marketing site is a static Pages deployment and needs source and deployed-claim proof."
+    },
+    {
+      "id": "zeus",
+      "status": "local-advisory",
+      "sourcePaths": [".zeus", "scripts/zeus-impact.mjs", "scripts/zeus-check.mjs"],
+      "userSafeDescription": "Zeus 4.0 is useful local advisory tooling. It is not the branch-protection authority."
+    }
+  ]
+}

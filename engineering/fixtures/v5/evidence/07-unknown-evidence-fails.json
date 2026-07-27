@@ -1,0 +1,8 @@
+{
+  "classification": {
+    "required_evidence": ["not-in-catalog"],
+    "manual_review_required": false
+  },
+  "jobs": { "not-in-catalog": "success" },
+  "expected": { "decision": "fail" }
+}

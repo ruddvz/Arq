@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-07-27",
+  "contracts": [
+    {
+      "id": "plan-model-operations",
+      "state": "current-demo",
+      "description": "Plan editing must preserve the model and operation invariants expected by the current workspace.",
+      "sourcePaths": [
+        "apps/web/src/PlanCanvas.tsx",
+        "packages/bim-core",
+        "packages/operations",
+        "packages/validation",
+        "packages/geometry-2d"
+      ],
+      "evidence": ["unit", "browser_canvas2d", "browser_workspace_layout"],
+      "owner": "UNASSIGNED",
+      "requiresOwnerAssignment": true
+    },
+    {
+      "id": "journal-recovery-boundary",
+      "state": "current-demo-not-project-file",
+      "description": "The local journal is recovery data. A successful journal write must not be represented as a portable .arq file write.",
+      "sourcePaths": [
+        "apps/web/src/canvas/plan-journal.ts",
+        "packages/local-storage",
+        "apps/web/src/App.tsx"
+      ],
+      "evidence": ["unit", "browser_journal_recovery"],
+      "owner": "UNASSIGNED",
+      "requiresOwnerAssignment": true
+    },
+    {
+      "id": "native-arqfs-lifecycle",
+      "state": "library-not-open-pipeline",
+      "description": "Native .arq storage, migration, locking, integrity, and read-only behavior must be proven as a complete product flow before product claims are promoted.",
+      "sourcePaths": ["packages/arqfs", "workers/arqfs-worker"],
+      "evidence": ["unit", "browser_arqfs_opfs", "browser_file_open", "e2e_arq_open"],
+      "owner": "UNASSIGNED",
+      "requiresOwnerAssignment": true
+    },
+    {
+      "id": "file-ingress-state",
+      "state": "preflight-only",
+      "description": "Compatible or safe to open is not the same state as open. File ingress must preserve that distinction.",
+      "sourcePaths": ["apps/web/src/file-handling", "packages/arqfs"],
+      "evidence": ["unit", "browser_file_open", "e2e_arq_open"],
+      "owner": "UNASSIGNED",
+      "requiresOwnerAssignment": true
+    },
+    {
+      "id": "model-canvas-selection",
+      "state": "conflicted",
+      "description": "3D model surface and shared selection facts are conflicted in current source records. Resolve the source conflict before a release or public claim relies on this contract.",
+      "sourcePaths": ["apps/web/src/ModelCanvas.tsx", "apps/web/src/App.tsx", "STATUS.md"],
+      "evidence": ["unit", "browser_model_canvas", "render_frame", "conflict_resolution_3d"],
+      "owner": "UNASSIGNED",
+      "requiresOwnerAssignment": true
+    },
+    {
+      "id": "interop-boundary",
+      "state": "library-only",
+      "description": "External file handling must distinguish parsing capability from an end-to-end import or export product workflow.",
+      "sourcePaths": [
+        "workers/import-export-worker",
+        "packages/dxf-adapter",
+        "packages/ifc-adapter",
+        "packages/pdf-export"
+      ],
+      "evidence": ["unit", "browser_file_open", "e2e_import_export"],
+      "owner": "UNASSIGNED",
+      "requiresOwnerAssignment": true
+    },
+    {
+      "id": "public-site-truth",
+      "state": "current-static-site",
+      "description": "Public claims must be checked against canonical language truth, built output, and the deployment commit.",
+      "sourcePaths": [
+        "apps/marketing/src/content",
+        "apps/marketing/src/build.ts",
+        "apps/marketing/src/routes.ts",
+        ".github/workflows/deploy-pages.yml"
+      ],
+      "evidence": [
+        "marketing_build",
+        "language_contract",
+        "rendered_public_site",
+        "deployed_public_site"
+      ],
+      "owner": "UNASSIGNED",
+      "requiresOwnerAssignment": true
+    },
+    {
+      "id": "ci-release-control",
+      "state": "partially-active",
+      "description": "Required checks must run for the default branch and merge queue, classify base-to-head changes, and fail on unapproved critical evidence.",
+      "sourcePaths": [".github/workflows", "scripts", ".zeus"],
+      "evidence": [
+        "classifier_fixtures",
+        "policy_validation",
+        "repository_binding",
+        "protected_l4_approval"
+      ],
+      "owner": "UNASSIGNED",
+      "requiresOwnerAssignment": true
+    },
+    {
+      "id": "rust-core-parity",
+      "state": "library-current",
+      "description": "Rust core and WASM-facing changes require Rust formatting, lint, test, build, and parity evidence.",
+      "sourcePaths": ["rust", "rust/arq-core", "workers"],
+      "evidence": ["rust", "wasm_parity", "worker_core"],
+      "owner": "UNASSIGNED",
+      "requiresOwnerAssignment": true
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "release_id": "git-sha",
+  "created_at": "2026-07-27T00:00:00Z",
+  "lane": "L3",
+  "git": {
+    "sha": "git-sha",
+    "pr": 123
+  },
+  "runtime": {
+    "deployment_id": null,
+    "deployment_url": null,
+    "production_alias": null,
+    "rollback_target": null,
+    "worker_asset_version": null,
+    "wasm_asset_version": null
+  },
+  "document_compatibility": {
+    "affected": false,
+    "migration_ids": [],
+    "previous_app_reads_new_document": null,
+    "interrupted_migration_recoverable": null,
+    "safe_containment": null
+  },
+  "evidence": {
+    "selected": ["unit", "render_frame"],
+    "passed": ["unit", "render_frame"],
+    "failed": [],
+    "needs_review": []
+  },
+  "conflicts": [],
+  "protected_approval": null,
+  "status": "candidate"
+}

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "version": "5.0.0",
+  "systems": [
+    {
+      "id": "engineering-os-5",
+      "authority": "Deterministic change classification, minimum evidence, repository binding, release controls, and source drift detection.",
+      "cannot": [
+        "Invent a product capability.",
+        "Replace protected approval with an automated result.",
+        "Overwrite Language System canonical vocabulary."
+      ]
+    },
+    {
+      "id": "arq-language-system-4.1",
+      "authority": "Canonical vocabulary, current-claim rules, public-site phrase scanning, conflict-aware answerability, and rendered/deployed marketing validation.",
+      "cannot": [
+        "Declare a technical check passed.",
+        "Treat a local journal write as a native project-file write.",
+        "Resolve an Engineering OS conflict without source evidence."
+      ]
+    },
+    {
+      "id": "zeus-4.0",
+      "authority": "Local development guidance, task-language interpretation, and advisory impact context.",
+      "cannot": [
+        "Lower the deterministic Engineering OS lane.",
+        "Act as a required GitHub check.",
+        "Self-approve a protected L4 change."
+      ]
+    }
+  ],
+  "precedence": [
+    "Verified current source and test evidence",
+    "Approved architecture and product decisions",
+    "Engineering OS deterministic policy and conflict records",
+    "Language System canonical vocabulary and claim controls",
+    "Zeus advisory context",
+    "Human or AI prose that lacks a cited source"
+  ],
+  "interlocks": [
+    {
+      "id": "public-claim-change",
+      "when": "A source or marketing change can alter a public product claim.",
+      "required": [
+        "Engineering OS classification",
+        "Language System claim and route verification",
+        "rendered static-site proof",
+        "deployed-site proof for a release"
+      ]
+    },
+    {
+      "id": "conflicted-capability",
+      "when": "A claim touches an open conflict-registry record.",
+      "required": [
+        "CONFLICT or QUALIFY outcome in language workflows",
+        "designated-owner resolution record before promotion to current claim"
+      ]
+    },
+    {
+      "id": "critical-change",
+      "when": "A change is L4.",
+      "required": [
+        "Engineering OS selected evidence",
+        "protected GitHub Environment approval",
+        "release record when shipped"
+      ]
+    }
+  ]
+}

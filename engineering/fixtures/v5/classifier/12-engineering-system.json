@@ -1,0 +1,18 @@
+{
+  "files": [
+    "engineering/ops/change-map.v5.json",
+    "engineering/tools/engineering/classify-change.mjs"
+  ],
+  "expected": {
+    "lane": "L4",
+    "manualReviewRequired": true,
+    "impactsInclude": ["ci_control", "security"],
+    "evidenceInclude": [
+      "classifier_fixtures",
+      "policy_validation",
+      "repository_binding",
+      "protected_l4_approval"
+    ],
+    "dependencyEdgesInclude": ["workflow-to-control-plane"]
+  }
+}

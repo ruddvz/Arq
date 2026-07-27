@@ -6,9 +6,17 @@
 # SITE_ORIGIN enables sitemap.xml, the robots Sitemap line and absolute
 # Open Graph URLs.
 #
-# Triggers: pushes that touch the site (on the default branch and on the
-# audit/completion branch so the site is visible before that PR merges -
-# trim the extra branch once merged) plus manual dispatch.
+# Triggers: pushes that touch the site on the default branch, plus manual
+# dispatch. (The audit/completion branch trigger was trimmed after PR #282
+# merged, as its own comment instructed.)
+#
+# Engineering OS 5.0: engineering/../templates/.github/workflows/
+# deploy-pages.v5.fragment.yml adds rendered-artifact and post-deploy
+# public-site proof steps here. Those steps call Arq Language System 4.1
+# scripts (arq:language:*) that are not yet installed — merging them now
+# would fail every deploy. The deploy job already exposes page_url below so
+# the live-verify job can be added without restructuring. Tracked in
+# engineering/34_LIMITS_AND_OWNER_DECISIONS.md.
 name: Deploy website
 
 on:
@@ -16,7 +24,6 @@ on:
   push:
     branches:
       - claude/arq-cad-platform-research-ba8rav
-      - claude/repo-audit-completion-bzolr3
     paths:
       - 'apps/marketing/**'
       - 'brand/**'
@@ -56,6 +63,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4

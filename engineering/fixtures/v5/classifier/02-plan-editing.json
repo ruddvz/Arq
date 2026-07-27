@@ -1,0 +1,8 @@
+{
+  "files": ["apps/web/src/PlanCanvas.tsx"],
+  "expected": {
+    "lane": "L3",
+    "impactsInclude": ["geometry", "document", "persistence", "rendering", "interaction"],
+    "evidenceInclude": ["unit", "browser_canvas2d", "render_frame"]
+  }
+}

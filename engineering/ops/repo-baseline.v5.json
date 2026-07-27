@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "baselineKind": "audited repository snapshot",
+  "auditedAt": "2026-07-27",
+  "repository": {
+    "fullName": "ruddvz/Arq",
+    "defaultBranch": "claude/arq-cad-platform-research-ba8rav",
+    "commit": "e1aa1018b0ba8c3c3f9cd64bb34edb38db7e220d",
+    "publicSite": "https://ruddvz.github.io/Arq/"
+  },
+  "runtime": {
+    "node": "20.x",
+    "packageManager": "pnpm@9.0.0",
+    "packageManagerSource": "package.json"
+  },
+  "importantPaths": {
+    "web": "apps/web",
+    "marketing": "apps/marketing",
+    "arqfs": "packages/arqfs",
+    "localStorage": "packages/local-storage",
+    "arqfsWorker": "workers/arqfs-worker",
+    "importExportWorker": "workers/import-export-worker",
+    "workflows": ".github/workflows"
+  },
+  "notes": [
+    "This is a time-stamped audit baseline, not a claim that the repository must remain frozen.",
+    "Run the repository binding and context checks after installation. Update this snapshot through reviewed evidence when source truth changes."
+  ]
+}

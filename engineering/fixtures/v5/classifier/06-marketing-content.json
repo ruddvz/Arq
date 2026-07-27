@@ -1,0 +1,9 @@
+{
+  "files": ["apps/marketing/src/content/home.ts"],
+  "expected": {
+    "lane": "L2",
+    "impactsInclude": ["public_claim", "deployment"],
+    "evidenceInclude": ["language_contract", "rendered_public_site"],
+    "dependencyEdgesInclude": ["marketing-route-to-deployment-proof"]
+  }
+}

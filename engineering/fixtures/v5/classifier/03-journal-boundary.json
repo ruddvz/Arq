@@ -1,0 +1,9 @@
+{
+  "files": ["apps/web/src/canvas/plan-journal.ts"],
+  "expected": {
+    "lane": "L4",
+    "manualReviewRequired": true,
+    "impactsInclude": ["document", "persistence", "recovery", "security"],
+    "evidenceInclude": ["browser_journal_recovery", "protected_l4_approval"]
+  }
+}
