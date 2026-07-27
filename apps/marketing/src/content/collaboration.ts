@@ -16,7 +16,6 @@ export const collaborationPage: Page = {
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-005 · collaboration',
       heading: 'Review first. Co-authoring when it is safe.',
       lede: 'Most architectural collaboration is one person drawing and several people reacting. Arq builds that reality first, and treats simultaneous editing as the hard problem it is.',
     })}
@@ -47,7 +46,7 @@ export const collaborationPage: Page = {
             {
               term: 'Co-authoring',
               detail:
-                'Later, and honestly hard: concurrent geometry editing is explicitly deferred until it cannot corrupt a model. The data structures for it (CRDT-based) are already being tested in the repository.',
+                'Later, because it is hard: concurrent geometry editing is explicitly deferred until it cannot corrupt a model. The data structures for it (CRDT-based) are already being tested in the repository.',
             },
           ])}
         `,

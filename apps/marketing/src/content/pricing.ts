@@ -17,7 +17,6 @@ export const pricingPage: Page = {
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-009 · pricing',
       heading: 'Not priced yet — and not pretending to be.',
       lede: 'Most pre-release products publish placeholder tiers and change them later. Arq publishes the actual state of the decision instead.',
     })}
@@ -60,7 +59,7 @@ export const pricingPage: Page = {
         body: html`
           <p>
             Approved plans, stated limits, and an entitlement table that matches the product's
-            actual behaviour. Until then, the only honest price list is this explanation.
+            actual behaviour. Until then, this explanation is the price list.
           </p>
         `,
       },

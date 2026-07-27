@@ -18,7 +18,6 @@ export const docsIndexPage: Page = {
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-011 · documentation index',
       heading: 'Documented before it is finished.',
       lede: 'Arq is developed specification-first: the documentation is in the repository next to the code it describes, and much of it is enforced by tests. A hosted help centre follows the first release.',
     })}

@@ -96,9 +96,8 @@ export function renderDocument(meta: PageMeta, body: SafeHtml): string {
               </div>
             </div>
             <p class="footer-fineprint">
-              Arq is in development and has not shipped. Every statement on this site describes
-              either the working development build or clearly labelled planned work — see the
-              <a href="/changelog">changelog</a> for what exists today.
+              Arq is in development and has not shipped. The
+              <a href="/changelog">changelog</a> records what exists today.
             </p>
           </div>
         </footer>

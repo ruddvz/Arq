@@ -13,11 +13,10 @@ export const architectsPage: Page = {
     route: '/architects',
     title: 'For architects',
     description:
-      'Arq is being built for residential projects and small practices: measured plans, honest drawings and files that stay on your machine.',
+      'Arq is being built for residential projects and small practices: measured plans, dependable drawings and files that stay on your machine.',
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-003 · for architects',
       heading: 'Built for the practice of two, not the firm of two thousand.',
       lede: 'Arq is aimed at residential work and small practices: extensions, renovations, single dwellings. Not every project — that would be a lie — but these projects, done carefully.',
     })}
@@ -56,7 +55,7 @@ export const architectsPage: Page = {
         `,
       },
       {
-        title: 'Where it stands, honestly',
+        title: 'Where it stands today',
         body: html`
           <p>
             Arq is pre-release. The workspace, file format and drawing libraries exist and are

@@ -13,11 +13,10 @@ export const interoperabilityPage: Page = {
     route: '/interoperability',
     title: 'Interoperability',
     description:
-      'Arq format support, published accurately: .arq native, PDF and image underlay, vector PDF export, DXF exchange and IFC viewing on the roadmap — with DWG and RVT honestly not committed.',
+      'Arq format support, published accurately: .arq native, PDF and image underlay, vector PDF export, DXF exchange and IFC viewing on the roadmap — with DWG and RVT not committed.',
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-007 · interoperability',
       heading: 'Format support, stated exactly.',
       lede: 'Exchange is where CAD marketing usually lies. This table is mirrored from the repository’s format support matrix, and the site’s tests fail if a claim here outruns it.',
     })}
@@ -49,7 +48,7 @@ export const interoperabilityPage: Page = {
           <p>
             “Exchange” never means lossless. Every import in Arq produces an import report: what
             came in, what was converted, what was unsupported and why. Exports state what they
-            contain. If a consultant asks “will it round-trip?”, the honest answer is that nothing
+            contain. If a consultant asks “will it round-trip?”, the answer is that nothing
             round-trips perfectly between BIM tools, and Arq will show you the differences instead
             of hiding them.
           </p>

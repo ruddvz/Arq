@@ -18,7 +18,6 @@ export const contactPage: Page = {
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-014 · contact and support',
       heading: 'Small project, real channels.',
       lede: 'Arq is pre-release and has no sales team or support desk yet. Rather than publish addresses nobody staffs, this page lists the channels that actually work today.',
     })}

@@ -18,9 +18,8 @@ export const termsPage: Page = {
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-016 · terms',
       heading: 'The terms before the terms.',
-      lede: 'Formal product terms require a lawyer and a service worth governing. Neither exists yet. What can be stated now, honestly, is the basis on which the pre-release build is offered.',
+      lede: 'Formal product terms require a lawyer and a service worth governing. Neither exists yet. What can be stated now is the basis on which the pre-release build is offered.',
     })}
     ${notes([
       {

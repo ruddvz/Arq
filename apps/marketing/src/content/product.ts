@@ -13,17 +13,16 @@ export const productPage: Page = {
     route: '/product',
     title: 'Product',
     description:
-      'What Arq is, what each release contains, and what is deliberately out of scope. A plan-first architectural editor with real units, local files and honest limits.',
+      'What Arq is, what each release contains, and what is deliberately out of scope. A plan-first architectural editor with real units, local files and stated limits.',
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-002 · product overview',
       heading: 'A plan editor first. Everything else follows.',
       lede: 'Arq starts where architectural work starts: the floor plan. Model elements carry meaning — a wall knows it is a wall — so plans, 3D and schedules are views of one model, not separate drawings.',
     })}
     ${notes([
       {
-        title: 'One model, several honest views',
+        title: 'One model, several views of it',
         body: html`
           <p>
             You draw walls, place doors and windows, and bound rooms in a 2D plan with snapping and
@@ -82,7 +81,7 @@ export const productPage: Page = {
             The development build has a working workspace shell — panels, tool rail, tabs,
             inspector, command palette, touch layouts — over a hardened local file format with 175
             tests on the format layer alone. The interactive drawing surface is being wired to it
-            now. The <a href="/changelog">changelog</a> tracks this honestly, entry by entry.
+            now. The <a href="/changelog">changelog</a> tracks this, entry by entry.
           </p>
         `,
       },

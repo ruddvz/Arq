@@ -15,12 +15,12 @@ const ENTRIES: readonly {
   {
     date: '2026-07-27',
     title: 'Public site; interactive canvas; validation; local persistence; basic 3D',
-    body: 'This website ships as a static, no-JavaScript-required build with every public page from the site specification. In the workspace, the plan canvas gains real interaction (pan, zoom, wall drawing with snapping, point and marquee selection, hover), every commit is checked by the new validation rules with plain-language messages, edits are journalled to browser storage and recovered on reload with honest save states, and a 3D tab renders drawn walls as extruded solids with orbit, fit, and selection shared with the plan.',
+    body: 'This website ships as a static, no-JavaScript-required build with every public page from the site specification. In the workspace, the plan canvas gains real interaction (pan, zoom, wall drawing with snapping, point and marquee selection, hover), every commit is checked by the new validation rules with plain-language messages, edits are journalled to browser storage and recovered on reload with save states that report the true journal condition, and a 3D tab renders drawn walls as extruded solids with orbit, fit, and selection shared with the plan.',
   },
   {
     date: '2026-07-26',
-    title: 'Workspace completed to its current honest scope',
-    body: 'Touch compositions (phone dock and bar, drawers, bottom sheets with detents), browser and inspector section systems, tab management with context menus, command palette, keyboard map, and a critique pass fixing defects found by review. The shell reports save state honestly: no project open, offline.',
+    title: 'Workspace shell completed to its current scope',
+    body: 'Touch compositions (phone dock and bar, drawers, bottom sheets with detents), browser and inspector section systems, tab management with context menus, command palette, keyboard map, and a critique pass fixing defects found by review. The shell reports the true save state: no project open, offline.',
   },
   {
     date: '2026-07-24',
@@ -49,7 +49,6 @@ export const changelogPage: Page = {
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-012 · changelog',
       heading: 'What actually happened, dated.',
       lede: 'No public release has shipped yet. Until one does, this is the development log — each entry summarises work that is merged, tested and real, not intended.',
     })}

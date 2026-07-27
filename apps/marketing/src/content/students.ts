@@ -16,9 +16,8 @@ export const studentsPage: Page = {
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-004 · for students',
       heading: 'Learn on the real thing.',
-      lede: 'Arq has no separate student edition. It is one tool with honest limits, and several of the things that make it good for a small practice make it good for a studio desk.',
+      lede: 'Arq has no separate student edition. It is one tool with stated limits, and several of the things that make it good for a small practice make it good for a studio desk.',
     })}
     ${notes([
       {

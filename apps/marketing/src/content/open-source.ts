@@ -22,7 +22,6 @@ export function openSourcePage(sbom: Sbom): Page {
     },
     render: () => html`
       ${hero({
-        eyebrow: 'PUB-017 · open-source notices',
         heading: 'Software Arq is built with.',
         lede: 'Arq depends on open-source software, and says so precisely. This list is generated from the repository’s software bill of materials — the same data the continuous-integration licence gate enforces.',
       })}

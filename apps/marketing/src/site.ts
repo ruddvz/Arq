@@ -67,7 +67,7 @@ export const FOOTER_INDEX: readonly {
     ],
   },
   {
-    heading: 'Follow',
+    heading: 'Project',
     links: [
       { route: '/docs', label: 'Documentation' },
       { route: '/changelog', label: 'Changelog' },

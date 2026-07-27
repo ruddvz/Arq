@@ -16,7 +16,6 @@ export const securityPage: Page = {
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-010 · security',
       heading: 'Your drawings are the asset. Act like it.',
       lede: 'Arq’s strongest security property is architectural: work lives in a file on your device, so the most common cloud failure modes have nothing to reach. Everything beyond that is a stated baseline, not a badge.',
     })}
@@ -71,7 +70,7 @@ export const securityPage: Page = {
         body: html`
           <p>
             No compliance certification has been obtained, and this page will not imply one. Arq
-            does not promise zero data loss — instead it builds journalling, recovery and honest
+            does not promise zero data loss — instead it builds journalling, recovery and plain
             failure messages, and tests them. When a claim here can be backed by an audit, the audit
             will be linked from this page.
           </p>

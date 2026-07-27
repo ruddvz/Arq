@@ -12,11 +12,10 @@ export const ipadPage: Page = {
     route: '/ipad',
     title: 'iPad',
     description:
-      'Arq on iPad: a first-class touch layout in Safari today’s build, with native Files, Pencil and RoomPlan integration planned for Release 4 — described honestly, benchmarks first.',
+      'Arq on iPad: a first-class touch layout in today’s browser build, with native Files, Pencil and RoomPlan integration planned for Release 4.',
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-008 · ipad',
       heading: 'The site desk is a desk too.',
       lede: 'Arq treats the iPad as a working surface, not a viewer. The browser build already lays itself out for touch; the native features that need Apple’s APIs come later, in the open.',
     })}

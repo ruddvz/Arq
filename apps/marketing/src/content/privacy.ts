@@ -19,7 +19,6 @@ export const privacyPage: Page = {
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-015 · privacy notice',
       heading: 'Privacy, as currently practised.',
       lede: 'A formal, lawyer-reviewed privacy notice will be published before any hosted service launches. Until then, here are the practices in force today — verifiable, because there is so little to verify.',
     })}

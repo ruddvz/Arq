@@ -17,9 +17,8 @@ export const statusPage: Page = {
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-013 · status',
       heading: 'No hosted service. Nothing to be down.',
-      lede: 'Arq currently ships as a local development build: the application and your projects live on your device. Until a hosted service exists, a status page has exactly one honest state.',
+      lede: 'Arq currently ships as a local development build: the application and your projects live on your device. Until a hosted service exists, a status page has exactly one true state.',
     })}
     ${notes([
       {

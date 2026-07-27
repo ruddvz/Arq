@@ -9,8 +9,13 @@ import { html, type SafeHtml } from './html.js';
  */
 
 export interface HeroOptions {
-  /** Mono eyebrow above the h1, e.g. "PUB-002 · PRODUCT OVERVIEW". */
-  readonly eyebrow: string;
+  /**
+   * Optional mono line above the h1. Used sparingly - the home page's
+   * identity line and the 404's status line. Sheet numbers live in the
+   * footer title block, their one home; repeating them here read as
+   * breadcrumb clutter and was removed.
+   */
+  readonly eyebrow?: string;
   /** The page's single h1. */
   readonly heading: string;
   /** One or two sentences under the heading. */
@@ -33,10 +38,12 @@ export function hero(options: HeroOptions): SafeHtml {
               >`,
           )}
         </p>`;
+  const eyebrow =
+    options.eyebrow === undefined ? html`` : html`<p class="eyebrow">${options.eyebrow}</p>`;
   return html`
     <section class="hero">
       <div class="measure">
-        <p class="eyebrow">${options.eyebrow}</p>
+        ${eyebrow}
         <h1>${options.heading}</h1>
         <p class="lede">${options.lede}</p>
         ${actions}

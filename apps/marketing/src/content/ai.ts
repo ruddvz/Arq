@@ -18,7 +18,6 @@ export const aiPage: Page = {
   },
   render: () => html`
     ${hero({
-      eyebrow: 'PUB-006 · ai',
       heading: 'AI that shows its working.',
       lede: 'In Arq, AI is a careful junior who drafts a change and hands you the red pen — never a ghost hand moving your walls. Every proposal is inspectable before it exists, and reversible after.',
     })}
