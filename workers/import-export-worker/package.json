@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@arq/dxf-adapter": "workspace:*",
-    "@arq/file-ingress": "workspace:*"
+    "@arq/file-ingress": "workspace:*",
+    "@arq/ifc-adapter": "workspace:*"
   }
 }

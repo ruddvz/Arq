@@ -212,6 +212,9 @@ importers:
 
   packages/ifc-adapter:
     dependencies:
+      '@arq/file-ingress':
+        specifier: workspace:*
+        version: link:../file-ingress
       web-ifc:
         specifier: ^0.0.77
         version: 0.0.77
@@ -326,6 +329,9 @@ importers:
       '@arq/file-ingress':
         specifier: workspace:*
         version: link:../../packages/file-ingress
+      '@arq/ifc-adapter':
+        specifier: workspace:*
+        version: link:../../packages/ifc-adapter
 
 packages:
 

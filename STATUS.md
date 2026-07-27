@@ -63,8 +63,9 @@ checks, weekly render benchmark).
 
 1. No end-to-end project open: file-open UI stops at its safety verdict;
    the OPFS worker is never constructed (`workers/arqfs-worker`).
-2. No import/export reachable from the UI (adapters are library-only;
-   `ifc` routes to an adapter id that does not exist yet).
+2. No import/export reachable from the UI: the import worker is never
+   constructed by `apps/web` (adapters themselves are real - dxf, underlay,
+   attachment and now ifc all resolve in the worker's default registry).
 3. `apps/api` is an `export {}` stub; sync has protocol logic but no
    transport or backend.
 4. Three data-layer libraries still have zero consumers (derived-cache,
