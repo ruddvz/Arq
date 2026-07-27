@@ -1,6 +1,6 @@
 # @arq/ifc-adapter
 
-IFC import/export via web-ifc, plus the canonical IFC <-> Arq entity mapping. MPL-2.0 - keep isolated per §19.
+IFC reading via web-ifc (viewing and inspection, per the format matrix); IFC export and the full canonical entity mapping are not built yet. MPL-2.0 - keep isolated per §19.
 
 `readIfcModel` (ARQ-160) is a prototype "viewer" - reading, per
 `docs/interoperability/FORMAT-SUPPORT-MATRIX.md`'s stated IFC role

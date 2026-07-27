@@ -1,10 +1,20 @@
 # Start here
 
-## One package
+## What this repository is
 
-This ZIP includes the work already completed and every currently identifiable
-remaining research, design, legal, technical and validation activity. There is no
-separate companion pack.
+Arq began as a specification pack and is now a working monorepo: 30 packages,
+three apps (`apps/web` workspace, `apps/marketing` public site, `apps/api`
+stub), workers, a Rust core, CI gates and a large test suite, alongside the
+full planning corpus the implementation is built from. `STATUS.md` is the
+current-state summary; `README.md` is the project introduction.
+
+## Plan of record
+
+1. `docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md` - the blueprint
+2. `docs/adr/` - accepted decisions; live decisions outrank older text
+3. `backlog/` - the 242 ordered issues (`node scripts/generate-backlog-index.mjs`
+   regenerates the index from the issue files)
+4. `docs/product/RELEASE-SCOPE.md` - what each release contains
 
 ## First product
 
@@ -13,30 +23,13 @@ residential floor plan, author semantic walls, doors, windows and rooms, inspect
 edit properties, see coordinated 2D and 3D, add dimensions, recover after interruption,
 download an Arq archive and export a scaled vector PDF.
 
-## Begin in this order
-
-1. Repository ownership, visibility and licence decision
-2. ADR review
-3. Architect interviews
-4. Clickable prototype tests
-5. 2D renderer benchmark
-6. Local journal and recovery spike
-7. Wall-room-plan-3D vertical slice
-8. Documentation and PDF
-9. Reliability gate
-10. Exchange, review collaboration, AI and native iPad later
-
 ## Key directories
 
-- `docs/pages/` - all currently identified pages
-- `docs/components/` - all currently identified interface components
+- `apps/` - the workspace, the public website, the API stub
+- `packages/` - implemented libraries (file format, geometry, renderers, tools, UI)
+- `docs/pages/` and `docs/components/` - all identified surfaces and components
 - `docs/flows/` - end-to-end flows
-- `api/` - OpenAPI and event drafts
-- `database/` - PostgreSQL and data dictionary drafts
-- `design/icons/svg/` - draft technical SVG icons
-- `prototype/` - openable static product-shell prototype
-- `monorepo-starter/` - starter repository scaffold
-- `quality/` - bugs, tests, edge cases and improvements
-- `validation/` - decisions that require real evidence
-- `legal/` - legal document outlines and review checklists
-- `operations/` - support, backup, incident and launch plans
+- `prototype/` - the original static product-shell prototype (historical)
+- `quality/` and `validation/` - bug/test/edge-case registers and evidence-pending decisions
+- `legal/` and `operations/` - outlines awaiting professional review
+- `remaining/` - work that still cannot be closed from inside this repository

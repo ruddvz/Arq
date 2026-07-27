@@ -2,7 +2,7 @@
 
 **Route or surface:** `/status`
 **Access:** public
-**Status:** Planned
+**Status:** Implemented in `apps/marketing` (static build; see its README for enforced acceptance tests)
 
 ## Goal
 

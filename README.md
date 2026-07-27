@@ -65,16 +65,19 @@ ARQ is not initially a replacement for every AutoCAD, Revit, Archicad, SketchUp,
 ## Project status
 
 The repository is in active technical validation and vertical-slice implementation.
+The maintained area-by-area summary, gap list, and open decisions live in
+[`STATUS.md`](STATUS.md).
 
 | Area                  | Current repository state                                                                             |
 | --------------------- | ---------------------------------------------------------------------------------------------------- |
-| Browser editor        | Vite, React, and TypeScript application shell with a Canvas 2D demo scene                            |
+| Browser editor        | Full workspace shell with an interactive plan canvas: wall drawing, snapping, selection, pan/zoom    |
 | Design system         | Product shell components, design tokens, and a generated technical icon package                      |
 | Domain boundaries     | Geometry, semantic model, operations, validation, rendering, storage, and adapter packages           |
 | Shared core           | Rust crate with WebAssembly build and parity-check tooling                                           |
 | Local project storage | Native SQLite and browser OPFS prototypes, single-writer protection, export, and recovery groundwork |
 | Synchronisation       | Narrow operation and snapshot protocol groundwork, not a finished collaboration product              |
 | Quality system        | Unit, property, browser, capability, performance, formatting, type, dependency, and licence checks   |
+| Public website        | All seventeen public pages from `docs/pages/` as a static site with claim-honesty tests              |
 | Product workflow      | Incomplete. The first wall-to-room-to-plan-to-3D-to-sheet workflow remains the release gate          |
 
 ### Current milestone
@@ -266,7 +269,7 @@ Benchmark results apply only to the tested commit, device, operating system, bro
 Arq/
 ├── apps/
 │   ├── web/                  # Primary browser authoring surface
-│   ├── marketing/            # Product and documentation site boundary
+│   ├── marketing/            # Public website (static build of all PUB pages)
 │   └── api/                  # Service boundary
 ├── packages/
 │   ├── design-system/        # Product shell and shared interface components
