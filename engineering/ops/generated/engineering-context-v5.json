@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "a5a3e641362b0efa20be01a8da13ecc95dab650c175634eb8052d7ac0196187f",
+  "source_hash": "9fa3d7b10b9e8425e27c4825d644013caff64e22bcb08615f5e835e0693d653c",
   "source_records": [
     {
       "scope": "package",
@@ -49,7 +49,7 @@
     {
       "scope": "package",
       "path": "ops/active-surface-register.v5.json",
-      "sha256": "4ef763c668a215239fb39c615032ff1e48f6cb49de3c933cf53c27981a75cb7c"
+      "sha256": "91d1a7b20d0c7e7b8b33fc5164b5f733f49475be34e0a7ea7f886e6e03d58dbc"
     },
     {
       "scope": "package",
@@ -59,12 +59,12 @@
     {
       "scope": "package",
       "path": "ops/conflict-registry.v5.json",
-      "sha256": "d09cab4d96b1fd5bef57e462f4463512938a9894b8ec73c27c06ff9f0dc882d4"
+      "sha256": "1d88aeb2fb1f7c81562dcaab7cd56388d35a2a65bef62e5c4bfc7509d755122f"
     },
     {
       "scope": "package",
       "path": "ops/critical-contracts.v5.json",
-      "sha256": "b2a2505e4cc6f5eebce7bdfa2ce5e5120372a7f816024eb46ecce85423916e12"
+      "sha256": "feee174dfb91e7de7718169527357ddb0d65a29e43cda322271ffe25e3c3efcf"
     },
     {
       "scope": "package",
@@ -74,7 +74,7 @@
     {
       "scope": "package",
       "path": "ops/evidence-catalog.v5.json",
-      "sha256": "39ba1067c881de537c1a9be77db5c94e1062376be0e728b5fe7c85b13465eea2"
+      "sha256": "81a89fcfc9873abfc5d0a63a95a1c6c6db033d0d06cadf93b902359337bfcd01"
     },
     {
       "scope": "package",
@@ -89,7 +89,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "816ec05795a1c2f7cb99a83ce3f55ec1c2896f4751785d2597cde9f6dd40347a"
+      "sha256": "a0c306af20a1e6ce2f2b3b0b7e06032d4eecfab2961a3c6a73900d4cad93cb2b"
     },
     {
       "scope": "repository",
@@ -174,7 +174,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/product.ts",
-      "sha256": "2776412528efb21407ae52e477270d73ba2f8b3c6a7d327e88579b52f744f4be"
+      "sha256": "513454df93ac6b5acba66ffe49727dde7a49df55274707de415dd90e8bbbdb41"
     },
     {
       "scope": "repository",
@@ -364,7 +364,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "6f34e458e9f0d84e32e84995c0b5672c2931f4416b8b526e6cece282cbc5b2c5"
+      "sha256": "47b70305fcacdd2904466bdb9bda8cd96d02a9d2054bbb5adda2d52e4293e906"
     },
     {
       "scope": "repository",
@@ -759,7 +759,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "e0e291b4e0526471a3279ae72e002c0ef5bdb5eadc79a2f21ec9da0058d42811"
+      "sha256": "a697d7d8a40709403c6a3b8d714417175f916a8425f1c84b3edc2c43b91900a1"
     },
     {
       "scope": "repository",

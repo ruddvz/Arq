@@ -10,10 +10,10 @@
   "conflicts": [
     {
       "id": "CONFLICT-3D-CURRENT-STATUS",
-      "status": "unresolved",
+      "status": "resolved",
       "severity": "critical",
       "domain": "current-reachability",
-      "summary": "STATUS.md says a wired ModelCanvas with shared selection is current, then says the 3D stack has zero consumers and no 3D surface exists.",
+      "summary": "Resolved: STATUS.md previously asserted both a wired ModelCanvas with shared selection and a 3D stack with zero consumers. The run-model-canvas-capability-check.mjs browser check proved the 3D tab reachable, rendering through WebGL2, with bidirectional plan-shared selection; STATUS.md now records the verified viewing-surface truth.",
       "sourceIds": ["status", "web-app", "code-tests"],
       "affectedClaimIds": ["3d-current"],
       "blockedSurfaces": ["public", "support", "product-ai", "documentation"],
@@ -24,7 +24,14 @@
           "Run the relevant 3D/browser capability test.",
           "Refresh generated language context."
         ],
-        "cannotAutoResolve": true
+        "cannotAutoResolve": true,
+        "resolvedAt": "2026-07-28",
+        "resolvedBy": "ruddvz",
+        "evidence": [
+          "scripts/run-model-canvas-capability-check.mjs (3 consecutive passing runs)",
+          "benchmarks/results/model-canvas-capability-2026-07-28T02-36-42-075Z.json",
+          "benchmarks/results/model-canvas-visual-2026-07-28T02-36-42-075Z.png"
+        ]
       }
     },
     {

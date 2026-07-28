@@ -67,6 +67,14 @@ jobs:
       - run: pnpm benchmark:arqfs-project-isolation
       - run: pnpm benchmark:design-system-dialog
       - run: pnpm benchmark:file-open
+      # Engineering OS 5.0 proof-gap closures: browser_journal_recovery proves
+      # a real edit journals to IndexedDB and is recovered after reload,
+      # distinct from a portable project-file save; browser_model_canvas
+      # proves the 3D tab is user-reachable, renders through WebGL2, and
+      # shares selection with the plan canvas - the evidence that resolved
+      # CONFLICT-3D-CURRENT-STATUS.
+      - run: pnpm benchmark:journal-recovery
+      - run: pnpm benchmark:model-canvas
       # Doc 52's workspace visual QA protocol, asserted rather than eyeballed:
       # band, canvas floor, no horizontal overflow, touch bands canvas-first
       # with a way to summon panels back, and save/sync separately legible, at

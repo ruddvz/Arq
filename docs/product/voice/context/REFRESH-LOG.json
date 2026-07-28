@@ -2,6 +2,24 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "generatedAt": "2026-07-28T02:44:00.597Z",
+      "sourceSetDigest": "e92b9886024c811109265a4c1bc1ddad1a79f1eaee8f5ebfb298845b2fa5002c",
+      "previousSourceSetDigest": "79d078959b0b4feb2d0f98715b2078760d24dab9a94107549ad3f5bfc19aca19",
+      "changedSourceSets": ["marketing-claims-tests"]
+    },
+    {
+      "generatedAt": "2026-07-28T02:43:04.110Z",
+      "sourceSetDigest": "79d078959b0b4feb2d0f98715b2078760d24dab9a94107549ad3f5bfc19aca19",
+      "previousSourceSetDigest": "90af1168a03d99263bb31742955463c7c721fa8af187b8b5daae8ff9d80e87d4",
+      "changedSourceSets": ["marketing-content"]
+    },
+    {
+      "generatedAt": "2026-07-28T02:41:22.672Z",
+      "sourceSetDigest": "90af1168a03d99263bb31742955463c7c721fa8af187b8b5daae8ff9d80e87d4",
+      "previousSourceSetDigest": "791d52e7bfd87fe42839c8cf3b0fed252bb84d631bba543678afa16f25f1ed60",
+      "changedSourceSets": ["status"]
+    },
+    {
       "generatedAt": "2026-07-28T01:45:28.940Z",
       "sourceSetDigest": "791d52e7bfd87fe42839c8cf3b0fed252bb84d631bba543678afa16f25f1ed60",
       "previousSourceSetDigest": "791d52e7bfd87fe42839c8cf3b0fed252bb84d631bba543678afa16f25f1ed60",

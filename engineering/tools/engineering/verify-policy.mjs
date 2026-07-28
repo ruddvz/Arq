@@ -5,7 +5,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const LANE_NAMES = new Set(['L1', 'L2', 'L3', 'L4']);
-const CONFLICT_STATUSES = new Set(['CONFLICT', 'QUALIFY', 'UNKNOWN']);
+// RESOLVED joined the vocabulary when the 3D reachability conflict closed:
+// the original set had no terminal state, so a recorded conflict could never
+// legally resolve - contradicting the registry's own resolutionRequired flow.
+const CONFLICT_STATUSES = new Set(['CONFLICT', 'QUALIFY', 'UNKNOWN', 'RESOLVED']);
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const defaultRoot = path.resolve(scriptDirectory, '../..');
 

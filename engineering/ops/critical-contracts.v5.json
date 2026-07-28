@@ -54,8 +54,8 @@
     },
     {
       "id": "model-canvas-selection",
-      "state": "conflicted",
-      "description": "3D model surface and shared selection facts are conflicted in current source records. Resolve the source conflict before a release or public claim relies on this contract.",
+      "state": "current-viewing-surface",
+      "description": "The 3D view is user-reachable and renders through WebGL2 with selection shared bidirectionally with the plan canvas, proven by the browser_model_canvas capability check with committed visual fixtures. It is a viewing surface: 3D authoring tools are not current product behavior and remain unpromotable.",
       "sourcePaths": ["apps/web/src/ModelCanvas.tsx", "apps/web/src/App.tsx", "STATUS.md"],
       "evidence": ["unit", "browser_model_canvas", "render_frame", "conflict_resolution_3d"],
       "owner": "ruddvz",

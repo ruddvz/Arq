@@ -1,8 +1,13 @@
 {
   "classification": {
-    "required_evidence": ["browser_journal_recovery"],
+    "required_evidence": ["e2e_arq_open"],
     "manual_review_required": false
   },
-  "jobs": { "browser_journal_recovery": "success" },
-  "expected": { "decision": "fail", "failedEvidence": ["browser_journal_recovery"] }
+  "jobs": {
+    "e2e_arq_open": "success"
+  },
+  "expected": {
+    "decision": "fail",
+    "failedEvidence": ["e2e_arq_open"]
+  }
 }
