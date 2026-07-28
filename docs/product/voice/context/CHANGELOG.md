@@ -1,5 +1,23 @@
 # Arq language-system changelog
 
+## 2026-07-28 - Refresh logging and write-time docs coverage
+
+Every substantive context refresh now records itself. When the source-set
+digest changes, `refresh-arq-language-context.mjs` appends an entry to
+`context/REFRESH-LOG.json` naming the source sets that moved, and
+`verify-arq-language-context.mjs` fails any committed context whose digest the
+log does not carry. An update to governed sources therefore cannot land
+unlogged: CI rejects it.
+
+The warn-only guardian hook now also covers prose under `docs/pages`,
+`docs/product`, `docs/ai` and `docs/interoperability` (excluding
+`docs/product/voice`, whose audit records quote violations on purpose and are
+governed by the acknowledgement contract). AI-written copy on those surfaces is
+checked at write time; `arq:language:audit:ci` remains the blocking gate.
+
+`CLAUDE.md` states the standing loop for every session: touch a governed
+source, refresh once in the same change, run the ladder before pushing.
+
 ## 2026-07-27 - Version 4.1
 
 Version 4.1 corrects a deployment-boundary defect found by inspecting the live

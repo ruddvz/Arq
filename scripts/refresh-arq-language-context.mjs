@@ -182,6 +182,45 @@ const context = {
     launchClaims: readRepo('business/LAUNCH-CLAIMS-CHECKLIST.md'),
   },
 };
+/*
+ * Refresh log. Every substantive refresh (a digest change) appends an entry
+ * naming the source sets that moved, so the record of what changed and when is
+ * written by the same step that updates the context. verify-arq-language-context
+ * requires the latest entry to match the committed context, which makes an
+ * unlogged update fail CI. The log itself is not a hashed source set, so
+ * writing it cannot invalidate the context it describes.
+ */
+const logPath = join(languageRoot, 'context/REFRESH-LOG.json');
+let previous = null;
+if (existsSync(output)) {
+  try {
+    previous = JSON.parse(readFileSync(output, 'utf8'));
+  } catch {
+    previous = null;
+  }
+}
+let refreshLog = { schemaVersion: 1, entries: [] };
+if (existsSync(logPath)) {
+  try {
+    const parsed = JSON.parse(readFileSync(logPath, 'utf8'));
+    if (Array.isArray(parsed?.entries)) refreshLog = parsed;
+  } catch {
+    /* an unreadable log is rebuilt from this refresh */
+  }
+}
+if (refreshLog.entries[0]?.sourceSetDigest !== sourceSetDigest) {
+  const previousSources = previous?.sources ?? {};
+  const changedSourceSets = [...new Set([...Object.keys(previousSources), ...Object.keys(records)])]
+    .filter((id) => previousSources[id]?.sha256 !== records[id]?.sha256)
+    .sort();
+  refreshLog.entries.unshift({
+    generatedAt: new Date().toISOString(),
+    sourceSetDigest,
+    previousSourceSetDigest: previous?.sourceSetDigest ?? null,
+    changedSourceSets,
+  });
+  writeFileSync(logPath, `${JSON.stringify(refreshLog, null, 2)}\n`);
+}
 mkdirSync(dirname(output), { recursive: true });
 writeFileSync(output, `${JSON.stringify(context, null, 2)}\n`);
 console.log(

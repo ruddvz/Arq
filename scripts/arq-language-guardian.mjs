@@ -32,11 +32,19 @@ const filePath =
 if (!filePath) process.exit(0);
 
 const rel = filePath.replace(/^.*\/Arq\//, '');
+/*
+ * Docs prose is warned on at write time with the same bases the hard audit
+ * scans, except docs/product/voice/: the system's own audit records quote
+ * violations on purpose and are covered by the acknowledgement contract in
+ * arq:language:audit:ci instead.
+ */
 const inScope =
   /^apps\/marketing\/src\//.test(rel) ||
   /^apps\/web\/src\//.test(rel) ||
   /^packages\/design-system\/src\//.test(rel) ||
-  /^packages\/workspace\/src\/registry\/.*\.json$/.test(rel);
+  /^packages\/workspace\/src\/registry\/.*\.json$/.test(rel) ||
+  (/^docs\/(pages|product|ai|interoperability)\//.test(rel) &&
+    !/^docs\/product\/voice\//.test(rel));
 
 const isTest = /\.(test|spec)\.[tj]sx?$/.test(rel) || /__tests__\//.test(rel);
 if (!inScope || isTest) process.exit(0);
