@@ -56,5 +56,7 @@ truth outcome from the Language System:
   record is conflicted.
 - Bind every deployed verification record to the exact deployment commit.
 
-See `ops/public-site-contract.v5.json` and the supplied Language System 4.1
-package for executable route, phrase, conflict, and deployed-site checks.
+See `ops/public-site-contract.v5.json` and the installed Arq Language System
+4.1 (`docs/product/voice/`, `scripts/verify-arq-*`, the `language-system` CI
+job, and the deploy-pages proof jobs) for executable route, phrase, conflict,
+and deployed-site checks.

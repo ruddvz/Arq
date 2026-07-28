@@ -59,7 +59,9 @@ status.
 2. Reconcile the 3D conflict and add a browser contract before expanding the
    3D interface.
 3. Add recovery, ingress, selection, and destructive-action browser flows.
-4. Install the public-site proof chain and repair current claims.
+4. Use the installed public-site proof chain (rendered and live verification
+   in `deploy-pages.yml` and the `language-system` CI job) to repair any
+   remaining current claims.
 5. Add accessibility and performance fixtures to the selected-evidence map.
 6. Revisit the active-surface register and language claims after every
    capability promotion.

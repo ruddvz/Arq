@@ -32,8 +32,10 @@ It is deliberately staged so a policy package cannot silently break delivery.
 2. Replace every CODEOWNERS placeholder with an authorised owner or team.
 3. Configure a protected `arq-critical-change` GitHub Environment. It must
    require designated reviewers and have no broad bypass path.
-4. Install Arq Language System 4.1. Add its source, rendered-artifact, and
-   deployed-site checks to Pages deployment.
+4. Done: Arq Language System 4.1 is installed (`docs/product/voice/`,
+   `scripts/verify-arq-*`); its source, rendered-artifact, and deployed-site
+   checks run in the `language-system` CI job and the Pages deployment
+   workflow.
 5. Reconcile the 3D source conflict before permitting a current 3D claim.
 6. Keep current journal, project-file, and preflight states separate in UI,
    support, marketing, and release notes.

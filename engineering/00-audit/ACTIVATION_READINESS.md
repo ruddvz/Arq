@@ -11,11 +11,11 @@ branch-protection enforcement until the blockers below are closed.
 | Classifier            | executable and fixture-covered                  | shadow against representative pull requests                                            |
 | Evidence catalogue    | mapped to current commands                      | confirm command duration and reliability in CI                                         |
 | Critical contracts    | mapped, but several exposure states are partial | owner assignment and missing end-to-end proof                                          |
-| CODEOWNERS            | blocked                                         | replace every @REPLACE entry                                                           |
-| Default-branch policy | blocked                                         | reconcile workflow triggers with actual default branch                                 |
+| CODEOWNERS            | resolved                                        | every entry names the repository owner; extend with teams as maintainers are added     |
+| Default-branch policy | resolved                                        | ci.yml push covers the actual default branch and declares merge_group                  |
 | Manual L4 approval    | configuration required                          | create protected critical-change environment with non-self approval                    |
 | Provider ledger       | incomplete                                      | record Pages, branch rules, deployment permissions, and any active observability state |
-| Public-site proof     | implementation required                         | install language-system rendered and live verifier                                     |
+| Public-site proof     | installed and enforced                          | keep rendered and live verification bound to the exact deployed commit                 |
 | Persistence decision  | unresolved                                      | resolve IndexedDB journal and SQLite/OPFS overlap through ADR                          |
 | 3D status             | conflicted                                      | resolve from code and product-owner acceptance evidence                                |
 

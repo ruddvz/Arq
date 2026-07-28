@@ -21,7 +21,18 @@
     "A local journal, native .arq file, and compatible-but-not-opened file state must not be collapsed in public copy."
   ],
   "knownBaselineFindings": {
-    "visibleEmDashesAcrossAuditedRoutes": 84,
-    "claimRisk": "The current public site contains statements that exceed evidenced current product behavior for local files, opening, 3D, interop, security, and pricing."
+    "auditedAt": "2026-07-27",
+    "auditedCommit": "e1aa1018b0ba8c3c3f9cd64bb34edb38db7e220d",
+    "resolvedBy": "Arq Language System 4.1 (PR #283): claim bindings, editorial policy, and the rendered/deployed proof gates now audit the built HTML and the live site on every deployment.",
+    "visibleEmDashesAcrossAuditedRoutes": {
+      "atAudit": 84,
+      "current": 0,
+      "enforcedBy": "arq:language:audit:ci and arq:language:site:build:verify"
+    },
+    "claimRisk": {
+      "atAudit": "The public site contained statements that exceeded evidenced current product behavior for local files, opening, 3D, interop, security, and pricing.",
+      "current": "Claim bindings pass (arq:language:claims:verify, 35 bindings; arq:language:public:verify, 18 sources) and unresolved conflicts still prohibit promotional current-tense claims.",
+      "enforcedBy": "arq:language:claims:verify and arq:language:conflicts:verify"
+    }
   }
 }

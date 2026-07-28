@@ -12,7 +12,7 @@
         },
         {
           "path": "STATUS.md",
-          "claim": "A later status statement says the 3D stack has zero consumers and no 3D surface exists."
+          "claim": "STATUS.md marks the 3D view as DISPUTED (do not cite either way): App.tsx renders ModelCanvas for a 3d tab, but no test or headless-browser check proves user reachability; tracked as CONFLICT-3D-CURRENT-STATUS in docs/product/voice/conflict-registry.json."
         }
       ],
       "prohibitedClaims": [

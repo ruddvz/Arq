@@ -69,6 +69,18 @@
       "status": "local-advisory",
       "sourcePaths": [".zeus", "scripts/zeus-impact.mjs", "scripts/zeus-check.mjs"],
       "userSafeDescription": "Zeus 4.0 is useful local advisory tooling. It is not the branch-protection authority."
+    },
+    {
+      "id": "language-system",
+      "status": "current-gating",
+      "sourcePaths": [
+        "docs/product/voice",
+        "scripts/verify-arq-rendered-public-site.mjs",
+        "scripts/verify-arq-deployed-public-site.mjs",
+        ".github/workflows/ci.yml",
+        ".github/workflows/deploy-pages.yml"
+      ],
+      "userSafeDescription": "Arq Language System 4.1 governs public vocabulary and claims; its checks gate CI and every Pages deployment."
     }
   ]
 }

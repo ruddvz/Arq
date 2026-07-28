@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "11099e035d2206442af726189ae34e397305910cfd4e8f65f279d4053bd96d3f",
+  "source_hash": "b3e8a9c3520ec64ffa94bb0ca458a7c345e6616a6c2fd725449230c8182ba4f4",
   "source_records": [
     {
       "scope": "package",
@@ -24,17 +24,17 @@
     {
       "scope": "package",
       "path": "31_PUBLIC_SITE_AND_LANGUAGE_INTERLOCK.md",
-      "sha256": "efda4b56b06d4496c2d6367dde3ddbbd902597134493048dd4607a188df50a7a"
+      "sha256": "b20ee7fc948bbfce0cd77df11074a4540497737960a928dc8cc8bd8b040dc02f"
     },
     {
       "scope": "package",
       "path": "32_PROOF_GAPS_AND_CLOSURE_PLAN.md",
-      "sha256": "60bc092855dc1922a2d844d4d3b3bf0755ab4125a527bb2d3ee9dc5cf4d272ea"
+      "sha256": "9a9c54a5bc1a21586100ba5e5c5466a6fcae4fd20f8be3ea56061785ea709a73"
     },
     {
       "scope": "package",
       "path": "33_IMPLEMENTATION_HANDOFF.md",
-      "sha256": "4d123fa7708669ca9d9480af33024e31f0f781dffa8da154b41cc8e6c1775d4e"
+      "sha256": "e49898c471338ebba481907cc0db021834d24712dc942688f68443936a8ca727"
     },
     {
       "scope": "package",
@@ -44,12 +44,12 @@
     {
       "scope": "package",
       "path": "35_PRODUCT_AND_UIUX_REMEDIATION.md",
-      "sha256": "62b736f77fd4df88ed0416dbef30c7e3351af6e6830386d3b1ebd85b6ee033cc"
+      "sha256": "b49e4a2d750214f01f5f405e9f79eb2d975f79daf010bda60e61deedaf7f6303"
     },
     {
       "scope": "package",
       "path": "ops/active-surface-register.v5.json",
-      "sha256": "7e30c287ddf5201ed65df6b0465ce2f7bc2c4a2545d8fa56b0734c883172be68"
+      "sha256": "4ef763c668a215239fb39c615032ff1e48f6cb49de3c933cf53c27981a75cb7c"
     },
     {
       "scope": "package",
@@ -59,7 +59,7 @@
     {
       "scope": "package",
       "path": "ops/conflict-registry.v5.json",
-      "sha256": "6a84cfa2f993e6146c5e67691dd321ab80d60597d7d67eae8dfeb74f84124d12"
+      "sha256": "adcace3372107f59fbd780f872d2d223c07232d613b62e341295e309427964d7"
     },
     {
       "scope": "package",
@@ -99,7 +99,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/engineering-gate.yml",
-      "sha256": "6757f066a74ab19597cec03eb4a063cc853962538d42db5914e54bcbbce79779"
+      "sha256": "0c466ce567dc1c0b0390c1b5c11910304decf0ee59c943a275fffd3c5e395b33"
     },
     {
       "scope": "repository",

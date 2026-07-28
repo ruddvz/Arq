@@ -156,10 +156,14 @@ export function verifyRepoBindings({ repoRoot, packageRoot = defaultPackageRoot 
   const baselineIsAncestor =
     actualCommit === baseline.repository.commit ||
     git(root, ['merge-base', '--is-ancestor', baseline.repository.commit, 'HEAD']) !== null;
-  if (actualCommit && !baselineIsAncestor)
+  if (actualCommit && !baselineIsAncestor) {
+    const isShallow = git(root, ['rev-parse', '--is-shallow-repository']) === 'true';
     warnings.push(
-      'Audited baseline commit is not an ancestor of repository HEAD. Refresh the audit baseline and generated context through review before treating this package as current.',
+      isShallow
+        ? 'Checkout is shallow, so baseline ancestry cannot be verified. Fetch full history (fetch-depth: 0) before running this check as evidence.'
+        : 'Audited baseline commit is not an ancestor of repository HEAD. Refresh the audit baseline and generated context through review before treating this package as current.',
     );
+  }
   if (actualDefaultBranch && actualDefaultBranch !== baseline.repository.defaultBranch)
     warnings.push(
       'Remote default branch differs from audited baseline: ' + actualDefaultBranch + '.',
