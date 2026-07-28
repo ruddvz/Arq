@@ -99,6 +99,11 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Browser evidence (canvas, workspace-layout, journal-recovery,
+      # model-canvas, render-frame) launches headless Chromium; without this
+      # install every browser evidence fails at launch, which read as gate
+      # failures unrelated to the change under review.
+      - run: npx playwright install --with-deps chromium
       - uses: actions/download-artifact@v4
         with:
           name: engineering-classification

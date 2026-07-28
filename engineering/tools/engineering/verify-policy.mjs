@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { APPROVED_EVIDENCE_COMMANDS } from './run-selected-evidence.mjs';
 
 const LANE_NAMES = new Set(['L1', 'L2', 'L3', 'L4']);
 // RESOLVED joined the vocabulary when the 3D reachability conflict closed:
@@ -134,6 +135,18 @@ export function verifyPolicy(root) {
         typeof entry?.state === 'string',
         'Evidence ' + (entry?.id || 'unknown') + ' needs a state.',
       );
+      // A runnable catalog entry with no approved command mapping only fails
+      // at gate runtime, and only once something selects it - three ids
+      // shipped that way before this check existed. Catch it at policy time.
+      if (entry?.kind === 'command' && entry?.state === 'available' && entry?.id) {
+        addError(
+          errors,
+          entry.id in APPROVED_EVIDENCE_COMMANDS,
+          'Evidence ' +
+            entry.id +
+            ' is available but has no approved command mapping in run-selected-evidence.mjs.',
+        );
+      }
     }
   }
 
