@@ -152,6 +152,8 @@
       "id": "collaboration-auth-api",
       "globs": [
         "apps/api/**",
+        "api/**",
+        "database/**",
         "packages/collaboration/**",
         "packages/sync-protocol/**",
         "docs/adr/0013-*.md",
@@ -202,7 +204,8 @@
         "Cargo.toml",
         "Cargo.lock",
         "**/package.json",
-        "**/Cargo.toml"
+        "**/Cargo.toml",
+        "**/Cargo.lock"
       ],
       "minLane": "L3",
       "impacts": ["dependencies", "security", "build", "performance"],
@@ -215,8 +218,9 @@
         ".github/actions/**",
         ".github/CODEOWNERS",
         "scripts/check-*.mjs",
-        "scripts/zeus-*.mjs",
+        "scripts/zeus*",
         ".zeus/**",
+        ".claude/**",
         "engineering/ops/**",
         "engineering/tools/**",
         "engineering/fixtures/**"

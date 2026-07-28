@@ -1,0 +1,10 @@
+{
+  "files": ["api/openapi.yaml", "database/schema.sql"],
+  "expected": {
+    "lane": "L4",
+    "manualReviewRequired": true,
+    "impactsInclude": ["sync_collaboration", "security", "privacy", "persistence"],
+    "impactsExclude": ["unknown_runtime_surface"],
+    "evidenceInclude": ["unit", "protected_l4_approval"]
+  }
+}

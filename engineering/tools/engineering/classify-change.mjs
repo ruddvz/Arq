@@ -272,6 +272,14 @@ export function classifyChange({ map, files, baseSha = null, headSha = null, sem
         defaults.unknownExecutableLane || defaults.unknown_source_min_lane || 'L3',
       );
       unknownFiles.push(file);
+    } else if (matched.length === 0) {
+      // Unmatched non-executable files must still reach the declared floor:
+      // before this branch existed the map declared nonExecutableLane L1 but
+      // a diff of only such files classified L0, contradicting the policy.
+      deterministicLane = maxLane(
+        deterministicLane,
+        defaults.nonExecutableLane || defaults.non_executable_lane || 'L1',
+      );
     }
     for (const rule of matched) {
       deterministicLane = appendRuleEffect({

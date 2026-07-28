@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "eda9298a4571a5b73fe64f239769b5b75dad8cc7f670dcc55e2a8cf5b926a118",
+  "source_hash": "778dd442a747aa1fb2bc953f5f0c66bc3db48b18b77352b54906c813c3db7316",
   "source_records": [
     {
       "scope": "package",
@@ -54,7 +54,7 @@
     {
       "scope": "package",
       "path": "ops/change-map.v5.json",
-      "sha256": "4d5755be9fbff3ff8ab23bce9f15cb525a010b8668861d1f0b800369150e08d3"
+      "sha256": "357ff5b9dd0aa8fd3a65fb4328aa56696dbe07a8defb3dbdccfdc480f7c905b7"
     },
     {
       "scope": "package",
