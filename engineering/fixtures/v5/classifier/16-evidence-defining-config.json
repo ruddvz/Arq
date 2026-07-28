@@ -1,0 +1,9 @@
+{
+  "files": ["vitest.config.ts", ".prettierignore"],
+  "expected": {
+    "lane": "L4",
+    "manualReviewRequired": true,
+    "impactsInclude": ["ci_control", "security"],
+    "evidenceInclude": ["classifier_fixtures", "policy_validation", "protected_l4_approval"]
+  }
+}

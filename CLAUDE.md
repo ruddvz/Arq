@@ -26,6 +26,13 @@ Full specification: `.zeus/ZEUS.md`. Domain rules: `.zeus/modules/`. Slash comma
 `/zeus`, `/zeus-audit`, `/zeus-handoff`, `/zeus-design`, `/zeus-incident`,
 `/zeus-release`.
 
+**Zeus is advisory, not merge authority.** Deterministic change classification,
+evidence selection, and approval gating belong to Engineering OS 5.0
+(`engineering/`, enforced by `.github/workflows/engineering-gate.yml`). Zeus may
+add context and propose escalations; it may never lower a lane, mark missing
+evidence as passed, or stand in for the gate — see
+`engineering/30_ZEUS_AND_ENGINEERING_AUTHORITY.md`.
+
 ## Z Voice (Arq Language System 4.1)
 
 The governed vocabulary lives under `docs/product/voice/` and is enforced by the
