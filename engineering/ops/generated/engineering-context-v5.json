@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "9fa3d7b10b9e8425e27c4825d644013caff64e22bcb08615f5e835e0693d653c",
+  "source_hash": "7e1b04bd050ae806f55d39958d4ac1df101ca40380214b4132defe5ce48999c1",
   "source_records": [
     {
       "scope": "package",
@@ -54,7 +54,7 @@
     {
       "scope": "package",
       "path": "ops/change-map.v5.json",
-      "sha256": "ad4081e1b94a6961e9ec2cab5b4969196eb82220520af726ad5c9125e7050b1e"
+      "sha256": "a21f5c98e879ab593254202299f4abff4ab8d77f830abe9d59931d11119186af"
     },
     {
       "scope": "package",
@@ -74,7 +74,7 @@
     {
       "scope": "package",
       "path": "ops/evidence-catalog.v5.json",
-      "sha256": "81a89fcfc9873abfc5d0a63a95a1c6c6db033d0d06cadf93b902359337bfcd01"
+      "sha256": "76e2e365ad677a0b09fd0d3bef771b13dd2636b9d1c66f379694270f0463889c"
     },
     {
       "scope": "package",
@@ -89,7 +89,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "a0c306af20a1e6ce2f2b3b0b7e06032d4eecfab2961a3c6a73900d4cad93cb2b"
+      "sha256": "4c59d49dd99ca38a11968e3421dc079f02f871f3ae232f3f7b0d9e96dd09a2d6"
     },
     {
       "scope": "repository",
@@ -204,7 +204,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/App.tsx",
-      "sha256": "07efd402d6ffc37bdcdf5f0789e2b5f3e8b472d84fc276e31d211ca64aed86fa"
+      "sha256": "8ea0a3b6c0ced6e90ffe674c6a4b36f294742cf6e5745d4629cccbc0dcfdfde4"
     },
     {
       "scope": "repository",
@@ -224,7 +224,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/PlanCanvas.tsx",
-      "sha256": "ec005021bce9c802d17ecc37e54f87d5798943248abe96cc43410cd0b44d0ad7"
+      "sha256": "bff3655318d9906d155475b7d36d11bb517a0a6064f67faf3feea8a73ff37375"
     },
     {
       "scope": "repository",
@@ -364,7 +364,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "47b70305fcacdd2904466bdb9bda8cd96d02a9d2054bbb5adda2d52e4293e906"
+      "sha256": "51978f18430b09910d1d7c421dda46c84246703d552112202c1887c465eb0b0c"
     },
     {
       "scope": "repository",

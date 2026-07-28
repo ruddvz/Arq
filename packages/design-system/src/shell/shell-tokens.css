@@ -45,6 +45,7 @@
      leaves room for a same-tier stack (e.g. two toasts) without renumbering
      everything above it. */
   --arq-z-shell-raised: 10;
+  --arq-z-context-hud: 90;
   --arq-z-overlay-backdrop: 100;
   --arq-z-overlay-surface: 110;
   --arq-z-popover: 120;
@@ -61,6 +62,26 @@
      section 20's rule that no component may introduce a new shadow literal
      without a named token first. */
   --arq-shadow-overlay: 0 8px 24px rgb(0 0 0 / 12%);
+
+  /* The menu/popover shadow that top-bar.tsx, tab-context-menu.tsx and
+     phone-project-bar.tsx each carried as an inline `0 4px 16px` literal -
+     named here so section 20's no-new-shadow-literal rule actually holds. */
+  --arq-shadow-menu: 0 4px 16px rgb(0 0 0 / 18%);
+
+  /* Interaction-foundation motion vocabulary (docs/components + section 20's
+     restraint rules): every product-UI transition must use one of these
+     durations and the standard ease. `fast` is 120ms because that is the value
+     every shipped transition already used as a literal (modal-dialog.css,
+     workspace-shell.css) - promoting, not changing. No `transition: all`,
+     no decorative bounce, no ambient movement in editor UI. */
+  --arq-motion-instant: 0ms;
+  --arq-motion-micro: 90ms;
+  --arq-motion-fast: 120ms;
+  --arq-motion-normal: 180ms;
+  --arq-motion-deliberate: 260ms;
+  --arq-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --arq-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --arq-ease-exit: cubic-bezier(0.4, 0, 1, 1);
 }
 
 @media (prefers-color-scheme: dark) {

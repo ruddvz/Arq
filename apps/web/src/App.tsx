@@ -26,6 +26,9 @@ import {
   type ModelPanelSelectionState,
   type CommandPaletteEntry,
   type ToolRailCategory,
+  CommandFeedbackRegion,
+  createCommandFeedbackStore,
+  isEditableEventTarget,
 } from '@arq/design-system';
 import {
   CLOSED_SHEET_STATE,
@@ -442,6 +445,27 @@ export function App(): JSX.Element {
     );
   }, [modeState.mode]);
 
+  /**
+   * W135 command feedback: concise, factual outcome messages published only
+   * after the semantic operation actually happened. The store caps and
+   * groups so repeated tool use can never grow an unbounded queue; the
+   * region announces politely without stealing focus. Note operations are
+   * demo bookkeeping, not command outcomes, and stay silent.
+   */
+  const feedbackStoreRef = useRef(createCommandFeedbackStore());
+
+  const feedbackForOperation = (operation: WorkspaceOperation): string | null => {
+    if (operation.kind === 'add-walls') {
+      return operation.walls.length === 1 ? 'Wall drawn' : `${operation.walls.length} walls drawn`;
+    }
+    if (operation.kind === 'remove-walls') {
+      return operation.wallIds.length === 1
+        ? 'Wall deleted'
+        : `${operation.wallIds.length} walls deleted`;
+    }
+    return null;
+  };
+
   /** Applies a typed operation to the plan document, records its real inverse, journals it. */
   const performOperation = useCallback(
     (operation: WorkspaceOperation) => {
@@ -453,6 +477,13 @@ export function App(): JSX.Element {
       setDrawnWalls(applyOperation(current, operation));
       setHistoryVersion((v) => v + 1);
       journalOperation(operation);
+      // Published after the model applied and the inverse is recorded - the
+      // semantic commit is real. Persistence has its own honest channel
+      // (the status bar's journal state), deliberately not conflated here.
+      const message = feedbackForOperation(operation);
+      if (message !== null) {
+        feedbackStoreRef.current.publish('success', message, Date.now());
+      }
     },
     [journalOperation],
   );
@@ -462,6 +493,7 @@ export function App(): JSX.Element {
     if (inverse !== null) {
       setDrawnWalls(applyOperation(drawnWallsRef.current, inverse));
       journalOperation(inverse);
+      feedbackStoreRef.current.publish('info', 'Undone', Date.now());
     }
     setHistoryVersion((v) => v + 1);
   }, [journalOperation]);
@@ -471,6 +503,7 @@ export function App(): JSX.Element {
     if (forward !== null) {
       setDrawnWalls(applyOperation(drawnWallsRef.current, forward));
       journalOperation(forward);
+      feedbackStoreRef.current.publish('info', 'Redone', Date.now());
     }
     setHistoryVersion((v) => v + 1);
   }, [journalOperation]);
@@ -485,12 +518,12 @@ export function App(): JSX.Element {
   /*
    * §4.3 gate on the one committing edit this build has: a finished wall
    * chain is validated against @arq/validation's rules before it becomes
-   * an operation. Errors block the commit and surface as a plain-language
-   * notice; warnings (e.g. an exact duplicate wall) commit but tell the
-   * user what happened. Rejected input leaves committed state unchanged.
+   * an operation. Errors block the commit and surface through the command
+   * feedback region as a real failure; warnings (e.g. an exact duplicate
+   * wall) commit but tell the user what happened. Rejected input leaves
+   * committed state unchanged - failure is never converted into success
+   * because a preview appeared.
    */
-  const [validationNotice, setValidationNotice] = useState<ValidationMessage | null>(null);
-
   const handleCommitWallSegments = useCallback(
     (segments: readonly { readonly start: WorldPoint; readonly end: WorldPoint }[]) => {
       // Identity is the document's concern, not the canvas's: ids are
@@ -506,11 +539,23 @@ export function App(): JSX.Element {
       });
       const messages = validateWallSegments(walls, drawnWallsRef.current);
       if (hasErrors(messages)) {
-        setValidationNotice(messages.find((m) => m.severity === 'error') ?? null);
+        const error = messages.find((m) => m.severity === 'error');
+        feedbackStoreRef.current.publish(
+          'error',
+          error !== undefined ? `${error.title}. ${error.explanation}` : 'Wall rejected',
+          Date.now(),
+        );
         return;
       }
       performOperation({ kind: 'add-walls', walls });
-      setValidationNotice(messages[0] ?? null);
+      const warning = messages[0];
+      if (warning !== undefined) {
+        feedbackStoreRef.current.publish(
+          'info',
+          `${warning.title}. ${warning.explanation}`,
+          Date.now(),
+        );
+      }
     },
     [performOperation],
   );
@@ -554,10 +599,7 @@ export function App(): JSX.Element {
    */
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent): void {
-      const target = event.target;
-      const textFieldFocused =
-        target instanceof HTMLElement &&
-        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
+      const textFieldFocused = isEditableEventTarget(event.target);
 
       const probeEvent = {
         key: event.key,
@@ -588,6 +630,21 @@ export function App(): JSX.Element {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         setCommandPaletteOpen(true);
+        return;
+      }
+
+      // Registry `undo`/`redo`: Cmd/Ctrl+Z and Cmd/Ctrl+Shift+Z - the
+      // bindings workspace-keyboard-map.json and keyboard-baseline.ts have
+      // documented all along, finally handled. shouldHandleShortcut already
+      // keeps these away from text fields, so native input undo still works
+      // while typing in the wall HUD or a rename field.
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        if (event.shiftKey) {
+          handleRedo();
+        } else {
+          handleUndo();
+        }
         return;
       }
 
@@ -1129,44 +1186,12 @@ export function App(): JSX.Element {
           so it sits beside WorkspaceRoot rather than inside a layout slot. */}
       <FileOpenPanel isOpen={fileOpenPanelOpen} onOpenChange={setFileOpenPanelOpen} />
 
-      {validationNotice !== null && (
-        <div
-          role="status"
-          style={{
-            position: 'fixed',
-            bottom: '2.5rem',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 9,
-            maxWidth: '36rem',
-            padding: '0.625rem 0.875rem',
-            background: 'var(--arq-ui-surface, #fff)',
-            border: `1px solid ${
-              validationNotice.severity === 'error'
-                ? 'var(--arq-ui-text, #000)'
-                : 'var(--arq-ui-border, #888)'
-            }`,
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-            fontSize: '0.8125rem',
-            display: 'flex',
-            gap: '0.75rem',
-            alignItems: 'baseline',
-          }}
-        >
-          <span>
-            <strong>{validationNotice.title}.</strong> {validationNotice.explanation}{' '}
-            {validationNotice.suggestedActions[0]}
-          </span>
-          <button
-            type="button"
-            onClick={() => setValidationNotice(null)}
-            aria-label="Dismiss message"
-            style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '1em' }}
-          >
-            ✕
-          </button>
-        </div>
-      )}
+      {/* W135 ToastRegion replaces the previous ad-hoc validation notice,
+          which sat at zIndex 9 (below every menu and the modal backdrop) and
+          referenced three custom properties that never existed. Validation
+          failures, commit successes and undo/redo outcomes all flow through
+          the one capped, grouped, auto-expiring queue. */}
+      <CommandFeedbackRegion store={feedbackStoreRef.current} />
 
       {historyVersion > 0 && (
         <p

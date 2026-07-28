@@ -148,3 +148,55 @@ describe('resolveNumericOverlayPoint', () => {
     expect(point.y).toBeCloseTo(1, 10);
   });
 });
+
+describe('setFieldText (DOM-input path)', () => {
+  it('replaces the whole field text and focuses the field', () => {
+    const overlay = createNumericOverlay();
+    overlay.setFieldText('distance', '3500');
+    expect(overlay.snapshot()).toEqual({ field: 'distance', distanceText: '3500', angleText: '' });
+  });
+
+  it('refuses invalid text and leaves the state unchanged', () => {
+    const overlay = createNumericOverlay();
+    overlay.setFieldText('distance', '350');
+    overlay.setFieldText('distance', '35w');
+    expect(overlay.snapshot().distanceText).toBe('350');
+  });
+
+  it('accepts in-progress metric suffixes while typing', () => {
+    const overlay = createNumericOverlay();
+    overlay.setFieldText('distance', '3.5 c');
+    expect(overlay.snapshot().distanceText).toBe('3.5 c');
+    overlay.setFieldText('distance', '3.5 cm');
+    expect(overlay.snapshot().distanceText).toBe('3.5 cm');
+  });
+
+  it('clears a field with empty text', () => {
+    const overlay = createNumericOverlay();
+    overlay.setFieldText('distance', '350');
+    overlay.setFieldText('distance', '');
+    expect(overlay.snapshot().distanceText).toBe('');
+  });
+});
+
+describe('parseNumericOverlay with metric units (ARQ-054 reuse)', () => {
+  it('parses a plain number as millimetres exactly as before', () => {
+    const overlay = createNumericOverlay();
+    overlay.setFieldText('distance', '3500');
+    expect(parseNumericOverlay(overlay.snapshot()).distance).toBe(3500);
+  });
+
+  it('parses metre and centimetre suffixes through parseMetricLength', () => {
+    const overlay = createNumericOverlay();
+    overlay.setFieldText('distance', '3.5m');
+    expect(parseNumericOverlay(overlay.snapshot()).distance).toBe(3500);
+    overlay.setFieldText('distance', '350 cm');
+    expect(parseNumericOverlay(overlay.snapshot()).distance).toBe(3500);
+  });
+
+  it('parses a partial suffix to null rather than guessing', () => {
+    const overlay = createNumericOverlay();
+    overlay.setFieldText('distance', '3.5 c');
+    expect(parseNumericOverlay(overlay.snapshot()).distance).toBeNull();
+  });
+});

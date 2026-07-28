@@ -22,8 +22,26 @@
 
 import type { WorldPoint } from '@arq/geometry-2d';
 import { worldPoint } from '@arq/geometry-2d';
+import { parseMetricLength } from './metric-numeric-input';
 
 export type NumericOverlayField = 'distance' | 'angle';
+
+/**
+ * Whole-text validity while the user is mid-edit: everything a keystroke
+ * sequence toward a parseable value passes through. Distance follows
+ * parseMetricLength's grammar (digits, one dot, optional space, optional
+ * mm/cm/m suffix - partial suffixes like a lone 'c' are valid *in-progress*
+ * states even though they do not parse yet); angle is degrees with an
+ * optional leading minus. This is what lets a DOM input support selection
+ * and replacement (setFieldText) without a second parser: the text is
+ * validated here and parsed only by parseMetricLength / Number.
+ */
+const DISTANCE_TEXT_PATTERN = /^\d*\.?\d*\s?(m|mm|c|cm)?$/i;
+const ANGLE_TEXT_PATTERN = /^-?\d*\.?\d*$/;
+
+export function isValidOverlayFieldText(field: NumericOverlayField, text: string): boolean {
+  return field === 'distance' ? DISTANCE_TEXT_PATTERN.test(text) : ANGLE_TEXT_PATTERN.test(text);
+}
 
 export interface NumericOverlayState {
   readonly field: NumericOverlayField | null;
@@ -32,16 +50,7 @@ export interface NumericOverlayState {
 }
 
 function isValidChar(field: NumericOverlayField, text: string, char: string): boolean {
-  if (char >= '0' && char <= '9') {
-    return true;
-  }
-  if (char === '.') {
-    return !text.includes('.');
-  }
-  if (char === '-' && field === 'angle') {
-    return text === '';
-  }
-  return false;
+  return isValidOverlayFieldText(field, text + char);
 }
 
 export function createNumericOverlay() {
@@ -111,7 +120,26 @@ export function createNumericOverlay() {
     return snapshot();
   }
 
-  return { snapshot, focusField, typeChar, backspace, escape, reset };
+  /**
+   * Replaces a field's whole text - the DOM-input path (select-all + retype,
+   * paste, IME commit) as opposed to typeChar's per-keystroke path. Invalid
+   * text leaves the state unchanged, so a controlled input simply refuses
+   * the edit. Focuses the field as a side effect: replacing text is editing.
+   */
+  function setFieldText(target: NumericOverlayField, text: string): NumericOverlayState {
+    if (!isValidOverlayFieldText(target, text)) {
+      return snapshot();
+    }
+    field = target;
+    if (target === 'distance') {
+      distanceText = text;
+    } else {
+      angleText = text;
+    }
+    return snapshot();
+  }
+
+  return { snapshot, focusField, typeChar, backspace, escape, reset, setFieldText };
 }
 
 export interface ParsedNumericOverlay {
@@ -119,12 +147,18 @@ export interface ParsedNumericOverlay {
   readonly angleRadians: number | null;
 }
 
-/** Parses typed text into validated numbers; an empty or non-numeric field parses to null (use the fallback). Distance must be non-negative. */
+/**
+ * Parses typed text into validated numbers; an empty or non-parseable field
+ * parses to null (use the cursor-derived fallback). Distance goes through
+ * parseMetricLength (ARQ-054) - plain numbers stay millimetres exactly as
+ * before, and mm/cm/m suffixes now resolve ('3.5m' -> 3500) - one parser,
+ * not a HUD-local reimplementation. Angle is degrees -> radians.
+ */
 export function parseNumericOverlay(state: NumericOverlayState): ParsedNumericOverlay {
-  const distance = state.distanceText === '' ? NaN : Number(state.distanceText);
+  const distance = state.distanceText === '' ? null : parseMetricLength(state.distanceText);
   const angleDegrees = state.angleText === '' ? NaN : Number(state.angleText);
   return {
-    distance: Number.isFinite(distance) && distance >= 0 ? distance : null,
+    distance: distance !== null && Number.isFinite(distance) && distance >= 0 ? distance : null,
     angleRadians: Number.isFinite(angleDegrees) ? (angleDegrees * Math.PI) / 180 : null,
   };
 }

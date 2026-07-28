@@ -45,13 +45,13 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .arq-modal-overlay[data-entering] {
-    animation: arq-overlay-fade-in 120ms ease-out;
+    animation: arq-overlay-fade-in var(--arq-motion-fast) var(--arq-ease-standard);
   }
   .arq-modal-overlay[data-exiting] {
-    animation: arq-overlay-fade-out 120ms ease-in;
+    animation: arq-overlay-fade-out var(--arq-motion-fast) var(--arq-ease-exit);
   }
   .arq-modal[data-entering] {
-    animation: arq-dialog-rise-in 120ms ease-out;
+    animation: arq-dialog-rise-in var(--arq-motion-fast) var(--arq-ease-standard);
   }
 }
 

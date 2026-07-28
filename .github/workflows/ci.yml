@@ -27,6 +27,11 @@ jobs:
       # Package 3.0/4.0 workspace registries: integrity fails the build,
       # designed-vs-built coverage is printed for the log only.
       - run: pnpm check:workspace-registries
+      # Interaction Foundation 1.0: rule-driven editor dependency boundaries
+      # (quality/editor-dependency-boundaries.json) - Lenis-style scroll
+      # hijacking, duplicate accessibility foundations, and parallel
+      # state/animation frameworks fail the build in editor-critical paths.
+      - run: pnpm check:editor-dependency-boundaries
 
   test:
     runs-on: ubuntu-latest

@@ -209,7 +209,13 @@
       ],
       "minLane": "L3",
       "impacts": ["dependencies", "security", "build", "performance"],
-      "evidence": ["workspace_registry", "dependency_licence", "unit", "build"]
+      "evidence": [
+        "workspace_registry",
+        "dependency_licence",
+        "unit",
+        "build",
+        "editor_dependency_boundaries"
+      ]
     },
     {
       "id": "control-plane",

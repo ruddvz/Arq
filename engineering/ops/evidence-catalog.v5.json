@@ -51,6 +51,13 @@
       "state": "available"
     },
     {
+      "id": "editor_dependency_boundaries",
+      "kind": "command",
+      "command": "pnpm check:editor-dependency-boundaries",
+      "packageScript": "check:editor-dependency-boundaries",
+      "state": "available"
+    },
+    {
       "id": "rust",
       "kind": "command",
       "command": "pnpm rust:fmt-check && pnpm rust:clippy && pnpm rust:test",
