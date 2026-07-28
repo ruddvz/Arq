@@ -1,9 +1,14 @@
 name: CI
 
+# push covers the actual default branch (this repository's default is the
+# long-lived claude/arq-cad-platform-research-ba8rav branch, not main);
+# merge_group is present so a merge queue can be enabled later without a
+# coverage gap — see engineering/33_IMPLEMENTATION_HANDOFF.md Phase 2.
 on:
   pull_request:
+  merge_group:
   push:
-    branches: [main]
+    branches: [claude/arq-cad-platform-research-ba8rav]
 
 jobs:
   lint-and-typecheck:

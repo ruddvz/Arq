@@ -40,6 +40,18 @@ docs/product/voice/PACKAGE-MANIFEST.json
 docs/product/voice/deploy-pages.fragment.yml
 docs/product/voice/marketing-claim-test.fragment.ts
 
+# Engineering OS 5.0 gate runtime artifacts. The engineering-gate workflow
+# writes classification/evidence/decision records into the workspace and
+# downloads them between jobs (.engineering-artifacts/); the selected-evidence
+# job then runs `pnpm format:check` in that same workspace, so these transient
+# machine records must not count as source style violations. They are written
+# by JSON.stringify, not authored.
+.engineering-artifacts/
+/engineering-classification.json
+/engineering-selected-evidence.json
+/engineering-evidence-decision.json
+/.engineering-changed-files
+
 # Build output.
 **/dist/
 **/coverage/

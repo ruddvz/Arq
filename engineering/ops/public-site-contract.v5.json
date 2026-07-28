@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "site": {
+    "sourceRoot": "apps/marketing/src",
+    "outputRoot": "apps/marketing/dist",
+    "deploymentWorkflow": ".github/workflows/deploy-pages.yml",
+    "baseUrl": "https://ruddvz.github.io/Arq/"
+  },
+  "proofOrder": [
+    "Validate source claims through Arq Language System 4.1.",
+    "Build the exact static artifact with SITE_BASE_PATH=/Arq and SITE_ORIGIN=https://ruddvz.github.io.",
+    "Run rendered-artifact route and phrase verification before upload.",
+    "Deploy the artifact through the protected Pages workflow.",
+    "Verify the deployed route set and commit-bound proof after deployment."
+  ],
+  "requiredProperties": [
+    "A claim scanner must run before any context-refresh command.",
+    "Route coverage must include every public source route and the 404 page.",
+    "The deployed proof must record the commit and artifact identity.",
+    "An unresolved conflict-registry record prohibits a promotional current-tense claim.",
+    "A local journal, native .arq file, and compatible-but-not-opened file state must not be collapsed in public copy."
+  ],
+  "knownBaselineFindings": {
+    "auditedAt": "2026-07-27",
+    "auditedCommit": "e1aa1018b0ba8c3c3f9cd64bb34edb38db7e220d",
+    "resolvedBy": "Arq Language System 4.1 (PR #283): claim bindings, editorial policy, and the rendered/deployed proof gates now audit the built HTML and the live site on every deployment.",
+    "visibleEmDashesAcrossAuditedRoutes": {
+      "atAudit": 84,
+      "current": 0,
+      "enforcedBy": "arq:language:audit:ci and arq:language:site:build:verify"
+    },
+    "claimRisk": {
+      "atAudit": "The public site contained statements that exceeded evidenced current product behavior for local files, opening, 3D, interop, security, and pricing.",
+      "current": "Claim bindings pass (arq:language:claims:verify, 35 bindings; arq:language:public:verify, 18 sources) and unresolved conflicts still prohibit promotional current-tense claims.",
+      "enforcedBy": "arq:language:claims:verify and arq:language:conflicts:verify"
+    }
+  }
+}

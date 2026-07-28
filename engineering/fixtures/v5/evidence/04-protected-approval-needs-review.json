@@ -1,0 +1,8 @@
+{
+  "classification": {
+    "required_evidence": ["protected_l4_approval"],
+    "manual_review_required": true
+  },
+  "jobs": { "protected_l4_approval": "skipped" },
+  "expected": { "decision": "needs_review", "needsReviewEvidence": ["protected_l4_approval"] }
+}

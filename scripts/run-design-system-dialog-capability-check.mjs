@@ -147,19 +147,28 @@ async function run() {
     }
     const focusTrapHeld = tabStopsInsideDialog.every(Boolean);
 
+    // React Aria restores opener focus during the overlay's unmount cleanup,
+    // which can land a frame after the dialog leaves the DOM - so waiting for
+    // "hidden" and then sampling document.activeElement once is a race (seen
+    // failing ~1 in 4 runs). Poll instead: a genuine restore failure still
+    // fails after the timeout; only the one-frame gap is absorbed.
+    const focusReturnsToTrigger = async () => {
+      const handle = await commandButton.elementHandle();
+      return page
+        .waitForFunction((el) => el === document.activeElement, handle, { timeout: 2000 })
+        .then(() => true)
+        .catch(() => false);
+    };
+
     await page.keyboard.press('Escape');
     await dialog.waitFor({ state: 'hidden', timeout: 5000 });
-    const focusReturnedAfterEscape = await commandButton.evaluate(
-      (el) => el === document.activeElement,
-    );
+    const focusReturnedAfterEscape = await focusReturnsToTrigger();
 
     await commandButton.click();
     await dialog.waitFor({ state: 'visible', timeout: 5000 });
     await page.mouse.click(10, 10);
     await dialog.waitFor({ state: 'hidden', timeout: 5000 });
-    const focusReturnedAfterOutsideClick = await commandButton.evaluate(
-      (el) => el === document.activeElement,
-    );
+    const focusReturnedAfterOutsideClick = await focusReturnsToTrigger();
 
     const ok =
       shellControlsCssApplied &&

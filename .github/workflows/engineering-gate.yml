@@ -1,0 +1,170 @@
+# Engineering OS 5.0 deterministic gate — installed in SHADOW MODE.
+#
+# Adapted from engineering/../templates/.github/workflows/engineering-gate.v5.reference.yml
+# per ops/installation-map.v5.json (mode: review-and-adapt). Differences from the
+# reference: pnpm/action-setup carries no explicit version (package.json's
+# packageManager field pins pnpm@9), matching every other workflow in this repo;
+# and the classification/evidence/decision files are written WITHOUT a leading
+# dot — the reference template uploaded dot-prefixed files, which
+# actions/upload-artifact@v4 silently excludes by default (hidden-file policy),
+# so every classify run failed at the upload step with "No files were found".
+#
+# Shadow mode means: this workflow runs on every PR and merge-group but is NOT a
+# required check. Per 33_IMPLEMENTATION_HANDOFF.md Phase 3, only after the shadow
+# evidence is reliable on representative PRs should the final `engineering-gate`
+# job be made required for the default branch — require that single job, not the
+# conditionally skipped sub-jobs. The `arq-critical-change` environment must be
+# configured as protected (designated reviewers, no broad bypass) before L4
+# approval semantics are real — until then its approval is advisory.
+name: Engineering Gate
+
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: engineering-gate-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    outputs:
+      lane: ${{ steps.classify.outputs.lane }}
+      required_evidence: ${{ steps.classify.outputs.required_evidence }}
+      needs_l4_approval: ${{ steps.classify.outputs.needs_l4_approval }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Classify the complete review diff
+        id: classify
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            base_sha="${{ github.event.pull_request.base.sha }}"
+          else
+            base_sha="${{ github.event.merge_group.base_sha }}"
+          fi
+          head_sha="$GITHUB_SHA"
+          git cat-file -e "$base_sha^{commit}"
+          git diff --name-only "$base_sha" "$head_sha" > .engineering-changed-files
+          node engineering/tools/engineering/classify-change.mjs \
+            --map engineering/ops/change-map.v5.json \
+            --files-file .engineering-changed-files \
+            --base-sha "$base_sha" \
+            --head-sha "$head_sha" \
+            --output engineering-classification.json \
+            --github-output "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: engineering-classification
+          path: engineering-classification.json
+          if-no-files-found: error
+
+  preflight:
+    needs: classify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: node engineering/tools/engineering/verify-policy.mjs --root engineering
+      - run: node engineering/tools/engineering/run-fixtures.mjs
+      - run: node engineering/tools/engineering/verify-engineering-context.mjs --root engineering --repo-root .
+
+  selected-evidence:
+    needs: [classify, preflight]
+    runs-on: ubuntu-latest
+    steps:
+      # Full history: the repository_binding evidence verifies that the audited
+      # baseline commit is an ancestor of HEAD, which a shallow clone cannot see.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v4
+        with:
+          name: engineering-classification
+          path: .engineering-artifacts/classification
+      - name: Run only the selected approved evidence commands
+        run: >-
+          node engineering/tools/engineering/run-selected-evidence.mjs
+          --classification .engineering-artifacts/classification/engineering-classification.json
+          --catalog engineering/ops/evidence-catalog.v5.json
+          --repo-root .
+          --output engineering-selected-evidence.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: engineering-selected-evidence
+          path: engineering-selected-evidence.json
+          if-no-files-found: error
+
+  critical-approval:
+    needs: classify
+    if: needs.classify.outputs.needs_l4_approval == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: arq-critical-change
+    steps:
+      - name: Confirm protected critical-change approval
+        run: echo "Protected Environment approval completed."
+
+  engineering-gate:
+    if: always()
+    needs: [classify, preflight, selected-evidence, critical-approval]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/download-artifact@v4
+        with:
+          name: engineering-classification
+          path: .engineering-artifacts/classification
+      - uses: actions/download-artifact@v4
+        with:
+          name: engineering-selected-evidence
+          path: .engineering-artifacts/evidence
+      - name: Reject failed prerequisite jobs
+        shell: bash
+        env:
+          CLASSIFY: ${{ needs.classify.result }}
+          PREFLIGHT: ${{ needs.preflight.result }}
+          SELECTED_EVIDENCE: ${{ needs.selected-evidence.result }}
+        run: |
+          set -euo pipefail
+          test "$CLASSIFY" = success
+          test "$PREFLIGHT" = success
+          test "$SELECTED_EVIDENCE" = success
+      - name: Evaluate evidence and protected approval
+        run: >-
+          node engineering/tools/engineering/verify-evidence.mjs
+          --classification .engineering-artifacts/classification/engineering-classification.json
+          --catalog engineering/ops/evidence-catalog.v5.json
+          --jobs-file .engineering-artifacts/evidence/engineering-selected-evidence.json
+          --job protected_l4_approval=${{ needs['critical-approval'].result }}
+          --output engineering-evidence-decision.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: engineering-evidence-decision
+          path: engineering-evidence-decision.json
+          if-no-files-found: warn

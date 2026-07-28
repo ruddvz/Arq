@@ -1,0 +1,9 @@
+{
+  "files": ["packages/operations/src/apply.ts"],
+  "expected": {
+    "lane": "L3",
+    "impactsInclude": ["document", "persistence", "recovery"],
+    "evidenceInclude": ["browser_canvas2d"],
+    "dependencyEdgesInclude": ["operations-to-document-and-recovery"]
+  }
+}

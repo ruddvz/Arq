@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "targetRepository": "ruddvz/Arq",
+  "copies": [
+    {
+      "from": "ops",
+      "to": "engineering/ops"
+    },
+    {
+      "from": "tools/engineering",
+      "to": "engineering/tools/engineering"
+    },
+    {
+      "from": "fixtures/v5",
+      "to": "engineering/fixtures/v5"
+    },
+    {
+      "from": "templates/ops",
+      "to": "engineering/templates/ops"
+    },
+    {
+      "from": "00-audit",
+      "to": "engineering/00-audit"
+    },
+    {
+      "from": "30_ZEUS_AND_ENGINEERING_AUTHORITY.md",
+      "to": "engineering/30_ZEUS_AND_ENGINEERING_AUTHORITY.md"
+    },
+    {
+      "from": "31_PUBLIC_SITE_AND_LANGUAGE_INTERLOCK.md",
+      "to": "engineering/31_PUBLIC_SITE_AND_LANGUAGE_INTERLOCK.md"
+    },
+    {
+      "from": "32_PROOF_GAPS_AND_CLOSURE_PLAN.md",
+      "to": "engineering/32_PROOF_GAPS_AND_CLOSURE_PLAN.md"
+    },
+    {
+      "from": "33_IMPLEMENTATION_HANDOFF.md",
+      "to": "engineering/33_IMPLEMENTATION_HANDOFF.md"
+    },
+    {
+      "from": "34_LIMITS_AND_OWNER_DECISIONS.md",
+      "to": "engineering/34_LIMITS_AND_OWNER_DECISIONS.md"
+    },
+    {
+      "from": "35_PRODUCT_AND_UIUX_REMEDIATION.md",
+      "to": "engineering/35_PRODUCT_AND_UIUX_REMEDIATION.md"
+    }
+  ],
+  "workflowReferences": [
+    {
+      "from": "templates/.github/workflows/engineering-gate.v5.reference.yml",
+      "to": ".github/workflows/engineering-gate.yml",
+      "mode": "review-and-adapt"
+    },
+    {
+      "from": "templates/.github/workflows/deploy-pages.v5.fragment.yml",
+      "to": ".github/workflows/deploy-pages.yml",
+      "mode": "merge-into-existing"
+    }
+  ],
+  "requiredPackageScripts": {
+    "engineering:policy": "node engineering/tools/engineering/verify-policy.mjs --root engineering",
+    "engineering:fixtures": "node engineering/tools/engineering/run-fixtures.mjs",
+    "engineering:context:verify": "node engineering/tools/engineering/verify-engineering-context.mjs --root engineering --repo-root .",
+    "engineering:context:build": "node engineering/tools/engineering/build-engineering-context.mjs --root engineering --repo-root .",
+    "engineering:bindings": "node engineering/tools/engineering/verify-repo-bindings.mjs --repo-root . --package-root engineering --strict"
+  },
+  "notes": [
+    "Do not copy the supplied workflow files blindly. Merge them into the actual branch, environment, and Pages configuration in a reviewable PR.",
+    "Do not add a required check until the workflow has run successfully in shadow mode on representative pull requests.",
+    "Arq Language System 4.1 is installed (docs/product/voice, scripts/verify-arq-*); the public-site language evidence entries are enabled and must stay bound to those scripts and the deploy-pages verification jobs."
+  ]
+}

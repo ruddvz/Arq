@@ -1,0 +1,7 @@
+{
+  "files": ["NOTICE"],
+  "expected": {
+    "lane": "L1",
+    "manualReviewRequired": false
+  }
+}

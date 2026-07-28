@@ -1,6 +1,29 @@
-# Replace placeholders after team assignment.
-/docs/ @REPLACE
-/packages/geometry-2d/ @REPLACE
-/packages/bim-core/ @REPLACE
-/packages/project-format/ @REPLACE
-/packages/security/ @REPLACE
+# Code ownership for review routing. @ruddvz is the repository owner and the
+# only maintainer with authority over protected surfaces today; replace or
+# extend entries with teams as maintainers are added.
+#
+# Note: ownership rules only enforce anything once branch protection requires
+# code-owner review — see engineering/33_IMPLEMENTATION_HANDOFF.md Phase 2/3.
+
+# Product-truth and architecture documents.
+/docs/ @ruddvz
+
+# Core geometry and document semantics.
+/packages/geometry-2d/ @ruddvz
+/packages/bim-core/ @ruddvz
+/packages/project-format/ @ruddvz
+
+# Security policy and threat models (root directory; there is no
+# packages/security workspace).
+/security/ @ruddvz
+
+# Control plane: CI workflows, code ownership itself, and the Engineering
+# OS 5.0 deterministic gate (classified L4 by engineering/ops/change-map.v5.json).
+/.github/ @ruddvz
+/engineering/ @ruddvz
+
+# Untrusted-file ingress and persistence surfaces (L4 in the change map).
+/packages/file-ingress/ @ruddvz
+/packages/arqfs/ @ruddvz
+/packages/local-storage/ @ruddvz
+/workers/ @ruddvz

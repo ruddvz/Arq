@@ -1,0 +1,16 @@
+{
+  "files": ["docs/architecture/notes.md"],
+  "semantic": [
+    {
+      "domain": "security",
+      "minLane": "L3",
+      "evidence": ["dependency_licence"],
+      "reason": "The documentation change changes a security policy statement."
+    }
+  ],
+  "expected": {
+    "lane": "L3",
+    "impactsInclude": ["documentation", "security"],
+    "evidenceInclude": ["dependency_licence"]
+  }
+}

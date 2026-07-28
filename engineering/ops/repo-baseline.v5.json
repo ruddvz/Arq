@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "baselineKind": "audited repository snapshot",
+  "auditedAt": "2026-07-28",
+  "repository": {
+    "fullName": "ruddvz/Arq",
+    "defaultBranch": "claude/arq-cad-platform-research-ba8rav",
+    "commit": "9e6b1d55e4e52af43965d34be21f0e5853a559fe",
+    "publicSite": "https://ruddvz.github.io/Arq/"
+  },
+  "runtime": {
+    "node": "20.x",
+    "packageManager": "pnpm@9.0.0",
+    "packageManagerSource": "package.json"
+  },
+  "importantPaths": {
+    "web": "apps/web",
+    "marketing": "apps/marketing",
+    "arqfs": "packages/arqfs",
+    "localStorage": "packages/local-storage",
+    "arqfsWorker": "workers/arqfs-worker",
+    "importExportWorker": "workers/import-export-worker",
+    "workflows": ".github/workflows"
+  },
+  "notes": [
+    "This is a time-stamped audit baseline, not a claim that the repository must remain frozen.",
+    "Run the repository binding and context checks after installation. Update this snapshot through reviewed evidence when source truth changes.",
+    "Baseline advanced from e1aa1018 to 9e6b1d5 by the reviewed Engineering OS 5.0 installation PR after Arq Language System 4.1 (PR #283) merged into the default branch."
+  ]
+}

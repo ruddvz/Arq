@@ -1,0 +1,8 @@
+{
+  "classification": {
+    "required_evidence": ["unit"],
+    "manual_review_required": true
+  },
+  "jobs": { "unit": "success" },
+  "expected": { "decision": "needs_review", "needsReviewEvidence": ["protected_l4_approval"] }
+}

@@ -1,0 +1,8 @@
+{
+  "classification": {
+    "required_evidence": ["browser_journal_recovery"],
+    "manual_review_required": false
+  },
+  "jobs": { "browser_journal_recovery": "success" },
+  "expected": { "decision": "fail", "failedEvidence": ["browser_journal_recovery"] }
+}

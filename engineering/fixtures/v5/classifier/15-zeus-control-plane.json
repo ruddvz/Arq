@@ -1,0 +1,10 @@
+{
+  "files": ["scripts/zeus.mjs", ".claude/settings.json"],
+  "expected": {
+    "lane": "L4",
+    "manualReviewRequired": true,
+    "impactsInclude": ["ci_control", "security"],
+    "impactsExclude": ["unknown_runtime_surface"],
+    "evidenceInclude": ["classifier_fixtures", "policy_validation", "protected_l4_approval"]
+  }
+}

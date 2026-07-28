@@ -1,0 +1,9 @@
+{
+  "files": [".github/workflows/deploy-pages.yml"],
+  "expected": {
+    "lane": "L4",
+    "manualReviewRequired": true,
+    "impactsInclude": ["ci_control", "deployment", "security"],
+    "evidenceInclude": ["classifier_fixtures", "policy_validation", "protected_l4_approval"]
+  }
+}

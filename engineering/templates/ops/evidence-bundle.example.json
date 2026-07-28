@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "change": {
+    "base_sha": "base-sha",
+    "head_sha": "head-sha",
+    "lane": "L3",
+    "impacts": ["document", "persistence"],
+    "confidence": "high"
+  },
+  "classification": {
+    "matching_rules": ["plan-and-model-editing"],
+    "matching_dependency_edges": ["operations-to-document-and-recovery"],
+    "unknown_files": []
+  },
+  "evidence": {
+    "selected": ["unit", "browser_canvas2d"],
+    "passed": ["unit", "browser_canvas2d"],
+    "failed": [],
+    "needs_review": [],
+    "missing_mappings": []
+  },
+  "protected_approval": { "required": false, "result": "not-selected" },
+  "decision": "pass"
+}

@@ -1,0 +1,11 @@
+{
+  "files": ["docs/architecture/review-notes.md"],
+  "expected": {
+    "lane": "L1",
+    "deterministicLane": "L1",
+    "confidence": "high",
+    "manualReviewRequired": false,
+    "impactsInclude": ["documentation"],
+    "evidenceInclude": []
+  }
+}

@@ -1,0 +1,42 @@
+# Non-secret audited-state ledger. Update only after direct verification.
+github:
+  default_branch: claude/arq-cad-platform-research-ba8rav
+  required_gate: engineering-gate
+  merge_queue: not_evidenced
+  release_environment_protection: not_configured
+  codeowners: contains_unassigned_placeholders
+
+hosting:
+  provider: GitHub Pages
+  production_branch: claude/arq-cad-platform-research-ba8rav
+  production_domain: https://ruddvz.github.io/Arq/
+  preview_mode: not_evidenced
+  cache_policy: not_audited
+  service_worker: not_audited
+  worker_wasm_mime_verified: false
+
+observability:
+  provider: not_audited
+  project: not_audited
+  production_environment: production
+  release_strategy: not_audited
+  project_content_capture: deny
+  source_maps: not_audited
+
+sync:
+  active: false
+  provider: not_current
+  environment: not_current
+  protocol_version: not_current
+  retention_policy: not_current
+
+identity:
+  active: false
+  provider: not_current
+  allowed_origins_verified: false
+
+feature_delivery:
+  provider: not_audited
+  emergency_disable_mechanism: not_audited
+
+last_verified: 2026-07-27

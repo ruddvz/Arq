@@ -6,14 +6,16 @@
 # SITE_ORIGIN enables sitemap.xml, the robots Sitemap line and absolute
 # Open Graph URLs.
 #
-# Triggers: pushes that touch the site (on the default branch and on the
-# in-flight site branches so the site is visible before those PRs merge -
-# trim the extra branches once merged) plus manual dispatch.
+# Triggers: pushes that touch the site on the default branch, plus manual
+# dispatch. (The in-flight site branch triggers were trimmed after PRs #282
+# and #283 merged, as their own comments instructed.)
 #
 # Language System 4.1 adds three gates around the existing build: route
 # coverage before the build, a rendered-copy audit that writes a commit-bound
 # proof into the artifact, and a post-deployment check that reads that proof
-# and every route hash back off the published URL.
+# and every route hash back off the published URL. These are exactly the
+# controls Engineering OS 5.0's deploy-pages.v5.fragment.yml required — the
+# static-artifact and post-deploy public-site proof model is now live.
 name: Deploy website
 
 on:
@@ -21,8 +23,6 @@ on:
   push:
     branches:
       - claude/arq-cad-platform-research-ba8rav
-      - claude/repo-audit-completion-bzolr3
-      - claude/arq-language-system-4-1-l3p9fr
     paths:
       - 'apps/marketing/**'
       - 'brand/**'

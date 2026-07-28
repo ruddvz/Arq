@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Arq Release Manifest",
+  "type": "object",
+  "required": ["release_id", "created_at", "lane", "git", "evidence", "status"],
+  "properties": {
+    "release_id": { "type": "string" },
+    "created_at": { "type": "string" },
+    "lane": { "enum": ["L1", "L2", "L3", "L4"] },
+    "git": {
+      "type": "object",
+      "required": ["sha"],
+      "properties": {
+        "sha": { "type": "string" },
+        "pr": { "type": ["integer", "null"] }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "properties": {
+        "deployment_id": { "type": ["string", "null"] },
+        "deployment_url": { "type": ["string", "null"] },
+        "production_alias": { "type": ["string", "null"] },
+        "rollback_target": { "type": ["string", "null"] },
+        "worker_asset_version": { "type": ["string", "null"] },
+        "wasm_asset_version": { "type": ["string", "null"] }
+      }
+    },
+    "document_compatibility": {
+      "type": "object",
+      "properties": {
+        "affected": { "type": "boolean" },
+        "migration_ids": { "type": "array", "items": { "type": "string" } },
+        "previous_app_reads_new_document": { "type": ["boolean", "null"] },
+        "interrupted_migration_recoverable": { "type": ["boolean", "null"] },
+        "safe_containment": { "type": ["string", "null"] }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["selected", "passed", "failed", "needs_review"],
+      "properties": {
+        "selected": { "type": "array", "items": { "type": "string" } },
+        "passed": { "type": "array", "items": { "type": "string" } },
+        "failed": { "type": "array", "items": { "type": "string" } },
+        "needs_review": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "conflicts": { "type": "array", "items": { "type": "string" } },
+    "protected_approval": { "type": ["object", "null"] },
+    "status": {
+      "enum": ["candidate", "promoted", "verified", "rolled_back", "contained", "failed"]
+    }
+  }
+}
