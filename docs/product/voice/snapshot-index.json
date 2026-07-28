@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Dated package mirrors. These are useful for package validation and historical review, but the generated live context is authoritative after integration.",
+  "snapshots": [
+    {
+      "id": "repo-facts-2026-07-27",
+      "path": "02-canonical/snapshots/repo-facts-2026-07-27.json",
+      "kind": "facts",
+      "snapshotDate": "2026-07-27",
+      "repository": "ruddvz/Arq",
+      "ref": "claude/arq-cad-platform-research-ba8rav"
+    },
+    {
+      "id": "interface-2026-07-27",
+      "path": "02-canonical/snapshots/interface-snapshot-2026-07-27.json",
+      "kind": "interface",
+      "snapshotDate": "2026-07-27",
+      "repository": "ruddvz/Arq",
+      "ref": "claude/arq-cad-platform-research-ba8rav"
+    }
+  ],
+  "rules": {
+    "oneCurrentSnapshotPerKind": true,
+    "doNotHardCodeCounts": true,
+    "replaceWithNewDatedSnapshotWhenSourceShapeChanges": true
+  }
+}

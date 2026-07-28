@@ -41,10 +41,17 @@ checks, weekly render benchmark).
   `@arq/local-storage`): edits are journalled to IndexedDB and recovered on
   start-up; the shell's save state reports the journal's real condition
   (`saved`/`saving`/`recovered`/`unsaved-changes`).
-- **3D view** (`apps/web/src/ModelCanvas.tsx` over `@arq/model-renderer` +
-  `@arq/geometry-3d`): the 3D tab renders drawn walls as extruded solids in
-  real WebGL with orbit/pan/zoom/fit and raycast picking; selection is
-  shared with the plan view, so the two views cannot disagree.
+- **3D view: DISPUTED, do not cite either way.** `apps/web/src/ModelCanvas.tsx`
+  exists and `App.tsx` renders it for a `3d` tab, over `@arq/model-renderer` +
+  `@arq/geometry-3d`. No test covers that surface and no headless-browser
+  capability check exercises it, so there is no user-reachability evidence to
+  match the wall-drawing, OPFS or file-open checks. This file previously
+  asserted both a wired 3D tab and a 3D stack with zero consumers. Neither
+  assertion is authoritative. Tracked as `CONFLICT-3D-CURRENT-STATUS` in
+  `docs/product/voice/conflict-registry.json`, which blocks the claim from
+  public, support, documentation and product-AI surfaces until it is resolved.
+  Resolving it needs a browser capability check for the 3D tab, a corrected
+  statement here, and a language-context refresh.
 - **Editor libraries** (`packages/editor-shell`, `geometry-2d`,
   `plan-renderer`, `command-system`, `operations`): implemented and
   thoroughly tested; door/window/room tools and region selection exist but
@@ -56,8 +63,9 @@ checks, weekly render benchmark).
   PDF vector export, file-ingress detection/policy/staging, RoomPlan
   converter, Rust `arq-core` with WASM parity scripts. Tested as libraries;
   no import or export path runs end to end in the product yet.
-- **3D stack** (`model-renderer`, `geometry-3d`): implemented and tested,
-  zero consumers - no 3D view surface exists yet.
+- **3D stack** (`model-renderer`, `geometry-3d`): implemented and tested as
+  libraries. Their only consumer is `ModelCanvas.tsx`, whose reachability is
+  the disputed item above.
 
 ## Biggest known gaps (in rough priority order)
 
@@ -74,6 +82,18 @@ checks, weekly render benchmark).
    11 of 54 tool commands (tracked by `scripts/check-workspace-registries.mjs`,
    report-only by design).
 
+## Language and claims
+
+Public, product, support and documentation wording is governed by the Arq
+Language System 4.1 (`docs/product/voice/`, standard in
+`docs/product/VOICE-SYSTEM.md` and `docs/product/PRODUCT-COPY-PRINCIPLES.md`).
+The claim registry, conflict registry and claim bindings decide what any
+surface may state as current, and `pnpm arq:language:verify` plus the
+`language-system` CI job enforce it. The generated language context
+(`docs/product/voice/generated-repo-context.json`) is hashed from the sources
+listed in `context-contract.json`: change one of them and refresh it in the
+same commit, because CI fails on a stale context and never regenerates it.
+
 ## Open decisions
 
 - **Local persistence overlap**: ADR-0019/0024 commit to SQLite-WASM over
@@ -81,6 +101,10 @@ checks, weekly render benchmark).
   implementation named by ADR-0019's own "Dexie project database" line -
   the overlap is recorded in `docs/research/incoming/README.md` and needs
   an explicit ADR resolution before the open-project pipeline is built.
+  Tracked as `DECISION-PERSISTENCE-TIERS`; until it is decided, no surface
+  may describe a journal write as a portable `.arq` write.
+- **3D reachability**: `CONFLICT-3D-CURRENT-STATUS`, described above. Needs a
+  browser capability check before any surface states it either way.
 - Licence for Arq itself: undecided (`LICENSE-DECISION-REQUIRED.md`).
 - Everything in `remaining/REMAINING-WORK.md` (people, hardware, legal,
   market evidence - work that cannot be closed from inside the repository).

@@ -7,8 +7,13 @@
 # Open Graph URLs.
 #
 # Triggers: pushes that touch the site (on the default branch and on the
-# audit/completion branch so the site is visible before that PR merges -
-# trim the extra branch once merged) plus manual dispatch.
+# in-flight site branches so the site is visible before those PRs merge -
+# trim the extra branches once merged) plus manual dispatch.
+#
+# Language System 4.1 adds three gates around the existing build: route
+# coverage before the build, a rendered-copy audit that writes a commit-bound
+# proof into the artifact, and a post-deployment check that reads that proof
+# and every route hash back off the published URL.
 name: Deploy website
 
 on:
@@ -17,9 +22,14 @@ on:
     branches:
       - claude/arq-cad-platform-research-ba8rav
       - claude/repo-audit-completion-bzolr3
+      - claude/arq-language-system-4-1-l3p9fr
     paths:
       - 'apps/marketing/**'
       - 'brand/**'
+      - 'docs/product/voice/**'
+      - 'scripts/verify-arq-rendered-public-site.mjs'
+      - 'scripts/verify-arq-deployed-public-site.mjs'
+      - 'scripts/arq-language-patterns.mjs'
       - '.github/workflows/deploy-pages.yml'
 
 permissions:
@@ -43,10 +53,24 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Route coverage runs before the build: a content module that is missing
+      # from the route map, the registry or the public-copy inventory should
+      # stop the deployment, not ship as a silently absent page.
+      - name: Verify public route coverage
+        run: pnpm arq:language:routes:verify
       - run: pnpm --filter @arq/marketing build
         env:
           SITE_BASE_PATH: /Arq
           SITE_ORIGIN: https://ruddvz.github.io
+      # Audits the rendered HTML, not the TypeScript source, then writes
+      # arq-language-site-proof.json (this exact SHA plus a sha256 per route)
+      # into the artifact so the deployed site can be checked against it.
+      - name: Verify rendered public copy and write deployment proof
+        run: >-
+          pnpm arq:language:site:build:verify
+          --site-root apps/marketing/dist
+          --write-proof
+          --commit "${{ github.sha }}"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/marketing/dist
@@ -56,6 +80,31 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  # The build artifact passing is not evidence that the live site passes. This
+  # job reads the deployed proof and every deployed route back off the Pages
+  # URL and fails unless the proof commit is exactly this run's SHA. Pages
+  # propagation is not instant, hence the retry window.
+  verify-live-language:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Verify deployed public copy matches the audited artifact
+        run: >-
+          pnpm arq:language:site:live:verify
+          --base-url "${{ needs.deploy.outputs.page_url }}"
+          --expected-commit "${{ github.sha }}"
+          --attempts 8
+          --delay-ms 5000

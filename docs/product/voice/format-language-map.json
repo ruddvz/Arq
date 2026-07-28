@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 2,
+  "source": "docs/interoperability/FORMAT-SUPPORT-MATRIX.md",
+  "formats": [
+    {
+      "id": "arq",
+      "label": ".arq",
+      "firstRole": "Native project",
+      "roadmap": "Release 1",
+      "claimRule": "Native format. Current product reachability must still be checked against STATUS/code."
+    },
+    {
+      "id": "png-jpeg",
+      "label": "PNG / JPEG",
+      "firstRole": "Underlay",
+      "roadmap": "Release 1"
+    },
+    {
+      "id": "pdf",
+      "label": "PDF",
+      "firstRole": "Underlay and vector export",
+      "roadmap": "Release 1"
+    },
+    {
+      "id": "dxf",
+      "label": "DXF",
+      "firstRole": "Linework exchange",
+      "roadmap": "Release 2"
+    },
+    {
+      "id": "ifc",
+      "label": "IFC",
+      "firstRole": "Viewing and property inspection",
+      "roadmap": "Release 2"
+    },
+    {
+      "id": "gltf-glb",
+      "label": "glTF / GLB",
+      "firstRole": "Visual exchange",
+      "roadmap": "Later"
+    },
+    {
+      "id": "bcf",
+      "label": "BCF",
+      "firstRole": "Issue exchange",
+      "roadmap": "Later"
+    },
+    {
+      "id": "step",
+      "label": "STEP",
+      "firstRole": "Selected solids",
+      "roadmap": "Later"
+    },
+    {
+      "id": "dwg",
+      "label": "DWG",
+      "firstRole": "Licensed conversion only if justified",
+      "roadmap": "Not committed"
+    },
+    {
+      "id": "rvt",
+      "label": "RVT",
+      "firstRole": "Connector or external workflow only",
+      "roadmap": "Not committed"
+    }
+  ],
+  "fidelityTerms": [
+    {
+      "id": "preserved",
+      "label": "Preserved",
+      "meaning": "Meaning/value retained."
+    },
+    {
+      "id": "converted",
+      "label": "Converted",
+      "meaning": "Mapped into a different Arq representation."
+    },
+    {
+      "id": "approximated",
+      "label": "Approximated",
+      "meaning": "Representation changed with known/measurable loss."
+    },
+    {
+      "id": "flattened",
+      "label": "Flattened",
+      "meaning": "Structured/semantic content reduced to simpler representation."
+    },
+    {
+      "id": "omitted",
+      "label": "Omitted",
+      "meaning": "Intentionally not included in output."
+    },
+    {
+      "id": "unsupported",
+      "label": "Unsupported",
+      "meaning": "No supported mapping exists."
+    },
+    {
+      "id": "opaque",
+      "label": "Retained as opaque data",
+      "meaning": "Retained without Arq interpreting its semantics."
+    },
+    {
+      "id": "failed",
+      "label": "Failed",
+      "meaning": "Processing did not complete for the item."
+    }
+  ]
+}

@@ -40,7 +40,7 @@ function footerIndex(): SafeHtml {
 }
 
 export function renderDocument(meta: PageMeta, body: SafeHtml): string {
-  const documentTitle = meta.documentTitle ?? `${meta.title} — Arq`;
+  const documentTitle = meta.documentTitle ?? `${meta.title} · Arq`;
   const page = html`<!doctype html>
     <html lang="en">
       <head>
@@ -87,12 +87,12 @@ export function renderDocument(meta: PageMeta, body: SafeHtml): string {
             <div class="footer-grid">${footerIndex()}</div>
             <div class="title-block" aria-label="Sheet information">
               <div>
-                <span class="tb-label">Project</span><span>Arq — architectural workspace</span>
+                <span class="tb-label">Project</span><span>Arq (architectural workspace)</span>
               </div>
               <div><span class="tb-label">Sheet</span><span>${meta.id} · ${meta.title}</span></div>
               <div><span class="tb-label">Revision</span><span>${REVISION}</span></div>
               <div>
-                <span class="tb-label">Status</span><span>Pre-release — in development</span>
+                <span class="tb-label">Status</span><span>Pre-release, in development</span>
               </div>
             </div>
             <p class="footer-fineprint">

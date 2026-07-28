@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 2,
+  "source": "security/RBAC-MATRIX.csv",
+  "roles": [
+    {
+      "id": "owner",
+      "label": "Owner"
+    },
+    {
+      "id": "administrator",
+      "label": "Administrator"
+    },
+    {
+      "id": "editor",
+      "label": "Editor"
+    },
+    {
+      "id": "commenter",
+      "label": "Commenter"
+    },
+    {
+      "id": "viewer",
+      "label": "Viewer"
+    }
+  ],
+  "actions": {
+    "view_project": ["owner", "administrator", "editor", "commenter", "viewer"],
+    "create_project": ["owner", "administrator", "editor"],
+    "download_archive": ["owner", "administrator", "editor"],
+    "edit_model": ["owner", "administrator", "editor"],
+    "import_content": ["owner", "administrator", "editor"],
+    "comment": ["owner", "administrator", "editor", "commenter"],
+    "create_issue": ["owner", "administrator", "editor", "commenter"],
+    "invite_member": ["owner", "administrator"],
+    "change_role": ["owner", "administrator"],
+    "create_share_link": ["owner", "administrator"],
+    "export_project": ["owner", "administrator", "editor"],
+    "archive_project": ["owner", "administrator"],
+    "delete_project": ["owner"],
+    "view_audit": ["owner", "administrator"]
+  },
+  "copyRule": "Permission denial names the required role/capability and never pretends the capability itself is unavailable."
+}

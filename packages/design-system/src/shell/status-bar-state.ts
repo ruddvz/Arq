@@ -26,14 +26,20 @@ export interface StatusBarCoordinates {
   readonly y: number;
 }
 
-/** `null` coordinates means the pointer is currently outside the canvas - shown as an em dash, not "0, 0" (which would be a real, misleading position). */
+/**
+ * `null` coordinates means the pointer is currently outside the canvas. Say so
+ * in words, the way `formatActiveSnap` and `formatSelectionCount` already do,
+ * rather than "0, 0" (a real, misleading position) or a bare dash (which a
+ * screen reader announces as nothing and which the house style keeps out of
+ * rendered copy).
+ */
 export function formatCoordinates(
   coordinates: StatusBarCoordinates | null,
   unitLabel: string,
   fractionDigits = 0,
 ): string {
   if (coordinates === null) {
-    return '—';
+    return 'Off canvas';
   }
   return `${coordinates.x.toFixed(fractionDigits)}${unitLabel}, ${coordinates.y.toFixed(fractionDigits)}${unitLabel}`;
 }

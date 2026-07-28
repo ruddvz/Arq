@@ -17,8 +17,8 @@ describe('formatCoordinates', () => {
     expect(formatCoordinates({ x: 100.456, y: 0 }, 'mm', 2)).toBe('100.46mm, 0.00mm');
   });
 
-  it('shows an em dash when the pointer is outside the canvas, never a fake (0, 0)', () => {
-    expect(formatCoordinates(null, 'mm')).toBe('—');
+  it('says the pointer is off canvas rather than reporting a fake (0, 0)', () => {
+    expect(formatCoordinates(null, 'mm')).toBe('Off canvas');
   });
 });
 

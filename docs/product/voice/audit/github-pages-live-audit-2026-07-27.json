@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-07-27",
+  "repository": "ruddvz/Arq",
+  "ref": "claude/arq-cad-platform-research-ba8rav",
+  "siteUrl": "https://ruddvz.github.io/Arq/",
+  "routeSource": "docs/pages/ROUTE-MAP.csv",
+  "method": "Each public route was opened from the route map. Visible main-page text was inspected for U+2014 and for claim, evidence and editorial risks. This is a deployed-content snapshot, not an authorship assessment.",
+  "summary": {
+    "publicRoutesChecked": 17,
+    "routesWithEmDash": 16,
+    "emDashTotal": 46,
+    "hardFinding": "The deployed site contains U+2014 in public copy. The 4.1 contract changes this from a UI-only warning into a hard source, build and live-site failure.",
+    "governanceFinding": "4.0 inventories eight marketing sources. The current route registry serves seventeen public pages plus a 404 page, so 4.0 did not yet prove complete public-copy coverage."
+  },
+  "routes": [
+    {
+      "id": "PUB-001",
+      "route": "/",
+      "sourcePath": "apps/marketing/src/content/home.ts",
+      "emDashCount": 2,
+      "riskIds": [
+        "journal-portable-file-conflation",
+        "native-open-overclaim",
+        "current-semantic-authoring",
+        "self-attestation",
+        "unbounded-evidence-claim"
+      ]
+    },
+    {
+      "id": "PUB-002",
+      "route": "/product",
+      "sourcePath": "apps/marketing/src/content/product.ts",
+      "emDashCount": 5,
+      "riskIds": ["3d-current-conflict", "volatile-count", "release-scope-presented-as-current"]
+    },
+    {
+      "id": "PUB-003",
+      "route": "/architects",
+      "sourcePath": "apps/marketing/src/content/architects.ts",
+      "emDashCount": 8,
+      "riskIds": ["lifetime-local-access", "negative-parallelism", "current-semantic-authoring"]
+    },
+    {
+      "id": "PUB-004",
+      "route": "/students",
+      "sourcePath": "apps/marketing/src/content/students.ts",
+      "emDashCount": 3,
+      "riskIds": ["browser-hardware-minimum", "current-semantic-authoring", "pricing-unknown"]
+    },
+    {
+      "id": "PUB-005",
+      "route": "/collaboration",
+      "sourcePath": "apps/marketing/src/content/collaboration.ts",
+      "emDashCount": 1,
+      "riskIds": ["planned-collaboration", "local-file-lifetime-language"]
+    },
+    {
+      "id": "PUB-006",
+      "route": "/ai",
+      "sourcePath": "apps/marketing/src/content/ai.ts",
+      "emDashCount": 5,
+      "riskIds": [
+        "ai-current-enforcement-overclaim",
+        "ui-metaphor",
+        "future-feature-presented-as-current"
+      ]
+    },
+    {
+      "id": "PUB-007",
+      "route": "/interoperability",
+      "sourcePath": "apps/marketing/src/content/interoperability.ts",
+      "emDashCount": 1,
+      "riskIds": ["end-to-end-import-overclaim", "universal-exchange", "volatile-count"]
+    },
+    {
+      "id": "PUB-008",
+      "route": "/ipad",
+      "sourcePath": "apps/marketing/src/content/ipad.ts",
+      "emDashCount": 2,
+      "riskIds": ["ipad-current-reachability", "native-arq-open"]
+    },
+    {
+      "id": "PUB-009",
+      "route": "/pricing",
+      "sourcePath": "apps/marketing/src/content/pricing.ts",
+      "emDashCount": 2,
+      "riskIds": ["pricing-unknown", "lifetime-local-access", "self-attestation"]
+    },
+    {
+      "id": "PUB-010",
+      "route": "/security",
+      "sourcePath": "apps/marketing/src/content/security.ts",
+      "emDashCount": 3,
+      "riskIds": ["no-network-data-transfer", "privacy-transport-absolute"]
+    },
+    {
+      "id": "PUB-011",
+      "route": "/docs",
+      "sourcePath": "apps/marketing/src/content/docs-index.ts",
+      "emDashCount": 1,
+      "riskIds": ["planned-help-centre", "documentation-count-volatile"]
+    },
+    {
+      "id": "PUB-012",
+      "route": "/changelog",
+      "sourcePath": "apps/marketing/src/content/changelog.ts",
+      "emDashCount": 8,
+      "riskIds": [
+        "3d-current-conflict",
+        "native-open-overclaim",
+        "volatile-count",
+        "release-log-claim-evidence"
+      ]
+    },
+    {
+      "id": "PUB-013",
+      "route": "/status",
+      "sourcePath": "apps/marketing/src/content/status.ts",
+      "emDashCount": 0,
+      "riskIds": ["lifetime-local-access", "service-status-absolute"]
+    },
+    {
+      "id": "PUB-014",
+      "route": "/contact",
+      "sourcePath": "apps/marketing/src/content/contact.ts",
+      "emDashCount": 2,
+      "riskIds": ["self-attestation", "support-channel-commitment"]
+    },
+    {
+      "id": "PUB-015",
+      "route": "/legal/privacy",
+      "sourcePath": "apps/marketing/src/content/privacy.ts",
+      "emDashCount": 1,
+      "riskIds": ["no-network-data-transfer", "privacy-policy-not-approved"]
+    },
+    {
+      "id": "PUB-016",
+      "route": "/legal/terms",
+      "sourcePath": "apps/marketing/src/content/terms.ts",
+      "emDashCount": 1,
+      "riskIds": ["legal-terms-not-approved", "future-terms-commitment"]
+    },
+    {
+      "id": "PUB-017",
+      "route": "/legal/open-source",
+      "sourcePath": "apps/marketing/src/content/open-source.ts",
+      "emDashCount": 1,
+      "riskIds": ["generated-notice-freshness"]
+    }
+  ]
+}

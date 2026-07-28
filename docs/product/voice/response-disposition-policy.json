@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Action handling that sits beside, but does not replace, the five answerability outcomes.",
+  "dispositions": {
+    "SELF_SERVICE": "Give the evidence-backed next action in product vocabulary.",
+    "QUALIFIED_GUIDANCE": "Explain the limitation or scope, then give only the safe next action.",
+    "COLLECT_MINIMUM_EVIDENCE": "Ask for the smallest safe diagnostic detail needed to continue.",
+    "CONFLICT_EXPLANATION": "State that current sources disagree, identify the safe boundary and do not choose the stronger claim.",
+    "SECURITY_HANDOFF": "Route to the approved private security channel without collecting secrets in conversation.",
+    "PROFESSIONAL_BOUNDARY": "State the boundary and direct the user to the appropriate qualified professional or authoritative source.",
+    "NO_ACTION": "Do not suggest a workaround that bypasses validation, permission, file integrity or approval controls."
+  },
+  "answerabilityToAllowedDispositions": {
+    "ANSWER": ["SELF_SERVICE", "COLLECT_MINIMUM_EVIDENCE"],
+    "QUALIFY": ["QUALIFIED_GUIDANCE", "COLLECT_MINIMUM_EVIDENCE", "NO_ACTION"],
+    "CONFLICT": ["CONFLICT_EXPLANATION", "NO_ACTION"],
+    "UNKNOWN": ["QUALIFIED_GUIDANCE", "COLLECT_MINIMUM_EVIDENCE", "NO_ACTION"],
+    "REFUSE_AUTHORITY": ["PROFESSIONAL_BOUNDARY", "SECURITY_HANDOFF", "NO_ACTION"]
+  }
+}

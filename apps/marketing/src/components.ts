@@ -4,7 +4,7 @@ import { html, type SafeHtml } from './html.js';
  * The set's shared drawing conventions.
  *
  * Pages are composed like sheets: a hero band on grid paper, then numbered
- * notes ("01 — …") the way a drawing carries general notes. The numbering is
+ * notes ("01", "02", …) the way a drawing carries general notes. The numbering is
  * generated, so a page can never skip or repeat a note number.
  */
 

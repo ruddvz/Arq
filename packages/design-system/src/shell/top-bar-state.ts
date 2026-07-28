@@ -29,19 +29,29 @@
 export type SaveState = 'no-project' | 'saved' | 'saving' | 'unsaved-changes' | 'recovered';
 export type SyncState = 'synced' | 'syncing' | 'offline' | 'sync-error';
 
-/** Section 126 ("Baseline"): "status not colour-only" - always a real word, never a colour swatch alone. */
+/**
+ * Section 126 ("Baseline"): "status not colour-only" - always a real word, never
+ * a colour swatch alone.
+ *
+ * The labels name the persistence tier. `Saved` on its own reads as "the project
+ * file was written", which no current save path does: the shell persists to a
+ * local target, not to a portable `.arq` file. The language system's save
+ * machine (docs/product/voice/state-language-map.json) fixes these labels, and
+ * ui-state-adapter-map.json binds this union's states to their canonical
+ * messages.
+ */
 export function describeSaveState(state: SaveState): string {
   switch (state) {
     case 'no-project':
       return 'No project open';
     case 'saved':
-      return 'Saved';
+      return 'Saved locally';
     case 'saving':
-      return 'Saving…';
+      return 'Saving locally…';
     case 'unsaved-changes':
       return 'Unsaved changes';
     case 'recovered':
-      return 'Recovered';
+      return 'Recovered locally';
   }
 }
 

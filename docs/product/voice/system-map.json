@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 4,
+  "system": "Arq language system",
+  "version": "4.1.0",
+  "contractVersion": "4.1.0",
+  "principle": "One product truth expressed consistently across all surfaces, with every current claim traceable to fresh evidence, every public page accountable for its claims, and every deployed public page tied to its built revision.",
+  "languageLayers": [
+    {
+      "id": "engineering",
+      "purpose": "stable internal identifiers, schemas, codes and diagnostics",
+      "mayExposeDirectly": false
+    },
+    {
+      "id": "product",
+      "purpose": "canonical user-facing labels, states and actions",
+      "mayExposeDirectly": true
+    },
+    {
+      "id": "support",
+      "purpose": "plain-language diagnosis using product vocabulary plus controlled technical detail",
+      "mayExposeDirectly": true
+    },
+    {
+      "id": "ai-proposal",
+      "purpose": "reviewable request, assumptions, operations, validation and approval language",
+      "mayExposeDirectly": true
+    }
+  ],
+  "productLayers": [
+    { "id": "project", "meaning": "semantic project identity and authoritative building data" },
+    {
+      "id": "mode",
+      "meaning": "Design, Document, Inspect, Review or Present lens over the same project"
+    },
+    { "id": "view", "meaning": "current view or view instance" },
+    { "id": "tool", "meaning": "active authoring/navigation tool" },
+    { "id": "context", "meaning": "selection, immediate controls, numeric input and state" },
+    { "id": "canvas", "meaning": "plan, 3D or sheet presentation and direct manipulation surface" }
+  ],
+  "truthStates": {
+    "PROHIBITED": "Never claim affirmatively.",
+    "CONFLICTED": "Authoritative sources disagree; do not promote a stronger claim.",
+    "UNKNOWN": "No approved current source establishes the fact.",
+    "NOT_COMMITTED": "Intentionally not committed to product scope.",
+    "DEFERRED": "Explicitly outside the current protected scope.",
+    "PLANNED": "Approved future direction, not current behaviour.",
+    "DESIGNED_GATED": "Designed surface or contract without current capability evidence.",
+    "LIBRARY_ONLY": "Implementation or adapter exists, but the user-reachable product path is not established.",
+    "CURRENT": "Reachable current behaviour backed by the required scope-specific evidence.",
+    "LOCKED": "A governed terminology or contract decision that may change only through its declared process.",
+    "VOLATILE": "Can change between builds and requires generated or fresh evidence."
+  },
+  "executionModes": [
+    { "id": "package", "rule": "Dated snapshots validate package structure only." },
+    {
+      "id": "integrated",
+      "rule": "Live source hashes and state coverage are required for repository claims."
+    },
+    {
+      "id": "release",
+      "rule": "Public, support and AI contexts are published only from the same passing source digest."
+    }
+  ],
+  "artifacts": {
+    "snapshotIndex": "02-canonical/snapshot-index.json",
+    "contextContract": "02-canonical/context-contract.json",
+    "claimBindings": "02-canonical/claim-binding-registry.json",
+    "messageContract": "02-canonical/message-contract.json",
+    "stateAdapters": "02-canonical/ui-state-adapter-map.json",
+    "consumerVersion": "02-canonical/language-contract-version.json",
+    "editorialAuthenticity": "02-canonical/editorial-authenticity-policy.json",
+    "publicCopyInventory": "02-canonical/public-copy-inventory.json",
+    "deployedSiteContract": "02-canonical/deployed-site-contract.json",
+    "integrationContract": "02-canonical/integration-contract.json"
+  },
+  "consumerContracts": [
+    "product-ui",
+    "marketing",
+    "documentation",
+    "support",
+    "product-ai",
+    "accessibility",
+    "localisation",
+    "editorial-review",
+    "deployed-public-site"
+  ],
+  "conflictPolicy": "A conflicted fact cannot be promoted to a stronger claim by marketing, support, documentation or AI. Resolve the source conflict first, then regenerate context.",
+  "integrityBoundary": "The in-package manifest detects accidental drift. It is not a signature or tamper-proof release attestation."
+}

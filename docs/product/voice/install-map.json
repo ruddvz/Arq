@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 5,
+  "rule": "Install on a dedicated branch. copy-directory means copy directory contents into the destination. merge means reconcile existing repository content; it never permits blind overwrite.",
+  "mappings": [
+    { "source": "README.md", "destination": "docs/product/voice/README.md", "mode": "copy" },
+    {
+      "source": "PERFECTION-BRIEF.md",
+      "destination": "docs/product/voice/INTEGRATION-BRIEF.md",
+      "mode": "copy"
+    },
+    {
+      "source": "GOVERNANCE.md",
+      "destination": "docs/product/voice/GOVERNANCE.md",
+      "mode": "copy"
+    },
+    {
+      "source": "COPY-IMPACT-PR-CHECKLIST.md",
+      "destination": "docs/product/voice/COPY-IMPACT-PR-CHECKLIST.md",
+      "mode": "copy"
+    },
+    {
+      "source": "DEPRECATION-POLICY.md",
+      "destination": "docs/product/voice/DEPRECATION-POLICY.md",
+      "mode": "copy"
+    },
+    { "source": "00-audit", "destination": "docs/product/voice/audit", "mode": "copy-directory" },
+    {
+      "source": "01-standards/voice.md",
+      "destination": "docs/product/VOICE-SYSTEM.md",
+      "mode": "replace-or-create"
+    },
+    {
+      "source": "01-standards/product-copy.md",
+      "destination": "docs/product/PRODUCT-COPY-PRINCIPLES.md",
+      "mode": "merge",
+      "note": "Preserve valid repository principles and add the 4.1 semantic, evidence, editorial-quality and deployed-site rules."
+    },
+    {
+      "source": "01-standards",
+      "destination": "docs/product/voice/standards",
+      "mode": "copy-directory",
+      "exclude": ["product-copy.md", "voice.md"]
+    },
+    {
+      "source": "02-canonical",
+      "destination": "docs/product/voice",
+      "mode": "copy-directory",
+      "exclude": ["generated"]
+    },
+    {
+      "source": "05-templates",
+      "destination": "docs/product/voice/templates",
+      "mode": "copy-directory"
+    },
+    {
+      "source": "06-context",
+      "destination": "docs/product/voice/context",
+      "mode": "copy-directory"
+    },
+    {
+      "source": "07-future-readiness",
+      "destination": "docs/product/voice/future-readiness",
+      "mode": "copy-directory"
+    },
+    {
+      "source": "04-wiring/INTEGRATION-READINESS.md",
+      "destination": "docs/product/voice/INTEGRATION-READINESS.md",
+      "mode": "copy"
+    },
+    {
+      "source": "04-wiring/marketing-claim-test.fragment.ts",
+      "destination": "docs/product/voice/marketing-claim-test.fragment.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "04-wiring/deploy-pages.fragment.yml",
+      "destination": "docs/product/voice/deploy-pages.fragment.yml",
+      "mode": "copy"
+    },
+    {
+      "source": "04-wiring/PUBLIC-COPY-REMEDIATION-4.1.md",
+      "destination": "docs/product/voice/PUBLIC-COPY-REMEDIATION-4.1.md",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/arq-language-patterns.mjs",
+      "destination": "scripts/arq-language-patterns.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/arq-language-audit.mjs",
+      "destination": "scripts/arq-language-audit.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/arq-language-guardian.mjs",
+      "destination": "scripts/arq-language-guardian.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-editorial-authenticity.mjs",
+      "destination": "scripts/arq-language-editorial-policy.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-public-copy-inventory.mjs",
+      "destination": "scripts/verify-arq-public-copy-inventory.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-marketing-route-coverage.mjs",
+      "destination": "scripts/verify-arq-marketing-route-coverage.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-rendered-public-site.mjs",
+      "destination": "scripts/verify-arq-rendered-public-site.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-deployed-public-site.mjs",
+      "destination": "scripts/verify-arq-deployed-public-site.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-integrated-install.mjs",
+      "destination": "scripts/verify-arq-language-installation.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/refresh-repo-context.mjs",
+      "destination": "scripts/refresh-arq-language-context.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-repo-context.mjs",
+      "destination": "scripts/verify-arq-language-context.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-source-contract.mjs",
+      "destination": "scripts/verify-arq-language-source-contract.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-state-language-coverage.mjs",
+      "destination": "scripts/verify-arq-state-language-coverage.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-state-adapter-coverage.mjs",
+      "destination": "scripts/verify-arq-state-adapters.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-conflict-gates.mjs",
+      "destination": "scripts/verify-arq-language-conflicts.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-claim-bindings.mjs",
+      "destination": "scripts/verify-arq-language-claims.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/validate-canonical-data.mjs",
+      "destination": "scripts/validate-arq-language-data.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-arq-language-system.mjs",
+      "destination": "scripts/verify-arq-language-system.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/build-language-context.mjs",
+      "destination": "scripts/build-arq-language-context.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/verify-language-context.mjs",
+      "destination": "scripts/verify-arq-language-bundle.mjs",
+      "mode": "copy"
+    },
+    {
+      "source": "03-machine-layer/copy-impact-report.mjs",
+      "destination": "scripts/arq-copy-impact-report.mjs",
+      "mode": "copy"
+    }
+  ],
+  "integrationRequiredSources": [
+    "01-standards/voice.md",
+    "01-standards/product-copy.md",
+    "02-canonical",
+    "05-templates",
+    "07-future-readiness",
+    "03-machine-layer/refresh-repo-context.mjs",
+    "03-machine-layer/verify-repo-context.mjs",
+    "03-machine-layer/verify-source-contract.mjs",
+    "03-machine-layer/verify-state-language-coverage.mjs",
+    "03-machine-layer/verify-state-adapter-coverage.mjs",
+    "03-machine-layer/verify-conflict-gates.mjs",
+    "03-machine-layer/verify-claim-bindings.mjs",
+    "03-machine-layer/validate-canonical-data.mjs",
+    "03-machine-layer/build-language-context.mjs",
+    "03-machine-layer/verify-editorial-authenticity.mjs",
+    "03-machine-layer/verify-public-copy-inventory.mjs",
+    "03-machine-layer/verify-marketing-route-coverage.mjs",
+    "03-machine-layer/verify-rendered-public-site.mjs",
+    "03-machine-layer/verify-deployed-public-site.mjs",
+    "03-machine-layer/verify-integrated-install.mjs"
+  ],
+  "integrationRequiredDestinations": [
+    "docs/product/VOICE-SYSTEM.md",
+    "docs/product/PRODUCT-COPY-PRINCIPLES.md",
+    "docs/product/voice",
+    "scripts/refresh-arq-language-context.mjs",
+    "scripts/verify-arq-language-context.mjs",
+    "scripts/verify-arq-language-source-contract.mjs",
+    "scripts/verify-arq-state-language-coverage.mjs",
+    "scripts/verify-arq-state-adapters.mjs",
+    "scripts/verify-arq-language-conflicts.mjs",
+    "scripts/verify-arq-language-claims.mjs",
+    "scripts/validate-arq-language-data.mjs",
+    "scripts/build-arq-language-context.mjs",
+    "scripts/arq-language-editorial-policy.mjs",
+    "scripts/verify-arq-public-copy-inventory.mjs",
+    "scripts/verify-arq-marketing-route-coverage.mjs",
+    "scripts/verify-arq-rendered-public-site.mjs",
+    "scripts/verify-arq-deployed-public-site.mjs",
+    "scripts/verify-arq-language-installation.mjs"
+  ]
+}

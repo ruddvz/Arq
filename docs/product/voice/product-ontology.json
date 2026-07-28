@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 2,
+  "source": "docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md core entities plus current repo contracts",
+  "entities": [
+    {
+      "id": "workspace",
+      "canonical": "Workspace",
+      "definition": "Collaboration/account container when hosted workspace concepts apply."
+    },
+    {
+      "id": "user",
+      "canonical": "User",
+      "definition": "Authenticated human account when accounts exist."
+    },
+    {
+      "id": "team",
+      "canonical": "Team",
+      "definition": "Group/workspace membership concept when implemented."
+    },
+    {
+      "id": "project",
+      "canonical": "Project",
+      "definition": "Authoritative semantic architectural project."
+    },
+    {
+      "id": "site",
+      "canonical": "Site",
+      "definition": "Project site container."
+    },
+    {
+      "id": "building",
+      "canonical": "Building",
+      "definition": "Building container within a project/site."
+    },
+    {
+      "id": "level",
+      "canonical": "Level",
+      "definition": "Vertical building storey/reference with elevation."
+    },
+    {
+      "id": "grid",
+      "canonical": "Grid",
+      "definition": "Reference grid object."
+    },
+    {
+      "id": "element",
+      "canonical": "Element",
+      "definition": "Base semantic model element."
+    },
+    {
+      "id": "element-type",
+      "canonical": "Element type",
+      "definition": "Reusable type-level definition."
+    },
+    {
+      "id": "wall",
+      "canonical": "Wall",
+      "definition": "Semantic wall element."
+    },
+    {
+      "id": "opening",
+      "canonical": "Opening",
+      "definition": "Hosted opening/void in a wall."
+    },
+    {
+      "id": "door",
+      "canonical": "Door",
+      "definition": "Door opening/element hosted by a wall where supported."
+    },
+    {
+      "id": "window",
+      "canonical": "Window",
+      "definition": "Window opening/element hosted by a wall where supported."
+    },
+    {
+      "id": "slab",
+      "canonical": "Slab",
+      "definition": "Semantic slab element."
+    },
+    {
+      "id": "room",
+      "canonical": "Room",
+      "definition": "Semantic space/room derived from boundaries and seed/context."
+    },
+    {
+      "id": "view",
+      "canonical": "View",
+      "definition": "Semantic saved representation of project data."
+    },
+    {
+      "id": "sheet",
+      "canonical": "Sheet",
+      "definition": "Document sheet containing placed viewports/content."
+    },
+    {
+      "id": "annotation",
+      "canonical": "Annotation",
+      "definition": "Document annotation attached to model/view/sheet context."
+    },
+    {
+      "id": "dimension",
+      "canonical": "Dimension",
+      "definition": "Measurement annotation tied to geometry/objects."
+    },
+    {
+      "id": "import-source",
+      "canonical": "Import source",
+      "definition": "External source provenance for imported/reference data."
+    },
+    {
+      "id": "export-record",
+      "canonical": "Export record",
+      "definition": "Record of an export operation/result."
+    },
+    {
+      "id": "operation",
+      "canonical": "Operation",
+      "definition": "Typed project mutation unit."
+    },
+    {
+      "id": "snapshot",
+      "canonical": "Snapshot",
+      "definition": "Recorded project state used for persistence/history/system purposes."
+    },
+    {
+      "id": "revision",
+      "canonical": "Revision",
+      "definition": "Meaningful project state used for review/comparison."
+    },
+    {
+      "id": "comment",
+      "canonical": "Comment",
+      "definition": "Conversation/review comment."
+    },
+    {
+      "id": "issue",
+      "canonical": "Issue",
+      "definition": "Actionable tracked review problem."
+    },
+    {
+      "id": "role",
+      "canonical": "Role",
+      "definition": "Permission role."
+    },
+    {
+      "id": "design-option",
+      "canonical": "Design option",
+      "definition": "Alternative design branch/option, later."
+    },
+    {
+      "id": "material",
+      "canonical": "Material",
+      "definition": "Material definition, later."
+    },
+    {
+      "id": "component-definition",
+      "canonical": "Component definition",
+      "definition": "Reusable component definition, later."
+    }
+  ],
+  "distinctions": [
+    {
+      "a": "Project",
+      "b": "project file",
+      "rule": "Project is semantic data; project file is the portable .arq representation."
+    },
+    {
+      "a": "View",
+      "b": "view tab",
+      "rule": "A semantic view definition may have more than one open view-tab instance."
+    },
+    {
+      "a": "Snapshot",
+      "b": "revision",
+      "rule": "Do not use as synonyms unless the underlying history model explicitly equates them."
+    },
+    {
+      "a": "Comment",
+      "b": "Issue",
+      "rule": "Comment is discussion; Issue is actionable tracked work/problem."
+    },
+    {
+      "a": "Warning",
+      "b": "validation error",
+      "rule": "Warning is non-blocking; validation error blocks a commit/action."
+    },
+    {
+      "a": "Underlay",
+      "b": "imported model",
+      "rule": "Underlay is reference-only and must not be described as authoritative semantic model data."
+    },
+    {
+      "a": "Local save",
+      "b": "sync",
+      "rule": "Local persistence and remote synchronisation are separate state machines."
+    },
+    {
+      "a": "Proposal",
+      "b": "operation",
+      "rule": "Proposal is unapplied intent; operation is a typed mutation unit."
+    }
+  ]
+}

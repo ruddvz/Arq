@@ -1,0 +1,43 @@
+# Apply this fragment to .github/workflows/deploy-pages.yml after language
+# system installation. It keeps pull-request validation offline and makes the
+# live GitHub Pages check part of the deployment result.
+
+# In jobs.build.steps, before the marketing build:
+- name: Verify public route coverage
+  run: pnpm arq:language:routes:verify
+
+# In jobs.build.steps, immediately after the marketing build:
+- name: Verify rendered public copy and write deployment proof
+  run: >-
+    pnpm arq:language:site:build:verify
+    --site-root apps/marketing/dist
+    --write-proof
+    --commit "${{ github.sha }}"
+
+# Add this output to jobs.deploy:
+# outputs:
+#   page_url: ${{ steps.deployment.outputs.page_url }}
+
+# Add this job after jobs.deploy:
+verify-live-language:
+  needs: deploy
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: pnpm
+    - run: pnpm install --frozen-lockfile
+    - name: Verify deployed public copy matches the audited artifact
+      run: >-
+        pnpm arq:language:site:live:verify
+        --base-url "${{ needs.deploy.outputs.page_url }}"
+        --expected-commit "${{ github.sha }}"
+        --attempts 8
+        --delay-ms 5000
+
+# Do not add --write-proof to ordinary pull-request CI. The proof belongs to
+# the deploy artifact. The ordinary CI gate still builds and audits the static
+# site with arq:language:site:build:verify.

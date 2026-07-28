@@ -1,0 +1,2979 @@
+{
+  "schemaVersion": 4,
+  "contractVersion": "4.1.0",
+  "sourceContractDigest": "a6a8cc27b8ba8437875c7a4696e4bc84b458e5ecac3395735c9894329abcd5d4",
+  "sourceSetDigest": "09ed514f0ae5cce46e6e9269c702a292348f77f9264d67e1c3beafe2aefd8488",
+  "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
+  "sources": {
+    "repository-readme": {
+      "id": "repository-readme",
+      "kind": "file",
+      "path": "README.md",
+      "sha256": "b1368877bf3af22a6c90449a1bdc01bb2ed6383242332377d96e5ea1bcb3677b",
+      "bytes": 18990
+    },
+    "status": {
+      "id": "status",
+      "kind": "file",
+      "path": "STATUS.md",
+      "sha256": "e0e291b4e0526471a3279ae72e002c0ef5bdb5eadc79a2f21ec9da0058d42811",
+      "bytes": 6449
+    },
+    "accepted-adrs": {
+      "id": "accepted-adrs",
+      "kind": "directory",
+      "path": "docs/adr",
+      "sha256": "67de4f611e2524b7b43c8f8e232996dc6e5dfcfbcd85a27499359c26a927dab0",
+      "files": [
+        {
+          "rel": "docs/adr/0000-adr-template.md",
+          "sha256": "3f75275631c2d75827049f63be8b9e1c31debab4e7e60030d0f011b89aa2c472",
+          "bytes": 185
+        },
+        {
+          "rel": "docs/adr/0001-web-first-editor.md",
+          "sha256": "97a7e711e95df2a2a65101eb808e2706787b1704dfd7ec068f474e339fe3e709",
+          "bytes": 886
+        },
+        {
+          "rel": "docs/adr/0002-plan-first-semantic-model.md",
+          "sha256": "a620d01fac1bee7e4b25f4244dbd25398c5ed9445e6e2777cccfefb193348ece",
+          "bytes": 901
+        },
+        {
+          "rel": "docs/adr/0003-modular-monolith.md",
+          "sha256": "8ee2885c347763c19f6eb05f237e1a1c7cf9f6fda892b5c04cae1bd0bfc95514",
+          "bytes": 893
+        },
+        {
+          "rel": "docs/adr/0004-units-and-numeric-representation.md",
+          "sha256": "828a40b95bbc1cf0773ebcc0603a59ba6d87985dac4f341f08cd46b2f1a93524",
+          "bytes": 918
+        },
+        {
+          "rel": "docs/adr/0005-typed-operations.md",
+          "sha256": "d5d77adca1883b4d4205132a66ed04e90cdc85ba15750b6e2de5154dc83f378d",
+          "bytes": 879
+        },
+        {
+          "rel": "docs/adr/0006-snapshots-and-local-journal.md",
+          "sha256": "21e75456b11b907535507c17655cdfabf1a4f829691c168be54c7408d411b761",
+          "bytes": 890
+        },
+        {
+          "rel": "docs/adr/0007-purpose-built-planar-geometry.md",
+          "sha256": "bd3807edf85244bd0f904730d0034b0ff84e3ace1a223218bc591752daebebd6",
+          "bytes": 883
+        },
+        {
+          "rel": "docs/adr/0008-rendering-strategy.md",
+          "sha256": "0de1342f230eefa0060f60c583a9da8cb8e615b957c4a5ebcc7d067d2a4067a1",
+          "bytes": 8109
+        },
+        {
+          "rel": "docs/adr/0009-opencascade-boundary.md",
+          "sha256": "957532dfa017489b6dc7ba706f01a3ceb68a582e184e1bb96e44fd028de47f03",
+          "bytes": 866
+        },
+        {
+          "rel": "docs/adr/0010-arq-archive.md",
+          "sha256": "93fc18892b17c1b8cb1841177085c51c2c8150b9a898f8ee801734efe2b4961d",
+          "bytes": 872
+        },
+        {
+          "rel": "docs/adr/0011-ifc-adapter.md",
+          "sha256": "92f0e6699fd8242577054eb1465eb89bec585c8d0ef1fbdf04f0ffb1c2d4867c",
+          "bytes": 874
+        },
+        {
+          "rel": "docs/adr/0012-dxf-and-dwg-strategy.md",
+          "sha256": "3d1cec19d4f8f262d5a9efedfc029d67adcd1f8eb80894e7eb429eeec328baf5",
+          "bytes": 1436
+        },
+        {
+          "rel": "docs/adr/0013-collaboration-staging.md",
+          "sha256": "9b255ec595f7d2a61bd249013e1416dab03492b7abe034f4ee0335d734a24436",
+          "bytes": 879
+        },
+        {
+          "rel": "docs/adr/0014-ai-operation-model.md",
+          "sha256": "681af8611d69504b24e5bdce10c734b93d891289d576b5caf4de2a95c995cca5",
+          "bytes": 1946
+        },
+        {
+          "rel": "docs/adr/0015-native-ipad-strategy.md",
+          "sha256": "b64941abd2e195ad6d55223ca7ae546b9abc1340e21d7252ba5d13b8368f0451",
+          "bytes": 883
+        },
+        {
+          "rel": "docs/adr/0016-authentication-strategy.md",
+          "sha256": "0439abe5814c159bea7086bafb48d284bab51d7a27a753673359dd0d3a2a4f5a",
+          "bytes": 875
+        },
+        {
+          "rel": "docs/adr/0017-dependency-and-licensing-policy.md",
+          "sha256": "bc4266ce7e6c8f296d07f41b766e0a87838e2ed18c9ee5264d003df0e4e6e968",
+          "bytes": 873
+        },
+        {
+          "rel": "docs/adr/0018-analytics-and-privacy.md",
+          "sha256": "bbcd57e0649c12df4c14c5314f70f32644a52da17f900eeb0246ca857cba6739",
+          "bytes": 886
+        },
+        {
+          "rel": "docs/adr/0019-arq-native-sqlite-file-format.md",
+          "sha256": "3755bf8e4dc6bd335ffbd14765806e78884111f4a5a4c8df8a784ee5a94c4de6",
+          "bytes": 513
+        },
+        {
+          "rel": "docs/adr/0020-shared-rust-core.md",
+          "sha256": "bc56c50419104f0d7ffc156138c0a3c043480a38169e2c074c62fcb9d6036518",
+          "bytes": 430
+        },
+        {
+          "rel": "docs/adr/0021-local-first-replica-sync.md",
+          "sha256": "70a692f0b875835ce0747059f9879ad95ee37d2fe671ec90c735e104594cdc8f",
+          "bytes": 393
+        },
+        {
+          "rel": "docs/adr/0022-canonical-derived-data-separation.md",
+          "sha256": "6736dc23a9824a5fb4681d4cecf7ef1a1894a4da3d804e2a6d3c85efe914836d",
+          "bytes": 360
+        },
+        {
+          "rel": "docs/adr/0023-progressive-project-opening.md",
+          "sha256": "d03e603894b00d561ba72909b38fbc7b89b28e7b875d81ceb20d8b4b311ded3d",
+          "bytes": 360
+        },
+        {
+          "rel": "docs/adr/0024-sqlite-wasm-worker-and-opfs.md",
+          "sha256": "de90ac4d0420976d31032b07cca4afe1d9b9777631e74075a605f0701e7b92fb",
+          "bytes": 799
+        },
+        {
+          "rel": "docs/adr/0025-webgl-production-webgpu-lab.md",
+          "sha256": "2a731a5cd174e3f08e9d83eea71413b9ea69e61fe844bafef690f63db9906299",
+          "bytes": 633
+        },
+        {
+          "rel": "docs/adr/0026-accessible-component-foundation.md",
+          "sha256": "b047aeb8c513df019f95f740030af7908d93cbda202c0ac2cb67b1bcfa3a85f2",
+          "bytes": 527
+        }
+      ]
+    },
+    "blueprint": {
+      "id": "blueprint",
+      "kind": "file",
+      "path": "docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md",
+      "sha256": "4f9f228dd70f9c6190e4aee56488fdc3e0703e90dc5412b5ac6d4397ef02dad9",
+      "bytes": 98364
+    },
+    "release-scope": {
+      "id": "release-scope",
+      "kind": "file",
+      "path": "docs/product/RELEASE-SCOPE.md",
+      "sha256": "167c2dc1350144477c0a752feb8fd495d1ae31d3026fe927f29c2a4b3886eb7e",
+      "bytes": 1088
+    },
+    "copy-principles": {
+      "id": "copy-principles",
+      "kind": "file",
+      "path": "docs/product/PRODUCT-COPY-PRINCIPLES.md",
+      "sha256": "a9bf3d9b1160d516f3b6cda8e38723bf87466349bd5db63dd145103826b9b86d",
+      "bytes": 10357
+    },
+    "format-matrix": {
+      "id": "format-matrix",
+      "kind": "file",
+      "path": "docs/interoperability/FORMAT-SUPPORT-MATRIX.md",
+      "sha256": "bc481a1415777a85c009c988778c542c72849f4fc1057ecf0e4eacd588a2da4a",
+      "bytes": 1062
+    },
+    "ai-guardrails": {
+      "id": "ai-guardrails",
+      "kind": "file",
+      "path": "docs/ai/AI-GUARDRAILS.md",
+      "sha256": "94315b037922d854597eb7ed4437531cca25ac8ccf63503e10c710d6a61f881d",
+      "bytes": 360
+    },
+    "launch-claims": {
+      "id": "launch-claims",
+      "kind": "file",
+      "path": "business/LAUNCH-CLAIMS-CHECKLIST.md",
+      "sha256": "4f1d75e8135964f4ad626cd1b7402f2ed023a70740901ae9a0fe372564bc9617",
+      "bytes": 187
+    },
+    "security": {
+      "id": "security",
+      "kind": "file",
+      "path": "SECURITY.md",
+      "sha256": "8ec7d06138c7e78be02ae3f001287e150eb944cc82bd6bb2134b7c4260c01962",
+      "bytes": 655
+    },
+    "rbac": {
+      "id": "rbac",
+      "kind": "file",
+      "path": "security/RBAC-MATRIX.csv",
+      "sha256": "f3feb9b042bff25767470bb1d899db783b0fb47753019eeafa88b3b8b62e7573",
+      "bytes": 493
+    },
+    "routes": {
+      "id": "routes",
+      "kind": "file",
+      "path": "docs/pages/ROUTE-MAP.csv",
+      "sha256": "c108e1a3f79d7217f9a1f9bb32e5dc7c4e287fe37b1d8992e996869b1a9908ff",
+      "bytes": 7389
+    },
+    "workspace-types": {
+      "id": "workspace-types",
+      "kind": "file",
+      "path": "packages/workspace/src/workspace-types.ts",
+      "sha256": "ba1f4c16460a0ed5738f78e74b46d0d5bff0fde7f8485d470f63ddc0bfd7c9dd",
+      "bytes": 3937
+    },
+    "workspace-registries": {
+      "id": "workspace-registries",
+      "kind": "directory",
+      "path": "packages/workspace/src/registry",
+      "sha256": "1b087e36295a8b18f265b87fe27193017c75be69ade921252e6044a26dbc5de9",
+      "files": [
+        {
+          "rel": "packages/workspace/src/registry/workspace-capability-gates.json",
+          "sha256": "dac41e6df7c991dbd06f78bb58615ffa8bb0110215f8dc38fdbe01651aa6ca21",
+          "bytes": 1560
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-component-registry.json",
+          "sha256": "7246da1bf9cee933af0d213c1a5d88417bc168be7d87840ae863560d34e34848",
+          "bytes": 46592
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-context-menu-registry.json",
+          "sha256": "8c2afd5170dddd9ee34b951df5ccdbee2e728d39b9bb47569d83fa46c805d662",
+          "bytes": 1509
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-icon-registry.json",
+          "sha256": "4cc52bdd6be9889b0730f6a1401b7a1b8df9e4df25a636993692cf6ebca6955d",
+          "bytes": 213895
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-keyboard-map.json",
+          "sha256": "04523a5fa6db19a68a464f99ff2dd4fab0623a2e845d55cb849af1339a6ea013",
+          "bytes": 2539
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-layout-slots.json",
+          "sha256": "8677792e38b07983d84bf767f6578bf0db8c8d56320272217a27e850dab9ac27",
+          "bytes": 2672
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-panel-registry.json",
+          "sha256": "7082c0f56e294e26e2c012fe2aa9333bb22325c9b9bfe3bc9272dcaa40a203e8",
+          "bytes": 1952
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-platform-layouts.json",
+          "sha256": "56dce64155dd5b6db8ac482775800b05feff614244653c4acf4fb43088d101b5",
+          "bytes": 2302
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-qa-fixtures.json",
+          "sha256": "335c7d08ae99d400e208e2a96d927192f3061edf34e436ca91844c91208f7d3d",
+          "bytes": 3578
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-state-machines.json",
+          "sha256": "07a9db65dfa782fe7f2958673bb542257e3173528ab1426e8489e359ced3a7a6",
+          "bytes": 1679
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-surface-registry.json",
+          "sha256": "cc9805efe93bdeb1da2fc7de140b30068dc62bb6a357e421e8ba96257a31db3b",
+          "bytes": 14603
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-tab-registry.json",
+          "sha256": "de8f825fe1cbd2a50d1efa874b05c17fe2c486edc4fb71aad70c45b055ee1f3b",
+          "bytes": 3609
+        },
+        {
+          "rel": "packages/workspace/src/registry/workspace-tool-registry.json",
+          "sha256": "8164012d040983a3f82031fd296e9acb1645418fa74c9524f14c2c741f5e72f3",
+          "bytes": 28227
+        }
+      ]
+    },
+    "arqfs-open": {
+      "id": "arqfs-open",
+      "kind": "file",
+      "path": "packages/arqfs/src/arqfs-open.ts",
+      "sha256": "0e5b73b4c3341c07aa11528f8ccb1a96ed0d0733eb87cbf13a225d6bc1f1a171",
+      "bytes": 6274
+    },
+    "arqfs-recovery": {
+      "id": "arqfs-recovery",
+      "kind": "file",
+      "path": "packages/arqfs/src/arqfs-recovery-report.ts",
+      "sha256": "8482133c585830a044e71ff3ae64ea5a780826f6e27677b8f5e7d3c1f976e530",
+      "bytes": 3222
+    },
+    "arqfs-safe-mode": {
+      "id": "arqfs-safe-mode",
+      "kind": "file",
+      "path": "packages/arqfs/src/arqfs-safe-mode.ts",
+      "sha256": "0b3e1b3b8d5e7ac1580096372422e8fd54ac1719a3e3c30728af0fa50651bff9",
+      "bytes": 3673
+    },
+    "file-open-ui": {
+      "id": "file-open-ui",
+      "kind": "directory",
+      "path": "apps/web/src/file-handling",
+      "sha256": "0c463d9b3f1d4d6e249ef1fadd3da276d0dae82e7581fe34f2f14304bf83e1bf",
+      "files": [
+        {
+          "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
+          "sha256": "fc475a584b2a500b93253fb64863462bff707075eda79ba29b52fc09ef862296",
+          "bytes": 7671
+        },
+        {
+          "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",
+          "sha256": "3c2a740b41b7ae5547ecd8bc5e74074645722ff8bf1716f18dba6c3fdd0e45ef",
+          "bytes": 2659
+        },
+        {
+          "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
+          "sha256": "074c72b31ca225c308cc7250599dbf26b7802448b0db3e9d76985c3498ee4f21",
+          "bytes": 3023
+        },
+        {
+          "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
+          "sha256": "d276b4afa40a4c1907e4b10fbb90043a6fbb028aab2ceff1ca02a3c8781e4b8b",
+          "bytes": 4134
+        },
+        {
+          "rel": "apps/web/src/file-handling/evaluate-selected-file.ts",
+          "sha256": "4f15bbb7af14004673d8c801f397961506e20b0c0c8eff9d053e7267d5c9d951",
+          "bytes": 1670
+        },
+        {
+          "rel": "apps/web/src/file-handling/file-state-machine.test.ts",
+          "sha256": "972e06e414a4e8ac26d30ed37bcf27624a93554ea42d156560a34f1293bd64a0",
+          "bytes": 3411
+        },
+        {
+          "rel": "apps/web/src/file-handling/file-state-machine.ts",
+          "sha256": "23b09ad809d2c68772e32caf2e129621ef919a0b778235ad340e6a6e7555deb7",
+          "bytes": 3427
+        },
+        {
+          "rel": "apps/web/src/file-handling/index.ts",
+          "sha256": "2b805b50bb2127b827e9f7c993efac6abd9b4ac6fa1d1181d699b033a27c466e",
+          "bytes": 68
+        },
+        {
+          "rel": "apps/web/src/file-handling/route-file.test.ts",
+          "sha256": "2d9293596b3bcac3acc8f67e77b1a97b0d7992b16615dd408513171788b38630",
+          "bytes": 1674
+        },
+        {
+          "rel": "apps/web/src/file-handling/route-file.ts",
+          "sha256": "cf56be2159ad62ada7613207571befb5058cb2d2d7d2a6209c5466829a78d478",
+          "bytes": 1980
+        }
+      ]
+    },
+    "plan-journal": {
+      "id": "plan-journal",
+      "kind": "file",
+      "path": "apps/web/src/canvas/plan-journal.ts",
+      "sha256": "58b5158adc809a86128585a2f0b25b15da9c435e72b542e147a9c36bc8a7d355",
+      "bytes": 4951
+    },
+    "web-app": {
+      "id": "web-app",
+      "kind": "file",
+      "path": "apps/web/src/App.tsx",
+      "sha256": "07efd402d6ffc37bdcdf5f0789e2b5f3e8b472d84fc276e31d211ca64aed86fa",
+      "bytes": 43390
+    },
+    "plan-canvas": {
+      "id": "plan-canvas",
+      "kind": "file",
+      "path": "apps/web/src/PlanCanvas.tsx",
+      "sha256": "ec005021bce9c802d17ecc37e54f87d5798943248abe96cc43410cd0b44d0ad7",
+      "bytes": 26609
+    },
+    "model-canvas": {
+      "id": "model-canvas",
+      "kind": "file",
+      "path": "apps/web/src/ModelCanvas.tsx",
+      "sha256": "4799613f1ef01c0cbc293b045c486b6a16fe009ded99afe3df7c1a2fa57a4221",
+      "bytes": 12619
+    },
+    "local-storage": {
+      "id": "local-storage",
+      "kind": "directory",
+      "path": "packages/local-storage/src",
+      "sha256": "b55e2f772d173cd3de5a7a508f2a67fe16520bc71511cc3eecc5eb4a72bb5624",
+      "files": [
+        {
+          "rel": "packages/local-storage/src/archive-export.test.ts",
+          "sha256": "49f0986c0122fe936f7dc7dd60bc751427e21ea7f22eea63f9929c21920c64d4",
+          "bytes": 2343
+        },
+        {
+          "rel": "packages/local-storage/src/archive-export.ts",
+          "sha256": "1c67cc9862da7fc02929fe38d40a9d4991629b87d53b0668e7236176a860dadb",
+          "bytes": 1290
+        },
+        {
+          "rel": "packages/local-storage/src/database.test.ts",
+          "sha256": "805e2af94050d6198cb898597943752c644e4fb7e7cad666b3b85222d5417591",
+          "bytes": 1928
+        },
+        {
+          "rel": "packages/local-storage/src/database.ts",
+          "sha256": "ab688714b4f2f485e1ab0ca63134ccf45e0d2124c38b1de916113ef6aaa3f58a",
+          "bytes": 3128
+        },
+        {
+          "rel": "packages/local-storage/src/derived-cache.test.ts",
+          "sha256": "7604991020f643339e64983280a8acc0ef9fe00f1ee4eb01476c0090606cf030",
+          "bytes": 5912
+        },
+        {
+          "rel": "packages/local-storage/src/derived-cache.ts",
+          "sha256": "315def9c7ac89ce5e78da4fda887f5d60c2115b89dca027d87a3ee7833faf1e0",
+          "bytes": 3342
+        },
+        {
+          "rel": "packages/local-storage/src/index.ts",
+          "sha256": "56aaf74a3130a0ecd9c29a1a4fb6449887745fed44d08c2df480b65be72395e1",
+          "bytes": 288
+        },
+        {
+          "rel": "packages/local-storage/src/journal-append.test.ts",
+          "sha256": "92557fb5ee64360c66b6a45ef637dbd723e1dad6c23463dad8380a1282c43fea",
+          "bytes": 3000
+        },
+        {
+          "rel": "packages/local-storage/src/journal-append.ts",
+          "sha256": "41d9be376e4252b6ee566f6e6128fa62a7f149e5e86cdc90338b8f4892f9a76f",
+          "bytes": 1845
+        },
+        {
+          "rel": "packages/local-storage/src/journal-recovery.test.ts",
+          "sha256": "fd245535366d2177f612d1a823177e9e8aae0ca221d5a8d7ed3db76e5af16834",
+          "bytes": 3627
+        },
+        {
+          "rel": "packages/local-storage/src/journal-recovery.ts",
+          "sha256": "b70831f3616dea496e6c5bae28ae76a05a5bf1d8cc4cf8ebbedcdc06271ac6ae",
+          "bytes": 2740
+        },
+        {
+          "rel": "packages/local-storage/src/quota-error.test.ts",
+          "sha256": "f96971a28b29ea91dfa1623761448fa6b8052efd94a3e83ec64ea8bf13cc64de",
+          "bytes": 3573
+        },
+        {
+          "rel": "packages/local-storage/src/quota-error.ts",
+          "sha256": "b0f1ade602347159fdea0c8a6701cbd5a5c07e5f276af20a3456300d21112a73",
+          "bytes": 2130
+        },
+        {
+          "rel": "packages/local-storage/src/recovery-report.test.ts",
+          "sha256": "37fdbb52d7daa00b573d24aceadb7169340fee6479e9ce3e7ad9c199ea1976be",
+          "bytes": 3526
+        },
+        {
+          "rel": "packages/local-storage/src/recovery-report.ts",
+          "sha256": "8007ccaa14c17c37b07426199ad2734f2ea3d09617dc8027f40b7d3aa95c886d",
+          "bytes": 3172
+        },
+        {
+          "rel": "packages/local-storage/src/safe-mode.test.ts",
+          "sha256": "27f071e328202c1d2784b953937d44c12277b47f206eb96652d3490087a632ca",
+          "bytes": 2912
+        },
+        {
+          "rel": "packages/local-storage/src/safe-mode.ts",
+          "sha256": "4d8149ade7e5f616096ed9274da0e9e8b3118e8ef3e918d4fa6376691aa772a1",
+          "bytes": 2988
+        },
+        {
+          "rel": "packages/local-storage/src/snapshot.test.ts",
+          "sha256": "f4aceb41bfa725b7ac18dee620aa99bb1dbb4966e0ae73cd6b790f0e4b86be34",
+          "bytes": 2739
+        },
+        {
+          "rel": "packages/local-storage/src/snapshot.ts",
+          "sha256": "696a12e3fd52047f6108ac7f4c85cd8b36512f22c1bf0cfb80b0bf495b862f63",
+          "bytes": 1602
+        }
+      ]
+    },
+    "marketing-content": {
+      "id": "marketing-content",
+      "kind": "directory",
+      "path": "apps/marketing/src/content",
+      "sha256": "694691bc92794171bc080a87ead7b541c7ce989965c1f032b82e2cc59f70d605",
+      "files": [
+        {
+          "rel": "apps/marketing/src/content/ai.ts",
+          "sha256": "58f95a3b9d4a7ec1fc4565f084bd63ee5928b2fae584946be384bc07c2c0a846",
+          "bytes": 3744
+        },
+        {
+          "rel": "apps/marketing/src/content/architects.ts",
+          "sha256": "3c53b4033fd4a02e8fd94a1a509c9d38bc93d2be77c89f45a0013bc26e177f41",
+          "bytes": 4476
+        },
+        {
+          "rel": "apps/marketing/src/content/changelog.ts",
+          "sha256": "3952bc8080ea764e0ad95f3d4b47786121a15ec3c9295bc24a7d93729950acfc",
+          "bytes": 7173
+        },
+        {
+          "rel": "apps/marketing/src/content/collaboration.ts",
+          "sha256": "0975541c2aa62e63056182e73edfc30ee3617d727e94b8ee7ee7df088168df95",
+          "bytes": 3818
+        },
+        {
+          "rel": "apps/marketing/src/content/contact.ts",
+          "sha256": "7c21a7bc0499d885b574c71eb027613fee2c22d03826f48340323c1bd294d641",
+          "bytes": 2931
+        },
+        {
+          "rel": "apps/marketing/src/content/docs-index.ts",
+          "sha256": "aa765235fbe2c3424507cdce41fbee6c41fa35c8abcbf0c70a737c415bf92553",
+          "bytes": 3878
+        },
+        {
+          "rel": "apps/marketing/src/content/home.ts",
+          "sha256": "f4bf85c44bdd9d53f6b846b87c6abff5cf7a14e3cc0a8ff653acde4ee00ec095",
+          "bytes": 4733
+        },
+        {
+          "rel": "apps/marketing/src/content/interoperability.ts",
+          "sha256": "602238276aa29fcb21f2e235c0e3e2c6c8dd92499fe3b470d8043ec9f0ad6e2f",
+          "bytes": 4550
+        },
+        {
+          "rel": "apps/marketing/src/content/ipad.ts",
+          "sha256": "ebad4571561bc676d7657e01fab1fce5046e02c1ae7ea3f20efd409f9ed1bc53",
+          "bytes": 4198
+        },
+        {
+          "rel": "apps/marketing/src/content/not-found.ts",
+          "sha256": "86665d8df0d9530fdf1bdd5ec912cf86c254d30f09db5667e2a4b814318b1b41",
+          "bytes": 1591
+        },
+        {
+          "rel": "apps/marketing/src/content/open-source.ts",
+          "sha256": "53f1487441de4a6b9dfa8a235d8a817125b74f2ae2e1b7bb7d11ccd1b86bb260",
+          "bytes": 2818
+        },
+        {
+          "rel": "apps/marketing/src/content/pricing.ts",
+          "sha256": "b4309ab96097d5bb414f5ea594066954679ee124cf51b17321e76488983e9b4b",
+          "bytes": 3504
+        },
+        {
+          "rel": "apps/marketing/src/content/privacy.ts",
+          "sha256": "30715773e9a5c1e954c280eac93c87aa7e9121d98e200c6196652f75d92870b4",
+          "bytes": 3895
+        },
+        {
+          "rel": "apps/marketing/src/content/product.ts",
+          "sha256": "2776412528efb21407ae52e477270d73ba2f8b3c6a7d327e88579b52f744f4be",
+          "bytes": 5522
+        },
+        {
+          "rel": "apps/marketing/src/content/security.ts",
+          "sha256": "86ce1a961171f13c894d6e5234f9c153b28c44e770c7bacc4794dd11da9ddcec",
+          "bytes": 4629
+        },
+        {
+          "rel": "apps/marketing/src/content/status.ts",
+          "sha256": "215dca9e63488c39c9b82ee12fb21948af8c0a6bbe52ecc09c7fe257d976b1c4",
+          "bytes": 3106
+        },
+        {
+          "rel": "apps/marketing/src/content/students.ts",
+          "sha256": "93ac7ba86df787e9b823dd0dc1dbd7b6f485daaafaf4a2140f41e8dd67f8266f",
+          "bytes": 3303
+        },
+        {
+          "rel": "apps/marketing/src/content/terms.ts",
+          "sha256": "ffc943cba191132cc002cac6765075c28ec09252fe8174db052bcf735c6f7c60",
+          "bytes": 2965
+        }
+      ]
+    },
+    "marketing-routes": {
+      "id": "marketing-routes",
+      "kind": "file",
+      "path": "apps/marketing/src/routes.ts",
+      "sha256": "aed1e388d1f45aad30a01286492a4433e9bd4cc4f4b3a8879ebd4118262fc2ee",
+      "bytes": 1666
+    },
+    "marketing-build": {
+      "id": "marketing-build",
+      "kind": "file",
+      "path": "apps/marketing/src/build.ts",
+      "sha256": "6d394f5be57616f7c5e7c641f020b3d8d6ae3925eaa148ecce0a12a814d938e7",
+      "bytes": 7612
+    },
+    "marketing-claims-tests": {
+      "id": "marketing-claims-tests",
+      "kind": "file",
+      "path": "apps/marketing/src/pages.test.ts",
+      "sha256": "2e31600289a514173f0cd42764a74012dbeb5bfdd537978c61f0aeefb420cf7d",
+      "bytes": 11504
+    },
+    "marketing-deployment": {
+      "id": "marketing-deployment",
+      "kind": "file",
+      "path": ".github/workflows/deploy-pages.yml",
+      "sha256": "ed4d08bca48c0131cb150b8cd17ca5a5c4ec58d82e3a79540fce5f087c75cb7c",
+      "bytes": 3981
+    },
+    "telemetry": {
+      "id": "telemetry",
+      "kind": "file",
+      "path": "analytics/EVENT-DICTIONARY.csv",
+      "sha256": "a932626f1515730f3aa966625d649619cc154ed931a5766307050a7d6dcd12e4",
+      "bytes": 1020
+    }
+  },
+  "registries": {
+    "tools": {
+      "schemaVersion": 1,
+      "toolGroups": [
+        "Select",
+        "Draw",
+        "Build",
+        "Modify",
+        "Annotate",
+        "Measure",
+        "View",
+        "Review"
+      ],
+      "tools": [
+        {
+          "id": "select",
+          "name": "Select",
+          "group": "Select",
+          "icon": "SelectIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "window-select",
+          "name": "Window select",
+          "group": "Select",
+          "icon": "WindowselectIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "crossing-select",
+          "name": "Crossing select",
+          "group": "Select",
+          "icon": "CrossingselectIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "selection-filter",
+          "name": "Selection filter",
+          "group": "Select",
+          "icon": "SelectionfilterIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "select-similar",
+          "name": "Select similar",
+          "group": "Select",
+          "icon": "SelectsimilarIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "wall",
+          "name": "Wall",
+          "group": "Draw",
+          "icon": "WallIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "room-boundary",
+          "name": "Room boundary",
+          "group": "Draw",
+          "icon": "RoomboundaryIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "reference-line",
+          "name": "Reference line",
+          "group": "Draw",
+          "icon": "ReferencelineIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "grid",
+          "name": "Grid",
+          "group": "Draw",
+          "icon": "GridIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "door",
+          "name": "Door",
+          "group": "Build",
+          "icon": "DoorIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "window",
+          "name": "Window",
+          "group": "Build",
+          "icon": "WindowIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "opening",
+          "name": "Opening",
+          "group": "Build",
+          "icon": "OpeningIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "column",
+          "name": "Column",
+          "group": "Build",
+          "icon": "ColumnIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "slab",
+          "name": "Slab",
+          "group": "Build",
+          "icon": "SlabIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "roof",
+          "name": "Roof",
+          "group": "Build",
+          "icon": "RoofIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "stair",
+          "name": "Stair",
+          "group": "Build",
+          "icon": "StairIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "railing",
+          "name": "Railing",
+          "group": "Build",
+          "icon": "RailingIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "furniture-component",
+          "name": "Furniture/component",
+          "group": "Build",
+          "icon": "FurniturecomponentIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "move",
+          "name": "Move",
+          "group": "Modify",
+          "icon": "MoveIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "copy",
+          "name": "Copy",
+          "group": "Modify",
+          "icon": "CopyIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "rotate",
+          "name": "Rotate",
+          "group": "Modify",
+          "icon": "RotateIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "mirror",
+          "name": "Mirror",
+          "group": "Modify",
+          "icon": "MirrorIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "offset",
+          "name": "Offset",
+          "group": "Modify",
+          "icon": "OffsetIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "align",
+          "name": "Align",
+          "group": "Modify",
+          "icon": "AlignIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "trim",
+          "name": "Trim",
+          "group": "Modify",
+          "icon": "TrimIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "extend",
+          "name": "Extend",
+          "group": "Modify",
+          "icon": "ExtendIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "join",
+          "name": "Join",
+          "group": "Modify",
+          "icon": "JoinIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "split",
+          "name": "Split",
+          "group": "Modify",
+          "icon": "SplitIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "array",
+          "name": "Array",
+          "group": "Modify",
+          "icon": "ArrayIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "delete",
+          "name": "Delete",
+          "group": "Modify",
+          "icon": "DeleteIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "dimension",
+          "name": "Dimension",
+          "group": "Annotate",
+          "icon": "DimensionIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "text-note",
+          "name": "Text note",
+          "group": "Annotate",
+          "icon": "TextnoteIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "tag",
+          "name": "Tag",
+          "group": "Annotate",
+          "icon": "TagIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "spot-elevation",
+          "name": "Spot elevation",
+          "group": "Annotate",
+          "icon": "SpotelevationIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "section-marker",
+          "name": "Section marker",
+          "group": "Annotate",
+          "icon": "SectionmarkerIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "elevation-marker",
+          "name": "Elevation marker",
+          "group": "Annotate",
+          "icon": "ElevationmarkerIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "distance",
+          "name": "Distance",
+          "group": "Measure",
+          "icon": "DistanceIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "angle",
+          "name": "Angle",
+          "group": "Measure",
+          "icon": "AngleIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "area",
+          "name": "Area",
+          "group": "Measure",
+          "icon": "AreaIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "pan",
+          "name": "Pan",
+          "group": "View",
+          "icon": "PanIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "orbit",
+          "name": "Orbit",
+          "group": "View",
+          "icon": "OrbitIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "zoom",
+          "name": "Zoom",
+          "group": "View",
+          "icon": "ZoomIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "fit",
+          "name": "Fit",
+          "group": "View",
+          "icon": "FitIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "perspective",
+          "name": "Perspective",
+          "group": "View",
+          "icon": "PerspectiveIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "orthographic",
+          "name": "Orthographic",
+          "group": "View",
+          "icon": "OrthographicIcon",
+          "status": "existing-or-partial",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "section-box",
+          "name": "Section box",
+          "group": "View",
+          "icon": "SectionboxIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "hide",
+          "name": "Hide",
+          "group": "View",
+          "icon": "HideIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "isolate",
+          "name": "Isolate",
+          "group": "View",
+          "icon": "IsolateIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "unhide",
+          "name": "Unhide",
+          "group": "View",
+          "icon": "UnhideIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "view-style",
+          "name": "View style",
+          "group": "View",
+          "icon": "ViewstyleIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "issue",
+          "name": "Issue",
+          "group": "Review",
+          "icon": "IssueIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "comment",
+          "name": "Comment",
+          "group": "Review",
+          "icon": "CommentIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "model-health",
+          "name": "Model health",
+          "group": "Review",
+          "icon": "ModelhealthIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        },
+        {
+          "id": "compare-revisions",
+          "name": "Compare revisions",
+          "group": "Review",
+          "icon": "ComparerevisionsIcon",
+          "status": "design-specified-capability-gated",
+          "activation": "typed tool/command; never direct renderer mutation",
+          "cancel": "Escape returns to Select or previous persistent tool according to tool contract",
+          "touch": "44px minimum target; long-press may expose flyout but never be the only access",
+          "keyboard": "assign in command registry; show in tooltip/menu when available"
+        }
+      ],
+      "important": "Status is a design/implementation coverage marker, not a shipping claim."
+    },
+    "tabs": {
+      "schemaVersion": 1,
+      "tabKinds": [
+        {
+          "kind": "project-overview",
+          "label": "Project overview",
+          "icon": "ProjectOverviewIcon",
+          "closeable": false,
+          "duplicable": false,
+          "supportsPin": true,
+          "supportsSplit": false,
+          "notes": [
+            "Dashboard landing, not canonical model view."
+          ]
+        },
+        {
+          "kind": "plan",
+          "label": "Plan",
+          "icon": "PlanIcon",
+          "closeable": true,
+          "duplicable": true,
+          "supportsPin": true,
+          "supportsSplit": true,
+          "notes": [
+            "2D authoring view."
+          ]
+        },
+        {
+          "kind": "3d",
+          "label": "3D",
+          "icon": "Model3dIcon",
+          "closeable": true,
+          "duplicable": true,
+          "supportsPin": true,
+          "supportsSplit": true,
+          "notes": [
+            "3D model view."
+          ]
+        },
+        {
+          "kind": "section",
+          "label": "Section",
+          "icon": "SectionIcon",
+          "closeable": true,
+          "duplicable": true,
+          "supportsPin": true,
+          "supportsSplit": true,
+          "notes": [
+            "Section view."
+          ]
+        },
+        {
+          "kind": "elevation",
+          "label": "Elevation",
+          "icon": "ElevationIcon",
+          "closeable": true,
+          "duplicable": true,
+          "supportsPin": true,
+          "supportsSplit": true,
+          "notes": [
+            "Elevation view."
+          ]
+        },
+        {
+          "kind": "sheet",
+          "label": "Sheet",
+          "icon": "SheetIcon",
+          "closeable": true,
+          "duplicable": true,
+          "supportsPin": true,
+          "supportsSplit": true,
+          "notes": [
+            "Print/document sheet."
+          ]
+        },
+        {
+          "kind": "schedule",
+          "label": "Schedule",
+          "icon": "ScheduleIcon",
+          "closeable": true,
+          "duplicable": true,
+          "supportsPin": true,
+          "supportsSplit": false,
+          "notes": [
+            "Structured table view."
+          ]
+        },
+        {
+          "kind": "report",
+          "label": "Report",
+          "icon": "ReportIcon",
+          "closeable": true,
+          "duplicable": false,
+          "supportsPin": true,
+          "supportsSplit": false,
+          "notes": [
+            "Derived/report surface."
+          ]
+        },
+        {
+          "kind": "issues",
+          "label": "Issues",
+          "icon": "IssueIcon",
+          "closeable": false,
+          "duplicable": false,
+          "supportsPin": true,
+          "supportsSplit": false,
+          "notes": [
+            "Review surface."
+          ]
+        },
+        {
+          "kind": "compare",
+          "label": "Compare",
+          "icon": "CompareIcon",
+          "closeable": false,
+          "duplicable": false,
+          "supportsPin": true,
+          "supportsSplit": false,
+          "notes": [
+            "Revision/option comparison."
+          ]
+        },
+        {
+          "kind": "model-health",
+          "label": "Model health",
+          "icon": "ModelHealthIcon",
+          "closeable": false,
+          "duplicable": false,
+          "supportsPin": true,
+          "supportsSplit": false,
+          "notes": [
+            "Diagnostics derived surface."
+          ]
+        },
+        {
+          "kind": "ai-proposal",
+          "label": "AI proposal",
+          "icon": "ProposalIcon",
+          "closeable": false,
+          "duplicable": false,
+          "supportsPin": true,
+          "supportsSplit": false,
+          "notes": [
+            "Proposal review surface, capability-gated."
+          ]
+        }
+      ],
+      "behaviors": {
+        "activation": "Selecting a tab changes view state only; never mutates model data.",
+        "close": "Closing a tab closes the view instance, not the semantic view definition unless explicit Delete is chosen elsewhere.",
+        "dirtyMarker": "Use for unsent local UI draft only; local canonical save and cloud sync are displayed separately in SaveSyncCluster.",
+        "overflow": "Pinned first, active always visible, remaining tabs in ordered overflow menu.",
+        "reorder": "Pointer drag or keyboard move command; persist user tab order as UI preference, not project geometry."
+      }
+    },
+    "panels": {
+      "schemaVersion": 1,
+      "panels": [
+        {
+          "id": "P-left-browser",
+          "name": "Project Browser",
+          "desktop": {
+            "defaultWidth": 268,
+            "min": 232,
+            "max": 384,
+            "dock": "left"
+          },
+          "tabs": [
+            "Project",
+            "Views",
+            "Documents",
+            "Files"
+          ],
+          "phone": "full-height sheet via View/Project action",
+          "tablet": "overlay or drawer; never permanently steal narrow canvas"
+        },
+        {
+          "id": "P-right-inspector",
+          "name": "Inspector",
+          "desktop": {
+            "defaultWidth": 292,
+            "min": 248,
+            "max": 420,
+            "dock": "right"
+          },
+          "tabs": [
+            "Properties",
+            "Type",
+            "Relations",
+            "Warnings",
+            "History"
+          ],
+          "phone": "bottom sheet 36/68/92% detents",
+          "tablet": "right drawer landscape; bottom sheet portrait"
+        },
+        {
+          "id": "P-review",
+          "name": "Review rail",
+          "desktop": {
+            "defaultWidth": 328,
+            "min": 280,
+            "max": 420,
+            "dock": "left-or-right depending mode"
+          },
+          "tabs": [
+            "Issues",
+            "Comments",
+            "Changes"
+          ],
+          "phone": "full-height sheet with canvas peek"
+        },
+        {
+          "id": "P-tasks",
+          "name": "Task tray",
+          "desktop": {
+            "defaultWidth": 360,
+            "dock": "bottom-right-overlay"
+          },
+          "tabs": [
+            "Tasks"
+          ],
+          "phone": "bottom sheet"
+        },
+        {
+          "id": "P-ai",
+          "name": "AI proposal",
+          "desktop": {
+            "defaultWidth": 360,
+            "min": 320,
+            "max": 480,
+            "dock": "right-overlay or replace inspector"
+          },
+          "tabs": [
+            "Proposal",
+            "Assumptions",
+            "Validation"
+          ],
+          "phone": "full-height review sheet; apply bar sticky"
+        },
+        {
+          "id": "P-diagnostics",
+          "name": "Diagnostics",
+          "desktop": {
+            "defaultWidth": 420,
+            "min": 360,
+            "max": 560,
+            "dock": "right-overlay"
+          },
+          "tabs": [
+            "Model",
+            "System",
+            "Performance"
+          ],
+          "phone": "full-height sheet"
+        }
+      ]
+    },
+    "states": {
+      "schemaVersion": 1,
+      "machines": {
+        "workspace-open": [
+          "project-loading",
+          "project-ready",
+          "project-offline-ready",
+          "project-read-only",
+          "project-recovery-required",
+          "project-fatal-error"
+        ],
+        "tab": [
+          "closed",
+          "opening",
+          "ready",
+          "background-stale",
+          "active",
+          "closing",
+          "failed"
+        ],
+        "tool": [
+          "inactive",
+          "hover-discoverable",
+          "armed",
+          "previewing",
+          "awaiting-numeric-input",
+          "committing",
+          "complete",
+          "rejected",
+          "cancelled"
+        ],
+        "panel": [
+          "docked",
+          "collapsed",
+          "overlay-open",
+          "overlay-peek",
+          "resizing",
+          "hidden"
+        ],
+        "save": [
+          "saved-local",
+          "saving-local",
+          "local-save-failed"
+        ],
+        "sync": [
+          "not-configured",
+          "offline",
+          "queued",
+          "syncing",
+          "synced",
+          "conflict",
+          "sync-failed"
+        ],
+        "selection": [
+          "none",
+          "hover",
+          "single",
+          "multi",
+          "locked-target",
+          "remote-selected"
+        ],
+        "issue": [
+          "open",
+          "in-progress",
+          "resolved",
+          "reopened",
+          "stale-context"
+        ],
+        "ai-proposal": [
+          "idle",
+          "generating",
+          "proposal-ready",
+          "validation-running",
+          "validation-failed",
+          "ready-to-apply",
+          "applying",
+          "applied",
+          "rejected",
+          "stale"
+        ],
+        "long-task": [
+          "queued",
+          "running",
+          "paused-if-supported",
+          "cancel-requested",
+          "cancelled",
+          "partial",
+          "succeeded",
+          "failed"
+        ]
+      },
+      "invariants": [
+        "Local save and remote sync are separate machines.",
+        "View/tab close never deletes model data by implication.",
+        "Tool preview never becomes canonical until transaction commit.",
+        "Stale asynchronous results never overwrite newer document revision."
+      ]
+    },
+    "capabilities": {
+      "schemaVersion": 1,
+      "gates": [
+        {
+          "id": "CAP-core-plan",
+          "status": "current/protected-path",
+          "surfaces": [
+            "WS-02"
+          ],
+          "rule": "May be implemented against current semantic/tool contracts."
+        },
+        {
+          "id": "CAP-3d",
+          "status": "current/derived",
+          "surfaces": [
+            "WS-03",
+            "WS-04"
+          ],
+          "rule": "Derived renderer only; no canonical mesh mutation."
+        },
+        {
+          "id": "CAP-document",
+          "status": "current-or-near-term",
+          "surfaces": [
+            "WS-05",
+            "WS-06",
+            "WS-07"
+          ],
+          "rule": "Use truthful available document/sheet/export capabilities."
+        },
+        {
+          "id": "CAP-collaboration",
+          "status": "gated-until-current-repo-evidence",
+          "surfaces": [
+            "WS-09",
+            "WS-10",
+            "WS-13",
+            "WS-23"
+          ],
+          "rule": "Design is complete; hidden/disabled/preview states must not pretend server capability."
+        },
+        {
+          "id": "CAP-ai",
+          "status": "gated-until-current-repo-evidence",
+          "surfaces": [
+            "WS-20"
+          ],
+          "rule": "Proposal UX may be built behind flag; no direct mutation; no capability claim without backend evidence."
+        },
+        {
+          "id": "CAP-native",
+          "status": "architecture-decision-required",
+          "surfaces": [
+            "future native shells"
+          ],
+          "rule": "Do not add Tauri/native mobile packaging from this UI package alone."
+        },
+        {
+          "id": "CAP-broad-exchange",
+          "status": "format-capability-matrix-required",
+          "surfaces": [
+            "WS-14",
+            "WS-15",
+            "WS-16",
+            "WS-17"
+          ],
+          "rule": "Only expose formats/operations backed by current tested adapters."
+        }
+      ]
+    },
+    "workspaceSurfaces": {
+      "schemaVersion": 1,
+      "count": 30,
+      "surfaces": [
+        {
+          "id": "WS-01",
+          "name": "Project overview",
+          "family": "dashboard",
+          "purpose": "Internal project landing. Continue work, recent views, health, issues, activity, team/references and recovery.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-02",
+          "name": "Design / plan",
+          "family": "design",
+          "purpose": "Primary 2D authoring.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-03",
+          "name": "Design / 3D",
+          "family": "design",
+          "purpose": "Primary 3D authoring/navigation.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-04",
+          "name": "Design / split",
+          "family": "design",
+          "purpose": "Coordinated plan + 3D or two compatible views.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-05",
+          "name": "Document browser",
+          "family": "document",
+          "purpose": "Views, sheets, schedules and reports.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-06",
+          "name": "Sheet editing",
+          "family": "document",
+          "purpose": "Sheet composition and viewport placement.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-07",
+          "name": "Schedule editing",
+          "family": "document",
+          "purpose": "Schedule/table editing.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-08",
+          "name": "Inspect selection",
+          "family": "inspect",
+          "purpose": "Properties, relations, warnings and model context.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-09",
+          "name": "Review issues",
+          "family": "review",
+          "purpose": "Issue list + model context + issue detail/comments.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-10",
+          "name": "Review comments",
+          "family": "review",
+          "purpose": "Comment-centric review.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-11",
+          "name": "Version history",
+          "family": "review",
+          "purpose": "Project revision timeline.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-12",
+          "name": "Revision compare",
+          "family": "review",
+          "purpose": "Before/after/overlay/changed elements.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-13",
+          "name": "Conflict resolution",
+          "family": "review",
+          "purpose": "Semantic conflict resolution, capability gated.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-14",
+          "name": "Files and references",
+          "family": "files",
+          "purpose": "Imported/linked reference management.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-15",
+          "name": "Import report",
+          "family": "files",
+          "purpose": "Review mapping/warnings after import.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-16",
+          "name": "Export setup",
+          "family": "files",
+          "purpose": "Choose format/scope/options and validate.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-17",
+          "name": "Export report",
+          "family": "files",
+          "purpose": "Success/partial/failure result.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-18",
+          "name": "Model health",
+          "family": "analysis",
+          "purpose": "Model diagnostics and focus actions.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-19",
+          "name": "System diagnostics",
+          "family": "analysis",
+          "purpose": "Worker/storage/performance/system diagnostics.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-20",
+          "name": "AI proposal",
+          "family": "ai",
+          "purpose": "Proposal assumptions, operations, preview, validation and apply/reject, gated.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-21",
+          "name": "Present",
+          "family": "present",
+          "purpose": "Saved views and presentation settings with minimal chrome.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-22",
+          "name": "Project settings",
+          "family": "settings",
+          "purpose": "Project-level name/units/preferences/permissions where supported.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-23",
+          "name": "Share project",
+          "family": "collaboration",
+          "purpose": "Permissions and link/member sharing, gated by current capability.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-24",
+          "name": "Recovery",
+          "family": "recovery",
+          "purpose": "Local recovery points and restore verification.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-25",
+          "name": "Keyboard shortcuts",
+          "family": "help",
+          "purpose": "Context-aware shortcut reference.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-26",
+          "name": "Command palette",
+          "family": "help",
+          "purpose": "Global command/view/object search overlay.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-27",
+          "name": "Mobile tool picker",
+          "family": "mobile",
+          "purpose": "Phone/tablet tool selection sheet.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-28",
+          "name": "Mobile inspector",
+          "family": "mobile",
+          "purpose": "Phone/tablet selection/property sheet.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-29",
+          "name": "Mobile review",
+          "family": "mobile",
+          "purpose": "Phone/tablet issue/comment sheet.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        },
+        {
+          "id": "WS-30",
+          "name": "Fullscreen canvas",
+          "family": "mobile",
+          "purpose": "Canvas-dominant work with minimal restore chrome.",
+          "desktop": "specified",
+          "ipad": "specified",
+          "phone": "specified",
+          "states": [
+            "loading",
+            "ready",
+            "empty where meaningful",
+            "error",
+            "offline",
+            "stale",
+            "read-only/permission where meaningful",
+            "long-content",
+            "200%-zoom"
+          ]
+        }
+      ]
+    }
+  },
+  "routes": [
+    {
+      "id": "PUB-001",
+      "title": "Marketing home",
+      "route": "/",
+      "access": "public",
+      "goal": "Explain the product and route users to product, security, pricing and sign-up.",
+      "file": "docs/pages/PUB-001-marketing-home.md"
+    },
+    {
+      "id": "PUB-002",
+      "title": "Product overview",
+      "route": "/product",
+      "access": "public",
+      "goal": "Describe the complete product direction without unsupported compatibility claims.",
+      "file": "docs/pages/PUB-002-product-overview.md"
+    },
+    {
+      "id": "PUB-003",
+      "title": "For architects",
+      "route": "/architects",
+      "access": "public",
+      "goal": "Explain the residential and small-practice workflow.",
+      "file": "docs/pages/PUB-003-for-architects.md"
+    },
+    {
+      "id": "PUB-004",
+      "title": "For students",
+      "route": "/students",
+      "access": "public",
+      "goal": "Explain learning use without weakening professional positioning.",
+      "file": "docs/pages/PUB-004-for-students.md"
+    },
+    {
+      "id": "PUB-005",
+      "title": "Collaboration",
+      "route": "/collaboration",
+      "access": "public",
+      "goal": "Explain viewing, comments, issues and later co-authoring.",
+      "file": "docs/pages/PUB-005-collaboration.md"
+    },
+    {
+      "id": "PUB-006",
+      "title": "AI",
+      "route": "/ai",
+      "access": "public",
+      "goal": "Explain previewable, validated and undoable AI operations.",
+      "file": "docs/pages/PUB-006-ai.md"
+    },
+    {
+      "id": "PUB-007",
+      "title": "Interoperability",
+      "route": "/interoperability",
+      "access": "public",
+      "goal": "Publish format support accurately.",
+      "file": "docs/pages/PUB-007-interoperability.md"
+    },
+    {
+      "id": "PUB-008",
+      "title": "iPad",
+      "route": "/ipad",
+      "access": "public",
+      "goal": "Describe browser and future native iPad value.",
+      "file": "docs/pages/PUB-008-ipad.md"
+    },
+    {
+      "id": "PUB-009",
+      "title": "Pricing",
+      "route": "/pricing",
+      "access": "public",
+      "goal": "Present approved plans and limits after research.",
+      "file": "docs/pages/PUB-009-pricing.md"
+    },
+    {
+      "id": "PUB-010",
+      "title": "Security",
+      "route": "/security",
+      "access": "public",
+      "goal": "Explain security and privacy without overclaiming certification.",
+      "file": "docs/pages/PUB-010-security.md"
+    },
+    {
+      "id": "PUB-011",
+      "title": "Documentation index",
+      "route": "/docs",
+      "access": "public",
+      "goal": "Route users to learning and technical documentation.",
+      "file": "docs/pages/PUB-011-documentation-index.md"
+    },
+    {
+      "id": "PUB-012",
+      "title": "Changelog",
+      "route": "/changelog",
+      "access": "public",
+      "goal": "Publish release changes and migrations.",
+      "file": "docs/pages/PUB-012-changelog.md"
+    },
+    {
+      "id": "PUB-013",
+      "title": "Status",
+      "route": "/status",
+      "access": "public",
+      "goal": "Show service health and incidents.",
+      "file": "docs/pages/PUB-013-status.md"
+    },
+    {
+      "id": "PUB-014",
+      "title": "Contact and support",
+      "route": "/contact",
+      "access": "public",
+      "goal": "Route sales, support, security and press enquiries.",
+      "file": "docs/pages/PUB-014-contact-and-support.md"
+    },
+    {
+      "id": "PUB-015",
+      "title": "Privacy notice",
+      "route": "/legal/privacy",
+      "access": "public",
+      "goal": "Publish lawyer-approved privacy notice.",
+      "file": "docs/pages/PUB-015-privacy-notice.md"
+    },
+    {
+      "id": "PUB-016",
+      "title": "Terms",
+      "route": "/legal/terms",
+      "access": "public",
+      "goal": "Publish lawyer-approved product terms.",
+      "file": "docs/pages/PUB-016-terms.md"
+    },
+    {
+      "id": "PUB-017",
+      "title": "Open-source notices",
+      "route": "/legal/open-source",
+      "access": "public",
+      "goal": "Publish generated third-party notices.",
+      "file": "docs/pages/PUB-017-open-source-notices.md"
+    },
+    {
+      "id": "AUTH-001",
+      "title": "Sign in",
+      "route": "/sign-in",
+      "access": "anonymous",
+      "goal": "Authenticate a user securely.",
+      "file": "docs/pages/AUTH-001-sign-in.md"
+    },
+    {
+      "id": "AUTH-002",
+      "title": "Sign up",
+      "route": "/sign-up",
+      "access": "anonymous",
+      "goal": "Create an account and accept current terms.",
+      "file": "docs/pages/AUTH-002-sign-up.md"
+    },
+    {
+      "id": "AUTH-003",
+      "title": "Verify email",
+      "route": "/verify-email",
+      "access": "anonymous",
+      "goal": "Verify email ownership.",
+      "file": "docs/pages/AUTH-003-verify-email.md"
+    },
+    {
+      "id": "AUTH-004",
+      "title": "Forgot password",
+      "route": "/forgot-password",
+      "access": "anonymous",
+      "goal": "Request account recovery.",
+      "file": "docs/pages/AUTH-004-forgot-password.md"
+    },
+    {
+      "id": "AUTH-005",
+      "title": "Reset password",
+      "route": "/reset-password",
+      "access": "anonymous",
+      "goal": "Set a new password from a valid token.",
+      "file": "docs/pages/AUTH-005-reset-password.md"
+    },
+    {
+      "id": "APP-001",
+      "title": "Recent projects",
+      "route": "/app",
+      "access": "signed-in",
+      "goal": "Show recent and owned projects.",
+      "file": "docs/pages/APP-001-recent-projects.md"
+    },
+    {
+      "id": "APP-002",
+      "title": "Shared with me",
+      "route": "/app/shared",
+      "access": "signed-in",
+      "goal": "Show projects shared with the user.",
+      "file": "docs/pages/APP-002-shared-with-me.md"
+    },
+    {
+      "id": "APP-003",
+      "title": "Templates",
+      "route": "/app/templates",
+      "access": "signed-in",
+      "goal": "Create a project from controlled templates.",
+      "file": "docs/pages/APP-003-templates.md"
+    },
+    {
+      "id": "APP-004",
+      "title": "Archived projects",
+      "route": "/app/archived",
+      "access": "signed-in",
+      "goal": "Restore or permanently delete archived projects.",
+      "file": "docs/pages/APP-004-archived-projects.md"
+    },
+    {
+      "id": "APP-005",
+      "title": "New project",
+      "route": "/app/new",
+      "access": "signed-in",
+      "goal": "Create a project with units and initial level.",
+      "file": "docs/pages/APP-005-new-project.md"
+    },
+    {
+      "id": "APP-006",
+      "title": "Import project",
+      "route": "/app/import",
+      "access": "signed-in",
+      "goal": "Import an Arq archive or supported reference format.",
+      "file": "docs/pages/APP-006-import-project.md"
+    },
+    {
+      "id": "APP-007",
+      "title": "Workspace members",
+      "route": "/app/workspace/members",
+      "access": "administrator",
+      "goal": "Manage membership and roles.",
+      "file": "docs/pages/APP-007-workspace-members.md"
+    },
+    {
+      "id": "APP-008",
+      "title": "Workspace settings",
+      "route": "/app/workspace/settings",
+      "access": "administrator",
+      "goal": "Manage workspace identity and defaults.",
+      "file": "docs/pages/APP-008-workspace-settings.md"
+    },
+    {
+      "id": "APP-009",
+      "title": "Account settings",
+      "route": "/app/account",
+      "access": "signed-in",
+      "goal": "Manage profile, authentication and privacy.",
+      "file": "docs/pages/APP-009-account-settings.md"
+    },
+    {
+      "id": "APP-010",
+      "title": "Billing",
+      "route": "/app/billing",
+      "access": "owner",
+      "goal": "Manage approved subscription, invoices and entitlements.",
+      "file": "docs/pages/APP-010-billing.md"
+    },
+    {
+      "id": "PROJ-001",
+      "title": "Plan editor",
+      "route": "/app/projects/:id/plan/:viewId",
+      "access": "editor",
+      "goal": "Primary plan authoring surface.",
+      "file": "docs/pages/PROJ-001-plan-editor.md"
+    },
+    {
+      "id": "PROJ-002",
+      "title": "3D editor",
+      "route": "/app/projects/:id/3d/:viewId",
+      "access": "editor",
+      "goal": "Coordinated model view and selected editing.",
+      "file": "docs/pages/PROJ-002-3d-editor.md"
+    },
+    {
+      "id": "PROJ-003",
+      "title": "Split view",
+      "route": "/app/projects/:id/split",
+      "access": "editor",
+      "goal": "Display coordinated plan and 3D.",
+      "file": "docs/pages/PROJ-003-split-view.md"
+    },
+    {
+      "id": "PROJ-004",
+      "title": "Sheet editor",
+      "route": "/app/projects/:id/sheets/:sheetId",
+      "access": "editor",
+      "goal": "Lay out a plan viewport and export a sheet.",
+      "file": "docs/pages/PROJ-004-sheet-editor.md"
+    },
+    {
+      "id": "PROJ-005",
+      "title": "Inspect mode",
+      "route": "/app/projects/:id/inspect",
+      "access": "editor",
+      "goal": "Inspect identity, properties, relationships and warnings.",
+      "file": "docs/pages/PROJ-005-inspect-mode.md"
+    },
+    {
+      "id": "PROJ-006",
+      "title": "Document mode",
+      "route": "/app/projects/:id/document",
+      "access": "editor",
+      "goal": "Manage views, annotations, schedules and sheets.",
+      "file": "docs/pages/PROJ-006-document-mode.md"
+    },
+    {
+      "id": "PROJ-007",
+      "title": "Review mode",
+      "route": "/app/projects/:id/review",
+      "access": "commenter",
+      "goal": "Review comments, issues and revisions.",
+      "file": "docs/pages/PROJ-007-review-mode.md"
+    },
+    {
+      "id": "PROJ-008",
+      "title": "Present mode",
+      "route": "/app/projects/:id/present",
+      "access": "viewer",
+      "goal": "Navigate saved views without accidental edits.",
+      "file": "docs/pages/PROJ-008-present-mode.md"
+    },
+    {
+      "id": "PROJ-009",
+      "title": "Comments",
+      "route": "/app/projects/:id/comments",
+      "access": "commenter",
+      "goal": "List and resolve model and sheet comments.",
+      "file": "docs/pages/PROJ-009-comments.md"
+    },
+    {
+      "id": "PROJ-010",
+      "title": "Issues",
+      "route": "/app/projects/:id/issues",
+      "access": "commenter",
+      "goal": "Track actionable design issues.",
+      "file": "docs/pages/PROJ-010-issues.md"
+    },
+    {
+      "id": "PROJ-011",
+      "title": "Version history",
+      "route": "/app/projects/:id/history",
+      "access": "viewer",
+      "goal": "Show snapshots and operations.",
+      "file": "docs/pages/PROJ-011-version-history.md"
+    },
+    {
+      "id": "PROJ-012",
+      "title": "Revision compare",
+      "route": "/app/projects/:id/compare/:a/:b",
+      "access": "viewer",
+      "goal": "Compare two revisions.",
+      "file": "docs/pages/PROJ-012-revision-compare.md"
+    },
+    {
+      "id": "PROJ-013",
+      "title": "Import report",
+      "route": "/app/projects/:id/imports/:importId",
+      "access": "editor",
+      "goal": "Explain imported, converted and unsupported content.",
+      "file": "docs/pages/PROJ-013-import-report.md"
+    },
+    {
+      "id": "PROJ-014",
+      "title": "Export dialog",
+      "route": "/app/projects/:id/export",
+      "access": "editor",
+      "goal": "Choose format, scope and validation.",
+      "file": "docs/pages/PROJ-014-export-dialog.md"
+    },
+    {
+      "id": "PROJ-015",
+      "title": "Export report",
+      "route": "/app/projects/:id/exports/:exportId",
+      "access": "viewer",
+      "goal": "Show included, omitted and failed content.",
+      "file": "docs/pages/PROJ-015-export-report.md"
+    },
+    {
+      "id": "PROJ-016",
+      "title": "Project settings",
+      "route": "/app/projects/:id/settings",
+      "access": "administrator",
+      "goal": "Manage units, precision, permissions and archive.",
+      "file": "docs/pages/PROJ-016-project-settings.md"
+    },
+    {
+      "id": "PROJ-017",
+      "title": "Share project",
+      "route": "/app/projects/:id/share",
+      "access": "administrator",
+      "goal": "Invite users and create controlled share links.",
+      "file": "docs/pages/PROJ-017-share-project.md"
+    },
+    {
+      "id": "PROJ-018",
+      "title": "Recovery",
+      "route": "/app/recovery/:projectId",
+      "access": "editor",
+      "goal": "Restore locally journalled work safely.",
+      "file": "docs/pages/PROJ-018-recovery.md"
+    },
+    {
+      "id": "PROJ-019",
+      "title": "Sync conflict",
+      "route": "/app/projects/:id/conflict",
+      "access": "editor",
+      "goal": "Resolve rejected or conflicting operations.",
+      "file": "docs/pages/PROJ-019-sync-conflict.md"
+    },
+    {
+      "id": "PROJ-020",
+      "title": "Diagnostics",
+      "route": "/app/projects/:id/diagnostics",
+      "access": "administrator",
+      "goal": "Inspect performance, memory, errors and support bundle.",
+      "file": "docs/pages/PROJ-020-diagnostics.md"
+    },
+    {
+      "id": "PROJ-021",
+      "title": "Command palette",
+      "route": "overlay",
+      "access": "editor",
+      "goal": "Search commands, views, objects, settings and help.",
+      "file": "docs/pages/PROJ-021-command-palette.md"
+    },
+    {
+      "id": "PROJ-022",
+      "title": "Keyboard shortcuts",
+      "route": "overlay",
+      "access": "signed-in",
+      "goal": "Show and search active shortcuts.",
+      "file": "docs/pages/PROJ-022-keyboard-shortcuts.md"
+    },
+    {
+      "id": "PROJ-023",
+      "title": "Onboarding project",
+      "route": "/app/onboarding",
+      "access": "signed-in",
+      "goal": "Teach the benchmark workflow inside a real project.",
+      "file": "docs/pages/PROJ-023-onboarding-project.md"
+    },
+    {
+      "id": "PROJ-024",
+      "title": "Model health",
+      "route": "panel",
+      "access": "editor",
+      "goal": "Summarise blocking errors and warnings.",
+      "file": "docs/pages/PROJ-024-model-health.md"
+    },
+    {
+      "id": "PROJ-025",
+      "title": "AI proposal",
+      "route": "panel",
+      "access": "editor",
+      "goal": "Show intent, assumptions, operations, preview and validation.",
+      "file": "docs/pages/PROJ-025-ai-proposal.md"
+    }
+  ],
+  "permissions": [
+    {
+      "action": "view_project",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "yes",
+      "commenter": "yes",
+      "viewer": "yes"
+    },
+    {
+      "action": "create_project",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "yes",
+      "commenter": "no",
+      "viewer": "no"
+    },
+    {
+      "action": "download_archive",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "yes",
+      "commenter": "no",
+      "viewer": "no"
+    },
+    {
+      "action": "edit_model",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "yes",
+      "commenter": "no",
+      "viewer": "no"
+    },
+    {
+      "action": "import_content",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "yes",
+      "commenter": "no",
+      "viewer": "no"
+    },
+    {
+      "action": "comment",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "yes",
+      "commenter": "yes",
+      "viewer": "no"
+    },
+    {
+      "action": "create_issue",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "yes",
+      "commenter": "yes",
+      "viewer": "no"
+    },
+    {
+      "action": "invite_member",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "no",
+      "commenter": "no",
+      "viewer": "no"
+    },
+    {
+      "action": "change_role",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "no",
+      "commenter": "no",
+      "viewer": "no"
+    },
+    {
+      "action": "create_share_link",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "no",
+      "commenter": "no",
+      "viewer": "no"
+    },
+    {
+      "action": "export_project",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "yes",
+      "commenter": "no",
+      "viewer": "no"
+    },
+    {
+      "action": "archive_project",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "no",
+      "commenter": "no",
+      "viewer": "no"
+    },
+    {
+      "action": "delete_project",
+      "owner": "yes",
+      "administrator": "no",
+      "editor": "no",
+      "commenter": "no",
+      "viewer": "no"
+    },
+    {
+      "action": "view_audit",
+      "owner": "yes",
+      "administrator": "yes",
+      "editor": "no",
+      "commenter": "no",
+      "viewer": "no"
+    }
+  ],
+  "telemetry": [
+    {
+      "event": "project_created",
+      "purpose": "Project created",
+      "properties": "workspace_id, unit_system",
+      "projectContent": "no raw project content"
+    },
+    {
+      "event": "first_wall_created",
+      "purpose": "First wall committed",
+      "properties": "project_tier, latency_ms",
+      "projectContent": "no raw project content"
+    },
+    {
+      "event": "room_created",
+      "purpose": "Room committed",
+      "properties": "status, latency_ms",
+      "projectContent": "no raw project content"
+    },
+    {
+      "event": "view_3d_opened",
+      "purpose": "3D opened",
+      "properties": "latency_ms, device_class",
+      "projectContent": "no raw project content"
+    },
+    {
+      "event": "export_completed",
+      "purpose": "Export result across all formats",
+      "properties": "format, duration_ms, result_code",
+      "projectContent": "no raw project content"
+    },
+    {
+      "event": "import_completed",
+      "purpose": "Import result",
+      "properties": "format, duration_ms, result_code",
+      "projectContent": "no raw project content"
+    },
+    {
+      "event": "operation_rejected",
+      "purpose": "Validation rejected operation",
+      "properties": "operation_type, error_code",
+      "projectContent": "no raw project content"
+    },
+    {
+      "event": "recovery_used",
+      "purpose": "Recovery opened",
+      "properties": "operation_count, result_code",
+      "projectContent": "no raw project content"
+    },
+    {
+      "event": "command_no_result",
+      "purpose": "Command search no result",
+      "properties": "query_category_only",
+      "projectContent": "no raw project content"
+    },
+    {
+      "event": "ai_proposal_applied",
+      "purpose": "Bounded AI applied",
+      "properties": "operation_count, correction_count",
+      "projectContent": "no raw project content"
+    },
+    {
+      "event": "client_crash",
+      "purpose": "Unhandled client error",
+      "properties": "context, recoverable, error_code",
+      "projectContent": "no raw project content"
+    }
+  ],
+  "externalStates": {
+    "arqfs-safe-mode": [
+      "unreadable",
+      "corrupt",
+      "interrupted-write",
+      "reader-too-old-to-write",
+      "missing-required-entries",
+      "safe-mode-required",
+      "healthy"
+    ],
+    "file-flow": [
+      "idle",
+      "acquiring",
+      "detecting",
+      "native-opening",
+      "import-options",
+      "importing",
+      "staged-review",
+      "migrating",
+      "read-only-safe-mode",
+      "failed"
+    ],
+    "web-plan-journal-status": [
+      "recovered",
+      "saving",
+      "unsaved-changes",
+      "no-project",
+      "saved",
+      "saving",
+      "unsaved-changes",
+      "recovered"
+    ]
+  },
+  "textSources": {
+    "readme": "<h1 align=\"center\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"brand/01_VECTOR/ARQ_Wordmark_White.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"brand/01_VECTOR/ARQ_Wordmark_PhthaloGreen.svg\">\n    <img src=\"brand/01_VECTOR/ARQ_Wordmark_PhthaloGreen.svg\" alt=\"ARQ\" width=\"280\">\n  </picture>\n</h1>\n\n<p align=\"center\"><strong>Architecture made simple.</strong></p>\n\n<p align=\"center\">\n  Browser-first architectural authoring with visible BIM semantics, recoverable local project files, and dependable documentation.\n</p>\n\n<p align=\"center\">\n  <a href=\"#project-status\"><img alt=\"Stage: pre-release\" src=\"https://img.shields.io/badge/stage-pre--release-0B6B50?style=flat-square\"></a>\n  <a href=\"#quick-start\"><img alt=\"Node.js 20 or newer\" src=\"https://img.shields.io/badge/Node.js-20%2B-111111?style=flat-square\"></a>\n  <a href=\"#architecture\"><img alt=\"Core: Rust and WebAssembly\" src=\"https://img.shields.io/badge/core-Rust%20%2B%20WebAssembly-111111?style=flat-square\"></a>\n  <a href=\"#licence\"><img alt=\"Licence: proprietary\" src=\"https://img.shields.io/badge/licence-proprietary-555555?style=flat-square\"></a>\n</p>\n\n<p align=\"center\">\n  <a href=\"#overview\">Overview</a> ·\n  <a href=\"#project-status\">Status</a> ·\n  <a href=\"#quick-start\">Quick start</a> ·\n  <a href=\"#architecture\">Architecture</a> ·\n  <a href=\"#repository-map\">Repository</a> ·\n  <a href=\"#contributing\">Contributing</a>\n</p>\n\n---\n\n> [!WARNING]\n> ARQ is pre-release software. This repository contains working application, core, storage, design-system, test, and benchmark code, but the protected end-to-end architectural workflow is not complete or ready for production projects.\n\n## Overview\n\nARQ is a browser-based architectural plan and lightweight BIM editor for independent architects and small practices.\n\nIt combines direct CAD-style interaction with an inspectable semantic building model. Walls, openings, rooms, levels, dimensions, views, sheets, and their relationships are project data. Canvas primitives and 3D meshes are derived representations, not the source of truth.\n\n<table>\n  <tr>\n    <td width=\"25%\"><strong>Direct</strong><br><sub>Precise selection, snaps, numeric entry, and predictable editing.</sub></td>\n    <td width=\"25%\"><strong>Semantic</strong><br><sub>Plan, 3D, dimensions, and sheets refer to the same building objects.</sub></td>\n    <td width=\"25%\"><strong>Local-first</strong><br><sub>Ordinary authoring and recovery do not depend on a server round trip.</sub></td>\n    <td width=\"25%\"><strong>Explainable</strong><br><sub>Changes, failures, imports, and automation show their impact.</sub></td>\n  </tr>\n</table>\n\nThe protected first workflow is intentionally narrow:\n\n```text\nNew project\n    ↓\nDimensioned residential plan\n    ↓\nCoordinated 3D\n    ↓\nScaled vector PDF\n```\n\nARQ is not initially a replacement for every AutoCAD, Revit, Archicad, SketchUp, Rhino, or Blender workflow. The first objective is one complete residential authoring path that remains fast, inspectable, recoverable, and printable.\n\n## Project status\n\nThe repository is in active technical validation and vertical-slice implementation.\nThe maintained area-by-area summary, gap list, and open decisions live in\n[`STATUS.md`](STATUS.md).\n\n| Area                  | Current repository state                                                                             |\n| --------------------- | ---------------------------------------------------------------------------------------------------- |\n| Browser editor        | Full workspace shell with an interactive plan canvas: wall drawing, snapping, selection, pan/zoom    |\n| Design system         | Product shell components, design tokens, and a generated technical icon package                      |\n| Domain boundaries     | Geometry, semantic model, operations, validation, rendering, storage, and adapter packages           |\n| Shared core           | Rust crate with WebAssembly build and parity-check tooling                                           |\n| Local project storage | Native SQLite and browser OPFS prototypes, single-writer protection, export, and recovery groundwork |\n| Synchronisation       | Narrow operation and snapshot protocol groundwork, not a finished collaboration product              |\n| Quality system        | Unit, property, browser, capability, performance, formatting, type, dependency, and licence checks   |\n| Public website        | All seventeen public pages from `docs/pages/` as a static site with claim-honesty tests              |\n| Product workflow      | Incomplete. The first wall-to-room-to-plan-to-3D-to-sheet workflow remains the release gate          |\n\n### Current milestone\n\nThe active milestone is the first dependable architectural vertical slice:\n\n1. create or trace a small plan;\n2. create semantic walls and hosted openings;\n3. derive rooms and coordinated plan output;\n4. inspect the same objects in 3D;\n5. add stable dimensions and a plan sheet;\n6. export a clean scaled PDF;\n7. close, recover, reopen, and verify the project.\n\n### Deferred until the protected workflow is dependable\n\n- broad DXF and IFC exchange;\n- review, comments, issues, and multi-user collaboration;\n- design options and semantic comparison;\n- public AI authoring;\n- native desktop and iPad applications;\n- enterprise BIM, structural, MEP, fabrication, 4D, and 5D workflows.\n\n## Product principles\n\n1. **The semantic model is authoritative.** Renderer objects, canvas primitives, and caches are disposable projections.\n2. **Every committed edit is explicit.** Operations carry preconditions, affected elements, invalidations, validation results, and inverse behaviour where meaningful.\n3. **Invalid work fails safely.** A rejected operation must leave the previous project state unchanged.\n4. **Recovery is local.** Acknowledged work and project access must not depend on cloud availability.\n5. **Performance is product quality.** Selection, snapping, drawing, moving, opening, saving, and projection updates are measured as user actions.\n6. **Interoperability reports fidelity.** Import and export must explain what was preserved, approximated, flattened, omitted, or retained as opaque data.\n7. **Automation is reviewable.** AI may propose typed operations, but it cannot bypass deterministic validation or user approval.\n8. **Complexity appears progressively.** ARQ should behave like a professional instrument, not an enterprise dashboard compressed into a drawing canvas.\n\n## Architecture\n\n```mermaid\nflowchart LR\n    U[Architect]\n    W[Web editor<br/>React + Vite + TypeScript]\n    I[Command and input systems<br/>pointer · touch · keyboard · Pencil]\n    D[Typed operations and semantic model]\n    R[arq-core<br/>Rust + WebAssembly]\n    P[Plan renderer<br/>Canvas 2D]\n    M[3D renderer boundary]\n    F[ARQFS prototype<br/>SQLite + OPFS working copy]\n    C[Disposable derived caches]\n    X[PDF · DXF · IFC adapters]\n    S[Optional operation and snapshot sync]\n    A[Typed AI proposals]\n\n    U --> W\n    W --> I\n    I --> D\n    D <--> R\n    D --> P\n    D --> M\n    D <--> F\n    D --> C\n    D -. staged .-> X\n    F -. optional .-> S\n    D -. later .-> A\n\n    classDef current fill:#0B6B50,color:#FFFFFF,stroke:#0B6B50;\n    classDef core fill:#111111,color:#FFFFFF,stroke:#111111;\n    classDef boundary fill:#FFFFFF,color:#111111,stroke:#8A8A8A;\n    classDef later fill:#FFFFFF,color:#555555,stroke:#8A8A8A,stroke-dasharray:5 5;\n\n    class W,D,F current;\n    class R core;\n    class U,I,P,M,C boundary;\n    class X,S,A later;\n```\n\n### State boundaries\n\n- **Interface state:** active tools, panels, hover, menus, temporary previews, and cameras\n- **Canonical project state:** semantic entities, operations, views, sheets, annotations, resources, and revisions\n- **Derived state:** meshes, room boundaries, projections, render lists, spatial indexes, validation results, and thumbnails\n- **Adapters:** isolated exchange boundaries that cannot mutate canonical data directly\n- **Cloud services:** optional metadata and collaboration services, not a requirement for ordinary local authoring\n\n## Native `.arq` project format\n\nThe current ARQFS direction implements `.arq` as a native SQLite application database, not a renamed ZIP archive.\n\nThe canonical project is intended to contain semantic entities, typed operation history, views, sheets, annotations, resources, schema versions, migrations, and integrity metadata. Browser work uses an OPFS working copy with explicit writer ownership.\n\nThe implementation is being validated against these rules:\n\n- local ownership and reopening without mandatory cloud access;\n- transactional writes and deterministic migrations;\n- backup or original-file retention before migration;\n- recovery from an interrupted session;\n- explicit schema and application versions;\n- safe handling of unknown optional data;\n- canonical project data that never depends on a cache;\n- clean publication from a working copy to a portable `.arq` file.\n\nDerived meshes, projections, indexes, and thumbnails may be cached for speed. Missing, stale, or corrupt derived data must trigger recomputation, not project failure.\n\n## Quick start\n\n### Requirements\n\n- Node.js 20 or newer\n- pnpm 9 through Corepack\n- Rust toolchain for `arq-core` or WebAssembly work\n- a current Chromium, Firefox, or Safari browser for browser validation\n\n### Install and run the browser editor\n\n```bash\ncorepack enable\npnpm install\npnpm --filter @arq/web dev\n```\n\nBuild and preview the browser app:\n\n```bash\npnpm --filter @arq/web build\npnpm --filter @arq/web preview\n```\n\nThe current browser app renders the real ARQ shell and Canvas 2D pipeline with a small demo scene. It is not yet a complete project authoring workflow.\n\n### Rust and WebAssembly\n\n```bash\nrustup target add wasm32-unknown-unknown\n```\n\nInstall a `wasm-bindgen-cli` version compatible with the locked `wasm-bindgen` crate, then run:\n\n```bash\npnpm rust:build-wasm\npnpm rust:verify-wasm-parity\n```\n\n## Development checks\n\nRun the standard repository checks before opening a pull request:\n\n```bash\npnpm format:check\npnpm lint\npnpm typecheck\npnpm test\npnpm build\n```\n\nRun the Rust checks when changing the shared core:\n\n```bash\npnpm rust:fmt-check\npnpm rust:clippy\npnpm rust:test\n```\n\nReview dependency licences:\n\n```bash\npnpm check:dependency-licences\n```\n\n<details>\n<summary><strong>Capability and performance checks</strong></summary>\n\n```bash\npnpm benchmark:canvas2d\npnpm benchmark:pixijs\npnpm benchmark:canvaskit\npnpm benchmark:render-frame\npnpm benchmark:pencil-input\npnpm benchmark:hover-sequence\npnpm benchmark:arqfs-opfs\npnpm benchmark:arqfs-writer-lock\npnpm benchmark:arq-core-worker\n```\n\nBenchmark results apply only to the tested commit, device, operating system, browser, project fixture, and measurement method. They are engineering evidence, not universal product claims.\n\n</details>\n\n## Repository map\n\n```text\nArq/\n├── apps/\n│   ├── web/                  # Primary browser authoring surface\n│   ├── marketing/            # Public website (static build of all PUB pages)\n│   └── api/                  # Service boundary\n├── packages/\n│   ├── design-system/        # Product shell and shared interface components\n│   ├── icons/                # Generated ARQ technical icon package\n│   ├── editor-shell/         # Viewport and editor-shell contracts\n│   ├── command-system/       # Command lifecycle and invocation\n│   ├── input-system/         # Pointer, touch, keyboard, and Pencil abstractions\n│   ├── geometry-2d/          # Plan geometry and spatial logic\n│   ├── geometry-3d/          # 3D geometry boundary\n│   ├── bim-core/             # Semantic building model\n│   ├── operations/           # Typed project operations and undo groundwork\n│   ├── plan-renderer/        # Canvas 2D plan rendering\n│   ├── model-renderer/       # Coordinated 3D rendering boundary\n│   ├── project-format/       # Native project-format contracts\n│   ├── local-storage/        # Browser-local persistence\n│   ├── validation/           # Deterministic validation\n│   ├── pdf-export/           # Drawing and sheet export boundary\n│   ├── dxf-adapter/          # DXF exchange boundary\n│   └── ifc-adapter/          # IFC exchange boundary\n├── workers/                  # Geometry and import/export workers\n├── rust/\n│   └── arq-core/             # Shared deterministic Rust core and WASM target\n├── brand/                    # Canonical logo, favicon, app, social, and print assets\n├── design/                   # Tokens and design resources\n├── docs/                     # Product, ADR, architecture, UX, security, and research docs\n├── benchmarks/                # Performance fixtures and results\n├── scripts/                  # Build, benchmark, validation, and maintenance tools\n├── prototype/                # Static product-shell prototype\n└── .github/                  # Ownership, templates, workflows, and automation\n```\n\nSee [`docs/architecture/REPOSITORY-STRUCTURE.md`](docs/architecture/REPOSITORY-STRUCTURE.md) for the package-level structure.\n\n## Documentation and decisions\n\nWhen sources disagree, use this order:\n\n1. approved Architecture Decision Records in [`docs/adr/`](docs/adr/);\n2. the active product blueprint, [`docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md`](docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md);\n3. package, API, schema, page, component, and flow specifications;\n4. machine-readable backlog, quality, and validation registers;\n5. historical planning documents.\n\nA material architecture change should be recorded through an ADR. Planning prose must not silently override accepted decisions, package contracts, tests, or working code.\n\n## Brand system\n\nThis README uses the canonical ARQ wordmark from `brand/01_VECTOR/`. GitHub switches between the Phthalo Green and white variants based on the reader's colour scheme.\n\n| Use                                             | Canonical location                                                                                       |\n| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------- |\n| Brand guidelines                                | [`brand/00_GUIDE/ARQ_Brand_Guidelines_FINAL.pdf`](brand/00_GUIDE/ARQ_Brand_Guidelines_FINAL.pdf)         |\n| Quick reference                                 | [`brand/00_GUIDE/ARQ_Logo_Quick_Reference_FINAL.pdf`](brand/00_GUIDE/ARQ_Logo_Quick_Reference_FINAL.pdf) |\n| SVG wordmarks and symbols                       | [`brand/01_VECTOR/`](brand/01_VECTOR/)                                                                   |\n| High-resolution transparent PNGs                | [`brand/02_4K_PNG/`](brand/02_4K_PNG/)                                                                   |\n| Favicons, manifest, PWA icons, and social image | [`brand/03_WEB/`](brand/03_WEB/)                                                                         |\n| App icon masters                                | [`brand/04_APP_ICONS/`](brand/04_APP_ICONS/)                                                             |\n| Print-ready assets                              | [`brand/05_PRINT/`](brand/05_PRINT/)                                                                     |\n\nBrand rules for implementation:\n\n- use supplied assets without redrawing or retyping the wordmark;\n- preserve the `q` descender and the required clear space;\n- use vector artwork where possible;\n- do not stretch, compress, rotate, outline, shadow, glow, or recolour the mark;\n- use only ARQ Black `#000000`, ARQ White `#FFFFFF`, and ARQ Phthalo Green `#0B6B50` for the logo system;\n- do not use the wordmark below 64 px, the symbol below 24 px, or the tagline lockup below 360 px;\n- use the shared [`Logo`](packages/design-system/src/logo.tsx) component inside the product rather than importing logo files ad hoc.\n\n## AI boundary\n\nARQ is not a chat interface that directly rewrites hidden geometry.\n\nThe intended AI contract is:\n\n1. interpret a request against a known project revision;\n2. produce a typed proposal;\n3. show assumptions, affected objects, warnings, and document impact;\n4. run deterministic validation;\n5. require approval for consequential changes;\n6. apply the accepted operation group;\n7. preserve provenance and grouped undo.\n\nAI output does not establish professional approval, building-code compliance, structural safety, fire safety, accessibility compliance, constructability, cost accuracy, or design correctness.\n\n## Contributing\n\nARQ uses an ordered, backlog-driven contribution process. Coordinate work before starting, especially while architecture and file-format boundaries are still changing.\n\nBefore opening a pull request:\n\n1. select an issue and confirm its phase, owner, dependencies, and acceptance criteria;\n2. read the relevant ADR and package specification;\n3. state the problem, proposed solution, and non-goals;\n4. add tests and performance evidence where relevant;\n5. record any new dependency and its licence;\n6. document accessibility, project-format, migration, security, and rollback effects.\n\nRead [`CONTRIBUTING.md`](CONTRIBUTING.md) and use the repository pull-request template.\n\n## Security\n\nDo not disclose an unpatched vulnerability through a public issue. Use the private reporting process described in [`SECURITY.md`](SECURITY.md).\n\nTreat file import, migrations, project recovery, authentication, sharing, synchronisation, and future AI orchestration as security-sensitive boundaries.\n\n## Professional-use boundary\n\nARQ is architectural authoring software under development. It does not certify professional approval, regulatory compliance, structural safety, fire safety, accessibility compliance, cost, or constructability. Qualified professionals remain responsible for project decisions and issued documents.\n\n## Licence\n\nCopyright © 2026 the ARQ project. All rights reserved.\n\nThis repository is proprietary. Source code, documentation, designs, schemas, and other materials may not be copied, modified, distributed, sublicensed, or sold without prior written permission. Third-party components remain governed by their own licences.\n\nSee [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) for the current terms and third-party notices.\n\n---\n\n<p align=\"center\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"brand/01_VECTOR/ARQ_Symbol_White.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"brand/01_VECTOR/ARQ_Symbol_PhthaloGreen.svg\">\n    <img src=\"brand/01_VECTOR/ARQ_Symbol_PhthaloGreen.svg\" alt=\"ARQ symbol\" width=\"48\">\n  </picture>\n</p>\n\n<p align=\"center\"><sub>Direct while drawing. Structured while coordinating. Dependable while documenting.</sub></p>\n",
+    "status": "# Arq — where the project stands\n\n_Last updated: 2026-07-27. This is the top-level summary the buried triage\nnotes (`docs/research/incoming/README.md`) used to be the only source of.\nWhen code and this file disagree, the code and its tests win - update this\nfile in the same change._\n\n## Plan of record\n\n- Blueprint: `docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md`\n- Decisions: `docs/adr/` (0001-0026; live ADRs outrank all older text)\n- Backlog: `backlog/issues/` — 242 ordered issues; index regenerated by\n  `node scripts/generate-backlog-index.mjs`. Completion is recorded in git\n  history (commit messages reference ARQ-### ids), deliberately not in the index.\n- Release ladder: `docs/product/RELEASE-SCOPE.md`\n\n## What is real today\n\nVerified by `pnpm typecheck` (36/36 packages plus `contracts/`),\n`pnpm lint` (real eslint gate over the whole repository), `pnpm test`\n(230+ files, ~2,000 tests) and CI (`.github/workflows/`: format, lint,\ntypecheck, tests, workspace-registry check, licence/SBOM gate, secret scan,\nexplicit build gate, Rust fmt/clippy/test, six headless-Chromium capability\nchecks, weekly render benchmark).\n\n- **`.arq` file format** (`packages/arqfs`): schema v1/v2, capability-gated\n  open, byte preflight, copy-on-write migration with reopen+integrity\n  verification, recovery reporting, fuzz tests. Library-complete; not yet\n  reachable from the product (no open-project pipeline).\n- **Workspace shell** (`apps/web` + `packages/workspace` +\n  `packages/design-system`): the full open-project surface - top bar, tabs,\n  mode/tool rails, browser/inspector panels, command palette, status bar,\n  phone/tablet touch compositions - running on a demo project context and\n  honestly reporting `no-project` / `offline`.\n- **Interactive plan canvas** (`apps/web/src/PlanCanvas.tsx`): pan, zoom\n  (wheel/pinch), wall drawing with snapping (endpoint/midpoint/grid), point\n  and marquee (window/crossing) selection, hover, fit; typed undoable\n  operations validated by `@arq/validation` before commit, with live\n  model-health counts in the status bar.\n- **Local persistence** (`apps/web/src/canvas/plan-journal.ts` over\n  `@arq/local-storage`): edits are journalled to IndexedDB and recovered on\n  start-up; the shell's save state reports the journal's real condition\n  (`saved`/`saving`/`recovered`/`unsaved-changes`).\n- **3D view: DISPUTED, do not cite either way.** `apps/web/src/ModelCanvas.tsx`\n  exists and `App.tsx` renders it for a `3d` tab, over `@arq/model-renderer` +\n  `@arq/geometry-3d`. No test covers that surface and no headless-browser\n  capability check exercises it, so there is no user-reachability evidence to\n  match the wall-drawing, OPFS or file-open checks. This file previously\n  asserted both a wired 3D tab and a 3D stack with zero consumers. Neither\n  assertion is authoritative. Tracked as `CONFLICT-3D-CURRENT-STATUS` in\n  `docs/product/voice/conflict-registry.json`, which blocks the claim from\n  public, support, documentation and product-AI surfaces until it is resolved.\n  Resolving it needs a browser capability check for the 3D tab, a corrected\n  statement here, and a language-context refresh.\n- **Editor libraries** (`packages/editor-shell`, `geometry-2d`,\n  `plan-renderer`, `command-system`, `operations`): implemented and\n  thoroughly tested; door/window/room tools and region selection exist but\n  are not yet wired to the canvas.\n- **Public website** (`apps/marketing`): all 17 PUB pages from `docs/pages/`\n  as a static, no-JS-required site with tests enforcing the launch-claims\n  checklist, route coverage and accessibility basics.\n- **Interop libraries**: DXF parse (tokenizer/units), IFC read via web-ifc,\n  PDF vector export, file-ingress detection/policy/staging, RoomPlan\n  converter, Rust `arq-core` with WASM parity scripts. Tested as libraries;\n  no import or export path runs end to end in the product yet.\n- **3D stack** (`model-renderer`, `geometry-3d`): implemented and tested as\n  libraries. Their only consumer is `ModelCanvas.tsx`, whose reachability is\n  the disputed item above.\n\n## Biggest known gaps (in rough priority order)\n\n1. No end-to-end project open: file-open UI stops at its safety verdict;\n   the OPFS worker is never constructed (`workers/arqfs-worker`).\n2. No import/export reachable from the UI: the import worker is never\n   constructed by `apps/web` (adapters themselves are real - dxf, underlay,\n   attachment and now ifc all resolve in the worker's default registry).\n3. `apps/api` is an `export {}` stub; sync has protocol logic but no\n   transport or backend.\n4. Three data-layer libraries still have zero consumers (derived-cache,\n   project-loading, collaboration, model-context is near-zero).\n5. Component coverage: ~25 of 84 spec'd components, 40 of 215 icons,\n   11 of 54 tool commands (tracked by `scripts/check-workspace-registries.mjs`,\n   report-only by design).\n\n## Language and claims\n\nPublic, product, support and documentation wording is governed by the Arq\nLanguage System 4.1 (`docs/product/voice/`, standard in\n`docs/product/VOICE-SYSTEM.md` and `docs/product/PRODUCT-COPY-PRINCIPLES.md`).\nThe claim registry, conflict registry and claim bindings decide what any\nsurface may state as current, and `pnpm arq:language:verify` plus the\n`language-system` CI job enforce it. The generated language context\n(`docs/product/voice/generated-repo-context.json`) is hashed from the sources\nlisted in `context-contract.json`: change one of them and refresh it in the\nsame commit, because CI fails on a stale context and never regenerates it.\n\n## Open decisions\n\n- **Local persistence overlap**: ADR-0019/0024 commit to SQLite-WASM over\n  OPFS while `packages/local-storage` ships a tested Dexie/IndexedDB\n  implementation named by ADR-0019's own \"Dexie project database\" line -\n  the overlap is recorded in `docs/research/incoming/README.md` and needs\n  an explicit ADR resolution before the open-project pipeline is built.\n  Tracked as `DECISION-PERSISTENCE-TIERS`; until it is decided, no surface\n  may describe a journal write as a portable `.arq` write.\n- **3D reachability**: `CONFLICT-3D-CURRENT-STATUS`, described above. Needs a\n  browser capability check before any surface states it either way.\n- Licence for Arq itself: undecided (`LICENSE-DECISION-REQUIRED.md`).\n- Everything in `remaining/REMAINING-WORK.md` (people, hardware, legal,\n  market evidence - work that cannot be closed from inside the repository).\n",
+    "releaseScope": "# Release scope\n\n## Release 1\n\n- New project\n- Units\n- Levels\n- Image underlay\n- PDF underlay after image path is stable\n- Straight walls\n- Doors\n- Windows\n- Rooms\n- Linear dimensions\n- Text notes\n- Floor plan\n- Basic orthographic 3D\n- Selection synchronisation\n- Inspector\n- Undo and redo\n- Local journal\n- Recovery\n- `.arq` archive\n- One plan sheet\n- Vector PDF\n\n## Release 2\n\n- DXF linework exchange\n- IFC viewing and property inspection\n- Import reports\n- Share links\n- Comments\n- Issues\n- Revision comparison\n\n## Release 3\n\n- ArqScript\n- Explain selection\n- Single-step AI modifications\n- Basic schedules\n- Controlled IFC export subset\n- Sections and elevations after quality gates\n\n## Release 4\n\n- Native iPad features\n- Files integration\n- Pencil hover\n- Double tap\n- Squeeze on supported hardware\n- Haptic snap feedback\n- RoomPlan and LiDAR prototype\n\n## Explicitly deferred\n\n- Curved walls\n- Complex roofs and stairs\n- Full family editor\n- Photorealistic renderer\n- Concurrent geometry editing\n- Full IFC authoring\n- DWG authoring\n- RVT\n- Structural and MEP\n- Plugin marketplace\n",
+    "productCopyPrinciples": "# Product copy principles\n\nCanonical standard for Arq product UI, support and documentation wording.\n\nThis file is the merge point of two sources. The short principles below are the\nrepository's original rules and remain in force. Everything after them is the\nArq Language System 4.1 product-copy standard, expanded for the 57 specified\nArq surfaces. Where the two overlap, they agree; where 4.1 is more specific, the\nmore specific rule applies.\n\nRelated canonical material:\n\n- Voice and register: `docs/product/VOICE-SYSTEM.md`\n- Machine-readable vocabulary, states, claims and conflicts: `docs/product/voice/`\n- Governance and change process: `docs/product/voice/GOVERNANCE.md`\n- Editorial review policy: `docs/product/voice/editorial-authenticity-policy.json`\n\n## Core principles\n\n- State the object and action directly.\n- Explain failure in plain language.\n- Do not hide uncertainty.\n- Separate local save from cloud sync.\n- Do not claim compatibility beyond tested support.\n- Do not describe generated geometry as accurate until calibrated and validated.\n- Do not claim code compliance, professional approval or structural safety.\n- Avoid generic success messages when the user needs the exact result.\n\n## Error structure\n\n1. What happened\n2. Why\n3. What was affected\n4. What remains safe\n5. What the user can do\n\nExample:\n\n> The door overlaps the wall end by 74 mm. Move it inward, reduce its width, or\n> extend the wall. No change was applied.\n\n## Labels\n\nUse the shortest unambiguous label.\n\nGood:\n\n- Project browser\n- Inspector\n- Model health\n- Export PDF\n- View scale\n- Saved locally\n\nAvoid:\n\n- Manage your project\n- Project management area\n- Your model's current health status\n\n## Tooltips\n\nA tooltip can contain:\n\n1. tool/action name;\n2. shortcut;\n3. one-line consequence or unavailable reason.\n\nExample:\n\n> **Wall**\n> W\n> Draw connected wall segments.\n\nDisabled:\n\n> **Export DXF**\n> No project open.\n\nDo not use a tooltip to hide a critical warning that belongs in the main workflow.\n\n## Empty states\n\nAn empty state should answer:\n\n- what is empty;\n- whether this is expected;\n- the next meaningful action.\n\nExample:\n\n> **No sheets yet**\n> Create a sheet to place views for export.\n> **Create sheet**\n\nAvoid invented sample counts, fake activity, fake projects, or demo content that\nlooks real.\n\n## Loading\n\nName the thing being loaded when delay is material.\n\n- Opening project\n- Rebuilding room boundaries\n- Preparing PDF\n- Checking import\n- Restoring local journal\n\nDo not use \"Working...\" for long-running professional operations when the user\nneeds to know which phase is active.\n\n## Completion\n\nSay what completed.\n\n- Exported 1 sheet\n- Imported 214 lines with 3 warnings\n- Recovered 12 operations\n- Saved locally\n\nAvoid:\n\n- Success!\n- Done!\n- Everything worked\n\n## Permissions\n\nPermission copy states the required access and preserves context. Use the\ncanonical role names: Owner, Administrator, Editor, Commenter, Viewer.\n\n> You can view this project, but editing requires Editor access.\n\nDo not imply a technical error, and do not use a bare \"access denied\". Name the\naction the reader attempted and the role that permits it. A capability that is\nabsent from the build is not a permission problem: see \"Unavailable\ncapabilities\".\n\n## Offline\n\nOffline is not automatically an error in a local-first product.\n\nGood:\n\n> Offline\n> Local editing remains available. Sync will resume when a connection is available.\n\nAvoid:\n\n> Connection lost. Your work may be unavailable.\n\nunless local access really is unavailable.\n\n## Save and sync\n\nNever use one label for both.\n\nUse the canonical state labels from `docs/product/voice/state-language-map.json`.\n\nLocal save currently maps to:\n\n- Saving locally...\n- Saved locally\n- Local save failed\n\nRemote sync maps to:\n\n- Sync not configured\n- Offline\n- Changes queued for sync\n- Syncing...\n- Synced\n- Sync conflict\n- Sync failed\n\nRecovery is a separate state and action. It must not be presented as another\nsynonym for save.\n\n## Persistence tiers\n\nLocal save, local journal, working copy, project file, recovery, migration and\nread-only are distinct states. Name the tier that actually changed.\n\n- A journal append is not a portable `.arq` write. Say \"Saved locally\" or\n  \"Local changes recorded\", never \"Project file updated\", unless the portable\n  file was written.\n- A compatibility preflight is not an open project. Say \"Compatible Arq\n  project\" until a live project session exists.\n- A read-only session states why it is read-only and what remains possible.\n- A migration states that the original file is preserved and where the migrated\n  copy is.\n\nThe mapping from a concrete implementation state to the canonical message is\nrecorded in `docs/product/voice/ui-state-adapter-map.json` and enforced by\n`pnpm arq:language:adapters:verify`.\n\n## State exposure\n\nEvery state carries an exposure level: `product`, `diagnostic` or `internal`.\n\nEngineering-only conditions must not reach ordinary customer wording unless a\ngoverned translation exists. `local-save-failed`, `reader-too-old-to-write`,\n`missing-required-entries` and `safe-mode-required` are diagnostic identifiers,\nnot user copy. Translate the condition:\n\n> This copy of Arq is older than the file and can open it read-only. Update Arq\n> to edit it. Your file was not changed.\n\n`docs/product/voice/state-language-map.json` holds the mapping;\n`pnpm arq:language:state:verify` fails when a source state has no entry.\n\n## Destructive actions\n\nName the object in the action.\n\n- Delete wall\n- Delete Level 2\n- Remove member\n- Discard local recovery\n- Replace local version\n\nIf dependencies are affected, list or count them before enabling the action.\n\n## Form errors\n\nPut the problem next to the field.\n\nGood:\n\n> Wall thickness must be greater than 0 mm.\n\nAvoid:\n\n> Invalid value.\n\nDo not erase an invalid value merely to clear the error. Let the user edit it.\n\n## Command palette\n\nVisible command labels use verbs where useful:\n\n- Draw wall\n- Insert door\n- Fit view\n- Close active view\n- Export PDF\n\nThe tool rail can keep noun labels:\n\n- Wall\n- Door\n- Fit\n\nSearch synonyms remain invisible unless needed as help text.\n\n## Number and unit formatting\n\nKeep values and units together. Use locale-aware display but canonical internal\nvalues.\n\nDo not write a value without its unit in a sentence when multiple dimensions are\npossible.\n\n## Notifications and toasts\n\nUse toasts for transient confirmation, not for critical state.\n\nGood:\n\n> Project name updated.\n\nBad:\n\n> Export omitted 2 views.\n\nThe second needs a persistent export report.\n\n## Import, export and interoperability\n\nExchange results use the canonical fidelity vocabulary and nothing else:\nPreserved, Converted, Approximated, Flattened, Omitted, Unsupported, Retained as\nopaque data, Failed.\n\nAn adapter or parser is not an import workflow. Describe a tested library as a\nlibrary until the product path and its report are tested end to end. Do not\nclaim a round trip.\n\n## AI proposal language\n\nAn AI capability is described as a proposal, never as an action already taken.\nA proposal states intent, assumptions, operations, preview and validation, and\nundo. AI does not approve, certify or sign off anything.\n\nDo not describe a future contract as a currently shipping capability.\n\n## Information density\n\nUse one sentence for one state, reason or action. Do not add a reassuring second\nsentence that repeats the first in broader language. If a user needs an\nexplanation, name the object, condition and next action.\n\nDo not use conversational filler such as agreement, praise or generic offers of\nhelp in system messages. Product UI states the current condition.\n\n## Unavailable capabilities\n\nKeep a designed control visible when discoverability matters and show the reason.\n\nUse stable reason language:\n\n- No project open\n- Not available in this build\n- Requires Editor access\n- Unavailable while offline\n- Resolve blocking errors first\n- Planned for Release 2\n\nAvoid:\n\n- Coming soon\n- Not possible\n- Disabled\n\n## Evidence rules for claim-bearing copy\n\nA current-tense claim needs a source that establishes current, user-reachable\nbehaviour. Code alone is not enough, and a status note alone is not enough.\n\n- A tool, entity class, library, adapter or code path is not proof of a\n  reachable workflow.\n- Where authoritative sources disagree, the claim is CONFLICTED. Record it in\n  `docs/product/voice/conflict-registry.json` and keep the weaker wording.\n  Do not pick the more attractive statement.\n- Counts (tests, packages, components) are volatile. Generate them or omit them.\n- Privacy, offline behaviour, network behaviour, hardware support, security,\n  availability, price, lifetime access, subscription and AI capability claims\n  need an authoritative owner. Legal wording is routed to the legal owner.\n\nClaim-bearing public files are bound in\n`docs/product/voice/claim-binding-registry.json` and checked by\n`pnpm arq:language:claims:verify` and `pnpm arq:language:conflicts:verify`.\n\n## Editorial quality\n\nHouse style for public and product copy:\n\n- No U+2014 em dash in rendered public or UI text. Use a full stop, comma,\n  colon, parentheses, or restructure the sentence. This is a house-style\n  decision, not an authorship test.\n- No self-attesting trust language (\"honest\", \"genuinely\", \"not pretending\").\n  State the behaviour, source or limit instead.\n- No combative contrast with unnamed competitors, no fake quotations, no\n  invented social proof, no stock conclusions, no formulaic paired emphasis.\n- Prefer concrete behaviour to benefit language. Keep sentences proportionate to\n  the evidence behind them.\n- Vary sentence shape where it helps the reader. Do not apply length or\n  punctuation quotas.\n\n`docs/product/voice/editorial-authenticity-policy.json` records which of these\nare hard rules and which need a reviewer. The check is a review aid. It is not\nan AI-writing detector and must not be described as one.\n\n## Deployed public site\n\nPublic copy is only correct once the deployed page is correct.\n\n- The rendered build is checked with `pnpm arq:language:site:build:verify`.\n- The deployment writes a commit-bound proof with per-route hashes into the\n  artifact.\n- The deployed site is checked with `pnpm arq:language:site:live:verify` against\n  the published URL and that exact commit.\n\nA source-only pass does not license a claim about the live site.\n",
+    "aiGuardrails": "# AI guardrails\n\n- No hidden project mutation\n- No code approval\n- No structural-safety claim\n- No unlabelled assumptions\n- No image scale without calibration\n- No deletion to make a request work without explicit preview\n- No private-project training by default\n- No arbitrary code execution\n- No permission bypass\n- No apply while blocking validation remains\n",
+    "formatMatrix": "# Format support matrix\n\n| Format   | First role                            | Early status  |\n| -------- | ------------------------------------- | ------------- |\n| `.arq`   | Native archive                        | Release 1     |\n| PNG/JPEG | Underlay                              | Release 1     |\n| PDF      | Underlay and vector export            | Release 1     |\n| DXF      | Linework exchange                     | Release 2     |\n| IFC      | Viewing and inspection                | Release 2     |\n| glTF/GLB | Visual exchange                       | Later         |\n| BCF      | Issue exchange                        | Later         |\n| STEP     | Selected solids                       | Later         |\n| DWG      | Licensed conversion only if justified | Not committed |\n| RVT      | Connector or external workflow only   | Not committed |\n\nDXF's own detailed entity/section/units matrix, reflecting what the\n`@arq/dxf-adapter` prototype parser actually reads (not just this release\ntarget): `docs/interoperability/DXF-SUPPORT-MATRIX.md` (ARQ-159).\n",
+    "security": "# Security policy\n\nArq is currently pre-release.\n\n## Reporting\n\nCreate a private security advisory in the repository after it exists. Do not report\nunpatched vulnerabilities through public issues.\n\n## Security baseline\n\n- Server-side authorisation\n- Private projects by default\n- Short-lived signed file URLs\n- Dependency and secret scanning\n- File-size and complexity limits\n- Sandboxed or isolated import processing\n- No training on private project data by default\n- Audit events for sharing, export and permission changes\n- Recovery that does not expose private project content\n\nSee `docs/security/` for the detailed threat model and review checklist.\n",
+    "launchClaims": "# Launch claims checklist\n\nDo not claim full CAD, full BIM, full IFC, DWG, Revit replacement, survey-grade capture, code compliance, structural safety or zero data loss without evidence.\n"
+  }
+}

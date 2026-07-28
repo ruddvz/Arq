@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 2,
+  "purpose": "An explicit review inventory for every public marketing content source. It reconciles source modules, the public route map, the typed page registry and generated static output so a new, renamed or unclassified page cannot silently escape claim governance.",
+  "contentRoot": "apps/marketing/src/content",
+  "routeMapPath": "docs/pages/ROUTE-MAP.csv",
+  "routeRegistryPath": "apps/marketing/src/routes.ts",
+  "includedExtensions": [".ts", ".tsx", ".md", ".mdx"],
+  "classificationRules": {
+    "claim-bearing": "Contains a current, planned, capability, pricing, privacy, file, AI, support, legal or product-scope assertion that needs a claim binding.",
+    "non-claim": "Contains no governed product assertion, but remains subject to editorial review and must state why it has no binding."
+  },
+  "entries": [
+    {
+      "id": "public-home",
+      "pageId": "PUB-001",
+      "route": "/",
+      "sourcePath": "apps/marketing/src/content/home.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": [
+        "pub-home-native-file",
+        "pub-home-local-persistence",
+        "pub-home-semantic-tools"
+      ],
+      "owner": "marketing and product",
+      "reviewTriggers": ["source-change", "claim-state-change", "file-flow-change", "release"],
+      "risk": "File opening, persistence and semantic-authoring reachability."
+    },
+    {
+      "id": "public-product",
+      "pageId": "PUB-002",
+      "route": "/product",
+      "sourcePath": "apps/marketing/src/content/product.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-product-3d", "pub-product-volatile-count"],
+      "owner": "marketing and product",
+      "reviewTriggers": ["source-change", "claim-state-change", "3d-surface-change", "release"],
+      "risk": "Current 3D reachability and volatile implementation metrics."
+    },
+    {
+      "id": "public-architects",
+      "pageId": "PUB-003",
+      "route": "/architects",
+      "sourcePath": "apps/marketing/src/content/architects.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": [
+        "pub-architects-wall-workflow",
+        "pub-architects-lifetime",
+        "pub-architects-model-integrity"
+      ],
+      "owner": "marketing and product",
+      "reviewTriggers": ["source-change", "wall-authoring-change", "file-flow-change", "release"],
+      "risk": "Workflow reachability, lifetime access guarantees and model-integrity assertions."
+    },
+    {
+      "id": "public-students",
+      "pageId": "PUB-004",
+      "route": "/students",
+      "sourcePath": "apps/marketing/src/content/students.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": [
+        "pub-student-hardware",
+        "pub-student-semantic-tools",
+        "pub-student-pricing"
+      ],
+      "owner": "marketing and performance",
+      "reviewTriggers": [
+        "source-change",
+        "benchmark-change",
+        "supported-environment-change",
+        "pricing-decision",
+        "release"
+      ],
+      "risk": "Unbounded hardware, semantic authoring and pricing statements."
+    },
+    {
+      "id": "public-collaboration",
+      "pageId": "PUB-005",
+      "route": "/collaboration",
+      "sourcePath": "apps/marketing/src/content/collaboration.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-collaboration-roadmap", "pub-collaboration-current"],
+      "owner": "product and collaboration",
+      "reviewTriggers": [
+        "source-change",
+        "capability-gate-change",
+        "release-scope-change",
+        "release"
+      ],
+      "risk": "Designed collaboration contracts can be mistaken for current sharing or review capability."
+    },
+    {
+      "id": "public-ai",
+      "pageId": "PUB-006",
+      "route": "/ai",
+      "sourcePath": "apps/marketing/src/content/ai.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-ai-current"],
+      "owner": "product and AI safety",
+      "reviewTriggers": ["source-change", "ai-capability-change", "guardrail-change", "release"],
+      "risk": "Future guardrails can be read as a current shipping AI feature."
+    },
+    {
+      "id": "public-interoperability",
+      "pageId": "PUB-007",
+      "route": "/interoperability",
+      "sourcePath": "apps/marketing/src/content/interoperability.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-interop-end-to-end", "pub-interop-fidelity"],
+      "owner": "marketing and interoperability",
+      "reviewTriggers": ["source-change", "format-matrix-change", "adapter-change", "release"],
+      "risk": "Adapter capability can be mistaken for a shipped import or export workflow."
+    },
+    {
+      "id": "public-ipad",
+      "pageId": "PUB-008",
+      "route": "/ipad",
+      "sourcePath": "apps/marketing/src/content/ipad.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": [
+        "pub-ipad-touch-layout",
+        "pub-ipad-native-features",
+        "pub-ipad-file-reachability"
+      ],
+      "owner": "product and platform",
+      "reviewTriggers": [
+        "source-change",
+        "browser-capability-change",
+        "release-scope-change",
+        "release"
+      ],
+      "risk": "Browser layouts, planned native features and file reachability need separate language."
+    },
+    {
+      "id": "public-pricing",
+      "pageId": "PUB-009",
+      "route": "/pricing",
+      "sourcePath": "apps/marketing/src/content/pricing.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-pricing-status", "pub-pricing-lifetime"],
+      "owner": "product and commercial",
+      "reviewTriggers": ["source-change", "pricing-decision", "file-flow-change", "release"],
+      "risk": "Pre-release availability and pricing decisions must not imply lifetime guarantees."
+    },
+    {
+      "id": "public-security",
+      "pageId": "PUB-010",
+      "route": "/security",
+      "sourcePath": "apps/marketing/src/content/security.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-security-network"],
+      "owner": "security and marketing",
+      "reviewTriggers": ["source-change", "privacy-change", "telemetry-change", "release"],
+      "risk": "Absolute transport and privacy claims."
+    },
+    {
+      "id": "public-docs-index",
+      "pageId": "PUB-011",
+      "route": "/docs",
+      "sourcePath": "apps/marketing/src/content/docs-index.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-docs-repository", "pub-docs-help-centre"],
+      "owner": "documentation and product",
+      "reviewTriggers": [
+        "source-change",
+        "documentation-structure-change",
+        "release-scope-change",
+        "release"
+      ],
+      "risk": "Repository documentation and a planned hosted help centre require different status wording."
+    },
+    {
+      "id": "public-changelog",
+      "pageId": "PUB-012",
+      "route": "/changelog",
+      "sourcePath": "apps/marketing/src/content/changelog.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": [
+        "pub-changelog-evidence",
+        "pub-changelog-3d",
+        "pub-changelog-native-open"
+      ],
+      "owner": "engineering and marketing",
+      "reviewTriggers": ["source-change", "commit-evidence-change", "conflict-change", "release"],
+      "risk": "A development log can promote unresolved claims unless every entry is bound to evidence and conflict state."
+    },
+    {
+      "id": "public-status",
+      "pageId": "PUB-013",
+      "route": "/status",
+      "sourcePath": "apps/marketing/src/content/status.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-status-hosted-service", "pub-status-lifetime"],
+      "owner": "operations and product",
+      "reviewTriggers": ["source-change", "deployment-change", "hosted-service-change", "release"],
+      "risk": "Current service status is volatile and cannot imply future availability."
+    },
+    {
+      "id": "public-contact",
+      "pageId": "PUB-014",
+      "route": "/contact",
+      "sourcePath": "apps/marketing/src/content/contact.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-contact-channels"],
+      "owner": "marketing and security",
+      "reviewTriggers": [
+        "source-change",
+        "support-channel-change",
+        "security-policy-change",
+        "release"
+      ],
+      "risk": "Contact channels need a verified target and must not imply an unstated support commitment."
+    },
+    {
+      "id": "public-privacy",
+      "pageId": "PUB-015",
+      "route": "/legal/privacy",
+      "sourcePath": "apps/marketing/src/content/privacy.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-privacy-current", "pub-privacy-notice"],
+      "owner": "privacy, security and legal",
+      "reviewTriggers": [
+        "source-change",
+        "telemetry-change",
+        "third-party-resource-change",
+        "legal-review",
+        "release"
+      ],
+      "risk": "Privacy practice is volatile and formal policy status has legal consequences."
+    },
+    {
+      "id": "public-terms",
+      "pageId": "PUB-016",
+      "route": "/legal/terms",
+      "sourcePath": "apps/marketing/src/content/terms.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-terms-current", "pub-terms-future"],
+      "owner": "legal and product",
+      "reviewTriggers": ["source-change", "legal-review", "pricing-decision", "release"],
+      "risk": "Provisional pre-release language must not masquerade as approved terms."
+    },
+    {
+      "id": "public-open-source",
+      "pageId": "PUB-017",
+      "route": "/legal/open-source",
+      "sourcePath": "apps/marketing/src/content/open-source.ts",
+      "classification": "claim-bearing",
+      "claimBindingIds": ["pub-open-source-notices"],
+      "owner": "engineering and legal",
+      "reviewTriggers": ["source-change", "dependency-change", "sbom-change", "release"],
+      "risk": "The visible notice set must be generated from the deployed artifact's dependency evidence."
+    },
+    {
+      "id": "public-not-found",
+      "pageId": "PUB-404",
+      "route": "/404",
+      "sourcePath": "apps/marketing/src/content/not-found.ts",
+      "classification": "non-claim",
+      "claimBindingIds": [],
+      "owner": "marketing and product",
+      "reviewTriggers": ["source-change", "route-change", "release"],
+      "nonClaimReason": "The page explains a missing route and offers navigation. It makes no governed product capability or policy assertion."
+    }
+  ]
+}
