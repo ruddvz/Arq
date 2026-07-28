@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "a6a8cc27b8ba8437875c7a4696e4bc84b458e5ecac3395735c9894329abcd5d4",
-  "sourceSetDigest": "09ed514f0ae5cce46e6e9269c702a292348f77f9264d67e1c3beafe2aefd8488",
+  "sourceSetDigest": "791d52e7bfd87fe42839c8cf3b0fed252bb84d631bba543678afa16f25f1ed60",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -638,8 +638,8 @@
       "id": "marketing-deployment",
       "kind": "file",
       "path": ".github/workflows/deploy-pages.yml",
-      "sha256": "ed4d08bca48c0131cb150b8cd17ca5a5c4ec58d82e3a79540fce5f087c75cb7c",
-      "bytes": 3981
+      "sha256": "1a80998720aefcf0e3eeeb823a9c4f49541fd895cee3ce8b9861164e4d0c3e6e",
+      "bytes": 4058
     },
     "telemetry": {
       "id": "telemetry",
