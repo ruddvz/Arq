@@ -14,8 +14,9 @@
         "packages/geometry-2d"
       ],
       "evidence": ["unit", "browser_canvas2d", "browser_workspace_layout"],
-      "owner": "UNASSIGNED",
-      "requiresOwnerAssignment": true
+      "owner": "ruddvz",
+      "requiresOwnerAssignment": false,
+      "ownerAssignedNote": "Assigned to the sole repository owner at their direction during the Engineering OS 5.0 installation review; reassign to teams as maintainers are added."
     },
     {
       "id": "journal-recovery-boundary",
@@ -27,8 +28,9 @@
         "apps/web/src/App.tsx"
       ],
       "evidence": ["unit", "browser_journal_recovery"],
-      "owner": "UNASSIGNED",
-      "requiresOwnerAssignment": true
+      "owner": "ruddvz",
+      "requiresOwnerAssignment": false,
+      "ownerAssignedNote": "Assigned to the sole repository owner at their direction during the Engineering OS 5.0 installation review; reassign to teams as maintainers are added."
     },
     {
       "id": "native-arqfs-lifecycle",
@@ -36,8 +38,9 @@
       "description": "Native .arq storage, migration, locking, integrity, and read-only behavior must be proven as a complete product flow before product claims are promoted.",
       "sourcePaths": ["packages/arqfs", "workers/arqfs-worker"],
       "evidence": ["unit", "browser_arqfs_opfs", "browser_file_open", "e2e_arq_open"],
-      "owner": "UNASSIGNED",
-      "requiresOwnerAssignment": true
+      "owner": "ruddvz",
+      "requiresOwnerAssignment": false,
+      "ownerAssignedNote": "Assigned to the sole repository owner at their direction during the Engineering OS 5.0 installation review; reassign to teams as maintainers are added."
     },
     {
       "id": "file-ingress-state",
@@ -45,8 +48,9 @@
       "description": "Compatible or safe to open is not the same state as open. File ingress must preserve that distinction.",
       "sourcePaths": ["apps/web/src/file-handling", "packages/arqfs"],
       "evidence": ["unit", "browser_file_open", "e2e_arq_open"],
-      "owner": "UNASSIGNED",
-      "requiresOwnerAssignment": true
+      "owner": "ruddvz",
+      "requiresOwnerAssignment": false,
+      "ownerAssignedNote": "Assigned to the sole repository owner at their direction during the Engineering OS 5.0 installation review; reassign to teams as maintainers are added."
     },
     {
       "id": "model-canvas-selection",
@@ -54,8 +58,9 @@
       "description": "3D model surface and shared selection facts are conflicted in current source records. Resolve the source conflict before a release or public claim relies on this contract.",
       "sourcePaths": ["apps/web/src/ModelCanvas.tsx", "apps/web/src/App.tsx", "STATUS.md"],
       "evidence": ["unit", "browser_model_canvas", "render_frame", "conflict_resolution_3d"],
-      "owner": "UNASSIGNED",
-      "requiresOwnerAssignment": true
+      "owner": "ruddvz",
+      "requiresOwnerAssignment": false,
+      "ownerAssignedNote": "Assigned to the sole repository owner at their direction during the Engineering OS 5.0 installation review; reassign to teams as maintainers are added."
     },
     {
       "id": "interop-boundary",
@@ -68,8 +73,9 @@
         "packages/pdf-export"
       ],
       "evidence": ["unit", "browser_file_open", "e2e_import_export"],
-      "owner": "UNASSIGNED",
-      "requiresOwnerAssignment": true
+      "owner": "ruddvz",
+      "requiresOwnerAssignment": false,
+      "ownerAssignedNote": "Assigned to the sole repository owner at their direction during the Engineering OS 5.0 installation review; reassign to teams as maintainers are added."
     },
     {
       "id": "public-site-truth",
@@ -87,8 +93,9 @@
         "rendered_public_site",
         "deployed_public_site"
       ],
-      "owner": "UNASSIGNED",
-      "requiresOwnerAssignment": true
+      "owner": "ruddvz",
+      "requiresOwnerAssignment": false,
+      "ownerAssignedNote": "Assigned to the sole repository owner at their direction during the Engineering OS 5.0 installation review; reassign to teams as maintainers are added."
     },
     {
       "id": "ci-release-control",
@@ -101,8 +108,9 @@
         "repository_binding",
         "protected_l4_approval"
       ],
-      "owner": "UNASSIGNED",
-      "requiresOwnerAssignment": true
+      "owner": "ruddvz",
+      "requiresOwnerAssignment": false,
+      "ownerAssignedNote": "Assigned to the sole repository owner at their direction during the Engineering OS 5.0 installation review; reassign to teams as maintainers are added."
     },
     {
       "id": "rust-core-parity",
@@ -110,8 +118,9 @@
       "description": "Rust core and WASM-facing changes require Rust formatting, lint, test, build, and parity evidence.",
       "sourcePaths": ["rust", "rust/arq-core", "workers"],
       "evidence": ["rust", "wasm_parity", "worker_core"],
-      "owner": "UNASSIGNED",
-      "requiresOwnerAssignment": true
+      "owner": "ruddvz",
+      "requiresOwnerAssignment": false,
+      "ownerAssignedNote": "Assigned to the sole repository owner at their direction during the Engineering OS 5.0 installation review; reassign to teams as maintainers are added."
     }
   ]
 }

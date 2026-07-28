@@ -20,7 +20,7 @@
         "Arq has no 3D surface at all."
       ],
       "resolutionRequired": "Reconcile the implementation, consumer wiring, test coverage, and status record in one reviewed change. Add browser-level proof before publishing a current capability claim.",
-      "owner": "UNASSIGNED"
+      "owner": "ruddvz"
     },
     {
       "id": "persistence-authority",
@@ -44,7 +44,7 @@
         "The native .arq opening and save lifecycle is current product behavior."
       ],
       "resolutionRequired": "Name the journal and project-file states separately in code and UI. Close the persistence decision only with end-to-end native file evidence.",
-      "owner": "UNASSIGNED"
+      "owner": "ruddvz"
     },
     {
       "id": "file-open-state",
@@ -54,13 +54,16 @@
           "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
           "claim": "The flow distinguishes compatible and safe-to-open from actually open."
         },
-        { "path": "STATUS.md", "claim": "The open-project pipeline remains incomplete." }
+        {
+          "path": "STATUS.md",
+          "claim": "The open-project pipeline remains incomplete."
+        }
       ],
       "prohibitedClaims": [
         "Selecting a compatible .arq project opens it in the current browser app."
       ],
       "resolutionRequired": "Wire and test the Worker and OPFS opening pipeline, then promote the user-facing state only after proof.",
-      "owner": "UNASSIGNED"
+      "owner": "ruddvz"
     },
     {
       "id": "security-current-vs-target",
@@ -70,13 +73,16 @@
           "path": "SECURITY.md",
           "claim": "The document describes future server authorization and project-protection expectations."
         },
-        { "path": "apps/api", "claim": "The current API surface is a stub." }
+        {
+          "path": "apps/api",
+          "claim": "The current API surface is a stub."
+        }
       ],
       "prohibitedClaims": [
         "Current hosted Arq enforces the described server authorization baseline."
       ],
       "resolutionRequired": "Label target architecture as target architecture until a deployed API, authorization tests, and operational controls exist.",
-      "owner": "UNASSIGNED"
+      "owner": "ruddvz"
     }
   ]
 }

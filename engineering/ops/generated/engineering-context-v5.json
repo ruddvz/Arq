@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "14e00d261b78d167643d2bda97b29684f91b81a64653092a338e8d30a9d8d0a2",
+  "source_hash": "a5a3e641362b0efa20be01a8da13ecc95dab650c175634eb8052d7ac0196187f",
   "source_records": [
     {
       "scope": "package",
@@ -59,12 +59,12 @@
     {
       "scope": "package",
       "path": "ops/conflict-registry.v5.json",
-      "sha256": "adcace3372107f59fbd780f872d2d223c07232d613b62e341295e309427964d7"
+      "sha256": "d09cab4d96b1fd5bef57e462f4463512938a9894b8ec73c27c06ff9f0dc882d4"
     },
     {
       "scope": "package",
       "path": "ops/critical-contracts.v5.json",
-      "sha256": "690d0029769cd110fdbaaa06121eb5539ec78c7caf69be53b4ade5687e88039a"
+      "sha256": "b2a2505e4cc6f5eebce7bdfa2ce5e5120372a7f816024eb46ecce85423916e12"
     },
     {
       "scope": "package",
