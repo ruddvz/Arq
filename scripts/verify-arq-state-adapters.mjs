@@ -10,7 +10,7 @@ const value = (flag, fallback) => {
   const i = args.indexOf(flag);
   return i >= 0 && args[i + 1] ? args[i + 1] : fallback;
 };
-const languageRoot = resolve(value('--language-root', PACKAGE_ROOT));
+const languageRoot = resolve(value('--language-root', join(PACKAGE_ROOT, 'docs/product/voice')));
 const repoRoot = value('--repo-root', null);
 const locate = (name) => {
   const candidates = [join(languageRoot, `02-canonical/${name}`), join(languageRoot, name)];

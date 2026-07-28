@@ -1,6 +1,7 @@
 # Arq canonical language standard
 
-This file defines Arq's top-level voice.
+This file defines Arq's top-level voice, named Z Voice. The canonical data and
+checks behind it live under `docs/product/voice/`.
 
 Domain standards may make the wording more specific. They may not weaken the truth, safety, naming, state, or consequence rules here.
 

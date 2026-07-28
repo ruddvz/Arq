@@ -10,7 +10,7 @@ const value = (flag, fallback) => {
   const i = args.indexOf(flag);
   return i >= 0 && args[i + 1] ? args[i + 1] : fallback;
 };
-const languageRoot = resolve(value('--language-root', PACKAGE_ROOT));
+const languageRoot = resolve(value('--language-root', join(PACKAGE_ROOT, 'docs/product/voice')));
 function locate(rel) {
   const candidates = [
     join(languageRoot, rel),
@@ -29,10 +29,7 @@ const snapshot = (kind) => {
   if (!item) throw new Error(`Snapshot index missing ${kind} snapshot`);
   return { meta: item, data: read(item.path) };
 };
-const defaultOutput =
-  languageRoot === PACKAGE_ROOT
-    ? join(PACKAGE_ROOT, '02-canonical/generated/language-context-v4.1.json')
-    : join(languageRoot, 'language-context.json');
+const defaultOutput = join(languageRoot, 'language-context.json');
 const output = resolve(value('--output', defaultOutput));
 const repoContextArg = value('--repo-context', null);
 const candidateRepoContext = repoContextArg

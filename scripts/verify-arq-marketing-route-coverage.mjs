@@ -11,7 +11,7 @@ const value = (flag, fallback) => {
   return index >= 0 && args[index + 1] ? args[index + 1] : fallback;
 };
 const repoRoot = resolve(value('--repo-root', '.'));
-const languageRoot = resolve(value('--language-root', PACKAGE_ROOT));
+const languageRoot = resolve(value('--language-root', join(PACKAGE_ROOT, 'docs/product/voice')));
 
 function locate(name) {
   const candidates = [

@@ -1,5 +1,8 @@
 # Arq Language System 4.1
 
+Within Arq this system is named Z Voice. "Z Voice" and "Arq Language System
+4.1" refer to the same governed vocabulary, registries and checks.
+
 This is Arq's canonical language architecture. It governs how the product names
 objects, commands, states, files, permissions, failures, imports, exports,
 recovery, support answers, AI proposals, documentation and public claims.

@@ -10,7 +10,7 @@ const value = (flag, fallback) => {
   return i >= 0 && args[i + 1] ? args[i + 1] : fallback;
 };
 const contextPath = resolve(
-  value('--context', join(ROOT, '02-canonical/generated/language-context-v4.1.json')),
+  value('--context', join(ROOT, 'docs/product/voice/language-context.json')),
 );
 if (!existsSync(contextPath)) {
   console.error(`FAIL language context missing: ${contextPath}`);

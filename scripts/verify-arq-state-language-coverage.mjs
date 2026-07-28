@@ -10,7 +10,7 @@ const value = (flag, fallback) => {
   const i = args.indexOf(flag);
   return i >= 0 && args[i + 1] ? args[i + 1] : fallback;
 };
-const languageRoot = resolve(value('--language-root', PACKAGE_ROOT));
+const languageRoot = resolve(value('--language-root', join(PACKAGE_ROOT, 'docs/product/voice')));
 const repoContextPath = value('--repo-context', null);
 const json = (path) => JSON.parse(readFileSync(path, 'utf8'));
 function locate(rel) {

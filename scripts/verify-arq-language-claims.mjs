@@ -6,7 +6,9 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const languageRoot = resolve(
-  args.includes('--language-root') ? args[args.indexOf('--language-root') + 1] : ROOT,
+  args.includes('--language-root')
+    ? args[args.indexOf('--language-root') + 1]
+    : join(ROOT, 'docs/product/voice'),
 );
 function locate(name) {
   const p = [join(languageRoot, `02-canonical/${name}`), join(languageRoot, name)].find(existsSync);
