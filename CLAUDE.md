@@ -25,3 +25,29 @@ visible, not silent. It stays quiet only on acknowledgements, `/zeus-*` slash co
 Full specification: `.zeus/ZEUS.md`. Domain rules: `.zeus/modules/`. Slash commands:
 `/zeus`, `/zeus-audit`, `/zeus-handoff`, `/zeus-design`, `/zeus-incident`,
 `/zeus-release`.
+
+## Z Voice (Arq Language System 4.1)
+
+The governed vocabulary lives under `docs/product/voice/` and is enforced by the
+`language-system` CI job and the Pages deployment gates. Standing rules for
+every session, human or AI:
+
+1. Any change that touches a governed source set (the 29 sets listed in
+   `docs/product/voice/context-contract.json`: STATUS.md, README.md, ADRs,
+   marketing content, workspace registries, state machines, routes, RBAC and
+   the rest) must run `pnpm arq:language:refresh` once, in the same change.
+   The refresh appends an entry to `docs/product/voice/context/REFRESH-LOG.json`
+   naming the source sets that moved; CI fails a context whose change is not
+   logged, and never regenerates the context itself.
+2. All copy that AI writes for product UI, marketing pages or docs is checked
+   at write time by the warn-only guardian hook
+   (`scripts/arq-language-guardian.mjs`, wired as a `PostToolUse` hook) and
+   blocked at CI time by `pnpm arq:language:audit:ci`. Do not bypass a guardian
+   warning; fix the wording or record a reviewed acknowledgement.
+3. Before pushing a change that affects public copy, product state language or
+   the registries, run the ladder: `pnpm arq:language:sources:verify` through
+   `pnpm arq:language:audit:ci` (order in
+   `docs/product/voice/INTEGRATION-BRIEF.md`), then tests.
+4. A public current-state claim needs a claim-registry binding; an open
+   conflict in `docs/product/voice/conflict-registry.json` blocks its claims
+   from every surface until resolved by its owner.

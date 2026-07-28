@@ -113,6 +113,29 @@ const digest = sha(
     .join('\n'),
 );
 if (context.sourceSetDigest !== digest) fail('generated context source-set digest mismatch');
+/*
+ * The refresh log written by refresh-arq-language-context must record the
+ * digest the committed context carries. This fails a context that was updated
+ * without its change being logged, so the record of which source sets moved
+ * stays complete.
+ */
+const refreshLogPath = join(languageRoot, 'context/REFRESH-LOG.json');
+if (!existsSync(refreshLogPath)) {
+  fail('context refresh log missing: run arq:language:refresh');
+} else {
+  let refreshLog = null;
+  try {
+    refreshLog = JSON.parse(readFileSync(refreshLogPath, 'utf8'));
+  } catch {
+    refreshLog = null;
+  }
+  const latest = refreshLog?.entries?.[0];
+  if (!latest?.sourceSetDigest) fail('context refresh log has no entries');
+  else if (latest.sourceSetDigest !== context.sourceSetDigest)
+    fail('context change is not logged: run arq:language:refresh');
+  else if (!Array.isArray(latest.changedSourceSets))
+    fail('latest refresh log entry does not record changed source sets');
+}
 if (failures) {
   console.error(
     `\n${failures} repo-context freshness failure(s). Run arq:language:refresh after fixing canonical sources.`,
