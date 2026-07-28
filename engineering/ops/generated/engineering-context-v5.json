@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "b3d59ad70e69a07d45152d570cac67e9dd251ae063a90fb9c4905295daabb4eb",
+  "source_hash": "eda9298a4571a5b73fe64f239769b5b75dad8cc7f670dcc55e2a8cf5b926a118",
   "source_records": [
     {
       "scope": "package",
@@ -95,6 +95,11 @@
       "scope": "repository",
       "path": ".github/workflows/deploy-pages.yml",
       "sha256": "29ec14b0687d1e14c77272ee07d051ddb2b0bbc14cab553ed6039e7d83a735e3"
+    },
+    {
+      "scope": "repository",
+      "path": ".github/workflows/engineering-gate.yml",
+      "sha256": "6757f066a74ab19597cec03eb4a063cc853962538d42db5914e54bcbbce79779"
     },
     {
       "scope": "repository",

@@ -3,7 +3,11 @@
 # Adapted from engineering/../templates/.github/workflows/engineering-gate.v5.reference.yml
 # per ops/installation-map.v5.json (mode: review-and-adapt). Differences from the
 # reference: pnpm/action-setup carries no explicit version (package.json's
-# packageManager field pins pnpm@9), matching every other workflow in this repo.
+# packageManager field pins pnpm@9), matching every other workflow in this repo;
+# and the classification/evidence/decision files are written WITHOUT a leading
+# dot — the reference template uploaded dot-prefixed files, which
+# actions/upload-artifact@v4 silently excludes by default (hidden-file policy),
+# so every classify run failed at the upload step with "No files were found".
 #
 # Shadow mode means: this workflow runs on every PR and merge-group but is NOT a
 # required check. Per 33_IMPLEMENTATION_HANDOFF.md Phase 3, only after the shadow
@@ -57,12 +61,12 @@ jobs:
             --files-file .engineering-changed-files \
             --base-sha "$base_sha" \
             --head-sha "$head_sha" \
-            --output .engineering-classification.json \
+            --output engineering-classification.json \
             --github-output "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
         with:
           name: engineering-classification
-          path: .engineering-classification.json
+          path: engineering-classification.json
           if-no-files-found: error
 
   preflight:
@@ -98,14 +102,14 @@ jobs:
       - name: Run only the selected approved evidence commands
         run: >-
           node engineering/tools/engineering/run-selected-evidence.mjs
-          --classification .engineering-artifacts/classification/.engineering-classification.json
+          --classification .engineering-artifacts/classification/engineering-classification.json
           --catalog engineering/ops/evidence-catalog.v5.json
           --repo-root .
-          --output .engineering-selected-evidence.json
+          --output engineering-selected-evidence.json
       - uses: actions/upload-artifact@v4
         with:
           name: engineering-selected-evidence
-          path: .engineering-selected-evidence.json
+          path: engineering-selected-evidence.json
           if-no-files-found: error
 
   critical-approval:
@@ -149,14 +153,14 @@ jobs:
       - name: Evaluate evidence and protected approval
         run: >-
           node engineering/tools/engineering/verify-evidence.mjs
-          --classification .engineering-artifacts/classification/.engineering-classification.json
+          --classification .engineering-artifacts/classification/engineering-classification.json
           --catalog engineering/ops/evidence-catalog.v5.json
-          --jobs-file .engineering-artifacts/evidence/.engineering-selected-evidence.json
+          --jobs-file .engineering-artifacts/evidence/engineering-selected-evidence.json
           --job protected_l4_approval=${{ needs['critical-approval'].result }}
-          --output .engineering-evidence-decision.json
+          --output engineering-evidence-decision.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: engineering-evidence-decision
-          path: .engineering-evidence-decision.json
+          path: engineering-evidence-decision.json
           if-no-files-found: warn

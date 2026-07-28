@@ -24,6 +24,7 @@
     "pnpm-workspace.yaml",
     ".github/workflows/ci.yml",
     ".github/workflows/deploy-pages.yml",
+    ".github/workflows/engineering-gate.yml",
     ".github/CODEOWNERS",
     "docs/adr/**/*.md",
     "apps/web/src/App.tsx",
