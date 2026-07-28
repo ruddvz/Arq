@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "4.1.0",
+  "purpose": "A quality and evidence policy for human-facing Arq copy. It does not determine who wrote text and must not be used to make an authorship claim.",
+  "goals": [
+    "Make each claim specific enough to inspect.",
+    "Keep product facts, limits and consequences ahead of rhetoric.",
+    "Remove canned transitions, unsupported significance and vague social proof.",
+    "Require accountable human review where pattern matching cannot establish quality."
+  ],
+  "nonGoals": [
+    "Evading AI detectors.",
+    "Inferring authorship from a phrase match or treating it as proof that text was AI-generated.",
+    "Replacing product evidence with style compliance.",
+    "Enforcing one literary voice across technical, accessibility and localisation surfaces."
+  ],
+  "referenceHandling": {
+    "method": "Use descriptive observations to prompt evidence and clarity review, never to diagnose authorship.",
+    "notSufficientOnTheirOwn": [
+      "title case",
+      "curly quotation marks or apostrophes",
+      "one transition word",
+      "one word associated with current or past model output",
+      "one punctuation mark"
+    ],
+    "houseStyleException": "U+2014 is prohibited in public and UI copy because the deployed Arq site has an observed overuse problem. This is a product house-style decision, not an authorship inference."
+  },
+  "reviewOrder": [
+    "truth-state-and-evidence",
+    "object-action-scope",
+    "user-consequence-and-limit",
+    "plain-language-and-accessibility",
+    "tone-and-rhythm"
+  ],
+  "categories": [
+    {
+      "id": "unearned-significance",
+      "risk": "The copy calls a feature pivotal, transformative or enduring without evidence of a concrete effect.",
+      "requiredReview": "Replace the judgement with the observed behaviour, or attach evidence that supports the narrower claim.",
+      "lintRuleId": "unearned-significance"
+    },
+    {
+      "id": "vague-attribution",
+      "risk": "The copy borrows authority from unnamed experts, users, observers or reports.",
+      "requiredReview": "Name the source and what it establishes, or remove the attribution.",
+      "lintRuleId": "vague-attribution"
+    },
+    {
+      "id": "canned-assurance",
+      "risk": "The copy asks for trust with reassurance rather than evidence, state or next action.",
+      "requiredReview": "State the check, boundary or consequence directly.",
+      "lintRuleId": "canned-assurance"
+    },
+    {
+      "id": "template-structure",
+      "risk": "The copy relies on stock transitions, forced conclusions or a formulaic list of benefits.",
+      "requiredReview": "Keep only the sections and transitions that carry new information.",
+      "lintRuleIds": ["template-transition-cluster", "stock-conclusion", "not-only-but-also"]
+    },
+    {
+      "id": "promotional-ornament",
+      "risk": "Decorative adjectives and metaphors imply a product benefit without describing it.",
+      "requiredReview": "Name the capability, condition and limit instead of the feeling it is meant to create.",
+      "lintRuleId": "promotional-ornament"
+    },
+    {
+      "id": "assistant-filler",
+      "risk": "Conversational filler makes an answer sound helpful without advancing the task.",
+      "requiredReview": "Lead with the answer, state or action. Offer follow-up only when a real choice remains.",
+      "lintRuleId": "assistant-filler"
+    },
+    {
+      "id": "negative-parallelism",
+      "risk": "A rhetorical contrast makes a limitation sound forceful without adding a concrete product fact.",
+      "requiredReview": "Keep the contrast only when it corrects a likely, specific misunderstanding. Otherwise state the capability or limit directly.",
+      "lintRuleId": "negative-parallelism"
+    },
+    {
+      "id": "self-attestation",
+      "risk": "The copy calls itself honest, real or genuine instead of supplying evidence a reader can inspect.",
+      "requiredReview": "Replace the character claim with the source, behaviour, limit or evidence.",
+      "lintRuleId": "self-attestation"
+    },
+    {
+      "id": "unbounded-evidence-claim",
+      "risk": "The copy invokes universal testing or verification without identifying the artifact that supports it.",
+      "requiredReview": "Name or link the exact evidence. Do not use a broad testing statement as reassurance.",
+      "lintRuleId": "unbounded-evidence-claim"
+    },
+    {
+      "id": "em-dash-public-copy",
+      "risk": "Formulaic punctuation creates artificial emphasis and has become pervasive in the public site.",
+      "requiredReview": "Use a full stop, colon, parentheses or a shorter direct sentence. This is a hard rule for public and UI copy, not an authorship test.",
+      "lintRuleIds": ["em-dash-public", "em-dash-ui"]
+    }
+  ],
+  "publicCopyRequirements": {
+    "inventoryRequired": true,
+    "everyClaimBearingSourceHasBinding": true,
+    "everyPublicSourceHasAnOwnerAndReviewTrigger": true,
+    "currentClaimsNeedFreshEvidence": true,
+    "nonClaimContentNeedsAnExplicitReason": true,
+    "sourceRouteRegistryAndStaticOutputMustReconcile": true,
+    "publicU2014IsProhibited": true,
+    "deployedRevisionMustMatchTheVerifiedArtifact": true
+  },
+  "acknowledgementRequirements": {
+    "allowedOnlyFor": ["review-required"],
+    "mustContain": ["ruleId", "sourcePath", "reason", "evidencePath", "reviewerRole", "expiresOn"],
+    "maximumLifetimeDays": 30,
+    "notAllowedFor": ["hard-claim", "active-conflict", "missing-public-copy-inventory"]
+  },
+  "manualReviewChecks": [
+    "Could this sentence describe a different product with no edits? If yes, add the product-specific object, behaviour or limit.",
+    "Can the reviewer point to the source that supports every present-tense product assertion? If no, qualify or remove it.",
+    "Does the sentence add a consequence or fact that the preceding sentence did not already establish? If no, cut it.",
+    "Does the sentence use a named source instead of a vague group? If no, name it or remove the attribution.",
+    "Would the copy remain accurate if read in isolation in search, a card, an assistive-technology announcement or support? If no, add the missing scope."
+  ]
+}

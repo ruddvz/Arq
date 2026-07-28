@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "4.1.0",
+  "purpose": "Make public language verifiable at three distinct boundaries: authored source, rendered static artifact, and deployed GitHub Pages response. A passing source check alone is not evidence that the page visitors receive is current or compliant.",
+  "repository": {
+    "contentRoot": "apps/marketing/src/content",
+    "routeMapPath": "docs/pages/ROUTE-MAP.csv",
+    "routeRegistryPath": "apps/marketing/src/routes.ts",
+    "staticOutputPath": "apps/marketing/dist",
+    "staticOutputLayout": "root route maps to index.html; every other public route maps to <route>/index.html; /404 maps to 404.html",
+    "projectBasePath": "/Arq",
+    "productionBaseUrl": "https://ruddvz.github.io/Arq/"
+  },
+  "proof": {
+    "fileName": "arq-language-site-proof.json",
+    "requiresCommitSha": true,
+    "routeHashAlgorithm": "sha256",
+    "purpose": "The proof binds the deployed response to the exact built HTML and commit. It prevents a successful live style scan from silently approving a stale deployment."
+  },
+  "enforcement": {
+    "sourceInventoryMustCoverAllContentModules": true,
+    "routeMapMustCoverAllPublicInventoryRoutes": true,
+    "staticBuildMustCoverAllPublicRoutes": true,
+    "staticAndLiveBuildMustRejectExternalLoadedResources": true,
+    "liveVerificationMustCheckProofCommit": true,
+    "liveVerificationMustCheckRouteHashes": true,
+    "hardRulesMustPassInSourceAndRenderedOutput": [
+      "em-dash-public",
+      "prohibited-public-claim",
+      "committed-dwg-rvt"
+    ],
+    "reviewRequiredRulesNeedAnActiveAcknowledgementOrRewrite": true
+  },
+  "releaseOrder": [
+    "verify public-copy inventory against route map and content directory",
+    "audit authored public copy",
+    "build the marketing site",
+    "verify rendered static output and write proof",
+    "deploy the exact artifact",
+    "verify the live proof commit, response hashes and rendered language"
+  ],
+  "nonGoals": [
+    "Using typography or phrase patterns to infer authorship.",
+    "Making a network request part of ordinary pull-request CI.",
+    "Treating a successful deployment as proof of product capability."
+  ]
+}

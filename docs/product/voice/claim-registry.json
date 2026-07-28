@@ -1,0 +1,331 @@
+{
+  "schemaVersion": 4,
+  "states": [
+    "CURRENT",
+    "LIBRARY_ONLY",
+    "DESIGNED_GATED",
+    "PLANNED",
+    "DEFERRED",
+    "NOT_COMMITTED",
+    "PROHIBITED",
+    "UNKNOWN",
+    "VOLATILE",
+    "LOCKED",
+    "CONFLICTED"
+  ],
+  "claims": [
+    {
+      "id": "full-cad",
+      "state": "PROHIBITED",
+      "patterns": ["full CAD", "complete CAD replacement"],
+      "evidenceSourceIds": ["launch-claims"],
+      "assertionClass": "scope"
+    },
+    {
+      "id": "full-bim",
+      "state": "PROHIBITED",
+      "patterns": ["full BIM", "complete BIM replacement"],
+      "evidenceSourceIds": ["launch-claims"],
+      "assertionClass": "scope"
+    },
+    {
+      "id": "revit-replacement",
+      "state": "PROHIBITED",
+      "patterns": ["Revit replacement", "replaces Revit"],
+      "evidenceSourceIds": ["launch-claims", "code-tests"],
+      "assertionClass": "scope"
+    },
+    {
+      "id": "lossless-exchange",
+      "state": "PROHIBITED",
+      "patterns": [
+        "lossless exchange",
+        "lossless import",
+        "lossless export",
+        "lossless round-trip"
+      ],
+      "evidenceSourceIds": ["launch-claims", "format-matrix"],
+      "assertionClass": "fidelity"
+    },
+    {
+      "id": "survey-grade",
+      "state": "PROHIBITED",
+      "patterns": ["survey-grade", "survey grade"],
+      "evidenceSourceIds": ["launch-claims"],
+      "assertionClass": "measurement"
+    },
+    {
+      "id": "professional-approval",
+      "state": "PROHIBITED",
+      "patterns": ["professionally approved", "approved design"],
+      "evidenceSourceIds": ["ai-guardrails", "launch-claims"],
+      "assertionClass": "professional-boundary"
+    },
+    {
+      "id": "code-compliance",
+      "state": "PROHIBITED",
+      "patterns": ["code compliant design", "automatic code compliance"],
+      "evidenceSourceIds": ["ai-guardrails", "launch-claims"],
+      "assertionClass": "professional-boundary"
+    },
+    {
+      "id": "structural-safety",
+      "state": "PROHIBITED",
+      "patterns": ["structurally safe", "structural safety guaranteed"],
+      "evidenceSourceIds": ["ai-guardrails", "launch-claims"],
+      "assertionClass": "professional-boundary"
+    },
+    {
+      "id": "zero-data-loss",
+      "state": "PROHIBITED",
+      "patterns": ["zero data loss", "cannot lose data", "never lose your work"],
+      "evidenceSourceIds": ["launch-claims"],
+      "assertionClass": "reliability"
+    },
+    {
+      "id": "dwg",
+      "state": "NOT_COMMITTED",
+      "patterns": ["DWG support", "opens DWG", "imports DWG", "exports DWG"],
+      "evidenceSourceIds": ["format-matrix"],
+      "assertionClass": "format"
+    },
+    {
+      "id": "rvt",
+      "state": "NOT_COMMITTED",
+      "patterns": ["RVT support", "opens RVT", "imports RVT", "exports RVT"],
+      "evidenceSourceIds": ["format-matrix"],
+      "assertionClass": "format"
+    },
+    {
+      "id": "dxf-exchange",
+      "state": "PLANNED",
+      "patterns": ["DXF linework exchange"],
+      "evidenceSourceIds": ["release-scope", "format-matrix"],
+      "assertionClass": "format"
+    },
+    {
+      "id": "ifc-viewing",
+      "state": "PLANNED",
+      "patterns": ["IFC viewing", "IFC property inspection"],
+      "evidenceSourceIds": ["release-scope", "format-matrix"],
+      "assertionClass": "format"
+    },
+    {
+      "id": "sharing-comments-issues",
+      "state": "PLANNED",
+      "patterns": ["share links", "comments", "issues", "revision comparison"],
+      "evidenceSourceIds": ["release-scope", "capability-gates"],
+      "assertionClass": "collaboration"
+    },
+    {
+      "id": "ai-modifications",
+      "state": "PLANNED",
+      "patterns": ["AI modifications", "single-step AI modifications"],
+      "evidenceSourceIds": ["release-scope", "ai-guardrails"],
+      "assertionClass": "ai"
+    },
+    {
+      "id": "pricing",
+      "state": "UNKNOWN",
+      "patterns": ["per month", "per year", "student plan", "team plan"],
+      "evidenceSourceIds": ["historical"],
+      "assertionClass": "commercial"
+    },
+    {
+      "id": "native-arq-open",
+      "state": "LIBRARY_ONLY",
+      "patterns": ["open .arq project", "opens in your browser"],
+      "evidenceSourceIds": ["file-open-ui", "status", "code-tests"],
+      "assertionClass": "file-reachability",
+      "note": "Compatibility preflight is current; the full browser opening pipeline is not established as user-reachable."
+    },
+    {
+      "id": "3d-current",
+      "state": "CONFLICTED",
+      "patterns": ["3D view is current", "basic orthographic 3D is available"],
+      "evidenceSourceIds": ["status", "web-app", "code-tests"],
+      "assertionClass": "current-reachability",
+      "conflictIds": ["CONFLICT-3D-CURRENT-STATUS"]
+    },
+    {
+      "id": "test-counts",
+      "state": "VOLATILE",
+      "patterns": ["test count", "package count", "viewport count", "several hundred tests"],
+      "evidenceSourceIds": ["code-tests"],
+      "assertionClass": "evidence"
+    },
+    {
+      "id": "local-journal-persistence",
+      "state": "CURRENT",
+      "patterns": ["saved in the local journal", "recovered from the local journal"],
+      "evidenceSourceIds": ["plan-journal", "web-app", "local-storage", "status"],
+      "assertionClass": "persistence",
+      "persistenceTier": "indexeddb-journal",
+      "note": "Current demo-plan journal state, not portable .arq publication."
+    },
+    {
+      "id": "portable-arq-publication",
+      "state": "LIBRARY_ONLY",
+      "patterns": ["portable .arq file updated", "saved to .arq file"],
+      "evidenceSourceIds": ["status", "file-open-ui", "code-tests"],
+      "assertionClass": "persistence",
+      "persistenceTier": "portable-arq-file"
+    },
+    {
+      "id": "current-wall-authoring",
+      "state": "CURRENT",
+      "patterns": ["draw walls", "wall drawing"],
+      "evidenceSourceIds": ["web-app", "code-tests", "status"],
+      "assertionClass": "current-reachability"
+    },
+    {
+      "id": "current-door-window-room-authoring",
+      "state": "LIBRARY_ONLY",
+      "patterns": ["place doors", "place windows", "bound rooms"],
+      "evidenceSourceIds": ["status", "tool-registry", "code-tests"],
+      "assertionClass": "current-reachability",
+      "note": "Tool or library presence is not sufficient while the workflow is not wired to the canvas."
+    },
+    {
+      "id": "semantic-model-integrity",
+      "state": "LIBRARY_ONLY",
+      "patterns": ["door cannot sit outside its wall", "dimension cannot drift from geometry"],
+      "evidenceSourceIds": ["status", "tool-registry", "code-tests"],
+      "assertionClass": "current-reachability",
+      "note": "Do not advertise model-consistency rules as a user-reachable workflow without surface-specific evidence."
+    },
+    {
+      "id": "current-import-export-e2e",
+      "state": "LIBRARY_ONLY",
+      "patterns": ["every import produces an import report", "export complete"],
+      "evidenceSourceIds": ["status", "interop-adapters", "format-matrix"],
+      "assertionClass": "current-reachability"
+    },
+    {
+      "id": "current-ai-authoring",
+      "state": "PLANNED",
+      "patterns": ["AI proposal is available", "AI modifications are available"],
+      "evidenceSourceIds": ["release-scope", "capability-gates", "ai-guardrails"],
+      "assertionClass": "ai"
+    },
+    {
+      "id": "browser-hardware-minimum",
+      "state": "UNKNOWN",
+      "patterns": ["modest laptop is enough", "works on any device"],
+      "evidenceSourceIds": ["benchmarks"],
+      "assertionClass": "performance-hardware"
+    },
+    {
+      "id": "no-network-data-transfer",
+      "state": "UNKNOWN",
+      "patterns": ["sends nothing anywhere", "nothing leaves your device"],
+      "evidenceSourceIds": ["security", "code-tests", "telemetry"],
+      "assertionClass": "privacy-transport"
+    },
+    {
+      "id": "lifetime-local-access",
+      "state": "PROHIBITED",
+      "patterns": ["will always open", "outlive your software", "can never lock you out"],
+      "evidenceSourceIds": ["launch-claims"],
+      "assertionClass": "lifetime-guarantee"
+    },
+    {
+      "id": "collaboration-current",
+      "state": "DESIGNED_GATED",
+      "patterns": ["sharing backend", "review mode", "comment and issue data models"],
+      "evidenceSourceIds": ["capability-gates", "release-scope", "status"],
+      "assertionClass": "current-reachability",
+      "note": "The collaboration contracts may exist while sharing and review remain unavailable to users."
+    },
+    {
+      "id": "ipad-touch-layout",
+      "state": "CURRENT",
+      "patterns": ["touch layout", "coarse pointer", "bottom sheet"],
+      "evidenceSourceIds": ["web-app", "code-tests", "benchmarks"],
+      "assertionClass": "current-reachability"
+    },
+    {
+      "id": "ipad-native-features",
+      "state": "PLANNED",
+      "patterns": ["Files integration", "Pencil hover", "RoomPlan", "LiDAR"],
+      "evidenceSourceIds": ["release-scope", "capability-gates"],
+      "assertionClass": "platform-roadmap"
+    },
+    {
+      "id": "repository-documentation",
+      "state": "VOLATILE",
+      "patterns": ["documentation in the repository", "technical documentation"],
+      "evidenceSourceIds": ["blueprint", "route-map", "marketing-routes"],
+      "assertionClass": "documentation-availability",
+      "note": "The repository documentation set changes with the reviewed revision."
+    },
+    {
+      "id": "hosted-help-centre",
+      "state": "PLANNED",
+      "patterns": ["hosted help centre", "help centre"],
+      "evidenceSourceIds": ["release-scope", "blueprint"],
+      "assertionClass": "documentation-roadmap"
+    },
+    {
+      "id": "development-changelog-status",
+      "state": "VOLATILE",
+      "patterns": ["development log", "what is merged and tested"],
+      "evidenceSourceIds": ["status", "code-tests", "marketing-build"],
+      "assertionClass": "release-evidence",
+      "note": "Each entry needs commit-linked evidence and must not settle an active conflict."
+    },
+    {
+      "id": "hosted-service-status",
+      "state": "VOLATILE",
+      "patterns": ["no hosted service", "service status"],
+      "evidenceSourceIds": ["status", "marketing-deployment"],
+      "assertionClass": "service-status",
+      "note": "This must be checked at deployment time and cannot support a lifetime availability promise."
+    },
+    {
+      "id": "repository-support-channels",
+      "state": "CURRENT",
+      "patterns": ["repository issue", "private security advisory"],
+      "evidenceSourceIds": ["security", "code-tests"],
+      "assertionClass": "support-channel"
+    },
+    {
+      "id": "website-privacy-practice",
+      "state": "VOLATILE",
+      "patterns": ["no analytics", "no cookies", "no telemetry"],
+      "evidenceSourceIds": ["security", "telemetry", "marketing-build"],
+      "assertionClass": "privacy-practice",
+      "note": "Public privacy assertions require a current artifact check and approved policy scope."
+    },
+    {
+      "id": "formal-privacy-notice",
+      "state": "PLANNED",
+      "patterns": ["formal privacy notice", "lawyer-reviewed privacy notice"],
+      "evidenceSourceIds": ["release-scope", "security"],
+      "assertionClass": "legal-roadmap"
+    },
+    {
+      "id": "pre-release-terms",
+      "state": "UNKNOWN",
+      "patterns": ["pre-release terms", "terms before the terms"],
+      "evidenceSourceIds": ["historical"],
+      "assertionClass": "legal"
+    },
+    {
+      "id": "open-source-notices",
+      "state": "VOLATILE",
+      "patterns": ["open-source notices", "software bill of materials"],
+      "evidenceSourceIds": ["marketing-build", "code-tests"],
+      "assertionClass": "compliance-evidence",
+      "note": "The displayed dependency data must be generated for the deployed artifact."
+    }
+  ],
+  "promotionRules": {
+    "toCURRENT": "Requires a user-reachable implementation, relevant code or browser evidence, a fresh source context and no unresolved higher-authority conflict.",
+    "fromCONFLICTED": "Requires source reconciliation plus its recorded resolution checks; retrieval ranking alone is insufficient.",
+    "publicVOLATILE": "Requires generated evidence or a freshness guard.",
+    "prohibitedMention": "Allowed only in clear negation, disclaimer or documented limitation.",
+    "libraryOnly": "Must say that reachability is not established; never infer shipping capability from an adapter or package.",
+    "deployedPublicCopy": "A public claim also requires a static-output pass and a live proof that matches the deployed commit."
+  }
+}

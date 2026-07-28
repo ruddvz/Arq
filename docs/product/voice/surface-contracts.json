@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 4,
+  "families": {
+    "public": {
+      "voice": "marketing",
+      "must": {
+        "claimState": true,
+        "evidence": true,
+        "claimBinding": true,
+        "noUnsupportedCurrentClaims": true,
+        "plannedScopeMarker": true,
+        "inventoryEntry": true,
+        "specificityReview": true,
+        "standaloneFragmentTruth": true,
+        "noVagueAttribution": true
+      }
+    },
+    "auth": {
+      "voice": "product",
+      "must": { "actionSpecific": true, "securityClear": true, "privacyClear": true }
+    },
+    "dashboard": {
+      "voice": "product",
+      "must": { "noFakeMetrics": true, "emptyStateAction": true }
+    },
+    "authoring": {
+      "voice": "product",
+      "must": {
+        "toolStateClear": true,
+        "numericPrecision": true,
+        "validationAtomicity": true,
+        "previewVsCommitClear": true
+      }
+    },
+    "review": {
+      "voice": "product",
+      "must": { "commentIssueDistinction": true, "revisionProvenance": true }
+    },
+    "files": {
+      "voice": "fidelity",
+      "must": {
+        "sourceDestinationClear": true,
+        "fidelityCategories": true,
+        "partialState": true,
+        "compatibilityVsOpeningClear": true,
+        "persistenceTargetClear": true
+      }
+    },
+    "recovery": {
+      "voice": "recovery",
+      "must": {
+        "recoverySource": true,
+        "safeState": true,
+        "noFalseFileRepairClaim": true,
+        "portableFileImpactClear": true
+      }
+    },
+    "diagnostics": {
+      "voice": "technical",
+      "must": { "humanMeaningFirst": true, "stableCodeAvailable": true, "minimumDataRequest": true }
+    },
+    "ai": {
+      "voice": "ai-review",
+      "must": {
+        "assumptions": true,
+        "proposedOperations": true,
+        "validation": true,
+        "approvalBoundary": true,
+        "provenance": true,
+        "staleApplyBlocked": true
+      }
+    },
+    "permissions": {
+      "voice": "product",
+      "must": { "requiredRole": true, "capabilityVsPermission": true, "actionAndScopeClear": true }
+    },
+    "settings": {
+      "voice": "product",
+      "must": {
+        "scopeClear": true,
+        "immediateVsFutureEffect": true,
+        "destructiveSettingsExplicit": true
+      }
+    },
+    "help": {
+      "voice": "documentation",
+      "must": {
+        "canonicalCommandNames": true,
+        "aliasesSearchOnly": true,
+        "disabledReason": true,
+        "claimStateWhenNeeded": true
+      }
+    },
+    "collaboration": {
+      "voice": "review",
+      "must": {
+        "capabilityGateHonest": true,
+        "roleAndScopeClear": true,
+        "localVsRemoteClear": true
+      }
+    },
+    "mobile": {
+      "voice": "product",
+      "must": {
+        "sameMeaningAsDesktop": true,
+        "touchActionExplicit": true,
+        "noDesktopJargonForGestureOnlyAction": true
+      }
+    },
+    "status-notification": {
+      "voice": "product",
+      "must": {
+        "exactResult": true,
+        "persistentRiskNotToastOnly": true,
+        "noInventedProgress": true,
+        "persistenceTierClear": true
+      }
+    },
+    "onboarding": {
+      "voice": "education",
+      "must": {
+        "mentalModelFirst": true,
+        "demoDataLabelled": true,
+        "noFakeMetrics": true,
+        "plannedVsCurrentClear": true
+      }
+    }
+  },
+  "universalStates": [
+    "loading",
+    "ready",
+    "empty-where-meaningful",
+    "error",
+    "offline",
+    "stale",
+    "read-only-or-permission",
+    "long-content",
+    "200%-zoom",
+    "compatibility-without-opening",
+    "local-journal-recovered",
+    "persistence-failure",
+    "source-context-stale"
+  ],
+  "universalAccessibilityRules": [
+    "visible label remains in accessible name",
+    "live regions announce a state change once",
+    "disabled reason is programmatically available",
+    "status does not rely on colour alone"
+  ]
+}

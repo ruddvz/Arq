@@ -3,61 +3,69 @@ import { html } from '../html.js';
 import type { Page } from '../site.js';
 
 /**
- * PUB-016. Lawyer-approved terms do not exist yet, and inventing legal text
- * would be worse than none. The sheet states the current basis of use and
- * the commitments that will survive into the formal terms.
+ * PUB-016. Lawyer-approved terms do not exist, and inventing legal text would
+ * be worse than having none.
+ *
+ * Claim bindings: pub-terms-current (pre-release-terms, UNKNOWN) and
+ * pub-terms-future (pricing, UNKNOWN). This sheet states the legal status
+ * precisely (nothing here is approved legal terms) and does not promise the
+ * content or the timing of future paid-plan terms.
  */
 export const termsPage: Page = {
   meta: {
     id: 'PUB-016',
     route: '/legal/terms',
     title: 'Terms',
-    documentTitle: 'Terms — Arq',
+    documentTitle: 'Terms · Arq',
     description:
-      'The current basis for using pre-release Arq, stated plainly: provided as-is, no service commitments yet, your content remains yours. Formal terms follow legal review before any paid plan.',
+      'Arq has published no product terms. This page describes the basis on which the pre-release build is offered and is not a legal agreement. Formal terms require legal review.',
   },
   render: () => html`
     ${hero({
-      heading: 'The terms before the terms.',
-      lede: 'Formal product terms require a lawyer and a service worth governing. Neither exists yet. What can be stated now is the basis on which the pre-release build is offered.',
+      heading: 'No published terms yet.',
+      lede: 'Formal product terms need a lawyer and a service worth governing, and neither exists. Nothing on this page has had legal review, and none of it is an agreement.',
     })}
     ${notes([
       {
         title: 'Using the pre-release build',
         body: html`
+          <p>The following is a description of the current position, not approved legal wording.</p>
           ${specList([
             {
               term: 'As-is',
               detail:
-                'Pre-release software changes and breaks. Use it for real work only with the caution you would give any beta - and keep exports of anything you cannot lose.',
+                'Pre-release software changes and breaks. Use it for real work only with the caution you would give any beta, and keep exports of anything you cannot lose.',
             },
             {
               term: 'Your content',
               detail:
-                'Drawings and projects you create are yours. Arq claims no rights over your work, now or in any future terms.',
+                'Drawings and projects you create are yours. Arq claims no rights over your work.',
             },
             {
               term: 'No service commitments',
               detail:
-                'There is no uptime promise, no support commitment and no data-hosting relationship - the build runs locally and hosts nothing.',
+                'There is no uptime promise, no support commitment and no data-hosting relationship. The build runs on your device and hosts nothing.',
             },
             {
               term: 'Licences',
               detail:
-                'Third-party software in Arq is listed under open-source notices. The licence for Arq itself is not yet decided and is recorded in the repository as an open decision.',
+                'Third-party software in Arq is listed under open-source notices. The licence for Arq itself is not decided and is recorded in the repository as an open decision.',
             },
           ])}
         `,
       },
       {
-        title: 'What formal terms will add',
+        title: 'What is still undecided',
         body: html`
           <p>
-            Before any paid plan or hosted service: reviewed terms covering the subscription,
-            acceptable use, data processing, availability expectations and termination — with
-            cancellation expectations informed by the published pricing research. Changes will be
-            dated, summarised in plain language, and announced in the
-            <a href="/changelog">changelog</a>, not slipped in.
+            Terms covering a subscription, acceptable use, data processing, availability
+            expectations and termination need commercial decisions and a legal review before they
+            can be written. Their content and their timing are both open, so this page does not
+            preview them.
+          </p>
+          <p>
+            When terms are published, changes are dated, summarised in plain language and announced
+            in the <a href="/changelog">changelog</a>.
           </p>
         `,
       },

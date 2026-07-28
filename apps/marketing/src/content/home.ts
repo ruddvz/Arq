@@ -4,24 +4,29 @@ import type { Page } from '../site.js';
 
 /**
  * PUB-001. Explains the product and routes onward to product, security,
- * pricing and the changelog. Every claim on this sheet is either present
- * tense about the working development build or explicitly labelled planned —
- * business/LAUNCH-CLAIMS-CHECKLIST.md is enforced by pages.test.ts.
+ * pricing and the changelog.
+ *
+ * Claim bindings (docs/product/voice/claim-binding-registry.json):
+ * pub-home-native-file (native-arq-open, LIBRARY_ONLY, must qualify),
+ * pub-home-local-persistence (local-journal-persistence, CURRENT) and
+ * pub-home-semantic-tools (current-door-window-room-authoring, LIBRARY_ONLY,
+ * must qualify). Present-tense sentences here are limited to what those
+ * bindings allow; the release ladder is labelled as scope, not availability.
  */
 export const homePage: Page = {
   meta: {
     id: 'PUB-001',
     route: '/',
     title: 'Home',
-    documentTitle: 'Arq — an architectural workspace that keeps your work yours',
+    documentTitle: 'Arq · an architectural workspace built on a local project file',
     description:
-      'Arq is an in-development architectural design tool for drawing plans that behave like buildings — local-first, precise, and honest about what it can do.',
+      'Arq is pre-release architectural design software. The current development build draws walls in a plan with real units and records those edits in a local journal on your device.',
   },
   render: () => html`
     ${hero({
       eyebrow: 'Arq · architectural workspace · pre-release',
-      heading: 'Draw plans that behave like buildings.',
-      lede: 'Arq is an architectural design tool in open development: walls, doors, windows and rooms with real dimensions, saved locally in a file you own. No account, no upload, no surprise.',
+      heading: 'Plans made of building elements, not lines.',
+      lede: 'Arq is architectural design software in open development. A wall in Arq is a wall, with a thickness and a length in millimetres, and the current development build lets you draw walls in a plan and keeps those edits on your own device.',
       actions: [
         { href: '/product', label: 'See the product' },
         { href: '/changelog', label: 'What exists today' },
@@ -29,14 +34,19 @@ export const homePage: Page = {
     })}
     ${notes([
       {
-        title: 'Local first, by architecture',
+        title: 'Where your work is kept',
         body: html`
           <p>
-            Your project is a single <code>.arq</code> file — a versioned SQLite database that lives
-            on your device and opens in your browser. Saving is a local write, not a network
-            request. Arq's file format, migration and recovery layers are built and tested before
-            any cloud feature: if a sync service exists one day, it will be an addition to the file
-            you own, never a replacement for it.
+            The Arq project format is a single <code>.arq</code> file: a versioned SQLite database
+            you hold on your own disk. Choosing an <code>.arq</code> file in the current build
+            checks it and reports whether it is a compatible Arq project. Opening it as a working
+            project in the browser is not wired yet.
+          </p>
+          <p>
+            What the current build does persist is its own demo plan. Every edit is appended to a
+            journal in your browser's local storage and replayed when you return. That journal is a
+            local record on your device. It does not write to a portable <code>.arq</code> file, and
+            nothing is uploaded.
           </p>
         `,
       },
@@ -45,19 +55,20 @@ export const homePage: Page = {
         body: html`
           <p>
             Arq works in real units at millimetre precision. The status bar reads out world
-            coordinates; dimensions are measurements, not decorations. Where the software cannot be
-            precise, it says so plainly — an error in Arq tells you what happened, why, what was
+            coordinates, and dimensions are measurements rather than decorations. Where the software
+            cannot be precise, it says so: an error in Arq names what happened, why, what was
             affected and what remains safe.
           </p>
         `,
       },
       {
-        title: 'Honest software, honestly described',
+        title: 'A small first release, stated plainly',
         body: html`
           <p>
-            Arq is not finished, and this site will not pretend otherwise. It is not a full CAD
-            seat, it does not replace Revit, and its scope is deliberately small: the first release
-            targets the drawings below and nothing more.
+            Arq has not shipped. It is not a full CAD seat and does not replace Revit. Its scope is
+            deliberately small. The list below is release scope from
+            <code>docs/product/RELEASE-SCOPE.md</code>. It describes the intended sequence of work,
+            not what the current development build can do today.
           </p>
           ${specList([
             {
@@ -76,12 +87,17 @@ export const homePage: Page = {
                 'Curved walls, complex roofs, family editor, photorealistic rendering, structural and MEP.',
             },
           ])}
+          <p>
+            Doors, windows and rooms are in Release 1 scope. Their libraries and tools exist in the
+            repository and are tested, but they are not yet connected to the drawing canvas, so they
+            are not something you can use today.
+          </p>
         `,
       },
     ])}
     ${ctaBand(
       'Follow the work, not the promises.',
-      'The changelog lists what is genuinely built, with tests behind every entry. The product page explains where Arq is going and in what order.',
+      'The changelog records dated development work with the evidence behind each entry. The product page explains where Arq is going and in what order.',
       [
         { href: '/changelog', label: 'Read the changelog' },
         { href: '/security', label: 'How Arq treats your work' },

@@ -1,0 +1,269 @@
+{
+  "schemaVersion": 2,
+  "rule": "Use product-ontology.json for semantic entities and interface snapshot/live registries for tools, panels, views and surfaces. This file contains cross-domain controlled vocabulary.",
+  "terms": [
+    {
+      "canonical": "Arq",
+      "definition": "Product name in running prose/UI",
+      "avoid": ["Arc", "ARQ in ordinary prose"]
+    },
+    {
+      "canonical": "ARQ",
+      "definition": "Wordmark/formal all-caps identifier",
+      "avoid": []
+    },
+    {
+      "canonical": ".arq",
+      "definition": "Native project file extension",
+      "avoid": [".ARQ"]
+    },
+    {
+      "canonical": "project",
+      "definition": "Authoritative semantic architectural project",
+      "avoid": ["document when project is meant"]
+    },
+    {
+      "canonical": "project file",
+      "definition": "Portable .arq file",
+      "avoid": ["archive as the only user-facing name"]
+    },
+    {
+      "canonical": "working copy",
+      "definition": "Session-local editable representation",
+      "avoid": []
+    },
+    {
+      "canonical": "local journal",
+      "definition": "Local ordered persistence/recovery record",
+      "avoid": ["cloud save"]
+    },
+    {
+      "canonical": "local save",
+      "definition": "Persistence on the user's device",
+      "avoid": ["sync"]
+    },
+    {
+      "canonical": "sync",
+      "definition": "Remote synchronisation",
+      "avoid": ["save"]
+    },
+    {
+      "canonical": "recovery",
+      "definition": "Restoration after interruption",
+      "avoid": ["autosave"]
+    },
+    {
+      "canonical": "semantic model",
+      "definition": "Authoritative semantic building/project objects and relationships",
+      "avoid": ["render model as authority"]
+    },
+    {
+      "canonical": "derived data",
+      "definition": "Recomputable meshes/projections/indexes/thumbnails/caches",
+      "avoid": ["project data"]
+    },
+    {
+      "canonical": "view",
+      "definition": "Semantic view definition",
+      "avoid": ["tab"]
+    },
+    {
+      "canonical": "view tab",
+      "definition": "Open UI instance of a view",
+      "avoid": ["view definition"]
+    },
+    {
+      "canonical": "snapshot",
+      "definition": "Recorded project state for system/history purposes",
+      "avoid": ["revision when review semantics are intended"]
+    },
+    {
+      "canonical": "revision",
+      "definition": "Meaningful project state for review/comparison",
+      "avoid": ["app version"]
+    },
+    {
+      "canonical": "operation",
+      "definition": "Typed mutation unit",
+      "avoid": ["generic action when transaction semantics matter"]
+    },
+    {
+      "canonical": "proposal",
+      "definition": "Unapplied proposed operation group",
+      "avoid": ["applied change"]
+    },
+    {
+      "canonical": "validation error",
+      "definition": "Blocking deterministic validation result",
+      "avoid": ["warning"]
+    },
+    {
+      "canonical": "warning",
+      "definition": "Non-blocking detected condition",
+      "avoid": ["error"]
+    },
+    {
+      "canonical": "model health",
+      "definition": "Grouped validation/diagnostic surface",
+      "avoid": ["model quality score"]
+    },
+    {
+      "canonical": "underlay",
+      "definition": "Reference-only image/PDF",
+      "avoid": ["imported model"]
+    },
+    {
+      "canonical": "import",
+      "definition": "External content entering Arq through mapping/conversion",
+      "avoid": []
+    },
+    {
+      "canonical": "export",
+      "definition": "External representation written from Arq",
+      "avoid": []
+    },
+    {
+      "canonical": "import report",
+      "definition": "Fidelity report for imported content",
+      "avoid": []
+    },
+    {
+      "canonical": "export report",
+      "definition": "Scope/fidelity result for exported content",
+      "avoid": []
+    },
+    {
+      "canonical": "read-only",
+      "definition": "Project/session can be inspected but not modified/saved as normal",
+      "avoid": ["safe mode as sufficient user label"]
+    },
+    {
+      "canonical": "sync conflict",
+      "definition": "Remote/local operation/revision conflict requiring resolution",
+      "avoid": ["merge error as generic copy"]
+    },
+    {
+      "canonical": "Comment",
+      "definition": "Review discussion",
+      "avoid": ["Issue"]
+    },
+    {
+      "canonical": "Issue",
+      "definition": "Actionable tracked review problem",
+      "avoid": ["Warning", "validation error"]
+    },
+    {
+      "canonical": "Owner",
+      "definition": "Permission role",
+      "avoid": ["manager"]
+    },
+    {
+      "canonical": "Administrator",
+      "definition": "Permission role",
+      "avoid": ["admin as visible label unless product chooses it"]
+    },
+    {
+      "canonical": "Editor",
+      "definition": "Permission role",
+      "avoid": []
+    },
+    {
+      "canonical": "Commenter",
+      "definition": "Permission role",
+      "avoid": []
+    },
+    {
+      "canonical": "Viewer",
+      "definition": "Permission role",
+      "avoid": []
+    },
+    {
+      "canonical": "Design",
+      "definition": "Workspace mode",
+      "avoid": []
+    },
+    {
+      "canonical": "Document",
+      "definition": "Workspace mode",
+      "avoid": []
+    },
+    {
+      "canonical": "Inspect",
+      "definition": "Workspace mode",
+      "avoid": []
+    },
+    {
+      "canonical": "Review",
+      "definition": "Workspace mode",
+      "avoid": []
+    },
+    {
+      "canonical": "Present",
+      "definition": "Workspace mode",
+      "avoid": []
+    },
+    {
+      "canonical": "Project Browser",
+      "definition": "Canonical panel name",
+      "avoid": ["project sidebar"]
+    },
+    {
+      "canonical": "Inspector",
+      "definition": "Canonical panel name",
+      "avoid": ["properties sidebar"]
+    },
+    {
+      "canonical": "AI proposal",
+      "definition": "Canonical future AI review surface/object",
+      "avoid": ["AI architect", "copilot"]
+    },
+    {
+      "canonical": "Preserved",
+      "definition": "Import/export fidelity category",
+      "avoid": []
+    },
+    {
+      "canonical": "Converted",
+      "definition": "Import/export fidelity category",
+      "avoid": []
+    },
+    {
+      "canonical": "Approximated",
+      "definition": "Import/export fidelity category",
+      "avoid": []
+    },
+    {
+      "canonical": "Flattened",
+      "definition": "Import/export fidelity category",
+      "avoid": []
+    },
+    {
+      "canonical": "Omitted",
+      "definition": "Import/export fidelity category",
+      "avoid": []
+    },
+    {
+      "canonical": "Unsupported",
+      "definition": "Import/export fidelity category",
+      "avoid": []
+    },
+    {
+      "canonical": "Retained as opaque data",
+      "definition": "Import/export fidelity category",
+      "avoid": []
+    },
+    {
+      "canonical": "Failed",
+      "definition": "Import/export fidelity category",
+      "avoid": []
+    }
+  ],
+  "registryPointers": {
+    "semanticEntities": "02-canonical/product-ontology.json",
+    "states": "02-canonical/state-language-map.json",
+    "roles": "02-canonical/roles-permissions.json",
+    "formats": "02-canonical/format-language-map.json",
+    "aliases": "02-canonical/term-aliases.json",
+    "interfaceSnapshot": "02-canonical/snapshots/interface-snapshot-2026-07-27.json"
+  }
+}

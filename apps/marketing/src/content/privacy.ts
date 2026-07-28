@@ -3,43 +3,52 @@ import { html } from '../html.js';
 import type { Page } from '../site.js';
 
 /**
- * PUB-015. The spec calls for a lawyer-approved privacy notice; none exists
- * yet. What can be published honestly is the current factual practice —
- * which is unusually easy to state, because this site and the development
- * build collect nothing — plus a clear statement of what changes and when.
+ * PUB-015. The spec calls for a lawyer-approved privacy notice; none exists.
+ *
+ * Claim bindings: pub-privacy-current (website-privacy-practice, VOLATILE) and
+ * pub-privacy-notice (formal-privacy-notice, PLANNED). The website statements
+ * below are the ones the build and the deployment checks can substantiate: the
+ * rendered-site verifier fails the build if any page loads a third-party
+ * script, style, image, font, frame or CSS url(). Statements about the
+ * application build are scoped to its architecture, because no network
+ * observation test has been published.
  */
 export const privacyPage: Page = {
   meta: {
     id: 'PUB-015',
     route: '/legal/privacy',
     title: 'Privacy',
-    documentTitle: 'Privacy notice — Arq',
+    documentTitle: 'Privacy notice · Arq',
     description:
-      'Arq’s current privacy facts, stated plainly: this website sets no cookies and runs no analytics; the development build stores projects locally and sends no telemetry. A formal notice follows legal review.',
+      'Arq has not published a formal privacy notice. This page states the practices that the current build and deployment checks can substantiate, and what still needs legal review.',
   },
   render: () => html`
     ${hero({
-      heading: 'Privacy, as currently practised.',
-      lede: 'A formal, lawyer-reviewed privacy notice will be published before any hosted service launches. Until then, here are the practices in force today — verifiable, because there is so little to verify.',
+      heading: 'No formal notice yet. Here is what can be stated.',
+      lede: 'A lawyer-reviewed privacy notice is published before any hosted service launches. This page is not that notice. It is a plain-language account of the practices in force at the revision it was built from.',
     })}
     ${notes([
       {
         title: 'This website',
         body: html`
+          <p>
+            Each statement below is checked when the site is built and again after it is deployed. A
+            page that loaded a third-party resource would fail those checks.
+          </p>
           ${specList([
-            { term: 'Cookies', detail: 'None set.' },
+            { term: 'Cookies', detail: 'None set by this site.' },
             {
               term: 'Analytics',
-              detail: 'None running. No page-view tracking, no third-party scripts.',
+              detail: 'None running. No page-view tracking and no third-party scripts.',
             },
             {
               term: 'Requests',
               detail:
-                'Static files served from this site’s own origin - fonts, styles and images included. No third-party resource is loaded.',
+                'Every script, style, font and image is served from this site’s own origin. The deployment gate rejects an external resource.',
             },
             {
               term: 'Forms',
-              detail: 'There are none. Nothing you do here is recorded by us.',
+              detail: 'There are none. This site collects nothing from you.',
             },
           ])}
         `,
@@ -51,20 +60,21 @@ export const privacyPage: Page = {
             {
               term: 'Your projects',
               detail:
-                'Stored on your device (browser storage or files you choose). Never uploaded - there is no server to upload to.',
+                'Held on your device, in browser storage or in files you choose. There is no Arq server to upload them to.',
             },
             {
               term: 'Accounts',
-              detail: 'None exist. Nothing to sign up for, nothing to profile.',
+              detail: 'None exist. There is nothing to sign up for and no profile to build.',
             },
             {
               term: 'Telemetry',
-              detail: 'None is sent. The development build reports nothing back.',
+              detail:
+                'No telemetry endpoint is configured in the build. A published network-observation test is what would let this page make a stronger statement.',
             },
             {
               term: 'AI training',
               detail:
-                'Committed policy for any future service: no training on private project data by default.',
+                'Recorded policy for any future service: no training on private project data by default.',
             },
           ])}
         `,
@@ -73,11 +83,13 @@ export const privacyPage: Page = {
         title: 'What will change, and how you will know',
         body: html`
           <p>
-            Hosted features - accounts, sync, shared links - change the privacy picture, and a
-            formal notice will precede them: what is collected, the lawful basis, retention,
-            processors, and your rights, reviewed by a lawyer before publication. This page keeps
-            its plain-language summary alongside the formal text, and material changes will be dated
-            in the <a href="/changelog">changelog</a>.
+            Hosted features (accounts, sync, shared links) change the privacy picture, and a formal
+            notice precedes them: what is collected, the lawful basis, retention, processors and
+            your rights, reviewed by a lawyer before publication.
+          </p>
+          <p>
+            This page keeps its plain-language summary alongside the formal text when that exists,
+            and material changes are dated in the <a href="/changelog">changelog</a>.
           </p>
         `,
       },

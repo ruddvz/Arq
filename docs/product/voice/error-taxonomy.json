@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 2,
+  "requiredUserInformation": ["whatHappened", "why", "affected", "safeState", "nextActions"],
+  "categories": [
+    {
+      "id": "validation",
+      "titlePattern": "{object} was not {actionPast}",
+      "safeRule": "If commit was blocked atomically, say no project change was applied."
+    },
+    {
+      "id": "file-open",
+      "titlePattern": "Project could not be opened",
+      "safeRule": "Differentiate unreadable, incompatible, corrupt, incomplete, writer-lock and read-only cases."
+    },
+    {
+      "id": "local-storage",
+      "titlePattern": "Local save failed",
+      "safeRule": "State whether changes remain in memory/current session and avoid calling it sync."
+    },
+    {
+      "id": "sync",
+      "titlePattern": "Sync failed",
+      "safeRule": "Always state local-save state separately when relevant."
+    },
+    {
+      "id": "permission",
+      "titlePattern": "{action} requires {role} access",
+      "safeRule": "Do not imply project corruption or capability absence."
+    },
+    {
+      "id": "import",
+      "titlePattern": "Import {result}",
+      "safeRule": "Separate source file, staged/native project changes, and fidelity categories."
+    },
+    {
+      "id": "export",
+      "titlePattern": "Export {result}",
+      "safeRule": "Report output scope and omissions."
+    },
+    {
+      "id": "migration",
+      "titlePattern": "Project migration {result}",
+      "safeRule": "State original/backup retention and verification only if actually performed."
+    },
+    {
+      "id": "recovery",
+      "titlePattern": "Recovery {result}",
+      "safeRule": "Name recovery source and what file/state was or was not modified."
+    },
+    {
+      "id": "long-task",
+      "titlePattern": "{task} {result}",
+      "safeRule": "Partial completion must list completed/incomplete work."
+    },
+    {
+      "id": "ai",
+      "titlePattern": "Proposal {result}",
+      "safeRule": "Proposal remains unapplied until explicit apply succeeds."
+    },
+    {
+      "id": "system",
+      "titlePattern": "{surface} could not continue",
+      "safeRule": "Give stable error code in details, not as the only user explanation."
+    }
+  ]
+}

@@ -137,19 +137,22 @@
       "id": "language_contract",
       "kind": "command",
       "command": "pnpm arq:language:verify",
-      "state": "requires-language-system-4.1"
+      "packageScript": "arq:language:verify",
+      "state": "available"
     },
     {
       "id": "rendered_public_site",
       "kind": "command",
       "command": "pnpm arq:language:site:build:verify --site-root apps/marketing/dist",
-      "state": "requires-language-system-4.1"
+      "packageScript": "arq:language:site:build:verify",
+      "state": "available"
     },
     {
       "id": "deployed_public_site",
       "kind": "command",
-      "command": "pnpm arq:language:site:live:verify",
-      "state": "requires-language-system-4.1"
+      "command": "pnpm arq:language:site:live:verify --base-url <pages-url> --expected-commit <sha>",
+      "state": "enforced-by-deploy-workflow",
+      "closure": "Runs as the verify-live-language job in .github/workflows/deploy-pages.yml against the exact deployed commit; it cannot run as pull-request evidence because the live site serves the default branch, not the PR head. If a rule ever selects it, the gate fails rather than passing."
     },
     {
       "id": "browser_journal_recovery",

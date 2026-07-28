@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 2,
+  "rule": "Aliases improve recognition/search/support. They do not replace canonical visible names.",
+  "aliases": [
+    {
+      "canonical": "Arq",
+      "aliases": ["ARQ"],
+      "notes": "ARQ only for wordmark/formal identifiers; Arc is not an alias."
+    },
+    {
+      "canonical": "project file",
+      "aliases": [".arq file", "Arq file", "archive"],
+      "notes": "Use project file in user copy when referring to the portable .arq file."
+    },
+    {
+      "canonical": "local save",
+      "aliases": ["autosave", "auto-save"],
+      "notes": "Resolve whether user means local journal/local save before answering."
+    },
+    {
+      "canonical": "sync",
+      "aliases": ["cloud sync", "online sync"],
+      "notes": "Do not translate local save into sync."
+    },
+    {
+      "canonical": "Project Browser",
+      "aliases": ["project panel", "browser panel", "model tree"],
+      "notes": "Model tree may be a sub-concept, not a perfect synonym."
+    },
+    {
+      "canonical": "Inspector",
+      "aliases": ["properties panel", "property panel", "right panel"],
+      "notes": "Use Inspector as visible name."
+    },
+    {
+      "canonical": "Fit",
+      "aliases": ["zoom extents", "fit view", "zoom to fit"]
+    },
+    {
+      "canonical": "Wall",
+      "aliases": ["wall tool", "draw wall", "wall draw"]
+    },
+    {
+      "canonical": "Room boundary",
+      "aliases": ["room tool", "room boundary tool"]
+    },
+    {
+      "canonical": "Revision compare",
+      "aliases": ["compare revisions", "version compare", "before and after"]
+    },
+    {
+      "canonical": "Model health",
+      "aliases": ["warnings", "validation summary", "model diagnostics"],
+      "notes": "Do not call it a score."
+    },
+    {
+      "canonical": "read-only",
+      "aliases": ["view only", "can't edit"],
+      "notes": "Explain reason, not just alias."
+    },
+    {
+      "canonical": "underlay",
+      "aliases": ["reference image", "reference PDF", "background plan"],
+      "notes": "Only when reference-only."
+    },
+    {
+      "canonical": "Issue",
+      "aliases": ["review issue", "tracked issue"],
+      "notes": "Do not map validation errors to Issues."
+    },
+    {
+      "canonical": "Sheet",
+      "aliases": ["drawing sheet", "page"],
+      "notes": "Resolve 'page' because it can also mean web page."
+    },
+    {
+      "canonical": "Level",
+      "aliases": ["storey", "story", "floor"],
+      "notes": "Floor may mean floor geometry or storey; resolve context."
+    },
+    {
+      "canonical": "3D view",
+      "aliases": ["model view", "3D model"],
+      "notes": "Do not imply renderer mesh is authoritative model data."
+    }
+  ]
+}

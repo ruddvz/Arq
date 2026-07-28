@@ -3,8 +3,15 @@ import { html } from '../html.js';
 import type { Page } from '../site.js';
 
 /**
- * PUB-008. Browser first, native later — and no survey-grade LiDAR claims
- * (prohibited by the SEO brief, and unproven by anyone's hardware).
+ * PUB-008. Browser first, native later, and no survey-grade capture claims
+ * (prohibited by the SEO brief).
+ *
+ * Claim bindings: pub-ipad-touch-layout (ipad-touch-layout, CURRENT),
+ * pub-ipad-native-features (ipad-native-features, PLANNED) and
+ * pub-ipad-file-reachability (native-arq-open, LIBRARY_ONLY). The touch layout
+ * is the one current claim here, and it is bound to the repository's viewport
+ * capability check. "The same file opens on both devices" is removed: the
+ * opening path is not wired on either.
  */
 export const ipadPage: Page = {
   meta: {
@@ -12,12 +19,12 @@ export const ipadPage: Page = {
     route: '/ipad',
     title: 'iPad',
     description:
-      'Arq on iPad: a first-class touch layout in today’s browser build, with native Files, Pencil and RoomPlan integration planned for Release 4.',
+      'Arq on iPad: the browser build has a touch layout checked across the repository’s viewport set. Native Files, Pencil and RoomPlan integration is Release 4 scope.',
   },
   render: () => html`
     ${hero({
       heading: 'The site desk is a desk too.',
-      lede: 'Arq treats the iPad as a working surface, not a viewer. The browser build already lays itself out for touch; the native features that need Apple’s APIs come later, in the open.',
+      lede: 'Arq treats the iPad as a working surface rather than a viewer. The browser build already lays itself out for touch. The native features that need Apple’s APIs come later, in the open.',
     })}
     ${notes([
       {
@@ -26,9 +33,14 @@ export const ipadPage: Page = {
           <p>
             The development build's workspace detects a coarse pointer and re-composes: a phone dock
             and project bar on small screens, drawers and bottom sheets with real detents on
-            tablets, larger touch targets throughout. This is the same app, not a cut-down mobile
-            page — the layout system is exercised across eight viewports in the repository's
-            capability checks.
+            tablets, larger touch targets throughout. It is the same application rather than a
+            cut-down mobile page.
+          </p>
+          <p>
+            The layout is exercised by a headless-browser check in the repository across the
+            viewport set in <code>workspace-qa-fixtures.json</code>, which asserts that the canvas
+            stays visible, that panels can be summoned back, and that no viewport overflows
+            horizontally. That check is the evidence behind this paragraph.
           </p>
         `,
       },
@@ -36,17 +48,20 @@ export const ipadPage: Page = {
         title: 'Native, when it can be real',
         body: html`
           ${specList([
-            { term: 'Files integration', detail: 'Release 4 - .arq projects in the Files app.' },
+            {
+              term: 'Files integration',
+              detail: 'Release 4 scope: .arq projects in the Files app.',
+            },
             {
               term: 'Pencil hover and squeeze',
               detail:
-                'Release 4 - on hardware that supports them; capability-checked, not assumed.',
+                'Release 4 scope, on hardware that supports them. Capability-checked rather than assumed.',
             },
-            { term: 'Haptic snapping', detail: 'Release 4 - feel a snap engage.' },
+            { term: 'Haptic snapping', detail: 'Release 4 scope: feel a snap engage.' },
             {
               term: 'RoomPlan and LiDAR',
               detail:
-                'Release 4 - as a prototype for capturing existing rooms. Captured geometry is a starting point to verify against a tape measure, not a survey.',
+                'Release 4 scope, as a prototype for capturing existing rooms. Captured geometry is a starting point to verify against a tape measure, not a survey.',
             },
           ])}
         `,
@@ -55,16 +70,27 @@ export const ipadPage: Page = {
         title: 'What Arq will not claim about capture',
         body: html`
           <p>
-            Consumer LiDAR is genuinely useful and genuinely imprecise. Arq will never describe a
-            phone or tablet scan as measured-survey accuracy, and imported capture will carry its
+            Consumer LiDAR is useful and imprecise at the same time. Arq will never describe a phone
+            or tablet scan as measured-survey accuracy, and imported capture will carry its
             provenance so a dimension from a scan is never mistaken for a dimension from a tape.
+          </p>
+        `,
+      },
+      {
+        title: 'One format, once the opening path exists',
+        body: html`
+          <p>
+            The design intent is a single project format that behaves the same at the studio desk
+            and the site desk. Today neither the browser build nor a native build opens an existing
+            <code>.arq</code> file into a working project, so this page does not claim that a file
+            moves between devices. See <a href="/">how files are handled today</a>.
           </p>
         `,
       },
     ])}
     ${ctaBand(
       'One model, wherever you stand.',
-      'The same file opens at the studio desk and the site desk — that is the point of building local first.',
+      'That is the point of building on a local project format. The product page explains the order the pieces arrive in.',
       [
         { href: '/product', label: 'Product overview' },
         { href: '/changelog', label: 'Changelog' },

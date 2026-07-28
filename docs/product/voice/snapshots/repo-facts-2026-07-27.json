@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 2,
+  "snapshotDate": "2026-07-27",
+  "repo": "ruddvz/Arq",
+  "branch": "claude/arq-cad-platform-research-ba8rav",
+  "snapshotOnly": true,
+  "facts": [
+    {
+      "id": "product-thesis",
+      "state": "LOCKED",
+      "value": "Browser-first architectural plan and lightweight BIM editor for independent architects and small practices.",
+      "sources": [
+        "README.md",
+        "docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md"
+      ]
+    },
+    {
+      "id": "release-status",
+      "state": "CURRENT",
+      "value": "Pre-release; active technical validation and vertical-slice implementation.",
+      "sources": [
+        "README.md",
+        "STATUS.md"
+      ]
+    },
+    {
+      "id": "protected-workflow",
+      "state": "LOCKED",
+      "value": "New project → dimensioned residential plan → coordinated 3D → scaled vector PDF, with close/recover/reopen verification.",
+      "sources": [
+        "README.md",
+        "STATUS.md",
+        "blueprint"
+      ]
+    },
+    {
+      "id": "semantic-authority",
+      "state": "LOCKED",
+      "value": "Semantic model/project data is authoritative; renderer objects and derived caches are disposable projections.",
+      "sources": [
+        "README.md",
+        "blueprint"
+      ]
+    },
+    {
+      "id": "file-format-architecture",
+      "state": "LOCKED",
+      "value": ".arq direction is a native SQLite application database, not a renamed ZIP archive.",
+      "sources": [
+        "README.md",
+        "packages/arqfs"
+      ]
+    },
+    {
+      "id": "native-open-reachability",
+      "state": "LIBRARY_ONLY",
+      "value": "The .arq format/open/migration/recovery library exists, but STATUS says the end-to-end project-open pipeline is not yet reachable from the product.",
+      "sources": [
+        "STATUS.md",
+        "packages/arqfs",
+        "apps/web file handling"
+      ]
+    },
+    {
+      "id": "current-file-picker",
+      "state": "CURRENT",
+      "value": "The current Open project UI can read/detect/preflight selected files and honestly stops before claiming a native project is loaded.",
+      "sources": [
+        "apps/web/src/file-handling/FileOpenPanel.tsx",
+        "describe-file-flow-state.ts"
+      ]
+    },
+    {
+      "id": "plan-authoring",
+      "state": "CURRENT",
+      "value": "Current plan canvas supports wall drawing, snapping, selection, pan/zoom and typed validation before commit.",
+      "sources": [
+        "STATUS.md",
+        "apps/web/src/App.tsx",
+        "PlanCanvas.tsx"
+      ]
+    },
+    {
+      "id": "doors-windows-rooms-wired",
+      "state": "LIBRARY_ONLY",
+      "value": "Door/window/room tools/libraries are present in repository design/editor libraries but STATUS says they are not yet wired to the canvas.",
+      "sources": [
+        "STATUS.md"
+      ]
+    },
+    {
+      "id": "current-local-persistence",
+      "state": "CURRENT",
+      "value": "Current web editor journals plan edits to IndexedDB and can replay the journal on startup.",
+      "sources": [
+        "STATUS.md",
+        "apps/web/src/App.tsx"
+      ]
+    },
+    {
+      "id": "sync-backend",
+      "state": "CURRENT",
+      "value": "No remote sync backend is operating in the current product.",
+      "sources": [
+        "STATUS.md",
+        "apps/web/src/App.tsx"
+      ]
+    },
+    {
+      "id": "3d-current",
+      "state": "CONFLICTED",
+      "value": "STATUS contains contradictory statements: one says ModelCanvas is a working consumer; another says the 3D stack has zero consumers/no 3D surface.",
+      "sources": [
+        "STATUS.md"
+      ],
+      "rule": "Resolve against code/tests before publishing a stronger current claim."
+    },
+    {
+      "id": "ai-product",
+      "state": "PLANNED",
+      "value": "Bounded AI modifications are Release 3 scope; no AI-driven authoring is in the current development build.",
+      "sources": [
+        "RELEASE-SCOPE.md",
+        "apps/marketing/src/content/ai.ts"
+      ]
+    },
+    {
+      "id": "ai-boundary",
+      "state": "LOCKED",
+      "value": "AI cannot bypass deterministic validation, permissions or required approval; no hidden mutation.",
+      "sources": [
+        "README.md",
+        "docs/ai/AI-GUARDRAILS.md"
+      ]
+    },
+    {
+      "id": "pricing",
+      "state": "UNKNOWN",
+      "value": "Pricing has not been set. Current public copy says the development build is free while pre-release.",
+      "sources": [
+        "apps/marketing/src/content/pricing.ts"
+      ]
+    },
+    {
+      "id": "professional-boundary",
+      "state": "LOCKED",
+      "value": "Arq does not certify professional approval, regulatory/code compliance, structural/fire/accessibility safety/compliance, cost accuracy, constructability or design correctness.",
+      "sources": [
+        "README.md"
+      ]
+    },
+    {
+      "id": "support-channel",
+      "state": "CURRENT",
+      "value": "Current public support/product questions route to repository issues; security vulnerabilities route privately.",
+      "sources": [
+        "apps/marketing/src/content/contact.ts",
+        "SECURITY.md"
+      ]
+    }
+  ]
+}

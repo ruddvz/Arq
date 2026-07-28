@@ -147,9 +147,18 @@ export function verifyRepoBindings({ repoRoot, packageRoot = defaultPackageRoot 
         (repoPackage.packageManager || 'none') +
         '.',
     );
-  if (actualCommit && actualCommit !== baseline.repository.commit)
+  // The audited baseline must be part of this checkout's history. Requiring
+  // HEAD to *equal* the audited commit made every pull-request branch fail
+  // strict bindings by construction (a PR head can never be the audited
+  // snapshot), which would have neutered repository_binding as gate evidence.
+  // Ancestor semantics preserve the real invariant: the audit's snapshot was
+  // not rewritten away; it warns only on rewritten or divergent history.
+  const baselineIsAncestor =
+    actualCommit === baseline.repository.commit ||
+    git(root, ['merge-base', '--is-ancestor', baseline.repository.commit, 'HEAD']) !== null;
+  if (actualCommit && !baselineIsAncestor)
     warnings.push(
-      'Repository HEAD differs from audited baseline. Refresh the audit baseline and generated context through review before treating this package as current.',
+      'Audited baseline commit is not an ancestor of repository HEAD. Refresh the audit baseline and generated context through review before treating this package as current.',
     );
   if (actualDefaultBranch && actualDefaultBranch !== baseline.repository.defaultBranch)
     warnings.push(

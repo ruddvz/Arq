@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 5,
+  "sources": [
+    {
+      "id": "adr",
+      "rank": 1,
+      "authority": "accepted, non-superseded architecture and product decisions",
+      "sourceSet": "accepted-adrs",
+      "claimScope": "architecture"
+    },
+    {
+      "id": "code-tests",
+      "rank": 2,
+      "authority": "what works today, subject to user-reachability evidence",
+      "sourceSet": "web-app",
+      "claimScope": "current-reachability"
+    },
+    {
+      "id": "blueprint",
+      "rank": 3,
+      "authority": "approved product direction and design contract",
+      "sourceSet": "blueprint",
+      "claimScope": "product-direction"
+    },
+    {
+      "id": "release-scope",
+      "rank": 4,
+      "authority": "release ladder and planned scope, not standalone proof of current behaviour",
+      "sourceSet": "release-scope",
+      "claimScope": "roadmap"
+    },
+    {
+      "id": "tool-registry",
+      "rank": 4,
+      "authority": "canonical tool names and design status",
+      "sourceSet": "workspace-registries",
+      "claimScope": "tool-name"
+    },
+    {
+      "id": "tab-registry",
+      "rank": 4,
+      "authority": "canonical view/tab names and behaviours",
+      "sourceSet": "workspace-registries",
+      "claimScope": "view-name"
+    },
+    {
+      "id": "panel-registry",
+      "rank": 4,
+      "authority": "canonical panel names and layout contracts",
+      "sourceSet": "workspace-registries",
+      "claimScope": "panel-name"
+    },
+    {
+      "id": "state-machines",
+      "rank": 4,
+      "authority": "workspace state discriminants",
+      "sourceSet": "workspace-registries",
+      "claimScope": "workspace-state"
+    },
+    {
+      "id": "capability-gates",
+      "rank": 4,
+      "authority": "capability boundary and design gating",
+      "sourceSet": "workspace-registries",
+      "claimScope": "capability"
+    },
+    {
+      "id": "surface-registry",
+      "rank": 4,
+      "authority": "workspace surface inventory",
+      "sourceSet": "workspace-registries",
+      "claimScope": "surface-inventory"
+    },
+    {
+      "id": "route-map",
+      "rank": 4,
+      "authority": "public, auth and project route inventory",
+      "sourceSet": "routes",
+      "claimScope": "surface-inventory"
+    },
+    {
+      "id": "rbac",
+      "rank": 4,
+      "authority": "role/action permissions",
+      "sourceSet": "rbac",
+      "claimScope": "permission"
+    },
+    {
+      "id": "format-matrix",
+      "rank": 4,
+      "authority": "format role and roadmap status",
+      "sourceSet": "format-matrix",
+      "claimScope": "format-roadmap"
+    },
+    {
+      "id": "ai-guardrails",
+      "rank": 4,
+      "authority": "AI authority, mutation and validation boundary",
+      "sourceSet": "ai-guardrails",
+      "claimScope": "ai-boundary"
+    },
+    {
+      "id": "product-copy",
+      "rank": 4,
+      "authority": "repository product-copy baseline",
+      "sourceSet": "copy-principles",
+      "claimScope": "copy-contract"
+    },
+    {
+      "id": "file-open-ui",
+      "rank": 4,
+      "authority": "current user-reachable file preflight/opening boundary",
+      "sourceSet": "file-open-ui",
+      "claimScope": "file-reachability"
+    },
+    {
+      "id": "web-app",
+      "rank": 4,
+      "authority": "current browser workspace composition and user-reachable view wiring",
+      "sourceSet": "web-app",
+      "claimScope": "current-reachability"
+    },
+    {
+      "id": "plan-journal",
+      "rank": 4,
+      "authority": "current demo-plan IndexedDB journal semantics",
+      "sourceSet": "plan-journal",
+      "claimScope": "journal-persistence"
+    },
+    {
+      "id": "local-storage",
+      "rank": 4,
+      "authority": "current local journal storage implementation boundary",
+      "sourceSet": "local-storage",
+      "claimScope": "journal-persistence"
+    },
+    {
+      "id": "interop-adapters",
+      "rank": 4,
+      "authority": "adapter/library evidence; never standalone proof of end-to-end product reachability",
+      "sourceSet": "format-matrix",
+      "claimScope": "library-capability"
+    },
+    {
+      "id": "benchmarks",
+      "rank": 4,
+      "authority": "named benchmark/environment evidence",
+      "sourceSet": "web-app",
+      "claimScope": "performance-hardware"
+    },
+    {
+      "id": "status",
+      "rank": 6,
+      "authority": "maintained current summary, cross-checked against code/tests",
+      "sourceSet": "status",
+      "claimScope": "current-summary"
+    },
+    {
+      "id": "launch-claims",
+      "rank": 6,
+      "authority": "explicit public claim prohibitions",
+      "sourceSet": "launch-claims",
+      "claimScope": "public-prohibition"
+    },
+    {
+      "id": "security",
+      "rank": 6,
+      "authority": "security reporting and approved security statements",
+      "sourceSet": "security",
+      "claimScope": "security"
+    },
+    {
+      "id": "marketing",
+      "rank": 7,
+      "authority": "public-copy mirror only; never promotes a product fact",
+      "sourceSet": "marketing-content",
+      "claimScope": "copy-observation"
+    },
+    {
+      "id": "marketing-routes",
+      "rank": 4,
+      "authority": "typed public page registry and source-to-route mapping",
+      "sourceSet": "marketing-routes",
+      "claimScope": "public-surface-inventory"
+    },
+    {
+      "id": "marketing-build",
+      "rank": 4,
+      "authority": "static public artifact layout and generated-output evidence boundary",
+      "sourceSet": "marketing-build",
+      "claimScope": "public-artifact"
+    },
+    {
+      "id": "marketing-deployment",
+      "rank": 4,
+      "authority": "deployment workflow and GitHub Pages verification boundary",
+      "sourceSet": "marketing-deployment",
+      "claimScope": "deployment"
+    },
+    {
+      "id": "telemetry",
+      "rank": 7,
+      "authority": "approved diagnostic event vocabulary and privacy boundary",
+      "sourceSet": "telemetry",
+      "claimScope": "telemetry"
+    },
+    {
+      "id": "historical",
+      "rank": 8,
+      "authority": "reference only",
+      "sourceSet": "none",
+      "claimScope": "historical"
+    },
+    {
+      "id": "editorial-reference",
+      "rank": 8,
+      "authority": "descriptive editorial reference only; never establishes an Arq product fact",
+      "sourceSet": "none",
+      "claimScope": "editorial-quality"
+    }
+  ],
+  "currentPromotionRule": "A CURRENT claim needs evidence of a user-reachable path, the relevant implementation or browser test, and no unresolved higher-authority conflict. Library/package presence alone is insufficient.",
+  "conflictRule": "Higher authority wins only within its stated domain. Material disagreement, insufficient reachability evidence or dependent copy drift must be recorded; never silently choose convenient wording.",
+  "authorityByQuestion": {
+    "worksToday": ["code-tests", "file-open-ui", "plan-journal", "capability-gates", "status"],
+    "architecturalDecision": ["adr", "blueprint"],
+    "toolName": ["tool-registry"],
+    "viewName": ["tab-registry"],
+    "panelName": ["panel-registry"],
+    "workspaceState": ["state-machines", "file-open-ui", "plan-journal"],
+    "permission": ["rbac"],
+    "formatRoadmap": ["format-matrix", "release-scope"],
+    "aiBoundary": ["ai-guardrails", "adr"],
+    "publicClaimProhibition": ["launch-claims", "code-tests"],
+    "surfaceInventory": ["route-map", "surface-registry"],
+    "hardwareEvidence": ["benchmarks"],
+    "privacyTransport": ["security", "code-tests", "telemetry"],
+    "editorialQuality": ["product-copy", "editorial-reference"],
+    "publicArtifact": ["marketing-routes", "marketing-build", "marketing-deployment", "route-map"],
+    "deployedPublicCopy": ["marketing-build", "marketing-deployment", "code-tests"]
+  }
+}

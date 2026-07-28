@@ -3,10 +3,14 @@ import { html } from '../html.js';
 import type { Page } from '../site.js';
 
 /**
- * PUB-006. Previewable, validated, undoable AI operations. The SEO brief
- * prohibits "automatic compliant design"; the project's own kernel rules
- * require AI to propose typed operations with assumptions, validation, diff
- * and undo — that rule is the page.
+ * PUB-006. The SEO brief prohibits "automatic compliant design"; the project's
+ * kernel rules require AI to propose typed operations with assumptions,
+ * validation, diff and undo.
+ *
+ * Claim binding: pub-ai-current (current-ai-authoring, PLANNED). Nothing
+ * AI-driven exists in the current build, so the five-part contract is written
+ * as the requirement a future capability must meet, never as a guardrail that
+ * is currently protecting anyone.
  */
 export const aiPage: Page = {
   meta: {
@@ -14,26 +18,27 @@ export const aiPage: Page = {
     route: '/ai',
     title: 'AI',
     description:
-      'AI in Arq proposes; you dispose. Typed operations with stated assumptions, a preview diff, validation and undo — never silent edits, never claimed compliance.',
+      'The contract any future AI capability in Arq must meet: typed operations, stated assumptions, a preview diff, validation and undo. No AI-driven authoring exists in the current development build.',
   },
   render: () => html`
     ${hero({
-      heading: 'AI that shows its working.',
-      lede: 'In Arq, AI is a careful junior who drafts a change and hands you the red pen — never a ghost hand moving your walls. Every proposal is inspectable before it exists, and reversible after.',
+      heading: 'AI has to show its working before it changes anything.',
+      lede: 'No AI-driven authoring exists in the Arq development build today. This page sets out the contract a future AI capability has to meet before it is allowed to touch a project.',
     })}
     ${notes([
       {
-        title: 'The contract every AI feature must sign',
+        title: 'The contract every AI feature must meet',
         body: html`
           <p>
-            This is a design rule enforced in the project's kernel, not a marketing sentence. An AI
-            capability ships only as a proposal with all five parts:
+            This is a design rule recorded in the project's guardrails
+            (<code>docs/ai/AI-GUARDRAILS.md</code>), written before any AI capability exists. An AI
+            capability may ship only as a proposal with all five parts:
           </p>
           ${specList([
             { term: 'Intent', detail: 'What you asked, restated so you can catch a misreading.' },
             {
               term: 'Assumptions',
-              detail: 'What the model had to guess, listed — not buried.',
+              detail: 'What the model had to guess, listed rather than buried.',
             },
             {
               term: 'Operations',
@@ -47,15 +52,19 @@ export const aiPage: Page = {
             },
             { term: 'Undo', detail: 'One step back, always, like any other operation.' },
           ])}
+          <p>
+            Nothing in the current build is enforcing this contract, because there is nothing yet
+            for it to govern.
+          </p>
         `,
       },
       {
         title: 'What AI in Arq will not claim',
         body: html`
           <p>
-            Generated geometry is not accurate until you have checked it. Arq's AI does not produce
-            building-code compliance, does not approve designs and does not replace professional
-            judgement — the copy principles in the repository forbid describing it otherwise, and
+            Generated geometry is not accurate until you have checked it. Arq's AI will not produce
+            building-code compliance, will not approve designs and will not replace professional
+            judgement. The copy principles in the repository forbid describing it otherwise, and
             this site follows them.
           </p>
         `,
@@ -64,17 +73,16 @@ export const aiPage: Page = {
         title: 'Where it stands',
         body: html`
           <p>
-            AI modifications are Release 3 scope — after the editor they would operate on is solid.
-            Planned first steps are deliberately small: explain a selection, then single-step
-            modifications under the contract above. Nothing AI-driven is in the development build
-            today, and this page will change when that changes.
+            AI modifications are Release 3 scope, after the editor they would operate on is solid.
+            The planned first steps are deliberately small: explain a selection, then single-step
+            modifications under the contract above. This page will change when the build does.
           </p>
         `,
       },
     ])}
     ${ctaBand(
       'The boring parts make the clever parts safe.',
-      'Typed operations, validation and undo exist for every edit — AI or human. That is the product underneath.',
+      'Typed operations, validation and undo are being built for every edit, whoever proposes it. That is the product underneath.',
       [
         { href: '/product', label: 'Product overview' },
         { href: '/security', label: 'Security' },

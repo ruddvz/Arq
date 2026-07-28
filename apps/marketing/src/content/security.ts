@@ -3,8 +3,14 @@ import { html } from '../html.js';
 import type { Page } from '../site.js';
 
 /**
- * PUB-010. Security and privacy without overclaiming certification — the SEO
- * brief's prohibited claim for this sheet. Baseline items mirror SECURITY.md.
+ * PUB-010. Security and privacy without overclaiming certification, which is
+ * the SEO brief's prohibited claim for this sheet. Baseline items mirror
+ * SECURITY.md.
+ *
+ * Claim binding: pub-security-network (no-network-data-transfer, UNKNOWN). The
+ * previous "sends nothing anywhere" was an absolute transport claim with no
+ * network-observation evidence behind it. It is replaced by the architectural
+ * facts that are checkable now plus a statement of what is missing.
  */
 export const securityPage: Page = {
   meta: {
@@ -12,22 +18,28 @@ export const securityPage: Page = {
     route: '/security',
     title: 'Security',
     description:
-      'How Arq treats your work: local-first files, a published security baseline, sandboxed imports, no training on private projects by default — and no certifications claimed that have not been earned.',
+      'How Arq treats your work: projects held on your device, a published security baseline, sandboxed imports by design, and no certifications claimed that have not been earned.',
   },
   render: () => html`
     ${hero({
       heading: 'Your drawings are the asset. Act like it.',
-      lede: 'Arq’s strongest security property is architectural: work lives in a file on your device, so the most common cloud failure modes have nothing to reach. Everything beyond that is a stated baseline, not a badge.',
+      lede: 'Arq’s strongest security property is architectural: there is no account system and no Arq server, so the most common cloud failure modes have nothing to reach. Everything beyond that is a stated baseline rather than a badge.',
     })}
     ${notes([
       {
-        title: 'Local first is a security posture',
+        title: 'What the current architecture means',
         body: html`
           <p>
-            The development build stores projects on your device and sends nothing anywhere — there
-            is no account system and no server to breach. When hosted features arrive, they extend
-            the local file rather than replacing it, and each one lands with its own threat-model
-            entry in the repository first.
+            The development build has no account system, no Arq backend and no sync transport. It
+            stores its work on your device, in browser storage or in files you choose. There is no
+            server on Arq's side to breach because there is no server.
+          </p>
+          <p>
+            Arq has not yet published a network-observation test for the build, so this page states
+            the architecture rather than making an absolute claim that no byte ever leaves your
+            machine. That test and an approved privacy statement are what would let a stronger
+            sentence be written here. When hosted features arrive, each one lands with its own
+            threat-model entry in the repository first.
           </p>
         `,
       },
@@ -35,7 +47,8 @@ export const securityPage: Page = {
         title: 'The published baseline',
         body: html`
           <p>
-            These commitments are recorded in the repository's security policy and threat model:
+            These commitments are recorded in the repository's security policy and threat model.
+            They govern hosted features when those are built:
           </p>
           ${specList([
             {
@@ -60,7 +73,7 @@ export const securityPage: Page = {
             {
               term: 'Supply chain',
               detail:
-                'Dependency licence policy enforced in CI with a generated SBOM — published on this site under open-source notices.',
+                'Dependency licence policy enforced in continuous integration with a generated software bill of materials, published on this site under open-source notices.',
             },
           ])}
         `,
@@ -70,9 +83,9 @@ export const securityPage: Page = {
         body: html`
           <p>
             No compliance certification has been obtained, and this page will not imply one. Arq
-            does not promise zero data loss — instead it builds journalling, recovery and plain
-            failure messages, and tests them. When a claim here can be backed by an audit, the audit
-            will be linked from this page.
+            does not promise zero data loss. What it does instead is build journalling, recovery and
+            plain failure messages, and test them. When a claim here can be backed by an audit, the
+            audit will be linked from this page.
           </p>
         `,
       },
@@ -82,8 +95,7 @@ export const securityPage: Page = {
           <p>
             Please do not report unpatched vulnerabilities in public issues. Use a private security
             advisory on the repository, as described in
-            <a href="/contact">contact and support</a>. Reports are read by the people who can fix
-            them.
+            <a href="/contact">contact and support</a>.
           </p>
         `,
       },

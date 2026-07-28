@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 3,
+  "contextSchemaVersion": 4,
+  "purpose": "The complete source boundary for a source-hashed Arq language context. A required source cannot be silently omitted or replaced by a hand-maintained summary.",
+  "sourceSets": [
+    {
+      "id": "repository-readme",
+      "path": "README.md",
+      "kind": "file",
+      "required": true,
+      "purpose": "product boundary and current architecture framing"
+    },
+    {
+      "id": "status",
+      "path": "STATUS.md",
+      "kind": "file",
+      "required": true,
+      "purpose": "maintained implementation summary and known gaps"
+    },
+    {
+      "id": "accepted-adrs",
+      "path": "docs/adr",
+      "kind": "directory",
+      "required": true,
+      "purpose": "accepted architecture and product decisions",
+      "qualification": "Only accepted, non-superseded ADRs may promote an architectural claim."
+    },
+    {
+      "id": "blueprint",
+      "path": "docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md",
+      "kind": "file",
+      "required": true,
+      "purpose": "product direction and design contracts"
+    },
+    {
+      "id": "release-scope",
+      "path": "docs/product/RELEASE-SCOPE.md",
+      "kind": "file",
+      "required": true,
+      "purpose": "release intent, never standalone proof of current reachability"
+    },
+    {
+      "id": "copy-principles",
+      "path": "docs/product/PRODUCT-COPY-PRINCIPLES.md",
+      "kind": "file",
+      "required": true,
+      "purpose": "repository product-copy baseline"
+    },
+    {
+      "id": "format-matrix",
+      "path": "docs/interoperability/FORMAT-SUPPORT-MATRIX.md",
+      "kind": "file",
+      "required": true,
+      "purpose": "format role and roadmap state"
+    },
+    {
+      "id": "ai-guardrails",
+      "path": "docs/ai/AI-GUARDRAILS.md",
+      "kind": "file",
+      "required": true,
+      "purpose": "AI authority and mutation boundary"
+    },
+    {
+      "id": "launch-claims",
+      "path": "business/LAUNCH-CLAIMS-CHECKLIST.md",
+      "kind": "file",
+      "required": true,
+      "purpose": "public-claim prohibitions"
+    },
+    {
+      "id": "security",
+      "path": "SECURITY.md",
+      "kind": "file",
+      "required": true,
+      "purpose": "security-reporting and policy boundary"
+    },
+    {
+      "id": "rbac",
+      "path": "security/RBAC-MATRIX.csv",
+      "kind": "file",
+      "required": true,
+      "purpose": "role/action authority"
+    },
+    {
+      "id": "routes",
+      "path": "docs/pages/ROUTE-MAP.csv",
+      "kind": "file",
+      "required": true,
+      "purpose": "surface inventory"
+    },
+    {
+      "id": "workspace-types",
+      "path": "packages/workspace/src/workspace-types.ts",
+      "kind": "file",
+      "required": true,
+      "purpose": "workspace types and save/sync separation"
+    },
+    {
+      "id": "workspace-registries",
+      "path": "packages/workspace/src/registry",
+      "kind": "directory",
+      "required": true,
+      "purpose": "tools, views, panels, state machines, capabilities and surfaces"
+    },
+    {
+      "id": "arqfs-open",
+      "path": "packages/arqfs/src/arqfs-open.ts",
+      "kind": "file",
+      "required": true,
+      "purpose": "native file compatibility and write capability"
+    },
+    {
+      "id": "arqfs-recovery",
+      "path": "packages/arqfs/src/arqfs-recovery-report.ts",
+      "kind": "file",
+      "required": true,
+      "purpose": "recovery fact boundary"
+    },
+    {
+      "id": "arqfs-safe-mode",
+      "path": "packages/arqfs/src/arqfs-safe-mode.ts",
+      "kind": "file",
+      "required": true,
+      "purpose": "file read-only/recovery states"
+    },
+    {
+      "id": "file-open-ui",
+      "path": "apps/web/src/file-handling",
+      "kind": "directory",
+      "required": true,
+      "purpose": "user-reachable file flow and copy"
+    },
+    {
+      "id": "plan-journal",
+      "path": "apps/web/src/canvas/plan-journal.ts",
+      "kind": "file",
+      "required": true,
+      "purpose": "current IndexedDB journal semantics"
+    },
+    {
+      "id": "web-app",
+      "path": "apps/web/src/App.tsx",
+      "kind": "file",
+      "required": true,
+      "purpose": "current reachable shell, journal display and view wiring"
+    },
+    {
+      "id": "plan-canvas",
+      "path": "apps/web/src/PlanCanvas.tsx",
+      "kind": "file",
+      "required": true,
+      "purpose": "current 2D authoring reachability"
+    },
+    {
+      "id": "model-canvas",
+      "path": "apps/web/src/ModelCanvas.tsx",
+      "kind": "file",
+      "required": true,
+      "purpose": "current 3D reachability evidence"
+    },
+    {
+      "id": "local-storage",
+      "path": "packages/local-storage/src",
+      "kind": "directory",
+      "required": true,
+      "purpose": "current local journal implementation boundary"
+    },
+    {
+      "id": "marketing-content",
+      "path": "apps/marketing/src/content",
+      "kind": "directory",
+      "required": true,
+      "purpose": "public user-facing claims"
+    },
+    {
+      "id": "marketing-routes",
+      "path": "apps/marketing/src/routes.ts",
+      "kind": "file",
+      "required": true,
+      "purpose": "typed public page registry and source-to-route membership"
+    },
+    {
+      "id": "marketing-build",
+      "path": "apps/marketing/src/build.ts",
+      "kind": "file",
+      "required": true,
+      "purpose": "static output layout, base path and generated public artifact boundary"
+    },
+    {
+      "id": "marketing-claims-tests",
+      "path": "apps/marketing/src/pages.test.ts",
+      "kind": "file",
+      "required": true,
+      "purpose": "rendered public claim gate"
+    },
+    {
+      "id": "marketing-deployment",
+      "path": ".github/workflows/deploy-pages.yml",
+      "kind": "file",
+      "required": true,
+      "purpose": "GitHub Pages build and deployment boundary"
+    },
+    {
+      "id": "telemetry",
+      "path": "analytics/EVENT-DICTIONARY.csv",
+      "kind": "file",
+      "required": true,
+      "purpose": "diagnostic and privacy language"
+    }
+  ],
+  "generatedContextRules": {
+    "noAbsolutePaths": true,
+    "requireSourceSetDigest": true,
+    "refuseMissingRequiredSources": true,
+    "directoryMembershipIsTracked": true,
+    "contextMayNotPromoteClaims": true
+  }
+}

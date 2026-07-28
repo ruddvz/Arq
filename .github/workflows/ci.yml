@@ -78,6 +78,53 @@ jobs:
           name: browser-capability-check-results
           path: benchmarks/results/
 
+  # Arq Language System 4.1. The order is fixed by docs/product/voice: source
+  # contract, installed footprint, public-copy inventory, route coverage,
+  # context freshness, canonical data, editorial policy, state and adapter
+  # coverage, conflict and claim gates, wiring, hard audit, rendered site.
+  #
+  # This job deliberately never regenerates the committed language context.
+  # Refreshing it here would turn a stale-context failure into a silent pass;
+  # the freshness check must fail so that a human refreshes it in the same
+  # change that altered the canonical sources.
+  language-system:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Verify language source contract
+        run: pnpm arq:language:sources:verify
+      - name: Verify language installation, public-copy inventory and route coverage
+        run: |
+          pnpm arq:language:install:verify
+          pnpm arq:language:public:verify
+          pnpm arq:language:routes:verify
+      - name: Verify canonical context freshness
+        run: pnpm arq:language:context:verify
+      - name: Verify canonical data and state language
+        run: |
+          pnpm arq:language:data:verify
+          pnpm arq:language:editorial:verify
+          pnpm arq:language:state:verify
+          pnpm arq:language:adapters:verify
+      - name: Verify claim and conflict gates
+        run: |
+          pnpm arq:language:conflicts:verify
+          pnpm arq:language:claims:verify
+      - name: Verify Arq language-system wiring
+        run: pnpm arq:language:verify
+      - name: Enforce hard Arq language rules
+        run: pnpm arq:language:audit:ci
+      - name: Build and verify rendered public copy
+        run: |
+          pnpm --filter @arq/marketing build
+          pnpm arq:language:site:build:verify --site-root apps/marketing/dist
+
   dependency-licence-scan:
     runs-on: ubuntu-latest
     steps:
