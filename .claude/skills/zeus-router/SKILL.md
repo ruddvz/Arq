@@ -16,7 +16,6 @@ silently working outside it.
 `.zeus/FAST-KERNEL.md`. This skill routes; it does not restate. When the source and this file disagree,
 the source wins and this file is the defect.
 
-
 ## Required finish
 
 Report the real result, the evidence state behind it, what was not inspected, and the

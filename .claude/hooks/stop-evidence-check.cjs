@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// ZEUS Operator OS 2.0 stop evidence check, adapted for the Arq repository.
+// Zeus 5 stop evidence check.
 //
-// Adaptations against the packaged version: the Stop hook payload carries only
+// The Stop hook payload carries only
 // session metadata, so matching completion language against the payload never
 // fires. This version reads the real transcript and blocks only the precise
 // case it is meant to catch, a completion claim in a session that produced no
@@ -44,7 +44,8 @@ function readTranscript(transcriptPath) {
     if (!Array.isArray(content)) continue;
     for (const part of content) {
       if (part?.type === 'tool_use' || part?.type === 'tool_result') sawToolUse = true;
-      if (part?.type === 'text' && entry?.message?.role === 'assistant') assistantText.push(String(part.text || ''));
+      if (part?.type === 'text' && entry?.message?.role === 'assistant')
+        assistantText.push(String(part.text || ''));
     }
   }
   return { assistantText: assistantText.join('\n'), sawToolUse };
@@ -66,7 +67,9 @@ process.stdin.on('end', () => {
 
   const transcript = readTranscript(payload.transcript_path);
   if (transcript && !transcript.sawToolUse && COMPLETION_CLAIM.test(transcript.assistantText)) {
-    block('ZEUS quality gate: a completion claim was made without running any command or inspecting the repository. Run the check or state the status as Not inspected.');
+    block(
+      'ZEUS quality gate: a completion claim was made without running any command or inspecting the repository. Run the check or state the status as Not inspected.',
+    );
   }
 
   if (process.env.ZEUS_STRICT_CHANGE_GATES === '1') {
@@ -80,7 +83,9 @@ process.stdin.on('end', () => {
       files = '';
     }
     if (HIGH_RISK_PATHS.test(files) && !TEST_PATHS.test(files)) {
-      block('ZEUS strict gate: high-risk paths changed without an accompanying test, fixture or benchmark change.');
+      block(
+        'ZEUS strict gate: high-risk paths changed without an accompanying test, fixture or benchmark change.',
+      );
     }
   }
 

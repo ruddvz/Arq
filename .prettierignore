@@ -59,3 +59,10 @@ docs/product/voice/marketing-claim-test.fragment.ts
 # Rust build artifacts and generated wasm bindings.
 rust/target/
 packages/*/wasm/
+
+# Zeus 5 runtime artifacts. The project index, check cache and run logs are
+# written by scripts/zeus-index.mjs and scripts/zeus-check.mjs into the
+# workspace and are git-ignored. They are machine records, not source, and a
+# local `pnpm format:check` should not fail on them.
+.zeus/cache/
+.zeus/runs/

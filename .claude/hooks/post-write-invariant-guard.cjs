@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// ZEUS Operator OS 2.0 invariant guard, adapted for the Arq repository.
+// Zeus 5 invariant guard.
 //
 // The Arq Language System 4.1 already owns em dashes, hype, prohibited public
 // claims, AI authority claims and interoperability overclaims, with real scope
@@ -45,12 +45,14 @@ const LANGUAGE_GUARDIAN_SCOPE = [
 
 function inLanguageGuardianScope(rel) {
   if (LANGUAGE_GUARDIAN_SCOPE.some((re) => re.test(rel))) return true;
-  return /^docs\/(?:pages|product|ai|interoperability)\//.test(rel) && !/^docs\/product\/voice\//.test(rel);
+  return (
+    /^docs\/(?:pages|product|ai|interoperability)\//.test(rel) &&
+    !/^docs\/product\/voice\//.test(rel)
+  );
 }
 
 // Places that legitimately quote rejected wording.
-const QUOTES_REJECTED_PATTERNS =
-  /^(?:\.claude|\.zeus|docs\/zeus|docs\/operator-source|engineering|scripts|quality|validation)\//;
+const QUOTES_REJECTED_PATTERNS = /^(?:\.claude|\.zeus|engineering|scripts|quality|validation)\//;
 
 let input = '';
 process.stdin.on('data', (d) => {
@@ -65,7 +67,10 @@ process.stdin.on('end', () => {
   }
 
   const filePath = String(
-    payload?.tool_input?.file_path || payload?.tool_input?.path || payload?.tool_input?.edits?.[0]?.file_path || '',
+    payload?.tool_input?.file_path ||
+      payload?.tool_input?.path ||
+      payload?.tool_input?.edits?.[0]?.file_path ||
+      '',
   );
   if (!filePath) process.exit(0);
 
@@ -82,7 +87,8 @@ process.stdin.on('end', () => {
   if (rel.startsWith('..')) process.exit(0);
   if (inLanguageGuardianScope(rel)) process.exit(0);
   if (QUOTES_REJECTED_PATTERNS.test(rel)) process.exit(0);
-  if (/\.(?:test|spec)\.[tj]sx?$/.test(rel) || /(?:^|\/)(?:__tests__|fixtures?)\//.test(rel)) process.exit(0);
+  if (/\.(?:test|spec)\.[tj]sx?$/.test(rel) || /(?:^|\/)(?:__tests__|fixtures?)\//.test(rel))
+    process.exit(0);
 
   let text = '';
   try {
@@ -97,13 +103,15 @@ process.stdin.on('end', () => {
     const hits = text.match(check.re);
     if (!hits) continue;
     if (check.requiresAbsenceOf && check.requiresAbsenceOf.test(text)) continue;
-    findings.push(`  ${check.label}: ${[...new Set(hits)].slice(0, 5).join(' | ')}\n    ${check.note}`);
+    findings.push(
+      `  ${check.label}: ${[...new Set(hits)].slice(0, 5).join(' | ')}\n    ${check.note}`,
+    );
   }
 
   if (findings.length) {
     process.stderr.write(
       `[zeus-invariant] ${findings.length} finding group(s) in ${rel}\n${findings.join('\n')}\n` +
-        `  Invariants: .claude/rules/ and docs/operator-source/01_PRODUCT_DIRECTION_AND_CORE_INVARIANTS.md\n` +
+        `  Invariants: .zeus/INVARIANTS.md sections J and M\n` +
         `  Hook is warn-only. Governed copy blocks through arq:language:audit:ci.\n`,
     );
   }
