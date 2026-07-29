@@ -67,6 +67,9 @@ export function WallHudEntry(props: WallHudEntryProps): JSX.Element {
           onValueChange(event.currentTarget.value);
         }}
         style={{
+          // The HUD surface is pointer-transparent (see context-hud.css);
+          // the field is the one control that accepts the pointer again.
+          pointerEvents: 'auto',
           width: '7ch',
           font: 'inherit',
           padding: '2px var(--arq-space-micro)',

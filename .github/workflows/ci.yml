@@ -80,6 +80,10 @@ jobs:
       # CONFLICT-3D-CURRENT-STATUS.
       - run: pnpm benchmark:journal-recovery
       - run: pnpm benchmark:model-canvas
+      # Interaction Foundation 1.0: the wall Context HUD's full contract -
+      # anchor lifecycle, numeric entry through the tool's own overlay,
+      # shortcut/wheel ownership, escape tiers, undo/redo, reduced motion.
+      - run: pnpm benchmark:wall-hud
       # Doc 52's workspace visual QA protocol, asserted rather than eyeballed:
       # band, canvas floor, no horizontal overflow, touch bands canvas-first
       # with a way to summon panels back, and save/sync separately legible, at

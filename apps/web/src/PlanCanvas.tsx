@@ -535,7 +535,11 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
           event.stopPropagation();
           return;
         }
-        if (hasTypedText && draftPoints.length > 0 && previewFallbackRef.current !== null) {
+        if (
+          hasTypedText &&
+          tool.snapshot().points.length > 0 &&
+          previewFallbackRef.current !== null
+        ) {
           event.preventDefault();
           event.stopPropagation();
           const parsed = parseNumericOverlay(overlay);
@@ -560,7 +564,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
           }
           return;
         }
-        if (draftPoints.length > 1) {
+        if (tool.snapshot().points.length > 1) {
           event.preventDefault();
           event.stopPropagation();
           commitDraft();
@@ -568,10 +572,17 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         return;
       }
 
-      if (event.key === 'Escape' && (draftPoints.length > 0 || hasTypedText)) {
+      if (event.key === 'Escape' && (tool.snapshot().points.length > 0 || hasTypedText)) {
         event.preventDefault();
         event.stopPropagation();
         tool.escape();
+        // Escape's pop tiers park the lifecycle in 'armed' (last point) or
+        // 'awaiting-input' (mid-chain); placePoint refuses both, so without
+        // re-entering preview the still-active tool silently swallowed the
+        // next click - a defect the old flow had too (first click after an
+        // Escape-pop did nothing). beginPreview is exactly that re-entry
+        // and no-ops from every other state.
+        tool.beginPreview();
         const after = tool.snapshot();
         setOverlayState(after.overlay);
         setDraftPoints(after.points);
@@ -593,7 +604,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       // keys stay shortcuts, and anything typed while an input already has
       // focus flows through the input itself.
       if (
-        draftPoints.length > 0 &&
+        tool.snapshot().points.length > 0 &&
         !isEditableEventTarget(event.target) &&
         !event.metaKey &&
         !event.ctrlKey &&
@@ -859,13 +870,19 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       const snapped = snap?.point ?? world;
       setSnapPoint(snap === undefined ? null : { point: snap.point, source: snap.source });
       onActiveSnapChange?.(snap === undefined ? null : SNAP_GLYPH_LABEL[snap.source]);
-      if (draftPoints.length === 0) {
+      // The tool's own point list, never the draftPoints render mirror: a
+      // pointer move can arrive in the same frame as the click that placed a
+      // point, before React re-renders, and reading the stale mirror here
+      // left the preview fallback unset - which silently disabled Enter's
+      // numeric placement (found by the wall-hud capability check).
+      const toolPoints = tool.snapshot().points;
+      if (toolPoints.length === 0) {
         setPreviewPoint(null);
         previewFallbackRef.current = null;
         hudAnchorRef.current = null;
         return;
       }
-      const from = draftPoints[draftPoints.length - 1]!;
+      const from = toolPoints[toolPoints.length - 1]!;
       const fallbackDistance = Math.hypot(snapped.x - from.x, snapped.y - from.y);
       const fallbackAngle = Math.atan2(snapped.y - from.y, snapped.x - from.x);
       previewFallbackRef.current = { distance: fallbackDistance, angleRadians: fallbackAngle };
@@ -918,7 +935,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   }
 
   function handleDoubleClick(): void {
-    if (activeToolId === 'wall' && draftPoints.length > 1) {
+    if (activeToolId === 'wall' && (wallToolRef.current?.snapshot().points.length ?? 0) > 1) {
       commitDraft();
     }
   }

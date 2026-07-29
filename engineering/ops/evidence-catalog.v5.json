@@ -182,6 +182,13 @@
       "state": "available"
     },
     {
+      "id": "browser_wall_hud",
+      "kind": "command",
+      "command": "pnpm benchmark:wall-hud",
+      "packageScript": "benchmark:wall-hud",
+      "state": "available"
+    },
+    {
       "id": "e2e_import_export",
       "kind": "proof-gap",
       "state": "missing",

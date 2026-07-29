@@ -53,6 +53,7 @@ const COMMANDS = Object.freeze({
   browser_journal_recovery: [['pnpm', ['benchmark:journal-recovery']]],
   browser_model_canvas: [['pnpm', ['benchmark:model-canvas']]],
   editor_dependency_boundaries: [['pnpm', ['check:editor-dependency-boundaries']]],
+  browser_wall_hud: [['pnpm', ['benchmark:wall-hud']]],
 });
 
 /**

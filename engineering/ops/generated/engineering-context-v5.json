@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "e264c94d5bcd93b4c25573fbe576213226f5fc5f8cab2e9aa908104badfd2a7e",
+  "source_hash": "813d5c969daf3cfa3fef150bd66c463cc04b8c29658f21b39619bb850d6824ab",
   "source_records": [
     {
       "scope": "package",
@@ -54,7 +54,7 @@
     {
       "scope": "package",
       "path": "ops/change-map.v5.json",
-      "sha256": "a21f5c98e879ab593254202299f4abff4ab8d77f830abe9d59931d11119186af"
+      "sha256": "001710d712994466e7e76969228209ce3c6792604785cf729a4e32dc3269ed0d"
     },
     {
       "scope": "package",
@@ -74,7 +74,7 @@
     {
       "scope": "package",
       "path": "ops/evidence-catalog.v5.json",
-      "sha256": "76e2e365ad677a0b09fd0d3bef771b13dd2636b9d1c66f379694270f0463889c"
+      "sha256": "c0b5255e629c95ad474f51931a3c9b023ab7fc7dcf7090f916ce27b6491d3bcf"
     },
     {
       "scope": "package",
@@ -89,7 +89,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "4c59d49dd99ca38a11968e3421dc079f02f871f3ae232f3f7b0d9e96dd09a2d6"
+      "sha256": "0d7afaa65a5104dfb6af967925879e9af694a0561a57e2fdd71cb4745fa56e6d"
     },
     {
       "scope": "repository",
@@ -224,7 +224,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/PlanCanvas.tsx",
-      "sha256": "bff3655318d9906d155475b7d36d11bb517a0a6064f67faf3feea8a73ff37375"
+      "sha256": "2a80833450186831bd6a70f98b944f67dce0856c71441365a3ef9dbe12456bd3"
     },
     {
       "scope": "repository",
@@ -364,7 +364,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "51978f18430b09910d1d7c421dda46c84246703d552112202c1887c465eb0b0c"
+      "sha256": "1949a95bae279a0adc8034e81472657bbdf13943c19f1f360cfa69ecebc043fe"
     },
     {
       "scope": "repository",
