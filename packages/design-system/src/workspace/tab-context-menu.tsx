@@ -146,7 +146,7 @@ export function TabContextMenu(props: TabContextMenuProps): JSX.Element {
         border: '1px solid var(--arq-ui-line-default)',
         borderRadius: 'var(--arq-radius-menu)',
         background: 'var(--arq-ui-paper)',
-        boxShadow: '0 4px 16px rgb(0 0 0 / 18%)',
+        boxShadow: 'var(--arq-shadow-menu)',
       }}
     >
       {items.map((item) => {

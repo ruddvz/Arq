@@ -1,0 +1,34 @@
+{
+  "timestamp": "2026-07-29T00:56:25.672Z",
+  "environment": "headless Chromium 141.0.7390.37, sandboxed container - real browser engine, not a physical iPad or Apple Pencil (see docs/research/PENCIL-WEB-INPUT.md)",
+  "pen": {
+    "eventTypesInOrder": [
+      "over",
+      "move",
+      "move",
+      "out"
+    ],
+    "noDownFired": true,
+    "moveCount": 2
+  },
+  "touch": {
+    "eventTypesInOrder": [
+      "over",
+      "move",
+      "move",
+      "out"
+    ],
+    "noDownFired": true,
+    "moveCount": 2
+  },
+  "mouse": {
+    "eventTypesInOrder": [
+      "over",
+      "move",
+      "move",
+      "out"
+    ],
+    "noDownFired": true,
+    "moveCount": 2
+  }
+}

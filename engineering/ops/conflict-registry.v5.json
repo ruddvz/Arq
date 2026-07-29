@@ -4,7 +4,7 @@
   "conflicts": [
     {
       "id": "3d-surface-status",
-      "status": "CONFLICT",
+      "status": "RESOLVED",
       "sources": [
         {
           "path": "apps/web/src/ModelCanvas.tsx",
@@ -20,7 +20,17 @@
         "Arq has no 3D surface at all."
       ],
       "resolutionRequired": "Reconcile the implementation, consumer wiring, test coverage, and status record in one reviewed change. Add browser-level proof before publishing a current capability claim.",
-      "owner": "ruddvz"
+      "owner": "ruddvz",
+      "resolution": {
+        "resolvedAt": "2026-07-28",
+        "resolvedBy": "ruddvz",
+        "evidence": [
+          "scripts/run-model-canvas-capability-check.mjs (3 consecutive passing runs: 3D tab reachable, WebGL2 surface renders, selection shared plan<->3D both directions, zero console errors)",
+          "benchmarks/results/model-canvas-capability-2026-07-28T02-36-42-075Z.json",
+          "benchmarks/results/model-canvas-visual-2026-07-28T02-36-42-075Z.png"
+        ],
+        "resolvedTruth": "A 3D viewing surface is current, user-reachable product behavior with plan-shared selection. 3D authoring is not current behavior; 'released 3D view' remains an overclaim and 'no 3D surface at all' is false."
+      }
     },
     {
       "id": "persistence-authority",

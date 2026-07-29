@@ -277,13 +277,23 @@ describe('language system 4.1 claim gates', () => {
     const active = conflictRegistry.conflicts.filter((conflict) =>
       activeStatuses.has(conflict.status),
     );
-    // The 3D reachability conflict is the one this release must not settle in
-    // either direction: no page may state that 3D works today, and none may
-    // state that no 3D surface exists.
-    expect(active.some((conflict) => conflict.id === 'CONFLICT-3D-CURRENT-STATUS')).toBe(true);
+    // CONFLICT-3D-CURRENT-STATUS was resolved by the run-model-canvas
+    // capability check (3D tab reachable, WebGL2 render, plan-shared
+    // selection), so it must no longer be counted as active; a regression to
+    // an active status would silently re-block the verified copy below.
+    const threeD = conflictRegistry.conflicts.find(
+      (conflict) => conflict.id === 'CONFLICT-3D-CURRENT-STATUS',
+    );
+    expect(threeD?.status).toBe('resolved');
+    expect(active.some((conflict) => conflict.id === 'CONFLICT-3D-CURRENT-STATUS')).toBe(false);
     for (const document of documents) {
       const text = textOf(document.html);
-      expect(text).not.toMatch(/\b3d (view|tab|editor)\b[^.]{0,60}\b(is available|works today)\b/);
+      // The resolved truth is a viewing surface. Public copy still must not
+      // overstate it as a 3D modelling workspace, and must never claim the
+      // surface is absent - that side of the old dispute stays false.
+      expect(text).not.toMatch(
+        /\b3d (modelling|modeling|authoring)\b[^.]{0,60}\b(is available|works today|is current)\b/,
+      );
       expect(text).not.toMatch(/\bno 3d (view|tab|surface)\b[^.]{0,40}\bexists\b/);
     }
   });

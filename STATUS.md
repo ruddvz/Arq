@@ -41,17 +41,18 @@ checks, weekly render benchmark).
   `@arq/local-storage`): edits are journalled to IndexedDB and recovered on
   start-up; the shell's save state reports the journal's real condition
   (`saved`/`saving`/`recovered`/`unsaved-changes`).
-- **3D view: DISPUTED, do not cite either way.** `apps/web/src/ModelCanvas.tsx`
-  exists and `App.tsx` renders it for a `3d` tab, over `@arq/model-renderer` +
-  `@arq/geometry-3d`. No test covers that surface and no headless-browser
-  capability check exercises it, so there is no user-reachability evidence to
-  match the wall-drawing, OPFS or file-open checks. This file previously
-  asserted both a wired 3D tab and a 3D stack with zero consumers. Neither
-  assertion is authoritative. Tracked as `CONFLICT-3D-CURRENT-STATUS` in
-  `docs/product/voice/conflict-registry.json`, which blocks the claim from
-  public, support, documentation and product-AI surfaces until it is resolved.
-  Resolving it needs a browser capability check for the 3D tab, a corrected
-  statement here, and a language-context refresh.
+- **3D viewing surface** (`apps/web/src/ModelCanvas.tsx` over
+  `@arq/model-renderer` + `@arq/geometry-3d`): user-reachable and rendering,
+  verified by `pnpm benchmark:model-canvas`
+  (`scripts/run-model-canvas-capability-check.mjs`) in headless Chromium: the
+  real `3D` tab activates, the surface renders through WebGL2, selection is
+  shared with the plan canvas in both directions (a wall selected on the plan
+  highlights in 3D; clicking empty 3D space clears the shared selection), with
+  zero console errors and a committed visual fixture in `benchmarks/results/`.
+  This resolved `CONFLICT-3D-CURRENT-STATUS` (this file previously asserted
+  both a wired 3D tab and a 3D stack with zero consumers). It is a viewing
+  surface: 3D authoring tools are not current behavior, and "released 3D
+  view" remains an overclaim.
 - **Editor libraries** (`packages/editor-shell`, `geometry-2d`,
   `plan-renderer`, `command-system`, `operations`): implemented and
   thoroughly tested; door/window/room tools and region selection exist but
