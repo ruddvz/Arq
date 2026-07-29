@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-07-28T02:45:18.680Z",
+  "environment": "headless Chromium 141.0.7390.37, real production apps/web build served over HTTP, real IndexedDB journal",
+  "ok": true,
+  "evidenceId": "browser_journal_recovery",
+  "baseline": {
+    "drawnWallRows": 0,
+    "saveStateLabel": "Saved locally",
+    "journalLabel": "Journal current"
+  },
+  "wallToolActivated": true,
+  "afterEdit": {
+    "drawnWallRows": 1,
+    "drawnWallRowText": "Wall 1445 mm (drawn)\nWall",
+    "saveStateLabel": "Saved locally",
+    "observedSaveStates": [
+      "Saved locally"
+    ],
+    "journalLabel": "Journal current"
+  },
+  "afterReload": {
+    "drawnWallRows": 1,
+    "drawnWallRowText": "Wall 1445 mm (drawn)\nWall",
+    "saveStateLabel": "Recovered locally",
+    "journalLabel": "Journal current · 1 operation(s) recovered",
+    "recoveredOperationCount": 1
+  },
+  "journalNotFileSave": {
+    "journalLabelNamesJournalReplay": true,
+    "saveStateLabelNamesLocalTier": true,
+    "downloadsProduced": [],
+    "syncStateStaysOffline": true
+  },
+  "consoleErrors": []
+}

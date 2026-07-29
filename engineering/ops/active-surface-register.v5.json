@@ -38,9 +38,9 @@
     },
     {
       "id": "model-canvas",
-      "status": "conflicted",
+      "status": "current-verified-viewing-surface",
       "sourcePaths": ["apps/web/src/ModelCanvas.tsx", "STATUS.md"],
-      "userSafeDescription": "Source facts about the current 3D surface conflict. Do not publish a resolved claim until the conflict record is closed."
+      "userSafeDescription": "The 3D tab is reachable in the running app and renders the model with plan-shared selection, verified by a headless-browser capability check; it is a viewing surface, not a 3D authoring feature."
     },
     {
       "id": "import-export",

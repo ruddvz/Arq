@@ -1,0 +1,33 @@
+{
+  "$comment": "Editor dependency boundaries (ARQ Interaction Foundation 1.0, docs 04-DEPENDENCY-POLICY). Rule-driven so future boundaries (renderer, server-only, package ownership) extend this file instead of forking the checker. Scopes are path prefixes relative to the repository root; a file matches the FIRST scope that contains it. 'forbiddenPackages' fails on both source imports (import/require/dynamic import) and package.json dependency declarations within the scope.",
+  "schemaVersion": 1,
+  "rules": [
+    {
+      "id": "no-scroll-hijack-in-editor",
+      "reason": "Lenis-style scroll smoothing corrupts exact wheel zoom, trackpad pan and numeric-entry surfaces. Allowed only on public marketing/documentation sites, never in the product.",
+      "scopes": ["apps/web", "packages", "workers"],
+      "forbiddenPackages": ["lenis", "@studio-freight/lenis"]
+    },
+    {
+      "id": "no-duplicate-accessibility-foundation",
+      "reason": "React Aria is ARQ's accessibility foundation. A second dialog/menu/focus system means two competing focus managers and double semantics.",
+      "scopes": ["apps/web", "packages", "workers"],
+      "forbiddenPackages": ["@radix-ui"]
+    },
+    {
+      "id": "no-parallel-state-or-animation-frameworks",
+      "reason": "Out of scope for the interaction foundation by decision record D2/D7 and the implementation contract: no second state architecture, no second animation system, no renderer rewrite without evidence.",
+      "scopes": ["apps/web", "packages", "workers"],
+      "forbiddenPackages": [
+        "zustand",
+        "gsap",
+        "@react-three/fiber",
+        "@react-three/drei",
+        "reactflow",
+        "@xyflow/react",
+        "animate-ui",
+        "@animate-ui"
+      ]
+    }
+  ]
+}

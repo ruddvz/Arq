@@ -7,14 +7,14 @@ import type { Page } from '../site.js';
  * compatibility overclaims. Scope statements mirror
  * docs/product/RELEASE-SCOPE.md; when that file changes, this sheet must.
  *
- * Claim bindings: pub-product-3d (3d-current, CONFLICTED, must qualify) and
- * pub-product-volatile-count (test-counts, VOLATILE, must qualify). The 3D
- * conflict is recorded in docs/product/voice/conflict-registry.json as
- * CONFLICT-3D-CURRENT-STATUS: STATUS.md asserts both a wired 3D tab and a 3D
- * stack with zero consumers, and no browser capability check covers it. Until
- * that is resolved this sheet describes 3D as Release 1 scope and says the
- * current state is disputed. It must not settle the conflict in either
- * direction.
+ * Claim bindings: pub-product-3d (3d-current, CURRENT, assert current) and
+ * pub-product-volatile-count (test-counts, VOLATILE, must qualify).
+ * CONFLICT-3D-CURRENT-STATUS is resolved in
+ * docs/product/voice/conflict-registry.json: the run-model-canvas
+ * capability check proved the 3D tab reachable, rendering through WebGL2,
+ * with plan-shared selection in both directions. This sheet may state the
+ * verified viewing-surface behaviour as current; it must not promote 3D
+ * authoring, which is not current behaviour.
  */
 export const productPage: Page = {
   meta: {
@@ -98,11 +98,12 @@ export const productPage: Page = {
             is committed, and journals the result locally.
           </p>
           <p>
-            The current state of the 3D view is disputed in the project's own records: the status
-            document describes a wired 3D tab in one section and a 3D stack with no consumers in
-            another, and no browser check covers it either way. Arq will not publish it as available
-            or as absent until that is resolved. The
-            <a href="/changelog">changelog</a> tracks this entry by entry.
+            The development build also has a working 3D view: opening the 3D tab renders the model,
+            and selecting an element on the plan highlights the same element in 3D. That behaviour
+            is verified by a headless-browser check in the repository's own quality gates, the same
+            way the wall-drawing and local-recovery behaviour is. It is a viewing surface today, not
+            a 3D modelling workspace. The <a href="/changelog">changelog</a> tracks this entry by
+            entry.
           </p>
         `,
       },

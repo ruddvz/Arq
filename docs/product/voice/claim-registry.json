@@ -141,11 +141,12 @@
     },
     {
       "id": "3d-current",
-      "state": "CONFLICTED",
+      "state": "CURRENT",
       "patterns": ["3D view is current", "basic orthographic 3D is available"],
       "evidenceSourceIds": ["status", "web-app", "code-tests"],
       "assertionClass": "current-reachability",
-      "conflictIds": ["CONFLICT-3D-CURRENT-STATUS"]
+      "conflictIds": ["CONFLICT-3D-CURRENT-STATUS"],
+      "note": "A 3D viewing surface with plan-shared selection is browser-verified current behavior (benchmark:model-canvas). 3D authoring remains non-current; do not promote beyond a viewing surface."
     },
     {
       "id": "test-counts",

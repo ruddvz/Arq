@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "a5a3e641362b0efa20be01a8da13ecc95dab650c175634eb8052d7ac0196187f",
+  "source_hash": "813d5c969daf3cfa3fef150bd66c463cc04b8c29658f21b39619bb850d6824ab",
   "source_records": [
     {
       "scope": "package",
@@ -49,22 +49,22 @@
     {
       "scope": "package",
       "path": "ops/active-surface-register.v5.json",
-      "sha256": "4ef763c668a215239fb39c615032ff1e48f6cb49de3c933cf53c27981a75cb7c"
+      "sha256": "91d1a7b20d0c7e7b8b33fc5164b5f733f49475be34e0a7ea7f886e6e03d58dbc"
     },
     {
       "scope": "package",
       "path": "ops/change-map.v5.json",
-      "sha256": "ad4081e1b94a6961e9ec2cab5b4969196eb82220520af726ad5c9125e7050b1e"
+      "sha256": "001710d712994466e7e76969228209ce3c6792604785cf729a4e32dc3269ed0d"
     },
     {
       "scope": "package",
       "path": "ops/conflict-registry.v5.json",
-      "sha256": "d09cab4d96b1fd5bef57e462f4463512938a9894b8ec73c27c06ff9f0dc882d4"
+      "sha256": "1d88aeb2fb1f7c81562dcaab7cd56388d35a2a65bef62e5c4bfc7509d755122f"
     },
     {
       "scope": "package",
       "path": "ops/critical-contracts.v5.json",
-      "sha256": "b2a2505e4cc6f5eebce7bdfa2ce5e5120372a7f816024eb46ecce85423916e12"
+      "sha256": "feee174dfb91e7de7718169527357ddb0d65a29e43cda322271ffe25e3c3efcf"
     },
     {
       "scope": "package",
@@ -74,7 +74,7 @@
     {
       "scope": "package",
       "path": "ops/evidence-catalog.v5.json",
-      "sha256": "39ba1067c881de537c1a9be77db5c94e1062376be0e728b5fe7c85b13465eea2"
+      "sha256": "c0b5255e629c95ad474f51931a3c9b023ab7fc7dcf7090f916ce27b6491d3bcf"
     },
     {
       "scope": "package",
@@ -89,7 +89,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "816ec05795a1c2f7cb99a83ce3f55ec1c2896f4751785d2597cde9f6dd40347a"
+      "sha256": "0d7afaa65a5104dfb6af967925879e9af694a0561a57e2fdd71cb4745fa56e6d"
     },
     {
       "scope": "repository",
@@ -99,7 +99,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/engineering-gate.yml",
-      "sha256": "0c466ce567dc1c0b0390c1b5c11910304decf0ee59c943a275fffd3c5e395b33"
+      "sha256": "73e23368a897b8b00fcc3cb33a7dcb4a59fa3386a5ec36149335a52069a31662"
     },
     {
       "scope": "repository",
@@ -174,7 +174,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/product.ts",
-      "sha256": "2776412528efb21407ae52e477270d73ba2f8b3c6a7d327e88579b52f744f4be"
+      "sha256": "513454df93ac6b5acba66ffe49727dde7a49df55274707de415dd90e8bbbdb41"
     },
     {
       "scope": "repository",
@@ -204,7 +204,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/App.tsx",
-      "sha256": "07efd402d6ffc37bdcdf5f0789e2b5f3e8b472d84fc276e31d211ca64aed86fa"
+      "sha256": "8ea0a3b6c0ced6e90ffe674c6a4b36f294742cf6e5745d4629cccbc0dcfdfde4"
     },
     {
       "scope": "repository",
@@ -224,7 +224,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/PlanCanvas.tsx",
-      "sha256": "ec005021bce9c802d17ecc37e54f87d5798943248abe96cc43410cd0b44d0ad7"
+      "sha256": "2a80833450186831bd6a70f98b944f67dce0856c71441365a3ef9dbe12456bd3"
     },
     {
       "scope": "repository",
@@ -364,7 +364,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "6f34e458e9f0d84e32e84995c0b5672c2931f4416b8b526e6cece282cbc5b2c5"
+      "sha256": "1949a95bae279a0adc8034e81472657bbdf13943c19f1f360cfa69ecebc043fe"
     },
     {
       "scope": "repository",
@@ -759,7 +759,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "e0e291b4e0526471a3279ae72e002c0ef5bdb5eadc79a2f21ec9da0058d42811"
+      "sha256": "a697d7d8a40709403c6a3b8d714417175f916a8425f1c84b3edc2c43b91900a1"
     },
     {
       "scope": "repository",

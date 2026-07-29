@@ -1,0 +1,51 @@
+/* W135 ToastRegion surface - tokens only. Top presentation tier. */
+@import '../../tokens.css';
+@import '../../shell/shell-tokens.css';
+
+.arq-command-feedback {
+  position: fixed;
+  right: var(--arq-space-panel);
+  bottom: calc(var(--arq-space-major-group) + var(--arq-space-panel));
+  z-index: var(--arq-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--arq-space-micro);
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.arq-command-feedback__entry {
+  display: flex;
+  gap: var(--arq-space-micro);
+  align-items: baseline;
+  margin: 0;
+  padding: var(--arq-space-compact) var(--arq-space-control-group);
+  border: 1px solid var(--arq-ui-line-default);
+  border-radius: var(--arq-radius-menu);
+  background: var(--arq-ui-paper);
+  color: var(--arq-ui-text-primary);
+  box-shadow: var(--arq-shadow-menu);
+  pointer-events: auto;
+}
+
+.arq-command-feedback__entry[data-tone='error'] {
+  border-color: var(--arq-ui-line-strong);
+  color: var(--arq-ui-ink);
+}
+
+.arq-command-feedback__tone {
+  color: var(--arq-brand-accent);
+}
+
+.arq-command-feedback__entry[data-tone='error'] .arq-command-feedback__tone {
+  color: var(--arq-ui-ink);
+}
+
+.arq-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

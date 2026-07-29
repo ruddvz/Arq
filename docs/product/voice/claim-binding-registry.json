@@ -40,8 +40,7 @@
       "surface": "public",
       "sourcePath": "apps/marketing/src/content/product.ts",
       "claimId": "3d-current",
-      "assertionMode": "must-qualify",
-      "requiredRepair": "Do not assert current 3D reachability until the status conflict is resolved."
+      "assertionMode": "current"
     },
     {
       "id": "pub-product-volatile-count",
@@ -216,8 +215,7 @@
       "surface": "public",
       "sourcePath": "apps/marketing/src/content/changelog.ts",
       "claimId": "3d-current",
-      "assertionMode": "must-qualify",
-      "requiredRepair": "Do not publish 3D availability as a settled fact while the source conflict is active."
+      "assertionMode": "current"
     },
     {
       "id": "pub-changelog-native-open",

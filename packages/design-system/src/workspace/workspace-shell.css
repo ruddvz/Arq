@@ -120,6 +120,6 @@
  */
 @media (prefers-reduced-motion: no-preference) {
   .arq-skip-link {
-    transition: transform 120ms ease-out;
+    transition: transform var(--arq-motion-fast) var(--arq-ease-standard);
   }
 }

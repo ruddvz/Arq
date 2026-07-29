@@ -18,8 +18,17 @@ import {
   createWallDrawTool,
   fitToBounds,
   panByScreenDelta,
+  parseNumericOverlay,
   zoomAtScreenPoint,
+  type NumericOverlayState,
 } from '@arq/editor-shell';
+import {
+  ContextHud,
+  isEditableEventTarget,
+  type ContextHudHandle,
+  type ScreenPoint as HudScreenPoint,
+} from '@arq/design-system';
+import { WallHudEntry } from './canvas/wall-hud-entry';
 import {
   buildPlanScene,
   paintPlanScene,
@@ -134,8 +143,20 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   const pinchRef = useRef<PinchState | null>(null);
   const spaceHeldRef = useRef(false);
   const pointerPositionsRef = useRef(new Map<number, { x: number; y: number }>());
-  const wallCounterRef = useRef(0);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  /**
+   * Wall Context HUD (interaction foundation pilot). The overlay text state
+   * is mirrored from the tool (low frequency: keystrokes only); the anchor
+   * is a mutable ref in client coordinates so per-pointer-move repositioning
+   * is an imperative call, never a React render of its own. The fallback
+   * distance/angle pair is the cursor-derived preview the numeric override
+   * resolves against (wall-draw-tool.previewPoint).
+   */
+  const [overlayState, setOverlayState] = useState<NumericOverlayState | null>(null);
+  const hudHandleRef = useRef<ContextHudHandle>(null);
+  const hudAnchorRef = useRef<HudScreenPoint | null>(null);
+  const hudInputRef = useRef<HTMLInputElement>(null);
+  const previewFallbackRef = useRef<{ distance: number; angleRadians: number } | null>(null);
   /** In-progress marquee drag (select tool): anchor and live corner in world space. */
   const [marquee, setMarquee] = useState<{
     readonly pointerId: number;
@@ -339,6 +360,58 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   /* Tool lifecycle                                                      */
   /* ------------------------------------------------------------------ */
 
+  /**
+   * World -> client conversion for the HUD anchor: the one explicit boundary
+   * where a world point becomes a DOM coordinate (viewport transform, then
+   * device-pixel ratio removed, then the canvas's client offset added).
+   * Mutates the anchor ref and asks the HUD to reposition - no React state,
+   * so following the pointer costs no extra renders.
+   */
+  const updateHudAnchor = useCallback(
+    (world: WorldPoint | null) => {
+      const canvas = canvasRef.current;
+      if (world === null || canvas === null || viewport === null) {
+        hudAnchorRef.current = null;
+        return;
+      }
+      const rect = canvas.getBoundingClientRect();
+      const screen = worldToScreen(viewport, world);
+      const devicePixelRatio = devicePixelRatioRef.current;
+      hudAnchorRef.current = {
+        x: rect.left + screen.x / devicePixelRatio,
+        y: rect.top + screen.y / devicePixelRatio,
+      };
+      hudHandleRef.current?.reposition();
+    },
+    [viewport],
+  );
+
+  /**
+   * Re-resolves the live preview after overlay text changes. Only a field
+   * that actually parses engages the override path - when nothing is typed
+   * the preview keeps the EXACT snapped coordinates (a distance/angle
+   * round-trip would drift by float error and break endpoint-snap
+   * exactness, which is Level 0 precision territory).
+   */
+  const applyOverlayPreview = useCallback(
+    (tool: NonNullable<typeof wallToolRef.current>) => {
+      const fallback = previewFallbackRef.current;
+      if (fallback === null) {
+        return;
+      }
+      const parsed = parseNumericOverlay(tool.snapshot().overlay);
+      if (parsed.distance === null && parsed.angleRadians === null) {
+        return;
+      }
+      const resolved = tool.previewPoint(fallback.distance, fallback.angleRadians);
+      if (resolved !== null) {
+        setPreviewPoint(resolved);
+        updateHudAnchor(resolved);
+      }
+    },
+    [updateHudAnchor],
+  );
+
   const clearDraft = useCallback(() => {
     wallToolRef.current = null;
     setDraftPoints([]);
@@ -346,6 +419,9 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     setSnapPoint(null);
     setHoveredId(null);
     setMarquee(null);
+    setOverlayState(null);
+    hudAnchorRef.current = null;
+    previewFallbackRef.current = null;
     onActiveSnapChange?.(null);
   }, [onActiveSnapChange]);
 
@@ -367,6 +443,15 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     wallToolRef.current = next;
     setDraftPoints([]);
     setPreviewPoint(null);
+    setOverlayState(null);
+    hudAnchorRef.current = null;
+    previewFallbackRef.current = null;
+    // The HUD unmounts with the draft; if focus was in its input, hand it
+    // back to the workspace canvas slot so keyboard flow continues rather
+    // than falling to <body>.
+    if (document.activeElement === hudInputRef.current) {
+      document.getElementById('arq-workspace-canvas')?.focus();
+    }
   }, [onCommitWalls]);
 
   // Arm the wall tool when it becomes active; discard any draft when the
@@ -426,45 +511,123 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
 
   // Escape/Enter for the wall draft, on capture so the draft consumes the
   // key before the workspace shell's own Escape handling closes overlays.
+  // This one listener is the single dispatch point for the wall tool's
+  // keyboard contract, HUD input included - Enter and Escape behave
+  // identically whether focus is on the canvas or in the length field, and
+  // the tool's own three-tier escape (clear field -> pop point -> exit)
+  // stays the only cancellation authority.
   useEffect(() => {
     if (activeToolId !== 'wall') {
       return;
     }
     function onKeyDown(event: KeyboardEvent): void {
       const tool = wallToolRef.current;
-      if (tool === null) {
+      if (tool === null || event.isComposing) {
         return;
       }
-      if (event.key === 'Enter' && draftPoints.length > 1) {
-        event.preventDefault();
-        event.stopPropagation();
-        commitDraft();
+      const overlay = tool.snapshot().overlay;
+      const hasTypedText = overlay.distanceText !== '' || overlay.angleText !== '';
+
+      if (event.key === 'Enter') {
+        // Key repeat must never place or commit twice: one press, one intent.
+        if (event.repeat) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        if (
+          hasTypedText &&
+          tool.snapshot().points.length > 0 &&
+          previewFallbackRef.current !== null
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+          const parsed = parseNumericOverlay(overlay);
+          if (overlay.distanceText !== '' && parsed.distance === null) {
+            // Invalid text never reaches a semantic command: the field shows
+            // its error state and the press does nothing else.
+            return;
+          }
+          const fallback = previewFallbackRef.current;
+          const resolved = tool.previewPoint(fallback.distance, fallback.angleRadians);
+          if (resolved !== null) {
+            const last = tool.snapshot().points.at(-1);
+            if (last === undefined || Math.hypot(resolved.x - last.x, resolved.y - last.y) >= 0.5) {
+              // Same chain path a click uses: placePoint -> beginPreview.
+              tool.placePoint(resolved);
+              tool.beginPreview();
+              setDraftPoints(tool.snapshot().points);
+              setPreviewPoint(resolved);
+              updateHudAnchor(resolved);
+            }
+            setOverlayState(tool.snapshot().overlay);
+          }
+          return;
+        }
+        if (tool.snapshot().points.length > 1) {
+          event.preventDefault();
+          event.stopPropagation();
+          commitDraft();
+        }
         return;
       }
-      if (event.key === 'Escape' && draftPoints.length > 0) {
+
+      if (event.key === 'Escape' && (tool.snapshot().points.length > 0 || hasTypedText)) {
         event.preventDefault();
         event.stopPropagation();
         tool.escape();
-        const remaining = tool.snapshot().points;
-        setDraftPoints(remaining);
-        if (remaining.length === 0) {
+        // Escape's pop tiers park the lifecycle in 'armed' (last point) or
+        // 'awaiting-input' (mid-chain); placePoint refuses both, so without
+        // re-entering preview the still-active tool silently swallowed the
+        // next click - a defect the old flow had too (first click after an
+        // Escape-pop did nothing). beginPreview is exactly that re-entry
+        // and no-ops from every other state.
+        tool.beginPreview();
+        const after = tool.snapshot();
+        setOverlayState(after.overlay);
+        setDraftPoints(after.points);
+        if (after.points.length === 0) {
           setPreviewPoint(null);
+          hudAnchorRef.current = null;
+          if (document.activeElement === hudInputRef.current) {
+            document.getElementById('arq-workspace-canvas')?.focus();
+          }
+        } else {
+          applyOverlayPreview(tool);
         }
+        return;
+      }
+
+      // Dynamic input: typing a digit while previewing focuses the HUD's
+      // length field and lands the digit there, so keyboard-only wall entry
+      // needs no pointer trip to the HUD. Only bare digits/dot - modified
+      // keys stay shortcuts, and anything typed while an input already has
+      // focus flows through the input itself.
+      if (
+        tool.snapshot().points.length > 0 &&
+        !isEditableEventTarget(event.target) &&
+        !event.metaKey &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        /^[0-9.]$/.test(event.key)
+      ) {
+        event.preventDefault();
+        tool.overlay.focusField('distance');
+        tool.overlay.typeChar(event.key);
+        setOverlayState(tool.snapshot().overlay);
+        hudInputRef.current?.focus();
+        applyOverlayPreview(tool);
       }
     }
     window.addEventListener('keydown', onKeyDown, true);
     return () => window.removeEventListener('keydown', onKeyDown, true);
-  }, [activeToolId, draftPoints, commitDraft]);
+  }, [activeToolId, draftPoints, commitDraft, applyOverlayPreview, updateHudAnchor]);
 
   // Space-held panning, tracked at the window level like the shell's own
   // shortcut handling - never while a text field owns the keyboard.
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent): void {
-      const target = event.target;
-      const textFieldFocused =
-        target instanceof HTMLElement &&
-        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
-      if (event.key === ' ' && !textFieldFocused) {
+      if (event.key === ' ' && !isEditableEventTarget(event.target)) {
         spaceHeldRef.current = true;
       }
     }
@@ -584,19 +747,37 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         return;
       }
       const snapped = computeSnap(world, content, viewport)?.point ?? world;
+      // A typed numeric override wins over the raw click position - the
+      // preview line already shows the resolved point, and placing anything
+      // else would commit geometry the user was not looking at. With no
+      // override the EXACT snapped point is placed (never a distance/angle
+      // round-trip of it - snap exactness is Level 0 precision).
+      let place = snapped;
+      const priorPoints = tool.snapshot().points;
+      if (priorPoints.length > 0) {
+        const from = priorPoints[priorPoints.length - 1]!;
+        const fallbackDistance = Math.hypot(snapped.x - from.x, snapped.y - from.y);
+        const fallbackAngle = Math.atan2(snapped.y - from.y, snapped.x - from.x);
+        const parsed = parseNumericOverlay(tool.snapshot().overlay);
+        if (parsed.distance !== null || parsed.angleRadians !== null) {
+          place = tool.previewPoint(fallbackDistance, fallbackAngle) ?? snapped;
+        }
+      }
       // Double-click-to-finish arrives as two pointerdowns at the same spot;
       // placing both would leave a zero-length trailing segment for
       // validation to reject. A repeat of the last point is a no-op instead.
-      const last = tool.snapshot().points.at(-1);
-      if (last !== undefined && Math.hypot(snapped.x - last.x, snapped.y - last.y) < 0.5) {
+      const last = priorPoints.at(-1);
+      if (last !== undefined && Math.hypot(place.x - last.x, place.y - last.y) < 0.5) {
         return;
       }
-      tool.placePoint(snapped);
+      tool.placePoint(place);
       // The lifecycle parks in awaiting-input after a placement; re-enter
       // previewing so the next pointer move rubber-bands from this point.
       tool.beginPreview();
       setDraftPoints(tool.snapshot().points);
-      setPreviewPoint(snapped);
+      setPreviewPoint(place);
+      setOverlayState(tool.snapshot().overlay);
+      updateHudAnchor(place);
       return;
     }
 
@@ -684,11 +865,37 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     }
 
     if (activeToolId === 'wall' && wallToolRef.current !== null) {
+      const tool = wallToolRef.current;
       const snap = computeSnap(world, content, viewport);
       const snapped = snap?.point ?? world;
       setSnapPoint(snap === undefined ? null : { point: snap.point, source: snap.source });
       onActiveSnapChange?.(snap === undefined ? null : SNAP_GLYPH_LABEL[snap.source]);
-      setPreviewPoint(draftPoints.length > 0 ? snapped : null);
+      // The tool's own point list, never the draftPoints render mirror: a
+      // pointer move can arrive in the same frame as the click that placed a
+      // point, before React re-renders, and reading the stale mirror here
+      // left the preview fallback unset - which silently disabled Enter's
+      // numeric placement (found by the wall-hud capability check).
+      const toolPoints = tool.snapshot().points;
+      if (toolPoints.length === 0) {
+        setPreviewPoint(null);
+        previewFallbackRef.current = null;
+        hudAnchorRef.current = null;
+        return;
+      }
+      const from = toolPoints[toolPoints.length - 1]!;
+      const fallbackDistance = Math.hypot(snapped.x - from.x, snapped.y - from.y);
+      const fallbackAngle = Math.atan2(snapped.y - from.y, snapped.x - from.x);
+      previewFallbackRef.current = { distance: fallbackDistance, angleRadians: fallbackAngle };
+      // A parsed numeric override resolves the preview; otherwise the exact
+      // snapped point is the preview (see handlePointerDown on why the
+      // no-override path must never round-trip through distance/angle).
+      const parsed = parseNumericOverlay(tool.snapshot().overlay);
+      const resolved =
+        parsed.distance !== null || parsed.angleRadians !== null
+          ? (tool.previewPoint(fallbackDistance, fallbackAngle) ?? snapped)
+          : snapped;
+      setPreviewPoint(resolved);
+      updateHudAnchor(resolved);
       return;
     }
 
@@ -728,7 +935,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   }
 
   function handleDoubleClick(): void {
-    if (activeToolId === 'wall' && draftPoints.length > 1) {
+    if (activeToolId === 'wall' && (wallToolRef.current?.snapshot().points.length ?? 0) > 1) {
       commitDraft();
     }
   }
@@ -736,21 +943,74 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   const cursor =
     activeToolId === 'pan' ? 'grab' : activeToolId === 'wall' ? 'crosshair' : 'default';
 
+  /*
+   * Wall Context HUD: open only while the wall tool is previewing from a
+   * placed point AND the anchor is valid - a stale or missing anchor closes
+   * the HUD rather than floating it over dead space. The displayed
+   * placeholder is the live cursor-derived length; typed text lives in the
+   * tool's own numeric overlay.
+   */
+  const hudOpen =
+    activeToolId === 'wall' &&
+    draftPoints.length > 0 &&
+    previewPoint !== null &&
+    hudAnchorRef.current !== null;
+  const lastDraftPoint = draftPoints.length > 0 ? draftPoints[draftPoints.length - 1]! : null;
+  const liveLengthMm =
+    lastDraftPoint !== null && previewPoint !== null
+      ? Math.round(Math.hypot(previewPoint.x - lastDraftPoint.x, previewPoint.y - lastDraftPoint.y))
+      : 0;
+  const distanceText = overlayState?.distanceText ?? '';
+  const distanceInvalid =
+    distanceText !== '' &&
+    parseNumericOverlay(overlayState ?? { field: null, distanceText: '', angleText: '' })
+      .distance === null;
+
+  const handleHudValueChange = useCallback(
+    (text: string) => {
+      const tool = wallToolRef.current;
+      if (tool === null) {
+        return;
+      }
+      tool.overlay.setFieldText('distance', text);
+      setOverlayState(tool.snapshot().overlay);
+      applyOverlayPreview(tool);
+    },
+    [applyOverlayPreview],
+  );
+
   return (
-    <canvas
-      ref={canvasRef}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUpOrCancel}
-      onPointerCancel={handlePointerUpOrCancel}
-      onDoubleClick={handleDoubleClick}
-      onPointerLeave={() => {
-        onPointerWorldPositionChange?.(null);
-        onActiveSnapChange?.(null);
-        setHoveredId(null);
-      }}
-      style={{ width: '100%', height: '100%', display: 'block', cursor, touchAction: 'none' }}
-      aria-label="Plan canvas"
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUpOrCancel}
+        onPointerCancel={handlePointerUpOrCancel}
+        onDoubleClick={handleDoubleClick}
+        onPointerLeave={() => {
+          onPointerWorldPositionChange?.(null);
+          onActiveSnapChange?.(null);
+          setHoveredId(null);
+        }}
+        style={{ width: '100%', height: '100%', display: 'block', cursor, touchAction: 'none' }}
+        aria-label="Plan canvas"
+      />
+      <ContextHud
+        ref={hudHandleRef}
+        open={hudOpen}
+        anchorRef={hudAnchorRef}
+        label="Wall length entry"
+        testId="arq-wall-hud"
+      >
+        <WallHudEntry
+          valueText={distanceText}
+          placeholder={String(liveLengthMm)}
+          invalid={distanceInvalid}
+          onValueChange={handleHudValueChange}
+          inputRef={hudInputRef}
+        />
+      </ContextHud>
+    </>
   );
 }

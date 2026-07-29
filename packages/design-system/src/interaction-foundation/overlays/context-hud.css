@@ -1,0 +1,33 @@
+/*
+ * Context HUD surface - tokens only, per shell-tokens.css's no-new-literal
+ * rules. The tier is --arq-z-context-hud (90): above raised shell chrome,
+ * below the modal backdrop (100), menus/popovers (120) and toasts (200), so
+ * a dialog or menu opened during a tool always out-ranks the HUD.
+ */
+@import '../../tokens.css';
+@import '../../shell/shell-tokens.css';
+
+.arq-context-hud {
+  z-index: var(--arq-z-context-hud);
+  max-width: min(320px, calc(100vw - 24px));
+
+  /* The HUD anchors beside the active drawing position - exactly where the
+     pointer travels next. A hit-testable surface there swallows the very
+     pointer moves and snap clicks the tool depends on (the register's "HUD
+     blocking the active snap target" failure, observed as the canvas never
+     seeing the first post-click move). The surface is therefore
+     pointer-transparent; interactive children (the numeric field) opt back
+     in with pointer-events: auto, so typing and clicking the field work
+     while everything else passes through to the viewport. */
+  pointer-events: none;
+}
+
+.arq-context-hud__surface {
+  padding: var(--arq-space-compact);
+  border: 1px solid var(--arq-ui-line-default);
+  border-radius: var(--arq-radius-menu);
+  background: var(--arq-ui-paper);
+  color: var(--arq-ui-text-primary);
+  box-shadow: var(--arq-shadow-menu);
+  contain: layout paint;
+}

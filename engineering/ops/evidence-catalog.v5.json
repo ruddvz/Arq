@@ -51,6 +51,13 @@
       "state": "available"
     },
     {
+      "id": "editor_dependency_boundaries",
+      "kind": "command",
+      "command": "pnpm check:editor-dependency-boundaries",
+      "packageScript": "check:editor-dependency-boundaries",
+      "state": "available"
+    },
+    {
       "id": "rust",
       "kind": "command",
       "command": "pnpm rust:fmt-check && pnpm rust:clippy && pnpm rust:test",
@@ -156,9 +163,10 @@
     },
     {
       "id": "browser_journal_recovery",
-      "kind": "proof-gap",
-      "state": "missing",
-      "closure": "Add a browser test that edits, restarts the app, confirms recovery, and distinguishes journal recovery from project-file save."
+      "kind": "command",
+      "command": "pnpm benchmark:journal-recovery",
+      "packageScript": "benchmark:journal-recovery",
+      "state": "available"
     },
     {
       "id": "e2e_arq_open",
@@ -168,9 +176,17 @@
     },
     {
       "id": "browser_model_canvas",
-      "kind": "proof-gap",
-      "state": "missing",
-      "closure": "Add an explicit browser test that opens the 3D surface, validates shared selection, and captures a visual fixture."
+      "kind": "command",
+      "command": "pnpm benchmark:model-canvas",
+      "packageScript": "benchmark:model-canvas",
+      "state": "available"
+    },
+    {
+      "id": "browser_wall_hud",
+      "kind": "command",
+      "command": "pnpm benchmark:wall-hud",
+      "packageScript": "benchmark:wall-hud",
+      "state": "available"
     },
     {
       "id": "e2e_import_export",
@@ -181,8 +197,8 @@
     {
       "id": "conflict_resolution_3d",
       "kind": "manual-record",
-      "state": "missing",
-      "closure": "A designated owner must reconcile STATUS.md and active consumers in a reviewed source-of-truth change."
+      "state": "recorded",
+      "closure": "Resolved by the repository owner in the reviewed 3D closure change: run-model-canvas-capability-check.mjs proves tab reachability, WebGL2 rendering, and bidirectional shared selection; STATUS.md, both conflict registries, and the model-canvas contract were reconciled together with a logged language-context refresh."
     },
     {
       "id": "protected_l4_approval",

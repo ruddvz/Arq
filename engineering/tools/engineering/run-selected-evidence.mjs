@@ -50,7 +50,19 @@ const COMMANDS = Object.freeze({
     ['pnpm', ['arq:language:site:build:verify', '--site-root', 'apps/marketing/dist']],
   ],
   deployed_public_site: [['pnpm', ['arq:language:site:live:verify']]],
+  browser_journal_recovery: [['pnpm', ['benchmark:journal-recovery']]],
+  browser_model_canvas: [['pnpm', ['benchmark:model-canvas']]],
+  editor_dependency_boundaries: [['pnpm', ['check:editor-dependency-boundaries']]],
+  browser_wall_hud: [['pnpm', ['benchmark:wall-hud']]],
 });
+
+/**
+ * Exported so verify-policy can prove every runnable catalog entry has an
+ * approved mapping - an 'available' command evidence with no entry here
+ * fails at gate runtime with 'No approved command mapping', which is
+ * exactly the silent-until-selected gap that once shipped three ids.
+ */
+export const APPROVED_EVIDENCE_COMMANDS = COMMANDS;
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
