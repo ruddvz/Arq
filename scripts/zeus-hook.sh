@@ -12,7 +12,7 @@ case "$NORM" in yes|ok|okay|sure|great|perfect|done|thanks|"thank you"|continue|
 case "$NORM" in /zeus-audit*|/zeus-design*|/zeus-release*|/zeus-incident*|/zeus-handoff*) exit 0;; esac
 CONTRACT="$(node "$DIR/zeus-fast-compile.mjs" --task "$PROMPT" 2>/dev/null)"
 if [ -n "$CONTRACT" ]; then
-  printf 'Zeus 4 routed this prompt:\n%s\n' "$CONTRACT"
+  printf 'Zeus 5 routed this prompt:\n%s\n' "$CONTRACT"
 else
-  printf '%s\n' '[ZEUS 4 INTERNAL] Load FAST-KERNEL only; route modules; use indexed context; execute; run adaptive checks; report verified status.'
+  printf '%s\n' '[ZEUS 5 INTERNAL] Load FAST-KERNEL only; route modules; use indexed context; execute; run adaptive checks; report verified status.'
 fi

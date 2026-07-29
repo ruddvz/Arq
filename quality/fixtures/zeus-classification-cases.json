@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Zeus 4 defect: 'ui' inside 'build' routed the visual module, and 'build' defeated the question branch",
+    "task": "explain how the build works",
+    "expect": { "mode": "answer", "deliveryStop": "answer" },
+    "modulesExclude": ["ui-visual"]
+  },
+  {
+    "name": "Zeus 4 defect: 'wall' inside 'wallpaper' routed geometry",
+    "task": "improve the wallpaper documentation typo",
+    "expect": { "tier": "fast" },
+    "modulesExclude": ["geometry"]
+  },
+  {
+    "name": "Zeus 4 defect: 'ui' inside 'guide' routed the visual module",
+    "task": "rename a variable in the parser guide",
+    "expect": { "tier": "fast", "blastRadius": "package" },
+    "modulesExclude": ["ui-visual"]
+  },
+  {
+    "name": "Zeus 4 defect: a question about releasing compiled a production deployment stop",
+    "task": "explain the release process",
+    "expect": { "mode": "answer", "deliveryStop": "answer", "risk": "moderate" },
+    "tierAtMost": "standard"
+  },
+  {
+    "name": "negative phrase: a unit test does not route the geometry module",
+    "task": "add a unit test for the parser",
+    "modulesExclude": ["geometry"]
+  },
+  {
+    "name": "inflection still matches: plural noun routes its module",
+    "task": "walls are not joining correctly at obtuse angles",
+    "modulesInclude": ["geometry"]
+  },
+  {
+    "name": "fast lane stays small and cheap",
+    "task": "Fix a README typo",
+    "expect": { "tier": "fast" },
+    "maxModules": 1,
+    "maxContractChars": 4000
+  },
+  {
+    "name": "deep lane routes persistence, reaches production and names a rollback",
+    "task": "Fix .arq migration recovery, open a PR, merge and deploy to production",
+    "expect": {
+      "tier": "deep",
+      "deliveryStop": "production-verified",
+      "blastRadius": "production"
+    },
+    "modulesInclude": ["arqfs"],
+    "acceptanceIncludes": ["rollback or compensating action stated"]
+  },
+  {
+    "name": "visual work loads the visual module even when the change sounds small",
+    "task": "Build pixel-perfect accessible tablet editor",
+    "modulesInclude": ["ui-visual"]
+  },
+  {
+    "name": "irreversible language raises risk and demands operator confirmation",
+    "task": "Delete the old project files and overwrite the original",
+    "expect": { "reversibility": "irreversible", "risk": "critical", "tier": "deep" },
+    "acceptanceIncludes": ["irreversible step confirmed with the operator before execution"]
+  },
+  {
+    "name": "a failing pipeline is an incident, not a release",
+    "task": "the ci is failing on main and the deployment is broken",
+    "expect": { "mode": "incident" },
+    "modulesInclude": ["incident"]
+  },
+  {
+    "name": "a technology question is answered, not implemented",
+    "task": "should we use webgl or webgpu for the 3d view?",
+    "expect": { "mode": "answer", "deliveryStop": "answer" }
+  },
+  {
+    "name": "scope gating keeps marketing methods away from a geometry defect",
+    "task": "the wall join breaks at obtuse angles",
+    "methodScopesExclude": ["mkt", "learn"]
+  },
+  {
+    "name": "high risk mandates risk methods",
+    "task": "harden the sqlite migration path against interruption",
+    "methodsInclude": ["RISKMAP", "SECONDORDER"]
+  }
+]

@@ -1,0 +1,190 @@
+{
+  "version": "5.0.0",
+  "project": "Arq",
+  "note": "Risk says how likely a change is to be wrong. Blast radius says how far a wrong change reaches, and reversibility says what it costs to undo. Zeus 4 carried only risk, so a low-risk edit to a persistent format and a low-risk edit to a README were gated identically.",
+  "levels": [
+    {
+      "id": "local",
+      "rank": 0,
+      "reaches": "One file or one private function. No exported contract moves.",
+      "minimumTier": "fast",
+      "requiresReview": false,
+      "requiresRollbackPlan": false
+    },
+    {
+      "id": "package",
+      "rank": 1,
+      "reaches": "One workspace package and its direct consumers.",
+      "minimumTier": "fast",
+      "requiresReview": false,
+      "requiresRollbackPlan": false
+    },
+    {
+      "id": "product",
+      "rank": 2,
+      "reaches": "User-visible product behaviour across packages.",
+      "minimumTier": "standard",
+      "requiresReview": true,
+      "requiresRollbackPlan": false
+    },
+    {
+      "id": "persistent",
+      "rank": 3,
+      "reaches": "Data a user already owns: `.arq` files, journals, local databases, migrations.",
+      "minimumTier": "deep",
+      "requiresReview": true,
+      "requiresRollbackPlan": true,
+      "extraEvidence": [
+        "original preserved",
+        "copy-on-write verified before promotion",
+        "recovery path exercised"
+      ]
+    },
+    {
+      "id": "public",
+      "rank": 4,
+      "reaches": "Statements or surfaces the public can read, plus security and privacy posture.",
+      "minimumTier": "deep",
+      "requiresReview": true,
+      "requiresRollbackPlan": true,
+      "extraEvidence": ["claim binding current", "no open conflict blocks the claim"]
+    },
+    {
+      "id": "production",
+      "rank": 5,
+      "reaches": "Deployed environments and live users.",
+      "minimumTier": "deep",
+      "requiresReview": true,
+      "requiresRollbackPlan": true,
+      "extraEvidence": [
+        "current-head evidence",
+        "rollback rehearsed or documented",
+        "post-deploy verification"
+      ]
+    }
+  ],
+  "reversibility": [
+    {
+      "id": "reversible",
+      "rank": 0,
+      "meaning": "A revert restores the previous state completely."
+    },
+    {
+      "id": "compensable",
+      "rank": 1,
+      "meaning": "The previous state is recoverable only through an explicit compensating action, such as a down migration or a restore."
+    },
+    {
+      "id": "irreversible",
+      "rank": 2,
+      "meaning": "Something outside the repository cannot be taken back: user data overwritten, a public statement, a published artifact, a sent notification."
+    }
+  ],
+  "moduleContribution": {
+    "note": "A module that matched on a single weak token must not drag a variable rename into the public lane. A module contributes its full blast radius only once it scores 2 or more; below that its contribution is capped.",
+    "minScoreForFullRadius": 2,
+    "cappedRadius": "package"
+  },
+  "pathRules": [
+    {
+      "glob": "packages/arqfs/**",
+      "blastRadius": "persistent",
+      "reversibility": "compensable"
+    },
+    {
+      "glob": "packages/project-format/**",
+      "blastRadius": "persistent",
+      "reversibility": "compensable"
+    },
+    {
+      "glob": "packages/local-storage/**",
+      "blastRadius": "persistent",
+      "reversibility": "compensable"
+    },
+    {
+      "glob": "**/migrations/**",
+      "blastRadius": "persistent",
+      "reversibility": "compensable"
+    },
+    {
+      "glob": "database/**",
+      "blastRadius": "persistent",
+      "reversibility": "compensable"
+    },
+    {
+      "glob": "apps/marketing/**",
+      "blastRadius": "public",
+      "reversibility": "compensable"
+    },
+    {
+      "glob": "docs/pages/**",
+      "blastRadius": "public",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": "docs/product/voice/**",
+      "blastRadius": "public",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": "security/**",
+      "blastRadius": "public",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": "infrastructure/**",
+      "blastRadius": "production",
+      "reversibility": "compensable"
+    },
+    {
+      "glob": ".github/workflows/**",
+      "blastRadius": "production",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": "apps/web/**",
+      "blastRadius": "product",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": "apps/api/**",
+      "blastRadius": "product",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": "packages/**",
+      "blastRadius": "package",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": "workers/**",
+      "blastRadius": "package",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": "docs/**",
+      "blastRadius": "local",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": "**/*.md",
+      "blastRadius": "local",
+      "reversibility": "reversible"
+    }
+  ],
+  "taskLanguage": {
+    "irreversible": [
+      "delete",
+      "drop",
+      "purge",
+      "overwrite",
+      "force push",
+      "publish",
+      "announce",
+      "send",
+      "revoke",
+      "rotate"
+    ],
+    "compensable": ["migrate", "migration", "deploy", "release", "rollout", "backfill"]
+  }
+}

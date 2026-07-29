@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.dev/schemas/zeus/evidence-ledger-5.json",
+  "title": "Zeus 5 evidence ledger",
+  "description": "Typed record of what was actually established during a Zeus run. A claim without a ledger entry is Not inspected, not Green.",
+  "type": "object",
+  "required": ["version", "task", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "const": "5.0.0" },
+    "task": { "type": "string", "minLength": 1 },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "deliveryStop": {
+      "enum": [
+        "answer",
+        "plan",
+        "local-green",
+        "pr-open",
+        "ci-green",
+        "merged",
+        "production-verified"
+      ]
+    },
+    "status": { "enum": ["green", "partial", "blocked", "failed", "rolled_back"] },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "openConflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim", "sources"],
+        "additionalProperties": false,
+        "properties": {
+          "claim": { "type": "string" },
+          "sources": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
+          "owner": { "type": "string" },
+          "registryId": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["claim", "state"],
+      "additionalProperties": false,
+      "properties": {
+        "claim": {
+          "type": "string",
+          "minLength": 1,
+          "description": "One statement about behaviour, not a description of activity."
+        },
+        "state": {
+          "enum": [
+            "verified",
+            "partially-verified",
+            "inferred",
+            "assumed",
+            "blocked",
+            "not-inspected",
+            "failed"
+          ]
+        },
+        "command": {
+          "type": "string",
+          "description": "The exact command that produced the evidence. Required for verified and failed."
+        },
+        "exitCode": { "type": "integer" },
+        "output": { "type": "string", "description": "Trimmed real output, never a paraphrase." },
+        "sources": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Repository paths inspected, with line ranges where useful."
+        },
+        "cached": { "type": "boolean", "default": false },
+        "reason": {
+          "type": "string",
+          "description": "Required when the state is blocked, assumed, inferred or not-inspected."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "state": { "enum": ["verified", "failed"] } } },
+          "then": { "required": ["command", "exitCode"] }
+        },
+        {
+          "if": {
+            "properties": {
+              "state": { "enum": ["blocked", "assumed", "inferred", "not-inspected"] }
+            }
+          },
+          "then": { "required": ["reason"] }
+        }
+      ]
+    }
+  }
+}

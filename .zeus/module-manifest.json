@@ -1,29 +1,59 @@
 {
-  "version": "4.0.0",
+  "version": "5.0.0",
+  "project": "Arq",
+  "matching": {
+    "note": "Zeus 4 matched triggers with a bare substring test, so 'build' selected ui-visual through 'ui', 'wallpaper' selected geometry through 'wall' and 'improve' selected github-cicd through 'pr'. Zeus 5 matches on token and phrase boundaries with a bounded inflection suffix.",
+    "tokenSuffixes": ["", "s", "es", "ing", "ed"],
+    "phraseMatch": "boundary-anchored substring"
+  },
   "modules": [
     {
       "id": "architecture",
       "title": "Architecture and scope",
       "path": ".zeus/modules/architecture.md",
-      "triggers": [
+      "phrases": [
+        "product scope",
+        "package boundary",
+        "source of truth",
+        "system design",
+        "design doc"
+      ],
+      "tokens": [
         "architecture",
+        "architectural",
         "adr",
-        "package",
         "boundary",
+        "boundaries",
         "schema",
         "refactor",
-        "product scope"
+        "coupling",
+        "layering",
+        "monorepo",
+        "workspace"
       ],
+      "negative": ["schema.org"],
+      "reviewers": ["arq-architecture-reviewer"],
+      "blastRadius": "product",
       "priority": 101
     },
     {
       "id": "geometry",
       "title": "Geometry, constraints and semantic BIM",
       "path": ".zeus/modules/geometry.md",
-      "triggers": [
+      "phrases": [
+        "coordinate space",
+        "canonical unit",
+        "wall join",
+        "room boundary",
+        "boolean operation"
+      ],
+      "tokens": [
         "geometry",
+        "geometric",
         "topology",
+        "topological",
         "constraint",
+        "snapping",
         "snap",
         "intersection",
         "offset",
@@ -33,19 +63,34 @@
         "window",
         "bim",
         "tolerance",
-        "unit"
+        "unit",
+        "millimetre",
+        "millimeter",
+        "precision",
+        "mesh",
+        "solid",
+        "opening"
       ],
+      "negative": ["unit test", "unit tests", "unit testing"],
+      "reviewers": ["arq-geometry-reviewer"],
+      "blastRadius": "product",
       "priority": 100
     },
     {
       "id": "editor-input",
-      "title": "Editor, commands, selection and input",
+      "title": "Editor, input and command state",
       "path": ".zeus/modules/editor-input.md",
-      "triggers": [
+      "phrases": [
+        "command palette",
+        "tool rail",
+        "pointer event",
+        "marquee selection",
+        "drawing tool"
+      ],
+      "tokens": [
         "editor",
         "selection",
         "select",
-        "snap",
         "keyboard",
         "cursor",
         "drag",
@@ -57,34 +102,59 @@
         "cancel",
         "undo",
         "redo",
-        "focus"
+        "preview",
+        "pointer"
       ],
-      "priority": 99
+      "negative": ["command line", "git command"],
+      "reviewers": ["arq-ux-accessibility-reviewer"],
+      "blastRadius": "product",
+      "priority": 96
     },
     {
       "id": "arqfs",
-      "title": ".arq, storage, sync and recovery",
+      "title": "`.arq` file, storage, migration and recovery",
       "path": ".zeus/modules/arqfs.md",
-      "triggers": [
+      "phrases": [
+        "file format",
+        "copy-on-write",
+        "project file",
+        "open a project",
+        "write-ahead log",
+        "raw page"
+      ],
+      "tokens": [
         ".arq",
+        "arqfs",
         "sqlite",
         "opfs",
         "storage",
+        "persistence",
         "sync",
         "migration",
+        "migrate",
         "recovery",
+        "recover",
         "corrupt",
+        "corruption",
         "wal",
-        "snapshot"
+        "shm",
+        "snapshot",
+        "journal",
+        "autosave"
       ],
-      "priority": 98
+      "negative": [],
+      "reviewers": ["arq-file-integrity-reviewer"],
+      "blastRadius": "persistent",
+      "priority": 102
     },
     {
       "id": "rendering",
-      "title": "Rendering and performance",
+      "title": "Renderer, picking and performance",
       "path": ".zeus/modules/rendering.md",
-      "triggers": [
+      "phrases": ["frame time", "draw call", "hit test", "level of detail"],
+      "tokens": [
         "render",
+        "renderer",
         "canvas",
         "webgl",
         "webgpu",
@@ -92,89 +162,150 @@
         "mesh",
         "fps",
         "latency",
-        "performance",
-        "benchmark"
+        "throughput",
+        "benchmark",
+        "profiling",
+        "gpu",
+        "tessellation"
       ],
-      "priority": 97
+      "negative": [],
+      "reviewers": ["arq-architecture-reviewer"],
+      "blastRadius": "product",
+      "priority": 94
     },
     {
       "id": "ui-visual",
-      "title": "UI, UX and pixel precision",
+      "title": "UI, visual precision and design system",
       "path": ".zeus/modules/ui-visual.md",
-      "triggers": [
+      "phrases": [
+        "design system",
+        "pixel perfect",
+        "visual regression",
+        "responsive layout",
+        "empty state"
+      ],
+      "tokens": [
         "ui",
         "ux",
-        "page",
         "component",
         "pixel",
         "responsive",
         "layout",
-        "design",
+        "spacing",
         "icon",
         "typography",
         "visual",
-        "screenshot"
+        "screenshot",
+        "theme",
+        "styling"
       ],
-      "priority": 96
+      "negative": [],
+      "reviewers": ["arq-ux-accessibility-reviewer"],
+      "blastRadius": "product",
+      "priority": 92
     },
     {
       "id": "accessibility",
-      "title": "Accessibility and input parity",
+      "title": "Accessibility and input modes",
       "path": ".zeus/modules/accessibility.md",
-      "triggers": [
-        "accessibility",
+      "phrases": [
         "screen reader",
+        "focus order",
+        "target size",
+        "colour contrast",
+        "color contrast",
+        "reduced motion"
+      ],
+      "tokens": [
+        "accessibility",
+        "accessible",
+        "a11y",
         "focus",
         "keyboard",
         "touch",
         "pencil",
         "contrast",
         "aria",
-        "gesture"
+        "gesture",
+        "wcag"
       ],
-      "priority": 95
+      "negative": [],
+      "reviewers": ["arq-ux-accessibility-reviewer"],
+      "blastRadius": "product",
+      "priority": 93
     },
     {
       "id": "security",
-      "title": "Security and supply chain",
+      "title": "Security, privacy and supply chain",
       "path": ".zeus/modules/security.md",
-      "triggers": [
+      "phrases": [
+        "supply chain",
+        "threat model",
+        "untrusted input",
+        "least privilege",
+        "personal data"
+      ],
+      "tokens": [
         "security",
+        "secure",
         "auth",
+        "authentication",
+        "authorisation",
+        "authorization",
         "permission",
         "secret",
+        "credential",
         "token",
         "dependency",
+        "licence",
         "license",
-        "supply chain",
         "untrusted",
-        "parser"
+        "parser",
+        "sandbox",
+        "encryption",
+        "privacy"
       ],
-      "priority": 94
+      "negative": ["design token", "design tokens"],
+      "reviewers": ["arq-security-ai-reviewer"],
+      "blastRadius": "product",
+      "priority": 103,
+      "blastRadiusNote": "Security posture reaches users through product behaviour. The public lane is reserved for claim-bearing surfaces, which blast-radius.json pathRules already cover."
     },
     {
       "id": "github-cicd",
-      "title": "GitHub and CI/CD",
+      "title": "GitHub, branches and CI",
       "path": ".zeus/modules/github-cicd.md",
-      "triggers": [
+      "phrases": [
+        "pull request",
+        "github actions",
+        "required check",
+        "branch protection",
+        "merge queue"
+      ],
+      "tokens": [
         "github",
         "branch",
         "commit",
-        "pull request",
         "pr",
         "ci",
         "workflow",
-        "check",
+        "pipeline",
         "merge",
-        "actions"
+        "merging",
+        "rebase",
+        "action"
       ],
-      "priority": 93
+      "negative": [],
+      "reviewers": ["arq-release-reviewer"],
+      "blastRadius": "product",
+      "priority": 90
     },
     {
       "id": "release-production",
       "title": "Release, deployment and production",
       "path": ".zeus/modules/release-production.md",
-      "triggers": [
+      "phrases": ["release notes", "production deployment", "public claim", "roll out", "go live"],
+      "tokens": [
         "release",
         "deploy",
         "deployment",
@@ -182,37 +313,77 @@
         "ship",
         "rollback",
         "smoke",
-        "environment"
+        "environment",
+        "changelog",
+        "version"
       ],
-      "priority": 92
+      "negative": [],
+      "reviewers": ["arq-release-reviewer"],
+      "blastRadius": "production",
+      "priority": 99
     },
     {
       "id": "ai",
-      "title": "AI and ArqScript",
+      "title": "AI proposals and ArqScript",
       "path": ".zeus/modules/ai.md",
-      "triggers": ["ai", "arqscript", "proposal", "agent", "generate", "copilot"],
-      "priority": 91
+      "phrases": ["ai proposal", "typed operation", "model context", "prompt injection"],
+      "tokens": [
+        "ai",
+        "arqscript",
+        "proposal",
+        "propose",
+        "agent",
+        "llm",
+        "copilot",
+        "assistant",
+        "generation"
+      ],
+      "negative": [],
+      "reviewers": ["arq-security-ai-reviewer"],
+      "blastRadius": "product",
+      "priority": 97
     },
     {
       "id": "interoperability",
       "title": "Import, export and interoperability",
       "path": ".zeus/modules/interoperability.md",
-      "triggers": ["ifc", "dxf", "dwg", "pdf", "import", "export", "interoperability"],
-      "priority": 90
+      "phrases": ["round trip", "fidelity report", "external format"],
+      "tokens": [
+        "ifc",
+        "dxf",
+        "dwg",
+        "rvt",
+        "revit",
+        "pdf",
+        "svg",
+        "import",
+        "export",
+        "interoperability",
+        "roomplan",
+        "adapter"
+      ],
+      "negative": [],
+      "reviewers": ["arq-file-integrity-reviewer"],
+      "blastRadius": "product",
+      "priority": 95
     },
     {
       "id": "incident",
-      "title": "Incident response",
+      "title": "Incident stabilisation and recovery",
       "path": ".zeus/modules/incident.md",
-      "triggers": [
-        "incident",
-        "outage",
+      "phrases": [
         "broken production",
+        "production down",
         "rollback production",
         "ci failing",
-        "deployment failing"
+        "deployment failing",
+        "data loss"
       ],
-      "priority": 89
+      "tokens": ["incident", "outage", "hotfix", "sev1", "sev2", "postmortem"],
+      "negative": [],
+      "reviewers": ["arq-release-reviewer"],
+      "blastRadius": "production",
+      "priority": 104
     }
   ]
 }

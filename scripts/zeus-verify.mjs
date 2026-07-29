@@ -8,6 +8,10 @@ const required = [
   '.zeus/module-manifest.json',
   '.zeus/config.json',
   '.zeus/compact-contract.schema.json',
+  '.zeus/evidence-ledger.schema.json',
+  '.zeus/INVARIANTS.md',
+  '.zeus/method-registry.json',
+  '.zeus/blast-radius.json',
   'scripts/zeus.mjs',
   'scripts/zeus-fast-compile.mjs',
   'scripts/zeus-index.mjs',
@@ -15,6 +19,9 @@ const required = [
   'scripts/zeus-impact.mjs',
   'scripts/zeus-check.mjs',
   'scripts/zeus-benchmark.mjs',
+  'scripts/zeus-method.mjs',
+  'scripts/zeus-evidence.mjs',
+  'scripts/zeus-validate.mjs',
   'scripts/zeus-hook.sh',
   'AGENTS.md',
   '.cursor/rules/zeus-always-on.mdc',
@@ -24,7 +31,7 @@ const errors = [];
 for (const f of required) if (!existsSync(join(root, f))) errors.push(`missing ${f}`);
 try {
   const c = JSON.parse(readFileSync(join(root, '.zeus/config.json'), 'utf8'));
-  if (c.version !== '4.0.0' || c.project !== 'Arq') errors.push('wrong config identity');
+  if (c.version !== '5.0.0' || c.project !== 'Arq') errors.push('wrong config identity');
   for (const t of ['fast', 'standard', 'deep'])
     if (!c.budgets?.[t]) errors.push(`missing budget ${t}`);
 } catch (e) {
@@ -68,4 +75,4 @@ if (errors.length) {
   console.error('Zeus verify failed:\n' + errors.map((x) => '- ' + x).join('\n'));
   process.exit(1);
 }
-console.log(`Zeus 4 verification passed (${required.length} required files).`);
+console.log(`Zeus 5 verification passed (${required.length} required files).`);
