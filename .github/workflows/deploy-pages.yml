@@ -84,7 +84,7 @@ jobs:
       page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   # The build artifact passing is not evidence that the live site passes. This
   # job reads the deployed proof and every deployed route back off the Pages
