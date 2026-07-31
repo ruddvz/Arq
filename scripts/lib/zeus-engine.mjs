@@ -35,7 +35,11 @@ export function normalise(text) {
 
 const boundedRe = (raw) => {
   const t = normalise(raw);
-  return new RegExp(`(?<![a-z0-9.])${escape(t)}${SUFFIX}(?![a-z0-9])`);
+  // A token that opens with an extension dot (`.arq`) must still match when it
+  // follows a filename stem, because "project.arq" is how people actually name
+  // the file. A word-character lookbehind would reject exactly that case.
+  const lead = t.startsWith('.') ? '(?<![a-z0-9.]\\.)(?<!\\.)' : '(?<![a-z0-9.])';
+  return new RegExp(`${lead}${escape(t)}${SUFFIX}(?![a-z0-9])`);
 };
 
 const compileMatchers = (list) => (list ?? []).map((raw) => ({ raw, re: boundedRe(raw) }));

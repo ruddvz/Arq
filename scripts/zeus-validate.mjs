@@ -264,8 +264,10 @@ const walk = (dir) => {
   }
 };
 for (const d of OWNED) walk(join(root, d));
-for (const f of readdirSync(join(root, '.claude/skills')))
-  if (f.startsWith('zeus')) walk(join(root, '.claude/skills', f));
+// A missing skills directory is already reported above as a validation failure.
+// Reading it unguarded here would replace that message with a stack trace.
+if (existsSync(skillRoot))
+  for (const f of readdirSync(skillRoot)) if (f.startsWith('zeus')) walk(join(skillRoot, f));
 
 /* ------------------------------------------------------------- 11. kernel */
 

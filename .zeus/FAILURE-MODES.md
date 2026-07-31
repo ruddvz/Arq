@@ -61,9 +61,19 @@ bounded inflection suffix. Regression cases are pinned in
 **Shape:** A deterministic guard blocks writing documentation that quotes a rejected
 pattern, or editing a fixture, so it gets disabled.
 **Why:** Matching against a whole serialised payload cannot tell a mention from an act.
-**Repair:** Match commands against commands and paths against paths.
-`quality/fixtures/zeus-guard-cases.json` pins both sides: what must be blocked and what
-must not.
+**Repair:** Match commands against commands and paths against paths, and treat the
+content a command _writes_ as data rather than instruction. Heredoc bodies and
+`echo`/`printf` arguments are removed before matching, but nothing is removed when the
+command could feed that text back to a shell (`| bash`, `sh -c`, `eval`, `xargs`,
+`bash <<`). Argument quoting is then dropped, so `rm -rf "/"` reads the same as
+`rm -rf /`. `quality/fixtures/zeus-guard-cases.json` pins all three sides: what must be
+blocked, what must not, and the bypasses that must stay blocked.
+
+The same principle applies to a text lint. `scripts/zeus-architecture-lint.mjs` now
+matches per sentence and skips a sentence that denies the pattern it contains, so
+"devices never sync raw SQLite pages" passes while "devices sync raw SQLite pages"
+fails. Its negation set deliberately excludes "without", because "the AI directly
+mutates canonical state without review" is a breach, not a denial.
 
 ## 7. Cached evidence for a protected gate
 

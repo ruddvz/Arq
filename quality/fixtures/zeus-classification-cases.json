@@ -29,6 +29,16 @@
     "modulesExclude": ["geometry"]
   },
   {
+    "name": "a concrete project filename routes persistence, not just the bare extension",
+    "task": "open project.arq fails with a schema error",
+    "modulesInclude": ["arqfs"]
+  },
+  {
+    "name": "a hyphenated project filename routes persistence",
+    "task": "my-house.arq will not open",
+    "modulesInclude": ["arqfs"]
+  },
+  {
     "name": "inflection still matches: plural noun routes its module",
     "task": "walls are not joining correctly at obtuse angles",
     "modulesInclude": ["geometry"]

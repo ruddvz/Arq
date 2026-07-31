@@ -86,11 +86,40 @@ contract names which apply, so "independent critique pass" has an address.
 hooks and schemas against each other.
 
 **Deterministic tool guards.** A pre-tool guard blocks destructive commands, secret
-access and edits to real project containers. It is adapted to this repository in two
+access and edits to real project containers. It is adapted to this repository in three
 ways the generic version got wrong: `.arq` is also the ArqScript source extension here,
-so only real SQLite containers are protected, and command patterns are matched against
-commands rather than the whole serialised payload, so documenting a rejected pattern is
-not blocked. `quality/fixtures/zeus-guard-cases.json` pins both sides of the line.
+so only real SQLite containers are protected; command patterns are matched against
+commands rather than the whole serialised payload; and the content a command _writes_
+is treated as data, so authoring a fixture or a document that quotes a rejected pattern
+is not blocked.
+
+That last one is deliberately narrow. Only heredoc bodies and `echo`/`printf` arguments
+are removed, and nothing is removed when the command could feed the text back to a shell
+(`| bash`, `sh -c`, `eval`, `xargs`, `bash <<`). Stripping every quoted string would be
+unsafe, because `rm -rf "/"` and `cat ".env"` are real operations whose arguments happen
+to be quoted.
+
+Writing those cases exposed a hole that predates Zeus 5: the destructive patterns
+anchored on a literal `/`, so `rm -rf "/"` was never caught, by Zeus 4 either. Argument
+quoting is now removed before matching. `quality/fixtures/zeus-guard-cases.json` pins
+all three sides: what must be blocked, what must not, and the bypasses that must stay
+blocked.
+
+## 4b. The same defect class in the architecture lint
+
+`scripts/zeus-architecture-lint.mjs` could not tell a sentence that states a prohibition
+from one that breaches it, because it matched patterns over a whole file. The correct
+sentence "an invalid operation is rejected whole, there is no partial commit" failed,
+and "renderer objects are disposable projections of canonical model data" failed because
+`.*` spanned the very clause that made it correct.
+
+Three corrections: match per sentence so a `.*` cannot join unrelated sentences; skip a
+sentence that denies or prohibits the pattern it contains; and require an assertive
+copula in the renderer rule rather than any intervening text. The negation set excludes
+"without" on purpose, so "the AI directly mutates canonical project state without
+review" still fails. Findings now quote the offending sentence, and
+`quality/architecture-clean/` states every prohibition in natural prose as the
+regression proof.
 
 ## 5. What was deliberately not adopted
 

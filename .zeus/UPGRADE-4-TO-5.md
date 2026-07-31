@@ -73,6 +73,19 @@ invariant sections it verifies. The compiled contract names which reviewers appl
 consistent": manifests, registries, skills, agents, hooks and schemas are cross-checked
 against each other.
 
+### Fixed: `.arq` never matched a real filename
+
+The token boundary rejected `.arq` when it followed a filename stem, so "open
+project.arq" routed nothing while "the .arq file" routed persistence correctly. A
+filename is the most common way the file gets named, so this was the common case
+failing. Fixed, with a regression case.
+
+### Fixed: a quoted argument slipped past the destructive-command patterns
+
+The patterns anchored on a literal `/`, so `rm -rf "/"` matched nothing. This predates
+Zeus 5. Argument quoting is now removed before matching, after the content a command
+merely writes has been separated out.
+
 ## Breaking changes
 
 - `.zeus/config.json` and `.zeus/module-manifest.json` are version `5.0.0`. A Zeus 4
