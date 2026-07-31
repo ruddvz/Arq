@@ -1,0 +1,998 @@
+{
+  "version": "5.0.0",
+  "project": "Arq",
+  "total": 98,
+  "distinctBehaviours": 94,
+  "selection": {
+    "primaryCount": 1,
+    "supportingMax": {
+      "fast": 2,
+      "standard": 4,
+      "deep": 8
+    },
+    "formattingRunsLast": true,
+    "scopeGate": "A method is selectable only when one of its scopes is in the task scope set.",
+    "evidenceOverride": "Repository evidence and Arq invariants outrank any creative or persuasive method."
+  },
+  "scopes": {
+    "eng": "Repository implementation, debugging and measurement.",
+    "arch": "Architecture, boundaries, contracts and decisions.",
+    "prod": "Product behaviour, editor UX and workflows.",
+    "comm": "Documentation, reports and internal communication.",
+    "mkt": "Public marketing and growth surfaces.",
+    "learn": "Teaching and operator skill transfer.",
+    "fmt": "Output shaping, applied last."
+  },
+  "modeDefaults": {
+    "implement": {
+      "primary": "DEBUG",
+      "defectFallbackPrimary": "REVERSEENGINEER",
+      "scopes": ["eng", "arch"]
+    },
+    "plan": {
+      "primary": "/firstprinciples",
+      "scopes": ["arch", "prod"]
+    },
+    "audit": {
+      "primary": "/critique",
+      "scopes": ["eng", "arch", "prod"]
+    },
+    "answer": {
+      "primary": "REVERSEENGINEER",
+      "scopes": ["eng", "arch", "learn"]
+    },
+    "release": {
+      "primary": "CHECKLIST",
+      "scopes": ["eng", "arch"]
+    },
+    "incident": {
+      "primary": "OODA",
+      "scopes": ["eng"]
+    }
+  },
+  "riskMandated": {
+    "high": ["RISKMAP", "SECONDORDER"],
+    "critical": ["RISKMAP", "SECONDORDER", "REDTEAM", "BLACKSWAN", "/reverse"]
+  },
+  "families": [
+    {
+      "id": "think",
+      "title": "Think",
+      "order": 1,
+      "note": "Frame the problem before acting."
+    },
+    {
+      "id": "write",
+      "title": "Write",
+      "order": 2,
+      "note": "Shape prose without changing governed meaning."
+    },
+    {
+      "id": "explain",
+      "title": "Explain",
+      "order": 3,
+      "note": "Match explanation depth to the reader."
+    },
+    {
+      "id": "create",
+      "title": "Create",
+      "order": 4,
+      "note": "Widen the option set before converging."
+    },
+    {
+      "id": "decide",
+      "title": "Decide",
+      "order": 5,
+      "note": "Converge with criteria, evidence and reversibility."
+    },
+    {
+      "id": "learn",
+      "title": "Learn",
+      "order": 6,
+      "note": "Transfer understanding to the operator."
+    },
+    {
+      "id": "ship",
+      "title": "Ship",
+      "order": 7,
+      "note": "Produce the deliverable and its shape."
+    },
+    {
+      "id": "stack",
+      "title": "Stack",
+      "order": 8,
+      "note": "Control the composition itself."
+    }
+  ],
+  "methods": [
+    {
+      "id": "firstprinciples",
+      "label": "/firstprinciples",
+      "family": "think",
+      "scopes": ["arch", "eng", "prod"],
+      "effect": "Rebuild the problem from fundamentals instead of inherited shape.",
+      "triggers": [
+        "first principles",
+        "from scratch",
+        "fundamental",
+        "rethink",
+        "foundation",
+        "why does this exist"
+      ]
+    },
+    {
+      "id": "assumptions",
+      "label": "/assumptions",
+      "family": "think",
+      "scopes": ["arch", "eng", "prod"],
+      "effect": "List what the proposal takes for granted and mark each as verified or unverified.",
+      "triggers": ["assumption", "assume", "presume", "taken for granted"]
+    },
+    {
+      "id": "hiddenassumptions",
+      "label": "HIDDENASSUMPTIONS",
+      "family": "think",
+      "scopes": ["arch", "eng", "prod"],
+      "effect": "Surface beliefs the author did not state about files, browsers, users, sync, precision or scale.",
+      "triggers": ["hidden assumption", "implicit", "unstated", "why is this safe"]
+    },
+    {
+      "id": "meta",
+      "label": "META",
+      "family": "think",
+      "scopes": ["arch", "eng"],
+      "effect": "Check whether the stated question is the right question before answering it.",
+      "triggers": ["right question", "reframe the problem", "step back", "am i asking"]
+    },
+    {
+      "id": "x10-think",
+      "label": "X10THINK",
+      "family": "think",
+      "scopes": ["arch", "prod"],
+      "effect": "Ask what a ten times larger, faster or more constrained version demands.",
+      "triggers": ["10x", "ten times", "scale up", "order of magnitude"]
+    },
+    {
+      "id": "deltr",
+      "label": "DELTR",
+      "family": "think",
+      "scopes": ["arch", "eng"],
+      "effect": "Isolate the smallest real delta between current and target behaviour.",
+      "triggers": ["delta", "difference", "gap between", "minimal change"]
+    },
+    {
+      "id": "fractal",
+      "label": "FRACTAL",
+      "family": "think",
+      "scopes": ["arch"],
+      "effect": "Check whether the same defect repeats at package, module and function scale.",
+      "triggers": ["repeats", "same pattern", "everywhere", "recurring"]
+    },
+    {
+      "id": "lensstack",
+      "label": "LENSSTACK",
+      "family": "think",
+      "scopes": ["arch", "prod", "eng"],
+      "effect": "Read the problem through several fixed lenses in sequence rather than one.",
+      "triggers": [
+        "multiple perspectives",
+        "different angles",
+        "lens",
+        "viewpoint",
+        "pixel perfect",
+        "polish",
+        "perfect it",
+        "make it excellent"
+      ]
+    },
+    {
+      "id": "systemmap",
+      "label": "SYSTEMMAP",
+      "family": "think",
+      "scopes": ["arch", "eng"],
+      "effect": "Draw the actors, state owners, boundaries and flows before changing any of them.",
+      "triggers": [
+        "system map",
+        "how does it fit",
+        "end to end",
+        "data flow",
+        "architecture map",
+        "across packages",
+        "multiple packages",
+        "wire together",
+        "integrate"
+      ]
+    },
+    {
+      "id": "paradox",
+      "label": "PARADOX",
+      "family": "think",
+      "scopes": ["arch"],
+      "effect": "Name the two requirements that cannot both hold and resolve the tension explicitly.",
+      "triggers": ["tradeoff", "tension", "conflicting requirement", "paradox", "cannot both"]
+    },
+    {
+      "id": "signalvsnoise",
+      "label": "SIGNALVSNOISE",
+      "family": "think",
+      "scopes": ["comm", "mkt", "arch"],
+      "effect": "Separate what materially changes the outcome from what only adds volume.",
+      "triggers": ["signal", "noise", "what matters", "too much detail", "prioritise"]
+    },
+    {
+      "id": "hypothesisgen",
+      "label": "HYPOTHESISGEN",
+      "family": "think",
+      "scopes": ["eng"],
+      "effect": "Generate competing causal hypotheses before selecting one to test.",
+      "triggers": ["hypothesis", "possible cause", "what could cause", "theories"]
+    },
+    {
+      "id": "reverseengineer",
+      "label": "REVERSEENGINEER",
+      "family": "think",
+      "scopes": ["eng", "arch"],
+      "effect": "Derive the intended contract from the code, tests and artifacts that exist.",
+      "triggers": [
+        "reverse engineer",
+        "how does this work",
+        "existing behaviour",
+        "what does the code do",
+        "implement",
+        "wire up",
+        "hook up",
+        "make it work",
+        "current implementation"
+      ]
+    },
+    {
+      "id": "blackswan",
+      "label": "BLACKSWAN",
+      "family": "think",
+      "scopes": ["arch", "eng"],
+      "effect": "Consider the rare, high-consequence failure that the normal path ignores.",
+      "triggers": ["rare failure", "worst case", "black swan", "catastrophic", "unlikely but"]
+    },
+    {
+      "id": "why",
+      "label": "/why",
+      "family": "think",
+      "scopes": ["arch", "eng", "prod"],
+      "effect": "Chain causal why questions until the real driver is reached.",
+      "triggers": ["why", "root reason", "underlying cause"]
+    },
+    {
+      "id": "deep",
+      "label": "/deep",
+      "family": "think",
+      "scopes": ["arch", "eng", "prod"],
+      "effect": "Increase reasoning depth for consequential work.",
+      "triggers": ["deep", "thorough", "senior level", "in depth", "comprehensive"]
+    },
+    {
+      "id": "human",
+      "label": "/human",
+      "family": "write",
+      "scopes": ["comm", "mkt", "prod"],
+      "effect": "Remove machine cadence and unearned emphasis from prose.",
+      "triggers": ["sound human", "natural", "less robotic", "rewrite naturally"]
+    },
+    {
+      "id": "rewrite",
+      "label": "/rewrite",
+      "family": "write",
+      "scopes": ["comm", "mkt", "prod"],
+      "effect": "Rewrite the text while preserving verified meaning.",
+      "triggers": ["rewrite", "redo the wording", "rephrase"]
+    },
+    {
+      "id": "improve",
+      "label": "/improve",
+      "family": "write",
+      "scopes": ["comm", "mkt", "prod"],
+      "effect": "Improve clarity and precision without inflating claims.",
+      "triggers": ["improve the wording", "make it better", "polish"]
+    },
+    {
+      "id": "shorten",
+      "label": "/shorten",
+      "family": "write",
+      "scopes": ["comm", "mkt", "prod"],
+      "effect": "Reduce length without losing a governed fact.",
+      "triggers": ["shorten", "shorter", "trim", "cut it down"]
+    },
+    {
+      "id": "expand",
+      "label": "/expand",
+      "family": "write",
+      "scopes": ["comm", "prod"],
+      "effect": "Add the missing detail a reader needs to act.",
+      "triggers": ["expand", "more detail", "elaborate", "flesh out"]
+    },
+    {
+      "id": "simplify",
+      "label": "/simplify",
+      "family": "write",
+      "scopes": ["comm", "prod"],
+      "effect": "Reduce reading difficulty while keeping the technical statement true.",
+      "triggers": ["simplify", "simpler", "plain language", "easier to read"]
+    },
+    {
+      "id": "formal",
+      "label": "/formal",
+      "family": "write",
+      "scopes": ["comm"],
+      "effect": "Shift register upward for specifications, ADRs and legal-adjacent text.",
+      "triggers": ["formal", "official tone", "professional tone"]
+    },
+    {
+      "id": "casual",
+      "label": "/casual",
+      "family": "write",
+      "scopes": ["comm", "mkt"],
+      "effect": "Shift register downward where the surface allows it.",
+      "triggers": ["casual", "informal", "conversational"]
+    },
+    {
+      "id": "tonechange",
+      "label": "/tonechange",
+      "family": "write",
+      "scopes": ["comm", "mkt"],
+      "effect": "Change register deliberately for a named surface.",
+      "triggers": ["change the tone", "different tone", "tone of voice"]
+    },
+    {
+      "id": "clarify",
+      "label": "/clarify",
+      "family": "write",
+      "scopes": ["comm", "prod"],
+      "effect": "Remove ambiguity a reader could resolve two ways.",
+      "triggers": ["clarify", "ambiguous", "unclear", "confusing"]
+    },
+    {
+      "id": "reframe",
+      "label": "/reframe",
+      "family": "write",
+      "scopes": ["comm", "mkt", "prod"],
+      "effect": "Restate the same verified fact from the reader’s position.",
+      "triggers": ["reframe", "different framing", "from the user perspective"]
+    },
+    {
+      "id": "compress",
+      "label": "/compress",
+      "family": "write",
+      "scopes": ["comm"],
+      "effect": "Compress to the smallest form that still carries the decision.",
+      "triggers": ["compress", "condense", "tighten"]
+    },
+    {
+      "id": "eli5",
+      "label": "ELI5",
+      "family": "explain",
+      "scopes": ["learn", "comm"],
+      "effect": "Explain at an absolute beginner level without false simplification.",
+      "triggers": ["eli5", "explain simply", "like i am five", "beginner"]
+    },
+    {
+      "id": "el10",
+      "label": "EL10",
+      "family": "explain",
+      "scopes": ["learn", "comm"],
+      "effect": "Explain at an early-learner level.",
+      "triggers": ["el10", "explain to a beginner", "simple terms"]
+    },
+    {
+      "id": "el15",
+      "label": "EL15",
+      "family": "explain",
+      "scopes": ["learn", "comm"],
+      "effect": "Explain at a competent-non-specialist level.",
+      "triggers": ["el15", "explain to a student"]
+    },
+    {
+      "id": "elicollege",
+      "label": "ELICollege",
+      "family": "explain",
+      "scopes": ["learn", "comm"],
+      "effect": "Explain at an undergraduate technical level.",
+      "triggers": ["elicollege", "undergraduate", "college level"]
+    },
+    {
+      "id": "eliph-d",
+      "label": "ELIPhD",
+      "family": "explain",
+      "scopes": ["learn", "arch"],
+      "effect": "Explain at a specialist level with precise terminology.",
+      "triggers": ["eliphd", "expert level", "specialist", "rigorous explanation"]
+    },
+    {
+      "id": "analogies",
+      "label": "/analogies",
+      "family": "explain",
+      "scopes": ["learn", "comm"],
+      "effect": "Use an analogy that survives the edge cases it will be tested on.",
+      "triggers": ["analogy", "analogies", "like what", "compare it to"]
+    },
+    {
+      "id": "feynman",
+      "label": "FEYNMAN",
+      "family": "explain",
+      "scopes": ["learn", "comm"],
+      "effect": "Explain until no undefined term remains, then name what is still unclear.",
+      "triggers": ["feynman", "teach it back", "explain from scratch", "really understand"]
+    },
+    {
+      "id": "teachme",
+      "label": "/teachme",
+      "family": "explain",
+      "scopes": ["learn"],
+      "effect": "Teach the topic in a structured progression.",
+      "triggers": ["teach me", "walk me through", "learn about"]
+    },
+    {
+      "id": "examples",
+      "label": "/examples",
+      "family": "explain",
+      "scopes": ["learn", "comm", "eng"],
+      "effect": "Ground the explanation in concrete worked examples.",
+      "triggers": ["example", "examples", "show me", "for instance"]
+    },
+    {
+      "id": "usecases",
+      "label": "/usecases",
+      "family": "explain",
+      "scopes": ["prod", "comm"],
+      "effect": "State the real situations the capability serves.",
+      "triggers": ["use case", "use cases", "when would", "scenarios"]
+    },
+    {
+      "id": "misconceptions",
+      "label": "MISCONCEPTIONS",
+      "family": "explain",
+      "scopes": ["learn", "comm"],
+      "effect": "Name what readers usually get wrong and correct it directly.",
+      "triggers": ["misconception", "common mistake", "people think", "myth"]
+    },
+    {
+      "id": "ideas10",
+      "label": "IDEAS10",
+      "family": "create",
+      "scopes": ["prod", "mkt", "arch"],
+      "effect": "Produce ten distinct options before converging.",
+      "triggers": ["ideas", "ten ideas", "options", "alternatives"]
+    },
+    {
+      "id": "alt3",
+      "label": "ALT3",
+      "family": "create",
+      "scopes": ["arch", "prod"],
+      "effect": "Produce three genuinely different approaches, not three variants of one.",
+      "triggers": ["three options", "alternatives", "other approaches", "alt"]
+    },
+    {
+      "id": "ideagen",
+      "label": "IDEAGEN",
+      "family": "create",
+      "scopes": ["prod", "mkt"],
+      "effect": "Generate directions from an explicit constraint set.",
+      "triggers": ["generate ideas", "ideation", "brainstorm"]
+    },
+    {
+      "id": "brainstorm100",
+      "label": "/brainstorm100",
+      "family": "create",
+      "scopes": ["mkt", "prod"],
+      "effect": "Generate a wide unfiltered set before any filtering.",
+      "triggers": ["brainstorm 100", "lots of ideas", "as many as possible"]
+    },
+    {
+      "id": "scamper",
+      "label": "SCAMPER",
+      "family": "create",
+      "scopes": ["prod", "arch"],
+      "effect": "Substitute, combine, adapt, modify, repurpose, eliminate, reverse.",
+      "triggers": ["scamper", "vary it", "modify the design", "what else could"]
+    },
+    {
+      "id": "remix",
+      "label": "REMIX",
+      "family": "create",
+      "scopes": ["prod", "mkt"],
+      "effect": "Recombine existing proven parts into a new arrangement.",
+      "triggers": ["remix", "recombine", "mash up"]
+    },
+    {
+      "id": "hooks10",
+      "label": "HOOKS10",
+      "family": "create",
+      "scopes": ["mkt"],
+      "effect": "Produce ten opening lines for a marketing surface.",
+      "triggers": ["hooks", "headlines", "opening lines"]
+    },
+    {
+      "id": "hook10",
+      "label": "HOOK10",
+      "family": "create",
+      "scopes": ["mkt"],
+      "effect": "Produce ten opening lines for a marketing surface.",
+      "triggers": ["hook", "headline"],
+      "aliasOf": "HOOKS10"
+    },
+    {
+      "id": "viralhooks",
+      "label": "/viralhooks",
+      "family": "create",
+      "scopes": ["mkt"],
+      "effect": "Produce attention-first openings for growth surfaces.",
+      "triggers": ["viral", "shareable", "attention grabbing"]
+    },
+    {
+      "id": "improvehooks",
+      "label": "/improvehooks",
+      "family": "create",
+      "scopes": ["mkt"],
+      "effect": "Strengthen an existing opening without overclaiming.",
+      "triggers": ["improve the hook", "better headline"]
+    },
+    {
+      "id": "script",
+      "label": "SCRIPT",
+      "family": "create",
+      "scopes": ["mkt", "comm"],
+      "effect": "Produce a spoken or demo script.",
+      "triggers": ["script", "voiceover", "demo script"]
+    },
+    {
+      "id": "thread",
+      "label": "THREAD",
+      "family": "create",
+      "scopes": ["mkt"],
+      "effect": "Produce a sequential social format.",
+      "triggers": ["thread", "social post", "tweet"]
+    },
+    {
+      "id": "storymode",
+      "label": "/storymode",
+      "family": "create",
+      "scopes": ["mkt", "comm"],
+      "effect": "Carry the point through narrative rather than assertion.",
+      "triggers": ["story", "narrative", "tell the story"]
+    },
+    {
+      "id": "simulate",
+      "label": "/simulate",
+      "family": "create",
+      "scopes": ["prod", "eng"],
+      "effect": "Walk a concrete user or system session step by step.",
+      "triggers": [
+        "simulate",
+        "walk through",
+        "what happens when",
+        "trace a session",
+        "user flow",
+        "walk the session",
+        "end to end flow"
+      ]
+    },
+    {
+      "id": "futurehistory",
+      "label": "/futurehistory",
+      "family": "create",
+      "scopes": ["arch", "prod"],
+      "effect": "Write the retrospective of the decision from a future vantage point.",
+      "triggers": ["future history", "looking back", "in two years"]
+    },
+    {
+      "id": "expandideas",
+      "label": "/expandideas",
+      "family": "create",
+      "scopes": ["prod", "mkt"],
+      "effect": "Develop the surviving option into a workable shape.",
+      "triggers": ["expand the idea", "develop it further", "build on that"]
+    },
+    {
+      "id": "decide",
+      "label": "DECIDE",
+      "family": "decide",
+      "scopes": ["arch", "prod", "eng"],
+      "effect": "Commit to one option with stated criteria, evidence and reversibility.",
+      "triggers": ["decide", "decision", "which should we", "pick one", "choose"]
+    },
+    {
+      "id": "proscons",
+      "label": "PROSCONS",
+      "family": "decide",
+      "scopes": ["arch", "prod"],
+      "effect": "List advantages and costs symmetrically.",
+      "triggers": ["pros and cons", "advantages", "downsides", "tradeoffs"]
+    },
+    {
+      "id": "swot",
+      "label": "SWOT",
+      "family": "decide",
+      "scopes": ["prod", "mkt"],
+      "effect": "Assess strengths, weaknesses, opportunities and threats.",
+      "triggers": ["swot", "strategic position", "market position"]
+    },
+    {
+      "id": "compare",
+      "label": "COMPARE",
+      "family": "decide",
+      "scopes": ["arch", "eng", "prod"],
+      "effect": "Compare candidates against fixed criteria rather than impressions.",
+      "triggers": ["compare", "versus", "vs", "which is better", "evaluate options"]
+    },
+    {
+      "id": "pareto",
+      "label": "PARETO",
+      "family": "decide",
+      "scopes": ["arch", "prod", "eng"],
+      "effect": "Identify the small share of work carrying most of the outcome.",
+      "triggers": ["pareto", "80/20", "biggest impact", "highest leverage"]
+    },
+    {
+      "id": "riskmap",
+      "label": "RISKMAP",
+      "family": "decide",
+      "scopes": ["arch", "eng"],
+      "effect": "Map risks by likelihood, consequence and detectability.",
+      "triggers": [
+        "risk",
+        "risks",
+        "what could go wrong",
+        "risk map",
+        "danger",
+        "blast radius",
+        "what breaks",
+        "impact of"
+      ]
+    },
+    {
+      "id": "secondorder",
+      "label": "SECONDORDER",
+      "family": "decide",
+      "scopes": ["arch", "eng"],
+      "effect": "Trace the consequences of the consequences.",
+      "triggers": ["second order", "knock on", "downstream effect", "side effect", "ripple"]
+    },
+    {
+      "id": "predict",
+      "label": "/predict",
+      "family": "decide",
+      "scopes": ["arch", "prod"],
+      "effect": "State what the change will cause, in falsifiable terms.",
+      "triggers": ["predict", "what will happen", "forecast", "expect"]
+    },
+    {
+      "id": "counter",
+      "label": "/counter",
+      "family": "decide",
+      "scopes": ["arch", "eng"],
+      "effect": "State the strongest counter-argument to the current direction.",
+      "triggers": ["counter argument", "argue against", "objection"]
+    },
+    {
+      "id": "steelman",
+      "label": "/steelman",
+      "family": "decide",
+      "scopes": ["arch", "eng"],
+      "effect": "Build the strongest honest version of the rejected option.",
+      "triggers": ["steelman", "best case for", "strongest argument"]
+    },
+    {
+      "id": "devilsadvocate",
+      "label": "/devilsadvocate",
+      "family": "decide",
+      "scopes": ["arch", "eng"],
+      "effect": "Argue the opposing position in good faith.",
+      "triggers": ["devil’s advocate", "devils advocate", "argue the other side"]
+    },
+    {
+      "id": "debate",
+      "label": "/debate",
+      "family": "decide",
+      "scopes": ["arch", "prod"],
+      "effect": "Run both positions to a resolution rather than a summary.",
+      "triggers": ["debate", "both sides", "argue it out"]
+    },
+    {
+      "id": "killcritic",
+      "label": "KILLCRITIC",
+      "family": "decide",
+      "scopes": ["eng", "arch", "comm"],
+      "effect": "Critique without softening, naming what would actually fail.",
+      "triggers": ["brutal", "harsh critique", "tear it apart", "no sugarcoating", "be blunt"]
+    },
+    {
+      "id": "redteam",
+      "label": "REDTEAM",
+      "family": "decide",
+      "scopes": ["eng", "arch", "prod"],
+      "effect": "Attack the design as an adversary with real capability.",
+      "triggers": ["red team", "attack", "adversarial", "exploit", "hostile input", "abuse"]
+    },
+    {
+      "id": "critique",
+      "label": "/critique",
+      "family": "decide",
+      "scopes": ["eng", "arch", "prod", "comm"],
+      "effect": "Review against explicit criteria and report real defects.",
+      "triggers": ["critique", "review", "feedback", "assess quality"]
+    },
+    {
+      "id": "reverse",
+      "label": "/reverse",
+      "family": "decide",
+      "scopes": ["eng", "arch"],
+      "effect": "Work backwards from the failure state to the change that prevents it.",
+      "triggers": ["work backwards", "inversion", "prevent failure", "pre-mortem", "premortem"]
+    },
+    {
+      "id": "ooda",
+      "label": "OODA",
+      "family": "decide",
+      "scopes": ["eng"],
+      "effect": "Run short observe, orient, decide, act cycles under uncertainty.",
+      "triggers": ["ooda", "fast loop", "iterate quickly", "tight loop"]
+    },
+    {
+      "id": "quizme",
+      "label": "QUIZME",
+      "family": "learn",
+      "scopes": ["learn"],
+      "effect": "Test recall and understanding with graded questions.",
+      "triggers": ["quiz", "test me", "questions"]
+    },
+    {
+      "id": "flashcards",
+      "label": "FLASHCARDS",
+      "family": "learn",
+      "scopes": ["learn"],
+      "effect": "Produce spaced-repetition pairs.",
+      "triggers": ["flashcards", "memorise", "cards"]
+    },
+    {
+      "id": "testme",
+      "label": "TESTME",
+      "family": "learn",
+      "scopes": ["learn"],
+      "effect": "Assess mastery against stated objectives.",
+      "triggers": ["test me", "assess me", "check my understanding"],
+      "aliasOf": "QUIZME"
+    },
+    {
+      "id": "socratic",
+      "label": "SOCRATIC",
+      "family": "learn",
+      "scopes": ["learn"],
+      "effect": "Lead to the answer through questions rather than assertion.",
+      "triggers": ["socratic", "ask me questions", "guide me to"]
+    },
+    {
+      "id": "socratic-76",
+      "label": "/socratic",
+      "family": "learn",
+      "scopes": ["learn"],
+      "effect": "Lead to the answer through questions rather than assertion.",
+      "triggers": ["socratic method"],
+      "aliasOf": "SOCRATIC"
+    },
+    {
+      "id": "timeline",
+      "label": "TIMELINE",
+      "family": "learn",
+      "scopes": ["learn", "comm"],
+      "effect": "Order events or decisions chronologically with causes.",
+      "triggers": ["timeline", "history of", "chronology", "when did"]
+    },
+    {
+      "id": "coach",
+      "label": "/coach",
+      "family": "learn",
+      "scopes": ["learn"],
+      "effect": "Coach the operator toward doing the work themselves.",
+      "triggers": ["coach me", "help me improve", "mentor"]
+    },
+    {
+      "id": "insights",
+      "label": "/insights",
+      "family": "learn",
+      "scopes": ["learn", "arch"],
+      "effect": "Extract the transferable lessons from the work just done.",
+      "triggers": ["insights", "lessons learned", "takeaways", "what did we learn"]
+    },
+    {
+      "id": "tldr",
+      "label": "TLDR",
+      "family": "ship",
+      "scopes": ["fmt"],
+      "effect": "Give the shortest correct summary first.",
+      "triggers": ["tldr", "summary first", "in short", "bottom line"]
+    },
+    {
+      "id": "bullets",
+      "label": "BULLETS",
+      "family": "ship",
+      "scopes": ["fmt"],
+      "effect": "Return the result as bullet points.",
+      "triggers": ["bullets", "bullet points", "list it"]
+    },
+    {
+      "id": "table",
+      "label": "TABLE",
+      "family": "ship",
+      "scopes": ["fmt"],
+      "effect": "Return the result as a table with fixed columns.",
+      "triggers": ["table", "tabular", "columns", "matrix"]
+    },
+    {
+      "id": "checklist",
+      "label": "CHECKLIST",
+      "family": "ship",
+      "scopes": ["fmt", "eng"],
+      "effect": "Return the result as a verifiable checklist.",
+      "triggers": [
+        "checklist",
+        "check list",
+        "tick boxes",
+        "verification list",
+        "release checklist",
+        "before shipping",
+        "readiness"
+      ]
+    },
+    {
+      "id": "steps",
+      "label": "STEPS",
+      "family": "ship",
+      "scopes": ["fmt"],
+      "effect": "Return the result as ordered steps.",
+      "triggers": ["steps", "procedure", "how to", "instructions"]
+    },
+    {
+      "id": "stepbystep",
+      "label": "/stepbystep",
+      "family": "ship",
+      "scopes": ["fmt"],
+      "effect": "Return the result as ordered steps.",
+      "triggers": ["step by step", "one step at a time"],
+      "aliasOf": "STEPS"
+    },
+    {
+      "id": "outline",
+      "label": "/outline",
+      "family": "ship",
+      "scopes": ["fmt", "comm"],
+      "effect": "Return a structural outline before the prose.",
+      "triggers": ["outline", "structure", "skeleton"]
+    },
+    {
+      "id": "summary",
+      "label": "/summary",
+      "family": "ship",
+      "scopes": ["fmt", "comm"],
+      "effect": "Return a proportionate summary of the whole.",
+      "triggers": ["summarise", "summarize", "summary", "recap"]
+    },
+    {
+      "id": "keypoints",
+      "label": "/keypoints",
+      "family": "ship",
+      "scopes": ["fmt", "comm"],
+      "effect": "Return only the load-bearing points.",
+      "triggers": ["key points", "main points", "essentials"]
+    },
+    {
+      "id": "breakdown",
+      "label": "/breakdown",
+      "family": "ship",
+      "scopes": ["fmt", "eng", "arch"],
+      "effect": "Decompose the work into named parts with owners.",
+      "triggers": ["break it down", "breakdown", "decompose", "split into parts"]
+    },
+    {
+      "id": "convert",
+      "label": "/convert",
+      "family": "ship",
+      "scopes": ["fmt", "eng"],
+      "effect": "Convert between formats without losing governed meaning.",
+      "triggers": ["convert", "transform into", "change format"]
+    },
+    {
+      "id": "translate",
+      "label": "/translate",
+      "family": "ship",
+      "scopes": ["fmt", "comm"],
+      "effect": "Translate while preserving governed terminology.",
+      "triggers": ["translate", "in another language", "localise", "localize"]
+    },
+    {
+      "id": "debug",
+      "label": "DEBUG",
+      "family": "ship",
+      "scopes": ["eng"],
+      "effect": "Locate the defect by evidence and prove the repair.",
+      "triggers": [
+        "debug",
+        "bug",
+        "broken",
+        "fails",
+        "error",
+        "crash",
+        "not working",
+        "regression",
+        "fix",
+        "repair",
+        "failing",
+        "failure",
+        "defect",
+        "broken behaviour",
+        "misbehaving"
+      ]
+    },
+    {
+      "id": "explaincode",
+      "label": "EXPLAINCODE",
+      "family": "ship",
+      "scopes": ["eng", "learn"],
+      "effect": "Explain what existing code actually does, including its edge behaviour.",
+      "triggers": [
+        "explain the code",
+        "what does this code",
+        "read this function",
+        "code walkthrough"
+      ]
+    },
+    {
+      "id": "optimize",
+      "label": "OPTIMIZE",
+      "family": "ship",
+      "scopes": ["eng"],
+      "effect": "Improve a measured cost without changing contract behaviour.",
+      "triggers": [
+        "optimise",
+        "optimize",
+        "faster",
+        "performance",
+        "slow",
+        "latency",
+        "memory",
+        "too slow",
+        "speed up",
+        "reduce time",
+        "frame budget"
+      ]
+    },
+    {
+      "id": "systemrewrite",
+      "label": "/systemrewrite",
+      "family": "ship",
+      "scopes": ["arch", "eng"],
+      "effect": "Rebuild a subsystem deliberately with migration and rollback.",
+      "triggers": ["rewrite the system", "rebuild it", "from the ground up", "major refactor"]
+    },
+    {
+      "id": "autoprompt",
+      "label": "/autoprompt",
+      "family": "stack",
+      "scopes": ["arch", "eng", "prod"],
+      "effect": "Compose the method stack automatically from the request.",
+      "triggers": ["autoprompt", "choose the approach", "you decide how"]
+    },
+    {
+      "id": "godmode",
+      "label": "/godmode",
+      "family": "stack",
+      "scopes": ["arch", "eng", "prod"],
+      "effect": "Apply full appropriate rigour within scope. Never unlimited scope or unsupported claims.",
+      "triggers": [
+        "godmode",
+        "god mode",
+        "maximum rigour",
+        "maximum rigor",
+        "absolutely perfect",
+        "everything you can"
+      ]
+    }
+  ]
+}

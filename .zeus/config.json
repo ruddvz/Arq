@@ -1,5 +1,5 @@
 {
-  "version": "4.0.0",
+  "version": "5.0.0",
   "project": "Arq",
   "mode": "adaptive-fast",
   "nodeMinimum": 18,
@@ -8,22 +8,25 @@
       "modules": 1,
       "sources": 4,
       "contextChars": 8000,
-      "contractChars": 700,
-      "repairRounds": 2
+      "contractChars": 900,
+      "repairRounds": 2,
+      "supportingMethods": 2
     },
     "standard": {
       "modules": 4,
       "sources": 10,
       "contextChars": 28000,
-      "contractChars": 1500,
-      "repairRounds": 3
+      "contractChars": 1800,
+      "repairRounds": 3,
+      "supportingMethods": 4
     },
     "deep": {
       "modules": 8,
       "sources": 24,
       "contextChars": 80000,
-      "contractChars": 3000,
-      "repairRounds": 5
+      "contractChars": 3200,
+      "repairRounds": 5,
+      "supportingMethods": 8
     }
   },
   "cache": {
@@ -56,5 +59,31 @@
     "build": 600000,
     "ciPoll": 900000
   },
-  "status": ["green", "partial", "blocked", "failed", "rolled_back"]
+  "status": ["green", "partial", "blocked", "failed", "rolled_back"],
+  "evidenceStates": [
+    "verified",
+    "partially-verified",
+    "inferred",
+    "assumed",
+    "blocked",
+    "not-inspected",
+    "failed"
+  ],
+  "greenEvidenceStates": ["verified"],
+  "sourceAuthority": [
+    "current working tree and repository head",
+    "executed checks, tests, schemas, migrations and measured benchmarks",
+    "accepted ADRs and the Engineering OS classification for the diff under review",
+    "current product and architecture specifications",
+    "planning packages, prompt packs and historical documents"
+  ],
+  "authorityNotes": {
+    "recencyIsNotAuthority": "A newer document does not outrank an older one by date alone.",
+    "specificationIsNotProof": "A specification states intent. Only executed evidence states behaviour.",
+    "conflictsAreNotResolvedSilently": "Record the conflict and keep the weaker claim until an owner resolves it."
+  },
+  "gate": {
+    "authority": "engineering-os-5",
+    "note": "Zeus classifies, routes and produces local evidence. It may raise a lane or add impacts. It may never lower a lane, mark missing evidence as passed, or stand in for the engineering-gate workflow."
+  }
 }

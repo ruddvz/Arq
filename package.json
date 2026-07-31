@@ -64,7 +64,11 @@
     "arq:language:site:live:verify": "node scripts/verify-arq-deployed-public-site.mjs --language-root docs/product/voice",
     "arq:language:impact": "node scripts/arq-copy-impact-report.mjs",
     "arq:language:bundle": "node scripts/build-arq-language-context.mjs --language-root docs/product/voice --repo-context docs/product/voice/generated-repo-context.json --output docs/product/voice/language-context.json",
-    "arq:language:bundle:verify": "node scripts/verify-arq-language-bundle.mjs --context docs/product/voice/language-context.json"
+    "arq:language:bundle:verify": "node scripts/verify-arq-language-bundle.mjs --context docs/product/voice/language-context.json",
+    "zeus": "node scripts/zeus.mjs",
+    "zeus:verify": "node scripts/zeus-verify.mjs",
+    "zeus:validate": "node scripts/zeus-validate.mjs",
+    "zeus:test": "bash scripts/test-zeus-system.sh"
   },
   "devDependencies": {
     "canvaskit-wasm": "^0.41.1",

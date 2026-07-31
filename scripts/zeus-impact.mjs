@@ -2,7 +2,8 @@
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { route } from './lib/zeus-engine.mjs';
+import { route, classifyPaths, globToRe, blastRadius } from './lib/zeus-engine.mjs';
+
 const a = process.argv.slice(2);
 const val = (n) => {
   const i = a.indexOf(`--${n}`);
@@ -11,6 +12,7 @@ const val = (n) => {
 const root = val('root') ?? process.cwd();
 const packageRoot = dirname(dirname(new URL(import.meta.url).pathname));
 const map = JSON.parse(readFileSync(join(packageRoot, '.zeus', 'impact-map.json'), 'utf8'));
+
 let files = [];
 if (val('files')) files = val('files').split(',').filter(Boolean);
 else {
@@ -21,33 +23,64 @@ else {
     .map((x) => x.slice(3).trim())
     .filter(Boolean);
 }
-const globToRe = (g) =>
-  new RegExp(
-    '^' +
-      g
-        .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-        .replaceAll('**', '§')
-        .replaceAll('*', '[^/]*')
-        .replaceAll('§', '.*') +
-      '$',
-  );
-const modules = new Set(),
-  checks = new Set();
-let risk = 'low';
+
+const modules = new Set();
+const checks = new Set();
 const rank = { low: 0, moderate: 1, high: 2, critical: 3 };
+const radiusRank = Object.fromEntries(blastRadius.levels.map((l) => [l.id, l.rank]));
+const reversibilityRank = Object.fromEntries(blastRadius.reversibility.map((r) => [r.id, r.rank]));
+
+let risk = 'low';
 for (const f of files) {
   for (const p of map.patterns) {
-    if (globToRe(p.glob).test(f)) {
-      for (const m of p.modules) modules.add(m);
-      for (const c of p.checks) checks.add(c);
-      if (rank[p.risk] > rank[risk]) risk = p.risk;
-    }
+    if (!globToRe(p.glob).test(f)) continue;
+    for (const m of p.modules) modules.add(m);
+    for (const c of p.checks) checks.add(c);
+    if (rank[p.risk] > rank[risk]) risk = p.risk;
   }
 }
+
+// Zeus 5: the changed paths themselves carry a blast radius and a reversibility
+// cost, independent of how the task was worded.
+const fromPaths = classifyPaths(files);
+let blast = fromPaths.blastRadius;
+let reversibility = fromPaths.reversibility;
+
 const task = val('task');
+let fromTask = null;
 if (task) {
   const r = route(task);
+  fromTask = {
+    mode: r.mode,
+    risk: r.risk,
+    tier: r.tier,
+    blastRadius: r.blastRadius,
+    reversibility: r.reversibility,
+  };
   for (const m of r.modules) modules.add(m.id);
   if (rank[r.risk] > rank[risk]) risk = r.risk;
+  if (radiusRank[r.blastRadius] > radiusRank[blast]) blast = r.blastRadius;
+  if (reversibilityRank[r.reversibility] > reversibilityRank[reversibility])
+    reversibility = r.reversibility;
 }
-console.log(JSON.stringify({ files, modules: [...modules], checks: [...checks], risk }, null, 2));
+
+// Blast radius can raise risk. It never lowers it.
+if (radiusRank[blast] >= radiusRank.persistent && rank[risk] < rank.high) risk = 'high';
+if (reversibility === 'irreversible' && rank[risk] < rank.high) risk = 'high';
+
+console.log(
+  JSON.stringify(
+    {
+      files,
+      modules: [...modules],
+      checks: [...checks],
+      risk,
+      blastRadius: blast,
+      reversibility,
+      fromPaths,
+      fromTask,
+    },
+    null,
+    2,
+  ),
+);

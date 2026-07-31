@@ -1,5 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.dev/schemas/zeus/compact-contract-5.json",
+  "title": "Zeus 5 compact contract",
   "type": "object",
   "required": [
     "version",
@@ -8,7 +10,10 @@
     "risk",
     "tier",
     "deliveryStop",
+    "blastRadius",
+    "reversibility",
     "modules",
+    "methods",
     "owner",
     "acceptance",
     "checks",
@@ -16,14 +21,14 @@
   ],
   "properties": {
     "version": {
-      "const": "4.0.0"
+      "const": "5.0.0"
     },
     "intent": {
       "type": "string",
       "maxLength": 320
     },
     "mode": {
-      "type": "string"
+      "enum": ["answer", "plan", "audit", "implement", "release", "incident"]
     },
     "risk": {
       "enum": ["low", "moderate", "high", "critical"]
@@ -32,12 +37,42 @@
       "enum": ["fast", "standard", "deep"]
     },
     "deliveryStop": {
-      "type": "string"
+      "enum": [
+        "answer",
+        "plan",
+        "local-green",
+        "pr-open",
+        "ci-green",
+        "merged",
+        "production-verified"
+      ]
+    },
+    "blastRadius": {
+      "enum": ["local", "package", "product", "persistent", "public", "production"]
+    },
+    "reversibility": {
+      "enum": ["reversible", "compensable", "irreversible"]
     },
     "modules": {
       "type": "array",
       "items": {
         "type": "string"
+      }
+    },
+    "modulePaths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "methods": {
+      "type": "object",
+      "required": ["primary", "supporting", "formatting", "scopes"],
+      "properties": {
+        "primary": { "type": "string" },
+        "supporting": { "type": "array", "items": { "type": "string" } },
+        "formatting": { "type": "array", "items": { "type": "string" } },
+        "scopes": { "type": "array", "items": { "type": "string" } }
       }
     },
     "owner": {
@@ -49,6 +84,19 @@
         "type": "string"
       }
     },
+    "reviewAgents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Subagents under .claude/agents/ that must run an independent pass at this tier."
+    },
+    "scope": {
+      "type": "array"
+    },
+    "nonGoals": {
+      "type": "array"
+    },
     "acceptance": {
       "type": "array"
     },
@@ -56,7 +104,11 @@
       "type": "array"
     },
     "budget": {
-      "type": "object"
+      "type": "object",
+      "required": ["modules", "sources", "contextChars", "repairRounds", "supportingMethods"]
+    },
+    "cachePolicy": {
+      "type": "string"
     }
   },
   "additionalProperties": true

@@ -1,4 +1,15 @@
 {
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Read(./.env.production)",
+      "Read(./**/secrets.*)",
+      "Read(./**/credentials.*)",
+      "Read(./**/id_rsa*)",
+      "Read(./**/*.pem)"
+    ]
+  },
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -6,6 +17,18 @@
           {
             "type": "command",
             "command": "bash scripts/zeus-hook.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/pre-tool-guard.cjs",
+            "timeout": 5
           }
         ]
       }
@@ -18,6 +41,22 @@
             "type": "command",
             "command": "node scripts/arq-language-guardian.mjs",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/post-write-invariant-guard.cjs",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/stop-evidence-check.cjs",
+            "timeout": 10
           }
         ]
       }

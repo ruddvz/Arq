@@ -1,30 +1,44 @@
 # Arq — Claude Code instructions
 
-**Zeus 4.0 is active for this repository.** Before any actionable work — a fix, a
+**Zeus 5.0 is active for this repository.** Before any actionable work — a fix, a
 feature, a review, a GitHub action — load `.zeus/FAST-KERNEL.md` first. Do not load
 the rest of `.zeus/` by default.
 
-1. Classify the task's tier (fast / standard / deep) and route only the modules under
-   `.zeus/modules/` that tier allows. Use `node scripts/zeus.mjs route --task "..."` to
-   check routing if uncertain.
+1. Classify the task on four axes: mode, risk, blast radius and reversibility. Tier
+   (fast / standard / deep) follows from them, and blast radius or reversibility may
+   raise it. Route only the modules under `.zeus/modules/` that the tier allows. Check
+   with `node scripts/zeus.mjs compile --task "..."` if uncertain.
 2. Use the project index (`node scripts/zeus.mjs context --query "..."`) for ranked
    evidence instead of reading the whole repository.
-3. Execute the smallest complete slice to the requested delivery stop.
+3. Execute the smallest complete slice to the requested delivery stop, and do not pass
+   it. A `local-green` task does not open a pull request.
 4. Run the adaptive check ladder for that tier (`node scripts/zeus.mjs check --tier
 <tier>`); never accept cached evidence for security, `.arq`, migration, recovery,
    release, CI, deployment, production or incident work.
-5. Report real, verified status only: green, partial, blocked or failed.
+5. Report each claim with its evidence state: verified, partially-verified, inferred,
+   assumed, blocked, not-inspected or failed. Only verified is green. Record claims
+   with `node scripts/zeus.mjs evidence` when the run is standard or deep.
+
+The 85 Arq invariants live in one place, `.zeus/INVARIANTS.md`. Modules apply them to a
+domain and the reviewer agents in `.claude/agents/` verify against them. Do not restate
+them elsewhere.
 
 A `UserPromptSubmit` hook (`.claude/settings.json` → `scripts/zeus-hook.sh`) compiles and
 echoes back the actual Zeus contract for every actionable prompt — mode, risk, tier,
-delivery stop, owner/reviewers, routed modules, acceptance criteria and checks (via
-`node scripts/zeus-fast-compile.mjs --task "..."`) — so what Zeus decided is always
-visible, not silent. It stays quiet only on acknowledgements, `/zeus-*` slash commands
-(which already carry their own contract), and automation/webhook payloads.
+blast radius, reversibility, delivery stop, owner, reviewers, routed modules, method
+stack, acceptance criteria and checks — so what Zeus decided is always visible, not
+silent. It stays quiet only on acknowledgements, `/zeus-*` slash commands (which already
+carry their own contract), and automation/webhook payloads.
 
-Full specification: `.zeus/ZEUS.md`. Domain rules: `.zeus/modules/`. Slash commands:
-`/zeus`, `/zeus-audit`, `/zeus-handoff`, `/zeus-design`, `/zeus-incident`,
-`/zeus-release`.
+Two deterministic guards run alongside it: `.claude/hooks/pre-tool-guard.cjs` blocks
+destructive commands, secret access and edits to real project containers (ArqScript
+`.arq` sources and fixtures stay editable), and `.claude/hooks/stop-evidence-check.cjs`
+blocks a completion claim made with no tool evidence at all. Both are pinned by
+`node scripts/zeus-guard-test.mjs`.
+
+Full specification: `.zeus/ZEUS.md`. What changed from Zeus 4: `.zeus/UPGRADE-4-TO-5.md`.
+Slash commands: `/zeus`, `/zeus-audit`, `/zeus-handoff`, `/zeus-design`,
+`/zeus-incident`, `/zeus-release`.
 
 **Zeus is advisory, not merge authority.** Deterministic change classification,
 evidence selection, and approval gating belong to Engineering OS 5.0
@@ -36,8 +50,9 @@ evidence as passed, or stand in for the gate — see
 ## Z Voice (Arq Language System 4.1)
 
 The governed vocabulary lives under `docs/product/voice/` and is enforced by the
-`language-system` CI job and the Pages deployment gates. Standing rules for
-every session, human or AI:
+`language-system` CI job and the Pages deployment gates. The Language System, not Zeus,
+owns public and product wording: Zeus reports a wording defect and never re-decides the
+vocabulary. Standing rules for every session, human or AI:
 
 1. Any change that touches a governed source set (the 29 sets listed in
    `docs/product/voice/context-contract.json`: STATUS.md, README.md, ADRs,
@@ -51,6 +66,9 @@ every session, human or AI:
    (`scripts/arq-language-guardian.mjs`, wired as a `PostToolUse` hook) and
    blocked at CI time by `pnpm arq:language:audit:ci`. Do not bypass a guardian
    warning; fix the wording or record a reviewed acknowledgement.
+   `.claude/hooks/post-write-invariant-guard.cjs` runs beside it and covers only the
+   product-safety absolutes the Language System does not already carry, on files
+   outside the guardian's scope, so the two never double-report.
 3. Before pushing a change that affects public copy, product state language or
    the registries, run the ladder: `pnpm arq:language:sources:verify` through
    `pnpm arq:language:audit:ci` (order in

@@ -2,6 +2,14 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.."&&pwd)";TMP="$(mktemp -d)";trap 'rm -rf "$TMP"' EXIT;cd "$ROOT"
 node scripts/zeus-verify.mjs;bash scripts/test-zeus-hook.sh
+node scripts/zeus-validate.mjs
+node scripts/zeus-classification-test.mjs
+node scripts/zeus-guard-test.mjs
+node scripts/zeus.mjs evidence init --root "$TMP" --task 'system test' >/dev/null
+node scripts/zeus.mjs evidence add --root "$TMP" --claim 'checks ran' --state verified --command 'true' --exit 0 >/dev/null
+node scripts/zeus.mjs evidence report --root "$TMP" >/dev/null
+node scripts/zeus.mjs evidence add --root "$TMP" --claim 'unseen surface' --state not-inspected --reason 'no capability check' >/dev/null
+if node scripts/zeus.mjs evidence report --root "$TMP" >/dev/null;then echo 'evidence ledger graded an uninspected claim as green' >&2;exit 1;fi
 node scripts/zeus.mjs compile --task 'Fix a README typo' --format json >"$TMP/fast.json";node -e "const x=require('$TMP/fast.json');if(x.tier!=='fast'||x.modules.length>1||JSON.stringify(x).length>4000)process.exit(1)"
 node scripts/zeus.mjs compile --task 'Fix .arq migration recovery, open a PR, merge and deploy to production' --format json >"$TMP/deep.json";node -e "const x=require('$TMP/deep.json');if(x.tier!=='deep'||x.deliveryStop!=='production-verified'||!x.modules.includes('arqfs'))process.exit(1)"
 node scripts/zeus.mjs route --task 'Build pixel-perfect accessible tablet editor' >"$TMP/route.json";node -e "const x=require('$TMP/route.json');if(!x.modules.some(m=>m.id==='ui-visual'))process.exit(1)"
@@ -17,4 +25,4 @@ node "$ROOT/scripts/zeus-check.mjs" --root "$TMP/repo" --tier fast --task 'fix w
 node "$ROOT/scripts/zeus-benchmark.mjs" --root "$TMP/repo" --iterations 200 >"$TMP/bench.json" || test $? -eq 3
 node -e "const x=require('$TMP/bench.json');if(x.fastContractJsonChars>4000||x.inProcessCompileAndRouteMs.p95>20)process.exit(1)"
 cd "$ROOT";node scripts/zeus-architecture-lint.mjs quality/architecture-clean;if node scripts/zeus-architecture-lint.mjs quality/architecture-bad >/dev/null 2>&1;then exit 1;fi;node scripts/zeus-security-lint.mjs quality/fixtures/security-clean;if node scripts/zeus-security-lint.mjs quality/fixtures/security-bad >/dev/null 2>&1;then exit 1;fi
-mkdir -p "$TMP/target/docs";cp "$TMP/repo/package.json" "$TMP/target/package.json";printf 'human\n' >"$TMP/target/AGENTS.md";bash scripts/install-zeus.sh "$TMP/target" >/dev/null;grep -q human "$TMP/target/AGENTS.md";bash "$TMP/target/scripts/uninstall-zeus.sh" "$TMP/target" >/dev/null;[ ! -f "$TMP/target/.zeus/FAST-KERNEL.md" ];echo 'Zeus 4 full system tests passed.'
+mkdir -p "$TMP/target/docs";cp "$TMP/repo/package.json" "$TMP/target/package.json";printf 'human\n' >"$TMP/target/AGENTS.md";bash scripts/install-zeus.sh "$TMP/target" >/dev/null;grep -q human "$TMP/target/AGENTS.md";bash "$TMP/target/scripts/uninstall-zeus.sh" "$TMP/target" >/dev/null;[ ! -f "$TMP/target/.zeus/FAST-KERNEL.md" ];echo 'Zeus 5 full system tests passed.'

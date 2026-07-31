@@ -6,10 +6,13 @@ const [cmd, ...args] = process.argv.slice(2);
 const map = {
   compile: 'zeus-fast-compile.mjs',
   route: 'zeus-module-route.mjs',
+  method: 'zeus-method.mjs',
+  evidence: 'zeus-evidence.mjs',
   index: 'zeus-index.mjs',
   context: 'zeus-context.mjs',
   impact: 'zeus-impact.mjs',
   check: 'zeus-check.mjs',
+  validate: 'zeus-validate.mjs',
   doctor: 'zeus-doctor.mjs',
   preflight: 'zeus-preflight.mjs',
   release: 'zeus-release-gate.mjs',
