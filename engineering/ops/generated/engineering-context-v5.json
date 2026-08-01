@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "982b732c4ec6db3b72ebfd8f60eca60d3f35c6fbdb967afe2b2f7ee49d177c11",
+  "source_hash": "a277aa284f0806c1cd270ddaeffc76527060515c450d8be81998673b9a76e4e5",
   "source_records": [
     {
       "scope": "package",
@@ -204,12 +204,12 @@
     {
       "scope": "repository",
       "path": "apps/web/src/App.tsx",
-      "sha256": "6ef0c224b6a68dd76d48ebbb2567c772621285fadc20fc269650ada3720331e4"
+      "sha256": "b19eec3df2ebaa42f77a3639cd0d7c6e70e661623d887fc3e6511d1ed0997313"
     },
     {
       "scope": "repository",
       "path": "apps/web/src/canvas/plan-journal.ts",
-      "sha256": "fa92b9977eb9c284e40ad837cc8e4d3287245040e563c508385677b5bc28d37d"
+      "sha256": "bdfa26aa1dd2349739896b72d79ff0b3185c8fc6a1a8486548db83a9740fdebc"
     },
     {
       "scope": "repository",

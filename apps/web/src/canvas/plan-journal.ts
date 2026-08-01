@@ -49,10 +49,28 @@ function nextOperationId(kind: string): string {
   return `${kind}-${sessionToken}-${operationCounter}`;
 }
 
+/**
+ * Why a write failed, as a value rather than as prose.
+ *
+ * The `reason` below is written for a person, so a caller that wants to react
+ * differently to a full disk than to an unrecognised error would have to
+ * pattern-match English to do it. `cause` is what the UI branches on; `reason`
+ * is what it may show.
+ */
+export type PlanJournalWriteFailureCause =
+  /** The browser refused more storage. The user can act on this: free space, or export. */
+  | 'storage-full'
+  /** Anything else, including a database that closed underneath the write. */
+  | 'unknown';
+
 export type PlanJournalState =
   | { readonly status: 'ready' }
   | { readonly status: 'unavailable'; readonly reason: string }
-  | { readonly status: 'write-failed'; readonly reason: string };
+  | {
+      readonly status: 'write-failed';
+      readonly cause: PlanJournalWriteFailureCause;
+      readonly reason: string;
+    };
 
 export interface PlanJournal {
   /** Replays the journal for `projectId`, returning the recovered document. */
@@ -121,11 +139,12 @@ export function createPlanJournal(
       if (result.status === 'quota-exceeded') {
         return {
           status: 'write-failed',
+          cause: 'storage-full',
           reason:
             'The browser refused more local storage (quota exceeded). Your change is applied but not journalled; free space or export your work.',
         };
       }
-      return { status: 'write-failed', reason: describeError(result.error) };
+      return { status: 'write-failed', cause: 'unknown', reason: describeError(result.error) };
     },
 
     onUnavailable(listener) {

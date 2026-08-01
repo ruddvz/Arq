@@ -367,8 +367,17 @@ export function App(): JSX.Element {
         setJournalLabel('Journal current');
       } else {
         setSaveState('unsaved-changes');
+        // The journal already worked out why, and a full disk is the one
+        // failure the user can do something about. Collapsing every write
+        // failure to the same four words threw that away: it told someone
+        // their work was not being kept without telling them the reason they
+        // could act on.
         setJournalLabel(
-          state.status === 'unavailable' ? 'Journal unavailable' : 'Journal write failed',
+          state.status === 'unavailable'
+            ? 'Journal unavailable'
+            : state.cause === 'storage-full'
+              ? 'Journal write failed: device storage is full'
+              : 'Journal write failed',
         );
       }
     });
