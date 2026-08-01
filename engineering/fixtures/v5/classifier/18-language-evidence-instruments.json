@@ -1,0 +1,15 @@
+{
+  "_comment": "The hard language gate is enforced by scripts/arq-language-audit.mjs. Without an instrument rule, editing that script never selected language_contract, so the audit could be relaxed in a change the audit was not run against.",
+  "files": [
+    "scripts/arq-language-audit.mjs",
+    "scripts/verify-arq-language-context.mjs",
+    "scripts/refresh-arq-language-context.mjs"
+  ],
+  "expected": {
+    "lane": "L4",
+    "confidence": "high",
+    "impactsInclude": ["ci_control"],
+    "impactsExclude": ["unknown_runtime_surface"],
+    "evidenceInclude": ["language_contract", "policy_validation"]
+  }
+}

@@ -16,9 +16,9 @@ file in the same change._
 
 ## What is real today
 
-Verified by `pnpm typecheck` (36/36 packages plus `contracts/`),
+Verified by `pnpm typecheck` (37/37 packages plus `contracts/`),
 `pnpm lint` (real eslint gate over the whole repository), `pnpm test`
-(230+ files, ~2,000 tests) and CI (`.github/workflows/`: format, lint,
+(259 files, 2,353 tests) and CI (`.github/workflows/`: format, lint,
 typecheck, tests, workspace-registry check, licence/SBOM gate, secret scan,
 explicit build gate, Rust fmt/clippy/test, six headless-Chromium capability
 checks, weekly render benchmark).
@@ -26,7 +26,14 @@ checks, weekly render benchmark).
 - **`.arq` file format** (`packages/arqfs`): schema v1/v2, capability-gated
   open, byte preflight, copy-on-write migration with reopen+integrity
   verification, recovery reporting, fuzz tests. Library-complete; not yet
-  reachable from the product (no open-project pipeline).
+  reachable from the product (no open-project pipeline). Preflight now reports
+  whether the bytes it was handed are the whole database: a write-ahead-log
+  project keeps its newest commits in a `-wal` sidecar that a file picker does
+  not supply, and SQLite reads such a file without the sidecar as of its last
+  checkpoint rather than failing - so the file-open surface says "compatible"
+  and "may not be complete" as the separate facts they are. A failed migration
+  can now be quarantined instead of deleted, because the half-migrated copy is
+  the only evidence of a bug that corrupts projects during upgrade.
 - **Workspace shell** (`apps/web` + `packages/workspace` +
   `packages/design-system`): the full open-project surface - top bar, tabs,
   mode/tool rails, browser/inspector panels, command palette, status bar,
@@ -104,6 +111,32 @@ surface may state as current, and `pnpm arq:language:verify` plus the
 (`docs/product/voice/generated-repo-context.json`) is hashed from the sources
 listed in `context-contract.json`: change one of them and refresh it in the
 same commit, because CI fails on a stale context and never regenerates it.
+
+## Gate integrity
+
+The Engineering OS 5.0 gate (`engineering/`,
+`.github/workflows/engineering-gate.yml`) runs in shadow mode and is not yet a
+required check. Three holes in it are now closed, each proven by running the
+real tooling rather than by inspection:
+
+- **The gate's own instruments are classified.** The scripts that produce and
+  check evidence used to classify as `unknown_runtime_surface`, so a change to
+  `scripts/verify-arq-core-wasm-parity.mjs` selected `format`, `lint`,
+  `typecheck`, `unit` and `build` - and never `wasm_parity`. An instrument can
+  no longer be weakened in the change it was meant to measure. Pinned by
+  classifier fixtures 17 and 18.
+- **The wasm evidence can pass.** `wasm_parity` and `worker_core` both read
+  `rust/arq-core/pkg`, a deliberately uncommitted build artifact that no
+  workflow built, so both failed at "pkg does not exist" for every change that
+  selected them - measuring the runner, not the diff. `pnpm rust:build-wasm`
+  now provisions its own toolchain (version read from `rust/Cargo.lock`) and
+  runs ahead of both.
+- **The live workflows are checked, not their templates.**
+  `verify-workflow-controls.mjs` replaces a script that read reference
+  templates this repository correctly never installed, threw `ENOENT` on every
+  invocation and was wired to nothing. It now asserts 15 controls against the
+  workflows named by `installation-map.v5.json`, including the gate's own, and
+  runs in the gate's preflight job.
 
 ## Open decisions
 

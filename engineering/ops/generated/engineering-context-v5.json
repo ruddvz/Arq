@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "56a3df806a70fb2e71e56247d7ec9200f01ca283b1d2af23234adad3c372a95a",
+  "source_hash": "0e89bc5babc7e5a85926cb9091e2fb4351dfea35ebefddad1df3969febedc67f",
   "source_records": [
     {
       "scope": "package",
@@ -54,7 +54,7 @@
     {
       "scope": "package",
       "path": "ops/change-map.v5.json",
-      "sha256": "001710d712994466e7e76969228209ce3c6792604785cf729a4e32dc3269ed0d"
+      "sha256": "cd04af2b3dbdbd802a2fde26b346a6a379a4484dbad3b1881d3a9de7e2a3b0f1"
     },
     {
       "scope": "package",
@@ -74,7 +74,7 @@
     {
       "scope": "package",
       "path": "ops/evidence-catalog.v5.json",
-      "sha256": "c0b5255e629c95ad474f51931a3c9b023ab7fc7dcf7090f916ce27b6491d3bcf"
+      "sha256": "3809d0f42f1f4ed73346fe55820ca781bd184576992f28df6453d1341127d241"
     },
     {
       "scope": "package",
@@ -94,12 +94,12 @@
     {
       "scope": "repository",
       "path": ".github/workflows/deploy-pages.yml",
-      "sha256": "1a80998720aefcf0e3eeeb823a9c4f49541fd895cee3ce8b9861164e4d0c3e6e"
+      "sha256": "da0296bd967e4ffd911ca9c8a833a078c28dd2896c2e177b1f3a2274ef0433d7"
     },
     {
       "scope": "repository",
       "path": ".github/workflows/engineering-gate.yml",
-      "sha256": "73e23368a897b8b00fcc3cb33a7dcb4a59fa3386a5ec36149335a52069a31662"
+      "sha256": "c9407668ea46527fcc37da89af3924369fd4b2fa16aeba7c77c8fe0780bf1351"
     },
     {
       "scope": "repository",
@@ -214,7 +214,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
-      "sha256": "fc475a584b2a500b93253fb64863462bff707075eda79ba29b52fc09ef862296"
+      "sha256": "8151fe0dd49168eb8d4fc1b88fb40ff83a2a75ecdaef7cda08e16c4cd9b0f2ef"
     },
     {
       "scope": "repository",
@@ -369,7 +369,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "2fe9b0042f74754f3804c3788c4262e24c97be0dcc3a752513c408e7c27e3ae0"
+      "sha256": "24fa77f5a41014a0e144eaa3f669412195c330ea291e2845c624936fcd481ca4"
     },
     {
       "scope": "repository",
@@ -469,12 +469,12 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-migration.test.ts",
-      "sha256": "9a28cbf956d554cef163a39adc1de4d3318aa1cd9299d71ba87a3225f3e71b34"
+      "sha256": "bea446b18d9aedc78709e28114b5ba2e2d9fbe4e8dc5e9805ddf48d737ce5da1"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-migration.ts",
-      "sha256": "1c7d29c309fb565d5b6e9655c51363e31aa23829360a3ea93b3aa91236238bd6"
+      "sha256": "201da35d293d3326cca938b706d819ef6f376771724826f067e983102106dc08"
     },
     {
       "scope": "repository",
@@ -514,17 +514,17 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-preflight-fixtures.test.ts",
-      "sha256": "d86802536e62c00b213bd9cc0ff707c7caa3687a047634f728b85cc67c49504f"
+      "sha256": "4a5e74ee7329f5d0cb555381bba191a6d8c1bea779d4067e644fd9170fa83afe"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-preflight.test.ts",
-      "sha256": "120d5c221b7a409ae6aa62f72db722e1321c42a0e21c2537ca8a6750e7f2096b"
+      "sha256": "4301fd3322a83193a05497ce8314e9f29a4bb82756f9c4e420a5239ff49e6fb7"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-preflight.ts",
-      "sha256": "c7a9c5506f3021cee11f6e221f9145574c72a3cc90c6ac9c1d52ad41128be266"
+      "sha256": "09976dde1e6bbaa94d9f37e20a2dafab50c7d28f3bbd5a4bfb49051335451783"
     },
     {
       "scope": "repository",
@@ -769,7 +769,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "bd8ec16ff1fdd32cbfbddaf0f0e3a746415855ab669a636ea17de501f02376ff"
+      "sha256": "4f3dfcb72185632fdd174dc12b04c4e656aac8aee5b622ca43005d848fe50fcf"
     },
     {
       "scope": "repository",

@@ -23,6 +23,35 @@ export const DEFAULT_ARQFS_PREFLIGHT_POLICY: ArqfsPreflightPolicy = {
   maxPageCount: 16_777_216,
 };
 
+/**
+ * How the file records transactions, read from the header's file-format write
+ * and read versions (offsets 18 and 19). SQLite writes 1 for a rollback journal
+ * and 2 for a write-ahead log.
+ */
+export type ArqfsJournalMode = 'rollback-journal' | 'write-ahead-log';
+
+/**
+ * Whether these bytes are the whole database.
+ *
+ * A rollback-journal database is complete in one file. A write-ahead-log
+ * database is not: every transaction committed since the last checkpoint lives
+ * in a `-wal` sidecar next to it. SQLite opened against the main file with that
+ * sidecar missing does not fail - it reads as though the log were empty and
+ * returns the database as of the last checkpoint.
+ *
+ * That silence is reachable from Arq's own open path. A browser file picker
+ * hands over exactly one file, so a user who picks `project.arq` can be shown a
+ * compatible, accepted, apparently healthy project that is missing their most
+ * recent saved work, with nothing anywhere reporting a problem. Preflight
+ * cannot repair it - the missing bytes were never handed over - so it reports
+ * the dependency and leaves the open path to say so.
+ */
+export type ArqfsSidecarDependency =
+  /** Everything committed to this database is inside these bytes. */
+  | 'complete'
+  /** Newer commits may live in a `-wal` sidecar that is not part of these bytes. */
+  | 'write-ahead-log-sidecar';
+
 export type ArqfsBytePreflightResult =
   | {
       readonly status: 'accepted';
@@ -32,6 +61,8 @@ export type ArqfsBytePreflightResult =
       readonly schemaVersion: number;
       readonly writeVersion: 1 | 2;
       readonly readVersion: 1 | 2;
+      readonly journalMode: ArqfsJournalMode;
+      readonly sidecarDependency: ArqfsSidecarDependency;
     }
   | { readonly status: 'rejected'; readonly code: string; readonly reason: string };
 
@@ -146,6 +177,13 @@ export function preflightArqfsBytes(
   }
   const estimatedPageCount =
     declaredPageCount > 0 ? declaredPageCount : Math.ceil(bytes.byteLength / pageSize);
+  // Either version reading 2 is treated as a write-ahead log. SQLite sets both
+  // together, so they normally agree; when they do not, the file is odd enough
+  // that assuming the sidecar might matter is the safer of the two readings -
+  // the cost of an unnecessary caution is a sentence, and the cost of a missed
+  // one is silently showing stale work.
+  const journalMode: ArqfsJournalMode =
+    writeVersion === 2 || readVersion === 2 ? 'write-ahead-log' : 'rollback-journal';
   return {
     status: 'accepted',
     pageSize,
@@ -154,5 +192,7 @@ export function preflightArqfsBytes(
     schemaVersion,
     writeVersion: writeVersion as 1 | 2,
     readVersion: readVersion as 1 | 2,
+    journalMode,
+    sidecarDependency: journalMode === 'write-ahead-log' ? 'write-ahead-log-sidecar' : 'complete',
   };
 }

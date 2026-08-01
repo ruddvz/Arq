@@ -58,6 +58,9 @@ describe('preflight against real on-disk fixtures', () => {
     expect(result.writeVersion).toBe(1);
     expect(result.readVersion).toBe(1);
     expect(result.applicationId).toBe(0x41525131);
+    // One file is the whole database, so there is nothing further to warn about.
+    expect(result.journalMode).toBe('rollback-journal');
+    expect(result.sidecarDependency).toBe('complete');
   });
 
   it('accepts a file left in WAL mode, which declares file format version 2', () => {
@@ -68,6 +71,22 @@ describe('preflight against real on-disk fixtures', () => {
     if (result.status !== 'accepted') return;
     expect(result.writeVersion).toBe(2);
     expect(result.readVersion).toBe(2);
+  });
+
+  /**
+   * Real bytes from a real WAL-mode database, not a hand-built header: the
+   * conclusion that matters is that this file's newest commits can live outside
+   * it, which is invisible to every other check in this module because the file
+   * is otherwise entirely valid.
+   */
+  it('reports a real WAL-mode file as depending on a sidecar', () => {
+    const filePath = writeFixture('v1-wal-sidecar.arq', 'WAL');
+    const result = preflightArqfsBytes(readBytes(filePath));
+
+    expect(result.status).toBe('accepted');
+    if (result.status !== 'accepted') return;
+    expect(result.journalMode).toBe('write-ahead-log');
+    expect(result.sidecarDependency).toBe('write-ahead-log-sidecar');
   });
 
   it('accepts a schema v2 file', () => {

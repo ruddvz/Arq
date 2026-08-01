@@ -31,7 +31,7 @@ const requiredFiles = [
   'tools/engineering/build-engineering-context.mjs',
   'tools/engineering/verify-engineering-context.mjs',
   'tools/engineering/run-selected-evidence.mjs',
-  'tools/engineering/verify-workflow-templates.mjs',
+  'tools/engineering/verify-workflow-controls.mjs',
   'tools/engineering/verify-template-data.mjs',
   'tools/engineering/run-fixtures.mjs',
   'tools/engineering/build-manifest.mjs',
@@ -107,8 +107,8 @@ export function verifyPackage(root) {
   if (!runNode(packageRoot, 'verify-engineering-context.mjs', ['--root', packageRoot]))
     errors.push('Generated engineering context validation failed.');
   if (!runNode(packageRoot, 'run-fixtures.mjs')) errors.push('Fixture validation failed.');
-  if (!runNode(packageRoot, 'verify-workflow-templates.mjs'))
-    errors.push('Workflow template validation failed.');
+  if (!runNode(packageRoot, 'verify-workflow-controls.mjs', ['--package-root', packageRoot]))
+    errors.push('Workflow control validation failed.');
   if (!runNode(packageRoot, 'verify-template-data.mjs'))
     errors.push('Template data validation failed.');
   if (!runNode(packageRoot, 'build-manifest.mjs', ['--root', packageRoot, '--verify']))

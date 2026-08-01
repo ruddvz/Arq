@@ -67,8 +67,9 @@
     {
       "id": "wasm_parity",
       "kind": "command",
-      "command": "pnpm rust:verify-wasm-parity",
+      "command": "pnpm rust:build-wasm && pnpm rust:verify-wasm-parity",
       "packageScript": "rust:verify-wasm-parity",
+      "buildsArtifact": "rust/arq-core/pkg",
       "state": "available"
     },
     {
@@ -109,8 +110,9 @@
     {
       "id": "worker_core",
       "kind": "command",
-      "command": "pnpm benchmark:arq-core-worker",
+      "command": "pnpm rust:build-wasm && pnpm benchmark:arq-core-worker",
       "packageScript": "benchmark:arq-core-worker",
+      "buildsArtifact": "rust/arq-core/pkg",
       "state": "available"
     },
     {

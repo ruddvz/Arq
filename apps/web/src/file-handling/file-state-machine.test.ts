@@ -11,8 +11,32 @@ describe('reduceFileFlow', () => {
     state = reduceFileFlow(state, { type: 'acquired' });
     expect(state).toEqual({ kind: 'detecting', name: 'project.arq' });
 
-    state = reduceFileFlow(state, { type: 'route-native' });
-    expect(state).toEqual({ kind: 'native-opening', name: 'project.arq' });
+    state = reduceFileFlow(state, { type: 'route-native', sidecarDependency: 'complete' });
+    expect(state).toEqual({
+      kind: 'native-opening',
+      name: 'project.arq',
+      sidecarDependency: 'complete',
+    });
+  });
+
+  /**
+   * A write-ahead-log project keeps its newest commits in a `-wal` sidecar, and
+   * a file picker hands over one file. The reducer must carry that finding into
+   * the state rather than flattening every accepted file to the same one, or
+   * the copy layer has nothing to distinguish "compatible" from "complete".
+   */
+  it('carries a write-ahead-log sidecar dependency into native-opening', () => {
+    const detecting: FileFlowState = { kind: 'detecting', name: 'project.arq' };
+    expect(
+      reduceFileFlow(detecting, {
+        type: 'route-native',
+        sidecarDependency: 'write-ahead-log-sidecar',
+      }),
+    ).toEqual({
+      kind: 'native-opening',
+      name: 'project.arq',
+      sidecarDependency: 'write-ahead-log-sidecar',
+    });
   });
 
   it('walks the import path through progress to staged review', () => {

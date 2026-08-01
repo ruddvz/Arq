@@ -232,6 +232,13 @@
         "scripts/check-*.mjs",
         "scripts/zeus*",
         "scripts/lib/**",
+        "scripts/verify-*.mjs",
+        "scripts/validate-*.mjs",
+        "scripts/build-*.mjs",
+        "scripts/refresh-*.mjs",
+        "scripts/arq-language-*.mjs",
+        "scripts/run-*-capability-check.mjs",
+        "scripts/run-*-benchmark.mjs",
         ".zeus/**",
         ".claude/**",
         "eslint.config.mjs",
@@ -251,6 +258,57 @@
         "repository_binding",
         "protected_l4_approval"
       ]
+    },
+    {
+      "_comment": "An instrument must run its own instrument. Before these rules the scripts that produce and check the gate's evidence classified as unknown_runtime_surface, so editing verify-arq-core-wasm-parity.mjs selected format, lint, typecheck, unit and build - and never wasm_parity. The check could be weakened in the same change that was supposed to be measured by it. Each rule below binds an instrument family to the evidence it produces, so a change to the instrument is measured by the instrument.",
+      "id": "wasm-evidence-instruments",
+      "globs": [
+        "scripts/build-arq-core-wasm.mjs",
+        "scripts/verify-arq-core-wasm-parity.mjs",
+        "scripts/run-arq-core-worker-capability-check.mjs"
+      ],
+      "minLane": "L3",
+      "impacts": ["ci_control", "build"],
+      "evidence": ["rust", "wasm_parity", "worker_core"]
+    },
+    {
+      "id": "language-evidence-instruments",
+      "globs": [
+        "scripts/arq-language-*.mjs",
+        "scripts/verify-arq-language-*.mjs",
+        "scripts/verify-arq-public-copy-inventory.mjs",
+        "scripts/verify-arq-marketing-route-coverage.mjs",
+        "scripts/verify-arq-state-*.mjs",
+        "scripts/validate-arq-language-data.mjs",
+        "scripts/refresh-arq-language-context.mjs",
+        "scripts/build-arq-language-context.mjs"
+      ],
+      "minLane": "L3",
+      "impacts": ["ci_control"],
+      "evidence": ["language_contract"]
+    },
+    {
+      "id": "public-site-evidence-instruments",
+      "globs": [
+        "scripts/verify-arq-rendered-public-site.mjs",
+        "scripts/verify-arq-deployed-public-site.mjs"
+      ],
+      "minLane": "L3",
+      "impacts": ["ci_control", "deployment"],
+      "evidence": ["marketing_build", "rendered_public_site", "deployed_public_site"]
+    },
+    {
+      "_comment": "Generators and standalone helpers write committed source or report on it rather than deciding a gate result, so they carry the evidence that catches a bad generation instead of the control-plane lane. The Python helpers are here because no workflow or package script runs them; if one ever does, it belongs in control-plane instead. Listed explicitly so scripts/ has no remaining unknown_runtime_surface files.",
+      "id": "repository-generators",
+      "globs": [
+        "scripts/gen-*.mjs",
+        "scripts/generate-*.mjs",
+        "scripts/arq-copy-impact-report.mjs",
+        "scripts/*.py"
+      ],
+      "minLane": "L2",
+      "impacts": ["build"],
+      "evidence": ["format", "lint", "typecheck", "unit", "build"]
     },
     {
       "id": "static-configuration",

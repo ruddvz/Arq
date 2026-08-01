@@ -46,6 +46,7 @@
     "engineering:context:verify": "node engineering/tools/engineering/verify-engineering-context.mjs --root engineering --repo-root .",
     "engineering:context:build": "node engineering/tools/engineering/build-engineering-context.mjs --root engineering --repo-root .",
     "engineering:bindings": "node engineering/tools/engineering/verify-repo-bindings.mjs --repo-root . --package-root engineering --strict",
+    "engineering:workflows": "node engineering/tools/engineering/verify-workflow-controls.mjs --package-root engineering --repo-root .",
     "arq:language:install:verify": "node scripts/verify-arq-language-installation.mjs --repo-root . --language-root docs/product/voice",
     "arq:language:public:verify": "node scripts/verify-arq-public-copy-inventory.mjs --repo-root . --language-root docs/product/voice",
     "arq:language:routes:verify": "node scripts/verify-arq-marketing-route-coverage.mjs --repo-root . --language-root docs/product/voice",
