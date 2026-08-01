@@ -1,0 +1,17 @@
+{
+  "$comment": "Not an endpoint. Arq has no remote gateway: no authorization server, no tenant isolation, no grant issuing over the network, no revocation, no abuse controls, no kill switches. arq_get_capabilities reports remote_gateway as unavailable. This file records the shape so the work is not rediscovered later.",
+  "mcpServers": {
+    "arq": {
+      "type": "http",
+      "url": "https://<not deployed>/mcp",
+      "$requiredBeforeThisCanExist": [
+        "An authorization server, with token issuer, audience and resource checks on every request",
+        "Project grants minted per subject and tenant, with expiry and revocation that reaches a live connection",
+        "A bounded snapshot transfer or an outbound channel from a paired Arq application, so whole projects are never uploaded by default",
+        "Rate limits, body limits, concurrency quotas, egress policy and secret redaction",
+        "Retention, deletion, export and incident policy for plans and project excerpts",
+        "Kill switches for the server, for write requests, and per domain profile, project, tenant and client"
+      ]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "$comment": "Starting point only. The command path is published by the Arq desktop application once it bundles @arq/mcp-server; there is no standalone executable in this repository. A session is only useful once Arq has shared a project with this client.",
+  "mcpServers": {
+    "arq": {
+      "command": "<path published by Arq>/arq-mcp",
+      "args": [],
+      "env": {
+        "ARQ_MCP_SERVER_MODE": "local_runtime"
+      }
+    }
+  }
+}

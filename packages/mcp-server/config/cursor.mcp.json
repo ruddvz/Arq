@@ -1,0 +1,12 @@
+{
+  "$comment": "Starting point only. See config/README.md: the command path is published by the Arq desktop application, and the server has no default grant.",
+  "mcpServers": {
+    "arq": {
+      "command": "<path published by Arq>/arq-mcp",
+      "args": [],
+      "env": {
+        "ARQ_MCP_SERVER_MODE": "local_runtime"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+# Starting point only. See config/README.md.
+# The command path is published by the Arq desktop application once it bundles
+# @arq/mcp-server. The server has no default grant: until Arq shares a project
+# with this client, every tool answers that nothing is shared.
+
+[mcp_servers.arq]
+command = "<path published by Arq>/arq-mcp"
+args = []
+
+[mcp_servers.arq.env]
+ARQ_MCP_SERVER_MODE = "local_runtime"

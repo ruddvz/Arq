@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "3e77c8f86156291fc542375971c3db30f283fbf8f1b42a1e811fb04ae80bca99",
+  "source_hash": "0d705e37c2c59e56700dc1b93b527a09686f377d1cd718adce042552a051aa29",
   "source_records": [
     {
       "scope": "package",
@@ -360,6 +360,11 @@
       "scope": "repository",
       "path": "docs/adr/0026-accessible-component-foundation.md",
       "sha256": "b047aeb8c513df019f95f740030af7908d93cbda202c0ac2cb67b1bcfa3a85f2"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0027-mcp-boundary-and-domain-profiles.md",
+      "sha256": "e0af750e5c7c010a33a166be948cf4b979b8d561798ca53f6a1aded35de1f284"
     },
     {
       "scope": "repository",
@@ -759,7 +764,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "a697d7d8a40709403c6a3b8d714417175f916a8425f1c84b3edc2c43b91900a1"
+      "sha256": "39e6c5c2442d1cd8252affd07f7f204db3033d1c4b54b95c1180395a3d3cd205"
     },
     {
       "scope": "repository",

@@ -57,6 +57,16 @@ checks, weekly render benchmark).
   `plan-renderer`, `command-system`, `operations`): implemented and
   thoroughly tested; door/window/room tools and region selection exist but
   are not yet wired to the canvas.
+- **MCP boundary** (`packages/mcp-server`, ADR-0027): the governed surface an
+  AI client crosses to reach a project - 23 tools, no commit, approve, path or
+  query-language tool, every call carrying a grant with scopes, expiry and
+  revocation. Operation types come from `@arq/arqscript`'s own constructors
+  (ADR-0014), the model it applies to is `@arq/bim-core`, and validation is
+  `@arq/validation` and `@arq/operations` rather than anything restated here.
+  Library-complete with 256 tests and zero new dependencies; not reachable from
+  the product - `apps/web` does not implement the host, no panel renders the
+  Review Centre model, and no client run has been recorded. The critique of the
+  reference packages it replaces is in `docs/ai/MCP-SYSTEM-3.0-PLAN.md`.
 - **Public website** (`apps/marketing`): all 17 PUB pages from `docs/pages/`
   as a static, no-JS-required site with tests enforcing the launch-claims
   checklist, route coverage and accessibility basics.
