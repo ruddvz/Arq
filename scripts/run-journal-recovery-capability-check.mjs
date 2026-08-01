@@ -280,14 +280,29 @@ async function run() {
     // Journal recovery, distinguished from portable project-file save: the
     // label names the journal and its replay; the save state names the local
     // tier ('Recovered locally', never a claim that a .arq file was
-    // written); no download was produced; and sync stays separately
-    // 'Offline' (save and sync are separate concepts, top-bar-state.ts).
+    // written); no download was produced; and sync reports separately, never
+    // claiming synchronisation because something was journalled locally (save
+    // and sync are separate concepts, top-bar-state.ts).
+    //
+    // Asserted as "never claims synchronised" rather than by matching the one
+    // label this build happens to show. The previous version required the
+    // literal string 'Offline', which made it a test of the current wording
+    // instead of the invariant: it failed the moment the shell corrected
+    // 'Offline' (remote sync exists but cannot run) to 'Sync not configured'
+    // (there is no remote sync), which is a strictly more honest statement of
+    // the very separation this check exists to protect.
     const statusBarText = await page.locator(STATUS_BAR).innerText();
     const journalNotFileSave = {
       journalLabelNamesJournalReplay: recoveredCountMatch !== null,
       saveStateLabelNamesLocalTier: afterReload.saveStateLabel === 'Recovered locally',
       downloadsProduced: downloads,
-      syncStateStaysOffline: statusBarText.includes('Offline'),
+      syncNeverClaimsSynchronised: !/\bSynced\b|\bSyncing\b/.test(statusBarText),
+      // ...and still reports something, so a silently missing sync readout
+      // cannot pass by saying nothing at all.
+      syncStateReported:
+        /Sync not configured|Offline|Sync error|Sync failed|Sync conflict|Changes queued/.test(
+          statusBarText,
+        ),
     };
 
     const ok =
@@ -308,7 +323,8 @@ async function run() {
       journalNotFileSave.journalLabelNamesJournalReplay &&
       journalNotFileSave.saveStateLabelNamesLocalTier &&
       downloads.length === 0 &&
-      journalNotFileSave.syncStateStaysOffline &&
+      journalNotFileSave.syncNeverClaimsSynchronised &&
+      journalNotFileSave.syncStateReported &&
       consoleErrors.length === 0;
 
     return {
