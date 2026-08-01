@@ -53,6 +53,9 @@ function parseArguments(argv) {
     if (argv[index] === '--root') {
       options.root = argv[index + 1];
       index += 1;
+    } else if (argv[index] === '--repo-root') {
+      options.repoRoot = argv[index + 1];
+      index += 1;
     } else if (argv[index] === '--help') {
       options.help = true;
     } else {
@@ -62,7 +65,26 @@ function parseArguments(argv) {
   return options;
 }
 
-export function verifyPolicy(root) {
+/**
+ * The consuming repository's package scripts, or null when this package is
+ * being validated on its own (a distribution archive has no repository around
+ * it, so "the script does not exist" would be a false failure rather than a
+ * finding). Null is reported in the CLI summary rather than passed over in
+ * silence - a check that quietly did not run reads exactly like one that ran
+ * and passed.
+ */
+function readRepositoryScripts(repoRoot) {
+  const manifestPath = path.join(repoRoot, 'package.json');
+  if (!fs.existsSync(manifestPath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(manifestPath, 'utf8')).scripts ?? {};
+  } catch {
+    return null;
+  }
+}
+
+export function verifyPolicy(root, repoRoot = path.resolve(root, '..')) {
+  const repositoryScripts = readRepositoryScripts(repoRoot);
   const errors = [];
   const policy = readJson(root, 'ops/engineering-policy.v5.json', errors);
   const baseline = readJson(root, 'ops/repo-baseline.v5.json', errors);
@@ -146,6 +168,23 @@ export function verifyPolicy(root) {
             entry.id +
             ' is available but has no approved command mapping in run-selected-evidence.mjs.',
         );
+        // The mapping above proves the gate knows HOW to run this evidence.
+        // This proves the script it names still exists. Renaming or deleting a
+        // package script otherwise stayed invisible until something selected
+        // the evidence and pnpm failed with "command not found" mid-gate -
+        // the same silent-until-selected shape the mapping check was added to
+        // close, one level further down.
+        if (typeof entry.packageScript === 'string' && repositoryScripts !== null) {
+          addError(
+            errors,
+            entry.packageScript in repositoryScripts,
+            'Evidence ' +
+              entry.id +
+              ' names package script "' +
+              entry.packageScript +
+              '", which does not exist in package.json.',
+          );
+        }
       }
     }
   }
@@ -420,9 +459,17 @@ function runCli() {
     process.stdout.write('Usage: node verify-policy.mjs [--root PACKAGE_ROOT]\n');
     return;
   }
-  const result = verifyPolicy(path.resolve(options.root));
+  const root = path.resolve(options.root);
+  const repoRoot = path.resolve(options.repoRoot ?? path.resolve(root, '..'));
+  const result = verifyPolicy(root, repoRoot);
   if (result.ok) {
-    process.stdout.write('Engineering policy is internally consistent.\n');
+    const scriptsChecked = fs.existsSync(path.join(repoRoot, 'package.json'));
+    process.stdout.write(
+      'Engineering policy is internally consistent' +
+        (scriptsChecked
+          ? ', and every evidence package script exists.\n'
+          : '. No package.json at ' + repoRoot + ', so package scripts were not checked.\n'),
+    );
   } else {
     for (const error of result.errors) process.stderr.write('POLICY ERROR: ' + error + '\n');
     process.exitCode = 1;

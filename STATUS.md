@@ -112,6 +112,25 @@ surface may state as current, and `pnpm arq:language:verify` plus the
 listed in `context-contract.json`: change one of them and refresh it in the
 same commit, because CI fails on a stale context and never regenerates it.
 
+## Privacy transport
+
+`pnpm benchmark:network-observation` records every request the real production
+bundle attempts in headless Chromium while a wall is drawn, the 3D view is
+opened and the file panel is used, and fails if any of them leaves the origin
+that served the app. Requests are recorded and allowed to proceed, never
+blocked: blocking outbound traffic and then observing none would measure the
+harness. Attempts count rather than successes, so a request to an unreachable
+host is still a finding. The check is proven by injection - a deliberate
+`fetch` to an external host was added, caught, and removed.
+
+This supplies the evidence half of what
+`DRIFT-PRIVACY-TRANSPORT-ABSOLUTE` asks for. That conflict stays open: its
+resolution requires "a network-observation test **and** an approved privacy
+statement, or revised copy", and the statement is the registry owner's
+decision, not this change's. Until they make it, `no-network-data-transfer`
+remains blocked on the public and support surfaces, and no surface here states
+it.
+
 ## Gate integrity
 
 The Engineering OS 5.0 gate (`engineering/`,

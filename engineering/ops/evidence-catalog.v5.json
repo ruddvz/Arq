@@ -234,6 +234,14 @@
       "state": "available"
     },
     {
+      "_comment": "Observes every request the real bundle attempts in headless Chromium while a wall is drawn, the 3D view opened and the file panel used. Recording, never blocking - blocking outbound traffic and observing none would measure the harness. Supplies the evidence half of what DRIFT-PRIVACY-TRANSPORT-ABSOLUTE asks for; the accompanying privacy statement remains the registry owner's decision.",
+      "id": "browser_network_observation",
+      "kind": "command",
+      "command": "pnpm benchmark:network-observation",
+      "packageScript": "benchmark:network-observation",
+      "state": "available"
+    },
+    {
       "id": "e2e_import_export",
       "kind": "proof-gap",
       "state": "missing",

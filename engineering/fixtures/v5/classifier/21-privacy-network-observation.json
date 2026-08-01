@@ -1,0 +1,10 @@
+{
+  "_comment": "The privacy claim 'nothing leaves your device' was an absolute with no instrument behind it (conflict DRIFT-PRIVACY-TRANSPORT-ABSOLUTE, evidence-insufficient, high). Now that browser_network_observation exists, a change to the code that would carry data off the device has to run it. A claim only checked when someone remembers is a claim, not a control.",
+  "files": ["packages/telemetry/src/redact-sensitive-fields.ts"],
+  "expected": {
+    "confidence": "high",
+    "impactsInclude": ["privacy", "security"],
+    "impactsExclude": ["unknown_runtime_surface"],
+    "evidenceInclude": ["unit", "browser_network_observation"]
+  }
+}

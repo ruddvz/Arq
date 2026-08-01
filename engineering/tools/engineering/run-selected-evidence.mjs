@@ -72,6 +72,7 @@ const COMMANDS = Object.freeze({
   browser_pencil_input: [['pnpm', ['benchmark:pencil-input']]],
   browser_hover_sequence: [['pnpm', ['benchmark:hover-sequence']]],
   mcp_protocol: [['pnpm', ['benchmark:mcp-protocol']]],
+  browser_network_observation: [['pnpm', ['benchmark:network-observation']]],
 });
 
 /**

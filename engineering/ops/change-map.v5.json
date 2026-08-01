@@ -181,10 +181,11 @@
     },
     {
       "id": "telemetry-and-privacy",
+      "_comment": "browser_network_observation is required here because this is the code that would carry data off the device if anything did. A privacy claim that is only checked when someone remembers is a claim, not a control.",
       "globs": ["packages/telemetry/**", "docs/adr/0018-*.md"],
       "minLane": "L3",
       "impacts": ["observability", "privacy", "security"],
-      "evidence": ["unit", "protected_l4_approval"]
+      "evidence": ["unit", "browser_network_observation", "protected_l4_approval"]
     },
     {
       "id": "marketing-content",

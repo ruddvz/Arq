@@ -107,6 +107,46 @@ describe('createPlanJournal', () => {
     }
   });
 
+  /**
+   * The journal is external input on the way back in. Its rows outlive the
+   * build that wrote them, so replay meets payloads from an older or newer
+   * Arq, and rows a user's browser storage may have mangled. recover() claims
+   * to skip what it does not recognise rather than crash, which is the
+   * difference between one bad row and an unopenable project - and nothing
+   * tested it.
+   */
+  describe('replaying a journal it does not fully recognise', () => {
+    it('skips an unrecognised operation kind and still replays the rest', async () => {
+      const name = `plan-journal-mixed-${(databaseCounter += 1)}`;
+      const j = createPlanJournal(name, { indexedDB, IDBKeyRange });
+      await j.append('p1', { kind: 'add-walls', walls: [WALL_A] });
+      // A kind this build has never heard of - a newer Arq's operation.
+      await j.append('p1', {
+        kind: 'add-roof',
+        walls: [],
+      } as unknown as Parameters<typeof j.append>[1]);
+      await j.append('p1', { kind: 'add-walls', walls: [WALL_B] });
+
+      const recovered = await j.recover('p1');
+      // Both known walls survive; the unknown row is skipped, not fatal.
+      expect(recovered.walls.map((wall) => wall.id)).toEqual(['drawn-wall-1', 'drawn-wall-2']);
+      expect(recovered.recoveredOperationCount).toBe(2);
+      j.close();
+    });
+
+    it('does not throw when a row payload is not an operation at all', async () => {
+      const name = `plan-journal-junk-${(databaseCounter += 1)}`;
+      const j = createPlanJournal(name, { indexedDB, IDBKeyRange });
+      await j.append('p1', { kind: 'add-walls', walls: [WALL_A] });
+      await j.append('p1', {
+        kind: null,
+      } as unknown as Parameters<typeof j.append>[1]);
+
+      await expect(j.recover('p1')).resolves.toMatchObject({ recoveredOperationCount: 1 });
+      j.close();
+    });
+  });
+
   it('keeps projects separate', async () => {
     const j = journal();
     await j.append('p1', { kind: 'add-walls', walls: [WALL_A] });
