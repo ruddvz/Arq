@@ -55,7 +55,14 @@
       ],
       "minLane": "L2",
       "impacts": ["ui", "interaction", "accessibility"],
-      "evidence": ["unit", "browser_workspace_layout", "browser_wall_hud"]
+      "evidence": [
+        "unit",
+        "browser_workspace_layout",
+        "browser_wall_hud",
+        "browser_design_system_dialog",
+        "browser_pencil_input",
+        "browser_hover_sequence"
+      ]
     },
     {
       "id": "plan-and-model-editing",
@@ -125,6 +132,8 @@
         "unit",
         "browser_arqfs_opfs",
         "browser_file_open",
+        "browser_arqfs_writer_lock",
+        "browser_arqfs_project_isolation",
         "e2e_arq_open",
         "protected_l4_approval"
       ]
@@ -258,6 +267,19 @@
         "repository_binding",
         "protected_l4_approval"
       ]
+    },
+    {
+      "_comment": "The AI trust boundary had no rule at all: packages/mcp-server classified as unknown_runtime_surface, so the package that decides what an AI client may reach in a project - grants, scopes, expiry, revocation, and the closed method allowlist - was governed by the default unknown-file policy and never required its own protocol evidence. Security and privacy are named because a defect here is a boundary failure, not a feature bug.",
+      "id": "ai-boundary-and-mcp",
+      "globs": [
+        "packages/mcp-server/**",
+        "docs/adr/0027-*.md",
+        "config/*mcp*.json",
+        "config/README.md"
+      ],
+      "minLane": "L4",
+      "impacts": ["security", "privacy", "validation", "document"],
+      "evidence": ["unit", "mcp_protocol", "build", "protected_l4_approval"]
     },
     {
       "_comment": "An instrument must run its own instrument. Before these rules the scripts that produce and check the gate's evidence classified as unknown_runtime_surface, so editing verify-arq-core-wasm-parity.mjs selected format, lint, typecheck, unit and build - and never wasm_parity. The check could be weakened in the same change that was supposed to be measured by it. Each rule below binds an instrument family to the evidence it produces, so a change to the instrument is measured by the instrument.",

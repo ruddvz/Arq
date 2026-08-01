@@ -66,6 +66,12 @@ const COMMANDS = Object.freeze({
   browser_model_canvas: [['pnpm', ['benchmark:model-canvas']]],
   editor_dependency_boundaries: [['pnpm', ['check:editor-dependency-boundaries']]],
   browser_wall_hud: [['pnpm', ['benchmark:wall-hud']]],
+  browser_arqfs_writer_lock: [['pnpm', ['benchmark:arqfs-writer-lock']]],
+  browser_arqfs_project_isolation: [['pnpm', ['benchmark:arqfs-project-isolation']]],
+  browser_design_system_dialog: [['pnpm', ['benchmark:design-system-dialog']]],
+  browser_pencil_input: [['pnpm', ['benchmark:pencil-input']]],
+  browser_hover_sequence: [['pnpm', ['benchmark:hover-sequence']]],
+  mcp_protocol: [['pnpm', ['benchmark:mcp-protocol']]],
 });
 
 /**

@@ -1,0 +1,11 @@
+{
+  "_comment": "packages/mcp-server had no rule at all and classified as unknown_runtime_surface, so the package deciding what an AI client may reach in a project was governed by the default unknown-file policy and never required its own protocol evidence. 'high' confidence is what pins it: an unknown file forces confidence to low.",
+  "files": ["packages/mcp-server/src/mcp/server.ts", "packages/mcp-server/src/grant/scopes.ts"],
+  "expected": {
+    "lane": "L4",
+    "confidence": "high",
+    "impactsInclude": ["security", "privacy"],
+    "impactsExclude": ["unknown_runtime_surface"],
+    "evidenceInclude": ["unit", "mcp_protocol", "protected_l4_approval"]
+  }
+}

@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "0e89bc5babc7e5a85926cb9091e2fb4351dfea35ebefddad1df3969febedc67f",
+  "source_hash": "23dfc734f33b87721c6ff4d91a21237bc403e5ffc216bcf81549804ee6f38d33",
   "source_records": [
     {
       "scope": "package",
@@ -54,7 +54,7 @@
     {
       "scope": "package",
       "path": "ops/change-map.v5.json",
-      "sha256": "cd04af2b3dbdbd802a2fde26b346a6a379a4484dbad3b1881d3a9de7e2a3b0f1"
+      "sha256": "f3188d8a542c261e779d14f9b133f970dcafec7e321b0031a5c6f8c3b6c1bc47"
     },
     {
       "scope": "package",
@@ -74,7 +74,7 @@
     {
       "scope": "package",
       "path": "ops/evidence-catalog.v5.json",
-      "sha256": "3809d0f42f1f4ed73346fe55820ca781bd184576992f28df6453d1341127d241"
+      "sha256": "89a048278ca631d6919cd7a835de203c7938749739bd0818105768e12231f538"
     },
     {
       "scope": "package",
@@ -89,7 +89,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "0d7afaa65a5104dfb6af967925879e9af694a0561a57e2fdd71cb4745fa56e6d"
+      "sha256": "92603f7e36f46263c794fd3ee4c595f62c71b2028cd467cadf01f6f2c6648f5d"
     },
     {
       "scope": "repository",

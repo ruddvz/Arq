@@ -191,6 +191,49 @@
       "state": "available"
     },
     {
+      "_comment": "These six headless-Chromium checks existed and passed but had no catalog id, so the gate could not select them however directly a change touched what they cover. Four already ran in ci.yml and build.yml, which meant CI knew something the gate could not: a change to the single-writer lock could not be required to run the single-writer lock check. Each was run green before being listed here.",
+      "id": "browser_arqfs_writer_lock",
+      "kind": "command",
+      "command": "pnpm benchmark:arqfs-writer-lock",
+      "packageScript": "benchmark:arqfs-writer-lock",
+      "state": "available"
+    },
+    {
+      "id": "browser_arqfs_project_isolation",
+      "kind": "command",
+      "command": "pnpm benchmark:arqfs-project-isolation",
+      "packageScript": "benchmark:arqfs-project-isolation",
+      "state": "available"
+    },
+    {
+      "id": "browser_design_system_dialog",
+      "kind": "command",
+      "command": "pnpm benchmark:design-system-dialog",
+      "packageScript": "benchmark:design-system-dialog",
+      "state": "available"
+    },
+    {
+      "id": "browser_pencil_input",
+      "kind": "command",
+      "command": "pnpm benchmark:pencil-input",
+      "packageScript": "benchmark:pencil-input",
+      "state": "available"
+    },
+    {
+      "id": "browser_hover_sequence",
+      "kind": "command",
+      "command": "pnpm benchmark:hover-sequence",
+      "packageScript": "benchmark:hover-sequence",
+      "state": "available"
+    },
+    {
+      "id": "mcp_protocol",
+      "kind": "command",
+      "command": "pnpm benchmark:mcp-protocol",
+      "packageScript": "benchmark:mcp-protocol",
+      "state": "available"
+    },
+    {
       "id": "e2e_import_export",
       "kind": "proof-gap",
       "state": "missing",

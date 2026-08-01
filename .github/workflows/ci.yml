@@ -89,6 +89,11 @@ jobs:
       # with a way to summon panels back, and save/sync separately legible, at
       # all eight workspace-qa-fixtures.json viewports.
       - run: pnpm benchmark:workspace-layout
+      # The two input checks were the only capability checks this repository
+      # owned that no workflow ran, so the Pencil pressure/tilt path and the
+      # pointer hover sequence were verified once by hand and never again.
+      - run: pnpm benchmark:pencil-input
+      - run: pnpm benchmark:hover-sequence
       - uses: actions/upload-artifact@v4
         if: always()
         with:
