@@ -4,8 +4,14 @@
 # was not exercised at all. Replaces the echo-only "Quality template".
 name: Build
 
+# merge_group alongside pull_request: ci.yml and engineering-gate.yml already
+# declare it, so without it here a merge queue would run the tests and the
+# evidence gate over the merged result while the build gate saw only the
+# pre-merge branches - two branches that each build can still fail to build
+# together.
 on:
   pull_request:
+  merge_group:
 
 jobs:
   build:

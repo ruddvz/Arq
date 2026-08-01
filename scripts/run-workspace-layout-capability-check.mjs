@@ -164,9 +164,24 @@ const VIEWPORTS = [
   },
 ];
 
+/**
+ * Always rebuilds, then asserts the output exists - the shape every other
+ * capability check in this directory already uses.
+ *
+ * This function previously skipped the build whenever apps/web/dist/index.html
+ * was present, which made the check report on whatever bundle happened to be
+ * on disk rather than on the working tree. On a fresh CI checkout there is no
+ * dist and the two behave identically, so the difference only ever showed up
+ * locally - where it matters most, because that is where someone re-runs the
+ * check to confirm a fix. It caught exactly that: a live-region fix in
+ * status-bar.tsx was reported as still broken because the stale bundle
+ * predated it. A check that can pass or fail on code that is not the code
+ * under review is not evidence. The rebuild costs about nine seconds.
+ */
 function buildBundle() {
+  execFileSync('npx', ['vite', 'build'], { cwd: webDir, stdio: 'inherit' });
   if (!existsSync(path.join(distDir, 'index.html'))) {
-    execFileSync('npx', ['vite', 'build'], { cwd: webDir, stdio: 'inherit' });
+    throw new Error('vite build did not produce apps/web/dist/index.html');
   }
 }
 
@@ -197,9 +212,36 @@ async function measure(page) {
       collapsedSlots: document.querySelector('.arq-top-bar')?.dataset.collapsedSlots ?? '',
       saveAndSyncLegible:
         /No project open|Saved|Saving|Unsaved|Recovered/.test(text) &&
-        /Synced|Syncing|Offline|Sync error/.test(text),
+        // Every label the governed `sync` machine defines, including
+        // "Sync not configured" - the honest state for a build with no sync
+        // backend, which 'offline' overclaimed as merely unreachable.
+        /Sync not configured|Synced|Syncing|Offline|Sync error|Sync failed|Sync conflict|Changes queued/.test(
+          text,
+        ),
       horizontalOverflow:
         document.documentElement.scrollWidth > document.documentElement.clientWidth,
+      /*
+       * Live-region scope. The status bar carried `role="status"
+       * aria-live="polite"` on its own <footer>, so every child announced
+       * itself on change - including the cursor world position, which changes
+       * on every pointer move. A polite region queues rather than interrupts,
+       * so a screen reader falls arbitrarily far behind reading coordinates
+       * and never reaches anything else. Measured in the real DOM because
+       * "which element is a live region" is a rendering fact, and this
+       * repository has no component-test stack that could assert it.
+       */
+      statusBarIsLiveRegion: (() => {
+        const bar = document.querySelector('.arq-status-bar');
+        if (bar === null) return false;
+        const live = bar.getAttribute('aria-live');
+        return live !== null && live !== 'off';
+      })(),
+      /* Every element that would announce itself, and whether any of them
+       * contains a coordinate readout. Ancestors count: a live region
+       * announces its whole subtree. */
+      liveRegionsAnnouncingCoordinates: Array.from(
+        document.querySelectorAll('[aria-live="polite"], [aria-live="assertive"]'),
+      ).filter((node) => /-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?/u.test(node.textContent ?? '')).length,
     };
   });
 }
@@ -254,6 +296,18 @@ function checkViewport(viewport, m, consoleErrors) {
   const syncReachable = m.saveAndSyncLegible || collapsed.has('sync-state');
   if (!saveReachable || !syncReachable) {
     failures.push('save and sync are neither visible nor in the project menu');
+  }
+  // Section 127 asks that the canvas readout be available, not that it be
+  // spoken continuously. A live region wrapping a value that changes with the
+  // pointer is not an accessibility feature; it is a screen reader that cannot
+  // be interrupted.
+  if (m.statusBarIsLiveRegion) {
+    failures.push('the status bar is a live region, so it announces cursor coordinates on move');
+  }
+  if (m.liveRegionsAnnouncingCoordinates > 0) {
+    failures.push(
+      `${m.liveRegionsAnnouncingCoordinates} live region(s) contain a coordinate readout`,
+    );
   }
   // Doc 36's protected pair may never collapse, at any width.
   for (const protectedSlot of ['project-identity', 'active-view']) {

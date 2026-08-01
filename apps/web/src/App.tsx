@@ -253,12 +253,17 @@ const COMMAND_ENTRIES: readonly Omit<CommandPaletteEntry, 'shortcutLabel'>[] = [
 ];
 
 /*
- * Sync has no backend, so 'offline' stays the only honest sync state. Save
- * state, by contrast, is now real: edits are journalled to IndexedDB
- * (canvas/plan-journal.ts) and recovered on start-up, so the bars report
- * the journal's actual condition instead of a demo constant.
+ * Sync has no backend at all, which is 'not-configured', not 'offline'. The
+ * governed `sync` vocabulary keeps those apart deliberately: 'offline' says
+ * "Remote sync cannot run", which tells a user a sync feature exists and is
+ * currently unreachable, so their work might be waiting to go somewhere.
+ * Nothing is waiting, because there is nowhere to send it.
+ *
+ * Save state, by contrast, is real: edits are journalled to IndexedDB
+ * (canvas/plan-journal.ts) and recovered on start-up, so the bars report the
+ * journal's actual condition instead of a demo constant.
  */
-const DEMO_SYNC_STATE = 'offline' as const;
+const DEMO_SYNC_STATE = 'not-configured' as const;
 const PLAN_PROJECT_ID = 'demo-project';
 
 /** Highest numeric suffix among recovered wall ids, so new ids never collide. */
@@ -1141,7 +1146,7 @@ export function App(): JSX.Element {
             pixelsPerUnit={pixelsPerUnit}
             modelHealth={modelHealth}
             localJournalStateLabel={journalLabel}
-            syncState="offline"
+            syncState={DEMO_SYNC_STATE}
             supportModeEnabled={false}
           />
         }

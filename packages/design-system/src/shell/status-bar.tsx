@@ -29,13 +29,28 @@ export interface StatusBarProps {
  * see status-bar-state.ts for rules and the "support mode" non-goal.
  *
  * A read-only strip, so its only interactive states are per-item keyboard
- * focus (each `<output>` is not itself focusable by design - status text is
- * not an interactive control; a screen reader still gets it live via
- * `aria-live`, satisfying section 127's canvas-accessibility requirement
- * without adding fake tab stops). No hover/active/disabled variants apply
- * here since nothing here is a button - the "error" state is the model
- * health summary switching to naming errors, still plain text (section 126:
- * "status not colour-only").
+ * focus (each item is not itself focusable by design - status text is not an
+ * interactive control, so making it one would add fake tab stops). No
+ * hover/active/disabled variants apply here since nothing here is a button -
+ * the "error" state is the model health summary switching to naming errors,
+ * still plain text (section 126: "status not colour-only").
+ *
+ * **The strip as a whole is not a live region, and must not become one
+ * again.** It previously carried `role="status" aria-live="polite"` on the
+ * `<footer>`, which meant every child announced itself on change - including
+ * the cursor world position, which changes on every pointer move. A polite
+ * region queues rather than interrupts, so a screen reader would fall
+ * arbitrarily far behind reading coordinates aloud and never reach anything
+ * else: the effect of announcing everything is that nothing is heard. It also
+ * announced sync state a second time, because top-bar.tsx already announces
+ * that field politely.
+ *
+ * Section 127's canvas-accessibility requirement is that the readout be
+ * available, not that it be spoken continuously; the coordinates, snap, scale
+ * and selection readouts stay plain text a screen-reader user navigates to
+ * when they want them. Only the model health summary is announced, because it
+ * is the one field here that changes meaningfully, that the user did not just
+ * cause, and that no other surface already announces.
  */
 export function StatusBar(props: StatusBarProps): JSX.Element {
   const {
@@ -56,8 +71,6 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
   return (
     <footer
       className="arq-status-bar arq-shell-panel"
-      role="status"
-      aria-live="polite"
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -85,7 +98,13 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
       <span>{formatSelectionCount(selectionCount)}</span>
       <span>{currentLevelName}</span>
       <span>{formatViewScale(pixelsPerUnit)}</span>
-      <span>{formatModelHealth(modelHealth)}</span>
+      {/* The one field announced: validation results change without the user
+          having just typed them, and nothing else reports them aloud. */}
+      <span role="status" aria-live="polite">
+        {formatModelHealth(modelHealth)}
+      </span>
+      {/* Save and sync are announced by top-bar.tsx. Repeating the
+          announcement here made a screen reader say each change twice. */}
       <span>{localJournalStateLabel}</span>
       <span>{describeSyncState(syncState)}</span>
       {performanceWarning !== null && <span role="alert">{performanceWarning}</span>}

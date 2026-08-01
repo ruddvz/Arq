@@ -5,8 +5,12 @@
 # dependency-licence-scan job, so this workflow adds only what was missing.
 name: Security
 
+# merge_group matters most here: a secret can enter the merged result through
+# the combination of two branches that were each clean, and the weekly schedule
+# would not notice until the following Monday.
 on:
   pull_request:
+  merge_group:
   schedule: [{ cron: '0 6 * * 1' }]
 
 jobs:
