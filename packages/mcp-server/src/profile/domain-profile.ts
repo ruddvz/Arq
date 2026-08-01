@@ -29,6 +29,7 @@
  */
 
 import type { JsonObject } from '../schema/json-value';
+import type { Validator } from '../schema/schema';
 import type { ArqMcpScope } from '../grant/scopes';
 
 /** The project states an operation may be staged against. `editable` is the only one any mutating operation should list. */
@@ -112,6 +113,24 @@ export interface DomainProfile {
   readonly semanticKinds: readonly string[];
   readonly derivedOutputs: readonly string[];
   readonly operations: readonly OperationDefinition[];
+  /**
+   * The runtime checker behind each operation's published `argumentsSchema`,
+   * keyed by operation type.
+   *
+   * `argumentsSchema` is JSON, which is what a client can read but not what
+   * anything can validate with. Carrying the validator here means a host -
+   * the in-process one, the browser build, or a future desktop shell - uses
+   * the operation's own contract rather than writing a second interpretation
+   * of the same schema. Two interpretations of one schema is exactly the
+   * drift this package's single-definition rule exists to prevent, and it
+   * would show up as one host accepting a change set another refuses.
+   *
+   * Deliberately not part of `operations`: those are serialised into the
+   * catalogue a client reads, and a function cannot cross that boundary.
+   * A registered profile must have one for every operation, which
+   * `validateDomainProfile` enforces.
+   */
+  readonly argumentValidators: Readonly<Record<string, Validator<unknown>>>;
   readonly fileImpact: DomainProfileFileImpact;
   readonly evidence: EvidenceRecord;
 }
@@ -184,6 +203,11 @@ export function validateDomainProfile(profile: DomainProfile): readonly ProfileI
     }
 
     if (profile.status === 'registered') {
+      if (!Object.hasOwn(profile.argumentValidators, operation.operationType)) {
+        report(
+          `Operation ${key} publishes an argument schema with no validator behind it. A host would have to reinterpret the schema, and two interpretations of one schema drift.`,
+        );
+      }
       if (
         operation.evidence.state !== 'verified' &&
         operation.evidence.state !== 'partially_verified'

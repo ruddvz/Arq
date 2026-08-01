@@ -779,3 +779,91 @@ describe('plans belong to a person, not to a grant', () => {
     );
   });
 });
+
+describe('a host that implements only part of the catalogue', () => {
+  /**
+   * The browser build edits a plan document of walls and has nowhere to put
+   * a room. Without the intersection, the catalogue would advertise room
+   * creation, an assistant would build a change set around it, and the
+   * failure would arrive at staging as "unregistered operation" - which is
+   * both late and untrue.
+   */
+  function narrowHarness() {
+    const base = harness();
+    const wallsOnly = ['architecture.wall.create', 'architecture.wall.update'];
+    const narrowedHost = {
+      ...base.host,
+      supportedOperationTypes: () => wallsOnly,
+      // Method identity matters: spreading an object literal keeps the
+      // functions, and every one of them still closes over the same store.
+      listProjectIds: () => base.host.listProjectIds(),
+      getSummary: (projectId: string) => base.host.getSummary(projectId),
+      getSnapshot: (projectId: string) => base.host.getSnapshot(projectId),
+      query: (query: Parameters<typeof base.host.query>[0]) => base.host.query(query),
+      validate: (
+        projectId: string,
+        baseRevision: string,
+        operations: Parameters<typeof base.host.validate>[2],
+      ) => base.host.validate(projectId, baseRevision, operations),
+      createDraft: (projectId: string, name: string) => base.host.createDraft(projectId, name),
+      requestOpen: (projectId: string) => base.host.requestOpen(projectId),
+      getUndoGroup: (projectId: string, undoGroupId: string) =>
+        base.host.getUndoGroup(projectId, undoGroupId),
+    };
+
+    const bridge = new ArqBridge({
+      host: narrowedHost,
+      registry: base.registry,
+      clock: base.clock.now,
+      idSource: createSequentialIdSource('id'),
+      audit: base.audit,
+      serverMode: 'local_runtime',
+    });
+    return { ...base, bridge };
+  }
+
+  it('advertises only what the project can accept, and says the catalogue is narrowed', () => {
+    const { bridge, grant } = narrowHarness();
+    const catalog = bridge.getOperationCatalog(grant, 'project-a');
+    expect(catalog.operations.map((operation) => operation.operationType).sort()).toEqual([
+      'architecture.wall.create',
+      'architecture.wall.update',
+    ]);
+    expect(catalog.hostSubsetsCatalogue).toBe(true);
+  });
+
+  it('refuses an operation Arq has but this project cannot take, and says which it is', () => {
+    const { bridge, grant } = narrowHarness();
+    const refusal = caught(() =>
+      bridge.stageChangeSet(grant, {
+        requestId: 'r1',
+        changeSet: wallChangeSet({
+          operations: [
+            {
+              operationId: 'op-1',
+              operationType: 'architecture.room.create',
+              operationVersion: '1.0.0',
+              arguments: {},
+              preconditions: [],
+            },
+          ],
+        }),
+      }),
+    );
+    expect(refusal.code).toBe('ARQ_CAPABILITY_UNAVAILABLE');
+    expect(refusal.state).toBe('blocked_by_capability');
+  });
+
+  it('still accepts what the project does support', () => {
+    const { bridge, grant } = narrowHarness();
+    const proposal = bridge.stageChangeSet(grant, { requestId: 'r1', changeSet: wallChangeSet() });
+    expect(proposal.state).toBe('ready_for_review');
+  });
+
+  it('leaves a host that declares nothing with the whole catalogue', () => {
+    const { bridge, grant, registry } = harness();
+    const catalog = bridge.getOperationCatalog(grant, 'project-a');
+    expect(catalog.operations).toHaveLength(registry.registeredOperations().length);
+    expect(catalog.hostSubsetsCatalogue).toBe(false);
+  });
+});

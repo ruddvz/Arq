@@ -1,51 +1,96 @@
-# Client configuration templates
+# Client configuration
 
-These are starting points, not evidence. None of them has been run against a
-real client: `docs/ai/MCP-SYSTEM-3.0-PLAN.md` records client acceptance as
-delivery phase 4, and support is claimed for one named client and version at a
-time after a recorded run.
+The server is a real, launchable process. Build it once:
 
-Two things have to exist before any of these work, and neither is in this
-repository yet:
+```bash
+pnpm --filter @arq/mcp-server build
+```
 
-1. **A launchable server.** `@arq/mcp-server` ships as TypeScript source, like
-   every other package in this workspace. The Arq application bundles it; there
-   is no standalone executable to point a `command` at until the desktop shell
-   builds one.
-2. **A grant.** The server has no default grant. Until Arq has a pairing and
-   sharing surface that mints one, every tool answers "nothing is shared with
-   this connection", which is the correct answer and not a useful session.
+That produces `packages/mcp-server/dist/arq-mcp-stdio.mjs`, a single Node
+module with no resolution setup, which is what the templates here launch.
+`pnpm benchmark:mcp-protocol` spawns exactly that bundle and drives a real
+JSON-RPC session against it, so the thing these templates point at is
+covered by a check rather than by hope.
 
-The command in each template is therefore written as the path the Arq
-application will publish, and is marked as such.
+## The grant file
+
+The server carries no authority of its own. `ARQ_MCP_GRANT_FILE` names a
+JSON file describing what the operator shared:
+
+```json
+{
+  "grantId": "grant-2026-08-01-a",
+  "subjectId": "subject-you",
+  "tenantId": "tenant-you",
+  "preset": "plan",
+  "scopes": ["arq.capabilities.read"],
+  "projectIds": ["project-local"],
+  "issuedAtEpochMs": 1767225600000,
+  "lifetimeMs": 3600000
+}
+```
+
+Four things follow from reading it per call rather than at connect time:
+
+- **No file means nothing is shared.** Every tool answers so. That is the
+  correct default, not a fault, and it is what an unconfigured client gets.
+- **Deleting the file withdraws access on the next call**, with no
+  reconnection. The capability check proves this by deleting it mid-session.
+- **A malformed file is treated as no grant**, with a line on standard
+  error. It never falls back to something permissive.
+- **The client's identity is not taken from the file.** The file says what
+  was shared; the `initialize` handshake says who turned up. That is why an
+  assistant cannot describe itself as a person in the provenance of a plan
+  it wrote.
+
+`preset` is `read_only`, `plan` or `propose` and replaces `scopes` when
+present. The presets are strictly nested, so raising one only ever adds.
 
 ## Local, over stdio
-
-Claude Code, Cursor, Codex CLI, Codex IDE and the ChatGPT desktop app can all
-launch a local server over stdio when Arq is on the same machine. That is the
-right transport for this boundary: the project never leaves the machine, and the
-grant is issued by the application the operator is already looking at.
 
 - [`claude-code.mcp.json`](claude-code.mcp.json)
 - [`cursor.mcp.json`](cursor.mcp.json)
 - [`codex.config.toml`](codex.config.toml)
 
+Claude Code, Cursor, Codex CLI, Codex IDE and the ChatGPT desktop app can
+all launch a local server. That is the right transport for this boundary:
+the project never leaves the machine, and the grant is written by the
+application the operator is already looking at.
+
+These are starting points, not evidence of support. No client run has been
+recorded, and support is claimed for one named client and version at a time
+after one has been - see delivery phase 4 in
+`docs/ai/MCP-SYSTEM-3.0-PLAN.md`.
+
+## What the local server actually holds
+
+The bundled entry uses the in-process semantic host: real levels, wall
+types, walls, openings, rooms and dimensions, validated by
+`@arq/validation` and `@arq/operations`, held in memory. It writes no file,
+and every snapshot says so. `ARQ_MCP_SEED_PROJECT=<name>` seeds one project
+with a ground floor and a wall type so a connected client has something to
+read.
+
+A desktop shell would pass its own `ArqProjectHost` and keep
+`ArqOperatorSurface` - the object that can commit - to itself.
+
 ## Remote, over HTTPS
 
-A hosted client cannot launch a local process, so it needs a remote endpoint.
-That is an architecture project rather than a configuration change - an
-authorization server, token audience and resource checks, tenant isolation,
-grant issuing and revocation, retention, abuse controls and kill switches - and
-none of it exists. `arq_get_capabilities` reports `remote_gateway` as
-unavailable for exactly this reason.
+A hosted client cannot launch a local process, so it needs a remote
+endpoint. That is an architecture project rather than a configuration
+change - an authorization server, token audience and resource checks,
+tenant isolation, grant issuing and revocation, retention, abuse controls
+and kill switches - and none of it exists. `arq_get_capabilities` reports
+`remote_gateway` as unavailable for exactly that reason.
 
-[`remote-http.mcp.json`](remote-http.mcp.json) records the shape so that the
-work is not rediscovered later. Do not treat it as an endpoint.
+[`remote-http.mcp.json`](remote-http.mcp.json) records the shape so the work
+is not rediscovered later. It is not an endpoint.
 
 ## The loopback endpoint
 
-`transport/http-guard.ts` implements a paired loopback HTTP endpoint for local
-protocol testing. It requires a bearer pairing token that Arq generates and
-shows to the operator, and it refuses any Host other than the loopback address
-it bound to - including `localhost`, whose resolution can be redirected. An
-unpaired endpoint refuses every request rather than defaulting to open.
+`transport/http-guard.ts` implements the guards for a paired loopback HTTP
+endpoint: a bearer pairing token compared in constant time, a Host check
+that refuses `localhost` (whose resolution can be redirected), an Origin
+check, a content-type check that a cross-site form cannot satisfy, and a
+body-size ceiling. An unpaired endpoint refuses every request rather than
+defaulting to open.

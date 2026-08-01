@@ -141,6 +141,10 @@ export const VEHICLE_CONCEPT_PROFILE: DomainProfile = {
       ['assembly-tree', 'mass-summary'],
     ),
   ],
+  // Empty on purpose: an operation nothing can stage has no argument
+  // contract to check against, and publishing one would invite a client to
+  // build a well-formed call to something that does not exist.
+  argumentValidators: {},
   fileImpact: {
     nativeSchemaChange: true,
     migrationRequired: true,

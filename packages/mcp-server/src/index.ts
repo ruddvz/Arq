@@ -87,8 +87,11 @@ export {
   ARCHITECTURE_PROFILE_ID,
 } from './profile/architecture-profile';
 export {
-  ARQSCRIPT_OPERATION_TYPES,
+  ARCHITECTURE_ARGUMENT_VALIDATORS,
   ARCHITECTURE_DEFAULTS,
+  ARQSCRIPT_OPERATION_TYPES,
+  MAX_ELEMENT_DIMENSION_MM,
+  MAX_PLAN_COORDINATE_MM,
 } from './profile/architecture-operations';
 export { DECLARED_PROFILES, VEHICLE_CONCEPT_PROFILE } from './profile/declared-profiles';
 export {

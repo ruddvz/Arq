@@ -22,6 +22,8 @@
  */
 import sqlite3InitModule from '@sqlite.org/sqlite-wasm';
 import {
+  ARQFS_WORKER_ERROR_CODES,
+  createArqfsWorkerSession,
   handleArqfsWorkerRequest,
   type ArqfsWorkerContext,
   type ArqfsWorkerRequest,
@@ -35,17 +37,22 @@ async function openContext(): Promise<ArqfsWorkerContext> {
   const projectId = readProjectIdFromWorkerSearch(self.location.search);
   const databaseFilename = opfsFilenameForProject(projectId);
   const sqlite3 = await sqlite3InitModule();
+  // One session per Worker, and one Worker per project: what `open` decides
+  // about this file is what every later write in this Worker is measured
+  // against.
+  const session = createArqfsWorkerSession();
 
   try {
     const poolUtil = await sqlite3.installOpfsSAHPoolVfs({ name: OPFS_SAHPOOL_VFS_NAME });
     const db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
-    return { driver: createSqliteWasmArqfsDriver(db), usedVfs: 'opfs-sahpool' };
+    return { driver: createSqliteWasmArqfsDriver(db), usedVfs: 'opfs-sahpool', session };
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     const db = new sqlite3.oo1.DB(':memory:', 'ct') as unknown as Sqlite3Oo1DatabaseLike;
     return {
       driver: createSqliteWasmArqfsDriver(db),
       usedVfs: `memory-fallback (opfs-sahpool unavailable: ${reason})`,
+      session,
     };
   }
 }
@@ -63,6 +70,7 @@ self.onmessage = async (event: MessageEvent<ArqfsWorkerRequest>) => {
     self.postMessage({
       id: event.data.id,
       ok: false,
+      code: ARQFS_WORKER_ERROR_CODES.unexpected,
       error: error instanceof Error ? error.message : String(error),
     });
   }

@@ -92,11 +92,25 @@ async function main() {
     await tabA.waitForFunction(() => window.__ARQ_WRITER_LOCK_READY__ === true);
     await tabB.waitForFunction(() => window.__ARQ_WRITER_LOCK_READY__ === true);
 
-    await tabA.evaluate(() => window.__acquireLock());
+    const HOUSE = 'house';
+    const BARN = 'barn';
 
-    // Fire tab B's acquisition attempt but do not await it yet - it must genuinely
-    // queue behind tab A, not resolve immediately.
-    const tabBAcquirePromise = tabB.evaluate(() => window.__acquireLock());
+    await tabA.evaluate((projectId) => window.__acquireLock(projectId), HOUSE);
+
+    // The isolation property, which a single global lock name silently broke:
+    // a different project must be acquirable while the first is held.
+    const tabBOtherProject = await tabB.evaluate(
+      (projectId) => window.__acquireLock(projectId),
+      BARN,
+    );
+    await tabB.evaluate((projectId) => window.__releaseLock(projectId), BARN);
+
+    // Fire tab B's acquisition attempt for the SAME project but do not await it
+    // yet - it must genuinely queue behind tab A, not resolve immediately.
+    const tabBAcquirePromise = tabB.evaluate(
+      (projectId) => window.__acquireLock(projectId, { waitForRelease: true }),
+      HOUSE,
+    );
 
     // Give the queued request a moment to actually reach the browser's lock manager,
     // then confirm it is real "pending" state, not a resolved promise we haven't
@@ -107,6 +121,10 @@ async function main() {
       window.__getNotifications().some((n) => n.type === 'writer-acquired'),
     );
 
+    // The degrade-instead-of-hang path: without waitForRelease, a contended
+    // request answers immediately rather than queueing.
+    const tabBDegraded = await tabB.evaluate((projectId) => window.__acquireLock(projectId), HOUSE);
+
     let tabBResolvedTooEarly = false;
     const raceResult = await Promise.race([
       tabBAcquirePromise.then(() => 'resolved'),
@@ -116,7 +134,7 @@ async function main() {
       tabBResolvedTooEarly = true;
     }
 
-    await tabA.evaluate(() => window.__releaseLock());
+    await tabA.evaluate((projectId) => window.__releaseLock(projectId), HOUSE);
     await tabBAcquirePromise; // Now it should resolve.
 
     const tabBNotificationsAfterRelease = await tabB.evaluate(() => window.__getNotifications());
@@ -130,6 +148,11 @@ async function main() {
         (n) => n.type === 'writer-released',
       ),
       tabBAcquiredAfterTabAReleased: true,
+      // Two different projects do not contend: the lock name is project-scoped,
+      // the same way the OPFS filename already is.
+      differentProjectAcquiredWhileFirstHeld: tabBOtherProject === 'writer',
+      // A contended request without waitForRelease answers rather than hanging.
+      contendedRequestDegradedToReadOnly: tabBDegraded === 'read-only:another-context-is-writing',
     };
 
     const version = await browser.version();

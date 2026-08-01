@@ -23,3 +23,12 @@ jobs:
       # here we only prove the rendered output exists and is non-trivial.
       - run: test -f apps/marketing/dist/index.html && test -f apps/marketing/dist/404.html
       - run: test -f apps/web/dist/index.html
+      - run: test -f packages/mcp-server/dist/arq-mcp-stdio.mjs
+      # The MCP package's own tests drive the protocol in-process, which
+      # proves dispatch and nothing about whether the server can be launched
+      # and talked to. This spawns the built bundle and speaks real
+      # line-delimited JSON-RPC to it: the handshake, the no-grant default,
+      # a staged proposal that changes nothing, a refusal that names the
+      # missing domain profile, and withdrawal taking effect on the next
+      # call after the grant file is deleted mid-session (ADR-0027).
+      - run: pnpm benchmark:mcp-protocol

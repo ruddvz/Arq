@@ -4,6 +4,7 @@ import { createLocalDatabase, type ArqLocalDatabase } from './database';
 import { appendOperationRecord, onAbnormalClose } from './journal-append';
 
 let openDatabases: ArqLocalDatabase[] = [];
+let databaseCounter = 0;
 
 function openTestDatabase(name: string): ArqLocalDatabase {
   const db = createLocalDatabase(name, { indexedDB, IDBKeyRange });
@@ -84,5 +85,88 @@ describe('onAbnormalClose', () => {
     unsubscribe();
     dbA.close();
     expect(handler).not.toHaveBeenCalled();
+  });
+});
+
+describe('appendOperationRecord idempotency', () => {
+  /**
+   * The replay defect. A bare `add` meant a retried append wrote a second row,
+   * and because recovery replays in `++id` order that row lands at the END of
+   * the log rather than at its original position - so create-then-delete
+   * replays as create-delete-create and reconstructs a document the user never
+   * had.
+   */
+  it('records an operation once, however many times it is appended', async () => {
+    const db = openTestDatabase(`idempotency-${(databaseCounter += 1)}`);
+    const record = {
+      projectId: 'p1',
+      operationId: 'add-walls-abc-1',
+      actorId: 'local-user',
+      operationType: 'add-walls',
+      baseRevision: 0,
+      payload: { kind: 'add-walls', walls: [{ id: 'w1' }] },
+      preconditions: null,
+      affectedElementIds: ['w1'],
+      createdAt: '2026-08-01T00:00:00.000Z',
+    };
+
+    const first = await appendOperationRecord(db, record);
+    const second = await appendOperationRecord(db, record);
+
+    expect(first.status).toBe('appended');
+    expect(second.status).toBe('duplicate');
+    if (first.status === 'appended' && second.status === 'duplicate') {
+      expect(second.sequence).toBe(first.sequence);
+    }
+    expect(await db.operationJournal.where('projectId').equals('p1').count()).toBe(1);
+  });
+
+  it('does not treat the same operation id in a different project as a duplicate', async () => {
+    const db = openTestDatabase(`idempotency-${(databaseCounter += 1)}`);
+    const base = {
+      operationId: 'add-walls-abc-1',
+      actorId: 'local-user',
+      operationType: 'add-walls',
+      baseRevision: 0,
+      payload: { kind: 'add-walls', walls: [] },
+      preconditions: null,
+      affectedElementIds: [],
+      createdAt: '2026-08-01T00:00:00.000Z',
+    };
+
+    expect((await appendOperationRecord(db, { ...base, projectId: 'p1' })).status).toBe('appended');
+    expect((await appendOperationRecord(db, { ...base, projectId: 'p2' })).status).toBe('appended');
+
+    expect(await db.operationJournal.count()).toBe(2);
+  });
+
+  it('keeps a retried append from changing what recovery reconstructs', async () => {
+    const db = openTestDatabase(`idempotency-${(databaseCounter += 1)}`);
+    const make = (operationId: string, kind: string, payload: unknown) => ({
+      projectId: 'p1',
+      operationId,
+      actorId: 'local-user',
+      operationType: kind,
+      baseRevision: 0,
+      payload,
+      preconditions: null,
+      affectedElementIds: ['w1'],
+      createdAt: '2026-08-01T00:00:00.000Z',
+    });
+
+    const create = make('create-1', 'add-walls', { kind: 'add-walls', walls: [{ id: 'w1' }] });
+    await appendOperationRecord(db, create);
+    await appendOperationRecord(
+      db,
+      make('delete-1', 'remove-walls', {
+        kind: 'remove-walls',
+        wallIds: ['w1'],
+      }),
+    );
+    // The retry of the first append, arriving after the delete.
+    await appendOperationRecord(db, create);
+
+    const replayed = await db.operationJournal.orderBy('id').toArray();
+    expect(replayed.map((entry) => entry.operationType)).toEqual(['add-walls', 'remove-walls']);
   });
 });

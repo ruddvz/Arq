@@ -1,14 +1,86 @@
 import type { ArqfsDriver } from './arqfs-driver';
 import { createArqfsSchemaV1 } from './arqfs-schema';
 import { createArqfsSchemaLatest } from './arqfs-schema-v2';
-import { openArqfs } from './arqfs-open';
+import { openArqfs, type ArqfsOpenResult } from './arqfs-open';
+import { applyDefensiveOpenPolicy } from './arqfs-defensive-open';
 import { putArchiveEntries, getArchiveEntry, listArchiveEntryPaths } from './arqfs-archive-store';
-import type { ArqfsWorkerRequest, ArqfsWorkerResponse } from './arqfs-worker-protocol';
+import {
+  ARQFS_WORKER_ERROR_CODES,
+  type ArqfsWorkerErrorCode,
+  type ArqfsWorkerRequest,
+  type ArqfsWorkerResponse,
+} from './arqfs-worker-protocol';
+
+/**
+ * What the last `open` decided, carried across requests.
+ *
+ * The worker is a connection, not a pure function: `open` establishes what this
+ * build is allowed to do with this file, and every later request has to be
+ * measured against that. Holding the decision in an explicit session - rather
+ * than re-deriving it per request or, as before, not consulting it at all -
+ * makes the write gate impossible to skip and straightforward to test.
+ */
+export interface ArqfsWorkerSession {
+  openResult: ArqfsOpenResult | null;
+}
+
+export function createArqfsWorkerSession(): ArqfsWorkerSession {
+  return { openResult: null };
+}
 
 export interface ArqfsWorkerContext {
   readonly driver: ArqfsDriver;
   /** Which VFS actually opened this driver ('opfs-sahpool', or an honest fallback description) - see workers/arqfs-worker. */
   readonly usedVfs: string;
+  /** Mutated by `open`, read by every write. Required, because a gate that can be skipped by omitting an argument is not a gate. */
+  readonly session: ArqfsWorkerSession;
+}
+
+function refuse(id: number, code: ArqfsWorkerErrorCode, error: string): ArqfsWorkerResponse {
+  return { id, ok: false, code, error };
+}
+
+/**
+ * Whether this session may write, and if not, why not.
+ *
+ * `openArqfs` already decides this: `canWrite` is false when the file's
+ * `min_writer_major` is above this build, and `safeModeRequired` is set when the
+ * file could not be fully understood. Until this check existed the handler asked
+ * for that decision on `open` and then ignored it - `putArchiveEntries` called
+ * straight through to the store, so a file this build had just declared itself
+ * unqualified to write could be mutated by the very next message.
+ */
+function writeRefusal(
+  session: ArqfsWorkerSession,
+): { readonly code: ArqfsWorkerErrorCode; readonly error: string } | null {
+  const result = session.openResult;
+  if (result === null) {
+    return {
+      code: ARQFS_WORKER_ERROR_CODES.notOpened,
+      error: 'Open the file before writing to it. Nothing was written.',
+    };
+  }
+  if (result.status === 'rejected') {
+    return {
+      code: ARQFS_WORKER_ERROR_CODES.openRejected,
+      error: `This file was not opened: ${result.reason}. Nothing was written.`,
+    };
+  }
+  if (!result.capabilities.canWrite) {
+    return {
+      code: ARQFS_WORKER_ERROR_CODES.notWritable,
+      error:
+        'This build can read this file but must not write it, because the file requires a newer writer. Nothing was written.',
+    };
+  }
+  if (result.capabilities.safeModeRequired) {
+    return {
+      code: ARQFS_WORKER_ERROR_CODES.notWritable,
+      error:
+        'This file opened in safe mode, so this build does not fully understand its contents. Nothing was written.',
+    };
+  }
+  return null;
 }
 
 /**
@@ -36,6 +108,18 @@ export function handleArqfsWorkerRequest(
           createArqfsSchemaLatest(context.driver, createArqfsSchemaV1);
         }
         const result = openArqfs(context.driver);
+        context.session.openResult = result;
+
+        // The connection-level hardening arqfs-defensive-open.ts was written for.
+        // Until this call existed it had no non-test caller at all, which meant
+        // that in the real browser runtime `PRAGMA foreign_keys` stayed off - so
+        // every `REFERENCES` and `ON DELETE CASCADE` schema v1 and v2 declare was
+        // inert - while `trusted_schema` stayed on for a file Arq did not write.
+        // It is applied here, at open, because this is the only moment the build
+        // knows whether the file may be written.
+        const writable = result.status === 'opened' && result.capabilities.canWrite;
+        applyDefensiveOpenPolicy(context.driver, { readOnly: !writable });
+
         return {
           id: request.id,
           ok: true,
@@ -43,6 +127,10 @@ export function handleArqfsWorkerRequest(
         };
       }
       case 'putArchiveEntries': {
+        const refusal = writeRefusal(context.session);
+        if (refusal !== null) {
+          return refuse(request.id, refusal.code, refusal.error);
+        }
         putArchiveEntries(context.driver, new Map(request.entries));
         return { id: request.id, ok: true, payload: { kind: 'putArchiveEntries' } };
       }
@@ -56,14 +144,15 @@ export function handleArqfsWorkerRequest(
       }
       case 'close': {
         context.driver.close();
+        context.session.openResult = null;
         return { id: request.id, ok: true, payload: { kind: 'close' } };
       }
     }
   } catch (error) {
-    return {
-      id: request.id,
-      ok: false,
-      error: error instanceof Error ? error.message : String(error),
-    };
+    return refuse(
+      request.id,
+      ARQFS_WORKER_ERROR_CODES.unexpected,
+      error instanceof Error ? error.message : String(error),
+    );
   }
 }

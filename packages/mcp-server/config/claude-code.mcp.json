@@ -1,11 +1,11 @@
 {
-  "$comment": "Starting point only. The command path is published by the Arq desktop application once it bundles @arq/mcp-server; there is no standalone executable in this repository. A session is only useful once Arq has shared a project with this client.",
+  "$comment": "Build the server first: pnpm --filter @arq/mcp-server build. Replace <repo> with the absolute path to this checkout. Until Arq writes a grant file, every tool answers that nothing is shared - that is the correct default, not a fault.",
   "mcpServers": {
     "arq": {
-      "command": "<path published by Arq>/arq-mcp",
-      "args": [],
+      "command": "node",
+      "args": ["<repo>/packages/mcp-server/dist/arq-mcp-stdio.mjs"],
       "env": {
-        "ARQ_MCP_SERVER_MODE": "local_runtime"
+        "ARQ_MCP_GRANT_FILE": "<the path Arq writes when you share a project>"
       }
     }
   }

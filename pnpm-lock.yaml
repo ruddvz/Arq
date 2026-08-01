@@ -257,6 +257,10 @@ importers:
       '@arq/validation':
         specifier: workspace:*
         version: link:../validation
+    devDependencies:
+      vite:
+        specifier: ^5
+        version: 5.4.21(@types/node@22.20.1)
 
   packages/model-context: {}
 

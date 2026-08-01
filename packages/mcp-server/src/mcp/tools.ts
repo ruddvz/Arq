@@ -1,7 +1,7 @@
 /**
  * The tool surface, as data.
  *
- * Twenty-three tools, none of which commits, approves, opens a path, runs a
+ * Twenty-four tools, none of which commits, approves, opens a path, runs a
  * query language or writes a file. That is not a claim in a document that a
  * reviewer has to check by reading handlers: `TOOL_SCOPES` in
  * `grant/scopes.ts` is the closed list of names, this table must cover it

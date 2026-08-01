@@ -30,6 +30,25 @@ import { applyOperation, type DrawnWall, type WorkspaceOperation } from './plan-
 
 export const PLAN_JOURNAL_ACTOR = 'local-user';
 
+/**
+ * A journal-unique operation id.
+ *
+ * The previous scheme was `${kind}-${affectedIds}-${Date.now()}`, which is not
+ * unique: two operations of the same kind over the same walls within one
+ * millisecond - rapid undo then redo, or a repeated delete - produced the same
+ * id. That matters now that the append is idempotent per id, because a genuine
+ * second operation carrying a previously-used id would be silently discarded as
+ * a duplicate. A counter plus a per-session token is unique without depending on
+ * the clock's resolution or on it moving forwards.
+ */
+let operationCounter = 0;
+const sessionToken = Math.random().toString(36).slice(2, 10);
+
+function nextOperationId(kind: string): string {
+  operationCounter += 1;
+  return `${kind}-${sessionToken}-${operationCounter}`;
+}
+
 export type PlanJournalState =
   | { readonly status: 'ready' }
   | { readonly status: 'unavailable'; readonly reason: string }
@@ -85,7 +104,7 @@ export function createPlanJournal(
         operation.kind === 'add-walls' ? operation.walls.map((wall) => wall.id) : operation.wallIds;
       const result = await appendOperationRecord(db, {
         projectId,
-        operationId: `${operation.kind}-${affected.join('+')}-${Date.now()}`,
+        operationId: nextOperationId(operation.kind),
         actorId: PLAN_JOURNAL_ACTOR,
         operationType: operation.kind,
         baseRevision: 0,
@@ -94,7 +113,9 @@ export function createPlanJournal(
         affectedElementIds: affected,
         createdAt: new Date().toISOString(),
       });
-      if (result.status === 'appended') {
+      // A duplicate means this exact operation was already recorded, which is
+      // the successful outcome of a retry, not a failure.
+      if (result.status === 'appended' || result.status === 'duplicate') {
         return { status: 'ready' };
       }
       if (result.status === 'quota-exceeded') {

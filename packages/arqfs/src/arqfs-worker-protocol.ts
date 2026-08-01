@@ -29,6 +29,32 @@ export type ArqfsWorkerResponsePayload =
   | { readonly kind: 'listArchiveEntryPaths'; readonly paths: readonly string[] }
   | { readonly kind: 'close' };
 
+/**
+ * Stable refusal codes.
+ *
+ * A caller has to be able to tell "this file is not writable by this build" from
+ * "something went wrong", and a message string is not a contract: it is prose that
+ * changes when someone improves the wording. These are the contract.
+ */
+export const ARQFS_WORKER_ERROR_CODES = {
+  /** A write arrived before any successful open. */
+  notOpened: 'ARQFS_WORKER_NOT_OPENED',
+  /** The open succeeded for reading, and this build must not write this file. */
+  notWritable: 'ARQFS_WORKER_FILE_NOT_WRITABLE',
+  /** The open itself was rejected; nothing may be done with this file. */
+  openRejected: 'ARQFS_WORKER_OPEN_REJECTED',
+  /** Anything unexpected. Deliberately last: a specific code is always preferred. */
+  unexpected: 'ARQFS_WORKER_UNEXPECTED_ERROR',
+} as const;
+
+export type ArqfsWorkerErrorCode =
+  (typeof ARQFS_WORKER_ERROR_CODES)[keyof typeof ARQFS_WORKER_ERROR_CODES];
+
 export type ArqfsWorkerResponse =
   | { readonly id: number; readonly ok: true; readonly payload: ArqfsWorkerResponsePayload }
-  | { readonly id: number; readonly ok: false; readonly error: string };
+  | {
+      readonly id: number;
+      readonly ok: false;
+      readonly code: ArqfsWorkerErrorCode;
+      readonly error: string;
+    };

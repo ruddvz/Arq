@@ -19,9 +19,12 @@ export interface DefensiveOpenOptions {
  *   SQL (views, triggers, check constraints) that a malicious file could carry.
  * - `PRAGMA busy_timeout` bounds how long a caller can be blocked by lock
  *   contention, rather than hanging indefinitely.
- * - `PRAGMA query_only = ON` (only with `readOnly: true`) makes every write attempt
- *   fail cleanly - confirmed directly to actually reject a write, not merely assumed
- *   to work as documented.
+ * - `PRAGMA query_only` is set explicitly either way rather than only turned on.
+ *   A pragma is connection state, not a one-way switch: leaving it alone on the
+ *   writable path means a connection that was once opened read-only stays
+ *   read-only for the rest of its life, so re-evaluating capabilities would have
+ *   no effect. Setting both directions makes the policy a function of its
+ *   argument, which is also what makes it safe to re-apply.
  * - `PRAGMA foreign_keys = ON` enforces the REFERENCES constraints schema v1 (
  *   `resource_chunk.resource_sha256`) and v2 (`source_object_map`, `import_session`,
  *   `import_issue`, `resource_reference`, arqfs-schema-v2.ts) both declare -
@@ -36,7 +39,5 @@ export function applyDefensiveOpenPolicy(driver: ArqfsDriver, options: Defensive
   driver.exec('PRAGMA busy_timeout = 5000');
   driver.exec('PRAGMA foreign_keys = ON');
   driver.exec('PRAGMA recursive_triggers = OFF');
-  if (options.readOnly) {
-    driver.exec('PRAGMA query_only = ON');
-  }
+  driver.exec(options.readOnly ? 'PRAGMA query_only = ON' : 'PRAGMA query_only = OFF');
 }

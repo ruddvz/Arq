@@ -127,6 +127,19 @@ describe('profile invariants', () => {
     expect(issues.some((issue) => issue.message.includes('must require review'))).toBe(true);
   });
 
+  it('rejects a registered operation that publishes a schema with no validator behind it', () => {
+    const issues = validateDomainProfile(
+      mutate({
+        argumentValidators: Object.fromEntries(
+          Object.entries(valid.argumentValidators).filter(
+            ([operationType]) => operationType !== 'architecture.wall.create',
+          ),
+        ),
+      }),
+    );
+    expect(issues.some((issue) => issue.message.includes('no validator behind it'))).toBe(true);
+  });
+
   it('rejects a registered operation whose evidence is not something a reviewer can open', () => {
     const issues = validateDomainProfile(
       mutate({
@@ -204,6 +217,18 @@ describe('the registry', () => {
     ]);
     const original = createDomainProfileRegistry([ARCHITECTURE_PROFILE]);
     expect(reworded.catalogRevision).toBe(original.catalogRevision);
+  });
+
+  it('hands a host the operation’s own argument checker rather than its published schema', () => {
+    const validator = registry.argumentValidator('architecture.wall.create');
+    expect(validator).toBeDefined();
+    // The same contract the catalogue advertises, as something that can
+    // actually run - so a host never has to reinterpret the JSON Schema.
+    expect(validator?.jsonSchema).toEqual(
+      registry.findOperation('architecture.wall.create')?.argumentsSchema,
+    );
+    expect(validator?.validate({}).ok).toBe(false);
+    expect(registry.argumentValidator('vehicle.concept.fuselage.create')).toBeUndefined();
   });
 
   it('looks operations up by version, not only by name', () => {

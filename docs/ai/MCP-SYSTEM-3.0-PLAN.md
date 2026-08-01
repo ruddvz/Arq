@@ -157,7 +157,7 @@ Claims are graded with this repository's own evidence vocabulary.
 | Claim                                                                          | Evidence            | Where                                                                               |
 | ------------------------------------------------------------------------------ | ------------------- | ----------------------------------------------------------------------------------- |
 | MCP protocol: handshake, version negotiation, tools, resources, prompts        | verified            | `mcp/*.test.ts`, 23 tests including a full client journey                           |
-| 23 tools, no commit, approve, path or query-language tool                      | verified            | scope table and tool table asserted equal in both directions                        |
+| 24 tools, no commit, approve, path or query-language tool                      | verified            | scope table and tool table asserted equal in both directions                        |
 | Grants, scopes, expiry, revocation, project isolation                          | verified            | `grant/grant.test.ts`, `adapter/bridge-adapter.test.ts`                             |
 | Operations validated by the real `@arq/validation` and `@arq/operations` rules | verified            | `host/memory-project-host.test.ts`                                                  |
 | Atomic application, grouped undo, commit-time revalidation                     | verified            | same                                                                                |

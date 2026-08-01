@@ -31,6 +31,7 @@
     "benchmark:journal-recovery": "node scripts/run-journal-recovery-capability-check.mjs",
     "benchmark:model-canvas": "node scripts/run-model-canvas-capability-check.mjs",
     "benchmark:wall-hud": "node scripts/run-wall-hud-capability-check.mjs",
+    "benchmark:mcp-protocol": "node scripts/run-mcp-protocol-capability-check.mjs",
     "rust:test": "cargo test --manifest-path rust/Cargo.toml",
     "rust:fmt-check": "cargo fmt --manifest-path rust/Cargo.toml --check",
     "rust:clippy": "cargo clippy --manifest-path rust/Cargo.toml --all-targets",

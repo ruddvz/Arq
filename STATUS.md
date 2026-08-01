@@ -58,7 +58,7 @@ checks, weekly render benchmark).
   thoroughly tested; door/window/room tools and region selection exist but
   are not yet wired to the canvas.
 - **MCP boundary** (`packages/mcp-server`, ADR-0027): the governed surface an
-  AI client crosses to reach a project - 23 tools, no commit, approve, path or
+  AI client crosses to reach a project - 24 tools, no commit, approve, path or
   query-language tool, every call carrying a grant with scopes, expiry and
   revocation. Operation types come from `@arq/arqscript`'s own constructors
   (ADR-0014), the model it applies to is `@arq/bim-core`, and validation is

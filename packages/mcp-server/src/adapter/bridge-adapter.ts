@@ -22,7 +22,11 @@ import type { ArqMcpScope } from '../grant/scopes';
 import type { GrantContext } from '../grant/grant';
 import { describeGrant, grantState, requireProjectAccess, requireScope } from '../grant/grant';
 import type { DomainProfileRegistry } from '../profile/profile-registry';
-import type { DomainProfile, ProjectAccessState } from '../profile/domain-profile';
+import type {
+  DomainProfile,
+  OperationDefinition,
+  ProjectAccessState,
+} from '../profile/domain-profile';
 import type { ArqProjectHost, HostOperation, HostPrecondition } from '../host/project-host';
 import type { JsonValue } from '../schema/json-value';
 import { toJsonValue } from '../schema/json-value';
@@ -127,6 +131,9 @@ export interface PublishRequest {
   readonly revision: string;
   readonly state: 'awaiting_user_destination';
 }
+
+/** See `planStore`: a byte that cannot appear in a tenant or subject identifier. */
+const PLAN_KEY_SEPARATOR = '\u0000';
 
 interface PlanStore {
   readonly briefs: Map<string, Brief>;
@@ -347,13 +354,34 @@ export class ArqBridge {
     if (summary === undefined) {
       throw projectNotAvailable();
     }
+    const operations = this.operationsFor(projectId);
     return {
       projectId,
       projectRevision: summary.revision,
       projectAccessState: summary.accessState,
       catalogRevision: this.registry.catalogRevision,
-      operations: this.registry.registeredOperations(),
+      operations,
+      hostSubsetsCatalogue: operations.length !== this.registry.registeredOperations().length,
     };
+  }
+
+  /**
+   * The operations this project can actually accept.
+   *
+   * The registry says what Arq knows how to do. The host says what this
+   * project store can do, and a host that cannot express a room must not
+   * have room creation advertised to a caller that will then build a change
+   * set around it. Where the host declares nothing, it implements the whole
+   * catalogue.
+   */
+  private operationsFor(projectId: string): readonly OperationDefinition[] {
+    const registered = this.registry.registeredOperations();
+    const supported = this.host.supportedOperationTypes?.(projectId);
+    if (supported === undefined) {
+      return registered;
+    }
+    const allowed = new Set(supported);
+    return registered.filter((operation) => allowed.has(operation.operationType));
   }
 
   saveBrief(
@@ -670,19 +698,29 @@ export class ArqBridge {
     // before anything reaches the host, so an unregistered operation is
     // refused as a capability question with an explanation rather than as an
     // opaque runtime rejection.
+    const availableHere = new Map(
+      this.operationsFor(changeSetInput.projectId).map((operation) => [
+        `${operation.operationType}@${operation.operationVersion}`,
+        operation,
+      ]),
+    );
     for (const operation of changeSetInput.operations) {
-      const definition = this.registry.findOperation(
-        operation.operationType,
-        operation.operationVersion,
+      const definition = availableHere.get(
+        `${operation.operationType}@${operation.operationVersion}`,
       );
       if (definition === undefined) {
         const explanation = this.registry.explainMissingCapability(operation.operationType);
         const versions = this.registry.registeredVersions(operation.operationType);
+        const hostSupports = this.operationsFor(changeSetInput.projectId).some(
+          (candidate) => candidate.operationType === operation.operationType,
+        );
         throw capabilityUnavailable(
           `${operation.operationType}@${operation.operationVersion}`,
           versions.length === 0
             ? explanation.reason
-            : `Arq registers that operation at ${versions.join(', ')} and not at ${operation.operationVersion}.`,
+            : !hostSupports
+              ? `Arq registers that operation, but this project cannot accept it. Read arq_get_operation_catalog for this project rather than assuming the whole catalogue applies.`
+              : `Arq registers that operation at ${versions.join(', ')} and not at ${operation.operationVersion}.`,
         );
       }
       if (!definition.allowedProjectStates.includes(summary.accessState)) {
@@ -973,7 +1011,12 @@ export class ArqBridge {
   }
 
   private planStore(grant: GrantContext): PlanStore {
-    const key = `${grant.tenantId} ${grant.subjectId}`;
+    // A separator no identifier can contain. A space would let
+    // ("tenant a", "subject") and ("tenant", "a subject") collide onto one
+    // key, which would show one person another person's plans. Written as
+    // an escape rather than a literal control character so the source stays
+    // text and the intent is visible.
+    const key = `${grant.tenantId}${PLAN_KEY_SEPARATOR}${grant.subjectId}`;
     const existing = this.plans.get(key);
     if (existing !== undefined) {
       return existing;

@@ -97,12 +97,40 @@ project changed.
 | A tool's schema matches what it checks                                        | One `Validator` carries both; drift is unrepresentable                                      |
 | Nothing is fetched                                                            | There is no fetch. A reference URI is parsed, stored and read by a person                   |
 
+## Running it
+
+```bash
+pnpm --filter @arq/mcp-server build     # -> dist/arq-mcp-stdio.mjs
+ARQ_MCP_SEED_PROJECT='My project' \
+  ARQ_MCP_GRANT_FILE=/path/to/grant.json \
+  node packages/mcp-server/dist/arq-mcp-stdio.mjs
+```
+
+Unlike every other package here, this one builds. An MCP client launches a
+process and speaks to it over stdio; it cannot import TypeScript source, and
+Node's own type stripping does not help because the workspace packages use
+extensionless relative imports. The build is a single bundled Node module
+with no resolution setup.
+
+Access comes from the grant file and nowhere else. With no file, every tool
+answers that nothing is shared. Deleting it withdraws access on the next
+call, without a reconnection. See [config/README.md](config/README.md).
+
 ## Running the checks
 
 ```bash
 pnpm --filter @arq/mcp-server typecheck
-pnpm vitest run packages/mcp-server
+pnpm vitest run packages/mcp-server     # 260 in-process tests
+pnpm benchmark:mcp-protocol             # spawns the built server, real stdio
 ```
+
+The last one is the half the unit tests cannot cover: it launches the bundle
+as a process and asserts, over real JSON-RPC, that the handshake negotiates,
+that an ungranted connection is told so, that a staged proposal reports
+`canonicalMutation: none`, that an unbuildable domain names its profile and
+blockers, that deleting the grant file mid-session withdraws access
+immediately, and that standard output carried protocol and nothing else. It
+writes timestamped evidence to `benchmarks/results/`.
 
 ## What this is not
 

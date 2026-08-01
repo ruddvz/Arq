@@ -80,6 +80,20 @@ export class ArqLocalDatabase extends Dexie {
     this.version(2).stores({
       derivedCaches: '++id, projectId, cacheKey, [projectId+cacheKey]',
     });
+    /*
+     * v3 adds a [projectId+operationId] index so an append can ask "have I
+     * already recorded this operation?" as an indexed lookup rather than a
+     * scan. Deliberately NOT a unique index: a database written by an earlier
+     * build may already contain two rows sharing an operation id (ids were
+     * derived from Date.now(), so two operations in the same millisecond over
+     * the same elements collided), and a unique index would make that database
+     * fail to upgrade - turning a recoverable journal into an unopenable one.
+     * Uniqueness is enforced going forward by appendOperationRecord, inside a
+     * transaction, where it can report a duplicate instead of throwing.
+     */
+    this.version(3).stores({
+      operationJournal: '++id, projectId, operationId, [projectId+id], [projectId+operationId]',
+    });
   }
 }
 

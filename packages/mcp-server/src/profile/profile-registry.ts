@@ -23,6 +23,7 @@
  */
 
 import type { JsonValue } from '../schema/json-value';
+import type { Validator } from '../schema/schema';
 import { contentDigest } from '../util/hash';
 import { ARCHITECTURE_PROFILE } from './architecture-profile';
 import { DECLARED_PROFILES } from './declared-profiles';
@@ -55,6 +56,12 @@ export interface DomainProfileRegistry {
   findOperation(operationType: string, operationVersion?: string): OperationDefinition | undefined;
   /** Every registered version of a name, newest last. Empty when the name is not registered at all. */
   registeredVersions(operationType: string): readonly string[];
+  /**
+   * The runtime checker for an operation's arguments, so a host validates
+   * against the operation's own contract instead of reinterpreting the
+   * published JSON Schema. `undefined` when the operation is not registered.
+   */
+  argumentValidator(operationType: string): Validator<unknown> | undefined;
   explainMissingCapability(requestedCapability: string): MissingCapabilityExplanation;
 }
 
@@ -109,6 +116,16 @@ export function createDomainProfileRegistry(
     );
   }
 
+  const validators = new Map<string, Validator<unknown>>();
+  for (const profile of profiles) {
+    if (profile.status !== 'registered') {
+      continue;
+    }
+    for (const [operationType, validator] of Object.entries(profile.argumentValidators)) {
+      validators.set(operationType, validator);
+    }
+  }
+
   const catalogRevision = computeCatalogRevision(registered);
 
   return {
@@ -126,6 +143,9 @@ export function createDomainProfileRegistry(
           operation.operationType === operationType &&
           (operationVersion === undefined || operation.operationVersion === operationVersion),
       );
+    },
+    argumentValidator(operationType) {
+      return validators.get(operationType);
     },
     registeredVersions(operationType) {
       return registered

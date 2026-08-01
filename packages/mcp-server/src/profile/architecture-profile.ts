@@ -26,6 +26,7 @@ import {
 import type { ArqMcpScope } from '../grant/scopes';
 import type { DomainProfile, EvidenceRecord, OperationDefinition } from './domain-profile';
 import {
+  ARCHITECTURE_ARGUMENT_VALIDATORS,
   ARQSCRIPT_OPERATION_TYPES,
   addDimensionArguments,
   createLevelArguments,
@@ -287,6 +288,7 @@ export const ARCHITECTURE_PROFILE: DomainProfile = {
   ],
   derivedOutputs: ARCHITECTURE_DERIVED_OUTPUTS,
   operations: ARCHITECTURE_OPERATIONS,
+  argumentValidators: ARCHITECTURE_ARGUMENT_VALIDATORS,
   fileImpact: {
     nativeSchemaChange: false,
     migrationRequired: false,

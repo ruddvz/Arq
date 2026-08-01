@@ -121,6 +121,23 @@ export interface HostUndoGroup {
 /** The read and validate half. This is the only object the MCP adapter holds. */
 export interface ArqProjectHost {
   listProjectIds(): readonly string[];
+  /**
+   * The operation types this host can actually carry out, or `undefined`
+   * when it implements the whole registered catalogue.
+   *
+   * A registry says what Arq knows how to do; a host says what *this*
+   * project store can do, and the two are not always the same. The browser
+   * build, for instance, edits a plan document of walls and has nowhere to
+   * put a room or a hosted opening. Without this, `arq_get_operation_catalog`
+   * would tell an assistant it may create a room, the assistant would build
+   * a change set around one, and the failure would arrive at staging as an
+   * unregistered-operation error - which is both late and untrue, because
+   * the operation *is* registered, just not here.
+   *
+   * The bridge intersects the registry with this list, so the catalogue a
+   * caller reads is the catalogue that project can accept.
+   */
+  supportedOperationTypes?(projectId: string): readonly string[] | undefined;
   getSummary(projectId: string): HostProjectSummary | undefined;
   getSnapshot(projectId: string): HostProjectSnapshot | undefined;
   query(query: HostQuery): HostQueryResult | undefined;
