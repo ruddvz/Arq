@@ -6,6 +6,23 @@
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { format, resolveConfig } from 'prettier';
+
+/*
+ * Both outputs are written through Prettier rather than raw `JSON.stringify`.
+ * The language contract requires this refresh to run in the same change that
+ * moved a governed source set, so whatever it writes is committed - and
+ * `JSON.stringify` disagrees with the repository's Prettier configuration about
+ * short arrays (`["accepted-adrs", "status"]` fits inside the 100-column width
+ * and is kept on one line; `JSON.stringify` always expands it). That made the
+ * mandated command leave the tree failing `pnpm format:check`, so every
+ * compliant change had to know about an undocumented second step. Formatting
+ * here keeps the contract a single command.
+ */
+async function writeFormattedJson(path, data) {
+  const options = await resolveConfig(path);
+  writeFileSync(path, await format(JSON.stringify(data), { ...options, filepath: path }));
+}
 
 const args = process.argv.slice(2);
 const value = (flag, fallback) => {
@@ -219,10 +236,10 @@ if (refreshLog.entries[0]?.sourceSetDigest !== sourceSetDigest) {
     previousSourceSetDigest: previous?.sourceSetDigest ?? null,
     changedSourceSets,
   });
-  writeFileSync(logPath, `${JSON.stringify(refreshLog, null, 2)}\n`);
+  await writeFormattedJson(logPath, refreshLog);
 }
 mkdirSync(dirname(output), { recursive: true });
-writeFileSync(output, `${JSON.stringify(context, null, 2)}\n`);
+await writeFormattedJson(output, context);
 console.log(
   `Wrote ${output} from ${Object.keys(records).length} source sets (${sourceSetDigest.slice(0, 12)}).`,
 );

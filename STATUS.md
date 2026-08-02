@@ -16,9 +16,9 @@ file in the same change._
 
 ## What is real today
 
-Verified by `pnpm typecheck` (36/36 packages plus `contracts/`),
+Verified by `pnpm typecheck` (37/37 packages plus `contracts/`),
 `pnpm lint` (real eslint gate over the whole repository), `pnpm test`
-(230+ files, ~2,000 tests) and CI (`.github/workflows/`: format, lint,
+(259 files, 2,353 tests) and CI (`.github/workflows/`: format, lint,
 typecheck, tests, workspace-registry check, licence/SBOM gate, secret scan,
 explicit build gate, Rust fmt/clippy/test, six headless-Chromium capability
 checks, weekly render benchmark).
@@ -26,7 +26,14 @@ checks, weekly render benchmark).
 - **`.arq` file format** (`packages/arqfs`): schema v1/v2, capability-gated
   open, byte preflight, copy-on-write migration with reopen+integrity
   verification, recovery reporting, fuzz tests. Library-complete; not yet
-  reachable from the product (no open-project pipeline).
+  reachable from the product (no open-project pipeline). Preflight now reports
+  whether the bytes it was handed are the whole database: a write-ahead-log
+  project keeps its newest commits in a `-wal` sidecar that a file picker does
+  not supply, and SQLite reads such a file without the sidecar as of its last
+  checkpoint rather than failing - so the file-open surface says "compatible"
+  and "may not be complete" as the separate facts they are. A failed migration
+  can now be quarantined instead of deleted, because the half-migrated copy is
+  the only evidence of a bug that corrupts projects during upgrade.
 - **Workspace shell** (`apps/web` + `packages/workspace` +
   `packages/design-system`): the full open-project surface - top bar, tabs,
   mode/tool rails, browser/inspector panels, command palette, status bar,
@@ -57,6 +64,16 @@ checks, weekly render benchmark).
   `plan-renderer`, `command-system`, `operations`): implemented and
   thoroughly tested; door/window/room tools and region selection exist but
   are not yet wired to the canvas.
+- **MCP boundary** (`packages/mcp-server`, ADR-0027): the governed surface an
+  AI client crosses to reach a project - 24 tools, no commit, approve, path or
+  query-language tool, every call carrying a grant with scopes, expiry and
+  revocation. Operation types come from `@arq/arqscript`'s own constructors
+  (ADR-0014), the model it applies to is `@arq/bim-core`, and validation is
+  `@arq/validation` and `@arq/operations` rather than anything restated here.
+  Library-complete with 256 tests and zero new dependencies; not reachable from
+  the product - `apps/web` does not implement the host, no panel renders the
+  Review Centre model, and no client run has been recorded. The critique of the
+  reference packages it replaces is in `docs/ai/MCP-SYSTEM-3.0-PLAN.md`.
 - **Public website** (`apps/marketing`): all 17 PUB pages from `docs/pages/`
   as a static, no-JS-required site with tests enforcing the launch-claims
   checklist, route coverage and accessibility basics.
@@ -94,6 +111,51 @@ surface may state as current, and `pnpm arq:language:verify` plus the
 (`docs/product/voice/generated-repo-context.json`) is hashed from the sources
 listed in `context-contract.json`: change one of them and refresh it in the
 same commit, because CI fails on a stale context and never regenerates it.
+
+## Privacy transport
+
+`pnpm benchmark:network-observation` records every request the real production
+bundle attempts in headless Chromium while a wall is drawn, the 3D view is
+opened and the file panel is used, and fails if any of them leaves the origin
+that served the app. Requests are recorded and allowed to proceed, never
+blocked: blocking outbound traffic and then observing none would measure the
+harness. Attempts count rather than successes, so a request to an unreachable
+host is still a finding. The check is proven by injection - a deliberate
+`fetch` to an external host was added, caught, and removed.
+
+This supplies the evidence half of what
+`DRIFT-PRIVACY-TRANSPORT-ABSOLUTE` asks for. That conflict stays open: its
+resolution requires "a network-observation test **and** an approved privacy
+statement, or revised copy", and the statement is the registry owner's
+decision, not this change's. Until they make it, `no-network-data-transfer`
+remains blocked on the public and support surfaces, and no surface here states
+it.
+
+## Gate integrity
+
+The Engineering OS 5.0 gate (`engineering/`,
+`.github/workflows/engineering-gate.yml`) runs in shadow mode and is not yet a
+required check. Three holes in it are now closed, each proven by running the
+real tooling rather than by inspection:
+
+- **The gate's own instruments are classified.** The scripts that produce and
+  check evidence used to classify as `unknown_runtime_surface`, so a change to
+  `scripts/verify-arq-core-wasm-parity.mjs` selected `format`, `lint`,
+  `typecheck`, `unit` and `build` - and never `wasm_parity`. An instrument can
+  no longer be weakened in the change it was meant to measure. Pinned by
+  classifier fixtures 17 and 18.
+- **The wasm evidence can pass.** `wasm_parity` and `worker_core` both read
+  `rust/arq-core/pkg`, a deliberately uncommitted build artifact that no
+  workflow built, so both failed at "pkg does not exist" for every change that
+  selected them - measuring the runner, not the diff. `pnpm rust:build-wasm`
+  now provisions its own toolchain (version read from `rust/Cargo.lock`) and
+  runs ahead of both.
+- **The live workflows are checked, not their templates.**
+  `verify-workflow-controls.mjs` replaces a script that read reference
+  templates this repository correctly never installed, threw `ENOENT` on every
+  invocation and was wired to nothing. It now asserts 15 controls against the
+  workflows named by `installation-map.v5.json`, including the gate's own, and
+  runs in the gate's preflight job.
 
 ## Open decisions
 

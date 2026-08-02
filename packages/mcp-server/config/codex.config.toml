@@ -1,0 +1,15 @@
+# Build the server first:
+#   pnpm --filter @arq/mcp-server build
+# Replace <repo> with the absolute path to this checkout.
+#
+# ARQ_MCP_GRANT_FILE is the file Arq writes when the operator shares a
+# project. The server re-reads it on every call, so deleting it withdraws
+# access immediately. With no file, every tool answers that nothing is
+# shared - the correct default, not a fault.
+
+[mcp_servers.arq]
+command = "node"
+args = ["<repo>/packages/mcp-server/dist/arq-mcp-stdio.mjs"]
+
+[mcp_servers.arq.env]
+ARQ_MCP_GRANT_FILE = "<the path Arq writes when you share a project>"

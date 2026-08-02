@@ -11,33 +11,67 @@
       // exercises the real Web Locks API + BroadcastChannel mechanics directly,
       // matching the same pattern already used by the Pencil/hover-sequence
       // capability checks (packages/input-system/benchmarks).
-      const LOCK_NAME = 'arqfs-project-writer';
-      const CHANNEL_NAME = 'arqfs-writer-notifications';
+      //
+      // Names are project-scoped, exactly as the module derives them. A single
+      // global lock name meant opening one project blocked an unrelated one, which
+      // is the opposite of the isolation the OPFS filename check already proves at
+      // the file level - so this page now takes a project id and the check drives
+      // two different ones to prove they do not contend.
+      const LOCK_PREFIX = 'arqfs-project-writer';
+      const CHANNEL_PREFIX = 'arqfs-writer-notifications';
+      const lockName = (projectId) => `${LOCK_PREFIX}:${projectId}`;
+      const channelName = (projectId) => `${CHANNEL_PREFIX}:${projectId}`;
 
-      let releaseHeldLock = () => {};
+      const releasers = new Map();
       const notifications = [];
-      const channel = new BroadcastChannel(CHANNEL_NAME);
-      channel.onmessage = (event) => notifications.push(event.data);
+      const listeners = new Map();
 
-      window.__acquireLock = () =>
-        new Promise((resolveAcquired) => {
-          navigator.locks.request(LOCK_NAME, { mode: 'exclusive' }, () => {
-            const notifyChannel = new BroadcastChannel(CHANNEL_NAME);
-            notifyChannel.postMessage({ type: 'writer-acquired' });
-            notifyChannel.close();
-            resolveAcquired();
-            return new Promise((resolveHeld) => {
-              releaseHeldLock = () => {
-                const releaseChannel = new BroadcastChannel(CHANNEL_NAME);
-                releaseChannel.postMessage({ type: 'writer-released' });
-                releaseChannel.close();
-                resolveHeld();
-              };
-            });
-          });
+      function listen(projectId) {
+        if (listeners.has(projectId)) return;
+        const channel = new BroadcastChannel(channelName(projectId));
+        channel.onmessage = (event) => notifications.push({ projectId, ...event.data });
+        listeners.set(projectId, channel);
+      }
+
+      /**
+       * Resolves to 'writer' or 'read-only', never hanging: `ifAvailable` makes an
+       * already-held lock an answer instead of an indefinite queue, and the
+       * request's own rejection is caught rather than discarded.
+       */
+      window.__acquireLock = (projectId, { waitForRelease = false } = {}) => {
+        listen(projectId);
+        return new Promise((resolve) => {
+          const options = waitForRelease
+            ? { mode: 'exclusive' }
+            : { mode: 'exclusive', ifAvailable: true };
+          navigator.locks
+            .request(lockName(projectId), options, (lock) => {
+              if (lock === null) {
+                resolve('read-only:another-context-is-writing');
+                return undefined;
+              }
+              const notifyChannel = new BroadcastChannel(channelName(projectId));
+              notifyChannel.postMessage({ type: 'writer-acquired' });
+              notifyChannel.close();
+              resolve('writer');
+              return new Promise((resolveHeld) => {
+                releasers.set(projectId, () => {
+                  const releaseChannel = new BroadcastChannel(channelName(projectId));
+                  releaseChannel.postMessage({ type: 'writer-released' });
+                  releaseChannel.close();
+                  releasers.delete(projectId);
+                  resolveHeld();
+                });
+              });
+            })
+            .catch(() => resolve('read-only:lock-request-refused'));
         });
+      };
 
-      window.__releaseLock = () => releaseHeldLock();
+      window.__releaseLock = (projectId) => {
+        const release = releasers.get(projectId);
+        if (release !== undefined) release();
+      };
       window.__getNotifications = () => notifications;
       window.__queryPendingRequests = async () => {
         const state = await navigator.locks.query();

@@ -10,6 +10,17 @@ on:
   push:
     branches: [claude/arq-cad-platform-research-ba8rav]
 
+# This is the expensive workflow - eleven headless-Chromium capability checks,
+# the full test suite and the language ladder - and without a concurrency group
+# two pushes a minute apart ran all of it twice, with the older run's result
+# arriving after the newer one and overwriting nothing useful. Superseding an
+# in-flight run is safe here because every job is a pure function of the commit.
+# Not `github.ref` alone: on pull_request that is the merge ref, which would
+# collide across different PRs targeting the same base.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint-and-typecheck:
     runs-on: ubuntu-latest
@@ -89,6 +100,15 @@ jobs:
       # with a way to summon panels back, and save/sync separately legible, at
       # all eight workspace-qa-fixtures.json viewports.
       - run: pnpm benchmark:workspace-layout
+      # The two input checks were the only capability checks this repository
+      # owned that no workflow ran, so the Pencil pressure/tilt path and the
+      # pointer hover sequence were verified once by hand and never again.
+      - run: pnpm benchmark:pencil-input
+      - run: pnpm benchmark:hover-sequence
+      # The privacy claim, observed rather than asserted: every request the
+      # real bundle attempts while a wall is drawn, the 3D view opened and the
+      # file panel used must go to the origin that served it.
+      - run: pnpm benchmark:network-observation
       - uses: actions/upload-artifact@v4
         if: always()
         with:

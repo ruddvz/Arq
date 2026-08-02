@@ -1,0 +1,113 @@
+/**
+ * Idempotency records that expire and are bounded.
+ *
+ * The reviewed 2.0 package kept one unbounded `Map` of every request id it
+ * had ever seen, with no expiry and no eviction, in a process designed to
+ * run for as long as an editor session. Every distinct request id grew it
+ * for ever, and because the stored value was the full result, the map also
+ * became a second, permanent copy of every brief and proposal that had
+ * crossed the boundary. That is a memory leak and a retention problem in
+ * the same data structure.
+ *
+ * Records here are keyed per grant, expire, and are capped. Beyond the cap
+ * the oldest record is dropped, which is safe in the direction that
+ * matters: losing a record makes a repeat request execute again rather than
+ * returning a stale answer, and every operation behind this store is either
+ * a read or a request that Arq must still approve.
+ *
+ * Keying by grant is not incidental. A shared key space would let one
+ * caller's request id collide with another's, and the conflict error would
+ * disclose that some other grant had used that identifier.
+ */
+
+import type { Clock } from '../runtime/clock';
+import type { JsonValue } from '../schema/json-value';
+import { idempotencyConflict } from '../domain/errors';
+import { IDEMPOTENCY_LIFETIME_MS, MAX_IDEMPOTENCY_RECORDS } from '../domain/limits';
+import { contentDigest } from '../util/hash';
+
+/**
+ * A separator no grant id, namespace or request id can contain.
+ *
+ * With a printable separator, a grant id ending in the separator could be
+ * made to collide with a different grant's namespace, and a collision here
+ * returns one caller's stored result to another. Written as an escape so
+ * the source stays text.
+ */
+const KEY_SEPARATOR = '\u0000';
+
+interface IdempotencyRecord {
+  readonly fingerprint: string;
+  readonly value: unknown;
+  readonly expiresAtEpochMs: number;
+}
+
+export interface IdempotencyStore {
+  /**
+   * Runs `operation` once for a given (grant, namespace, request id).
+   *
+   * A repeat with identical arguments returns the first answer. A repeat
+   * with different arguments is a conflict, because the caller has reused
+   * an identifier for a different request and returning either answer would
+   * be wrong.
+   */
+  run<T>(
+    grantId: string,
+    namespace: string,
+    requestId: string,
+    request: JsonValue,
+    operation: () => T,
+  ): T;
+  readonly size: number;
+}
+
+export function createIdempotencyStore(
+  clock: Clock,
+  lifetimeMs = IDEMPOTENCY_LIFETIME_MS,
+  capacity = MAX_IDEMPOTENCY_RECORDS,
+): IdempotencyStore {
+  const records = new Map<string, IdempotencyRecord>();
+
+  const prune = (): void => {
+    const now = clock();
+    for (const [key, record] of records) {
+      if (record.expiresAtEpochMs <= now) {
+        records.delete(key);
+      }
+    }
+    // Map preserves insertion order, so the first key is the oldest record.
+    while (records.size > capacity) {
+      const oldest = records.keys().next();
+      if (oldest.done === true) {
+        break;
+      }
+      records.delete(oldest.value);
+    }
+  };
+
+  return {
+    run(grantId, namespace, requestId, request, operation) {
+      prune();
+      const key = `${grantId}${KEY_SEPARATOR}${namespace}${KEY_SEPARATOR}${requestId}`;
+      const fingerprint = contentDigest(request);
+      const existing = records.get(key);
+      if (existing !== undefined) {
+        if (existing.fingerprint !== fingerprint) {
+          throw idempotencyConflict('request');
+        }
+        return existing.value as ReturnType<typeof operation>;
+      }
+
+      const value = operation();
+      records.set(key, {
+        fingerprint,
+        value,
+        expiresAtEpochMs: clock() + lifetimeMs,
+      });
+      return value;
+    },
+    get size() {
+      return records.size;
+    },
+  };
+}

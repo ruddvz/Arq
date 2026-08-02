@@ -5,9 +5,20 @@
 # dependency-licence-scan job, so this workflow adds only what was missing.
 name: Security
 
+# merge_group matters most here: a secret can enter the merged result through
+# the combination of two branches that were each clean, and the weekly schedule
+# would not notice until the following Monday.
 on:
   pull_request:
+  merge_group:
   schedule: [{ cron: '0 6 * * 1' }]
+
+# The weekly scheduled run is deliberately in its own group: a scheduled scan
+# is the one that catches a secret nobody pushed today, and cancelling it
+# because a pull request happened to be open would silently skip that week.
+concurrency:
+  group: security-${{ github.event_name == 'schedule' && 'scheduled' || github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   secret-scan:
@@ -17,4 +28,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      # The scanner's own test runs first: a broken pattern would otherwise
+      # let the scan below report a clean tree, which is worse than no scan
+      # because it is believed.
+      - run: node scripts/check-secrets-test.mjs
       - run: node scripts/check-secrets.mjs

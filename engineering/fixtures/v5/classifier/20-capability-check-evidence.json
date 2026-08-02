@@ -1,0 +1,15 @@
+{
+  "_comment": "The single-writer lock and project-isolation checks both existed, passed and ran in ci.yml, but had no catalog id - so a change to the lock itself could not be required to run the lock check. CI knew something the gate could not.",
+  "files": ["packages/arqfs/src/arqfs-single-writer-lock.ts"],
+  "expected": {
+    "lane": "L4",
+    "confidence": "high",
+    "impactsInclude": ["persistence", "recovery"],
+    "evidenceInclude": [
+      "unit",
+      "browser_arqfs_writer_lock",
+      "browser_arqfs_project_isolation",
+      "browser_arqfs_opfs"
+    ]
+  }
+}

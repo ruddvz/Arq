@@ -27,7 +27,19 @@
  * rule).
  */
 export type SaveState = 'no-project' | 'saved' | 'saving' | 'unsaved-changes' | 'recovered';
-export type SyncState = 'synced' | 'syncing' | 'offline' | 'sync-error';
+
+/**
+ * `not-configured` exists for the same reason `no-project` does above: without
+ * it, a build with no sync backend at all has no honest value to pass, and
+ * apps/web hard-coded `offline` instead. The two are different claims. The
+ * governed vocabulary (docs/product/voice/state-language-map.json, machine
+ * `sync`) separates them precisely: `offline` explains "Remote sync cannot
+ * run", which tells a user a sync feature exists and is currently unreachable
+ * - so they may reasonably wait for it, or worry their work is stranded.
+ * `not-configured` explains "No remote sync is configured", which is the true
+ * statement about this product today.
+ */
+export type SyncState = 'not-configured' | 'synced' | 'syncing' | 'offline' | 'sync-error';
 
 /**
  * Section 126 ("Baseline"): "status not colour-only" - always a real word, never
@@ -57,6 +69,10 @@ export function describeSaveState(state: SaveState): string {
 
 export function describeSyncState(state: SyncState): string {
   switch (state) {
+    // Verbatim from the governed `sync` machine, so the shell and the language
+    // registry cannot drift into two different words for one state.
+    case 'not-configured':
+      return 'Sync not configured';
     case 'synced':
       return 'Synced';
     case 'syncing':

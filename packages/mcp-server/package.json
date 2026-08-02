@@ -1,0 +1,25 @@
+{
+  "name": "@arq/mcp-server",
+  "private": true,
+  "version": "0.0.0",
+  "description": "The governed Model Context Protocol boundary (ADR-0027): briefs, design programs, domain profiles, capability coverage and typed change proposals. There is deliberately no commit, approve, path, or SQL tool.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@arq/arqscript": "workspace:*",
+    "@arq/bim-core": "workspace:*",
+    "@arq/geometry-2d": "workspace:*",
+    "@arq/operations": "workspace:*",
+    "@arq/validation": "workspace:*"
+  },
+  "bin": {
+    "arq-mcp-stdio": "./dist/arq-mcp-stdio.mjs"
+  },
+  "devDependencies": {
+    "vite": "^5"
+  }
+}

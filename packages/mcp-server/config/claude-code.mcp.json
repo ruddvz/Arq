@@ -1,0 +1,12 @@
+{
+  "$comment": "Build the server first: pnpm --filter @arq/mcp-server build. Replace <repo> with the absolute path to this checkout. Until Arq writes a grant file, every tool answers that nothing is shared - that is the correct default, not a fault.",
+  "mcpServers": {
+    "arq": {
+      "command": "node",
+      "args": ["<repo>/packages/mcp-server/dist/arq-mcp-stdio.mjs"],
+      "env": {
+        "ARQ_MCP_GRANT_FILE": "<the path Arq writes when you share a project>"
+      }
+    }
+  }
+}

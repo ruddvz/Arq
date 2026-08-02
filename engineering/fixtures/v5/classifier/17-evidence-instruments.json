@@ -1,0 +1,15 @@
+{
+  "_comment": "An instrument must run its own instrument. Before the evidence-instrument rules these scripts classified as unknown_runtime_surface, so a change to the wasm parity checker selected only format, lint, typecheck, unit and build - never wasm_parity. The check could be weakened in the same change it was supposed to measure. 'high' confidence is what pins the classification: an unknown file forces confidence to low, so this fails if the rule is ever removed.",
+  "files": [
+    "scripts/verify-arq-core-wasm-parity.mjs",
+    "scripts/build-arq-core-wasm.mjs",
+    "scripts/run-arq-core-worker-capability-check.mjs"
+  ],
+  "expected": {
+    "lane": "L4",
+    "confidence": "high",
+    "impactsInclude": ["ci_control", "build"],
+    "impactsExclude": ["unknown_runtime_surface"],
+    "evidenceInclude": ["rust", "wasm_parity", "worker_core", "policy_validation"]
+  }
+}

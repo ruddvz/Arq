@@ -1,6 +1,10 @@
 import { describe, expect, it, afterEach } from 'vitest';
 import { createNodeArqfsDriver } from './arqfs-node-driver';
-import { handleArqfsWorkerRequest, type ArqfsWorkerContext } from './arqfs-worker-handler';
+import {
+  createArqfsWorkerSession,
+  handleArqfsWorkerRequest,
+  type ArqfsWorkerContext,
+} from './arqfs-worker-handler';
 import { ARQFS_SCHEMA_VERSION_V2 } from './arqfs-schema-v2';
 import type { ArqfsDriver } from './arqfs-driver';
 
@@ -14,7 +18,7 @@ describe('handleArqfsWorkerRequest', () => {
 
   function freshContext(): ArqfsWorkerContext {
     driver = createNodeArqfsDriver();
-    context = { driver, usedVfs: 'test-node-driver' };
+    context = { driver, usedVfs: 'test-node-driver', session: createArqfsWorkerSession() };
     return context;
   }
 
@@ -112,5 +116,192 @@ describe('handleArqfsWorkerRequest', () => {
     if (!response.ok) {
       expect(response.error.length).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('the write gate', () => {
+  let driver: ArqfsDriver;
+
+  afterEach(() => {
+    driver?.close();
+  });
+
+  function openedContext(): ArqfsWorkerContext {
+    driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      session: createArqfsWorkerSession(),
+    };
+    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    return context;
+  }
+
+  const entry: ReadonlyArray<readonly [string, Uint8Array]> = [
+    ['model.json', new TextEncoder().encode('{"walls":[]}')],
+  ];
+
+  it('refuses a write that arrives before any open', () => {
+    driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      session: createArqfsWorkerSession(),
+    };
+
+    const response = handleArqfsWorkerRequest(context, {
+      id: 1,
+      type: 'putArchiveEntries',
+      entries: entry,
+    });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_NOT_OPENED');
+    }
+  });
+
+  /**
+   * The defect this gate exists for: `open` decided this build must not write
+   * the file, and the very next message wrote it anyway.
+   */
+  it('refuses a write to a file that declares a newer writer, and leaves it unchanged', () => {
+    const context = openedContext();
+    // Author a file this build may read but must not write.
+    context.driver.exec(`UPDATE arqfs_meta SET value = '99' WHERE key = 'min_writer_major'`);
+    const reopened = handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
+    expect(reopened.ok).toBe(true);
+    if (reopened.ok && reopened.payload.kind === 'open') {
+      expect(reopened.payload.result.status).toBe('opened');
+      if (reopened.payload.result.status === 'opened') {
+        expect(reopened.payload.result.capabilities.canRead).toBe(true);
+        expect(reopened.payload.result.capabilities.canWrite).toBe(false);
+      }
+    }
+
+    const before = handleArqfsWorkerRequest(context, { id: 3, type: 'listArchiveEntryPaths' });
+    const response = handleArqfsWorkerRequest(context, {
+      id: 4,
+      type: 'putArchiveEntries',
+      entries: entry,
+    });
+    const after = handleArqfsWorkerRequest(context, { id: 5, type: 'listArchiveEntryPaths' });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_FILE_NOT_WRITABLE');
+      expect(response.error).toContain('Nothing was written');
+    }
+    // The refusal is real, not cosmetic: the file did not change.
+    expect(after).toEqual({ ...before, id: 5 });
+  });
+
+  it('still allows a write to a file this build is qualified to write', () => {
+    const context = openedContext();
+
+    const response = handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'putArchiveEntries',
+      entries: entry,
+    });
+
+    expect(response.ok).toBe(true);
+    const listed = handleArqfsWorkerRequest(context, { id: 3, type: 'listArchiveEntryPaths' });
+    if (listed.ok && listed.payload.kind === 'listArchiveEntryPaths') {
+      expect(listed.payload.paths).toContain('model.json');
+    } else {
+      throw new Error('expected a listArchiveEntryPaths payload');
+    }
+  });
+
+  it('closing forgets the open decision, so a later write is refused again', () => {
+    const context = openedContext();
+    handleArqfsWorkerRequest(context, { id: 2, type: 'close' });
+
+    const response = handleArqfsWorkerRequest(context, {
+      id: 3,
+      type: 'putArchiveEntries',
+      entries: entry,
+    });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_NOT_OPENED');
+    }
+  });
+});
+
+describe('the defensive open policy', () => {
+  let driver: ArqfsDriver;
+
+  afterEach(() => {
+    driver?.close();
+  });
+
+  /**
+   * `applyDefensiveOpenPolicy` had no non-test caller, so in the real browser
+   * runtime none of this was in force: foreign keys were off, which makes every
+   * declared REFERENCES and ON DELETE CASCADE in schema v1 and v2 inert, and
+   * trusted_schema was on for a file Arq did not write.
+   */
+  it('is in force after an open, not merely available', () => {
+    driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      session: createArqfsWorkerSession(),
+    };
+    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+
+    // Set every pragma the policy owns to the wrong value first. Asserting a
+    // "before" state instead would test the driver's defaults rather than the
+    // policy: better-sqlite3 happens to default foreign_keys ON, and the
+    // sqlite-wasm build the browser actually uses does not. That difference is
+    // the whole reason the policy has to be applied explicitly.
+    driver.exec('PRAGMA foreign_keys = OFF');
+    driver.exec('PRAGMA trusted_schema = ON');
+    expect(driver.pragma('foreign_keys')).toBe(0);
+    expect(driver.pragma('trusted_schema')).toBe(1);
+
+    handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
+
+    expect(driver.pragma('foreign_keys')).toBe(1);
+    expect(driver.pragma('trusted_schema')).toBe(0);
+    expect(driver.pragma('query_only')).toBe(0);
+  });
+
+  it('clears query-only again when a later open finds the file writable', () => {
+    driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      session: createArqfsWorkerSession(),
+    };
+    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    driver.exec('PRAGMA query_only = ON');
+
+    handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
+
+    // A pragma is connection state, not a one-way switch. Leaving it alone on
+    // the writable path would strand a connection read-only for its lifetime.
+    expect(driver.pragma('query_only')).toBe(0);
+  });
+
+  it('opens a file it must not write in query-only mode, so even a direct write fails', () => {
+    driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      session: createArqfsWorkerSession(),
+    };
+    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    context.driver.exec(`UPDATE arqfs_meta SET value = '99' WHERE key = 'min_writer_major'`);
+
+    handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
+
+    expect(driver.pragma('query_only')).toBe(1);
+    // Belt and braces: the gate refuses the request, and SQLite itself would
+    // refuse the statement even if something reached past the gate.
+    expect(() => driver.exec("INSERT INTO arqfs_meta (key, value) VALUES ('x', 'y')")).toThrow();
   });
 });

@@ -240,6 +240,28 @@ importers:
         specifier: ^6.2.5
         version: 6.2.5
 
+  packages/mcp-server:
+    dependencies:
+      '@arq/arqscript':
+        specifier: workspace:*
+        version: link:../arqscript
+      '@arq/bim-core':
+        specifier: workspace:*
+        version: link:../bim-core
+      '@arq/geometry-2d':
+        specifier: workspace:*
+        version: link:../geometry-2d
+      '@arq/operations':
+        specifier: workspace:*
+        version: link:../operations
+      '@arq/validation':
+        specifier: workspace:*
+        version: link:../validation
+    devDependencies:
+      vite:
+        specifier: ^5
+        version: 5.4.21(@types/node@22.20.1)
+
   packages/model-context: {}
 
   packages/model-renderer:

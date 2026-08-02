@@ -67,7 +67,16 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
       setState((current) => reduceFileFlow(current, { type: 'fail', code, message: reason }));
       return;
     }
-    setState((current) => reduceFileFlow(current, { type: 'route-native' }));
+    // A file picker yields one file, so a write-ahead-log project arrives
+    // without the `-wal` sidecar holding its newest commits. Passing the
+    // preflight's finding through is what lets the flow say "compatible" and
+    // "may not be complete" as the separate facts they are.
+    setState((current) =>
+      reduceFileFlow(current, {
+        type: 'route-native',
+        sidecarDependency: preflight?.sidecarDependency ?? 'complete',
+      }),
+    );
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>): void {

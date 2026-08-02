@@ -56,8 +56,16 @@ jobs:
       # Route coverage runs before the build: a content module that is missing
       # from the route map, the registry or the public-copy inventory should
       # stop the deployment, not ship as a silently absent page.
-      - name: Verify public route coverage
-        run: pnpm arq:language:routes:verify
+      #
+      # The language-system wiring is verified here too, not only in ci.yml's
+      # language-system job. This workflow triggers on pushes to the deployment
+      # branch, so a change that reaches that branch without a green pull
+      # request would otherwise publish public copy having never had the
+      # standards, registries and consumer contract checked at all.
+      - name: Verify language-system wiring and public route coverage
+        run: |
+          pnpm arq:language:verify
+          pnpm arq:language:routes:verify
       - run: pnpm --filter @arq/marketing build
         env:
           SITE_BASE_PATH: /Arq

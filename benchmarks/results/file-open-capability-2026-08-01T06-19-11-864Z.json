@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-08-01T06:19:11.864Z",
+  "environment": "headless Chromium 141.0.7390.37, real production apps/web build, real arqfs fixtures from the Node driver",
+  "ok": true,
+  "truncatedFile": {
+    "headline": "truncated.arq could not be opened.",
+    "detail": "ARQ_FILE_TRUNCATED: SQLite file bytes do not contain complete pages."
+  },
+  "validFile": {
+    "headline": "good.arq is a compatible Arq project."
+  },
+  "nonArqSqliteFile": {
+    "headline": "other.sqlite3 could not be opened.",
+    "detail": "NOT_ARQ_SQLITE: This is a SQLite database, but its application ID does not identify an Arq project."
+  },
+  "accessibility": {
+    "dropZoneVisibleText": "Choose a file or drop it here",
+    "dropZoneAccessibleName": "Choose a file or drop it here",
+    "labelInNameHolds": true
+  },
+  "consoleErrors": []
+}

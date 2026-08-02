@@ -7,11 +7,24 @@
  * `routeBrowserFile` (route-file.ts) and @arq/file-ingress/@arq/arqfs supply
  * the real detection/import/open logic this state machine only sequences.
  */
+import type { ArqfsSidecarDependency } from '@arq/arqfs/src/arqfs-preflight';
+
 export type FileFlowState =
   | { readonly kind: 'idle' }
   | { readonly kind: 'acquiring'; readonly name: string }
   | { readonly kind: 'detecting'; readonly name: string }
-  | { readonly kind: 'native-opening'; readonly name: string }
+  | {
+      readonly kind: 'native-opening';
+      readonly name: string;
+      /**
+       * Whether the picked bytes are the whole database. A write-ahead-log
+       * database keeps its newest commits in a `-wal` sidecar, and a file
+       * picker hands over one file - so "compatible" and "complete" are
+       * different statements about the same accepted file, and the flow's own
+       * governed policy requires the distinct ones to stay distinct.
+       */
+      readonly sidecarDependency: ArqfsSidecarDependency;
+    }
   | { readonly kind: 'import-options'; readonly name: string; readonly formatId: string }
   | {
       readonly kind: 'importing';
@@ -32,7 +45,8 @@ export type FileFlowState =
 export type FileFlowEvent =
   | { readonly type: 'acquire'; readonly name: string }
   | { readonly type: 'acquired' }
-  | { readonly type: 'route-native' }
+  /** Required, not optional: a caller that has not decided whether the file is complete must not be able to omit the answer and get the reassuring default. */
+  | { readonly type: 'route-native'; readonly sidecarDependency: ArqfsSidecarDependency }
   | { readonly type: 'route-import'; readonly formatId: string }
   | { readonly type: 'import-start'; readonly requestId: string }
   | { readonly type: 'progress'; readonly fraction: number }
@@ -59,7 +73,11 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
     return { kind: 'detecting', name: state.name };
   }
   if (state.kind === 'detecting' && event.type === 'route-native') {
-    return { kind: 'native-opening', name: state.name };
+    return {
+      kind: 'native-opening',
+      name: state.name,
+      sidecarDependency: event.sidecarDependency,
+    };
   }
   if (state.kind === 'detecting' && event.type === 'route-import') {
     return { kind: 'import-options', name: state.name, formatId: event.formatId };

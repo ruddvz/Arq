@@ -20,13 +20,25 @@ const COMMANDS = Object.freeze({
     ['pnpm', ['rust:clippy']],
     ['pnpm', ['rust:test']],
   ],
-  wasm_parity: [['pnpm', ['rust:verify-wasm-parity']]],
+  // Both wasm evidences build rust/arq-core/pkg first. It is a regenerable
+  // artifact that is deliberately not committed, and no workflow built it, so
+  // until this step existed both ids failed at "pkg does not exist" for every
+  // change that selected them - reporting on the runner rather than the diff.
+  // rust:build-wasm provisions its own toolchain and is a no-op once the
+  // artifact is current, so naming it here costs nothing on a warm checkout.
+  wasm_parity: [
+    ['pnpm', ['rust:build-wasm']],
+    ['pnpm', ['rust:verify-wasm-parity']],
+  ],
   browser_canvas2d: [['pnpm', ['benchmark:canvas2d']]],
   browser_workspace_layout: [['pnpm', ['benchmark:workspace-layout']]],
   browser_arqfs_opfs: [['pnpm', ['benchmark:arqfs-opfs']]],
   browser_file_open: [['pnpm', ['benchmark:file-open']]],
   render_frame: [['pnpm', ['benchmark:render-frame']]],
-  worker_core: [['pnpm', ['benchmark:arq-core-worker']]],
+  worker_core: [
+    ['pnpm', ['rust:build-wasm']],
+    ['pnpm', ['benchmark:arq-core-worker']],
+  ],
   marketing_build: [['pnpm', ['--filter', '@arq/marketing', 'build']]],
   classifier_fixtures: [['node', ['engineering/tools/engineering/run-fixtures.mjs']]],
   policy_validation: [
@@ -54,6 +66,13 @@ const COMMANDS = Object.freeze({
   browser_model_canvas: [['pnpm', ['benchmark:model-canvas']]],
   editor_dependency_boundaries: [['pnpm', ['check:editor-dependency-boundaries']]],
   browser_wall_hud: [['pnpm', ['benchmark:wall-hud']]],
+  browser_arqfs_writer_lock: [['pnpm', ['benchmark:arqfs-writer-lock']]],
+  browser_arqfs_project_isolation: [['pnpm', ['benchmark:arqfs-project-isolation']]],
+  browser_design_system_dialog: [['pnpm', ['benchmark:design-system-dialog']]],
+  browser_pencil_input: [['pnpm', ['benchmark:pencil-input']]],
+  browser_hover_sequence: [['pnpm', ['benchmark:hover-sequence']]],
+  mcp_protocol: [['pnpm', ['benchmark:mcp-protocol']]],
+  browser_network_observation: [['pnpm', ['benchmark:network-observation']]],
 });
 
 /**
