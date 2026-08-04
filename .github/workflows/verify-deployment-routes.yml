@@ -90,26 +90,28 @@ jobs:
                     --jq '.[] | select(.state == "success") | .environment_url // empty' 2>/dev/null
                 done | grep '^https://' | sort -u || true)"
 
-            if [ -n "$candidates" ]; then
+            # More than one Vercel project connected to this repository means
+            # more than one deployment record per commit, and only one of them
+            # serves this artifact. Keep waiting for that one specifically rather
+            # than taking whichever reported first - the sibling projects finish
+            # sooner, so accepting the first candidate reliably picks the wrong
+            # product and then times out waiting for a commit it will never serve.
+            url="$(echo "$candidates" | grep -m1 'arq-website' || true)"
+            if [ -n "$url" ]; then
               echo "Candidate origins for ${HEAD_SHA}:"
               echo "$candidates" | sed 's/^/  /'
-              # More than one Vercel project connected to this repository means
-              # more than one deployment record per commit, and only one of them
-              # serves this artifact. Picking arbitrarily would check a different
-              # product and report the answer as though it were about this one.
-              url="$(echo "$candidates" | grep -m1 'arq-website' || true)"
-              if [ -z "$url" ]; then
-                url="$(echo "$candidates" | head -n1)"
-                echo "::warning::No arq-website origin among candidates; falling back to ${url}"
-              fi
               break
             fi
-            echo "  no successful preview deployment for ${HEAD_SHA} yet (attempt ${attempt}/60)"
+            if [ -n "$candidates" ]; then
+              echo "  ${HEAD_SHA} has deployments, but none from arq-website yet (attempt ${attempt}/60)"
+            else
+              echo "  no successful preview deployment for ${HEAD_SHA} yet (attempt ${attempt}/60)"
+            fi
             sleep 15
           done
 
           if [ -z "$url" ]; then
-            echo "::error::No successful preview deployment reported for ${HEAD_SHA}; nothing to verify."
+            echo "::error::No successful arq-website preview reported for ${HEAD_SHA}; nothing to verify."
             exit 1
           fi
           echo "Verifying ${url}"
