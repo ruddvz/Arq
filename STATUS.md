@@ -188,6 +188,14 @@ real tooling rather than by inspection:
   invocation and was wired to nothing. It now asserts 15 controls against the
   workflows named by `installation-map.v5.json`, including the gate's own, and
   runs in the gate's preflight job.
+- **The surface that mounts the 3D view selects the 3D evidence.** `App.tsx`
+  decides which viewport surface mounts and how it loads, but
+  `editor-shell-and-accessibility` did not select `browser_model_canvas`, while
+  the rule that does is keyed on `ModelCanvas.tsx`. A change to `App.tsx` alone
+  could therefore break 3D reachability without the gate asking for 3D proof.
+  Found by making exactly that change: deferring the 3D surface selected 23
+  evidence items and none of them was the model-canvas check. The mapping is
+  added and pinned by classifier fixture 23, which fails if it is removed.
 
 The gate remains deliberately red for `e2e_arq_open`. It selected 33 evidence
 items for the MCP merge revision, passed 32 and reported the browser Worker and

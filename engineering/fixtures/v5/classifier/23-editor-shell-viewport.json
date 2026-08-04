@@ -1,0 +1,8 @@
+{
+  "files": ["apps/web/src/App.tsx"],
+  "expected": {
+    "lane": "L3",
+    "impactsInclude": ["ui", "interaction", "accessibility"],
+    "evidenceInclude": ["browser_model_canvas", "browser_workspace_layout", "browser_wall_hud"]
+  }
+}

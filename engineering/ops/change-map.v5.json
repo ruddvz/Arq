@@ -57,6 +57,7 @@
       "impacts": ["ui", "interaction", "accessibility"],
       "evidence": [
         "unit",
+        "browser_model_canvas",
         "browser_workspace_layout",
         "browser_wall_hud",
         "browser_design_system_dialog",
