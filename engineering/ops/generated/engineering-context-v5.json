@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "e9ec7be478cb2878132b4c18f398269b9987d30d3e828d4ef7fa4ab06d12a2b6",
+  "source_hash": "de55c57b06582c6d0e7b4eb48492379a7c85a0c61c37d4ce36df45625a5a2da7",
   "source_records": [
     {
       "scope": "package",
@@ -623,6 +623,16 @@
     },
     {
       "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-source-completeness.test.ts",
+      "sha256": "6ed42c07c0a75d7148ca139688c18149c15a7b69e7aa927358037f02f410785f"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-source-completeness.ts",
+      "sha256": "e0964eb13a71fe9875ed27d6c9534261c8fcb437e54ef279009bf1e49fa9f9e2"
+    },
+    {
+      "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-client.test.ts",
       "sha256": "ea321d8bf77e1bc5feb60b5e5e1dccbe2a79a3553e083fccf73612d9777c7f4c"
     },
@@ -634,17 +644,17 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.test.ts",
-      "sha256": "1e757c9d550db2110dd43df8ce9455a5ed81d7d0e65ed6562177a367c4f1ae78"
+      "sha256": "5c65be8b19aac64ac52b7b9bc19c97f3ee62fbd7dec1554fc8ce9870c75caa0a"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.ts",
-      "sha256": "f5f93506d171154e7935eb1ca5f15fbe9fb4d58291770c6e53b463787bed239a"
+      "sha256": "3f4d03708fff6d833959b55853b981e0d5bf60ec415e4ba322420a08754b0623"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-protocol.ts",
-      "sha256": "7aa9b3aee6f6922f7e9335ab2cd0f8aa36d8f61b7e631f5777cbea4709aac019"
+      "sha256": "da9836940c281163ffb27ba846b16ce93a646cfebb0f43078b61c1640468a1f9"
     },
     {
       "scope": "repository",
@@ -659,7 +669,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/index.ts",
-      "sha256": "ad8cff8ff767c17c62bb1ae72e5d4bf32b2e4b573c5b056e5ec76b91d27ea495"
+      "sha256": "8ce3e05d2ac0e607484b3fb7058dcd5c950726b79f11351ea36d81fac4dbff48"
     },
     {
       "scope": "repository",
