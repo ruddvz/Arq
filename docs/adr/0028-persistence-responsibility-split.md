@@ -41,9 +41,21 @@ open that creates no persistence at all.
 
 **Status of this carve-out:** Proposed, with an implementation on the branch
 `claude/arq-native-lifecycle-v3-smx7rg`. Owner acceptance is still required, and
-the Engineering OS gate enforces that: the change is lane L4 and its
-`protected_l4_approval` evidence is unsatisfied, so it cannot merge on this
-document's word.
+**nothing mechanical currently enforces that.** The change classifies as lane L4
+and does select `protected_l4_approval`, but that evidence item was recorded
+`success` on the implementing run with state `requires-github-environment`: the
+`critical-approval` job targets GitHub Environment `arq-critical-change`, which
+appears to have no required reviewers configured, so it completed in one second
+with an `echo`. The workflow wiring is right; the environment setting behind it is
+not there.
+
+So this carve-out is held only by the pull request being a draft and by this
+document saying Proposed - both conventions, neither a control. Two consequences
+worth separating: this carve-out needs an explicit human acceptance before merge,
+and the missing required-reviewer setting on `arq-critical-change` is a governance
+defect that affects **every** L4 lane in `change-map.v5.json`, not just this one -
+including `journal-and-working-copy` and `collaboration-auth-api`. Fixing it is a
+repository settings change, not a code change.
 
 The blocking sentence above was written about persistence, which is this ADR's
 subject. Every failure it lists - two canonical stores diverging, a journal event

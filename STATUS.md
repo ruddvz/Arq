@@ -31,8 +31,14 @@ others. The Rust gates were not run in that local pass. Of the browser checks,
 `benchmark:native-open` was run locally on this branch and passed; the rest were
 not, and CI is what runs them all. These are revision-scoped results, not a claim
 that
-the protected workflow or production release gate is green: the gate stays red
-for `protected_l4_approval`, which no owner has granted.
+the protected workflow or production release gate is green. Note what
+`protected_l4_approval` currently does and does not do: it is selected for every
+L4 change and it passed on this branch's run with state
+`requires-github-environment`, because the `critical-approval` job targets GitHub
+Environment `arq-critical-change` and that environment appears to have no required
+reviewers. An L4 change therefore satisfies its approval evidence without any
+human approving it. The workflow is wired correctly; the environment setting is
+missing, and only a repository-settings change fixes it.
 
 - **Read-only native `.arq` project open** (`apps/web/src/file-handling` +
   `packages/project-loading` + `workers/arqfs-worker`): a user can choose a
@@ -290,8 +296,10 @@ still open.
   none of the open questions. Neither the split nor the carve-out is Accepted.
   Until an owner accepts or replaces them, no surface may describe a journal
   write as a portable `.arq` write, no working copy may be created, and the
-  read-only open path stays unmerged - the gate holds it at
-  `protected_l4_approval`.
+  read-only open path must not merge without an explicit human acceptance. Nothing
+  mechanical enforces that today: see the `protected_l4_approval` note above. The
+  path is held by its pull request being a draft, which is a convention rather
+  than a control.
 - **Repository visibility and licence wording**: GitHub reports the repository
   as public, while `LICENSE` describes all contents as proprietary and
   confidential and `LICENSE-DECISION-REQUIRED.md` records a private repository

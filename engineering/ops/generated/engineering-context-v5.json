@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "6483509c8b0b0799808b0c38ba71b869a86d7094ccb60c79f3ad3389071cca8e",
+  "source_hash": "b72a0f903a7bc5a7e3027fa6655ab07f2d867a3e1155f4b72cb8d5762bb4a9a6",
   "source_records": [
     {
       "scope": "package",
@@ -369,7 +369,7 @@
     {
       "scope": "repository",
       "path": "docs/adr/0028-persistence-responsibility-split.md",
-      "sha256": "69bb27e0dc192542727a80e8560a283995f10e26d0709b288b3af8a3a6bea901"
+      "sha256": "6302f620abd3f02a4b58afae45aa1251d7a4dd6a6e1136e7c6af3540daa70f57"
     },
     {
       "scope": "repository",
@@ -774,7 +774,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "d9a54714abef0e8d64b4b497bf54887293595382d51196d657d05b128c500a6d"
+      "sha256": "3cb17ca76efaf483a1712253a26abcddbdb31486bd75851b961c2fccfe51502b"
     },
     {
       "scope": "repository",
