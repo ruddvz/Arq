@@ -39,6 +39,14 @@ export interface ArqfsWorkerContext {
   readonly usedVfs: string;
   /** Mutated by `open`, read by every write. Required, because a gate that can be skipped by omitting an argument is not a gate. */
   readonly session: ArqfsWorkerSession;
+  /**
+   * Replaces this Worker's working copy with the given bytes. Supplied by
+   * workers/arqfs-worker, which owns the sqlite-wasm pool utility that can
+   * actually import into an `opfs-sahpool` database; absent in contexts backed
+   * by a plain driver, where importing is meaningless and is refused rather
+   * than silently ignored.
+   */
+  readonly importDatabase?: (bytes: Uint8Array) => void;
 }
 
 function refuse(id: number, code: ArqfsWorkerErrorCode, error: string): ArqfsWorkerResponse {
@@ -142,6 +150,27 @@ export function handleArqfsWorkerRequest(
 ): ArqfsWorkerResponse {
   try {
     switch (request.type) {
+      case 'importDatabase': {
+        if (context.importDatabase === undefined) {
+          return refuse(
+            request.id,
+            ARQFS_WORKER_ERROR_CODES.unexpected,
+            'This Worker cannot import a database into its working copy.',
+          );
+        }
+        // Importing replaces every byte of the working copy, so whatever a
+        // previous `open` decided about the old contents describes a file that
+        // no longer exists. Clearing the session forces a fresh open before any
+        // read or write - otherwise the gates would be measuring the imported
+        // database against the outgoing one's verdict.
+        context.session.openResult = null;
+        context.importDatabase(request.bytes);
+        return {
+          id: request.id,
+          ok: true,
+          payload: { kind: 'importDatabase', byteLength: request.bytes.byteLength },
+        };
+      }
       case 'open': {
         // application_id reads as 0 only on a database SQLite itself has never
         // touched (its own default) - safe to initialize. Any other value, right or

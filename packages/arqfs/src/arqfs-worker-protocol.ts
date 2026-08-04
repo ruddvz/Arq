@@ -12,6 +12,23 @@
 import type { ArqfsOpenResult } from './arqfs-open';
 
 export type ArqfsWorkerRequest =
+  /**
+   * Seeds this Worker's project-scoped working copy from the bytes a user
+   * selected, before any open.
+   *
+   * This exists because there is no other way in. `opfs-sahpool` does not store
+   * databases as plain OPFS files under the name it was given - it keeps them
+   * inside a pool of opaque files it manages itself - so the main thread cannot
+   * write a selected `.arq` to a path and have SQLite find it. Only the pool
+   * utility, which lives in the Worker, can import bytes into that pool. Without
+   * this command the Worker can only ever create an empty database, which is why
+   * native project opening was not reachable at all.
+   *
+   * Deliberately a separate command rather than an argument to `open`: importing
+   * replaces the working copy's entire contents, which is not something an open
+   * should do implicitly.
+   */
+  | { readonly id: number; readonly type: 'importDatabase'; readonly bytes: Uint8Array }
   | { readonly id: number; readonly type: 'open' }
   | {
       readonly id: number;
@@ -31,6 +48,7 @@ export type ArqfsWorkerRequest =
   | { readonly id: number; readonly type: 'close' };
 
 export type ArqfsWorkerResponsePayload =
+  | { readonly kind: 'importDatabase'; readonly byteLength: number }
   | { readonly kind: 'open'; readonly result: ArqfsOpenResult; readonly usedVfs: string }
   | { readonly kind: 'putArchiveEntries' }
   | { readonly kind: 'getArchiveEntry'; readonly content: Uint8Array | null }

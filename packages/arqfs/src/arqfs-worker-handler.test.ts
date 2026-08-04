@@ -441,3 +441,96 @@ describe('the defensive open policy', () => {
     expect(() => driver.exec("INSERT INTO arqfs_meta (key, value) VALUES ('x', 'y')")).toThrow();
   });
 });
+
+/**
+ * Seeding the working copy from selected bytes - the command that makes native
+ * project opening reachable at all. `opfs-sahpool` keeps databases inside a pool
+ * of opaque files rather than at the filename it was given, so the main thread
+ * cannot write a selected `.arq` somewhere SQLite will find it. Only the Worker's
+ * pool utility can import, which is why this crosses the protocol.
+ */
+describe('importing a database into the working copy', () => {
+  let driver: ArqfsDriver;
+
+  afterEach(() => {
+    driver?.close();
+  });
+
+  function contextWithImporter(): {
+    readonly context: ArqfsWorkerContext;
+    readonly imported: Uint8Array[];
+  } {
+    driver = createNodeArqfsDriver();
+    const imported: Uint8Array[] = [];
+    return {
+      context: {
+        driver,
+        usedVfs: 'test-node-driver',
+        session: createArqfsWorkerSession(),
+        importDatabase: (bytes) => {
+          imported.push(bytes);
+        },
+      },
+      imported,
+    };
+  }
+
+  it('hands the selected bytes to the Worker that owns the pool', () => {
+    const { context, imported } = contextWithImporter();
+    const bytes = new Uint8Array([1, 2, 3, 4]);
+
+    const response = handleArqfsWorkerRequest(context, { id: 1, type: 'importDatabase', bytes });
+
+    expect(response.ok).toBe(true);
+    if (response.ok && response.payload.kind === 'importDatabase') {
+      expect(response.payload.byteLength).toBe(4);
+    }
+    expect(imported).toEqual([bytes]);
+  });
+
+  /**
+   * An import replaces every byte of the working copy, so a verdict reached
+   * about the outgoing database describes a file that no longer exists.
+   * Carrying it forward would measure the imported project's gates against the
+   * wrong file - and, in the worst case, let a rejected file's replacement be
+   * read without ever being opened.
+   */
+  it('forgets what the previous open decided, forcing a fresh open', () => {
+    const { context } = contextWithImporter();
+    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    expect(context.session.openResult).not.toBeNull();
+
+    handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'importDatabase',
+      bytes: new Uint8Array([1]),
+    });
+
+    expect(context.session.openResult).toBeNull();
+    const read = handleArqfsWorkerRequest(context, { id: 3, type: 'listArchiveEntryPaths' });
+    expect(read.ok).toBe(false);
+    if (!read.ok) {
+      expect(read.code).toBe('ARQFS_WORKER_NOT_OPENED');
+    }
+  });
+
+  it('refuses rather than silently ignoring an import it cannot perform', () => {
+    driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      session: createArqfsWorkerSession(),
+    };
+
+    const response = handleArqfsWorkerRequest(context, {
+      id: 1,
+      type: 'importDatabase',
+      bytes: new Uint8Array([1]),
+    });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.error).toContain('cannot import');
+    }
+  });
+});

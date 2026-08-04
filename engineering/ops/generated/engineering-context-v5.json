@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "ba92bbf2f8d4bd902565e0c413148b0bed402300e76c16810fe4ea76a2b5a1f0",
+  "source_hash": "60f5bd2c5ed475d11fd6db09751e0646b899314ce63d9e60805c99b214ba7154",
   "source_records": [
     {
       "scope": "package",
@@ -654,17 +654,17 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.test.ts",
-      "sha256": "5ca4cf3e51150f293452c425ef977f760f7c0a49590db5a55405a0259aa26460"
+      "sha256": "ca54ef2ea43f64f45caae39834767d169d87ef40042ac391e2ad51cde410cdd7"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.ts",
-      "sha256": "3f4d03708fff6d833959b55853b981e0d5bf60ec415e4ba322420a08754b0623"
+      "sha256": "42e4e212f08c736431b7ae74513f65736a5ad9ccffe1536d6afe7edfd0f510c3"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-protocol.ts",
-      "sha256": "da9836940c281163ffb27ba846b16ce93a646cfebb0f43078b61c1640468a1f9"
+      "sha256": "4d910ee476b4b5ebe51793c1903d0aeefb5cd22f8756784696e3e0674469f054"
     },
     {
       "scope": "repository",
@@ -809,7 +809,7 @@
     {
       "scope": "repository",
       "path": "workers/arqfs-worker/src/arqfs-worker-entry.ts",
-      "sha256": "347d643ac656c849928e5878b99a11d2e72999f2d34f86282097ecc8073ba4b2"
+      "sha256": "bdb6f52518451789d794c8d741ce10d2a52cf59aeeceb0c946b1803c208db378"
     },
     {
       "scope": "repository",
