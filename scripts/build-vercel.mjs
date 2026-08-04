@@ -74,8 +74,20 @@ const siteOrigin =
       ? `https://${deploymentHost}`
       : '');
 
+// The same store `vercel.json`'s install command uses, exported so every nested
+// pnpm agrees with it. `check-dependency-licences.mjs` - reached through
+// apps/marketing's `ensureSbom` - shells out to `pnpm licenses list --json`, which
+// reads the store rather than `node_modules`. Pinning the store on the install
+// alone left that child looking in pnpm's default global store, which the install
+// had just stopped populating, so it failed to find a package that was in fact
+// present. `npm_config_store_dir` is inherited by child processes, so one setting
+// covers every pnpm the build spawns. Set here rather than in a checked-in
+// `.npmrc` so local development keeps pnpm's shared global store.
+const storeDir = join(root, 'node_modules', '.pnpm-store');
+
 const buildEnv = {
   ...process.env,
+  npm_config_store_dir: storeDir,
   // Root-served, unlike Pages' `/Arq` project subpath. vercel.json redirects the old
   // prefix so links published against the Pages URL keep resolving.
   SITE_BASE_PATH: '',
