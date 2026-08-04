@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "683bbb9d43199e0066e27946c706dbb23f8bdf9f1ddad969ecdfd401e98d0d46",
+  "source_hash": "ba92bbf2f8d4bd902565e0c413148b0bed402300e76c16810fe4ea76a2b5a1f0",
   "source_records": [
     {
       "scope": "package",
@@ -365,6 +365,11 @@
       "scope": "repository",
       "path": "docs/adr/0027-mcp-boundary-and-domain-profiles.md",
       "sha256": "e0af750e5c7c010a33a166be948cf4b979b8d561798ca53f6a1aded35de1f284"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0028-browser-working-copy-and-recovery-tiers.md",
+      "sha256": "044d361de00a239f2f0c5122cdec85d367630cd718d15e0a2b1023daef453461"
     },
     {
       "scope": "repository",

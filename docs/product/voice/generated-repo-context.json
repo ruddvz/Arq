@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "2fd607c4da46b66e8106e5c70ffa9ae8b7da28be5ed4543f4770041e2a4bb0fe",
+  "sourceSetDigest": "e9b4cfa782be766066e985cf3a4bcd27f6f5f8f5641aed9ac080af3d0e15871b",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -23,7 +23,7 @@
       "id": "accepted-adrs",
       "kind": "directory",
       "path": "docs/adr",
-      "sha256": "271b303418245c32f240b421263f5a13c087014a4d8236cd15af0f4fb82713c6",
+      "sha256": "8bcb99219a0be3ba1c52c94f62bba1dfa97ce41ace3e9065997a09ef6450a382",
       "files": [
         {
           "rel": "docs/adr/0000-adr-template.md",
@@ -164,6 +164,11 @@
           "rel": "docs/adr/0027-mcp-boundary-and-domain-profiles.md",
           "sha256": "e0af750e5c7c010a33a166be948cf4b979b8d561798ca53f6a1aded35de1f284",
           "bytes": 6789
+        },
+        {
+          "rel": "docs/adr/0028-browser-working-copy-and-recovery-tiers.md",
+          "sha256": "044d361de00a239f2f0c5122cdec85d367630cd718d15e0a2b1023daef453461",
+          "bytes": 5607
         },
         {
           "rel": "docs/adr/0028-persistence-responsibility-split.md",
