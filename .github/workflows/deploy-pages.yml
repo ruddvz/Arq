@@ -80,6 +80,19 @@ jobs:
           --site-root apps/marketing/dist
           --write-proof
           --commit "${{ github.sha }}"
+      # Binds the artifact to the revision it was built from and refuses to
+      # publish when they differ. This job checks out a branch, so between a
+      # release being approved at some SHA and this checkout running, the branch
+      # can move; the footer revision would agree with the drifted checkout and
+      # confirm nothing. The expected SHA therefore comes from the event rather
+      # than from the working tree, and a mismatch fails the job before upload.
+      - name: Verify source revision and write deployment provenance
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.sha }}
+        run: >-
+          node scripts/write-deployment-provenance.mjs
+          --dist apps/marketing/dist
+          --target github-pages
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/marketing/dist
