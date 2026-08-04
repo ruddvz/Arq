@@ -11,6 +11,16 @@
  * public-copy audit and the commit-bound proof - runs identically, so a green Vercel
  * build is evidence about the same product Pages already publishes and the two hosts
  * stay a rollback pair rather than diverging deployments.
+ *
+ * One Vercel-specific install detail lives in vercel.json rather than here: the pnpm
+ * store is pinned inside `node_modules`. Vercel restores `node_modules` from its build
+ * cache but treats pnpm's default global store as a separate directory, so a cached
+ * `node_modules` could reference store entries that were not restored with it. The
+ * marketing build reads that store - `check-dependency-licences.mjs` shells out to
+ * `pnpm licenses list --json` to write the SBOM - and failed with
+ * ERR_PNPM_MISSING_PACKAGE_INDEX_FILE on the second and later deployments, while the
+ * first, uncached one succeeded. Keeping the store inside `node_modules` makes the two
+ * cache or miss together.
  */
 import { execFileSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
