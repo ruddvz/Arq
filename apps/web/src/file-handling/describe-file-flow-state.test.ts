@@ -4,53 +4,50 @@ import type { FileFlowState } from './file-state-machine';
 
 describe('describeFileFlowState', () => {
   it('never claims a project is open for the native-opening state - it is honest about the unwired boundary', () => {
-    const description = describeFileFlowState({
-      kind: 'native-opening',
-      name: 'house.arq',
-      sidecarDependency: 'complete',
-    });
+    const description = describeFileFlowState({ kind: 'native-opening', name: 'house.arq' });
+
     expect(description.headline).not.toMatch(/is open|opened successfully/i);
     expect(description.detail).toMatch(/not wired/i);
   });
 
   /**
-   * The silent-staleness case. SQLite opened without a write-ahead log's `-wal`
-   * sidecar does not fail - it returns the database as of the last checkpoint -
-   * so an accepted file can be missing the user's most recent saved work with
-   * nothing reporting a problem. The copy has to name the companion file and a
-   * way out, because a caution the reader cannot act on is only alarming.
+   * The silent-staleness case, now handled by refusing rather than cautioning.
+   *
+   * SQLite opened without a write-ahead log's `-wal` sidecar does not fail - it
+   * returns the database as of the last checkpoint - so an accepted file can be
+   * missing the user's most recent saved work with nothing reporting a problem.
+   * That used to reach `native-opening` and be described as "compatible, but it
+   * may not be complete". A caution shown beside a project that is already on
+   * screen is not a safeguard, so the state is now a failure with its own code.
    */
-  it('warns that a write-ahead-log project may be missing its newest work, and says how to get it', () => {
+  it('reports a missing write-ahead-log sidecar as a failure, naming the file and the way out', () => {
     const description = describeFileFlowState({
-      kind: 'native-opening',
+      kind: 'failed',
       name: 'house.arq',
-      sidecarDependency: 'write-ahead-log-sidecar',
+      code: 'ARQ_WAL_SIDECAR_REQUIRED',
+      message:
+        'This database depends on a companion "-wal" file that was not included, so it may be missing the newest saved work. Reopen the project in the application that created it and close it cleanly, which folds the companion file back into the database, then choose the database again.',
     });
 
-    expect(description.tone).toBe('warning');
-    expect(description.headline).toMatch(/may not be complete/i);
-    // Names the actual artifact the user has to find, not just "a companion file".
+    expect(description.tone).toBe('error');
+    expect(description.headline).toMatch(/could not be opened/i);
+    // Names the actual artifact the user has to find, and the remedy.
     expect(description.detail).toMatch(/-wal/);
-    expect(description.detail).toMatch(/reopen and close|Choose the/i);
-    // Still never claims the project is open.
-    expect(description.headline).not.toMatch(/is open|opened successfully/i);
+    expect(description.detail).toMatch(/close it cleanly/i);
+    expect(description.detail).toContain('ARQ_WAL_SIDECAR_REQUIRED');
   });
 
-  it('says something materially different for a complete file than an incomplete one', () => {
-    const complete = describeFileFlowState({
-      kind: 'native-opening',
-      name: 'house.arq',
-      sidecarDependency: 'complete',
-    });
-    const incomplete = describeFileFlowState({
-      kind: 'native-opening',
-      name: 'house.arq',
-      sidecarDependency: 'write-ahead-log-sidecar',
-    });
+  /**
+   * The reachable success state must be unambiguous. There is no longer a
+   * variant of `native-opening` that means "accepted, but possibly stale" - if
+   * the flow reaches it at all, the bytes are whole.
+   */
+  it('describes the one native-opening state as complete, with no incomplete variant left', () => {
+    const description = describeFileFlowState({ kind: 'native-opening', name: 'house.arq' });
 
-    expect(complete.headline).not.toBe(incomplete.headline);
-    expect(complete.tone).toBe('neutral');
-    expect(incomplete.tone).toBe('warning');
+    expect(description.tone).toBe('neutral');
+    expect(description.headline).toMatch(/complete/i);
+    expect(description.headline).not.toMatch(/may not be complete/i);
   });
 
   it('surfaces the real failure code and message, not a generic error string', () => {
@@ -90,8 +87,7 @@ describe('describeFileFlowState', () => {
       { kind: 'idle' },
       { kind: 'acquiring', name: 'a.arq' },
       { kind: 'detecting', name: 'a.arq' },
-      { kind: 'native-opening', name: 'a.arq', sidecarDependency: 'complete' },
-      { kind: 'native-opening', name: 'a.arq', sidecarDependency: 'write-ahead-log-sidecar' },
+      { kind: 'native-opening', name: 'a.arq' },
       { kind: 'import-options', name: 'a.dxf', formatId: 'dxf' },
       { kind: 'importing', name: 'a.dxf', requestId: 'r1', fraction: 0.5 },
       { kind: 'staged-review', name: 'a.dxf', requestId: 'r1' },

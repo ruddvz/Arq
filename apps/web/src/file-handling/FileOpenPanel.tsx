@@ -19,12 +19,18 @@ export interface FileOpenPanelProps {
  * criteria ("wire preflightArqfsBytes into every file-open path") was
  * unimplemented on the UI side.
  *
- * Deliberately stops at reporting compatibility, not claiming a project
- * opened - see describe-file-flow-state.ts's own doc comment: this app has
- * no browser Worker/OPFS driver wired in yet (Phase 3 built the driver and
- * the Worker-crash transport, but nothing in apps/web constructs one), so
- * "this file is safe to open" and "this file is now open" are different, true
- * statements and only the first one is honest to make here.
+ * Deliberately stops at reporting that a file is safe to open, not claiming a
+ * project opened - this app has no browser Worker/OPFS driver wired in yet
+ * (the driver and the Worker-crash transport exist, but nothing in apps/web
+ * constructs one), so "this file is safe to open" and "this file is now open"
+ * are different, true statements and only the first one is honest to make here.
+ *
+ * The gate is completeness, not bare compatibility. A database whose `-wal`
+ * sidecar was not supplied is compatible and readable, and SQLite would open it
+ * without complaint as of its last checkpoint - so it is refused here rather
+ * than accepted behind a caution, because a caution shown beside a project that
+ * is already on screen cannot undo the impression that the user's newest work
+ * is present.
  */
 export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
   const { isOpen, onOpenChange } = props;
@@ -50,7 +56,7 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
     setState((current) => reduceFileFlow(current, { type: 'acquired' }));
 
     const evaluation = evaluateSelectedFile(bytes, file.name, file.type || undefined);
-    const { route, preflight } = evaluation;
+    const { route, completeness } = evaluation;
     if (route.kind === 'reject') {
       const { code, detail } = route;
       setState((current) => reduceFileFlow(current, { type: 'fail', code, message: detail }));
@@ -62,21 +68,22 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
       return;
     }
     // route.kind === 'open-native-arq'
-    if (preflight?.status === 'rejected') {
-      const { code, reason } = preflight;
+    //
+    // One rejection path for every reason a native candidate can be turned
+    // away, including the one a file picker makes routine: a write-ahead-log
+    // database arrives without the `-wal` sidecar holding its newest commits,
+    // and is refused rather than opened behind a caution. The completeness
+    // policy carries its own stable code, so truncation, "not an Arq file" and
+    // a missing sidecar stay distinguishable in the reported detail.
+    if (completeness === undefined || completeness.status === 'rejected') {
+      const { code, reason } = completeness ?? {
+        code: 'ARQ_SOURCE_NOT_EVALUATED',
+        reason: 'This file was not checked, so it was not opened.',
+      };
       setState((current) => reduceFileFlow(current, { type: 'fail', code, message: reason }));
       return;
     }
-    // A file picker yields one file, so a write-ahead-log project arrives
-    // without the `-wal` sidecar holding its newest commits. Passing the
-    // preflight's finding through is what lets the flow say "compatible" and
-    // "may not be complete" as the separate facts they are.
-    setState((current) =>
-      reduceFileFlow(current, {
-        type: 'route-native',
-        sidecarDependency: preflight?.sidecarDependency ?? 'complete',
-      }),
-    );
+    setState((current) => reduceFileFlow(current, { type: 'route-native' }));
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>): void {

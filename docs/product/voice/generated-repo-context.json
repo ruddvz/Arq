@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "a6a8cc27b8ba8437875c7a4696e4bc84b458e5ecac3395735c9894329abcd5d4",
-  "sourceSetDigest": "0cb3ae857ec576eefc5c3af43c825268a04416e804135182c4c010a496b21021",
+  "sourceSetDigest": "354c5ea2f0e35eeeb31792fbbb169f78e4fdf17e40d0f0585f53dd74dace44ae",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -335,42 +335,42 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "abdb8c2a4a27956adea458a8b8fcdaeee9df01b0d7e1e3ac92ba783cdcc62e00",
+      "sha256": "c134180cb6b684d915ea0cffceafc264681b47f4f0e38278c23da391890b42c6",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
-          "sha256": "8151fe0dd49168eb8d4fc1b88fb40ff83a2a75ecdaef7cda08e16c4cd9b0f2ef",
-          "bytes": 8057
+          "sha256": "b79530d2c47b473254e53a7798e9e55765a34eaa911dda3aeca1eecbb6d35113",
+          "bytes": 8664
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",
-          "sha256": "2dd116745601409faf32b02367aa07580f38e63bbec8587983239e8f3aa9c253",
-          "bytes": 4526
+          "sha256": "e2d3d7b6a89ee3e06b360eca0fe2c79e7cc3c03910149034f380e7f572396a97",
+          "bytes": 4755
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-          "sha256": "ac1edc9a28918080106b2126867528c067caaf9a7ef48292f8bbac8d694f71cd",
-          "bytes": 3976
+          "sha256": "faccb3c048e3ade670edc3a72b8d0fea4c4ad8c1ae8947d67e22307e1177c788",
+          "bytes": 3369
         },
         {
           "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
-          "sha256": "d276b4afa40a4c1907e4b10fbb90043a6fbb028aab2ceff1ca02a3c8781e4b8b",
-          "bytes": 4134
+          "sha256": "9e1436472704d71af645baae7f0e54b3f3a36f163a2c74f70bcfba480d513b4c",
+          "bytes": 4149
         },
         {
           "rel": "apps/web/src/file-handling/evaluate-selected-file.ts",
-          "sha256": "4f15bbb7af14004673d8c801f397961506e20b0c0c8eff9d053e7267d5c9d951",
-          "bytes": 1670
+          "sha256": "65957a0c4c813aec471c26857198cc705a5994274f6e62be6eefed38b5039d3e",
+          "bytes": 2055
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.test.ts",
-          "sha256": "d69973f182e87aecc89cb4e7dd51feaefcbd5bbb055c7387133e2e58dcec1ef0",
-          "bytes": 4267
+          "sha256": "1ca603f83cbb65bea8cba9c683b8c5f3ed204066293831dfbd06284d5a6eb760",
+          "bytes": 4393
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.ts",
-          "sha256": "b8fd15a857e0cd5271cc71ea037f46234b7e7c8cbb149cd9a0aa872098de0fae",
-          "bytes": 4253
+          "sha256": "760592306125b94e72c8821ee1a9c4d5dea65b31146dc255c1d26c540073224a",
+          "bytes": 3966
         },
         {
           "rel": "apps/web/src/file-handling/index.ts",
