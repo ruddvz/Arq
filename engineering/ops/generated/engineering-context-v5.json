@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "de55c57b06582c6d0e7b4eb48492379a7c85a0c61c37d4ce36df45625a5a2da7",
+  "source_hash": "8587322ae35f6bc7485486bdb22c9e0d558bdf0b2c1d38200895bd5ae3c6f9b7",
   "source_records": [
     {
       "scope": "package",
@@ -639,7 +639,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-client.ts",
-      "sha256": "0e74f6a492f28efbc92bd0c1c0a67296a298a2fef7bd5cbb216d3966d8a5d084"
+      "sha256": "2cbc0f2e966a001be11841b65b6885e93b12efec00f858dbe3fc695380e9f2b9"
     },
     {
       "scope": "repository",
