@@ -1,4 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import {
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import {
   TopBar,
   ToolRail,
@@ -119,7 +128,16 @@ import {
   WindowSelectIcon,
 } from '@arq/icons';
 import { PlanCanvas } from './PlanCanvas';
-import { ModelCanvas } from './ModelCanvas';
+/**
+ * The 3D surface carries three.js and the model renderer, which together are the
+ * largest single contributor to the initial bundle. It is only ever rendered for
+ * the `3d` tab, so it is fetched when that tab is first opened rather than on
+ * start-up. The split follows the surface boundary that already exists; it is
+ * not an arbitrary chunk boundary chosen to move bytes around.
+ */
+const ModelCanvas = lazy(async () => ({
+  default: (await import('./ModelCanvas')).ModelCanvas,
+}));
 import {
   buildDemoWallAccessibleDescription,
   buildDemoWallInspectorGroups,
@@ -858,13 +876,21 @@ export function App(): JSX.Element {
 
   const viewport =
     activeTab?.kind === '3d' ? (
-      <ModelCanvas
-        walls={drawnWalls}
-        selection={modelSelection}
-        onSelectElement={(elementId) =>
-          setModelSelection({ primary: elementId, secondary: new Set() })
+      <Suspense
+        fallback={
+          <div role="status" aria-live="polite">
+            Loading the 3D view
+          </div>
         }
-      />
+      >
+        <ModelCanvas
+          walls={drawnWalls}
+          selection={modelSelection}
+          onSelectElement={(elementId) =>
+            setModelSelection({ primary: elementId, secondary: new Set() })
+          }
+        />
+      </Suspense>
     ) : activeTab?.kind === 'project-overview' ? (
       <ProjectOverviewSurface
         data={overviewData}

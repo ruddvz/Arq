@@ -109,6 +109,29 @@ for `e2e_arq_open`, and no protected L4 approval exists.
    11 of 54 tool commands (tracked by `scripts/check-workspace-registries.mjs`,
    report-only by design).
 
+## Editor bundle
+
+Measured on this branch with `pnpm --filter @arq/web build`, not carried over
+from an earlier audit. The application previously shipped one JavaScript chunk
+of 1,136.33 kB (325.72 kB gzipped).
+
+The 3D surface is now fetched when the `3d` tab is first opened instead of at
+start-up, because it carries three.js and the model renderer and is the largest
+single contributor. That splits the output into a 613.85 kB start-up chunk
+(193.31 kB gzipped) and a 520.88 kB deferred chunk (132.18 kB gzipped): a 46%
+reduction in raw start-up bytes and 40.7% gzipped. The split follows the
+existing surface boundary rather than an arbitrary chunk size.
+
+No regression was observed: `benchmark:model-canvas` still activates the real
+`3D` tab, renders through WebGL2 and shares selection with the plan canvas in
+both directions with zero console errors, and `benchmark:workspace-layout`,
+`benchmark:wall-hud` and `benchmark:network-observation` pass. The deferred
+chunk is same-origin, so all nine observed requests remain on the app's origin
+and the privacy observation is unchanged.
+
+The start-up chunk is still above Vite's 500 kB warning threshold. No budget
+gate is wired yet, so bundle size stays open work.
+
 ## Language and claims
 
 Public, product, support and documentation wording is governed by the ARQ
