@@ -109,12 +109,147 @@ describe('handleArqfsWorkerRequest', () => {
     handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
     handleArqfsWorkerRequest(ctx, { id: 2, type: 'close' });
 
-    // The driver is now closed - any further operation against it should fail
-    // cleanly through the handler's own try/catch, not crash the test.
-    const response = handleArqfsWorkerRequest(ctx, { id: 3, type: 'listArchiveEntryPaths' });
+    // Deliberately `open` and not an archive read. The driver is closed, so this
+    // reaches the driver and throws, which is the try/catch this test is about.
+    // An archive read would now be turned away by the read gate before touching
+    // the driver at all - a true `ok: false`, but produced by a different
+    // mechanism, leaving the crash-containment path unexercised.
+    const response = handleArqfsWorkerRequest(ctx, { id: 3, type: 'open' });
     expect(response.ok).toBe(false);
     if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_UNEXPECTED_ERROR');
       expect(response.error.length).toBeGreaterThan(0);
+    }
+  });
+});
+
+/**
+ * The read side of the same gate the write side already had.
+ *
+ * `getArchiveEntry` and `listArchiveEntryPaths` consulted nothing before
+ * answering: a worker holding an open driver would hand back project entries for
+ * a file it had never opened, and for a file whose open it had explicitly
+ * rejected - rejection leaves the driver connected and only records a verdict
+ * these paths never read.
+ */
+describe('the read gate', () => {
+  let driver: ArqfsDriver;
+
+  afterEach(() => {
+    driver?.close();
+  });
+
+  function context(): ArqfsWorkerContext {
+    driver = createNodeArqfsDriver();
+    return { driver, usedVfs: 'test-node-driver', session: createArqfsWorkerSession() };
+  }
+
+  const readRequests = [
+    { type: 'getArchiveEntry', path: 'model.json' },
+    { type: 'listArchiveEntryPaths' },
+    { type: 'readAllArchiveEntries' },
+  ] as const;
+
+  it.each(readRequests)('refuses $type before any open', (request) => {
+    const ctx = context();
+
+    const response = handleArqfsWorkerRequest(ctx, { id: 1, ...request });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_NOT_OPENED');
+      expect(response.error).toContain('Nothing was read');
+    }
+  });
+
+  it.each(readRequests)('refuses $type after an open this build rejected', (request) => {
+    const ctx = context();
+    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    // Author a file openArqfs must reject outright, then re-open so the session
+    // carries the rejection.
+    ctx.driver.exec(`UPDATE arqfs_meta SET value = 'not-a-number' WHERE key = 'format_major'`);
+    const reopened = handleArqfsWorkerRequest(ctx, { id: 2, type: 'open' });
+    expect(reopened.ok).toBe(true);
+    if (reopened.ok && reopened.payload.kind === 'open') {
+      expect(reopened.payload.result.status).toBe('rejected');
+    }
+
+    const response = handleArqfsWorkerRequest(ctx, { id: 3, ...request });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_OPEN_REJECTED');
+      expect(response.error).toContain('Nothing was read');
+    }
+  });
+
+  it.each(readRequests)(
+    'refuses $type for a file that opened only in safe mode, whose semantics this build does not fully understand',
+    (request) => {
+      const ctx = context();
+      handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+      ctx.driver.exec(`UPDATE arqfs_meta SET value = '99' WHERE key = 'min_reader_major'`);
+      const reopened = handleArqfsWorkerRequest(ctx, { id: 2, type: 'open' });
+      expect(reopened.ok).toBe(true);
+      if (reopened.ok && reopened.payload.kind === 'open') {
+        expect(reopened.payload.result.status).toBe('opened');
+        if (reopened.payload.result.status === 'opened') {
+          expect(reopened.payload.result.capabilities.canRead).toBe(false);
+          expect(reopened.payload.result.capabilities.safeModeRequired).toBe(true);
+        }
+      }
+
+      const response = handleArqfsWorkerRequest(ctx, { id: 3, ...request });
+
+      expect(response.ok).toBe(false);
+      if (!response.ok) {
+        expect(response.code).toBe('ARQFS_WORKER_OPEN_REJECTED');
+      }
+    },
+  );
+
+  it('allows reads once the file is genuinely open, and returns every entry in one call', () => {
+    const ctx = context();
+    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    handleArqfsWorkerRequest(ctx, {
+      id: 2,
+      type: 'putArchiveEntries',
+      entries: [
+        ['manifest.json', new TextEncoder().encode('{"projectId":"p"}')],
+        ['model.json', new TextEncoder().encode('{"walls":[]}')],
+      ],
+    });
+
+    const response = handleArqfsWorkerRequest(ctx, { id: 3, type: 'readAllArchiveEntries' });
+
+    expect(response.ok).toBe(true);
+    if (response.ok && response.payload.kind === 'readAllArchiveEntries') {
+      expect(response.payload.entries.map(([path]) => path)).toEqual([
+        'manifest.json',
+        'model.json',
+      ]);
+      const model = response.payload.entries.find(([path]) => path === 'model.json')?.[1];
+      expect(new TextDecoder().decode(model)).toBe('{"walls":[]}');
+    } else {
+      throw new Error('expected a readAllArchiveEntries payload');
+    }
+  });
+
+  it('closing forgets the open decision, so a later read is refused again', () => {
+    const ctx = context();
+    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    handleArqfsWorkerRequest(ctx, {
+      id: 2,
+      type: 'putArchiveEntries',
+      entries: [['model.json', new TextEncoder().encode('{"walls":[]}')]],
+    });
+    handleArqfsWorkerRequest(ctx, { id: 3, type: 'close' });
+
+    const response = handleArqfsWorkerRequest(ctx, { id: 4, type: 'listArchiveEntryPaths' });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_NOT_OPENED');
     }
   });
 });

@@ -3,7 +3,12 @@ import { createArqfsSchemaV1 } from './arqfs-schema';
 import { createArqfsSchemaLatest } from './arqfs-schema-v2';
 import { openArqfs, type ArqfsOpenResult } from './arqfs-open';
 import { applyDefensiveOpenPolicy } from './arqfs-defensive-open';
-import { putArchiveEntries, getArchiveEntry, listArchiveEntryPaths } from './arqfs-archive-store';
+import {
+  putArchiveEntries,
+  getArchiveEntry,
+  listArchiveEntryPaths,
+  readAllArchiveEntries,
+} from './arqfs-archive-store';
 import {
   ARQFS_WORKER_ERROR_CODES,
   type ArqfsWorkerErrorCode,
@@ -84,6 +89,46 @@ function writeRefusal(
 }
 
 /**
+ * Whether this session may hand project bytes back, and if not, why not.
+ *
+ * The write gate above has an exact counterpart on the read side that did not
+ * exist: `getArchiveEntry` and `listArchiveEntryPaths` called straight through to
+ * the store without consulting the session at all. A worker holding an open
+ * driver would therefore answer for a file it had never opened, and - worse -
+ * for a file whose open it had just *rejected*, because rejection left the
+ * driver connected and only recorded a verdict nothing on this path read.
+ *
+ * `safeModeRequired` is refused here as well as on write. Safe mode means this
+ * build could not fully understand the file, and an entry read out of a file
+ * whose semantics are not understood is not a safe value to hand to a decoder
+ * that will treat it as canonical project truth.
+ */
+function readRefusal(
+  session: ArqfsWorkerSession,
+): { readonly code: ArqfsWorkerErrorCode; readonly error: string } | null {
+  const result = session.openResult;
+  if (result === null) {
+    return {
+      code: ARQFS_WORKER_ERROR_CODES.notOpened,
+      error: 'Open the file before reading project entries. Nothing was read.',
+    };
+  }
+  if (result.status === 'rejected') {
+    return {
+      code: ARQFS_WORKER_ERROR_CODES.openRejected,
+      error: `This file was not opened: ${result.reason}. Nothing was read.`,
+    };
+  }
+  if (!result.capabilities.canRead || result.capabilities.safeModeRequired) {
+    return {
+      code: ARQFS_WORKER_ERROR_CODES.openRejected,
+      error: 'This build cannot safely read the complete project semantics. Nothing was read.',
+    };
+  }
+  return null;
+}
+
+/**
  * Pure request handling, deliberately factored out of workers/arqfs-worker's actual
  * `self.onmessage` wiring so it is unit-testable in Node against the same
  * `ArqfsDriver` interface (e.g. the better-sqlite3 driver already used by
@@ -135,12 +180,28 @@ export function handleArqfsWorkerRequest(
         return { id: request.id, ok: true, payload: { kind: 'putArchiveEntries' } };
       }
       case 'getArchiveEntry': {
+        const refusal = readRefusal(context.session);
+        if (refusal !== null) {
+          return refuse(request.id, refusal.code, refusal.error);
+        }
         const content = getArchiveEntry(context.driver, request.path);
         return { id: request.id, ok: true, payload: { kind: 'getArchiveEntry', content } };
       }
       case 'listArchiveEntryPaths': {
+        const refusal = readRefusal(context.session);
+        if (refusal !== null) {
+          return refuse(request.id, refusal.code, refusal.error);
+        }
         const paths = listArchiveEntryPaths(context.driver);
         return { id: request.id, ok: true, payload: { kind: 'listArchiveEntryPaths', paths } };
+      }
+      case 'readAllArchiveEntries': {
+        const refusal = readRefusal(context.session);
+        if (refusal !== null) {
+          return refuse(request.id, refusal.code, refusal.error);
+        }
+        const entries = [...readAllArchiveEntries(context.driver)];
+        return { id: request.id, ok: true, payload: { kind: 'readAllArchiveEntries', entries } };
       }
       case 'close': {
         context.driver.close();

@@ -35,7 +35,9 @@ function readJson(path) {
  * it back from the same contract the verifier writes against keeps a rename from
  * silently producing a deployment with no provenance attached to it.
  */
-const siteContract = readJson(join(root, 'docs', 'product', 'voice', 'deployed-site-contract.json'));
+const siteContract = readJson(
+  join(root, 'docs', 'product', 'voice', 'deployed-site-contract.json'),
+);
 const proofFileName = siteContract.proof?.fileName ?? 'arq-language-site-proof.json';
 
 function currentRevision() {
@@ -56,7 +58,11 @@ const productionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
 const deploymentHost = process.env.VERCEL_URL;
 const siteOrigin =
   process.env.SITE_ORIGIN ??
-  (productionHost ? `https://${productionHost}` : deploymentHost ? `https://${deploymentHost}` : '');
+  (productionHost
+    ? `https://${productionHost}`
+    : deploymentHost
+      ? `https://${deploymentHost}`
+      : '');
 
 const buildEnv = {
   ...process.env,

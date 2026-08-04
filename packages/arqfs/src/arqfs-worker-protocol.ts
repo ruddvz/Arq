@@ -20,6 +20,14 @@ export type ArqfsWorkerRequest =
     }
   | { readonly id: number; readonly type: 'getArchiveEntry'; readonly path: string }
   | { readonly id: number; readonly type: 'listArchiveEntryPaths' }
+  /**
+   * Every logical entry in one round trip. A native open needs the manifest and the
+   * model together before it may adopt anything, and asking for them one path at a
+   * time would cross the Worker boundary once per entry for a decision that is only
+   * ever made on the whole set - exactly the "frequent small calls" this protocol's
+   * batching rule exists to avoid.
+   */
+  | { readonly id: number; readonly type: 'readAllArchiveEntries' }
   | { readonly id: number; readonly type: 'close' };
 
 export type ArqfsWorkerResponsePayload =
@@ -27,6 +35,10 @@ export type ArqfsWorkerResponsePayload =
   | { readonly kind: 'putArchiveEntries' }
   | { readonly kind: 'getArchiveEntry'; readonly content: Uint8Array | null }
   | { readonly kind: 'listArchiveEntryPaths'; readonly paths: readonly string[] }
+  | {
+      readonly kind: 'readAllArchiveEntries';
+      readonly entries: ReadonlyArray<readonly [string, Uint8Array]>;
+    }
   | { readonly kind: 'close' };
 
 /**
@@ -41,7 +53,7 @@ export const ARQFS_WORKER_ERROR_CODES = {
   notOpened: 'ARQFS_WORKER_NOT_OPENED',
   /** The open succeeded for reading, and this build must not write this file. */
   notWritable: 'ARQFS_WORKER_FILE_NOT_WRITABLE',
-  /** The open itself was rejected; nothing may be done with this file. */
+  /** The open itself was rejected, or it succeeded only in a form this build must not read from; nothing may be handed back from this file. */
   openRejected: 'ARQFS_WORKER_OPEN_REJECTED',
   /** Anything unexpected. Deliberately last: a specific code is always preferred. */
   unexpected: 'ARQFS_WORKER_UNEXPECTED_ERROR',
