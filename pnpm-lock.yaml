@@ -52,6 +52,9 @@ importers:
       '@arq/arqfs':
         specifier: workspace:*
         version: link:../../packages/arqfs
+      '@arq/arqfs-worker':
+        specifier: workspace:*
+        version: link:../../workers/arqfs-worker
       '@arq/bim-core':
         specifier: workspace:*
         version: link:../../packages/bim-core

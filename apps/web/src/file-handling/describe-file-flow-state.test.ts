@@ -3,11 +3,50 @@ import { describeFileFlowState } from './describe-file-flow-state';
 import type { FileFlowState } from './file-state-machine';
 
 describe('describeFileFlowState', () => {
-  it('never claims a project is open for the native-opening state - it is honest about the unwired boundary', () => {
+  /**
+   * `native-opening` is progress, not a verdict: the bytes were accepted and the
+   * project is being copied into a local working copy. It must not claim the
+   * project is open, because the decode and adoption that make that true have
+   * not happened yet - `native-opened` is the state entitled to say so.
+   */
+  it('reports native-opening as work in progress, not as an opened project', () => {
     const description = describeFileFlowState({ kind: 'native-opening', name: 'house.arq' });
 
-    expect(description.headline).not.toMatch(/is open|opened successfully/i);
-    expect(description.detail).toMatch(/not wired/i);
+    expect(description.tone).toBe('progress');
+    expect(description.headline).toMatch(/opening/i);
+    expect(description.headline).not.toMatch(/is open\b|opened successfully/i);
+    // Names where the copy goes, so "opening" does not read as "uploading".
+    expect(description.detail).toMatch(/local working copy/i);
+  });
+
+  it('says a project is open only once it has actually been adopted', () => {
+    const description = describeFileFlowState({
+      kind: 'native-opened',
+      name: 'house.arq',
+      readOnly: false,
+      warnings: [],
+    });
+
+    expect(description.tone).toBe('neutral');
+    expect(description.headline).toBe('house.arq is open.');
+  });
+
+  /**
+   * A project that silently refuses edits is a bug report; one that explains
+   * itself is a product. The reason travels with the state rather than being
+   * left for the user to discover by trying to draw.
+   */
+  it('carries the reason a project opened read-only', () => {
+    const description = describeFileFlowState({
+      kind: 'native-opened',
+      name: 'house.arq',
+      readOnly: true,
+      warnings: ['This project was saved by a newer version of Arq.'],
+    });
+
+    expect(description.tone).toBe('warning');
+    expect(description.headline).toMatch(/reading only/i);
+    expect(description.detail).toContain('newer version');
   });
 
   /**
@@ -38,15 +77,12 @@ describe('describeFileFlowState', () => {
   });
 
   /**
-   * The reachable success state must be unambiguous. There is no longer a
-   * variant of `native-opening` that means "accepted, but possibly stale" - if
-   * the flow reaches it at all, the bytes are whole.
+   * There is no longer a variant of `native-opening` that means "accepted, but
+   * possibly stale" - if the flow reaches it at all, the bytes are whole.
    */
-  it('describes the one native-opening state as complete, with no incomplete variant left', () => {
+  it('has no state that hedges about completeness', () => {
     const description = describeFileFlowState({ kind: 'native-opening', name: 'house.arq' });
 
-    expect(description.tone).toBe('neutral');
-    expect(description.headline).toMatch(/complete/i);
     expect(description.headline).not.toMatch(/may not be complete/i);
   });
 
@@ -88,6 +124,8 @@ describe('describeFileFlowState', () => {
       { kind: 'acquiring', name: 'a.arq' },
       { kind: 'detecting', name: 'a.arq' },
       { kind: 'native-opening', name: 'a.arq' },
+      { kind: 'native-opened', name: 'a.arq', readOnly: false, warnings: [] },
+      { kind: 'native-opened', name: 'a.arq', readOnly: true, warnings: ['older format'] },
       { kind: 'import-options', name: 'a.dxf', formatId: 'dxf' },
       { kind: 'importing', name: 'a.dxf', requestId: 'r1', fraction: 0.5 },
       { kind: 'staged-review', name: 'a.dxf', requestId: 'r1' },

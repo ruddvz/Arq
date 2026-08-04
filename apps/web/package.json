@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@arq/arqfs": "workspace:*",
+    "@arq/arqfs-worker": "workspace:*",
     "@arq/bim-core": "workspace:*",
     "@arq/design-system": "workspace:*",
     "@arq/editor-shell": "workspace:*",

@@ -23,20 +23,32 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
       return { headline: `Reading ${state.name}…`, detail: null, tone: 'progress' };
     case 'detecting':
       return { headline: `Checking ${state.name}…`, detail: null, tone: 'progress' };
+    case 'native-opened':
+      // The one state that may say the project is open, because by now its
+      // contents have been decoded and adopted. Read-only carries its reason:
+      // a project that silently refuses edits is a bug report, one that explains
+      // itself is a product.
+      return {
+        headline: state.readOnly
+          ? `${state.name} is open for reading only.`
+          : `${state.name} is open.`,
+        detail: state.warnings.length > 0 ? state.warnings.join(' ') : null,
+        tone: state.readOnly ? 'warning' : 'neutral',
+      };
     case 'native-opening':
-      // Honest boundary: the file passed byte preflight and the
-      // source-completeness policy, but this build does not yet load it into a
-      // live project (no browser Worker/OPFS driver is constructed here) -
-      // never claim the project is open when it is not.
+      // Progress, not a verdict. The file passed byte preflight and the
+      // source-completeness policy and is now being copied into a local working
+      // copy and opened - which is work, not a formality, so it gets its own
+      // state rather than being folded into success.
       //
       // There is no longer a "compatible, but may not be complete" branch. A
       // database depending on an absent `-wal` sidecar is refused before it
       // reaches this state, because the caution it used to show sat next to a
       // project that could be silently missing the user's most recent work.
       return {
-        headline: `${state.name} is a compatible, complete Arq project.`,
-        detail: 'Full in-browser opening is not wired into this build yet.',
-        tone: 'neutral',
+        headline: `Opening ${state.name}…`,
+        detail: 'Copying this project into a local working copy on this device.',
+        tone: 'progress',
       };
     case 'import-options':
       return {

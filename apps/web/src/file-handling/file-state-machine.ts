@@ -22,6 +22,19 @@ export type FileFlowState =
    * `ARQ_WAL_SIDECAR_REQUIRED`, so reaching here means the bytes are whole.
    */
   | { readonly kind: 'native-opening'; readonly name: string }
+  /**
+   * The project is open: its contents were decoded and adopted. Distinct from
+   * `native-opening`, which only means the bytes were accepted - the flow's own
+   * language policy requires "safe to open" and "open" to stay separate
+   * statements, because they were separate facts for the whole time opening was
+   * unreachable.
+   */
+  | {
+      readonly kind: 'native-opened';
+      readonly name: string;
+      readonly readOnly: boolean;
+      readonly warnings: readonly string[];
+    }
   | { readonly kind: 'import-options'; readonly name: string; readonly formatId: string }
   | {
       readonly kind: 'importing';
@@ -43,6 +56,11 @@ export type FileFlowEvent =
   | { readonly type: 'acquire'; readonly name: string }
   | { readonly type: 'acquired' }
   | { readonly type: 'route-native' }
+  | {
+      readonly type: 'native-opened';
+      readonly readOnly: boolean;
+      readonly warnings: readonly string[];
+    }
   | { readonly type: 'route-import'; readonly formatId: string }
   | { readonly type: 'import-start'; readonly requestId: string }
   | { readonly type: 'progress'; readonly fraction: number }
@@ -70,6 +88,14 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
   }
   if (state.kind === 'detecting' && event.type === 'route-native') {
     return { kind: 'native-opening', name: state.name };
+  }
+  if (state.kind === 'native-opening' && event.type === 'native-opened') {
+    return {
+      kind: 'native-opened',
+      name: state.name,
+      readOnly: event.readOnly,
+      warnings: event.warnings,
+    };
   }
   if (state.kind === 'detecting' && event.type === 'route-import') {
     return { kind: 'import-options', name: state.name, formatId: event.formatId };

@@ -1,13 +1,29 @@
-import { useRef, useState, type ChangeEvent, type DragEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
 import { ArqModalDialog } from '@arq/design-system';
 import { reduceFileFlow, type FileFlowState } from './file-state-machine';
 import { evaluateSelectedFile } from './evaluate-selected-file';
 import { describeFileFlowState } from './describe-file-flow-state';
+import {
+  openNativeProject,
+  type NativeOpenResult,
+  type NativeWorkerFactory,
+} from '../project/open-native-project';
+import { createBrowserArqfsWorker } from '../project/browser-worker-factory';
 
 export interface FileOpenPanelProps {
   readonly isOpen: boolean;
   readonly onOpenChange: (isOpen: boolean) => void;
+  /**
+   * Called once a candidate has been fully validated, decoded and adopted -
+   * never before. The workspace replaces its project only at this point, so a
+   * rejected or cancelled candidate leaves whatever was already open untouched.
+   */
+  readonly onProjectOpened?: (opened: NativeOpenSuccess) => void;
+  /** Injected so tests and the capability check can drive the flow without a real browser Worker. */
+  readonly createWorker?: NativeWorkerFactory;
 }
+
+type NativeOpenSuccess = Extract<NativeOpenResult, { status: 'opened' }>;
 
 /**
  * UI-011: the real file-open surface - a file picker/drop target wired to the
@@ -33,10 +49,22 @@ export interface FileOpenPanelProps {
  * is present.
  */
 export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
-  const { isOpen, onOpenChange } = props;
+  const { isOpen, onOpenChange, onProjectOpened, createWorker = createBrowserArqfsWorker } = props;
   const [state, setState] = useState<FileFlowState>({ kind: 'idle' });
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  /**
+   * The panel is not always closed by the person using it: adopting a project
+   * closes it from the workspace, without going through `onOpenChange`. So the
+   * reset belongs to the closed transition itself rather than to the dismiss
+   * handler - otherwise reopening the dialog after an open would still be
+   * showing the previous file's verdict, and "house.arq is open." would sit
+   * above a picker offering to open something else.
+   */
+  useEffect(() => {
+    if (!isOpen) setState({ kind: 'idle' });
+  }, [isOpen]);
 
   async function evaluate(file: File): Promise<void> {
     setState((current) => reduceFileFlow(current, { type: 'acquire', name: file.name }));
@@ -84,6 +112,25 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
       return;
     }
     setState((current) => reduceFileFlow(current, { type: 'route-native' }));
+
+    // Only now is a Worker constructed and a working copy created. Everything
+    // above this line is byte-level and leaves no trace if it refuses.
+    const opened = await openNativeProject(bytes, createWorker, file.name);
+    if (opened.status === 'rejected') {
+      const { code, reason } = opened;
+      setState((current) => reduceFileFlow(current, { type: 'fail', code, message: reason }));
+      return;
+    }
+    // Adoption is the last step, and it is the caller's: the panel never
+    // replaces the active project itself.
+    onProjectOpened?.(opened);
+    setState((current) =>
+      reduceFileFlow(current, {
+        type: 'native-opened',
+        readOnly: opened.snapshot.readOnly,
+        warnings: opened.snapshot.warnings,
+      }),
+    );
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>): void {
@@ -109,10 +156,7 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
   return (
     <ArqModalDialog
       isOpen={isOpen}
-      onOpenChange={(open) => {
-        if (!open) reset();
-        onOpenChange(open);
-      }}
+      onOpenChange={onOpenChange}
       // Points at the visible <h2> rather than repeating its text as an
       // aria-label, so the dialog's accessible name and its visible heading can
       // never drift apart.
