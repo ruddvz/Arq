@@ -25,7 +25,12 @@ jobs:
   lint-and-typecheck:
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth 0 so the decision-id check below can read the base tree.
+      # A shallow clone cannot, and the base comparison is the half that catches
+      # an identifier taken by work that merged after the branch was opened.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -35,6 +40,20 @@ jobs:
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
+      # ADR and decision identifiers. The self-test runs first because a
+      # verifier that cannot fail would report a clean repository either way.
+      - run: pnpm check:decision-ids:test
+      - run: pnpm check:decision-ids
+      # engines.node, packageManager and the versions workflows actually use.
+      - run: pnpm check:toolchain-policy
+      # On a pull request the tree is also compared against its base. Draft
+      # PR #280 is internally consistent on its own branch - it collides only
+      # with what merged first - so the tree-only run above passes it.
+      - name: Verify decision ids against the pull request base
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+          node scripts/verify-decision-ids.mjs --base "origin/${{ github.base_ref }}"
       # Package 3.0/4.0 workspace registries: integrity fails the build,
       # designed-vs-built coverage is printed for the log only.
       - run: pnpm check:workspace-registries

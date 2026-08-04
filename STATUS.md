@@ -252,19 +252,33 @@ still open.
 
 ## Open decisions
 
-- **Local persistence overlap**: ADR-0019/0024 commit to SQLite-WASM over
-  OPFS while `packages/local-storage` ships a tested Dexie/IndexedDB
-  implementation named by ADR-0019's own "Dexie project database" line -
-  the overlap is recorded in `docs/research/incoming/README.md` and needs
-  an explicit ADR resolution before the open-project pipeline is built.
-  ADR-0028 now records a Proposed responsibility split and migration path.
-  It is not Accepted. Until an owner accepts or replaces it, no surface may
-  describe a journal write as a portable `.arq` write.
-- **Repository visibility and licence wording**: GitHub reports the repository
-  as public, while `LICENSE` describes all contents as proprietary and
-  confidential and `LICENSE-DECISION-REQUIRED.md` records a private repository
-  decision. The owner and legal reviewer must reconcile the actual visibility
-  and licence text.
+- **Local persistence overlap: settled.** ADR-0028 is Accepted (D-024). SQLite
+  in an ARQ-owned dedicated Worker over OPFS owns the canonical local working
+  project. IndexedDB is bounded to recovery bridging, source provenance,
+  last-known-good pointers, resumable publication metadata, device preferences
+  and replaceable derived caches during migration. A journal append is not a
+  portable save, and no surface may describe one as the other. Acceptance
+  unblocks the open-project pipeline; it does not implement it, and nothing here
+  claims it exists.
+- **Repository visibility and licence wording**: still the owner's decision, now
+  with the conflict verified rather than reported. The GitHub API returns
+  `visibility: public`, `private: false`, `allow_forking: true` and
+  `license: NOASSERTION`, while `LICENSE` describes the contents as proprietary
+  and confidential. The proprietary grant is untouched. "Confidential" is
+  contradicted by the repository being publicly readable and forkable. Both
+  resolutions and their consequences are recorded in
+  `LICENSE-DECISION-REQUIRED.md`. No public surface may state a licence position
+  until one is chosen.
+- **Default branch**: ADR-0029 accepts `main` as the stable integration and
+  production branch (D-025), through a migration that keeps the current branch
+  undeleted through a rollback window. The migration has not been performed; the
+  default branch is still `claude/arq-cad-platform-research-ba8rav`.
+- **Engineering OS required status**: the gate reached 30 of 30 selected
+  evidence items at `cfcf2ac`, its first fully green run. It stays in shadow
+  mode until the exit criteria in `engineering/36_REQUIRED_CHECK_ROLLOUT.md`
+  pass. One green run is not a rollout criterion, and
+  `protected_l4_approval` still resolves to a deferred environment gate rather
+  than an approval anybody granted.
 - **Protected L4 release approval**: the complete plan-to-3D-to-sheet-to-PDF
   workflow, cross-platform matrix, rollback evidence and post-release proof do
   not exist. Production readiness remains blocked.
