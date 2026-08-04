@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "e4996cd16dd196aaf2c582e243d2d9b0322ab1d7a3ad51248def653c4b8df585",
+  "sourceSetDigest": "2c17281e46caf3d51f33c01f29e04fe703754f4968c550443d139650762fcc38",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -345,7 +345,7 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "abdb8c2a4a27956adea458a8b8fcdaeee9df01b0d7e1e3ac92ba783cdcc62e00",
+      "sha256": "bfd68b8bf1fc3172c48017ac7fcd8190e640ce4bb028977b1a8584710ae49e7c",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
@@ -359,8 +359,8 @@
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-          "sha256": "ac1edc9a28918080106b2126867528c067caaf9a7ef48292f8bbac8d694f71cd",
-          "bytes": 3976
+          "sha256": "12b80d19822ee9d7847e8f9121b48d6756ac4a6568509feb84afb199344d61ec",
+          "bytes": 9700
         },
         {
           "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
@@ -374,13 +374,13 @@
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.test.ts",
-          "sha256": "d69973f182e87aecc89cb4e7dd51feaefcbd5bbb055c7387133e2e58dcec1ef0",
-          "bytes": 4267
+          "sha256": "5f62c270166f9091c1359aef7849273e52d1f46ef6eab40d86e1b2f886f7e93b",
+          "bytes": 9328
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.ts",
-          "sha256": "b8fd15a857e0cd5271cc71ea037f46234b7e7c8cbb149cd9a0aa872098de0fae",
-          "bytes": 4253
+          "sha256": "733a032dc525a2a87982ab158fadb8e7b742092501841be915974b2d485b26dc",
+          "bytes": 15427
         },
         {
           "rel": "apps/web/src/file-handling/index.ts",
@@ -2837,7 +2837,21 @@
       "staged-review",
       "migrating",
       "read-only-safe-mode",
-      "failed"
+      "failed",
+      "staging",
+      "staged",
+      "migration-verified",
+      "worker-open",
+      "hydrating",
+      "workspace-active",
+      "quarantined",
+      "cancelled",
+      "project-failed",
+      "recovery-available",
+      "recovering",
+      "publishing",
+      "published",
+      "closed"
     ],
     "web-plan-journal-status": [
       "recovered",
