@@ -118,7 +118,17 @@ jobs:
           echo "base-url=${url}" >> "$GITHUB_OUTPUT"
           echo "expected-commit=${HEAD_SHA}" >> "$GITHUB_OUTPUT"
 
+      # The live probe only reports on a real origin, so the logic deciding
+      # "we were never shown the deployment" has no other place to be checked.
+      - name: Self-test the deployment-protection detector
+        run: node scripts/verify-vercel-routes.mjs --self-test
+
       - name: Verify deployed routes, caching and security headers
+        env:
+          # Present only if the owner has minted one. Absent is not fatal here:
+          # the script reports an unreadable protected origin as Not inspected
+          # and says exactly how to make it readable.
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: >-
           node scripts/verify-vercel-routes.mjs
           --base-url "${{ steps.origin.outputs.base-url }}"

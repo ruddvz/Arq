@@ -39,7 +39,9 @@ const delayMs = Number(value('--delay-ms', '5000'));
 /** How long to wait for the origin to start serving `--expected-commit` before failing. */
 const waitForCommitMs = Number(value('--wait-for-commit-ms', '600000'));
 
-if (!/^https?:\/\//.test(baseUrl)) {
+const selfTest = args.includes('--self-test');
+
+if (!selfTest && !/^https?:\/\//.test(baseUrl)) {
   console.error('FAIL --base-url is required, e.g. --base-url https://arq-website.vercel.app');
   process.exit(1);
 }
@@ -55,10 +57,25 @@ const headers = bypassToken ? { 'x-vercel-protection-bypass': bypassToken } : {}
 
 async function fetchOnce(path, redirect) {
   const response = await fetch(`${baseUrl}${path}`, { redirect, headers });
-  const text = response.headers.get('content-type')?.includes('json')
-    ? await response.text()
-    : await response.text();
-  return { status: response.status, headers: response.headers, body: text };
+  return { status: response.status, headers: response.headers, body: await response.text() };
+}
+
+const looksLikeHtml = (body) => /^\s*(<!doctype html|<html)/i.test(body);
+
+/**
+ * Recognises Vercel's deployment-protection interstitial, which is served in
+ * place of the deployment's own files. It has to be named specifically: the
+ * page is a normal HTML document, so without this the only symptom is JSON
+ * parsing failing on "<!DOCTYPE", which reads like a corrupt artifact rather
+ * than like an origin that never showed us the artifact at all.
+ */
+function protectionSignal(response) {
+  if (response.status === 401 || response.status === 403) return `HTTP ${response.status}`;
+  if (response.status !== 200 || !looksLikeHtml(response.body)) return null;
+  const match = response.body.match(
+    /_vercel\/sso|vercel\.com\/sso|Authentication Required|Deployment Protection|sso-api/i,
+  );
+  return match ? `HTTP 200 with "${match[0]}"` : null;
 }
 
 /**
@@ -91,6 +108,45 @@ function expectHeader(label, response, name, predicate, description) {
 }
 
 /**
+ * Pins the protection detector against captured response shapes, so the branch
+ * that decides "we were never shown the deployment" is itself verified rather
+ * than assumed. Runs in CI immediately before the live probe: this instrument
+ * only reports on a real origin, so without this its own logic would be the one
+ * untested thing in the check.
+ */
+function runSelfTest() {
+  const sso =
+    '<!doctype html><html><head><meta charset="utf-8"></head><body>' +
+    '<script>window.location="https://vercel.com/sso-api?url=x"</script></body></html>';
+  const cases = [
+    ['SSO interstitial served as 200', { status: 200, body: sso }, true],
+    ['protection as 401', { status: 401, body: '<html>Authentication Required</html>' }, true],
+    ['protection as 403', { status: 403, body: '' }, true],
+    ['the real provenance file', { status: 200, body: '{"commit":"abc"}' }, false],
+    // The marketing site legitimately answers with HTML. Treating any HTML body
+    // as a protection page would turn a healthy origin into a false blockage.
+    [
+      'an ordinary HTML page',
+      { status: 200, body: '<!doctype html><html><body>Arq</body></html>' },
+      false,
+    ],
+    ['a plain 404', { status: 404, body: 'Not Found' }, false],
+  ];
+  let broken = 0;
+  for (const [label, response, expected] of cases) {
+    const actual = protectionSignal(response) !== null;
+    if (actual === expected) console.log(`PASS self-test: ${label} -> ${actual}`);
+    else {
+      console.error(`FAIL self-test: ${label} -> ${actual}, expected ${expected}`);
+      broken += 1;
+    }
+  }
+  process.exit(broken === 0 ? 0 : 1);
+}
+
+if (selfTest) runSelfTest();
+
+/**
  * Waits until the origin is serving the commit we mean to check.
  *
  * A branch alias points at whatever deployed most recently, so running straight
@@ -104,9 +160,28 @@ async function awaitExpectedCommit() {
   if (!expectedCommit) return;
   const deadline = Date.now() + waitForCommitMs;
   let lastSeen = 'nothing';
+  // A settled wrong answer is not a race, so it is confirmed a few times and
+  // then reported - rather than re-asked for the whole window, which turns a
+  // diagnosable fault into fifteen minutes of identical noise.
+  let settledWrongAnswers = 0;
   for (;;) {
     try {
       const response = await request('/deployment-source.json', { redirect: 'follow' });
+      const protection = protectionSignal(response);
+      if (protection !== null) {
+        fail(
+          `the origin is protected, so its files were never visible to this check ` +
+            `(${protection}). Deployment protection is on for ${baseUrl}, and no bypass ` +
+            `token was supplied, so every path returns the sign-in page instead of the ` +
+            `deployment. The routing contract is therefore Not inspected: this job fails ` +
+            `because it could gather no evidence, not because a route is wrong.\n` +
+            `  To make this verifiable: Vercel project settings -> Deployment Protection -> ` +
+            `Protection Bypass for Automation, then store the generated value as the ` +
+            `VERCEL_AUTOMATION_BYPASS_SECRET repository secret. This script already sends ` +
+            `it as the x-vercel-protection-bypass header when it is present.`,
+        );
+        return;
+      }
       if (response.status === 200) {
         const parsed = JSON.parse(response.body);
         if (parsed.commit === expectedCommit) {
@@ -117,8 +192,24 @@ async function awaitExpectedCommit() {
       } else {
         lastSeen = `HTTP ${response.status}`;
       }
+      settledWrongAnswers = 0;
     } catch (error) {
-      lastSeen = `unreachable (${error?.message ?? error})`;
+      // A body that is not JSON is a definite answer from a live server, so it
+      // is treated as settled. A transport error genuinely can resolve on its
+      // own, so it stays a retry.
+      const isNotJson = error instanceof SyntaxError;
+      lastSeen = isNotJson
+        ? `a non-JSON body at /deployment-source.json (${error.message})`
+        : `unreachable (${error?.message ?? error})`;
+      if (isNotJson && (settledWrongAnswers += 1) >= 3) {
+        fail(
+          `/deployment-source.json is served, but is not the provenance file this check ` +
+            `reads - the origin answered with ${lastSeen} three times running. Either the ` +
+            `build did not run scripts/build-vercel.mjs, or something upstream is answering ` +
+            `in its place.`,
+        );
+        return;
+      }
     }
     if (Date.now() >= deadline) {
       fail(
@@ -137,7 +228,10 @@ async function main() {
 
   await awaitExpectedCommit();
   if (failures > 0) {
-    console.error('\nRefusing to report on routes: the expected deployment never became live.');
+    console.error(
+      '\nRefusing to report on routes: no evidence about the deployed routing was obtainable. ' +
+        'An unreachable or unreadable origin is not evidence that routing is correct.',
+    );
     process.exit(1);
   }
 
