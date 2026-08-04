@@ -25,10 +25,11 @@ plus `contracts/`, the repository ESLint gate, `pnpm format:check`, and 2,380
 passing tests across 259 files, all uncached. The same revision defines
 workspace-registry, licence/SBOM, secret-scan and Rust gates, and CI wires
 thirteen of the fourteen headless-Chromium capability checks
-(`benchmark:arq-core-worker` is defined but not run in CI). The Rust and
-capability checks were not executed on this branch. These are revision-scoped
-results, not a claim that the protected workflow or production release gate is
-green.
+(`benchmark:arq-core-worker` is defined but not run in CI). The Rust gates and
+the capability checks were not run in that local pass; CI ran both on this
+branch and both passed. These are revision-scoped results, not a claim that
+the protected workflow or production release gate is green: the gate stays red
+for `e2e_arq_open`, and no protected L4 approval exists.
 
 - **`.arq` file format** (`packages/arqfs`): schema v1/v2, capability-gated
   open, byte preflight, copy-on-write migration with reopen+integrity
