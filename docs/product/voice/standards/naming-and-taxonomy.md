@@ -10,8 +10,8 @@ Aliases may improve search, support understanding, import mapping, or migration.
 
 ## Brand
 
-- **Arq**: running prose and UI.
-- **ARQ**: wordmark reproduction, formal all-caps asset/spec identifiers, or an existing identifier that is literally uppercase.
+- **ARQ**: public prose, product UI, support, documentation, and the wordmark.
+- **arq**: code identifiers, package names, literal lowercase routes, and the `.arq` extension. Preserve case-sensitive deployment paths such as `/Arq`.
 - **`.arq`**: native file extension.
 - Do not use **Arc** as the product name. `arc` remains a legitimate geometry term when referring to an actual curve primitive.
 
@@ -110,9 +110,9 @@ Do not call every problem an “issue” if the product distinguishes validation
 ## Files and exchange
 
 - **Underlay**: reference-only image/PDF.
-- **Import**: external data entering Arq through a conversion/mapping process.
+- **Import**: external data entering ARQ through a conversion/mapping process.
 - **Import report**: what was preserved, converted, approximated, flattened, omitted, unsupported, opaque, or failed.
-- **Export**: external representation written from Arq.
+- **Export**: external representation written from ARQ.
 - **Export report**: what was included, omitted, warned, or failed.
 - **Native project**: `.arq`.
 - **Reference file**: external input retained as reference.

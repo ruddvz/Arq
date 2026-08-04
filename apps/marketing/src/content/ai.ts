@@ -7,10 +7,11 @@ import type { Page } from '../site.js';
  * kernel rules require AI to propose typed operations with assumptions,
  * validation, diff and undo.
  *
- * Claim binding: pub-ai-current (current-ai-authoring, PLANNED). Nothing
- * AI-driven exists in the current build, so the five-part contract is written
- * as the requirement a future capability must meet, never as a guardrail that
- * is currently protecting anyone.
+ * Claim bindings: pub-ai-current (current-ai-authoring, PLANNED) and
+ * pub-ai-mcp-boundary (mcp-proposal-boundary, LIBRARY_ONLY). The repository
+ * contains a tested MCP proposal boundary, but apps/web has no host or Review
+ * Centre surface and no client run is recorded. Product authoring remains
+ * unavailable.
  */
 export const aiPage: Page = {
   meta: {
@@ -18,21 +19,37 @@ export const aiPage: Page = {
     route: '/ai',
     title: 'AI',
     description:
-      'The contract any future AI capability in Arq must meet: typed operations, stated assumptions, a preview diff, validation and undo. No AI-driven authoring exists in the current development build.',
+      'ARQ has a tested MCP proposal boundary in the repository, but no AI authoring is connected to the product. Any future capability must use typed operations, validation, review and undo.',
   },
   render: () => html`
     ${hero({
       heading: 'AI has to show its working before it changes anything.',
-      lede: 'No AI-driven authoring exists in the Arq development build today. This page sets out the contract a future AI capability has to meet before it is allowed to touch a project.',
+      lede: 'No AI-driven authoring is available in the ARQ product. The repository now contains a tested proposal boundary, but it is not connected to the application and has not been exercised by a recorded client run.',
     })}
     ${notes([
+      {
+        title: 'What exists in the repository',
+        body: html`
+          <p>
+            <code>packages/mcp-server</code> implements the boundary described by ADR-0027. It
+            exposes 24 scoped tools for reading project context and preparing reviewable proposals.
+            It has no tool that commits, approves, accepts a raw path or runs an unrestricted query.
+          </p>
+          <p>
+            This is library code, not a product feature. The web application does not provide its
+            project host, no screen renders the Review Centre model, and no Claude Code, Codex or
+            Cursor run has been recorded. A proposal cannot change a user's project through the
+            current product.
+          </p>
+        `,
+      },
       {
         title: 'The contract every AI feature must meet',
         body: html`
           <p>
             This is a design rule recorded in the project's guardrails
-            (<code>docs/ai/AI-GUARDRAILS.md</code>), written before any AI capability exists. An AI
-            capability may ship only as a proposal with all five parts:
+            (<code>docs/ai/AI-GUARDRAILS.md</code>). The MCP package enforces this proposal shape at
+            its own boundary. A product capability may ship only with all five parts:
           </p>
           ${specList([
             { term: 'Intent', detail: 'What you asked, restated so you can catch a misreading.' },
@@ -53,16 +70,17 @@ export const aiPage: Page = {
             { term: 'Undo', detail: 'One step back, always, like any other operation.' },
           ])}
           <p>
-            Nothing in the current build is enforcing this contract, because there is nothing yet
-            for it to govern.
+            The library tests do not establish a safe product workflow. That requires the real
+            project host, a user-visible review surface, deterministic validation against the open
+            project, explicit approval, grouped undo and recovery evidence.
           </p>
         `,
       },
       {
-        title: 'What AI in Arq will not claim',
+        title: 'What AI in ARQ will not claim',
         body: html`
           <p>
-            Generated geometry is not accurate until you have checked it. Arq's AI will not produce
+            Generated geometry is not accurate until you have checked it. ARQ's AI will not produce
             building-code compliance, will not approve designs and will not replace professional
             judgement. The copy principles in the repository forbid describing it otherwise, and
             this site follows them.

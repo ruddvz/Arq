@@ -50,8 +50,8 @@ Prefer:
 - structurally sound
 - perfect layout
 - magic
-- "Arq thinks..."
-- "Arq decided..."
+- "ARQ thinks..."
+- "ARQ decided..."
 
 ## Assumptions
 

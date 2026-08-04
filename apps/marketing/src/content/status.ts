@@ -18,12 +18,12 @@ export const statusPage: Page = {
     route: '/status',
     title: 'Status',
     description:
-      'Arq service status: no hosted Arq service is documented, and this website is served as static files. Incident history begins when hosting does.',
+      'ARQ service status: no hosted ARQ service is documented, and this website is served as static files. Incident history begins when hosting does.',
   },
   render: () => html`
     ${hero({
       heading: 'No hosted service is running.',
-      lede: 'Arq currently ships as a local development build: the application and your projects sit on your device. This page states what is documented at the revision it was built from.',
+      lede: 'ARQ currently ships as a local development build: the application and your projects sit on your device. This page states what is documented at the revision it was built from.',
     })}
     ${notes([
       {
@@ -66,7 +66,7 @@ export const statusPage: Page = {
     ])}
     ${ctaBand(
       'Local first is the availability strategy.',
-      'Read how Arq is built so that a project keeps working without a service behind it.',
+      'Read how ARQ is built so that a project keeps working without a service behind it.',
       [
         { href: '/security', label: 'Security' },
         { href: '/product', label: 'Product overview' },

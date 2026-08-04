@@ -57,6 +57,7 @@
       "impacts": ["ui", "interaction", "accessibility"],
       "evidence": [
         "unit",
+        "browser_model_canvas",
         "browser_workspace_layout",
         "browser_wall_hud",
         "browser_design_system_dialog",
@@ -202,6 +203,7 @@
       "id": "marketing-build-and-pages",
       "globs": [
         "apps/marketing/src/build.ts",
+        "apps/marketing/src/layout.ts",
         "apps/marketing/src/**/*.css",
         "apps/marketing/public/**",
         "brand/**",

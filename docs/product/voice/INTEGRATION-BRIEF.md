@@ -1,9 +1,9 @@
-# Arq Language System 4.1 integration and reconciliation brief
+# ARQ Language System 4.1 integration and reconciliation brief
 
 ## Mission
 
 Make language a verified product boundary. The goal is one accurate meaning for
-each Arq object, state, action, permission, file condition, capability,
+each ARQ object, state, action, permission, file condition, capability,
 limitation and consequence across product UI, public site, docs, support,
 accessibility, localisation and product AI.
 
@@ -37,7 +37,7 @@ retained as conflicts:
 ## Installation and activation
 
 1. Run `node 03-machine-layer/verify-install-map.mjs` in this package.
-2. Copy/merge using `04-wiring/install-map.json` on a dedicated Arq branch.
+2. Copy/merge using `04-wiring/install-map.json` on a dedicated ARQ branch.
 3. Merge `package-scripts.fragment.json` and `ci-fragment.yml` into the real
    repository without replacing unrelated scripts or CI jobs.
 4. Add the rendered-site fragment to the public-site tests and bind each public

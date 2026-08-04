@@ -7,10 +7,10 @@ import type { Page } from '../site.js';
  * the SEO brief's prohibited claim for this sheet. Baseline items mirror
  * SECURITY.md.
  *
- * Claim binding: pub-security-network (no-network-data-transfer, UNKNOWN). The
- * previous "sends nothing anywhere" was an absolute transport claim with no
- * network-observation evidence behind it. It is replaced by the architectural
- * facts that are checkable now plus a statement of what is missing.
+ * Claim binding: pub-security-network (no-network-data-transfer, UNKNOWN).
+ * A current browser observation check now covers the exercised wall, 3D and
+ * file-panel path. An approved privacy statement is still missing, so the page
+ * reports the evidence without turning it into an absolute product promise.
  */
 export const securityPage: Page = {
   meta: {
@@ -18,28 +18,30 @@ export const securityPage: Page = {
     route: '/security',
     title: 'Security',
     description:
-      'How Arq treats your work: projects held on your device, a published security baseline, sandboxed imports by design, and no certifications claimed that have not been earned.',
+      'How ARQ treats your work: projects held on your device, a published security baseline, sandboxed imports by design, and no certifications claimed that have not been earned.',
   },
   render: () => html`
     ${hero({
       heading: 'Your drawings are the asset. Act like it.',
-      lede: 'Arq’s strongest security property is architectural: there is no account system and no Arq server, so the most common cloud failure modes have nothing to reach. Everything beyond that is a stated baseline rather than a badge.',
+      lede: 'ARQ’s strongest security property is architectural: there is no account system and no ARQ server, so the most common cloud failure modes have nothing to reach. Everything beyond that is a stated baseline rather than a badge.',
     })}
     ${notes([
       {
         title: 'What the current architecture means',
         body: html`
           <p>
-            The development build has no account system, no Arq backend and no sync transport. It
+            The development build has no account system, no ARQ backend and no sync transport. It
             stores its work on your device, in browser storage or in files you choose. There is no
-            server on Arq's side to breach because there is no server.
+            server on ARQ's side to breach because there is no server.
           </p>
           <p>
-            Arq has not yet published a network-observation test for the build, so this page states
-            the architecture rather than making an absolute claim that no byte ever leaves your
-            machine. That test and an approved privacy statement are what would let a stronger
-            sentence be written here. When hosted features arrive, each one lands with its own
-            threat-model entry in the repository first.
+            The repository now includes a headless-browser observation check. It records every
+            request attempted while the built application draws a wall, opens the 3D view and
+            exercises the file panel, and fails if a request leaves the serving origin. The check
+            records attempts rather than blocking them. This is implementation evidence for that
+            exercised path, not an approved privacy statement or a promise about every future
+            feature. When hosted features arrive, each one needs its own threat-model entry and
+            privacy review first.
           </p>
         `,
       },
@@ -79,10 +81,10 @@ export const securityPage: Page = {
         `,
       },
       {
-        title: 'What Arq does not claim',
+        title: 'What ARQ does not claim',
         body: html`
           <p>
-            No compliance certification has been obtained, and this page will not imply one. Arq
+            No compliance certification has been obtained, and this page will not imply one. ARQ
             does not promise zero data loss. What it does instead is build journalling, recovery and
             plain failure messages, and test them. When a claim here can be backed by an audit, the
             audit will be linked from this page.

@@ -1,6 +1,6 @@
 # Units, numbers, measurements, and precision
 
-Arq is a precision tool. Numbers are part of the language system.
+ARQ is a precision tool. Numbers are part of the language system.
 
 ## Unit attachment
 

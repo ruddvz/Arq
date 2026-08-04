@@ -1,6 +1,6 @@
 # Files, storage, migration, and recovery language
 
-This is one of Arq's highest-risk vocabulary areas.
+This is one of ARQ's highest-risk vocabulary areas.
 
 ## Four distinct things
 
@@ -18,7 +18,7 @@ A file flow may establish different facts:
 - bytes could be read;
 - format was detected;
 - file passed preflight;
-- file is a compatible Arq project;
+- file is a compatible ARQ project;
 - file can be read;
 - file can be written;
 - migration is required;
@@ -99,6 +99,6 @@ A single-writer conflict is not generic “file busy”.
 Preferred shape:
 
 > **Project is already open for editing**  
-> Another Arq session owns the writable working copy. Open read-only, return to the other session, or close it before editing here.
+> Another ARQ session owns the writable working copy. Open read-only, return to the other session, or close it before editing here.
 
 Only offer actions the platform actually supports.

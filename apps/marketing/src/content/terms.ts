@@ -16,9 +16,9 @@ export const termsPage: Page = {
     id: 'PUB-016',
     route: '/legal/terms',
     title: 'Terms',
-    documentTitle: 'Terms · Arq',
+    documentTitle: 'Terms · ARQ',
     description:
-      'Arq has published no product terms. This page describes the basis on which the pre-release build is offered and is not a legal agreement. Formal terms require legal review.',
+      'ARQ has published no product terms. This page describes the basis on which the pre-release build is offered and is not a legal agreement. Formal terms require legal review.',
   },
   render: () => html`
     ${hero({
@@ -39,7 +39,7 @@ export const termsPage: Page = {
             {
               term: 'Your content',
               detail:
-                'Drawings and projects you create are yours. Arq claims no rights over your work.',
+                'Drawings and projects you create are yours. ARQ claims no rights over your work.',
             },
             {
               term: 'No service commitments',
@@ -49,7 +49,7 @@ export const termsPage: Page = {
             {
               term: 'Licences',
               detail:
-                'Third-party software in Arq is listed under open-source notices. The licence for Arq itself is not decided and is recorded in the repository as an open decision.',
+                'Third-party software in ARQ is listed under open-source notices. The licence for ARQ itself is not decided and is recorded in the repository as an open decision.',
             },
           ])}
         `,

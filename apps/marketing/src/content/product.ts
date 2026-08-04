@@ -22,12 +22,12 @@ export const productPage: Page = {
     route: '/product',
     title: 'Product',
     description:
-      'What Arq is, what each release is scoped to contain, and what is deliberately out of scope. A plan-first architectural editor with real units and a local project file.',
+      'What ARQ is, what each release is scoped to contain, and what is deliberately out of scope. A plan-first architectural editor with real units and a local project file.',
   },
   render: () => html`
     ${hero({
       heading: 'A plan editor first. Everything else follows.',
-      lede: 'Arq starts where architectural work starts: the floor plan. Model elements are intended to carry meaning, so that plans, 3D and schedules become views of one model rather than separate drawings.',
+      lede: 'ARQ starts where architectural work starts: the floor plan. Model elements are intended to carry meaning, so that plans, 3D and schedules become views of one model rather than separate drawings.',
     })}
     ${notes([
       {
@@ -83,7 +83,7 @@ export const productPage: Page = {
           <p>
             Curved walls, complex roofs and stairs, a full family editor, photorealistic rendering,
             concurrent geometry editing, IFC authoring, DWG authoring, RVT, structural and MEP, and
-            a plugin marketplace are all outside the current plan. Arq would rather do a small set
+            a plugin marketplace are all outside the current plan. ARQ would rather do a small set
             of drawings properly than a large set badly.
           </p>
         `,
@@ -110,7 +110,7 @@ export const productPage: Page = {
     ])}
     ${ctaBand(
       'See it from your side of the desk.',
-      'How Arq is being shaped for residential and small-practice work, and what a student can do with it.',
+      'How ARQ is being shaped for residential and small-practice work, and what a student can do with it.',
       [
         { href: '/architects', label: 'For architects' },
         { href: '/students', label: 'For students' },

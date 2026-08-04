@@ -394,6 +394,7 @@ describe('the defensive open policy', () => {
     // sqlite-wasm build the browser actually uses does not. That difference is
     // the whole reason the policy has to be applied explicitly.
     driver.exec('PRAGMA foreign_keys = OFF');
+    // security-lint: allow - unsafe value set on purpose; asserted back off below.
     driver.exec('PRAGMA trusted_schema = ON');
     expect(driver.pragma('foreign_keys')).toBe(0);
     expect(driver.pragma('trusted_schema')).toBe(1);

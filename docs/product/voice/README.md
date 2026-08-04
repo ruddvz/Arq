@@ -1,9 +1,9 @@
-# Arq Language System 4.1
+# ARQ Language System 4.1
 
-Within Arq this system is named Z Voice. "Z Voice" and "Arq Language System
+Within ARQ this system is named Z Voice. "Z Voice" and "ARQ Language System
 4.1" refer to the same governed vocabulary, registries and checks.
 
-This is Arq's canonical language architecture. It governs how the product names
+This is ARQ's canonical language architecture. It governs how the product names
 objects, commands, states, files, permissions, failures, imports, exports,
 recovery, support answers, AI proposals, documentation and public claims.
 
@@ -86,7 +86,7 @@ patterns prompt a time-limited human review with an evidence path.
 
 The supplied editorial reference is used as a descriptive quality input, not as
 a detector or a way to hide AI use. U+2014 is prohibited because the current
-site overuses it and Arq wants restrained, direct public copy. It is not a claim
+site overuses it and ARQ wants restrained, direct public copy. It is not a claim
 about who wrote a sentence.
 
 Public marketing language passes only when all three checks agree:
@@ -108,7 +108,7 @@ node 03-machine-layer/package-test.mjs
 `package-test.mjs` validates package structure, canonical references, editorial
 policy, public inventory, state and adapter coverage, conflict/claim gates,
 install coverage, generated context and manifest integrity. It intentionally
-does not claim the package proves a live Arq checkout is current.
+does not claim the package proves a live ARQ checkout is current.
 
 ## Repository integration
 

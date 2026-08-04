@@ -1,11 +1,11 @@
 # Product copy principles
 
-Canonical standard for Arq product UI, support and documentation wording.
+Canonical standard for ARQ product UI, support and documentation wording.
 
 This file is the merge point of two sources. The short principles below are the
 repository's original rules and remain in force. Everything after them is the
-Arq Language System 4.1 product-copy standard, expanded for the 57 specified
-Arq surfaces. Where the two overlap, they agree; where 4.1 is more specific, the
+ARQ Language System 4.1 product-copy standard, expanded for the 57 specified
+ARQ surfaces. Where the two overlap, they agree; where 4.1 is more specific, the
 more specific rule applies.
 
 Related canonical material:
@@ -184,7 +184,7 @@ read-only are distinct states. Name the tier that actually changed.
 - A journal append is not a portable `.arq` write. Say "Saved locally" or
   "Local changes recorded", never "Project file updated", unless the portable
   file was written.
-- A compatibility preflight is not an open project. Say "Compatible Arq
+- A compatibility preflight is not an open project. Say "Compatible ARQ
   project" until a live project session exists.
 - A read-only session states why it is read-only and what remains possible.
 - A migration states that the original file is preserved and where the migrated
@@ -203,7 +203,7 @@ governed translation exists. `local-save-failed`, `reader-too-old-to-write`,
 `missing-required-entries` and `safe-mode-required` are diagnostic identifiers,
 not user copy. Translate the condition:
 
-> This copy of Arq is older than the file and can open it read-only. Update Arq
+> This copy of ARQ is older than the file and can open it read-only. Update ARQ
 > to edit it. Your file was not changed.
 
 `docs/product/voice/state-language-map.json` holds the mapping;

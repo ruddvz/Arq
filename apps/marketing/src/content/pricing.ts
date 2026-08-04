@@ -18,12 +18,12 @@ export const pricingPage: Page = {
     route: '/pricing',
     title: 'Pricing',
     description:
-      'Arq pricing has not been set. The development build is currently available without a paid plan. This page states what is decided, what is being researched, and what is still open.',
+      'ARQ pricing has not been set. The development build is currently available without a paid plan. This page states what is decided, what is being researched, and what is still open.',
   },
   render: () => html`
     ${hero({
       heading: 'Not priced yet.',
-      lede: 'Arq has no published plans, no tiers and no prices. This page records the state of that decision so you can see what is settled and what is not.',
+      lede: 'ARQ has no published plans, no tiers and no prices. This page records the state of that decision so you can see what is settled and what is not.',
     })}
     ${notes([
       {
@@ -38,7 +38,7 @@ export const pricingPage: Page = {
             {
               term: 'The format is documented',
               detail:
-                'Projects are local files in a format documented in the repository. Documentation is what Arq can commit to today; it makes no promise about future access terms.',
+                'Projects are local files in a format documented in the repository. Documentation is what ARQ can commit to today; it makes no promise about future access terms.',
             },
             {
               term: 'No dark patterns',

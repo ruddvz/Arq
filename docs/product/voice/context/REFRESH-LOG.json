@@ -2,10 +2,88 @@
   "schemaVersion": 1,
   "entries": [
     {
-      "generatedAt": "2026-08-04T20:12:32.227Z",
-      "sourceSetDigest": "354c5ea2f0e35eeeb31792fbbb169f78e4fdf17e40d0f0585f53dd74dace44ae",
-      "previousSourceSetDigest": "0cb3ae857ec576eefc5c3af43c825268a04416e804135182c4c010a496b21021",
+      "generatedAt": "2026-08-04T20:18:53.938Z",
+      "sourceSetDigest": "2fd607c4da46b66e8106e5c70ffa9ae8b7da28be5ed4543f4770041e2a4bb0fe",
+      "previousSourceSetDigest": "97dc9c821707422bd1bf33f338690853a6d4fadb2f26db82436ef11808723dbf",
       "changedSourceSets": ["file-open-ui"]
+    },
+    {
+      "generatedAt": "2026-08-04T19:43:14.139Z",
+      "sourceSetDigest": "97dc9c821707422bd1bf33f338690853a6d4fadb2f26db82436ef11808723dbf",
+      "previousSourceSetDigest": "e5ab545bfbcdaba48ddc183c670cd62a4d00c37569e173477fac39a3287fe59e",
+      "changedSourceSets": ["status"]
+    },
+    {
+      "generatedAt": "2026-08-04T15:59:01.846Z",
+      "sourceSetDigest": "e5ab545bfbcdaba48ddc183c670cd62a4d00c37569e173477fac39a3287fe59e",
+      "previousSourceSetDigest": "8daa29055fb7c0b20f6f34922265890975bf4d49f0159c2b5f7b8754709f08f6",
+      "changedSourceSets": ["status"]
+    },
+    {
+      "generatedAt": "2026-08-04T15:49:42.406Z",
+      "sourceSetDigest": "8daa29055fb7c0b20f6f34922265890975bf4d49f0159c2b5f7b8754709f08f6",
+      "previousSourceSetDigest": "b4ea59b77839881edb186a783de0a7615be50fdc8ff3ba672fa6fc0c5ae5c33d",
+      "changedSourceSets": ["status", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-04T14:30:07.637Z",
+      "sourceSetDigest": "b4ea59b77839881edb186a783de0a7615be50fdc8ff3ba672fa6fc0c5ae5c33d",
+      "previousSourceSetDigest": "cf0bbb4884fcaa9f6e55b857d0788a4e7a727a2dca17483d0a689916c9b6e485",
+      "changedSourceSets": ["status"]
+    },
+    {
+      "generatedAt": "2026-08-04T14:11:32.897Z",
+      "sourceSetDigest": "cf0bbb4884fcaa9f6e55b857d0788a4e7a727a2dca17483d0a689916c9b6e485",
+      "previousSourceSetDigest": "f77b06779046dad9fdbc6b6ac2aff24a8843a8994c2fe8e06214a7c6c8165340",
+      "changedSourceSets": ["status"]
+    },
+    {
+      "generatedAt": "2026-08-04T13:58:53.702Z",
+      "sourceSetDigest": "f77b06779046dad9fdbc6b6ac2aff24a8843a8994c2fe8e06214a7c6c8165340",
+      "previousSourceSetDigest": "8d717f6cab8662d996900d1c27e52c71ae03852f609277a12dcc4d4131538d6f",
+      "changedSourceSets": ["accepted-adrs"]
+    },
+    {
+      "generatedAt": "2026-08-04T07:10:39.403Z",
+      "sourceSetDigest": "8d717f6cab8662d996900d1c27e52c71ae03852f609277a12dcc4d4131538d6f",
+      "previousSourceSetDigest": "0adc86a3995552c90f487b351db3e7064615be08c37a31beb5098e12f0e75906",
+      "changedSourceSets": [
+        "copy-principles",
+        "marketing-claims-tests",
+        "marketing-content",
+        "marketing-deployment",
+        "status"
+      ]
+    },
+    {
+      "generatedAt": "2026-08-04T07:01:27.254Z",
+      "sourceSetDigest": "0adc86a3995552c90f487b351db3e7064615be08c37a31beb5098e12f0e75906",
+      "previousSourceSetDigest": "7d2dff585da3fcd02dd43b6cf75fd65358b157f2c91116e1a0dabd1f395270a8",
+      "changedSourceSets": ["accepted-adrs", "status"]
+    },
+    {
+      "generatedAt": "2026-08-04T04:03:56.232Z",
+      "sourceSetDigest": "7d2dff585da3fcd02dd43b6cf75fd65358b157f2c91116e1a0dabd1f395270a8",
+      "previousSourceSetDigest": "99128006375a62cde75ced05b3c34b08db45bbb4016b8f7289df2fa23b513029",
+      "changedSourceSets": ["status"]
+    },
+    {
+      "generatedAt": "2026-08-04T03:45:21.829Z",
+      "sourceSetDigest": "99128006375a62cde75ced05b3c34b08db45bbb4016b8f7289df2fa23b513029",
+      "previousSourceSetDigest": "cbd116a87ff1e42edb5d5327b0db375632dde55e258852a8ff1188f5e60a2338",
+      "changedSourceSets": ["marketing-content"]
+    },
+    {
+      "generatedAt": "2026-08-04T03:44:39.831Z",
+      "sourceSetDigest": "cbd116a87ff1e42edb5d5327b0db375632dde55e258852a8ff1188f5e60a2338",
+      "previousSourceSetDigest": "0cb3ae857ec576eefc5c3af43c825268a04416e804135182c4c010a496b21021",
+      "changedSourceSets": [
+        "marketing-build",
+        "marketing-claims-tests",
+        "marketing-content",
+        "marketing-deployment",
+        "status"
+      ]
     },
     {
       "generatedAt": "2026-08-01T16:57:09.132Z",

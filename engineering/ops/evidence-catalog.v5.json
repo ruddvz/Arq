@@ -172,9 +172,12 @@
     },
     {
       "id": "e2e_arq_open",
-      "kind": "proof-gap",
-      "state": "missing",
-      "closure": "Wire a real browser Worker and OPFS project-opening flow, then test valid, old-reader, corrupt, and read-only outcomes."
+      "kind": "command",
+      "command": "pnpm benchmark:e2e-arq-open",
+      "packageScript": "benchmark:e2e-arq-open",
+      "state": "available",
+      "proves": "A bundle of the real workers/arqfs-worker/src/arqfs-worker-entry.ts opening projects over real sqlite-wasm and OPFS in headless Chromium, across valid, read-only, old-reader and foreign-file outcomes, each on a freshly constructed Worker so the file must survive Worker teardown.",
+      "doesNotProve": "A user-reachable open-project workflow. apps/web still does not construct this Worker; that product-integration gap is tracked in STATUS.md."
     },
     {
       "id": "browser_model_canvas",

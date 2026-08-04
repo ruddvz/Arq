@@ -105,6 +105,14 @@ describe('per-page acceptance criteria', () => {
         expect(document.html).toContain('property="og:image"');
       });
 
+      it('keeps only the not-found page out of search indexes', () => {
+        if (document.meta.route === '/404') {
+          expect(document.html).toContain('name="robots" content="noindex, nofollow"');
+        } else {
+          expect(document.html).not.toContain('name="robots" content="noindex');
+        }
+      });
+
       it('loads no third-party resource and links nowhere external', () => {
         expect(document.html).not.toContain('https://');
         expect(document.html).not.toContain('http://');
@@ -200,7 +208,7 @@ describe('pre-release status', () => {
 });
 
 /**
- * Arq Language System 4.1. The registries under docs/product/voice/ are the
+ * ARQ Language System 4.1. The registries under docs/product/voice/ are the
  * semantic source; these tests bind the rendered public copy to them instead of
  * duplicating a second hand-maintained word list. Adapted from
  * docs/product/voice/marketing-claim-test.fragment.ts.

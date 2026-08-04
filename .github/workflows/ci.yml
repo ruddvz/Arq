@@ -109,6 +109,11 @@ jobs:
       # real bundle attempts while a wall is drawn, the 3D view opened and the
       # file panel used must go to the origin that served it.
       - run: pnpm benchmark:network-observation
+      # The Worker and OPFS project-open path, driven as a bundle of the real
+      # arqfs-worker-entry.ts rather than a reimplementation of it: valid,
+      # read-only, old-reader and foreign-file outcomes, each on a freshly
+      # constructed Worker so the file has to survive Worker teardown in OPFS.
+      - run: pnpm benchmark:e2e-arq-open
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "contextSchemaVersion": 4,
-  "purpose": "The complete source boundary for a source-hashed Arq language context. A required source cannot be silently omitted or replaced by a hand-maintained summary.",
+  "purpose": "The complete source boundary for a source-hashed ARQ language context. A required source cannot be silently omitted or replaced by a hand-maintained summary.",
   "sourceSets": [
     {
       "id": "repository-readme",

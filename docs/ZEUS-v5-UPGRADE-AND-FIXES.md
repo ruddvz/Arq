@@ -116,8 +116,8 @@ and "renderer objects are disposable projections of canonical model data" failed
 Three corrections: match per sentence so a `.*` cannot join unrelated sentences; skip a
 sentence that denies or prohibits the pattern it contains; and require an assertive
 copula in the renderer rule rather than any intervening text. The negation set excludes
-"without" on purpose, so "the AI directly mutates canonical project state without
-review" still fails. Findings now quote the offending sentence, and
+"without" on purpose, so the prohibited sentence "the AI directly mutates canonical
+project state without review" still fails. Findings now quote the offending sentence, and
 `quality/architecture-clean/` states every prohibition in natural prose as the
 regression proof.
 
@@ -129,7 +129,7 @@ and `STATUS.md` already own. Installing them would have created a second source 
 for the same invariants, which invariant 7 exists to prevent, so their content was
 folded into `.zeus/INVARIANTS.md` instead.
 
-It also shipped a blocking write-time language guard duplicating the Arq Language System
+It also shipped a blocking write-time language guard duplicating the ARQ Language System
 4.1 (em dashes, hype, prohibited claims, interoperability overclaims) with path
 heuristics instead of real scope resolution. The Language System is more precise and
 deliberately splits warn-at-write from block-in-CI. The Zeus guard was reduced to the
@@ -144,7 +144,7 @@ not reference a `.zeus/` source.
 ## 6. Unchanged
 
 Engineering OS 5.0 remains the merge authority
-(`engineering/30_ZEUS_AND_ENGINEERING_AUTHORITY.md`) and the Arq Language System 4.1
+(`engineering/30_ZEUS_AND_ENGINEERING_AUTHORITY.md`) and the ARQ Language System 4.1
 remains the language authority. Zeus 5 takes neither role. It may raise a lane, add an
 impact, or report a wording defect; it may never lower a lane, pass missing evidence, or
 re-decide governed vocabulary.

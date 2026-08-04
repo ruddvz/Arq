@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "policyVersion": "4.1.0",
-  "purpose": "A quality and evidence policy for human-facing Arq copy. It does not determine who wrote text and must not be used to make an authorship claim.",
+  "purpose": "A quality and evidence policy for human-facing ARQ copy. It does not determine who wrote text and must not be used to make an authorship claim.",
   "goals": [
     "Make each claim specific enough to inspect.",
     "Keep product facts, limits and consequences ahead of rhetoric.",
@@ -23,7 +23,7 @@
       "one word associated with current or past model output",
       "one punctuation mark"
     ],
-    "houseStyleException": "U+2014 is prohibited in public and UI copy because the deployed Arq site has an observed overuse problem. This is a product house-style decision, not an authorship inference."
+    "houseStyleException": "U+2014 is prohibited in public and UI copy because the deployed ARQ site has an observed overuse problem. This is a product house-style decision, not an authorship inference."
   },
   "reviewOrder": [
     "truth-state-and-evidence",

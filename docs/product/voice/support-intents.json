@@ -28,7 +28,7 @@
     },
     {
       "id": "recovery",
-      "examples": ["Arq recovered work", "crash recovery"],
+      "examples": ["ARQ recovered work", "crash recovery"],
       "sources": ["files-storage-recovery"],
       "sensitive": true
     },
@@ -64,7 +64,7 @@
     },
     {
       "id": "pricing",
-      "examples": ["how much is Arq", "student price"],
+      "examples": ["how much is ARQ", "student price"],
       "sources": ["claim registry"],
       "sensitive": false
     },
@@ -167,13 +167,13 @@
     },
     {
       "id": "performance",
-      "examples": ["Arq is slow", "lag while drawing"],
+      "examples": ["ARQ is slow", "lag while drawing"],
       "sources": ["diagnostics", "benchmarks"],
       "sensitive": true
     },
     {
       "id": "browser-device",
-      "examples": ["does Arq work on iPad", "which browser"],
+      "examples": ["does ARQ work on iPad", "which browser"],
       "sources": ["capability evidence", "claim registry"],
       "sensitive": false
     },
@@ -185,13 +185,13 @@
     },
     {
       "id": "privacy-data",
-      "examples": ["where is my project stored", "does Arq train on my file"],
+      "examples": ["where is my project stored", "does ARQ train on my file"],
       "sources": ["security", "privacy", "AI guardrails", "claim registry"],
       "sensitive": true
     },
     {
       "id": "professional-boundary",
-      "examples": ["does Arq check code", "is this structurally safe"],
+      "examples": ["does ARQ check code", "is this structurally safe"],
       "sources": ["professional-use boundary", "launch claims"],
       "sensitive": true
     },

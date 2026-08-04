@@ -32,7 +32,7 @@ Do not use `Unavailable` alone when a specific reason is known.
 
 ## Help search
 
-Help content may recognise aliases and incumbent-software terms. It should answer using Arq concepts first, then explain the mapping.
+Help content may recognise aliases and incumbent-software terms. It should answer using ARQ concepts first, then explain the mapping.
 
 ## No-result state
 
@@ -40,6 +40,6 @@ Say what was searched and provide a safe next step without implying the command 
 
 Example:
 
-> No Arq command matches “array path”. Try `Array`, or search documentation.
+> No ARQ command matches “array path”. Try `Array`, or search documentation.
 
 Telemetry may record only the approved coarse query category, not raw project content or raw prompts.

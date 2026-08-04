@@ -1,6 +1,6 @@
-# Arq canonical language standard
+# ARQ canonical language standard
 
-This file defines Arq's top-level voice, named Z Voice. The canonical data and
+This file defines ARQ's top-level voice, named Z Voice. The canonical data and
 checks behind it live under `docs/product/voice/`.
 
 Domain standards may make the wording more specific. They may not weaken the truth, safety, naming, state, or consequence rules here.
@@ -9,7 +9,7 @@ Domain standards may make the wording more specific. They may not weaken the tru
 
 **Precise enough for professional work, calm enough for long sessions, and honest enough to show state and limits without drama.**
 
-Arq should sound like a professional instrument.
+ARQ should sound like a professional instrument.
 
 Not a SaaS salesperson.  
 Not a chatty assistant.  
@@ -256,9 +256,9 @@ request, assumptions, operations, preview, validation, affected objects, approva
 
 ## Product name
 
-Use **Arq** in prose/UI.
+Use **ARQ** in public prose, product UI, support, and documentation.
 
-Use **ARQ** only for the wordmark or a literal all-caps formal identifier.
+Use lowercase **arq** only for code identifiers, package names, routes where the literal identifier is lowercase, and the `.arq` extension. Preserve case-sensitive deployment paths such as `/Arq`.
 
 Use **`.arq`** for the file extension.
 
@@ -292,7 +292,7 @@ unless the narrow noun makes the claim exact, such as an internal diagnostic lab
 
 ## Professional boundary
 
-Arq never claims that the software, support system, or AI establishes:
+ARQ never claims that the software, support system, or AI establishes:
 
 - professional approval;
 - regulatory/building-code compliance;

@@ -94,10 +94,10 @@
       "route": "/ai",
       "sourcePath": "apps/marketing/src/content/ai.ts",
       "classification": "claim-bearing",
-      "claimBindingIds": ["pub-ai-current"],
+      "claimBindingIds": ["pub-ai-current", "pub-ai-mcp-boundary"],
       "owner": "product and AI safety",
       "reviewTriggers": ["source-change", "ai-capability-change", "guardrail-change", "release"],
-      "risk": "Future guardrails can be read as a current shipping AI feature."
+      "risk": "A tested library boundary can be mistaken for product-reachable AI authoring."
     },
     {
       "id": "public-interoperability",

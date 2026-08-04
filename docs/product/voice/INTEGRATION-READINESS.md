@@ -1,6 +1,6 @@
 # Integration readiness gate
 
-Do this before copying the package into a working Arq branch.
+Do this before copying the package into a working ARQ branch.
 
 ## Preconditions
 

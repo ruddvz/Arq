@@ -1,13 +1,13 @@
 # Editorial quality standard
 
-This standard makes Arq copy specific, inspectable and useful. It is not an
+This standard makes ARQ copy specific, inspectable and useful. It is not an
 AI-authorship detector and must never be used to claim that a person or tool
 wrote a passage.
 
 The supplied reference is not a checklist of forbidden human traits. Title
 case, curly punctuation, a single transition word, one word associated with a
 model, or one punctuation mark cannot establish authorship and are not rejected
-by this system for that reason. The system checks whether a pattern harms Arq's
+by this system for that reason. The system checks whether a pattern harms ARQ's
 clarity, evidence or public trust boundary.
 
 ## The test
@@ -33,7 +33,7 @@ Write the observed behaviour and the user consequence.
 | Built for confidence         | Show the blocking validation reason before the operation is applied.                 |
 | A seamless file experience   | The selected file is compatible. Opening the project is not available in this build. |
 | Experts agree                | Name the source and what it establishes, or omit the assertion.                      |
-| Arq represents a new era     | Remove it unless a concrete, supported claim follows.                                |
+| ARQ represents a new era     | Remove it unless a concrete, supported claim follows.                                |
 
 Do not add a second sentence that restates the first with a broader claim about
 importance, the industry, the future or the reader's feelings.

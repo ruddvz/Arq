@@ -7,7 +7,7 @@
       "surface": "files",
       "requiredSlots": ["fileName", "compatibilityResult", "openingBoundary"],
       "forbiddenPhrases": ["opened", "project ready"],
-      "defaultLabel": "{fileName} is a compatible Arq project.",
+      "defaultLabel": "{fileName} is a compatible ARQ project.",
       "detailRule": "State that the current build has not opened a live project unless a real opening state exists."
     },
     {

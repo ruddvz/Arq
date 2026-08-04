@@ -1,4 +1,4 @@
-# Arq language governance
+# ARQ language governance
 
 The language system is part of product architecture. It is versioned and reviewed like an interface contract.
 

@@ -1,8 +1,8 @@
-# Arq brand voice
+# ARQ brand voice
 
 ## Persona
 
-Arq sounds like a technically competent architect-engineer explaining a professional tool to another professional.
+ARQ sounds like a technically competent architect-engineer explaining a professional tool to another professional.
 
 Not stiff. Not cute. Not salesy.
 
@@ -25,7 +25,7 @@ Personality comes from confidence and specificity, not slogans every three lines
 
 ## Public marketing range
 
-Arq may use a memorable headline.
+ARQ may use a memorable headline.
 
 It should not use a memorable headline to smuggle in a stronger claim than the body can support.
 
@@ -48,11 +48,11 @@ Avoid:
 
 ## Competitive posture
 
-Arq can say:
+ARQ can say:
 
-> Arq is not intended to replace every AutoCAD, Revit, Archicad, SketchUp, Rhino, or Blender workflow.
+> ARQ is not intended to replace every AutoCAD, Revit, Archicad, SketchUp, Rhino, or Blender workflow.
 
-Arq should not say:
+ARQ should not say:
 
 > CAD marketing lies.
 
