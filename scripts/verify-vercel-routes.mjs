@@ -36,6 +36,8 @@ const expectedCommit = value('--expected-commit', process.env.GITHUB_SHA ?? '');
 const bypassToken = value('--bypass-token', process.env.VERCEL_AUTOMATION_BYPASS_SECRET ?? '');
 const attempts = Number(value('--attempts', '3'));
 const delayMs = Number(value('--delay-ms', '5000'));
+/** How long to wait for the origin to start serving `--expected-commit` before failing. */
+const waitForCommitMs = Number(value('--wait-for-commit-ms', '600000'));
 
 if (!/^https?:\/\//.test(baseUrl)) {
   console.error('FAIL --base-url is required, e.g. --base-url https://arq-website.vercel.app');
@@ -88,9 +90,56 @@ function expectHeader(label, response, name, predicate, description) {
   else fail(`${label} ${name} is "${actual}", expected ${description}`);
 }
 
+/**
+ * Waits until the origin is serving the commit we mean to check.
+ *
+ * A branch alias points at whatever deployed most recently, so running straight
+ * away can check the *previous* deployment and report a pass that says nothing
+ * about this commit. Polling the provenance file first removes that race, and
+ * removes it in the honest direction: exhausting the window is a failure, not a
+ * skip. Without `--expected-commit` there is nothing to wait for, so this is a
+ * no-op and the checks describe whatever is currently live.
+ */
+async function awaitExpectedCommit() {
+  if (!expectedCommit) return;
+  const deadline = Date.now() + waitForCommitMs;
+  let lastSeen = 'nothing';
+  for (;;) {
+    try {
+      const response = await request('/deployment-source.json', { redirect: 'follow' });
+      if (response.status === 200) {
+        const parsed = JSON.parse(response.body);
+        if (parsed.commit === expectedCommit) {
+          pass(`origin is serving the expected commit ${expectedCommit}`);
+          return;
+        }
+        lastSeen = parsed.commit ?? 'no commit field';
+      } else {
+        lastSeen = `HTTP ${response.status}`;
+      }
+    } catch (error) {
+      lastSeen = `unreachable (${error?.message ?? error})`;
+    }
+    if (Date.now() >= deadline) {
+      fail(
+        `origin never served ${expectedCommit} within ${Math.round(waitForCommitMs / 1000)}s; last saw ${lastSeen}`,
+      );
+      return;
+    }
+    console.log(`  waiting for ${expectedCommit}; currently ${lastSeen}`);
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+}
+
 async function main() {
   console.log(`Verifying Arq deployment routing at ${baseUrl}`);
   if (bypassToken) console.log('Using deployment-protection bypass header.');
+
+  await awaitExpectedCommit();
+  if (failures > 0) {
+    console.error('\nRefusing to report on routes: the expected deployment never became live.');
+    process.exit(1);
+  }
 
   // 1. Marketing site at the root.
   const root = await request('/', { redirect: 'follow' });
