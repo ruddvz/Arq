@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "60f5bd2c5ed475d11fd6db09751e0646b899314ce63d9e60805c99b214ba7154",
+  "source_hash": "25d314c9ef3e6db99af99579580802b3f1dff819e4d8fde909859d2f684c1f0b",
   "source_records": [
     {
       "scope": "package",
@@ -789,7 +789,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "d65914049b66ca5b7fd7af6982a6394d9ec950f7e5c83d012d377b879f8c187b"
+      "sha256": "ea9ad95497434774805b5e423c47ecdf3a4e54785c501ca62334ec2517d01567"
     },
     {
       "scope": "repository",

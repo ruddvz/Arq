@@ -28,8 +28,9 @@ thirteen of the fourteen headless-Chromium capability checks
 (`benchmark:arq-core-worker` is defined but not run in CI). The Rust gates and
 the capability checks were not run in that local pass; CI ran both on this
 branch and both passed. These are revision-scoped results, not a claim that
-the protected workflow or production release gate is green: the gate stays red
-for `e2e_arq_open`, and no protected L4 approval exists.
+the protected workflow or production release gate is green. `e2e_arq_open` is no
+longer a standing proof gap - a real Worker and OPFS browser check now closes it -
+but a green gate is a statement about the checks that ran, not about release.
 
 - **`.arq` file format** (`packages/arqfs`): schema v1/v2, capability-gated
   open, byte preflight, copy-on-write migration with reopen+integrity
@@ -38,8 +39,10 @@ for `e2e_arq_open`, and no protected L4 approval exists.
   whether the bytes it was handed are the whole database: a write-ahead-log
   project keeps its newest commits in a `-wal` sidecar that a file picker does
   not supply, and SQLite reads such a file without the sidecar as of its last
-  checkpoint rather than failing - so the file-open surface says "compatible"
-  and "may not be complete" as the separate facts they are. A failed migration
+  checkpoint rather than failing - so such a file is now **refused** with
+  `ARQ_WAL_SIDECAR_REQUIRED` rather than opened behind a caution, because a
+  warning shown beside a project already on screen cannot undo the impression
+  that the newest work is present. A failed migration
   can now be quarantined instead of deleted, because the half-migrated copy is
   the only evidence of a bug that corrupts projects during upgrade.
 - **Workspace shell** (`apps/web` + `packages/workspace` +
@@ -96,7 +99,13 @@ for `e2e_arq_open`, and no protected L4 approval exists.
 ## Biggest known gaps (in rough priority order)
 
 1. No end-to-end project open: file-open UI stops at its safety verdict;
-   the OPFS worker is never constructed (`workers/arqfs-worker`).
+   the OPFS worker is never constructed by `apps/web`. The pieces beneath it are
+   now in place and tested - a native project host (`apps/web/src/project/`)
+   covering model decode, read-only policy, project identity and write
+   semantics, and an `importDatabase` Worker command that seeds a project-scoped
+   OPFS working copy from selected bytes. What remains is the wiring: nothing in
+   `apps/web` constructs the Worker or calls that pipeline, so opening a `.arq`
+   file is still not reachable by a user.
 2. No import/export reachable from the UI: the import worker is never
    constructed by `apps/web` (adapters themselves are real - dxf, underlay,
    attachment and now ifc all resolve in the worker's default registry).
