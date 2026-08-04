@@ -1,9 +1,30 @@
 # ADR-0028: Persistence responsibility split for project files, working copies, journals, and recovery
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-08-04
+**Accepted:** 2026-08-04 by the project owner, in the blocker-closure authorisation
 **Owners:** Architecture owner, project-data owner, release owner
-**Decision:** Owner acceptance required before implementation
+**Decision:** Option C, the bounded split described under "Decision" below
+
+## Acceptance
+
+The project owner accepted the bounded split on 2026-08-04. What is now settled:
+
+- SQLite running in an ARQ-owned dedicated Worker over OPFS owns the canonical
+  local working project state.
+- IndexedDB is bounded to recovery bridging, source provenance, last-known-good
+  pointers, resumable publication metadata, device preferences, and replaceable
+  derived caches during migration. It is not a second canonical store.
+- A journal append is not a portable save. Journal durability, working-copy
+  checkpoint, recovery, portable publication, and remote acknowledgement stay
+  distinct and separately named.
+- Portable publication produces a self-contained single-file project with no WAL
+  or SHM sidecar dependency.
+- Sync never moves raw SQLite pages, WAL, SHM, or IndexedDB databases.
+
+Acceptance unblocks implementation. It does not by itself implement anything:
+the user-reachable open pipeline is a separate change with its own evidence, and
+no surface may describe it as available until that change lands with proof.
 
 ## Context
 

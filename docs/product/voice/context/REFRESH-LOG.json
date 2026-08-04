@@ -2,6 +2,12 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "generatedAt": "2026-08-04T21:30:56.125Z",
+      "sourceSetDigest": "e4996cd16dd196aaf2c582e243d2d9b0322ab1d7a3ad51248def653c4b8df585",
+      "previousSourceSetDigest": "97dc9c821707422bd1bf33f338690853a6d4fadb2f26db82436ef11808723dbf",
+      "changedSourceSets": ["accepted-adrs", "marketing-deployment", "status"]
+    },
+    {
       "generatedAt": "2026-08-04T19:43:14.139Z",
       "sourceSetDigest": "97dc9c821707422bd1bf33f338690853a6d4fadb2f26db82436ef11808723dbf",
       "previousSourceSetDigest": "e5ab545bfbcdaba48ddc183c670cd62a4d00c37569e173477fac39a3287fe59e",

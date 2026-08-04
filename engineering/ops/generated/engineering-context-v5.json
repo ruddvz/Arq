@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "c5a761e0552b4cde5901d86a17dc4134e6da19c397fa32ec50baf05e51f5d3b9",
+  "source_hash": "b3a310dc7900f5ab32022bcef4692237d3d468486f82d45fd5c8d9a736b6e500",
   "source_records": [
     {
       "scope": "package",
@@ -89,12 +89,12 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "f65ccc5589a95fca99ad910bc4be4d0300d40eec37d319647f6859cabf5baea0"
+      "sha256": "14f497ae65da1e68c6096948ef42f93903d5dcfc21896a31d0ee236724a2f98f"
     },
     {
       "scope": "repository",
       "path": ".github/workflows/deploy-pages.yml",
-      "sha256": "61a3d905ad07ca2fca69f27a1a72182ff3a07119cbf93fa3e13c6443dc67d4c3"
+      "sha256": "799f4aba03f23b60d51e9d201d2f897bd9ed1512ef548b34c4dca05bdd88bd9d"
     },
     {
       "scope": "repository",
@@ -369,12 +369,17 @@
     {
       "scope": "repository",
       "path": "docs/adr/0028-persistence-responsibility-split.md",
-      "sha256": "1a9462f3c1334163cc17d3f1c3e8cf850c1f99b71da5dc863277f0241e7b4c5e"
+      "sha256": "e42ece23a268f59a1b094daa8ca4585fa831a5282dff7ebd61219b3b85bb349e"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0029-main-as-stable-integration-branch.md",
+      "sha256": "383c75b46c521554b261a87c1ed930fe6ef095fefb373fc0c47bc2b9f1009a85"
     },
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "a349ac629b20272f2a1fda3ebb191a30ce750b68c01976e0cd783fc478d67900"
+      "sha256": "66d49e9f4d31ededfa1aac7a0b915ffcb12ea33f8002573ada51f6209d2315f7"
     },
     {
       "scope": "repository",
@@ -774,7 +779,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "d65914049b66ca5b7fd7af6982a6394d9ec950f7e5c83d012d377b879f8c187b"
+      "sha256": "a949d27b9bc3299a31cc20cef2dcad8c869db576f4b1aa7072dbc260676c2ed0"
     },
     {
       "scope": "repository",
