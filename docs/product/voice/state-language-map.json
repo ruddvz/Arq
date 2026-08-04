@@ -474,8 +474,14 @@
       },
       {
         "internal": "native-opening",
-        "labelTemplate": "{name} is a compatible ARQ project",
-        "explain": "Do not say opened until the live project pipeline has actually loaded it.",
+        "labelTemplate": "Opening {name}…",
+        "explain": "Progress, not a verdict. The bytes were accepted and the project is being copied into a local working copy; the decode and adoption that would make \"open\" true have not happened yet. Name where the copy goes, so this does not read as uploading.",
+        "exposure": "product"
+      },
+      {
+        "internal": "native-opened",
+        "labelTemplate": "{name} is open.",
+        "explain": "The only state entitled to say a project is open: its contents have been decoded and adopted into the workspace. When it opened read-only the label becomes \"{name} is open for reading only.\" and carries the reason, because a project that silently refuses edits reads as a bug rather than as a decision.",
         "exposure": "product"
       },
       {
