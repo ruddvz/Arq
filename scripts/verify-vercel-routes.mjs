@@ -28,7 +28,10 @@ const value = (flag, fallback) => {
   return index >= 0 && args[index + 1] ? args[index + 1] : fallback;
 };
 
-const baseUrl = (value('--base-url', process.env.ARQ_DEPLOYMENT_URL ?? '') || '').replace(/\/$/, '');
+const baseUrl = (value('--base-url', process.env.ARQ_DEPLOYMENT_URL ?? '') || '').replace(
+  /\/$/,
+  '',
+);
 const expectedCommit = value('--expected-commit', process.env.GITHUB_SHA ?? '');
 const bypassToken = value('--bypass-token', process.env.VERCEL_AUTOMATION_BYPASS_SECRET ?? '');
 const attempts = Number(value('--attempts', '3'));
@@ -136,7 +139,13 @@ async function main() {
   }
 
   // 5. HTML must revalidate, or a deploy is invisible until caches expire.
-  expectHeader('/', root, 'cache-control', (v) => /max-age=0|no-cache|must-revalidate/.test(v), 'revalidated');
+  expectHeader(
+    '/',
+    root,
+    'cache-control',
+    (v) => /max-age=0|no-cache|must-revalidate/.test(v),
+    'revalidated',
+  );
 
   // 6. Legacy GitHub Pages paths keep resolving after the move to root serving.
   const legacyRoot = await request('/Arq');
