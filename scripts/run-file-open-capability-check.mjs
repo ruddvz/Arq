@@ -2,12 +2,14 @@
 /**
  * UI-011: proves FileOpenPanel's byte-safe compatibility gate against real
  * files in a real browser, not by inspecting the source and assuming
- * @arq/arqfs's preflight logic reaches the UI correctly. Generates three real
+ * @arq/arqfs's preflight logic reaches the UI correctly. Generates four real
  * fixtures via the actual Node arqfs driver (not hand-built byte arrays):
  *
  * - a genuinely valid arqfs project;
  * - the same project with 200 bytes truncated off the end;
- * - a real SQLite database that is not an Arq project at all.
+ * - a real SQLite database that is not an Arq project at all;
+ * - a real write-ahead-log project copied without its -wal sidecar, the way a
+ *   file picker hands one over while the writing application still holds it.
  *
  * Then drives the real production apps/web bundle in headless Chromium:
  * opens the Open-project dialog through its real trigger button, uploads
@@ -115,6 +117,19 @@ it('generates real arqfs fixtures for scripts/run-file-open-capability-check.mjs
   const otherDriver = createNodeArqfsDriver(\`\${outDir}/other.sqlite3\`);
   otherDriver.exec('CREATE TABLE unrelated (id INTEGER PRIMARY KEY)');
   otherDriver.close();
+
+  // A real write-ahead-log project, copied the way a file picker hands one over:
+  // the main database only, while its -wal sidecar still holds committed work.
+  // Not a byte-patched header - the connection is left open so SQLite has not
+  // checkpointed, which is exactly the state a user's project is in when they
+  // pick it out of a folder while the writing application still has it open.
+  const walSource = \`\${outDir}/wal-source.arq\`;
+  const walDriver = createNodeArqfsDriver(walSource);
+  createArqfsSchemaV1(walDriver);
+  walDriver.exec('PRAGMA journal_mode=WAL');
+  putArchiveEntry(walDriver, 'manifest.json', new TextEncoder().encode('{"project":"wal"}'));
+  writeFileSync(\`\${outDir}/wal-dependent.arq\`, readFileSync(walSource));
+  walDriver.close();
 });
 `,
   );
@@ -130,6 +145,7 @@ it('generates real arqfs fixtures for scripts/run-file-open-capability-check.mjs
     goodPath: path.join(dir, 'good.arq'),
     truncatedPath: path.join(dir, 'truncated.arq'),
     otherPath: path.join(dir, 'other.sqlite3'),
+    walDependentPath: path.join(dir, 'wal-dependent.arq'),
   };
 }
 
@@ -140,7 +156,7 @@ async function run() {
   }
 
   const fixtureDir = mkdtempSync(path.join(tmpdir(), 'file-open-capability-'));
-  const { goodPath, truncatedPath, otherPath } = writeFixtures(fixtureDir);
+  const { goodPath, truncatedPath, otherPath, walDependentPath } = writeFixtures(fixtureDir);
 
   const server = startServer();
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -196,7 +212,7 @@ async function run() {
     await page.getByRole('button', { name: 'Choose another file' }).click();
     await fileInput.setInputFiles(goodPath);
     await page.waitForFunction(
-      (sel) => document.querySelector(sel)?.textContent?.includes('compatible Arq project'),
+      (sel) => document.querySelector(sel)?.textContent?.includes('complete Arq project'),
       STATUS,
       { timeout: 5000 },
     );
@@ -213,10 +229,31 @@ async function run() {
     await page.locator(`${STATUS} summary`).click();
     const nonArqDetail = await page.locator(`${STATUS} details p`).textContent();
 
+    // The silent-staleness case, which this instrument did not cover at all
+    // until now: SQLite opens a WAL database without its sidecar and serves the
+    // last checkpoint, so the product must refuse it rather than present it as
+    // an openable project. Proving that in a real browser is the point - the
+    // policy is enforced from bytes, and a unit test cannot show that the bytes
+    // a file picker hands over actually reach it.
+    await page.getByRole('button', { name: 'Choose another file' }).click();
+    await fileInput.setInputFiles(walDependentPath);
+    await page.waitForFunction(
+      (sel) => document.querySelector(sel)?.textContent?.includes('could not be opened'),
+      STATUS,
+      { timeout: 5000 },
+    );
+    const walHeadline = await page.locator(`${STATUS} p`).first().textContent();
+    await page.locator(`${STATUS} summary`).click();
+    const walDetail = await page.locator(`${STATUS} details p`).textContent();
+
     const ok =
       truncatedHeadline.includes('could not be opened') &&
       truncatedDetail.includes('ARQ_FILE_TRUNCATED') &&
-      validHeadline.includes('compatible Arq project') &&
+      validHeadline.includes('complete Arq project') &&
+      walHeadline.includes('could not be opened') &&
+      walDetail.includes('ARQ_WAL_SIDECAR_REQUIRED') &&
+      // The refusal has to carry the remedy, not only the fault.
+      walDetail.includes('close it cleanly') &&
       nonArqHeadline.includes('could not be opened') &&
       nonArqDetail.includes('NOT_ARQ_SQLITE') &&
       labelInNameHolds &&
@@ -227,6 +264,7 @@ async function run() {
       truncatedFile: { headline: truncatedHeadline, detail: truncatedDetail },
       validFile: { headline: validHeadline },
       nonArqSqliteFile: { headline: nonArqHeadline, detail: nonArqDetail },
+      walDependentFile: { headline: walHeadline, detail: walDetail },
       accessibility: {
         dropZoneVisibleText,
         dropZoneAccessibleName,
