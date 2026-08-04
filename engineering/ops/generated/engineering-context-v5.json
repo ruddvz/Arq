@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "5b4639c2f94e7c78d33dd12450854bb177d7033f130d5ab77d22f874767607f5",
+  "source_hash": "c5a761e0552b4cde5901d86a17dc4134e6da19c397fa32ec50baf05e51f5d3b9",
   "source_records": [
     {
       "scope": "package",
@@ -74,7 +74,7 @@
     {
       "scope": "package",
       "path": "ops/evidence-catalog.v5.json",
-      "sha256": "a952bd1d3d430bd5b8f036874a4cc858c071f434613a701776c93163c6e87696"
+      "sha256": "16e81773b7a74a4769fea60428f127b54ee6f7c02d44de8318ec9dcab43383fb"
     },
     {
       "scope": "package",
@@ -89,7 +89,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "94d16dc183dcbe9243ab4718dc0069c58465496bc8607f40474bff127639bcd9"
+      "sha256": "f65ccc5589a95fca99ad910bc4be4d0300d40eec37d319647f6859cabf5baea0"
     },
     {
       "scope": "repository",
@@ -374,7 +374,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "dab0a808d2e910b571619705369d4fd7449511852c7de64b890f185b0f4fd080"
+      "sha256": "a349ac629b20272f2a1fda3ebb191a30ce750b68c01976e0cd783fc478d67900"
     },
     {
       "scope": "repository",
@@ -774,7 +774,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "3eecb9c89125d876d772294c89402951a4acb6075a619957d874facea30a849e"
+      "sha256": "d65914049b66ca5b7fd7af6982a6394d9ec950f7e5c83d012d377b879f8c187b"
     },
     {
       "scope": "repository",
@@ -789,12 +789,12 @@
     {
       "scope": "repository",
       "path": "workers/arqfs-worker/src/arqfs-project-filename.ts",
-      "sha256": "14376950beed8e00015e9776213b3f7ea3fc9a08533317b15124a328fc967592"
+      "sha256": "02954beb5100d4411d73430823581228646c2375276c4528ff877d0128f677e0"
     },
     {
       "scope": "repository",
       "path": "workers/arqfs-worker/src/arqfs-worker-entry.ts",
-      "sha256": "12f2cd970f2bf526f63339c2f48336c45bc448581e6e8ca36ed71cfced1a6941"
+      "sha256": "347d643ac656c849928e5878b99a11d2e72999f2d34f86282097ecc8073ba4b2"
     },
     {
       "scope": "repository",

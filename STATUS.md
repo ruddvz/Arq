@@ -197,11 +197,49 @@ real tooling rather than by inspection:
   evidence items and none of them was the model-canvas check. The mapping is
   added and pinned by classifier fixture 23, which fails if it is removed.
 
-The gate remains deliberately red for `e2e_arq_open`. It selected 33 evidence
-items for the MCP merge revision, passed 32 and reported the browser Worker and
-OPFS opening proof as missing. The gate is still in shadow mode and is not a
-required branch-protection check. Neither fact converts the missing proof into
-a pass.
+`e2e_arq_open` was the gate's last standing proof gap: for the MCP merge
+revision it selected 33 evidence items, passed 32, and reported the browser
+Worker and OPFS opening proof as missing.
+
+That proof now exists. `pnpm benchmark:e2e-arq-open`
+(`scripts/run-e2e-arq-open-capability-check.mjs`) builds
+`workers/arqfs-worker/src/arqfs-worker-entry.ts` with Vite and drives that
+bundle in headless Chromium over real sqlite-wasm and OPFS. It is the real
+Worker, not a reimplementation of it: the two older OPFS checks deliberately
+rewrote the mechanism under test in throwaway JavaScript because no bundler was
+wired for them, and a rewrite cannot show that the shipped path behaves. Four
+outcomes are asserted, each on its own project id and each opened by a freshly
+constructed Worker:
+
+- a project this build wrote opens readable and writable;
+- a file whose `min_writer_major` is above this reader opens readable and
+  refuses writes;
+- a file whose `min_reader_major` is above this reader opens with `canRead`
+  false and `safeModeRequired` true, which is where this build carries that
+  refusal rather than in a `rejected` status;
+- valid SQLite carrying another application's id and no `arqfs_meta` is
+  rejected instead of being initialised over.
+
+The seeded cases double as the persistence proof: a seeded version floor only
+reaches the open under test if the file survived Worker teardown in OPFS.
+Had it not, the fresh Worker would have created a new schema and reported the
+writable outcome, so those cases fail rather than pass quietly. The check also
+fails if any open falls back to an in-memory VFS, if any request goes unserved,
+or if the page logs a console error.
+
+Writing it found a real defect. `arqfs-worker-entry.ts` imported the
+`@arq/arqfs` barrel, which re-exports `arqfs-node-driver` and so reaches
+`better-sqlite3`, a Node native addon. The shipped Worker could not be bundled
+for a browser at all, and nothing had noticed because nothing had ever built it
+for one. Both worker modules now deep-import, as `apps/web` already did.
+
+**This does not make the product able to open a project.** `apps/web` still
+does not construct this Worker, so there is still no user-reachable
+open-project workflow, and the first gap listed above stands unchanged. What
+closed is the evidence gap the gate names: the Worker and OPFS open path is now
+proven rather than assumed. Building the product pipeline on top of it needs
+the persistence responsibility split accepted first, which is ADR-0028 and
+still open.
 
 ## Open decisions
 

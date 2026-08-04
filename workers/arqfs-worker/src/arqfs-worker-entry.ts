@@ -21,13 +21,22 @@
  * (scripts/run-arqfs-opfs-capability-check.mjs) can actually verify.
  */
 import sqlite3InitModule from '@sqlite.org/sqlite-wasm';
+// Deep imports, not the `@arq/arqfs` barrel: the barrel re-exports
+// `arqfs-node-driver`, which pulls in `better-sqlite3`, a Node native addon that
+// cannot be bundled for a browser. Importing the barrel here made this Worker
+// unbundleable - the failure only appears when something actually tries to build
+// it for the browser, which nothing did until
+// scripts/run-e2e-arq-open-capability-check.mjs. `apps/web` already deep-imports
+// `@arq/arqfs/src/arqfs-preflight` for the same reason.
 import {
   ARQFS_WORKER_ERROR_CODES,
+  type ArqfsWorkerRequest,
+} from '@arq/arqfs/src/arqfs-worker-protocol';
+import {
   createArqfsWorkerSession,
   handleArqfsWorkerRequest,
   type ArqfsWorkerContext,
-  type ArqfsWorkerRequest,
-} from '@arq/arqfs';
+} from '@arq/arqfs/src/arqfs-worker-handler';
 import { createSqliteWasmArqfsDriver, type Sqlite3Oo1DatabaseLike } from './arqfs-opfs-driver';
 import { opfsFilenameForProject, readProjectIdFromWorkerSearch } from './arqfs-project-filename';
 

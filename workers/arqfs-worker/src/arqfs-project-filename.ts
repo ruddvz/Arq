@@ -1,4 +1,7 @@
-import { validateArqfsProjectId } from '@arq/arqfs';
+// Deep import for the same reason as arqfs-worker-entry.ts: the `@arq/arqfs`
+// barrel reaches `better-sqlite3` through `arqfs-node-driver`, which cannot be
+// bundled for a browser.
+import { validateArqfsProjectId } from '@arq/arqfs/src/arqfs-policy';
 
 /**
  * Where a project's canonical file lives inside this origin's OPFS root. One
