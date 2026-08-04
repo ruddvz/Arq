@@ -1,6 +1,6 @@
 # Semantic UI contracts
 
-High-risk Arq messages are product contracts. They must preserve the exact
+High-risk ARQ messages are product contracts. They must preserve the exact
 object, persistence tier, claim state and available action. A shorter label is
 not allowed to erase a material distinction.
 
@@ -27,7 +27,7 @@ session has been created.
 
 Use these distinct phrases:
 
-- `Compatible Arq project` for a preflight result.
+- `Compatible ARQ project` for a preflight result.
 - `Opening project` only while a real opening pipeline is running.
 - `Project ready` only once the workspace has a usable project context.
 - `Opened read-only` only when the implementation has created a readable

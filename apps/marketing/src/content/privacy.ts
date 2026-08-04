@@ -10,17 +10,17 @@ import type { Page } from '../site.js';
  * below are the ones the build and the deployment checks can substantiate: the
  * rendered-site verifier fails the build if any page loads a third-party
  * script, style, image, font, frame or CSS url(). Statements about the
- * application build are scoped to its architecture, because no network
- * observation test has been published.
+ * application build are scoped to the exercised network-observation path and
+ * remain qualified because no formal privacy statement has been approved.
  */
 export const privacyPage: Page = {
   meta: {
     id: 'PUB-015',
     route: '/legal/privacy',
     title: 'Privacy',
-    documentTitle: 'Privacy notice · Arq',
+    documentTitle: 'Privacy notice · ARQ',
     description:
-      'Arq has not published a formal privacy notice. This page states the practices that the current build and deployment checks can substantiate, and what still needs legal review.',
+      'ARQ has not published a formal privacy notice. This page states the practices that the current build and deployment checks can substantiate, and what still needs legal review.',
   },
   render: () => html`
     ${hero({
@@ -60,7 +60,7 @@ export const privacyPage: Page = {
             {
               term: 'Your projects',
               detail:
-                'Held on your device, in browser storage or in files you choose. There is no Arq server to upload them to.',
+                'Held on your device, in browser storage or in files you choose. There is no ARQ server to upload them to.',
             },
             {
               term: 'Accounts',
@@ -69,7 +69,7 @@ export const privacyPage: Page = {
             {
               term: 'Telemetry',
               detail:
-                'No telemetry endpoint is configured in the build. A published network-observation test is what would let this page make a stronger statement.',
+                'No telemetry endpoint is configured in the build. A browser check exercises the wall, 3D and file-panel path and fails on an attempted request outside the serving origin. This does not replace an approved privacy statement.',
             },
             {
               term: 'AI training',

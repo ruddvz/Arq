@@ -210,6 +210,14 @@
       "assertionClass": "ai"
     },
     {
+      "id": "mcp-proposal-boundary",
+      "state": "LIBRARY_ONLY",
+      "patterns": ["MCP proposal boundary", "24 scoped tools"],
+      "evidenceSourceIds": ["adr", "status", "code-tests"],
+      "assertionClass": "ai",
+      "note": "packages/mcp-server and ADR-0027 are implemented and tested. apps/web has no project host or Review Centre surface, and no client run is recorded."
+    },
+    {
       "id": "browser-hardware-minimum",
       "state": "UNKNOWN",
       "patterns": ["modest laptop is enough", "works on any device"],

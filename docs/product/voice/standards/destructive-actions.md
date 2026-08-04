@@ -34,7 +34,7 @@ Never invent a count to make the dialog look complete.
 
 Use:
 
-> Arq could not calculate all dependencies. Review Model health before deleting this level.
+> ARQ could not calculate all dependencies. Review Model health before deleting this level.
 
 If the product cannot determine consequences safely, block the operation if required by the underlying product contract.
 

@@ -16,12 +16,12 @@ export const collaborationPage: Page = {
     route: '/collaboration',
     title: 'Collaboration',
     description:
-      'How collaboration is scoped to arrive in Arq: share links and review first, comments and issues next, co-authoring later. The current build has no sharing backend.',
+      'How collaboration is scoped to arrive in ARQ: share links and review first, comments and issues next, co-authoring later. The current build has no sharing backend.',
   },
   render: () => html`
     ${hero({
       heading: 'Review first. Co-authoring when it is safe.',
-      lede: 'Most architectural collaboration is one person drawing and several people reacting. Arq is scoped to build that first, and treats simultaneous editing as the hard problem it is.',
+      lede: 'Most architectural collaboration is one person drawing and several people reacting. ARQ is scoped to build that first, and treats simultaneous editing as the hard problem it is.',
     })}
     ${notes([
       {
@@ -85,7 +85,7 @@ export const collaborationPage: Page = {
     ])}
     ${ctaBand(
       'Built on a file you can trust.',
-      'Collaboration is only as good as the file underneath it. Read how Arq treats your project data.',
+      'Collaboration is only as good as the file underneath it. Read how ARQ treats your project data.',
       [
         { href: '/security', label: 'Security' },
         { href: '/product', label: 'Product overview' },

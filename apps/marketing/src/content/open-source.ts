@@ -21,14 +21,14 @@ export function openSourcePage(sbom: Sbom): Page {
       id: 'PUB-017',
       route: '/legal/open-source',
       title: 'Open-source notices',
-      documentTitle: 'Open-source notices · Arq',
+      documentTitle: 'Open-source notices · ARQ',
       description:
-        'Third-party open-source software used to build Arq, generated from the repository’s software bill of materials for this deployed build and grouped by licence.',
+        'Third-party open-source software used to build ARQ, generated from the repository’s software bill of materials for this deployed build and grouped by licence.',
     },
     render: () => html`
       ${hero({
-        heading: 'Software Arq is built with.',
-        lede: 'Arq depends on open-source software and says so precisely. This list is generated from the software bill of materials for this build, the same data the continuous-integration licence gate enforces.',
+        heading: 'Software ARQ is built with.',
+        lede: 'ARQ depends on open-source software and says so precisely. This list is generated from the software bill of materials for this build, the same data the continuous-integration licence gate enforces.',
       })}
       ${notes([
         {

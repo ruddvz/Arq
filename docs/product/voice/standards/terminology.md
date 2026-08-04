@@ -1,4 +1,4 @@
-# Arq terminology system
+# ARQ terminology system
 
 The canonical terminology system is split deliberately.
 
@@ -14,7 +14,7 @@ The canonical terminology system is split deliberately.
 
 One giant glossary would become a stale second implementation registry.
 
-Arq should reuse machine sources where they already exist and use the voice system to define meaning around them.
+ARQ should reuse machine sources where they already exist and use the voice system to define meaning around them.
 
 ## High-risk distinctions
 

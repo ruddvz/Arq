@@ -2,7 +2,8 @@
 
 ## Compatible, not yet loaded
 
-**[file] is a compatible Arq project**  
+**[file] is a compatible ARQ project**
+
 [Explain next available action. Do not say opened until a live project exists.]
 
 ## Read-only

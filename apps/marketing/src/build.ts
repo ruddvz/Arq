@@ -29,8 +29,9 @@ import { findRepoRoot, loadSbom } from './open-source-data.js';
  *   time. This is sound precisely because the site's tests forbid external
  *   resources: every `="/..."` attribute is provably internal.
  * - SITE_ORIGIN, e.g. "https://ruddvz.github.io" - enables sitemap.xml, the
- *   robots Sitemap line, and absolute og:image/og:url values (Open Graph
- *   consumers require absolute URLs).
+ *   robots Sitemap line, canonical links and absolute og:image/og:url values.
+ * - SITE_REVISION - the immutable source commit shown in every footer. CI
+ *   supplies the exact GitHub SHA; local builds are labelled as local.
  */
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -61,9 +62,8 @@ export function applyBasePath(html: string, basePath: string): string {
 }
 
 /**
- * Makes og:image absolute and adds og:url once an origin is known - Open
- * Graph consumers require absolute URLs. Runs AFTER applyBasePath, so the
- * paths it absolutises already carry the base.
+ * Makes og:image absolute and adds canonical and og:url once an origin is
+ * known. Runs AFTER applyBasePath, so the paths already carry the base.
  */
 export function absolutiseOpenGraph(
   html: string,
@@ -73,7 +73,7 @@ export function absolutiseOpenGraph(
   const withImage = html.replace(/(property="og:image" content=")(\/[^"]*)"/, `$1${origin}$2"`);
   return withImage.replace(
     /<meta property="og:image"/,
-    `<meta property="og:url" content="${origin}${canonicalPathWithBase}" />\n        <meta property="og:image"`,
+    `<link rel="canonical" href="${origin}${canonicalPathWithBase}" />\n        <meta property="og:url" content="${origin}${canonicalPathWithBase}" />\n        <meta property="og:image"`,
   );
 }
 
@@ -114,13 +114,14 @@ export function buildSite(): { readonly pages: number; readonly outDir: string }
   const pages = allPages(sbom);
   const basePath = normaliseBasePath(process.env['SITE_BASE_PATH']);
   const origin = process.env['SITE_ORIGIN'];
+  const sourceRevision = process.env['SITE_REVISION'];
   const hasOrigin = origin !== undefined && origin !== '';
 
   rmSync(dist, { recursive: true, force: true });
   mkdirSync(dist, { recursive: true });
 
   for (const page of pages) {
-    let html = applyBasePath(renderDocument(page.meta, page.render()), basePath);
+    let html = applyBasePath(renderDocument(page.meta, page.render(), sourceRevision), basePath);
     if (hasOrigin) {
       const canonicalPath =
         page.meta.route === '/' ? `${basePath}/` : `${basePath}${page.meta.route}/`;

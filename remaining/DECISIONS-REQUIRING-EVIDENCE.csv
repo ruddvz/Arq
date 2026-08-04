@@ -1,25 +1,22 @@
-id,item,owner,reason
-R-001,Create actual GitHub repository,Owner action,Repository owner and visibility required
-R-002,Select source licence strategy,Legal and owner,Commercial and contributor strategy unresolved
-R-003,Name and trademark clearance,Legal research,Arq remains a working name
-R-004,Conduct architect interviews,User research,Requires real participants
-R-005,Approve target user and workflow,Product decision,Must follow interview evidence
-R-006,Select benchmark devices,Engineering,Requires available hardware and market evidence
-R-007,Run 2D renderer spike,Code and benchmark,Canvas 2D versus PixiJS versus fallback
-R-008,Approve numeric unit representation,ADR and tests,Precision and IFC effects
-R-009,Build local journal spike,Code,IndexedDB and recovery behaviour
-R-010,Build wall-room-3D vertical slice,Code,Core technical proof
-R-011,Run OpenCascade.js spike,Code and licence,Only for exact-solid needs
-R-012,Approve authentication provider,Security spike,Operational capacity required
-R-013,Complete dependency legal review,Legal,Required before distribution
-R-014,Design actual icons,Visual design,"Manifest is included, artwork is not"
-R-015,Create clickable prototypes,Product design,Desktop and iPad
-R-016,Usability test benchmark workflow,Research,Requires participants and prototype
-R-017,Set pricing,Business,Not enough evidence
-R-018,Choose hosting and regions,Operations,Privacy and market requirements
-R-019,Create production threat model,Security,Depends on actual implementation
-R-020,Implement software,Engineering,"This ZIP contains specifications, not production code"
-R-021,Validate IFC and DXF with real files,Interoperability,Requires implementation and test corpus
-R-022,Test RoomPlan and LiDAR,Native research,Requires supported Apple hardware
-R-023,Choose desktop shell,Later ADR,Requires browser performance evidence
-R-024,Decide public contribution policy,Governance,Depends on source licence
+id,item,owner,status,closure_evidence
+R-001,Reconcile public repository visibility with proprietary and confidential licence wording,Owner and legal,blocked-owner-decision,"Approved visibility decision and legally reviewed LICENSE text"
+R-002,Complete trademark domain and app-store name clearance,Legal,blocked-external-evidence,Clearance record and owner approval
+R-003,Approve privacy notice and product terms,Legal and privacy,blocked-external-evidence,"Published approved documents before hosted features launch"
+R-004,Decide external-contributor and contributor-licence policy,Governance and legal,blocked-owner-decision,Approved contribution policy
+R-005,Validate target user and protected workflow with architects,Product research,blocked-user-evidence,Interview and usability evidence tied to decisions
+R-006,Approve supported browser device and platform matrix,Product and engineering,blocked-hardware-evidence,Protected workflow and failure-path runs on named environments
+R-007,Accept revise or reject Proposed ADR-0028 for SQLite-WASM/OPFS and Dexie/IndexedDB persistence responsibilities,Architecture owner,blocked-owner-decision,Accepted ADR with migration recovery publication and rollback plan
+R-008,Complete browser Worker and OPFS project-open pipeline,Engineering,blocked-by-R-007,"Valid old-reader corrupt read-only migration hydration and recovery tests"
+R-009,Complete end-to-end import and export workflows,Interoperability,open-implementation,Reachable UI flows with fidelity reports and golden files
+R-010,Complete product host and Review Centre for MCP proposals,AI and product engineering,open-implementation,"Reachable proposal preview approval undo and client-run evidence"
+R-011,Implement sync transport and backend,Platform engineering,open-implementation,"Authorisation ordering conflict recovery and cross-project isolation tests"
+R-012,Complete protected wall-to-PDF-to-reopen workflow,Product engineering,blocked-by-R-007,"L4 acceptance evidence across approved platforms"
+R-013,Approve production performance budgets and project corpus,Performance owner,blocked-owner-decision,"Named hardware corpus percentiles thresholds and regression policy"
+R-014,Complete dependency dataset model-weight and font legal review,Legal,blocked-external-evidence,Reviewed inventory and distribution decision
+R-015,Complete external accessibility review,Accessibility owner,blocked-external-evidence,Audit findings remediations and accepted exceptions
+R-016,Validate Pencil hover squeeze haptics RoomPlan and LiDAR,Platform engineering,blocked-hardware-evidence,Supported Apple hardware test record
+R-017,Approve pricing billing and launch market,Commercial owner,blocked-market-evidence,Approved commercial decision and updated public claims
+R-018,Choose hosting regions retention backups and deletion policy,Operations privacy and security,blocked-owner-decision,Approved architecture policy and tested runbooks
+R-019,Name incident release and support owners,Operations,blocked-owner-decision,"Owner register escalation path rollback and post-release runbooks"
+R-020,Promote Engineering OS gate from shadow mode,Release owner,blocked-by-R-008,"Green current-head e2e_arq_open evidence and protected L4 approval"
+R-021,Close or rebuild stale draft PR #280 before any merge,Architecture owner,blocked-owner-decision,"Current-base branch with unique ADR and decision IDs plus current L4 evidence"

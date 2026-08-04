@@ -1,6 +1,6 @@
 # Localisation and translation contract
 
-Arq's canonical language is semantic before it is English.
+ARQ's canonical language is semantic before it is English.
 
 ## Stable identifiers
 
@@ -28,7 +28,7 @@ Use complete message templates so grammar can change by locale.
 
 ## Product names
 
-`Arq` and `.arq` are not translated.
+`ARQ` and `.arq` are not translated.
 
 Technical standards and format names such as IFC, DXF, PDF, SQLite and WebAssembly remain their established names unless the locale has an accepted conventional rendering.
 

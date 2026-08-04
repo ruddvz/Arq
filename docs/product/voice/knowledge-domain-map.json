@@ -1,10 +1,10 @@
 {
   "schemaVersion": 2,
-  "rule": "This map routes questions to authoritative Arq sources. It is a retrieval map, not a duplicate fact database.",
+  "rule": "This map routes questions to authoritative ARQ sources. It is a retrieval map, not a duplicate fact database.",
   "domains": [
     {
       "id": "product-definition",
-      "topics": ["what Arq is", "target users", "anti-goals", "protected workflow"],
+      "topics": ["what ARQ is", "target users", "anti-goals", "protected workflow"],
       "sources": ["README.md", "docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md"]
     },
     {

@@ -1,4 +1,4 @@
-# Future Arq support bot contract
+# Future ARQ support bot contract
 
 This is not the support bot implementation.
 
@@ -124,7 +124,7 @@ When the user is worried about losing work, state only facts established by the 
 
 Example:
 
-> Local save failed. The current session still shows your edits, but Arq has not confirmed they were persisted locally. Keep the project open while you use the available recovery/export option.
+> Local save failed. The current session still shows your edits, but ARQ has not confirmed they were persisted locally. Keep the project open while you use the available recovery/export option.
 
 Do not say:
 
@@ -138,7 +138,7 @@ Potential vulnerabilities, token exposure, unauthorised access, or exploit repor
 
 ## Professional boundary
 
-Support may explain Arq behaviour.
+Support may explain ARQ behaviour.
 
 Support must not certify:
 

@@ -5,7 +5,7 @@
     "QUALIFY": "Evidence exists but the capability is planned, gated, library-only, volatile or otherwise scope-limited.",
     "CONFLICT": "Authoritative sources disagree or dependent copy conflicts with stronger evidence. State the boundary and do not choose the stronger answer.",
     "UNKNOWN": "No approved current source establishes the fact.",
-    "REFUSE_AUTHORITY": "The requested statement would imply professional, safety, compliance, permission or AI authority Arq does not have."
+    "REFUSE_AUTHORITY": "The requested statement would imply professional, safety, compliance, permission or AI authority ARQ does not have."
   },
   "decisionOrder": [
     "check professional/security/permission boundary",

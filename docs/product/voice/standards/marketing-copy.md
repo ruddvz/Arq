@@ -4,7 +4,7 @@
 
 The site should help a visitor answer:
 
-- What is Arq?
+- What is ARQ?
 - Who is it for first?
 - What works today?
 - What is planned?
@@ -16,7 +16,7 @@ The site should help a visitor answer:
 
 Distinctive but restrained.
 
-A strong Arq sentence often has one of these shapes:
+A strong ARQ sentence often has one of these shapes:
 
 - object + behaviour;
 - principle + consequence;
@@ -29,7 +29,7 @@ that the preceding statement does not already provide.
 
 Examples:
 
-> Arq’s architecture is designed so plan and 3D refer to the same semantic objects.
+> ARQ’s architecture is designed so plan and 3D refer to the same semantic objects.
 
 Do not shorten this to a current product-reachability claim while the 3D current-state conflict remains unresolved.
 
@@ -39,7 +39,7 @@ Do not shorten this to a current product-reachability claim while the 3D current
 
 ## Avoid competitor theatre
 
-Do not use competitor weakness as proof of Arq quality.
+Do not use competitor weakness as proof of ARQ quality.
 
 Avoid:
 
@@ -56,11 +56,11 @@ Do not promise what survives every possible future.
 
 Instead of:
 
-> If Arq disappears, your drawings still open.
+> If ARQ disappears, your drawings still open.
 
 Use:
 
-> Arq projects are designed as local files, and ordinary project access must not depend on an active hosted service.
+> ARQ projects are designed as local files, and ordinary project access must not depend on an active hosted service.
 
 ## Current-state claim test
 

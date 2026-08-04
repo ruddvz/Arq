@@ -14,7 +14,7 @@ For each material assertion, resolve:
 - claim ID and current claim state, where one exists;
 - applicable conflict IDs;
 - source-context digest and freshness result; and
-- whether the action would exceed Arq's authority.
+- whether the action would exceed ARQ's authority.
 
 Never allow a true library-level fact to imply a user-reachable workflow.
 

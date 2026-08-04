@@ -1,4 +1,4 @@
-# Integration plan for Arq Language System 4.1
+# Integration plan for ARQ Language System 4.1
 
 Use `install-map.json` as the authoritative package-to-repository map and run
 `verify-install-map.mjs` before integration. The map is intentionally complete:

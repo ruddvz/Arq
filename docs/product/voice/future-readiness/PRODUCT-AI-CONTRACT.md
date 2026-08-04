@@ -1,4 +1,4 @@
-# Future Arq product AI language contract
+# Future ARQ product AI language contract
 
 This file defines what future AI features may say and how they describe their work.
 

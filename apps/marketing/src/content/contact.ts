@@ -17,14 +17,14 @@ export const contactPage: Page = {
     id: 'PUB-014',
     route: '/contact',
     title: 'Contact',
-    documentTitle: 'Contact and support · Arq',
+    documentTitle: 'Contact and support · ARQ',
     description:
-      'How to reach the Arq project while it is pre-release: repository issues for product questions, and a private repository security advisory for vulnerabilities. No response time is committed.',
+      'How to reach the ARQ project while it is pre-release: repository issues for product questions, and a private repository security advisory for vulnerabilities. No response time is committed.',
   },
   render: () => html`
     ${hero({
       heading: 'Two routes, both in the repository.',
-      lede: 'Arq is pre-release and has no sales team or support desk. Rather than publish addresses nobody staffs, this page lists the routes that exist and what each one is for.',
+      lede: 'ARQ is pre-release and has no sales team or support desk. Rather than publish addresses nobody staffs, this page lists the routes that exist and what each one is for.',
     })}
     ${notes([
       {
@@ -34,7 +34,7 @@ export const contactPage: Page = {
             {
               term: 'Product and support',
               detail:
-                'Open an issue in the Arq repository. Issues go to the people building the product; a reproducible description is the most useful thing you can write.',
+                'Open an issue in the ARQ repository. Issues go to the people building the product; a reproducible description is the most useful thing you can write.',
             },
             {
               term: 'Security',
@@ -49,7 +49,7 @@ export const contactPage: Page = {
             {
               term: 'Press',
               detail:
-                'Please describe Arq as pre-release software. Claims on this site are deliberately conservative, so quoting them keeps you accurate.',
+                'Please describe ARQ as pre-release software. Claims on this site are deliberately conservative, so quoting them keeps you accurate.',
             },
           ])}
           <p>

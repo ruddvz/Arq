@@ -3,14 +3,14 @@
   "rule": "Aliases improve recognition/search/support. They do not replace canonical visible names.",
   "aliases": [
     {
-      "canonical": "Arq",
-      "aliases": ["ARQ"],
-      "notes": "ARQ only for wordmark/formal identifiers; Arc is not an alias."
+      "canonical": "ARQ",
+      "aliases": ["Arq"],
+      "notes": "Recognise legacy title-case usage, but answer and write ARQ publicly. Arc is not an alias."
     },
     {
       "canonical": "project file",
-      "aliases": [".arq file", "Arq file", "archive"],
-      "notes": "Use project file in user copy when referring to the portable .arq file."
+      "aliases": [".arq file", "ARQ file", "Arq file", "archive"],
+      "notes": "Use project file in user copy when referring to the portable .arq file. Recognise legacy title-case brand usage without reproducing it."
     },
     {
       "canonical": "local save",

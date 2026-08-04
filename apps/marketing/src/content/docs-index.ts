@@ -17,14 +17,14 @@ export const docsIndexPage: Page = {
     id: 'PUB-011',
     route: '/docs',
     title: 'Docs',
-    documentTitle: 'Documentation · Arq',
+    documentTitle: 'Documentation · ARQ',
     description:
-      'Where Arq documentation lives today: the engineering blueprint, architecture decision records, format plans and page specifications in the repository. A hosted help centre is planned.',
+      'Where ARQ documentation lives today: the engineering blueprint, architecture decision records, format plans and page specifications in the repository. A hosted help centre is planned.',
   },
   render: () => html`
     ${hero({
       heading: 'Documented before it is finished.',
-      lede: 'Arq is developed specification-first: the documentation sits in the repository next to the code it describes, and much of it is enforced by tests. A hosted help centre follows the first release.',
+      lede: 'ARQ is developed specification-first: the documentation sits in the repository next to the code it describes, and much of it is enforced by tests. A hosted help centre follows the first release.',
     })}
     ${notes([
       {

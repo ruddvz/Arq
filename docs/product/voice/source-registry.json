@@ -214,7 +214,7 @@
     {
       "id": "editorial-reference",
       "rank": 8,
-      "authority": "descriptive editorial reference only; never establishes an Arq product fact",
+      "authority": "descriptive editorial reference only; never establishes an ARQ product fact",
       "sourceSet": "none",
       "claimScope": "editorial-quality"
     }

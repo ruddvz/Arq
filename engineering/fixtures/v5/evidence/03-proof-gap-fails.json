@@ -1,13 +1,13 @@
 {
   "classification": {
-    "required_evidence": ["e2e_arq_open"],
+    "required_evidence": ["e2e_import_export"],
     "manual_review_required": false
   },
   "jobs": {
-    "e2e_arq_open": "success"
+    "e2e_import_export": "success"
   },
   "expected": {
     "decision": "fail",
-    "failedEvidence": ["e2e_arq_open"]
+    "failedEvidence": ["e2e_import_export"]
   }
 }

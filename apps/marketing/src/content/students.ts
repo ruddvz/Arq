@@ -18,26 +18,26 @@ export const studentsPage: Page = {
     route: '/students',
     title: 'For students',
     description:
-      'Arq for architecture students: a modelling tool with real units that runs in a browser and keeps projects in a local file format. Pricing is not set and the build is pre-release.',
+      'ARQ for architecture students: a modelling tool with real units that runs in a browser and keeps projects in a local file format. Pricing is not set and the build is pre-release.',
   },
   render: () => html`
     ${hero({
       heading: 'Learn on the real thing.',
-      lede: 'Arq has no separate student edition. It is one pre-release tool with one set of stated limits, and several of the things that suit a small practice also suit a studio desk.',
+      lede: 'ARQ has no separate student edition. It is one pre-release tool with one set of stated limits, and several of the things that suit a small practice also suit a studio desk.',
     })}
     ${notes([
       {
         title: 'Why it suits studying',
         body: html`
           <p>
-            Arq runs in a browser, so a locked-down university machine can run it without an install
+            ARQ runs in a browser, so a locked-down university machine can run it without an install
             or a licence server. The project has not published a minimum hardware profile yet, so
             this page will not tell you which laptops are enough. The repository's benchmark results
             are the only evidence that exists so far.
           </p>
           <p>
             Projects are local files you can carry on a USB stick or a cloud drive of your choosing.
-            Elements are semantic, so the habits Arq is built to teach are modelling habits rather
+            Elements are semantic, so the habits ARQ is built to teach are modelling habits rather
             than drafting tricks. Today the plan canvas draws walls; doors, openings and rooms are
             Release 1 scope and are not wired to the canvas yet.
           </p>
@@ -47,7 +47,7 @@ export const studentsPage: Page = {
         title: 'What it will not teach you',
         body: html`
           <p>
-            Arq is not the industry's incumbent software and does not emulate it. If your course
+            ARQ is not the industry's incumbent software and does not emulate it. If your course
             requires Revit or ArchiCAD deliverables, you will still need them. What transfers is the
             thinking: building a consistent model, dimensioning with intent, and reading what a
             drawing actually says.
@@ -60,7 +60,7 @@ export const studentsPage: Page = {
           <p>
             Pricing has not been set for anyone, students included. The project's research plan
             records an intention that student access should be affordable, which is an intention and
-            not a commitment. The development build costs nothing to use while Arq is pre-release.
+            not a commitment. The development build costs nothing to use while ARQ is pre-release.
             See <a href="/pricing">pricing</a> for what is and is not decided.
           </p>
         `,

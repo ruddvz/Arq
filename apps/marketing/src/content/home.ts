@@ -18,15 +18,15 @@ export const homePage: Page = {
     id: 'PUB-001',
     route: '/',
     title: 'Home',
-    documentTitle: 'Arq · an architectural workspace built on a local project file',
+    documentTitle: 'ARQ · pre-release architectural workspace',
     description:
-      'Arq is pre-release architectural design software. The current development build draws walls in a plan with real units and records those edits in a local journal on your device.',
+      'ARQ is pre-release architectural design software. The current development build draws walls in a plan with real units and records those edits in a local journal on your device.',
   },
   render: () => html`
     ${hero({
-      eyebrow: 'Arq · architectural workspace · pre-release',
+      eyebrow: 'ARQ · architectural workspace · pre-release',
       heading: 'Plans made of building elements, not lines.',
-      lede: 'Arq is architectural design software in open development. A wall in Arq is a wall, with a thickness and a length in millimetres, and the current development build lets you draw walls in a plan and keeps those edits on your own device.',
+      lede: 'ARQ is architectural design software in open development. A wall in ARQ is a wall, with a thickness and a length in millimetres, and the current development build lets you draw walls in a plan and keeps those edits on your own device.',
       actions: [
         { href: '/product', label: 'See the product' },
         { href: '/changelog', label: 'What exists today' },
@@ -37,9 +37,9 @@ export const homePage: Page = {
         title: 'Where your work is kept',
         body: html`
           <p>
-            The Arq project format is a single <code>.arq</code> file: a versioned SQLite database
+            The ARQ project format is a single <code>.arq</code> file: a versioned SQLite database
             you hold on your own disk. Choosing an <code>.arq</code> file in the current build
-            checks it and reports whether it is a compatible Arq project. Opening it as a working
+            checks it and reports whether it is a compatible ARQ project. Opening it as a working
             project in the browser is not wired yet.
           </p>
           <p>
@@ -54,9 +54,9 @@ export const homePage: Page = {
         title: 'Precision is the product',
         body: html`
           <p>
-            Arq works in real units at millimetre precision. The status bar reads out world
+            ARQ works in real units at millimetre precision. The status bar reads out world
             coordinates, and dimensions are measurements rather than decorations. Where the software
-            cannot be precise, it says so: an error in Arq names what happened, why, what was
+            cannot be precise, it says so: an error in ARQ names what happened, why, what was
             affected and what remains safe.
           </p>
         `,
@@ -65,7 +65,7 @@ export const homePage: Page = {
         title: 'A small first release, stated plainly',
         body: html`
           <p>
-            Arq has not shipped. It is not a full CAD seat and does not replace Revit. Its scope is
+            ARQ has not shipped. It is not a full CAD seat and does not replace Revit. Its scope is
             deliberately small. The list below is release scope from
             <code>docs/product/RELEASE-SCOPE.md</code>. It describes the intended sequence of work,
             not what the current development build can do today.
@@ -97,10 +97,10 @@ export const homePage: Page = {
     ])}
     ${ctaBand(
       'Follow the work, not the promises.',
-      'The changelog records dated development work with the evidence behind each entry. The product page explains where Arq is going and in what order.',
+      'The changelog records dated development work with the evidence behind each entry. The product page explains where ARQ is going and in what order.',
       [
         { href: '/changelog', label: 'Read the changelog' },
-        { href: '/security', label: 'How Arq treats your work' },
+        { href: '/security', label: 'How ARQ treats your work' },
       ],
     )}
   `,
