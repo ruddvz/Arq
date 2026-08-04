@@ -5,8 +5,8 @@
  * @arq/arqfs's preflight logic reaches the UI correctly. Generates three real
  * fixtures via the actual Node arqfs driver (not hand-built byte arrays):
  *
- * - a genuinely valid arqfs project;
- * - the same project with 200 bytes truncated off the end;
+ * - a structurally valid arqfs container that carries no project model;
+ * - the same file with 200 bytes truncated off the end;
  * - a real SQLite database that is not an Arq project at all.
  *
  * Then drives the real production apps/web bundle in headless Chromium:
@@ -14,6 +14,14 @@
  * each fixture through the real file input, and asserts the UI shows the
  * real diagnostic code/reason preflightArqfsBytes and routeBrowserFile
  * actually produced - not a placeholder, not "something went wrong".
+ *
+ * The first fixture is the interesting one now that this build really opens
+ * projects. Its bytes are a compatible Arq container - preflight accepts it - and
+ * it has no `model.json`, so the open that follows refuses it. That is the
+ * distinction the governed file-flow policy insists on: compatible bytes and an
+ * openable project are different claims, and this check is what stops them
+ * collapsing into one. `browser_native_open` covers the other half, a complete
+ * project that does open.
  *
  * Usage: node scripts/run-file-open-capability-check.mjs
  */
@@ -54,6 +62,10 @@ const MIME_TYPES = {
   '.js': 'text/javascript',
   '.css': 'text/css',
   '.svg': 'image/svg+xml',
+  // The open path loads sqlite-wasm inside a Worker, and a browser refuses to
+  // instantiate WebAssembly served as octet-stream. Without this the open would
+  // fail for a transport reason and this check would assert the wrong refusal.
+  '.wasm': 'application/wasm',
 };
 
 function startServer() {
@@ -195,12 +207,16 @@ async function run() {
 
     await page.getByRole('button', { name: 'Choose another file' }).click();
     await fileInput.setInputFiles(goodPath);
+    // Longer than the other two: this one is not a byte verdict, it is a real
+    // open - Worker construction, sqlite-wasm, and the whole check sequence -
+    // and it ends in a refusal because the container carries no project model.
     await page.waitForFunction(
-      (sel) => document.querySelector(sel)?.textContent?.includes('compatible Arq project'),
+      (sel) => document.querySelector(sel)?.textContent?.includes('could not be opened'),
       STATUS,
-      { timeout: 5000 },
+      { timeout: 60_000 },
     );
-    const validHeadline = await page.locator(`${STATUS} p`).first().textContent();
+    const incompleteHeadline = await page.locator(`${STATUS} p`).first().textContent();
+    const incompleteDetail = await page.locator(`${STATUS} details p`).textContent();
 
     await page.getByRole('button', { name: 'Choose another file' }).click();
     await fileInput.setInputFiles(otherPath);
@@ -216,7 +232,11 @@ async function run() {
     const ok =
       truncatedHeadline.includes('could not be opened') &&
       truncatedDetail.includes('ARQ_FILE_TRUNCATED') &&
-      validHeadline.includes('compatible Arq project') &&
+      incompleteHeadline.includes('could not be opened') &&
+      // Named content, not a generic failure: the reader is told what the file is
+      // missing, and the refusal comes from the open rather than from preflight.
+      incompleteDetail.includes('REQUIRED_ENTRIES_MISSING') &&
+      incompleteDetail.includes('model.json') &&
       nonArqHeadline.includes('could not be opened') &&
       nonArqDetail.includes('NOT_ARQ_SQLITE') &&
       labelInNameHolds &&
@@ -225,7 +245,11 @@ async function run() {
     return {
       ok,
       truncatedFile: { headline: truncatedHeadline, detail: truncatedDetail },
-      validFile: { headline: validHeadline },
+      compatibleButIncompleteFile: {
+        headline: incompleteHeadline,
+        detail: incompleteDetail,
+        note: 'Compatible bytes, no project model: preflight accepts it and the open refuses it. browser_native_open covers a complete project that opens.',
+      },
       nonArqSqliteFile: { headline: nonArqHeadline, detail: nonArqDetail },
       accessibility: {
         dropZoneVisibleText,
