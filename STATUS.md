@@ -30,15 +30,10 @@ fourteen of the fifteen headless-Chromium capability checks
 others. The Rust gates were not run in that local pass. Of the browser checks,
 `benchmark:native-open` was run locally on this branch and passed; the rest were
 not, and CI is what runs them all. These are revision-scoped results, not a claim
-that
-the protected workflow or production release gate is green. Note what
-`protected_l4_approval` currently does and does not do: it is selected for every
-L4 change and it passed on this branch's run with state
-`requires-github-environment`, because the `critical-approval` job targets GitHub
-Environment `arq-critical-change` and that environment appears to have no required
-reviewers. An L4 change therefore satisfies its approval evidence without any
-human approving it. The workflow is wired correctly; the environment setting is
-missing, and only a repository-settings change fixes it.
+that the protected workflow or production release gate is green: the gate stays in
+shadow mode, and `protected_l4_approval` still resolves to a deferred environment
+gate rather than an approval anybody granted - see
+`engineering/36_REQUIRED_CHECK_ROLLOUT.md` and the open decisions below.
 
 - **Read-only native `.arq` project open** (`apps/web/src/file-handling` +
   `packages/project-loading` + `workers/arqfs-worker`): a user can choose a
@@ -127,8 +122,9 @@ missing, and only a repository-settings change fixes it.
 
 1. No editing or saving of an opened project. A native `.arq` project can now
    be opened read-only and inspected (see below); nothing can change it, and
-   nothing can write a `.arq` file. Editing needs ADR-0028's persistence
-   responsibility split accepted first, and it is still Proposed.
+   nothing can write a `.arq` file. ADR-0028 being Accepted unblocks that work
+   and does not perform it: an editable working copy has to be built, in the
+   Worker over OPFS as the accepted split requires, with its own evidence.
 2. No import/export reachable from the UI: the import worker is never
    constructed by `apps/web` (adapters themselves are real - dxf, underlay,
    attachment and now ifc all resolve in the worker's default registry).
@@ -285,26 +281,37 @@ still open.
 
 ## Open decisions
 
-- **Local persistence overlap**: ADR-0019/0024 commit to SQLite-WASM over
-  OPFS while `packages/local-storage` ships a tested Dexie/IndexedDB
-  implementation named by ADR-0019's own "Dexie project database" line -
-  the overlap is recorded in `docs/research/incoming/README.md` and needs
-  an explicit ADR resolution before anything writes a project.
-  ADR-0028 records a Proposed responsibility split and migration path, plus a
-  Proposed carve-out for read-only inspection, which is what the open path
-  implemented in this change relies on: it creates no persistence, so it settles
-  none of the open questions. Neither the split nor the carve-out is Accepted.
-  Until an owner accepts or replaces them, no surface may describe a journal
-  write as a portable `.arq` write, no working copy may be created, and the
-  read-only open path must not merge without an explicit human acceptance. Nothing
-  mechanical enforces that today: see the `protected_l4_approval` note above. The
-  path is held by its pull request being a draft, which is a convention rather
-  than a control.
-- **Repository visibility and licence wording**: GitHub reports the repository
-  as public, while `LICENSE` describes all contents as proprietary and
-  confidential and `LICENSE-DECISION-REQUIRED.md` records a private repository
-  decision. The owner and legal reviewer must reconcile the actual visibility
-  and licence text.
+- **Local persistence overlap: settled.** ADR-0028 is Accepted (D-024). SQLite
+  in an ARQ-owned dedicated Worker over OPFS owns the canonical local working
+  project. IndexedDB is bounded to recovery bridging, source provenance,
+  last-known-good pointers, resumable publication metadata, device preferences
+  and replaceable derived caches during migration. A journal append is not a
+  portable save, and no surface may describe one as the other. Acceptance
+  unblocks the open-project pipeline; it does not implement it. The separate
+  change the acceptance anticipates is now partly delivered: a read-only open,
+  described above with its evidence. It creates no canonical local state at all,
+  so it exercises none of the ownership the acceptance grants - an editable
+  working copy is still unimplemented, and when it is built the accepted split
+  requires it to live in the Worker over OPFS, not in the IndexedDB journal.
+- **Repository visibility and licence wording**: still the owner's decision, now
+  with the conflict verified rather than reported. The GitHub API returns
+  `visibility: public`, `private: false`, `allow_forking: true` and
+  `license: NOASSERTION`, while `LICENSE` describes the contents as proprietary
+  and confidential. The proprietary grant is untouched. "Confidential" is
+  contradicted by the repository being publicly readable and forkable. Both
+  resolutions and their consequences are recorded in
+  `LICENSE-DECISION-REQUIRED.md`. No public surface may state a licence position
+  until one is chosen.
+- **Default branch**: ADR-0029 accepts `main` as the stable integration and
+  production branch (D-025), through a migration that keeps the current branch
+  undeleted through a rollback window. The migration has not been performed; the
+  default branch is still `claude/arq-cad-platform-research-ba8rav`.
+- **Engineering OS required status**: the gate reached 30 of 30 selected
+  evidence items at `cfcf2ac`, its first fully green run. It stays in shadow
+  mode until the exit criteria in `engineering/36_REQUIRED_CHECK_ROLLOUT.md`
+  pass. One green run is not a rollout criterion, and
+  `protected_l4_approval` still resolves to a deferred environment gate rather
+  than an approval anybody granted.
 - **Protected L4 release approval**: the complete plan-to-3D-to-sheet-to-PDF
   workflow, cross-platform matrix, rollback evidence and post-release proof do
   not exist. Production readiness remains blocked.

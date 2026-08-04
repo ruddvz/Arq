@@ -1,9 +1,30 @@
 # ADR-0028: Persistence responsibility split for project files, working copies, journals, and recovery
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-08-04
+**Accepted:** 2026-08-04 by the project owner, in the blocker-closure authorisation
 **Owners:** Architecture owner, project-data owner, release owner
-**Decision:** Owner acceptance required before implementation
+**Decision:** Option C, the bounded split described under "Decision" below
+
+## Acceptance
+
+The project owner accepted the bounded split on 2026-08-04. What is now settled:
+
+- SQLite running in an ARQ-owned dedicated Worker over OPFS owns the canonical
+  local working project state.
+- IndexedDB is bounded to recovery bridging, source provenance, last-known-good
+  pointers, resumable publication metadata, device preferences, and replaceable
+  derived caches during migration. It is not a second canonical store.
+- A journal append is not a portable save. Journal durability, working-copy
+  checkpoint, recovery, portable publication, and remote acknowledgement stay
+  distinct and separately named.
+- Portable publication produces a self-contained single-file project with no WAL
+  or SHM sidecar dependency.
+- Sync never moves raw SQLite pages, WAL, SHM, or IndexedDB databases.
+
+Acceptance unblocks implementation. It does not by itself implement anything:
+the user-reachable open pipeline is a separate change with its own evidence, and
+no surface may describe it as available until that change lands with proof.
 
 ## Context
 
@@ -34,43 +55,23 @@ owner acceptance or current evidence selection.
 
 Until this ADR is accepted, the browser project-open pipeline and every claim
 that equates the current IndexedDB journal with a portable `.arq` save remain
-Blocked - with one carve-out, added below and itself Proposed, for a read-only
-open that creates no persistence at all.
+Blocked.
 
-## Proposed carve-out: read-only inspection creates no persistence
+## Read-only inspection under the accepted split
 
-**Status of this carve-out:** Proposed, with an implementation on the branch
-`claude/arq-native-lifecycle-v3-smx7rg`. Owner acceptance is still required, and
-**nothing mechanical currently enforces that.** The change classifies as lane L4
-and does select `protected_l4_approval`, but that evidence item was recorded
-`success` on the implementing run with state `requires-github-environment`: the
-`critical-approval` job targets GitHub Environment `arq-critical-change`, which
-appears to have no required reviewers configured, so it completed in one second
-with an `echo`. The workflow wiring is right; the environment setting behind it is
-not there.
+This section was written while this ADR was Proposed, as a carve-out arguing that
+a read-only open could proceed ahead of the decision. Acceptance makes the
+argument unnecessary, so what remains is the narrower thing worth keeping on the
+record: how the implemented read-only path stands against what was accepted.
 
-So this carve-out is held only by the pull request being a draft and by this
-document saying Proposed - both conventions, neither a control. Two consequences
-worth separating: this carve-out needs an explicit human acceptance before merge,
-and the missing required-reviewer setting on `arq-critical-change` is a governance
-defect that affects **every** L4 lane in `change-map.v5.json`, not just this one -
-including `journal-and-working-copy` and `collaboration-auth-api`. Fixing it is a
-repository settings change, not a code change.
-
-The blocking sentence above was written about persistence, which is this ADR's
-subject. Every failure it lists - two canonical stores diverging, a journal event
-presented as a save, migration of the user's own file, publication that needs a
-sidecar, replay against the wrong revision, derived data overwriting truth - is a
-failure of something that writes. A path that opens a file the user chose, reads
-it, shows it, and writes nothing anywhere has none of them, and deciding it does
-not pre-empt any option in this document.
-
-The carve-out is therefore narrow and stated as properties, not as intent, so
-that an implementation either has them or does not:
+It creates no canonical local state, so it exercises none of the ownership the
+acceptance grants. That is a property of the implementation, not an intention, and
+each part is asserted by a test or a browser check:
 
 1. The selected file is never written. Its bytes are copied into the Worker and
    the connection is opened read-only at the SQLite level
    (`SQLITE_DESERIALIZE_READONLY`) as well as by policy (`PRAGMA query_only`).
+   The golden fixture's SHA-256 is compared before and after every open.
 2. Nothing durable is created. No OPFS file is opened, no IndexedDB record is
    written, no journal entry is appended, no working copy exists. Closing the
    project leaves nothing behind, which is what makes the path reversible by
@@ -80,21 +81,17 @@ that an implementation either has them or does not:
 4. The connection is hardened before the file's own schema content is queried.
 5. Every write request on such a connection is refused by ownership, not by the
    file's version floors - a healthy, writable-looking project is still refused.
-6. The existing IndexedDB journal keeps exactly the authority it has today, over
-   the workspace's own plan document. An opened `.arq` project is not journalled,
-   and while one is open the shell reports the governed `read-only` save state
-   rather than any state that asserts a write.
-7. No surface says an opened project can be edited or saved, and none describes
-   the read-only path as a portable save.
+6. The IndexedDB journal keeps exactly the authority it had, over the workspace's
+   own plan document. An opened `.arq` project is not journalled, and while one is
+   open the shell reports the governed `read-only` save state rather than any
+   state that asserts a write.
 
-What the carve-out does not permit, and what still waits on this ADR being
-accepted: any local working copy, any journal for an opened project, any
-publication, any migration of a user's file, and any claim that the product can
-save a `.arq` file.
-
-Rollback for the carve-out is the simple case this ADR's own rollback section
-names as available before activation: remove the open pipeline. There is no
-project data to recover, because the path creates none.
+Where this path stops, and what the acceptance requires of what comes next: an
+editable working copy is not implemented. Because the memory-resident connection
+here holds no canonical state, it is not a working copy and must not become one by
+extension - the accepted split puts canonical local project state in the Worker
+over OPFS, so an editable copy is a new implementation against that contract, with
+its own evidence, not a flag flipped on this one.
 
 ## Problem
 

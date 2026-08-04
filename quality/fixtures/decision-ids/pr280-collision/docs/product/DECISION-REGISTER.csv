@@ -1,0 +1,4 @@
+id,decision,status,evidence
+D-024,Persistence responsibility split,proposed,ADR-0028
+D-024,Defer a Tauri desktop shell,accepted,ADR-0027
+D-099,Cites an ADR that does not exist,proposed,ADR-0404

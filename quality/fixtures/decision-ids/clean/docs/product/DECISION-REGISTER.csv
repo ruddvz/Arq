@@ -1,0 +1,2 @@
+id,decision,status,evidence
+D-024,"Persistence responsibility split, bounded",accepted,"ADR-0028; ADR-0027"

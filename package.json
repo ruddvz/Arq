@@ -5,7 +5,7 @@
   "description": "Arq monorepo - apps, packages, and workers. See docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md and docs/architecture/REPOSITORY-STRUCTURE.md.",
   "packageManager": "pnpm@9.0.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=20 <23"
   },
   "scripts": {
     "build": "turbo run build",
@@ -52,6 +52,9 @@
     "benchmark:network-observation": "node scripts/run-network-observation-capability-check.mjs",
     "check:secrets": "node scripts/check-secrets.mjs",
     "check:secrets:test": "node scripts/check-secrets-test.mjs",
+    "check:decision-ids": "node scripts/verify-decision-ids.mjs",
+    "check:decision-ids:test": "node scripts/verify-decision-ids-test.mjs",
+    "check:toolchain-policy": "node scripts/verify-toolchain-policy.mjs",
     "arq:language:install:verify": "node scripts/verify-arq-language-installation.mjs --repo-root . --language-root docs/product/voice",
     "arq:language:public:verify": "node scripts/verify-arq-public-copy-inventory.mjs --repo-root . --language-root docs/product/voice",
     "arq:language:routes:verify": "node scripts/verify-arq-marketing-route-coverage.mjs --repo-root . --language-root docs/product/voice",
