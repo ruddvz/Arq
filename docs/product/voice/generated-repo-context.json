@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "4654c8ec7d351081bc2749e7ea0dcf0035aca174749b5ebc805cf48c12e7b068",
+  "sourceSetDigest": "9d9dfbd10302a4d70f8f0d4236b8add30c18a8cbad9e855598d73785f6e4f427",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -345,22 +345,22 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "c134180cb6b684d915ea0cffceafc264681b47f4f0e38278c23da391890b42c6",
+      "sha256": "7cfd6c1a9b9acef317afca938f1f1420623f1fb999576ba0fb49a2236d14c3fe",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
-          "sha256": "b79530d2c47b473254e53a7798e9e55765a34eaa911dda3aeca1eecbb6d35113",
-          "bytes": 8664
+          "sha256": "5d1e6c97f9ff03323ab79b30ceb19ad9c68018449c15b60fe35a1c8bba146053",
+          "bytes": 10711
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",
-          "sha256": "e2d3d7b6a89ee3e06b360eca0fe2c79e7cc3c03910149034f380e7f572396a97",
-          "bytes": 4755
+          "sha256": "e319e11a255c472f9fffcf1ff1bf70c69e608ae5932ebaf451521d38f73b37f3",
+          "bytes": 6216
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-          "sha256": "faccb3c048e3ade670edc3a72b8d0fea4c4ad8c1ae8947d67e22307e1177c788",
-          "bytes": 3369
+          "sha256": "dcc30f7176208b2471d52f7317b3d7e75a9318163b4a0f3da5fee901466cc98e",
+          "bytes": 3928
         },
         {
           "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
@@ -379,8 +379,8 @@
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.ts",
-          "sha256": "760592306125b94e72c8821ee1a9c4d5dea65b31146dc255c1d26c540073224a",
-          "bytes": 3966
+          "sha256": "a2cd8660d570947f2a234db294d4470f1466d2ed393a428bf36f7e20b5f9e305",
+          "bytes": 4811
         },
         {
           "rel": "apps/web/src/file-handling/index.ts",
@@ -410,8 +410,8 @@
       "id": "web-app",
       "kind": "file",
       "path": "apps/web/src/App.tsx",
-      "sha256": "3287e53654ce75cd64ccbf4d2bab43c10ac25bdb4c5f04a9fd667d10104a799f",
-      "bytes": 46298
+      "sha256": "af28f2dbd80b2f4bf805bc8e5c2df63e12f6bdcab122007ba8023711d1086405",
+      "bytes": 48578
     },
     "plan-canvas": {
       "id": "plan-canvas",
@@ -2832,6 +2832,7 @@
       "acquiring",
       "detecting",
       "native-opening",
+      "native-opened",
       "import-options",
       "importing",
       "staged-review",
