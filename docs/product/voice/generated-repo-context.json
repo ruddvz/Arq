@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "ec0043fe66bcde472d7865928d8af422628f8b1ba469d9091fca2698f67c1f43",
+  "sourceSetDigest": "7d996b5533d3ba12bf9238cc3ac34ffccba0e936b654c575406ad0cfe3ecff18",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -23,7 +23,7 @@
       "id": "accepted-adrs",
       "kind": "directory",
       "path": "docs/adr",
-      "sha256": "e12b786369136ecb9df41584b319b749d19cd2529a08c9f33a130768520f5fab",
+      "sha256": "000cf429f1c4078ee872a1c5c6f1d55dd7ede6a9f13ae7c83c13ab00a7d82c72",
       "files": [
         {
           "rel": "docs/adr/0000-adr-template.md",
@@ -166,11 +166,6 @@
           "bytes": 6789
         },
         {
-          "rel": "docs/adr/0028-browser-working-copy-and-recovery-tiers.md",
-          "sha256": "044d361de00a239f2f0c5122cdec85d367630cd718d15e0a2b1023daef453461",
-          "bytes": 5607
-        },
-        {
           "rel": "docs/adr/0028-persistence-responsibility-split.md",
           "sha256": "e42ece23a268f59a1b094daa8ca4585fa831a5282dff7ebd61219b3b85bb349e",
           "bytes": 24462
@@ -179,6 +174,11 @@
           "rel": "docs/adr/0029-main-as-stable-integration-branch.md",
           "sha256": "383c75b46c521554b261a87c1ed930fe6ef095fefb373fc0c47bc2b9f1009a85",
           "bytes": 3454
+        },
+        {
+          "rel": "docs/adr/0030-browser-working-copy-and-recovery-tiers.md",
+          "sha256": "499a649ae81ce65d4df7656c136e6b0465a1ddc546acea76a4e61a4e001af667",
+          "bytes": 5607
         }
       ]
     },

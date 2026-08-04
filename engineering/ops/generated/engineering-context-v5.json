@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "de5f50a7ba6f6eab016762b279de47a9ff7e2f2dcc7ef78840b45666d12f83a9",
+  "source_hash": "2198fe8270d69459a28b27009e9acf45e11ad9604fdbf13cd0181299389bec9d",
   "source_records": [
     {
       "scope": "package",
@@ -368,11 +368,6 @@
     },
     {
       "scope": "repository",
-      "path": "docs/adr/0028-browser-working-copy-and-recovery-tiers.md",
-      "sha256": "044d361de00a239f2f0c5122cdec85d367630cd718d15e0a2b1023daef453461"
-    },
-    {
-      "scope": "repository",
       "path": "docs/adr/0028-persistence-responsibility-split.md",
       "sha256": "e42ece23a268f59a1b094daa8ca4585fa831a5282dff7ebd61219b3b85bb349e"
     },
@@ -380,6 +375,11 @@
       "scope": "repository",
       "path": "docs/adr/0029-main-as-stable-integration-branch.md",
       "sha256": "383c75b46c521554b261a87c1ed930fe6ef095fefb373fc0c47bc2b9f1009a85"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0030-browser-working-copy-and-recovery-tiers.md",
+      "sha256": "499a649ae81ce65d4df7656c136e6b0465a1ddc546acea76a4e61a4e001af667"
     },
     {
       "scope": "repository",

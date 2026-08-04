@@ -1,4 +1,4 @@
-# ADR-0028: Browser working copy and recovery tiers
+# ADR-0030: Browser working copy and recovery tiers
 
 **Status:** Accepted
 **Date:** 2026-08-04
