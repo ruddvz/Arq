@@ -66,10 +66,14 @@ product feature are not the same claim.
   `resolveNativeOpenCapabilities` and `assertResumedProjectIdentity`; the write boundary
   (4) as `NativeProjectSession`; Worker read gates refusing archive reads before a
   successful open and after a rejected one.
-- **Accepted, not yet reachable:** the adoption boundary (3) end to end. The native
-  project host is not connected to the editor, because the Worker protocol has no command
-  to seed an OPFS working copy from selected bytes - `opfs-sahpool` keeps databases in
-  opaque pool files, so this requires `poolUtil.importDb` inside the Worker entry.
+  The adoption boundary (3) is reachable: the Worker protocol carries an `importDatabase`
+  command that seeds an OPFS working copy from selected bytes - `opfs-sahpool` keeps
+  databases in opaque pool files, so this goes through `poolUtil.importDb` inside the
+  Worker entry - and `benchmark:file-open` proves in a browser that a chosen file reaches
+  the workspace.
+- **Accepted, not yet reachable:** checkpointing edits back to the `.arq` file. A project
+  opens from a working copy and the workspace says so; nothing writes the user's changes
+  back, so copy-on-write migration stays unreachable and untested end to end.
 
 ## Consequences
 

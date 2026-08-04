@@ -98,14 +98,13 @@ but a green gate is a statement about the checks that ran, not about release.
 
 ## Biggest known gaps (in rough priority order)
 
-1. No end-to-end project open: file-open UI stops at its safety verdict;
-   the OPFS worker is never constructed by `apps/web`. The pieces beneath it are
-   now in place and tested - a native project host (`apps/web/src/project/`)
-   covering model decode, read-only policy, project identity and write
-   semantics, and an `importDatabase` Worker command that seeds a project-scoped
-   OPFS working copy from selected bytes. What remains is the wiring: nothing in
-   `apps/web` constructs the Worker or calls that pipeline, so opening a `.arq`
-   file is still not reachable by a user.
+1. Opening works; saving does not. Choosing a `.arq` file constructs the OPFS
+   Worker, imports the bytes into a working copy, decodes the archive and puts
+   the project in the workspace - proven in a browser by `benchmark:file-open`.
+   Nothing writes back: edits stay in memory, no checkpoint reaches the working
+   copy and no export reaches the chosen file, so the workspace reports the
+   project as open and not saved. Copy-on-write migration stays unreachable
+   until a write path exists, and a project opened read-only says why.
 2. No import/export reachable from the UI: the import worker is never
    constructed by `apps/web` (adapters themselves are real - dxf, underlay,
    attachment and now ifc all resolve in the worker's default registry).
@@ -242,13 +241,16 @@ Writing it found a real defect. `arqfs-worker-entry.ts` imported the
 for a browser at all, and nothing had noticed because nothing had ever built it
 for one. Both worker modules now deep-import, as `apps/web` already did.
 
-**This does not make the product able to open a project.** `apps/web` still
-does not construct this Worker, so there is still no user-reachable
-open-project workflow, and the first gap listed above stands unchanged. What
-closed is the evidence gap the gate names: the Worker and OPFS open path is now
-proven rather than assumed. Building the product pipeline on top of it needs
-the persistence responsibility split accepted first, which is ADR-0028 and
-still open.
+`apps/web` now constructs this Worker. Choosing a `.arq` file imports its bytes
+into an OPFS working copy, opens them through sqlite-wasm, decodes the archive
+and puts the project in the workspace; `benchmark:file-open` proves that in a
+browser against the real bundle, and records the refusals for a truncated file,
+a non-Arq database and one missing its `-wal` sidecar.
+
+**Opening is not saving.** Nothing checkpoints edits back to the `.arq` file, so
+the workspace says the project is open and not saved rather than claiming
+durability the product has not earned. Copy-on-write migration stays
+unreachable for the same reason.
 
 ## Open decisions
 

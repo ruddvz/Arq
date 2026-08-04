@@ -35,11 +35,15 @@ type NativeOpenSuccess = Extract<NativeOpenResult, { status: 'opened' }>;
  * criteria ("wire preflightArqfsBytes into every file-open path") was
  * unimplemented on the UI side.
  *
- * Deliberately stops at reporting that a file is safe to open, not claiming a
- * project opened - this app has no browser Worker/OPFS driver wired in yet
- * (the driver and the Worker-crash transport exist, but nothing in apps/web
- * constructs one), so "this file is safe to open" and "this file is now open"
- * are different, true statements and only the first one is honest to make here.
+ * It now opens what it accepts, rather than stopping at "this file is safe to
+ * open": a Worker is constructed, the bytes are imported into an OPFS working
+ * copy, and the decoded project is handed to the caller. The order matters and
+ * is load-bearing - every byte-level check runs first, so a refusal costs no
+ * working copy and leaves nothing behind.
+ *
+ * Adoption stays the caller's. The panel never replaces the active project
+ * itself, so a rejected or cancelled candidate leaves whatever was already open
+ * exactly as it was.
  *
  * The gate is completeness, not bare compatibility. A database whose `-wal`
  * sidecar was not supplied is compatible and readable, and SQLite would open it

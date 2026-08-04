@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "2198fe8270d69459a28b27009e9acf45e11ad9604fdbf13cd0181299389bec9d",
+  "source_hash": "51eb84149681d000278ae388c681136aa790cdc21f28ae5aad495756df6a0af3",
   "source_records": [
     {
       "scope": "package",
@@ -214,7 +214,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
-      "sha256": "5d1e6c97f9ff03323ab79b30ceb19ad9c68018449c15b60fe35a1c8bba146053"
+      "sha256": "53e623fbc100d5bb694cea303e5b2dff73495c83bcd59e71a6e5d8a8a222723c"
     },
     {
       "scope": "repository",
@@ -379,7 +379,7 @@
     {
       "scope": "repository",
       "path": "docs/adr/0030-browser-working-copy-and-recovery-tiers.md",
-      "sha256": "499a649ae81ce65d4df7656c136e6b0465a1ddc546acea76a4e61a4e001af667"
+      "sha256": "7db91ccb55d6bb5b6c2452f12e7db59f0c6227fabbb3b0113843e46076ef7046"
     },
     {
       "scope": "repository",
@@ -794,7 +794,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "f0f3323d0a405e3eafcd880135ec2b217d6dd5c59ce547a3fbbec466e787ad29"
+      "sha256": "71f68d0417f2a5f71112dcb5868282adf2f0565276eb2236be95d605b04e9f62"
     },
     {
       "scope": "repository",
