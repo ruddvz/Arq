@@ -113,4 +113,107 @@ describe('reduceFileFlow', () => {
   it('ignores an event that does not apply to the current state', () => {
     expect(reduceFileFlow(IDLE, { type: 'staged' })).toBe(IDLE);
   });
+
+  /**
+   * The open sequence. Each guard here is a refusal to let a surface show a
+   * state the build has not actually reached.
+   */
+  it('only starts an open from a file already found compatible', () => {
+    const compatible = reduceFileFlow(
+      { kind: 'detecting', name: 'house.arq' },
+      { type: 'route-native', sidecarDependency: 'complete' },
+    );
+
+    const opening = reduceFileFlow(compatible, { type: 'open-start', stageName: 'Identify' });
+
+    expect(opening).toEqual({
+      kind: 'opening-project',
+      name: 'house.arq',
+      stageName: 'Identify',
+      sidecarDependency: 'complete',
+    });
+    // Preflight cannot be skipped: an open cannot begin from acquisition or detection.
+    for (const state of [
+      { kind: 'idle' } as const,
+      { kind: 'acquiring', name: 'house.arq' } as const,
+      { kind: 'detecting', name: 'house.arq' } as const,
+    ]) {
+      expect(reduceFileFlow(state, { type: 'open-start', stageName: 'Identify' })).toBe(state);
+    }
+  });
+
+  it('advances the open stage without losing the file or its completeness', () => {
+    const opening = reduceFileFlow(
+      {
+        kind: 'opening-project',
+        name: 'house.arq',
+        stageName: 'Identify',
+        sidecarDependency: 'write-ahead-log-sidecar',
+      },
+      { type: 'open-stage', stageName: 'Skeleton' },
+    );
+
+    expect(opening).toEqual({
+      kind: 'opening-project',
+      name: 'house.arq',
+      stageName: 'Skeleton',
+      sidecarDependency: 'write-ahead-log-sidecar',
+    });
+  });
+
+  it('reaches an opened project only from an open in progress', () => {
+    const opened = reduceFileFlow(
+      {
+        kind: 'opening-project',
+        name: 'house.arq',
+        stageName: 'Skeleton',
+        sidecarDependency: 'write-ahead-log-sidecar',
+      },
+      { type: 'project-opened', projectName: 'House', revision: 191, conditionNote: null },
+    );
+
+    expect(opened).toEqual({
+      kind: 'project-open-read-only',
+      name: 'house.arq',
+      projectName: 'House',
+      revision: 191,
+      // Survives the open: a successful open does not make an absent sidecar's
+      // missing commits reappear.
+      sidecarDependency: 'write-ahead-log-sidecar',
+      conditionNote: null,
+    });
+    // A compatibility verdict is not an open, so it cannot jump straight to opened.
+    const compatible = {
+      kind: 'native-opening',
+      name: 'house.arq',
+      sidecarDependency: 'complete',
+    } as const;
+    expect(
+      reduceFileFlow(compatible, {
+        type: 'project-opened',
+        projectName: 'House',
+        revision: 1,
+        conditionNote: null,
+      }),
+    ).toBe(compatible);
+  });
+
+  it('lets an open fail from any point in the open, keeping the file name', () => {
+    const failed = reduceFileFlow(
+      {
+        kind: 'opening-project',
+        name: 'house.arq',
+        stageName: 'Skeleton',
+        sidecarDependency: 'complete',
+      },
+      { type: 'fail', code: 'CHECKSUM_MISMATCH', message: 'model.json' },
+    );
+
+    expect(failed).toEqual({
+      kind: 'failed',
+      name: 'house.arq',
+      code: 'CHECKSUM_MISMATCH',
+      message: 'model.json',
+    });
+  });
 });

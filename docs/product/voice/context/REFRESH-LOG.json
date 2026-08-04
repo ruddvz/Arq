@@ -2,6 +2,31 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "generatedAt": "2026-08-04T21:33:07.817Z",
+      "sourceSetDigest": "c3585ea3b1b7ac44ddc5591526870447a161a30cfcd8c60f034efce7635438a6",
+      "previousSourceSetDigest": "ccb0d059c37e974745b11d48e8436b17446d5151fb5341961fcc747d77f61d3a",
+      "changedSourceSets": ["status"]
+    },
+    {
+      "generatedAt": "2026-08-04T21:28:15.293Z",
+      "sourceSetDigest": "ccb0d059c37e974745b11d48e8436b17446d5151fb5341961fcc747d77f61d3a",
+      "previousSourceSetDigest": "58c5d7c4e9dd038e0d1ce1978ce64a2d6c0fd24858fe1b6267d51d9240c2288c",
+      "changedSourceSets": ["accepted-adrs", "status"]
+    },
+    {
+      "generatedAt": "2026-08-04T21:24:43.691Z",
+      "sourceSetDigest": "58c5d7c4e9dd038e0d1ce1978ce64a2d6c0fd24858fe1b6267d51d9240c2288c",
+      "previousSourceSetDigest": "97dc9c821707422bd1bf33f338690853a6d4fadb2f26db82436ef11808723dbf",
+      "changedSourceSets": [
+        "file-open-ui",
+        "model-canvas",
+        "plan-canvas",
+        "web-app",
+        "workspace-registries",
+        "workspace-types"
+      ]
+    },
+    {
       "generatedAt": "2026-08-04T19:43:14.139Z",
       "sourceSetDigest": "97dc9c821707422bd1bf33f338690853a6d4fadb2f26db82436ef11808723dbf",
       "previousSourceSetDigest": "e5ab545bfbcdaba48ddc183c670cd62a4d00c37569e173477fac39a3287fe59e",

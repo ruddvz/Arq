@@ -43,9 +43,33 @@
   color: var(--arq-ui-paper);
 }
 
+/*
+ * The one action a surface wants the reader to take. Section 18's state language
+ * needs an action hierarchy as much as it needs states: a dialog whose confirm
+ * and cancel look identical makes the reader work out which is which, and they
+ * sometimes get it wrong. Filled with ink rather than a hue, so the distinction
+ * survives monochrome and does not introduce a second brand colour.
+ */
+.arq-shell-button--primary {
+  background: var(--arq-ui-ink);
+  color: var(--arq-ui-paper);
+  border-color: var(--arq-ui-ink);
+}
+
+.arq-shell-button--primary:hover:not(:disabled) {
+  /* Keeps the filled treatment on hover; the shared rule would flatten it to a grey fill. */
+  background: var(--arq-ui-ink);
+  border-color: var(--arq-ui-line-strong);
+}
+
 .arq-shell-button:disabled {
   color: var(--arq-ui-text-muted);
   cursor: not-allowed;
+}
+
+.arq-shell-button--primary:disabled {
+  background: var(--arq-ui-surface-2);
+  border-color: var(--arq-ui-line-subtle);
 }
 
 /* Blocking error (section 18: "octagonal icon, cross-hatch and written label" - the

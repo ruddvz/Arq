@@ -4,7 +4,21 @@ import type {
   ArqfsWorkerResponsePayload,
 } from './arqfs-worker-protocol';
 
-export type ArqfsWorkerRequestInput = Omit<ArqfsWorkerRequest, 'id'>;
+export type { ArqfsWorkerResponsePayload };
+
+/**
+ * A request without its correlation id.
+ *
+ * Distributed over the union member by member. A plain `Omit<ArqfsWorkerRequest,
+ * 'id'>` keeps only the properties every member shares, so `type` survived and
+ * `path`, `entries` and `bytes` did not - which made every request that carries a
+ * payload fail to typecheck at the call site.
+ */
+export type ArqfsWorkerRequestInput = ArqfsWorkerRequest extends infer Request
+  ? Request extends { readonly id: number }
+    ? Omit<Request, 'id'>
+    : never
+  : never;
 
 export interface ArqfsWorkerLike {
   postMessage(message: ArqfsWorkerRequest, transfer?: Transferable[]): void;

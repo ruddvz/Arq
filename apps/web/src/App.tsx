@@ -145,6 +145,29 @@ import {
   buildDrawnWallInspectorGroups,
 } from './inspector-data';
 import { FileOpenPanel } from './file-handling/FileOpenPanel';
+import { createSelectedBytesArqfsWorker } from './file-handling/create-arqfs-worker';
+import {
+  NO_NATIVE_PROJECT,
+  activateProject,
+  closeActiveProject,
+  showLevel,
+  type ActiveProjectState,
+} from './file-handling/active-project';
+import { NativeProjectPanel } from './NativeProjectPanel';
+import type { StagedNativeProject } from '@arq/project-loading';
+import type { ArqfsSelectedBytesSession } from './file-handling/arqfs-worker-transport';
+import {
+  buildNativeAccessibleDescription,
+  buildNativeInspectorGroups,
+  buildNativeProjectTree,
+  findNativeElement,
+  nativeSelectionTypeName,
+  planRoomsForLevel,
+  planWallsForLevel,
+  resolvedWallHeightMm,
+  wallThicknessMm,
+} from './native-project-view';
+import type { WallSolidDimensions } from './ModelCanvas';
 
 /**
  * Package 3.0 doc 33: an open project is one persistent workspace, not a set of
@@ -281,6 +304,33 @@ const COMMAND_ENTRIES: readonly Omit<CommandPaletteEntry, 'shortcutLabel'>[] = [
  * (canvas/plan-journal.ts) and recovered on start-up, so the bars report the
  * journal's actual condition instead of a demo constant.
  */
+/**
+ * The commands and tools that would change a project. Named once, used by the
+ * tool rail, the command palette and the phone menu, so a build that opens a
+ * read-only project cannot end up offering authoring in one of the three because
+ * someone updated the other two.
+ */
+const AUTHORING_COMMAND_IDS: ReadonlySet<string> = new Set([
+  'wall',
+  'door',
+  'window',
+  'room-boundary',
+  'move',
+  'copy',
+  'rotate',
+  'mirror',
+  'offset',
+  'align',
+  'trim',
+  'extend',
+  'join',
+  'split',
+  'dimension',
+  'text-note',
+  'section-marker',
+  'elevation-marker',
+]);
+
 const DEMO_SYNC_STATE = 'not-configured' as const;
 const PLAN_PROJECT_ID = 'demo-project';
 
@@ -401,6 +451,17 @@ export function App(): JSX.Element {
     });
   }, []);
 
+  /**
+   * Which project the workspace is showing: its own in-memory plan document, or a
+   * native `.arq` project opened read-only. One value, replaced atomically, so a
+   * failed or superseded open can never leave the shell half-switched - see
+   * file-handling/active-project.ts.
+   */
+  const [activeProject, setActiveProject] = useState<ActiveProjectState>(NO_NATIVE_PROJECT);
+  const nativeProject = activeProject.kind === 'native-read-only' ? activeProject.project : null;
+  const nativeModel = nativeProject?.staged.model ?? null;
+  const readOnly = nativeProject !== null;
+
   const [projectName, setProjectName] = useState('Untitled project');
   const [modeState, setModeState] = useState(() =>
     initialModeState({
@@ -432,13 +493,49 @@ export function App(): JSX.Element {
   } | null>(null);
   const [pixelsPerUnit, setPixelsPerUnit] = useState(1);
 
+  /**
+   * What the bars report. For the workspace's own document this is the journal's
+   * real condition; for an opened `.arq` project it is `read-only`, which exists
+   * precisely so this surface does not have to choose between claiming a save that
+   * did not happen and claiming there is no project.
+   */
+  const shownSaveState = readOnly ? ('read-only' as const) : saveState;
+  /** One sentence, said the same way by every control an opened project disables. */
+  const readOnlyReason =
+    nativeProject?.staged.authoringUnavailableReason ?? 'This project is open read-only.';
+  /** The level whose plan is on show - the project's own name for it, not a constant. */
+  const activeLevelName =
+    nativeModel === null || nativeProject === null
+      ? 'Level 1'
+      : (nativeModel.levels.find((level) => (level.id as string) === nativeProject.activeLevelId)
+          ?.name ?? nativeProject.activeLevelId);
+  const shownJournalLabel = readOnly
+    ? 'Read-only · this project is not being written'
+    : journalLabel;
+
   const probe = useViewportProbe(INITIAL_PROBE);
   const platform = resolveWorkspacePlatform(probe);
   const slots = resolveLayoutSlots(probe);
 
+  /**
+   * The one project context every shell component reads. For an opened `.arq`
+   * project every field is the file's own: its id, its name, its revision, the
+   * governed `project-read-only` open state, and a local save state that says
+   * there is no save rather than claiming one happened.
+   */
   const project: WorkspaceProjectContext = useMemo(
-    () => ({ ...modeState.project, projectName }),
-    [modeState.project, projectName],
+    () =>
+      nativeModel === null
+        ? { ...modeState.project, projectName }
+        : {
+            projectId: nativeModel.summary.projectId,
+            projectName: nativeModel.summary.projectName,
+            documentRevision: `rev-${nativeModel.summary.revision}`,
+            openState: 'project-read-only',
+            saveSync: { local: 'read-only', sync: DEMO_SYNC_STATE },
+            readOnly: true,
+          },
+    [modeState.project, projectName, nativeModel],
   );
 
   /*
@@ -501,6 +598,18 @@ export function App(): JSX.Element {
   /** Applies a typed operation to the plan document, records its real inverse, journals it. */
   const performOperation = useCallback(
     (operation: WorkspaceOperation) => {
+      if (readOnly) {
+        // The last gate, after the hidden tools and the canvas's own refusal. A
+        // read-only project has no operation path at all: nothing is applied,
+        // nothing is journalled, and the reader is told why rather than watching
+        // an action do nothing.
+        feedbackStoreRef.current.publish(
+          'error',
+          'This project is open read-only. This build does not edit a .arq project.',
+          Date.now(),
+        );
+        return;
+      }
       const current = drawnWallsRef.current;
       undoStackRef.current.push({
         forward: operation,
@@ -517,7 +626,7 @@ export function App(): JSX.Element {
         feedbackStoreRef.current.publish('success', message, Date.now());
       }
     },
-    [journalOperation],
+    [journalOperation, readOnly],
   );
 
   const handleUndo = useCallback(() => {
@@ -608,6 +717,69 @@ export function App(): JSX.Element {
       warningCount: messages.filter((m) => m.severity === 'warning').length,
     };
   }, [drawnWalls]);
+
+  /**
+   * Commits an opened project as the active one and releases whatever it
+   * replaced. The order is the lifecycle contract's: the new project is in place
+   * before the old one stops being readable, and the reducer names what to
+   * release so nothing is left resident.
+   */
+  const handleProjectOpened = useCallback(
+    (attempt: {
+      readonly fileName: string;
+      readonly staged: StagedNativeProject;
+      readonly session: ArqfsSelectedBytesSession;
+    }) => {
+      setActiveProject((current) => {
+        const outcome = activateProject(current, attempt);
+        for (const session of outcome.disposeSessions) {
+          session.dispose();
+        }
+        return outcome.state;
+      });
+      // A project from another file has other ids; keeping a selection across the
+      // switch would point the inspector at an element that no longer exists.
+      setModelSelection({ primary: null, secondary: new Set() });
+      setTabs((state) => activateTab(state, 'plan-level-1'));
+      feedbackStoreRef.current.publish(
+        'success',
+        `${attempt.staged.model.summary.projectName} opened read-only`,
+        Date.now(),
+      );
+    },
+    [],
+  );
+
+  const handleCloseProject = useCallback(() => {
+    setActiveProject((current) => {
+      const outcome = closeActiveProject(current);
+      for (const session of outcome.disposeSessions) {
+        session.dispose();
+      }
+      return outcome.state;
+    });
+    setModelSelection({ primary: null, secondary: new Set() });
+    feedbackStoreRef.current.publish('info', 'Project closed', Date.now());
+  }, []);
+
+  /*
+   * A Worker outlives a React render, so an unmounted app that never disposed one
+   * would leave a whole project's pages resident for the life of the page.
+   *
+   * Unmount only, read through a ref. Depending on `activeProject` instead would
+   * run the cleanup on every change to it - including a level switch - and
+   * dispose the session of the project still on screen.
+   */
+  const activeProjectRef = useRef(activeProject);
+  activeProjectRef.current = activeProject;
+  useEffect(
+    () => () => {
+      for (const session of closeActiveProject(activeProjectRef.current).disposeSessions) {
+        session.dispose();
+      }
+    },
+    [],
+  );
 
   const handleActivateTool = useCallback(
     (toolId: string) => {
@@ -701,7 +873,13 @@ export function App(): JSX.Element {
       if (letter === 'v') {
         handleActivateTool('select');
       } else if (letter === 'w') {
-        handleActivateTool('wall');
+        // The rail and the palette already refuse this; the keyboard is the third
+        // door into the same tool and needs the same lock.
+        if (readOnly) {
+          feedbackStoreRef.current.publish('error', readOnlyReason, Date.now());
+        } else {
+          handleActivateTool('wall');
+        }
       } else if (letter === 'f') {
         handleActivateTool('fit');
       }
@@ -709,7 +887,7 @@ export function App(): JSX.Element {
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [handleActivateTool, sheet.openSheet, tabs]);
+  }, [handleActivateTool, sheet.openSheet, tabs, readOnly, readOnlyReason]);
 
   /*
    * The semantic tree gains the walls the user has actually drawn, named by
@@ -717,6 +895,12 @@ export function App(): JSX.Element {
    * the panel lists what exists, and labels the fixture data as fixture.
    */
   const modelTree = useMemo<readonly ModelPanelNode[]>(() => {
+    if (nativeModel !== null) {
+      // The opened project's own tree. The demo tree and the 5,000-row
+      // virtualisation fixture below belong to the workspace's own document and
+      // must not appear over someone's project.
+      return buildNativeProjectTree(nativeModel);
+    }
     if (drawnWalls.length === 0) {
       return MODEL_TREE;
     }
@@ -740,11 +924,55 @@ export function App(): JSX.Element {
         ],
       },
     ];
-  }, [drawnWalls]);
+  }, [drawnWalls, nativeModel]);
 
   const selectedDrawnWall = useMemo(
     () => drawnWalls.find((wall) => wall.id === modelSelection.primary) ?? null,
     [drawnWalls, modelSelection.primary],
+  );
+
+  /**
+   * Plan and 3D are fed from one projection of one model, keyed by the project's
+   * own canonical wall ids - so the two surfaces cannot disagree about what
+   * exists or about what is selected. For the workspace's own document that is
+   * the drawn-wall list; for an opened project it is the walls placed on the
+   * level currently on show.
+   */
+  const displayedWalls = useMemo<readonly DrawnWall[]>(
+    () =>
+      nativeProject === null || nativeModel === null
+        ? drawnWalls
+        : planWallsForLevel(nativeModel, nativeProject.activeLevelId),
+    [drawnWalls, nativeModel, nativeProject],
+  );
+
+  const displayedRooms = useMemo(
+    () =>
+      nativeProject === null || nativeModel === null
+        ? undefined
+        : planRoomsForLevel(nativeModel, nativeProject.activeLevelId),
+    [nativeModel, nativeProject],
+  );
+
+  /** Real per-wall solids: an opened project extrudes at its own wall types, not at one borrowed default. */
+  const wallDimensions = useMemo<ReadonlyMap<string, WallSolidDimensions> | undefined>(() => {
+    if (nativeModel === null) {
+      return undefined;
+    }
+    const dimensions = new Map<string, WallSolidDimensions>();
+    for (const wall of nativeModel.walls) {
+      const thicknessMm = wallThicknessMm(nativeModel, wall);
+      const heightMm = resolvedWallHeightMm(nativeModel, wall);
+      if (thicknessMm !== null && heightMm !== null) {
+        dimensions.set(wall.id as string, { thicknessMm, heightMm });
+      }
+    }
+    return dimensions;
+  }, [nativeModel]);
+
+  const nativeSelection = useMemo(
+    () => (nativeModel === null ? null : findNativeElement(nativeModel, modelSelection.primary)),
+    [nativeModel, modelSelection.primary],
   );
 
   /*
@@ -794,11 +1022,50 @@ export function App(): JSX.Element {
   useEffect(() => {
     setInspectorTabs((current) => reconcileInspectorTab(current, inspectorContext));
   }, [inspectorContext]);
-  const activeTab = tabs.tabs.find((tab) => tab.id === tabs.activeId) ?? null;
+  /**
+   * What the tab strip shows. The reducers keep owning `tabs`; only the titles
+   * are re-derived, because a plan tab labelled "Level 1 Plan" over a project
+   * whose ground floor is on show is the tab strip and the status bar disagreeing
+   * about the same view.
+   */
+  const shownTabs = useMemo(() => {
+    if (nativeProject === null) {
+      return tabs;
+    }
+    return {
+      ...tabs,
+      tabs: tabs.tabs.map((tab) =>
+        tab.kind === 'plan' ? { ...tab, title: `${activeLevelName} plan` } : tab,
+      ),
+    };
+  }, [tabs, nativeProject, activeLevelName]);
+
+  const activeTab = shownTabs.tabs.find((tab) => tab.id === shownTabs.activeId) ?? null;
   const railModel = useMemo(
     () => buildToolRailModel(modeState.mode, (toolId) => TOOL_ICONS[toolId] ?? null),
     [modeState.mode],
   );
+
+  /**
+   * Over a read-only project the authoring tools carry the read-only reason
+   * instead of their normal availability. `buildToolRailModel` already renders a
+   * tool with a `disabledReason` as unavailable-with-a-reason, so this reuses that
+   * treatment rather than adding a second one.
+   */
+  const readOnlyRailModel = useMemo(() => {
+    if (!readOnly) {
+      return railModel;
+    }
+    const toolsByCategory = Object.fromEntries(
+      Object.entries(railModel.toolsByCategory).map(([category, tools]) => [
+        category,
+        tools.map((tool) =>
+          AUTHORING_COMMAND_IDS.has(tool.id) ? { ...tool, disabledReason: readOnlyReason } : tool,
+        ),
+      ]),
+    ) as typeof railModel.toolsByCategory;
+    return { ...railModel, toolsByCategory };
+  }, [railModel, readOnly, readOnlyReason]);
 
   /*
    * Doc 47 > Gestures: "system back closes overlays first." On Android the back
@@ -835,14 +1102,24 @@ export function App(): JSX.Element {
     [platform, probe.coarsePointer],
   );
 
-  const commandEntries = useMemo<readonly CommandPaletteEntry[]>(
-    () =>
-      COMMAND_ENTRIES.map((entry) => {
-        const label = shortcutLabel(entry.id, shortcutDialect);
-        return label === null ? entry : { ...entry, shortcutLabel: label };
-      }),
-    [shortcutDialect],
-  );
+  /**
+   * Authoring commands are shown with the reason they are unavailable rather than
+   * removed, which is the same rule the tool rail follows for tools that exist in
+   * the registry but not in this build: a command that vanishes teaches the reader
+   * nothing, and a command that silently does nothing is worse.
+   */
+  const commandEntries = useMemo<readonly CommandPaletteEntry[]>(() => {
+    const entries = COMMAND_ENTRIES.map((entry) => {
+      const label = shortcutLabel(entry.id, shortcutDialect);
+      const withShortcut = label === null ? entry : { ...entry, shortcutLabel: label };
+      return readOnly && AUTHORING_COMMAND_IDS.has(entry.id)
+        ? { ...withShortcut, disabledReason: readOnlyReason }
+        : withShortcut;
+    });
+    return readOnly
+      ? [...entries, { id: 'close-project', label: 'Close project', category: 'File' }]
+      : entries;
+  }, [shortcutDialect, readOnly, readOnlyReason]);
 
   const activeToolLabel = useMemo(() => {
     const contract = toolContract(toolState.activeToolId);
@@ -866,12 +1143,12 @@ export function App(): JSX.Element {
    */
   const overviewData: ProjectOverviewData = useMemo(
     () => ({
-      projectName,
-      recentViews: tabs.tabs
+      projectName: project.projectName,
+      recentViews: shownTabs.tabs
         .filter((tab) => tab.kind !== 'project-overview')
         .map((tab) => ({ id: tab.id, title: tab.title, kind: tab.kind })),
     }),
-    [projectName, tabs.tabs],
+    [project.projectName, shownTabs.tabs],
   );
 
   const viewport =
@@ -884,11 +1161,14 @@ export function App(): JSX.Element {
         }
       >
         <ModelCanvas
-          walls={drawnWalls}
+          walls={displayedWalls}
           selection={modelSelection}
           onSelectElement={(elementId) =>
             setModelSelection({ primary: elementId, secondary: new Set() })
           }
+          {...(wallDimensions === undefined ? {} : { wallDimensions })}
+          // No fixture room outline over a real project.
+          showDemoRoom={nativeProject === null}
         />
       </Suspense>
     ) : activeTab?.kind === 'project-overview' ? (
@@ -901,7 +1181,9 @@ export function App(): JSX.Element {
     ) : (
       <PlanCanvas
         activeToolId={toolState.activeToolId}
-        walls={drawnWalls}
+        walls={displayedWalls}
+        {...(displayedRooms === undefined ? {} : { rooms: displayedRooms })}
+        readOnly={readOnly}
         selection={modelSelection}
         onSelectElement={(elementId) =>
           setModelSelection({ primary: elementId, secondary: new Set() })
@@ -939,8 +1221,8 @@ export function App(): JSX.Element {
         activeToolLabel={activeToolLabel}
         phoneProjectBar={
           <PhoneProjectBar
-            projectName={projectName}
-            saveState={saveState}
+            projectName={project.projectName}
+            saveState={shownSaveState}
             syncState={DEMO_SYNC_STATE}
             onBackToProjects={() => setFileOpenPanelOpen(true)}
             menuItems={[
@@ -948,15 +1230,32 @@ export function App(): JSX.Element {
                 id: 'undo',
                 label: 'Undo',
                 onActivate: handleUndo,
-                ...(undoStackRef.current.canUndo() ? {} : { disabledReason: 'Nothing to undo' }),
+                ...(readOnly
+                  ? { disabledReason: readOnlyReason }
+                  : undoStackRef.current.canUndo()
+                    ? {}
+                    : { disabledReason: 'Nothing to undo' }),
               },
               {
                 id: 'redo',
                 label: 'Redo',
                 onActivate: handleRedo,
-                ...(undoStackRef.current.canRedo() ? {} : { disabledReason: 'Nothing to redo' }),
+                ...(readOnly
+                  ? { disabledReason: readOnlyReason }
+                  : undoStackRef.current.canRedo()
+                    ? {}
+                    : { disabledReason: 'Nothing to redo' }),
               },
               { id: 'open', label: 'Open project…', onActivate: () => setFileOpenPanelOpen(true) },
+              ...(readOnly
+                ? [
+                    {
+                      id: 'close-project',
+                      label: 'Close project',
+                      onActivate: handleCloseProject,
+                    },
+                  ]
+                : []),
               {
                 id: 'commands',
                 label: 'Search commands',
@@ -975,14 +1274,14 @@ export function App(): JSX.Element {
         }
         compactViewControl={
           <CompactViewControl
-            state={tabs}
+            state={shownTabs}
             viewSwitcherOpen={sheet.openSheet === 'view-switcher'}
             onOpenViewSwitcher={() => setSheet((state) => toggleSheet(state, 'view-switcher'))}
           />
         }
         viewSwitcherSheet={
           <ViewSwitcherList
-            state={tabs}
+            state={shownTabs}
             onActivateTab={(id) => {
               setTabs((state) => activateTab(state, id));
               // Doc 47: "Tap switches and closes sheet."
@@ -994,17 +1293,33 @@ export function App(): JSX.Element {
         {...(reviewDisabledReason === undefined ? {} : { reviewDisabledReason })}
         projectBar={
           <TopBar
-            projectName={projectName}
-            onRenameProject={setProjectName}
+            projectName={project.projectName}
+            onRenameProject={(name) => {
+              if (readOnly) {
+                // Renaming would have to be written into the project file, which
+                // this build never writes. Refused with the reason rather than
+                // accepted into a name that the file does not carry.
+                feedbackStoreRef.current.publish(
+                  'error',
+                  'This project is open read-only. Its name is the name recorded in the file.',
+                  Date.now(),
+                );
+                return;
+              }
+              setProjectName(name);
+            }}
             activeViewName={activeTab?.title ?? 'No view open'}
             // Save state is real: it tracks the IndexedDB operation journal
             // (recover on boot, append per edit). Sync stays 'offline'
             // because no sync backend exists - the two are reported
             // separately, per the copy principles.
-            saveState={saveState}
+            saveState={shownSaveState}
             syncState={DEMO_SYNC_STATE}
-            canUndo={undoStackRef.current.canUndo()}
-            canRedo={undoStackRef.current.canRedo()}
+            // Undo and redo belong to the workspace's own plan document. While a
+            // read-only project is on screen they are off: an undo that quietly
+            // edited a hidden document would be a change the reader cannot see.
+            canUndo={!readOnly && undoStackRef.current.canUndo()}
+            canRedo={!readOnly && undoStackRef.current.canRedo()}
             lastUndoActionLabel={null}
             lastRedoActionLabel={null}
             onUndo={handleUndo}
@@ -1017,7 +1332,7 @@ export function App(): JSX.Element {
         }
         tabStrip={
           <ProjectTabStrip
-            state={tabs}
+            state={shownTabs}
             // Doc 37 overflow is width-driven; the strip itself does not
             // measure, so the host derives slots from the layout it is in.
             visibleSlots={platform === 'phone' ? 1 : platform === 'desktop' ? 8 : 4}
@@ -1044,8 +1359,8 @@ export function App(): JSX.Element {
         }
         toolRail={
           <ToolRail
-            toolsByCategory={railModel.toolsByCategory}
-            visibleCategories={railModel.visibleCategories}
+            toolsByCategory={readOnlyRailModel.toolsByCategory}
+            visibleCategories={readOnlyRailModel.visibleCategories}
             state={toolRailState}
             onToggleCategory={(category) =>
               setToolRailState((state) => toggleCategory(state, category))
@@ -1069,18 +1384,37 @@ export function App(): JSX.Element {
                * list - doc 35's "never invent" rule is not specific to the
                * overview.
                */
-              project: (
-                <ModelPanel
-                  tree={modelTree}
-                  selection={modelSelection}
-                  onSelectNode={(nodeId) =>
-                    setModelSelection({ primary: nodeId, secondary: new Set() })
-                  }
-                />
-              ),
+              project:
+                nativeProject === null ? (
+                  <ModelPanel
+                    tree={modelTree}
+                    selection={modelSelection}
+                    onSelectNode={(nodeId) =>
+                      setModelSelection({ primary: nodeId, secondary: new Set() })
+                    }
+                  />
+                ) : (
+                  <NativeProjectPanel
+                    fileName={nativeProject.fileName}
+                    staged={nativeProject.staged}
+                    activeLevelId={nativeProject.activeLevelId}
+                    onShowLevel={(levelId) =>
+                      setActiveProject((current) => showLevel(current, levelId))
+                    }
+                    onCloseProject={handleCloseProject}
+                  >
+                    <ModelPanel
+                      tree={modelTree}
+                      selection={modelSelection}
+                      onSelectNode={(nodeId) =>
+                        setModelSelection({ primary: nodeId, secondary: new Set() })
+                      }
+                    />
+                  </NativeProjectPanel>
+                ),
               views: (
                 <ViewSwitcherList
-                  state={tabs}
+                  state={shownTabs}
                   onActivateTab={(id) => setTabs((state) => activateTab(state, id))}
                   onCloseTab={(id) => setTabs((state) => closeTab(state, id))}
                 />
@@ -1094,11 +1428,13 @@ export function App(): JSX.Element {
             state={inspectorTabs}
             context={inspectorContext}
             commonTypeName={
-              selectedDrawnWall !== null
-                ? 'Wall (drawn)'
-                : isWallSelected
-                  ? 'Interior Wall 100mm'
-                  : null
+              nativeModel !== null
+                ? nativeSelectionTypeName(nativeSelection)
+                : selectedDrawnWall !== null
+                  ? 'Wall (drawn)'
+                  : isWallSelected
+                    ? 'Interior Wall 100mm'
+                    : null
             }
             onSelectTab={(tab) => setInspectorTabs((current) => selectInspectorTab(current, tab))}
             tabs={{
@@ -1112,24 +1448,31 @@ export function App(): JSX.Element {
               properties: (
                 <InspectorShell
                   groups={
-                    selectedDrawnWall !== null
-                      ? buildDrawnWallInspectorGroups(
-                          selectedDrawnWall.id,
-                          wallLength(selectedDrawnWall),
-                        )
-                      : isWallSelected
-                        ? buildDemoWallInspectorGroups()
-                        : buildEmptyInspectorGroups()
+                    nativeModel !== null
+                      ? // Real properties of the real element: the project's ids,
+                        // its wall types, its resolved heights, its hosted
+                        // openings. Nothing here is a placeholder.
+                        buildNativeInspectorGroups(nativeModel, nativeSelection)
+                      : selectedDrawnWall !== null
+                        ? buildDrawnWallInspectorGroups(
+                            selectedDrawnWall.id,
+                            wallLength(selectedDrawnWall),
+                          )
+                        : isWallSelected
+                          ? buildDemoWallInspectorGroups()
+                          : buildEmptyInspectorGroups()
                   }
                   selectedElementDescription={
-                    selectedDrawnWall !== null
-                      ? buildDrawnWallAccessibleDescription(
-                          selectedDrawnWall.id,
-                          wallLength(selectedDrawnWall),
-                        )
-                      : isWallSelected
-                        ? buildDemoWallAccessibleDescription()
-                        : null
+                    nativeModel !== null
+                      ? buildNativeAccessibleDescription(nativeModel, nativeSelection)
+                      : selectedDrawnWall !== null
+                        ? buildDrawnWallAccessibleDescription(
+                            selectedDrawnWall.id,
+                            wallLength(selectedDrawnWall),
+                          )
+                        : isWallSelected
+                          ? buildDemoWallAccessibleDescription()
+                          : null
                   }
                 />
               ),
@@ -1141,33 +1484,35 @@ export function App(): JSX.Element {
             activeToolId={toolState.activeToolId}
             selectionCount={selectionCount}
             actions={
-              selectedDrawnWall !== null
-                ? [
-                    {
-                      id: 'delete',
-                      label: selectionCount > 1 ? `Delete ${selectionCount} walls` : 'Delete',
-                      // A real, undoable deletion of every selected drawn
-                      // wall - one operation, one undo step.
-                      onActivate: () => {
-                        const drawnIds = new Set(drawnWalls.map((wall) => wall.id));
-                        const selectedIds = [
-                          modelSelection.primary,
-                          ...modelSelection.secondary,
-                        ].filter((id): id is string => id !== null && drawnIds.has(id));
-                        performOperation({ kind: 'remove-walls', wallIds: selectedIds });
-                        setModelSelection({ primary: null, secondary: new Set() });
-                      },
-                    },
-                  ]
-                : isWallSelected
+              readOnly
+                ? []
+                : selectedDrawnWall !== null
                   ? [
                       {
                         id: 'delete',
-                        label: 'Delete',
-                        onActivate: () => recordDemoAction('delete wall'),
+                        label: selectionCount > 1 ? `Delete ${selectionCount} walls` : 'Delete',
+                        // A real, undoable deletion of every selected drawn
+                        // wall - one operation, one undo step.
+                        onActivate: () => {
+                          const drawnIds = new Set(drawnWalls.map((wall) => wall.id));
+                          const selectedIds = [
+                            modelSelection.primary,
+                            ...modelSelection.secondary,
+                          ].filter((id): id is string => id !== null && drawnIds.has(id));
+                          performOperation({ kind: 'remove-walls', wallIds: selectedIds });
+                          setModelSelection({ primary: null, secondary: new Set() });
+                        },
                       },
                     ]
-                  : []
+                  : isWallSelected
+                    ? [
+                        {
+                          id: 'delete',
+                          label: 'Delete',
+                          onActivate: () => recordDemoAction('delete wall'),
+                        },
+                      ]
+                    : []
             }
           />
         }
@@ -1177,10 +1522,10 @@ export function App(): JSX.Element {
             cursorWorldPosition={cursorWorldPosition}
             activeSnapLabel={activeSnapLabel}
             selectionCount={selectionCount}
-            currentLevelName="Level 1"
+            currentLevelName={activeLevelName}
             pixelsPerUnit={pixelsPerUnit}
             modelHealth={modelHealth}
-            localJournalStateLabel={journalLabel}
+            localJournalStateLabel={shownJournalLabel}
             syncState={DEMO_SYNC_STATE}
             supportModeEnabled={false}
           />
@@ -1206,7 +1551,9 @@ export function App(): JSX.Element {
                * before this, invoking "Close active view" silently did nothing
                * because handleActivateTool had no such tool to arm.
                */
-              if (entry.id === 'close-tab') {
+              if (entry.id === 'close-project') {
+                handleCloseProject();
+              } else if (entry.id === 'close-tab') {
                 const active = tabs.tabs.find((tab) => tab.id === tabs.activeId);
                 if (active?.closeable === true) {
                   setTabs((state) => closeTab(state, active.id));
@@ -1224,7 +1571,13 @@ export function App(): JSX.Element {
 
       {/* Renders its own full-viewport ArqModalDialog (backdrop, focus trap),
           so it sits beside WorkspaceRoot rather than inside a layout slot. */}
-      <FileOpenPanel isOpen={fileOpenPanelOpen} onOpenChange={setFileOpenPanelOpen} />
+      <FileOpenPanel
+        isOpen={fileOpenPanelOpen}
+        onOpenChange={setFileOpenPanelOpen}
+        createWorker={createSelectedBytesArqfsWorker}
+        onProjectOpened={handleProjectOpened}
+        hasOpenProject={nativeProject !== null}
+      />
 
       {/* W135 ToastRegion replaces the previous ad-hoc validation notice,
           which sat at zIndex 9 (below every menu and the modal backdrop) and

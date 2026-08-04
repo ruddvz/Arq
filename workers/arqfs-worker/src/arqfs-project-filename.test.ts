@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   opfsFilenameForProject,
   arqfsWorkerUrlSearch,
+  arqfsSelectedBytesWorkerUrlSearch,
   readProjectIdFromWorkerSearch,
+  readWorkerSourceFromSearch,
 } from './arqfs-project-filename';
 
 describe('arqfs project-scoped OPFS filename', () => {
@@ -38,5 +40,23 @@ describe('arqfs project-scoped OPFS filename', () => {
 
   it('rejects a project id smuggled through the URL that would otherwise escape the projects directory', () => {
     expect(() => readProjectIdFromWorkerSearch('?project=..%2F..%2Fescape')).toThrow();
+  });
+});
+
+describe('arqfs Worker source mode', () => {
+  it('round-trips the selected-bytes mode through the Worker URL', () => {
+    expect(readWorkerSourceFromSearch(arqfsSelectedBytesWorkerUrlSearch())).toBe('selected-bytes');
+  });
+
+  it('treats a Worker constructed for a project as the owned-project mode', () => {
+    expect(readWorkerSourceFromSearch(arqfsWorkerUrlSearch('project-a'))).toBe('owned-project');
+    expect(readWorkerSourceFromSearch('')).toBe('owned-project');
+  });
+
+  it('refuses an unrecognised mode rather than defaulting to the writable one', () => {
+    // A typo must not silently produce a Worker that owns a project file.
+    for (const search of ['?source=selectedbytes', '?source=SELECTED-BYTES', '?source=readonly']) {
+      expect(() => readWorkerSourceFromSearch(search)).toThrow();
+    }
   });
 });

@@ -3,14 +3,20 @@ import { describeFileFlowState } from './describe-file-flow-state';
 import type { FileFlowState } from './file-state-machine';
 
 describe('describeFileFlowState', () => {
-  it('never claims a project is open for the native-opening state - it is honest about the unwired boundary', () => {
+  /**
+   * `native-opening` is a compatibility verdict, not an open. That was true when
+   * nothing in this build could open a project and it is still true now that
+   * something can: the checks that decide whether this project opens have not
+   * run yet, so this state must not speak for them.
+   */
+  it('never claims a project is open for the native-opening state', () => {
     const description = describeFileFlowState({
       kind: 'native-opening',
       name: 'house.arq',
       sidecarDependency: 'complete',
     });
     expect(description.headline).not.toMatch(/is open|opened successfully/i);
-    expect(description.detail).toMatch(/not wired/i);
+    expect(description.headline).toMatch(/compatible/i);
   });
 
   /**
@@ -92,6 +98,15 @@ describe('describeFileFlowState', () => {
       { kind: 'detecting', name: 'a.arq' },
       { kind: 'native-opening', name: 'a.arq', sidecarDependency: 'complete' },
       { kind: 'native-opening', name: 'a.arq', sidecarDependency: 'write-ahead-log-sidecar' },
+      { kind: 'opening-project', name: 'a.arq', stageName: 'Shell', sidecarDependency: 'complete' },
+      {
+        kind: 'project-open-read-only',
+        name: 'a.arq',
+        projectName: 'A',
+        revision: 3,
+        sidecarDependency: 'complete',
+        conditionNote: null,
+      },
       { kind: 'import-options', name: 'a.dxf', formatId: 'dxf' },
       { kind: 'importing', name: 'a.dxf', requestId: 'r1', fraction: 0.5 },
       { kind: 'staged-review', name: 'a.dxf', requestId: 'r1' },
@@ -103,5 +118,73 @@ describe('describeFileFlowState', () => {
       expect(() => describeFileFlowState(state)).not.toThrow();
       expect(describeFileFlowState(state).headline.length).toBeGreaterThan(0);
     }
+  });
+
+  /**
+   * The state that only exists because this build can now really open a project.
+   * A user told a project is open will try to edit it, so the same sentence that
+   * says "open" has to say "read-only" and has to say the chosen file is
+   * untouched - otherwise the true half is read as permission for the rest.
+   */
+  it('says a project is open, and in the same breath what cannot be done with it', () => {
+    const description = describeFileFlowState({
+      kind: 'project-open-read-only',
+      name: 'house.arq',
+      projectName: 'Courtyard House Reference',
+      revision: 191,
+      sidecarDependency: 'complete',
+      conditionNote: null,
+    });
+
+    expect(description.headline).toBe(
+      'Courtyard House Reference is open, read-only · revision 191',
+    );
+    expect(description.detail).toMatch(/does not edit or save/i);
+    expect(description.detail).toMatch(/unchanged/i);
+    expect(description.tone).toBe('neutral');
+  });
+
+  it('keeps the write-ahead-log caution after a successful open', () => {
+    const description = describeFileFlowState({
+      kind: 'project-open-read-only',
+      name: 'house.arq',
+      projectName: 'House',
+      revision: 4,
+      sidecarDependency: 'write-ahead-log-sidecar',
+      conditionNote: null,
+    });
+
+    // A successful open must not swallow the fact that the newest work may be in
+    // a sidecar the file picker never handed over.
+    expect(description.tone).toBe('warning');
+    expect(description.detail).toMatch(/-wal/);
+  });
+
+  it('adds a file condition note when the open found one worth stating', () => {
+    const description = describeFileFlowState({
+      kind: 'project-open-read-only',
+      name: 'house.arq',
+      projectName: 'House',
+      revision: 4,
+      sidecarDependency: 'complete',
+      conditionNote: 'A previous write to this project did not finish.',
+    });
+
+    expect(description.detail).toMatch(/did not finish/);
+  });
+
+  it('names the open stage instead of inventing a percentage', () => {
+    const description = describeFileFlowState({
+      kind: 'opening-project',
+      name: 'house.arq',
+      stageName: 'Skeleton',
+      sidecarDependency: 'complete',
+    });
+
+    expect(description.tone).toBe('progress');
+    expect(description.headline).toBe('Opening house.arq…');
+    expect(description.detail).toBe('Step: Skeleton.');
+    // No fabricated fraction: the staged open has no measurable one.
+    expect(description.headline).not.toMatch(/%/);
   });
 });

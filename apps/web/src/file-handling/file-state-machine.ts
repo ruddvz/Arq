@@ -25,6 +25,34 @@ export type FileFlowState =
        */
       readonly sidecarDependency: ArqfsSidecarDependency;
     }
+  /**
+   * A project session is being created: the Worker has the bytes and the open
+   * checks are running. Distinct from `detecting`, which is byte inspection on
+   * the main thread and reaches no SQLite, and distinct from `native-opening`,
+   * which is a compatibility verdict and not an open at all.
+   */
+  | {
+      readonly kind: 'opening-project';
+      readonly name: string;
+      /** The stage the staged-open state machine is on, for a progress label that is not a guess. */
+      readonly stageName: string;
+      /** Carried through the open: whether the picked bytes were the whole database stays true afterwards. */
+      readonly sidecarDependency: ArqfsSidecarDependency;
+    }
+  /**
+   * A real project is open and the workspace is showing it. Read-only: the
+   * governed `file-flow` policy requires an opened project and a compatible file
+   * to stay distinct states, and this is the first build in which both exist.
+   */
+  | {
+      readonly kind: 'project-open-read-only';
+      readonly name: string;
+      readonly projectName: string;
+      readonly revision: number;
+      readonly sidecarDependency: ArqfsSidecarDependency;
+      /** Present when the file opened with a condition worth stating (interrupted write, missing optional content). */
+      readonly conditionNote: string | null;
+    }
   | { readonly kind: 'import-options'; readonly name: string; readonly formatId: string }
   | {
       readonly kind: 'importing';
@@ -47,6 +75,14 @@ export type FileFlowEvent =
   | { readonly type: 'acquired' }
   /** Required, not optional: a caller that has not decided whether the file is complete must not be able to omit the answer and get the reassuring default. */
   | { readonly type: 'route-native'; readonly sidecarDependency: ArqfsSidecarDependency }
+  | { readonly type: 'open-start'; readonly stageName: string }
+  | { readonly type: 'open-stage'; readonly stageName: string }
+  | {
+      readonly type: 'project-opened';
+      readonly projectName: string;
+      readonly revision: number;
+      readonly conditionNote: string | null;
+    }
   | { readonly type: 'route-import'; readonly formatId: string }
   | { readonly type: 'import-start'; readonly requestId: string }
   | { readonly type: 'progress'; readonly fraction: number }
@@ -81,6 +117,32 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
   }
   if (state.kind === 'detecting' && event.type === 'route-import') {
     return { kind: 'import-options', name: state.name, formatId: event.formatId };
+  }
+  // An open may only start from a file already found compatible, so a caller
+  // cannot skip preflight and go straight to opening.
+  if (state.kind === 'native-opening' && event.type === 'open-start') {
+    return {
+      kind: 'opening-project',
+      name: state.name,
+      stageName: event.stageName,
+      sidecarDependency: state.sidecarDependency,
+    };
+  }
+  if (state.kind === 'opening-project' && event.type === 'open-stage') {
+    return { ...state, stageName: event.stageName };
+  }
+  if (state.kind === 'opening-project' && event.type === 'project-opened') {
+    return {
+      kind: 'project-open-read-only',
+      name: state.name,
+      projectName: event.projectName,
+      revision: event.revision,
+      // Carried forward rather than re-derived: a write-ahead-log project that
+      // opens successfully is still missing whatever its `-wal` sidecar held, and
+      // a successful open must not be allowed to swallow that caution.
+      sidecarDependency: state.sidecarDependency,
+      conditionNote: event.conditionNote,
+    };
   }
   if (state.kind === 'import-options' && event.type === 'import-start') {
     return { kind: 'importing', name: state.name, requestId: event.requestId, fraction: 0 };

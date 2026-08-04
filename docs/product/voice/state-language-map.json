@@ -26,9 +26,9 @@
     "sync": "Remote status is always independent of local save/journal status.",
     "workspace-open": "Project ready requires a usable project context, not a compatible file.",
     "arqfs-safe-mode": "Translate the underlying file condition before exposing read-only handling.",
-    "file-flow": "Compatibility, migration, staging and opened project states are distinct.",
+    "file-flow": "Compatibility, migration, staging, opening and opened project states are distinct. A read-only opened project is an opened project, and is never described as saved or editable.",
     "ai-proposal": "Apply requires current base revision and no blocking validation errors.",
-    "web-plan-journal-status": "The web build's saveState union reports the local IndexedDB operation journal for the demo plan. A label here never implies that a portable .arq file was written, that a user project was opened, or that anything was synced."
+    "web-plan-journal-status": "The web build's saveState union reports the local IndexedDB operation journal for its own plan document. A label here never implies that a portable .arq file was written, that a user project was opened, or that anything was synced. When a native .arq project is open the shell reports the `save` machine's read-only state instead of any of these."
   },
   "machines": {
     "workspace-open": [
@@ -209,6 +209,12 @@
         "internal": "local-save-failed",
         "label": "Local save failed",
         "explain": "Current changes may not be durably persisted locally. Never describe this as a sync error.",
+        "exposure": "product"
+      },
+      {
+        "internal": "read-only",
+        "label": "Read-only · nothing to save",
+        "explain": "The open project is inspected, not authored: this build performs no local save for it, and the file it was opened from is unchanged. Never present this as a completed save, and never as a failure.",
         "exposure": "product"
       }
     ],
@@ -476,6 +482,18 @@
         "internal": "native-opening",
         "labelTemplate": "{name} is a compatible ARQ project",
         "explain": "Do not say opened until the live project pipeline has actually loaded it.",
+        "exposure": "product"
+      },
+      {
+        "internal": "opening-project",
+        "labelTemplate": "Opening {name}…",
+        "explain": "A project session is being created. The project is not open until every open check has passed; do not present the workspace as showing it yet.",
+        "exposure": "product"
+      },
+      {
+        "internal": "project-open-read-only",
+        "labelTemplate": "{name} is open, read-only",
+        "explain": "A real project session exists and the workspace is showing that project. Editing and saving are unavailable, and the file the project was opened from is unchanged. Never describe this state as saved, editable or published.",
         "exposure": "product"
       },
       {

@@ -34,7 +34,55 @@ owner acceptance or current evidence selection.
 
 Until this ADR is accepted, the browser project-open pipeline and every claim
 that equates the current IndexedDB journal with a portable `.arq` save remain
-Blocked.
+Blocked - with one carve-out, added below and itself Proposed, for a read-only
+open that creates no persistence at all.
+
+## Proposed carve-out: read-only inspection creates no persistence
+
+**Status of this carve-out:** Proposed, with an implementation on the branch
+`claude/arq-native-lifecycle-v3-smx7rg`. Owner acceptance is still required, and
+the Engineering OS gate enforces that: the change is lane L4 and its
+`protected_l4_approval` evidence is unsatisfied, so it cannot merge on this
+document's word.
+
+The blocking sentence above was written about persistence, which is this ADR's
+subject. Every failure it lists - two canonical stores diverging, a journal event
+presented as a save, migration of the user's own file, publication that needs a
+sidecar, replay against the wrong revision, derived data overwriting truth - is a
+failure of something that writes. A path that opens a file the user chose, reads
+it, shows it, and writes nothing anywhere has none of them, and deciding it does
+not pre-empt any option in this document.
+
+The carve-out is therefore narrow and stated as properties, not as intent, so
+that an implementation either has them or does not:
+
+1. The selected file is never written. Its bytes are copied into the Worker and
+   the connection is opened read-only at the SQLite level
+   (`SQLITE_DESERIALIZE_READONLY`) as well as by policy (`PRAGMA query_only`).
+2. Nothing durable is created. No OPFS file is opened, no IndexedDB record is
+   written, no journal entry is appended, no working copy exists. Closing the
+   project leaves nothing behind, which is what makes the path reversible by
+   deleting code.
+3. No schema is created over a selected file. An empty or foreign file is
+   refused, never initialised into an Arq project and then reported as openable.
+4. The connection is hardened before the file's own schema content is queried.
+5. Every write request on such a connection is refused by ownership, not by the
+   file's version floors - a healthy, writable-looking project is still refused.
+6. The existing IndexedDB journal keeps exactly the authority it has today, over
+   the workspace's own plan document. An opened `.arq` project is not journalled,
+   and while one is open the shell reports the governed `read-only` save state
+   rather than any state that asserts a write.
+7. No surface says an opened project can be edited or saved, and none describes
+   the read-only path as a portable save.
+
+What the carve-out does not permit, and what still waits on this ADR being
+accepted: any local working copy, any journal for an opened project, any
+publication, any migration of a user's file, and any claim that the product can
+save a `.arq` file.
+
+Rollback for the carve-out is the simple case this ADR's own rollback section
+names as available before activation: remove the open pipeline. There is no
+project data to recover, because the path creates none.
 
 ## Problem
 

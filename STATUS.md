@@ -19,22 +19,46 @@ Update this file in the same change._
 
 ## What is real today
 
-Re-measured on this branch over revision `7f15889` plus the changes in the
+Re-measured on this branch over revision `4c31107` plus the changes in the
 commit containing this file: `pnpm typecheck` across all 37 workspace packages
-plus `contracts/`, the repository ESLint gate, `pnpm format:check`, and 2,380
-passing tests across 259 files, all uncached. The same revision defines
+plus `contracts/`, the repository ESLint gate, `pnpm format:check`, and 2,453
+passing tests across 264 files, all uncached. The same revision defines
 workspace-registry, licence/SBOM, secret-scan and Rust gates, and CI wires
-thirteen of the fourteen headless-Chromium capability checks
-(`benchmark:arq-core-worker` is defined but not run in CI). The Rust gates and
-the capability checks were not run in that local pass; CI ran both on this
-branch and both passed. These are revision-scoped results, not a claim that
+fourteen of the fifteen headless-Chromium capability checks
+(`benchmark:arq-core-worker` is defined but not run in CI); the fifteenth,
+`benchmark:native-open`, is new in this change and is wired into CI with the
+others. The Rust gates were not run in that local pass. Of the browser checks,
+`benchmark:native-open` was run locally on this branch and passed; the rest were
+not, and CI is what runs them all. These are revision-scoped results, not a claim
+that
 the protected workflow or production release gate is green: the gate stays red
-for `e2e_arq_open`, and no protected L4 approval exists.
+for `protected_l4_approval`, which no owner has granted.
 
+- **Read-only native `.arq` project open** (`apps/web/src/file-handling` +
+  `packages/project-loading` + `workers/arqfs-worker`): a user can choose a
+  `.arq` file and get that project in the workspace - its own name, revision,
+  levels, walls and rooms in the plan, the same canonical ids extruded in 3D,
+  shared selection, a real inspector, level switching, and close/replace.
+  Verified by `pnpm benchmark:native-open`
+  (`scripts/run-native-open-capability-check.mjs`) in headless Chromium against
+  the vite-built bundle and the unmodified golden fixture
+  (`fixtures/`): the project opens at revision 191, the ground floor reports its
+  37 of 79 walls, switching level changes what the plan draws, a wall selected
+  from the model tree highlights in 3D, the wall tool is disabled with its
+  reason, the shell says `Read-only · nothing to save`, three opens leave one
+  Worker and closing leaves none, no request leaves the origin, and the
+  fixture's SHA-256 is identical before and after.
+  It is read-only by construction, not by convention: the bytes are
+  deserialized with `SQLITE_DESERIALIZE_READONLY` into the Worker's own heap, no
+  OPFS file is opened, no schema is created over a selected file, and the Worker
+  refuses every write for a selected source whatever the file's own version
+  floors allow. Nothing is persisted, so opening a project decides nothing that
+  ADR-0028 has still to decide. What this is not: editing, saving, publishing,
+  migration or import. See the first gap above.
 - **`.arq` file format** (`packages/arqfs`): schema v1/v2, capability-gated
   open, byte preflight, copy-on-write migration with reopen+integrity
-  verification, recovery reporting, fuzz tests. Library-complete; not yet
-  reachable from the product (no open-project pipeline). Preflight now reports
+  verification, recovery reporting, fuzz tests. Now reachable from the product
+  through the read-only open path above. Preflight reports
   whether the bytes it was handed are the whole database: a write-ahead-log
   project keeps its newest commits in a `-wal` sidecar that a file picker does
   not supply, and SQLite reads such a file without the sidecar as of its last
@@ -95,16 +119,19 @@ for `e2e_arq_open`, and no protected L4 approval exists.
 
 ## Biggest known gaps (in rough priority order)
 
-1. No end-to-end project open: file-open UI stops at its safety verdict;
-   the OPFS worker is never constructed (`workers/arqfs-worker`).
+1. No editing or saving of an opened project. A native `.arq` project can now
+   be opened read-only and inspected (see below); nothing can change it, and
+   nothing can write a `.arq` file. Editing needs ADR-0028's persistence
+   responsibility split accepted first, and it is still Proposed.
 2. No import/export reachable from the UI: the import worker is never
    constructed by `apps/web` (adapters themselves are real - dxf, underlay,
    attachment and now ifc all resolve in the worker's default registry).
 3. `apps/api` is an `export {}` stub; sync has protocol logic but no
    transport or backend.
-4. Three data-layer libraries still have zero product consumers
-   (`derived-cache`, `project-loading`, `collaboration`); `model-context` has
-   only narrow use.
+4. Two data-layer libraries still have zero product consumers
+   (`derived-cache`, `collaboration`); `model-context` has only narrow use.
+   `project-loading` is now a consumer-facing package: it owns the native open
+   pipeline `apps/web` runs.
 5. Component coverage: ~25 of 84 spec'd components, 40 of 215 icons,
    11 of 54 tool commands (tracked by `scripts/check-workspace-registries.mjs`,
    report-only by design).
@@ -126,8 +153,17 @@ No regression was observed: `benchmark:model-canvas` still activates the real
 `3D` tab, renders through WebGL2 and shares selection with the plan canvas in
 both directions with zero console errors, and `benchmark:workspace-layout`,
 `benchmark:wall-hud` and `benchmark:network-observation` pass. The deferred
-chunk is same-origin, so all nine observed requests remain on the app's origin
-and the privacy observation is unchanged.
+chunks are same-origin, and `benchmark:native-open` records every request an
+opened project makes - including the Worker's, which the page's own request
+events do not see - with none leaving the origin.
+
+Opening a project adds two more deferred chunks, both fetched only when a user
+actually opens one: the SQLite Worker at 239.06 kB and sqlite-wasm's
+`sqlite3.wasm` at 864.75 kB. Neither is on the start-up path - the Worker is
+constructed by the file-open dialog, and nothing loads the WebAssembly until that
+Worker starts. The start-up chunk itself grew from 613.85 kB to 650.26 kB raw
+(193.31 kB to 204.59 kB gzipped) for the open pipeline's own main-thread code:
++36.41 kB raw, +5.9%.
 
 The start-up chunk is still above Vite's 500 kB warning threshold. No budget
 gate is wired yet, so bundle size stays open work.
@@ -247,10 +283,15 @@ still open.
   OPFS while `packages/local-storage` ships a tested Dexie/IndexedDB
   implementation named by ADR-0019's own "Dexie project database" line -
   the overlap is recorded in `docs/research/incoming/README.md` and needs
-  an explicit ADR resolution before the open-project pipeline is built.
-  ADR-0028 now records a Proposed responsibility split and migration path.
-  It is not Accepted. Until an owner accepts or replaces it, no surface may
-  describe a journal write as a portable `.arq` write.
+  an explicit ADR resolution before anything writes a project.
+  ADR-0028 records a Proposed responsibility split and migration path, plus a
+  Proposed carve-out for read-only inspection, which is what the open path
+  implemented in this change relies on: it creates no persistence, so it settles
+  none of the open questions. Neither the split nor the carve-out is Accepted.
+  Until an owner accepts or replaces them, no surface may describe a journal
+  write as a portable `.arq` write, no working copy may be created, and the
+  read-only open path stays unmerged - the gate holds it at
+  `protected_l4_approval`.
 - **Repository visibility and licence wording**: GitHub reports the repository
   as public, while `LICENSE` describes all contents as proprietary and
   confidential and `LICENSE-DECISION-REQUIRED.md` records a private repository

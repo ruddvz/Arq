@@ -10,9 +10,21 @@
  * operations").
  */
 import type { ArqfsOpenResult } from './arqfs-open';
+import type { ArqfsRecoveryReport } from './arqfs-recovery-report';
+import type { ArqfsWorkingCopyState } from './arqfs-working-copy';
 
 export type ArqfsWorkerRequest =
   | { readonly id: number; readonly type: 'open' }
+  /**
+   * Open bytes the user selected, rather than this Worker's own project file.
+   *
+   * A separate request type rather than an argument to `open` because the two
+   * have opposite defaults: `open` may initialise a schema on a database this
+   * build owns, and this must never do so on a file it was handed. The Worker
+   * entry, not the shared handler, turns the bytes into a connection; the
+   * handler decides what may be done with it (see `ArqfsWorkerContext.source`).
+   */
+  | { readonly id: number; readonly type: 'openSelectedBytes'; readonly bytes: Uint8Array }
   | {
       readonly id: number;
       readonly type: 'putArchiveEntries';
@@ -20,6 +32,10 @@ export type ArqfsWorkerRequest =
     }
   | { readonly id: number; readonly type: 'getArchiveEntry'; readonly path: string }
   | { readonly id: number; readonly type: 'listArchiveEntryPaths' }
+  /** The facts arqfs-recovery-report.ts computes: open result, required entries, SQLite health, interrupted write. */
+  | { readonly id: number; readonly type: 'recoveryReport' }
+  /** Project identity and revision as the file itself records them. */
+  | { readonly id: number; readonly type: 'readWorkingCopyState' }
   | { readonly id: number; readonly type: 'close' };
 
 export type ArqfsWorkerResponsePayload =
@@ -27,6 +43,8 @@ export type ArqfsWorkerResponsePayload =
   | { readonly kind: 'putArchiveEntries' }
   | { readonly kind: 'getArchiveEntry'; readonly content: Uint8Array | null }
   | { readonly kind: 'listArchiveEntryPaths'; readonly paths: readonly string[] }
+  | { readonly kind: 'recoveryReport'; readonly report: ArqfsRecoveryReport }
+  | { readonly kind: 'readWorkingCopyState'; readonly state: ArqfsWorkingCopyState | null }
   | { readonly kind: 'close' };
 
 /**
@@ -43,6 +61,12 @@ export const ARQFS_WORKER_ERROR_CODES = {
   notWritable: 'ARQFS_WORKER_FILE_NOT_WRITABLE',
   /** The open itself was rejected; nothing may be done with this file. */
   openRejected: 'ARQFS_WORKER_OPEN_REJECTED',
+  /**
+   * The connection holds bytes the user selected. Those bytes are an immutable
+   * copy of a file this build does not own, so no write is permitted regardless
+   * of what the file's own version floors would otherwise allow.
+   */
+  selectedSourceReadOnly: 'ARQFS_WORKER_SELECTED_SOURCE_READ_ONLY',
   /** Anything unexpected. Deliberately last: a specific code is always preferred. */
   unexpected: 'ARQFS_WORKER_UNEXPECTED_ERROR',
 } as const;
