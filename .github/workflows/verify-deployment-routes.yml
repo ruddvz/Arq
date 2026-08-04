@@ -81,15 +81,29 @@ jobs:
 
           url=""
           for attempt in $(seq 1 60); do
-            # Newest first; a preview that has not reported a status yet simply
-            # has no environment_url, so this keeps looking rather than failing.
-            url="$(gh api "repos/${REPO}/deployments?sha=${HEAD_SHA}&per_page=100" \
+            # A preview that has not reported a status yet simply has no
+            # environment_url, so this keeps looking rather than failing.
+            candidates="$(gh api "repos/${REPO}/deployments?sha=${HEAD_SHA}&per_page=100" \
               --jq '.[].id' 2>/dev/null \
               | while read -r id; do
                   gh api "repos/${REPO}/deployments/${id}/statuses?per_page=100" \
                     --jq '.[] | select(.state == "success") | .environment_url // empty' 2>/dev/null
-                done | grep -m1 '^https://' || true)"
-            if [ -n "$url" ]; then break; fi
+                done | grep '^https://' | sort -u || true)"
+
+            if [ -n "$candidates" ]; then
+              echo "Candidate origins for ${HEAD_SHA}:"
+              echo "$candidates" | sed 's/^/  /'
+              # More than one Vercel project connected to this repository means
+              # more than one deployment record per commit, and only one of them
+              # serves this artifact. Picking arbitrarily would check a different
+              # product and report the answer as though it were about this one.
+              url="$(echo "$candidates" | grep -m1 'arq-website' || true)"
+              if [ -z "$url" ]; then
+                url="$(echo "$candidates" | head -n1)"
+                echo "::warning::No arq-website origin among candidates; falling back to ${url}"
+              fi
+              break
+            fi
             echo "  no successful preview deployment for ${HEAD_SHA} yet (attempt ${attempt}/60)"
             sleep 15
           done
