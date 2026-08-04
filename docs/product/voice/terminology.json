@@ -3,14 +3,9 @@
   "rule": "Use product-ontology.json for semantic entities and interface snapshot/live registries for tools, panels, views and surfaces. This file contains cross-domain controlled vocabulary.",
   "terms": [
     {
-      "canonical": "Arq",
-      "definition": "Product name in running prose/UI",
-      "avoid": ["Arc", "ARQ in ordinary prose"]
-    },
-    {
       "canonical": "ARQ",
-      "definition": "Wordmark/formal all-caps identifier",
-      "avoid": []
+      "definition": "Product name in public prose, product UI, support, documentation, and the wordmark",
+      "avoid": ["Arc", "Arq in public-facing language"]
     },
     {
       "canonical": ".arq",
@@ -114,12 +109,12 @@
     },
     {
       "canonical": "import",
-      "definition": "External content entering Arq through mapping/conversion",
+      "definition": "External content entering ARQ through mapping/conversion",
       "avoid": []
     },
     {
       "canonical": "export",
-      "definition": "External representation written from Arq",
+      "definition": "External representation written from ARQ",
       "avoid": []
     },
     {

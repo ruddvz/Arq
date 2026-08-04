@@ -1,17 +1,18 @@
 # Work still required
 
-What cannot be completed honestly from inside this repository. Engineering
-state lives in `STATUS.md`; this file lists the work that needs people,
-hardware, legal advice or market evidence. Items completed since the
-original planning pack (monorepo, packages, CI, fixtures, benchmarks and a
-large share of the ordered issues) have been removed rather than left to
-misdescribe the repository as a spec-only archive.
+What is still required after reconciliation with upstream revision `7f15889`
+and the candidate changes on 2026-08-04. Engineering state lives in `STATUS.md`; this file keeps only work
+that still needs product integration, an owner decision, hardware, legal
+advice, release evidence or market evidence. Completed planning-pack items are
+removed instead of being left to misdescribe the repository as specification
+only.
 
 ## Owner and legal
 
-- Choose public or private repository visibility (repository exists).
-- Select the source licence and commercial strategy
-  (`LICENSE-DECISION-REQUIRED.md`).
+- Reconcile the public GitHub repository with `LICENSE`, which describes the
+  contents as proprietary and confidential, and with
+  `LICENSE-DECISION-REQUIRED.md`, which records a private-repository decision.
+- Confirm the commercial and source-distribution strategy with legal advice.
 - Complete trademark, domain and app-store name clearance.
 - Obtain legal review for LGPL, MPL, GPL, AGPL, datasets and model weights.
 - Obtain lawyer-approved privacy notice and product terms (the site's
@@ -34,13 +35,28 @@ misdescribe the repository as a spec-only archive.
 - Draw the remaining technical icons (40 of 215 exist).
 - Conduct an external accessibility review.
 
-## Engineering integration (tracked in backlog, needs build time not evidence)
+## Engineering integration and release evidence
 
-- Wire the open-project pipeline: file-open → arqfs OPFS worker → workspace.
-- Resolve the SQLite-WASM vs Dexie persistence overlap (see `STATUS.md`).
+- Review and accept, revise, or reject Proposed ADR-0028 for the
+  SQLite-WASM/OPFS and Dexie/IndexedDB persistence responsibility split. The
+  portable `.arq` working copy and the demo local journal must remain separate
+  until an accepted decision exists.
+- Wire the open-project pipeline: selected bytes, safe staging, copy-on-write
+  migration, OPFS worker session, semantic-model hydration, workspace state,
+  failure rollback and recovery evidence.
 - Connect import/export adapters end to end with import reports.
-- Implement `@arq/validation` and the sync transport/backend.
-- Make the lint gate real and replace the echo template workflows.
+- Build the product host and Review Centre surface for `@arq/mcp-server`, then
+  record a real Claude Code, Codex or Cursor client run. The current package is
+  library-complete but not product-reachable.
+- Implement the sync transport/backend. `apps/api` remains a stub.
+- Complete the protected wall/opening/room/dimension/sheet/vector-PDF/reopen
+  workflow and its invalid-operation, recovery and rollback paths.
+- Move Engineering OS 5.0 from shadow mode only after the missing
+  `e2e_arq_open` evidence and protected L4 approval are real.
+- Split the 1.14 MB pre-gzip `apps/web` main JavaScript chunk and add a
+  reviewed bundle budget. The current build warns but does not fail.
+- Close or rebuild open draft PR #280. Its old base, duplicate ADR-0027,
+  and conflicting D-024 assignment make it unsafe to merge as written.
 
 ## Hardware-dependent work
 
@@ -57,5 +73,6 @@ misdescribe the repository as a spec-only archive.
 - Pricing and billing.
 - Launch market.
 - Public claims and compatibility matrix sign-off before launch.
+- Name the release owner and complete rollback and post-deployment runbooks.
 
 The machine-readable register is `remaining/DECISIONS-REQUIRING-EVIDENCE.csv`.

@@ -1,6 +1,6 @@
 # Support language standard
 
-This standard is written now so a future support bot does not invent a parallel Arq vocabulary.
+This standard is written now so a future support bot does not invent a parallel ARQ vocabulary.
 
 ## Support's job
 
@@ -14,7 +14,7 @@ Support should:
 6. separate workaround from fix;
 7. distinguish current capability from roadmap;
 8. escalate security issues privately;
-9. never diagnose project design correctness beyond Arq's product boundary.
+9. never diagnose project design correctness beyond ARQ's product boundary.
 
 ## Support answer structure
 

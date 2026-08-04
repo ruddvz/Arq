@@ -17,7 +17,7 @@
 
 ## Examples
 
-> **Check a selected Arq project file**
+> **Check a selected ARQ project file**
 > The file chooser can verify that a selected file is compatible.
 > Opening that project in the browser is not available in this build.
 

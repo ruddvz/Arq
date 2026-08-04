@@ -59,7 +59,7 @@
       {
         "internal": "project-recovery-required",
         "label": "Recovery required",
-        "explain": "Arq detected a recoverable interrupted/local state that requires explicit recovery handling.",
+        "explain": "ARQ detected a recoverable interrupted/local state that requires explicit recovery handling.",
         "exposure": "product"
       },
       {
@@ -416,7 +416,7 @@
       {
         "internal": "unreadable",
         "label": "Project file cannot be opened",
-        "explain": "File cannot be read as a supported Arq project. Diagnostics should state the specific reason.",
+        "explain": "File cannot be read as a supported ARQ project. Diagnostics should state the specific reason.",
         "exposure": "product"
       },
       {
@@ -474,7 +474,7 @@
       },
       {
         "internal": "native-opening",
-        "labelTemplate": "{name} is a compatible Arq project",
+        "labelTemplate": "{name} is a compatible ARQ project",
         "explain": "Do not say opened until the live project pipeline has actually loaded it.",
         "exposure": "product"
       },

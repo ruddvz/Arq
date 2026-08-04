@@ -1,6 +1,6 @@
 # Onboarding and education language
 
-Arq onboarding teaches the product's mental model, not a marketing story.
+ARQ onboarding teaches the product's mental model, not a marketing story.
 
 ## First concepts to teach
 
@@ -25,7 +25,7 @@ Good:
 
 Bad:
 
-> Press W to start Arq.
+> Press W to start ARQ.
 
 ## Progressive disclosure
 
@@ -41,4 +41,4 @@ An empty state should explain why the surface is empty and name the next meaning
 
 ## Educational claims
 
-Do not imply that learning Arq certifies architectural competence or substitutes for required software in a course or practice.
+Do not imply that learning ARQ certifies architectural competence or substitutes for required software in a course or practice.

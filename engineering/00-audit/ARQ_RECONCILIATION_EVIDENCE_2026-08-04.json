@@ -1,0 +1,472 @@
+{
+  "schema_version": 2,
+  "recorded_at": "2026-08-04T14:20:00Z",
+  "repository": {
+    "remote": "https://github.com/ruddvz/Arq.git",
+    "visibility": "public",
+    "remote_default_branch": "claude/arq-cad-platform-research-ba8rav",
+    "remote_head": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+    "package_audited_base": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+    "package_candidate": "9a3f5d54dd2ca50851b84fbe517e0fc1ff09b72f",
+    "package_candidate_state": "local only; not found in remote history",
+    "local_revision_state": "verified in the genuine ruddvz/Arq working tree at base 7f15889ea66b672bd918a8b7ba61a904f6b4da3d on branch claude/arq-reconciliation-audit-y29e1k; the earlier sandbox run used a reconstructed worktree with synthetic ancestry and its results were re-run here",
+    "remote_writes": "none",
+    "prior_sandbox_run": {
+      "local_head": "78bc897a4518fef453ed435c6db8ef5e167adffc",
+      "state": "synthetic ancestry; superseded by the real-repository run recorded here"
+    }
+  },
+  "environment": {
+    "os": "Linux 6.18.5 x86_64",
+    "node": "v22.22.2",
+    "pnpm": "9.0.0 (install succeeded, 287 packages, frozen lockfile)",
+    "typescript": "5.9.3 (workspace)",
+    "rust": "cargo 1.94.1 present; Rust gates not executed this cycle",
+    "browser": "Chromium 141.0.7390.37 via Playwright; real HTTP navigation available"
+  },
+  "classification": {
+    "lane": "L4",
+    "confidence": "high",
+    "files": 88,
+    "unknown_files": [],
+    "impacts": [
+      "ci_control",
+      "configuration",
+      "deployment",
+      "documentation",
+      "product_truth",
+      "public_claim",
+      "security",
+      "test_integrity",
+      "ui"
+    ],
+    "required_evidence": [
+      "build",
+      "classifier_fixtures",
+      "format",
+      "language_contract",
+      "lint",
+      "marketing_build",
+      "policy_validation",
+      "protected_l4_approval",
+      "rendered_public_site",
+      "repository_binding",
+      "typecheck",
+      "unit"
+    ],
+    "artifact": "/mnt/data/arq-audit/final-classification.json"
+  },
+  "executed_checks": [
+    {
+      "name": "package-integrity",
+      "command": "unzip -t and sha256sum -c SHA256SUMS.txt",
+      "state": "passed",
+      "artifact": "/mnt/data/arq-audit/package-sha256-check.txt",
+      "archive_sha256": "61e6ed71132a229f97da9bf7d28b3d0cc25b52fa7ad0578d31efb27437941a1d"
+    },
+    {
+      "name": "zeus-task-compile",
+      "command": "node scripts/zeus.mjs compile --task \"Audit and reconcile the ARQ final repository and site package against the current repository and live website, then implement the highest-priority evidence-backed improvements without bypassing protected architecture or release gates.\"",
+      "state": "passed",
+      "artifact": "/mnt/data/arq-audit/zeus-compiled-task.txt"
+    },
+    {
+      "name": "git-diff-check",
+      "command": "git diff --check",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/git-diff-check.log"
+    },
+    {
+      "name": "zeus-validate",
+      "command": "node scripts/zeus-validate.mjs",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/zeus-validate.log"
+    },
+    {
+      "name": "engineering-policy",
+      "command": "node engineering/tools/engineering/verify-policy.mjs --root engineering",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/engineering-policy.log"
+    },
+    {
+      "name": "engineering-fixtures",
+      "command": "node engineering/tools/engineering/run-fixtures.mjs",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/engineering-fixtures.log"
+    },
+    {
+      "name": "engineering-context",
+      "command": "node engineering/tools/engineering/verify-engineering-context.mjs --root engineering --repo-root .",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/engineering-context.log"
+    },
+    {
+      "name": "engineering-workflows",
+      "command": "node engineering/tools/engineering/verify-workflow-controls.mjs --package-root engineering --repo-root .",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/engineering-workflows.log"
+    },
+    {
+      "name": "secret-test",
+      "command": "node scripts/check-secrets-test.mjs",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/secret-test.log"
+    },
+    {
+      "name": "secret-scan",
+      "command": "node scripts/check-secrets.mjs",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/secret-scan.log"
+    },
+    {
+      "name": "architecture-lint",
+      "command": "node scripts/zeus-architecture-lint.mjs",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/architecture-lint.log"
+    },
+    {
+      "name": "security-lint",
+      "command": "node scripts/zeus-security-lint.mjs",
+      "state": "passed",
+      "duration_seconds": 1,
+      "artifact": "/mnt/data/arq-audit/checks-final/security-lint.log"
+    },
+    {
+      "name": "workspace-registries",
+      "command": "node scripts/check-workspace-registries.mjs",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/workspace-registries.log"
+    },
+    {
+      "name": "editor-boundary",
+      "command": "node scripts/check-editor-dependency-boundaries.mjs",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/editor-boundary.log"
+    },
+    {
+      "name": "language-sources",
+      "command": "node scripts/verify-arq-language-source-contract.mjs --repo-root . --language-root docs/product/voice",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-sources.log"
+    },
+    {
+      "name": "language-install",
+      "command": "node scripts/verify-arq-language-installation.mjs --repo-root . --language-root docs/product/voice",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-install.log"
+    },
+    {
+      "name": "language-public",
+      "command": "node scripts/verify-arq-public-copy-inventory.mjs --repo-root . --language-root docs/product/voice",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-public.log"
+    },
+    {
+      "name": "language-routes",
+      "command": "node scripts/verify-arq-marketing-route-coverage.mjs --repo-root . --language-root docs/product/voice",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-routes.log"
+    },
+    {
+      "name": "language-context",
+      "command": "node scripts/verify-arq-language-context.mjs --language-root docs/product/voice",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-context.log"
+    },
+    {
+      "name": "language-data",
+      "command": "node scripts/validate-arq-language-data.mjs --language-root docs/product/voice",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-data.log"
+    },
+    {
+      "name": "language-editorial",
+      "command": "node scripts/arq-language-editorial-policy.mjs --language-root docs/product/voice",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-editorial.log"
+    },
+    {
+      "name": "language-state",
+      "command": "node scripts/verify-arq-state-language-coverage.mjs --language-root docs/product/voice --repo-context docs/product/voice/generated-repo-context.json",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-state.log"
+    },
+    {
+      "name": "language-adapters",
+      "command": "node scripts/verify-arq-state-adapters.mjs --language-root docs/product/voice --repo-root .",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-adapters.log"
+    },
+    {
+      "name": "language-conflicts",
+      "command": "node scripts/verify-arq-language-conflicts.mjs --language-root docs/product/voice",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-conflicts.log"
+    },
+    {
+      "name": "language-claims",
+      "command": "node scripts/verify-arq-language-claims.mjs --language-root docs/product/voice",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-claims.log"
+    },
+    {
+      "name": "language-system",
+      "command": "node scripts/verify-arq-language-system.mjs",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-system.log"
+    },
+    {
+      "name": "language-audit",
+      "command": "node scripts/arq-language-audit.mjs --ci --review-required",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-audit.log"
+    },
+    {
+      "name": "language-bundle",
+      "command": "node scripts/verify-arq-language-bundle.mjs --context docs/product/voice/language-context.json",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/language-bundle.log"
+    },
+    {
+      "name": "marketing-typecheck",
+      "command": "tsc --noEmit -p apps/marketing/tsconfig.build.json",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/marketing-typecheck.log",
+      "environment_note": "Used global TypeScript 5.8.3 and an environment-only symlink to installed @types/node. No repository dependency was added."
+    },
+    {
+      "name": "marketing-compile",
+      "command": "tsc -p apps/marketing/tsconfig.build.json",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/marketing-compile.log",
+      "environment_note": "Used global TypeScript 5.8.3 and an environment-only symlink to installed @types/node. No repository dependency was added."
+    },
+    {
+      "name": "marketing-build-final",
+      "command": "SITE_BASE_PATH=/Arq SITE_ORIGIN=https://ruddvz.github.io SITE_REVISION=LOCAL-REVIEW-CANDIDATE node apps/marketing/dist-build/build.js",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/marketing-build-final.log",
+      "limitation": "Static visual build reused the verified package candidate SBOM because pnpm licence generation was unavailable. No dependency or lockfile changed in this patch."
+    },
+    {
+      "name": "rendered-site-final",
+      "command": "node scripts/verify-arq-rendered-public-site.mjs --repo-root . --language-root docs/product/voice",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/rendered-site-final.log"
+    },
+    {
+      "name": "node-syntax-security",
+      "command": "node --check scripts/zeus-security-lint.mjs",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/node-syntax-security.log"
+    },
+    {
+      "name": "inline-site-audit",
+      "command": "python /mnt/data/arq-audit/audit_current_site_inline.py",
+      "state": "passed",
+      "duration_seconds": 16,
+      "artifact": "/mnt/data/arq-audit/checks-final/inline-site-audit.log",
+      "checks": 54,
+      "viewports": ["1440x900", "834x1194", "393x852"],
+      "limitation": "Assets were inlined because local HTTP navigation is blocked. This proves rendered structure, focus, reduced-motion and overflow states, not ordinary HTTP loading or deployed-site behaviour."
+    },
+    {
+      "name": "public-brand-casing",
+      "command": "PASS standalone public product name uses ARQ. Named identifiers such as ArqScript and case-sensitive /Arq paths are outside this check.",
+      "state": "passed",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/public-brand-casing.log"
+    },
+    {
+      "name": "repository-bindings",
+      "command": "node engineering/tools/engineering/verify-repo-bindings.mjs --repo-root . --package-root engineering --strict",
+      "state": "failed-environment",
+      "duration_seconds": 0,
+      "artifact": "/mnt/data/arq-audit/checks-final/repository-bindings.log",
+      "exit_code": 1,
+      "limitation": "The worktree has synthetic Git ancestry because git clone was blocked. The binding verifier correctly refused to treat it as the audited remote history."
+    },
+    {
+      "name": "install",
+      "command": "pnpm install --frozen-lockfile",
+      "state": "passed",
+      "detail": "287 packages, lockfile unchanged",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    },
+    {
+      "name": "format",
+      "command": "pnpm format:check",
+      "state": "passed",
+      "detail": "whole repository, uncached",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    },
+    {
+      "name": "lint",
+      "command": "pnpm lint",
+      "state": "passed",
+      "detail": "repository ESLint gate, uncached",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    },
+    {
+      "name": "typecheck",
+      "command": "pnpm typecheck",
+      "state": "passed",
+      "detail": "37/37 workspace packages plus contracts, uncached",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    },
+    {
+      "name": "unit",
+      "command": "pnpm test",
+      "state": "passed",
+      "detail": "259 files, 2380 tests, 0 failed, uncached",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    },
+    {
+      "name": "security_lint",
+      "command": "node scripts/zeus-security-lint.mjs",
+      "state": "passed",
+      "detail": "narrowed to per-line scope with site-local allow markers; negative control confirms a new test-file violation is still caught",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    },
+    {
+      "name": "architecture_lint",
+      "command": "node scripts/zeus-architecture-lint.mjs",
+      "state": "passed",
+      "detail": "",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    },
+    {
+      "name": "repository_bindings",
+      "command": "pnpm engineering:bindings",
+      "state": "passed",
+      "detail": "status ready, zero errors and zero warnings in the real tree; this was the sandbox run's single recorded failure",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    },
+    {
+      "name": "marketing_build",
+      "command": "SITE_BASE_PATH=/Arq SITE_ORIGIN=https://ruddvz.github.io SITE_REVISION=<head> pnpm --filter @arq/marketing build",
+      "state": "passed",
+      "detail": "18 routes rendered with the real deployment environment",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    },
+    {
+      "name": "rendered_public_site",
+      "command": "pnpm arq:language:site:build:verify",
+      "state": "passed",
+      "detail": "against the deployment-environment build",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    },
+    {
+      "name": "rendered_site_http_audit",
+      "command": "Playwright Chromium over a local HTTP server serving dist under /Arq",
+      "state": "passed",
+      "detail": "54 route/viewport checks at 1440x900, 834x1112 and 390x844 with reducedMotion=reduce; 0 findings; no failed requests, so assets resolve over real HTTP rather than being inlined",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    },
+    {
+      "name": "public_claim_surfaces",
+      "command": "grep over rendered HTML",
+      "state": "passed",
+      "detail": "canonical 18/18, 404 noindex+nofollow, /Arq base path applied, footer revision bound to SITE_REVISION, no standalone title-case Arq in visible text",
+      "revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus working-tree changes"
+    }
+  ],
+  "summary": {
+    "lane": "L4",
+    "checks_passed_this_cycle": 47,
+    "checks_failed_unresolved": 0,
+    "result": "All executed gates pass at the real repository base 7f15889ea66b672bd918a8b7ba61a904f6b4da3d plus the working-tree changes. No commit has been created and nothing has been pushed, merged or deployed."
+  },
+  "performance": {
+    "historical_editor_bundle_at_package_candidate": {
+      "raw_bytes": 1136330,
+      "gzip_bytes": 325720,
+      "state": "revision-locked package measurement; not remeasured in this environment"
+    },
+    "local_marketing_build": {
+      "routes": 18,
+      "files": 37,
+      "total_bytes": 392359,
+      "html_bytes": 184862,
+      "css_bytes": 14904,
+      "state": "measured from local reviewed static build; not a network-load benchmark"
+    }
+  },
+  "initial_failures_fixed_or_bounded": [
+    {
+      "finding": "git diff whitespace check failed on a trailing Markdown hard-break space introduced during brand reconciliation",
+      "action": "removed the trailing whitespace and refreshed generated contexts",
+      "final_state": "passed"
+    },
+    {
+      "finding": "first local marketing compile lacked installed Node type declarations and the first static build could not generate dependency-sbom.json because pnpm was unavailable",
+      "action": "ran the affected package typecheck and compile with environment-only installed Node types; reconstructed the unchanged verified candidate SBOM for visual build only",
+      "final_state": "marketing typecheck, compile, static build and rendered-site verifier passed; full dependency and monorepo gates remain unavailable"
+    },
+    {
+      "finding": "pnpm format:check failed on the three files this change adds (ADR-0028, the reconciliation audit and the matrix JSON). The sandbox could not run repository Prettier, so this was not detectable there.",
+      "action": "formatted the three files with repository Prettier 3.9.6 and regenerated the dependent contexts",
+      "final_state": "passed"
+    },
+    {
+      "finding": "engineering:context:verify reported the generated Engineering OS context stale in the real tree, because the ADR-0028 hash changed when the file was formatted.",
+      "action": "regenerated through engineering:context:build rather than editing the generated file",
+      "final_state": "passed"
+    },
+    {
+      "finding": "arq:language:context:verify reported the generated language context stale for the docs/adr source set, for the same reason.",
+      "action": "ran arq:language:refresh and arq:language:bundle; the refresh log records the accepted-adrs set",
+      "final_state": "passed"
+    },
+    {
+      "finding": "The security-lint change exempted every *.test.* and *.spec.* file from both SQLite rules and skipped the extension rule on any line containing negation words. That is broader than the \"narrow, reviewed allowance\" the audit described, and would have let a future test enable PRAGMA trusted_schema undetected.",
+      "action": "removed both blanket heuristics, kept per-line scoping, and placed explicit site-local \"security-lint: allow\" markers at the four legitimate sites in packages/arqfs. A negative control confirms new violations in a test file are caught again.",
+      "final_state": "passed"
+    },
+    {
+      "finding": "STATUS.md asserted 2,362 passing tests and twelve headless-Chromium capability checks. Measured at this revision: 2,380 tests across 259 files, and CI wires thirteen of the fourteen capability checks.",
+      "action": "corrected STATUS.md to the measured values, named the uncovered check, and stated that Rust and capability checks were not run on this branch",
+      "final_state": "passed"
+    }
+  ],
+  "unavailable_or_not_performed": [
+    "Rust formatting, tests, Clippy and WASM parity (toolchain present, not exercised this cycle)",
+    "headless-Chromium capability checks and benchmarks (not run on this branch)",
+    "editor production build and bundle re-measurement",
+    "deployed-site verification (arq:language:site:live:verify) - requires a deployment",
+    "protected L4 approval",
+    "browser Worker and OPFS end-to-end .arq open proof (blocked on ADR-0028 acceptance)",
+    "physical iPad, Pencil, RoomPlan, LiDAR, Safari and Firefox evidence",
+    "push, pull request, merge, deployment and post-deploy verification"
+  ]
+}

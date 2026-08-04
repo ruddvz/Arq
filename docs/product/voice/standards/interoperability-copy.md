@@ -23,12 +23,12 @@ A parser existing in a package is not equivalent to product support.
 Use only when the underlying adapter/report can justify the category:
 
 - **Preserved**: meaning and value retained.
-- **Converted**: mapped into a different Arq representation.
+- **Converted**: mapped into a different ARQ representation.
 - **Approximated**: representation changed with measurable or known loss.
 - **Flattened**: semantic or structured data reduced to a simpler representation.
 - **Omitted**: intentionally not included.
 - **Unsupported**: no supported mapping.
-- **Opaque**: retained without Arq interpreting the content.
+- **Opaque**: retained without ARQ interpreting the content.
 - **Failed**: processing did not complete for the item.
 
 Do not use **lossless** as a marketing shortcut.

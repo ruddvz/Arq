@@ -16,10 +16,12 @@ export interface PageMeta {
   readonly route: string;
   /** Short title used in nav and the <title> suffix position. */
   readonly title: string;
-  /** Full <title> text; defaults to `${title} - Arq` when omitted. */
+  /** Full <title> text; defaults to `${title} - ARQ` when omitted. */
   readonly documentTitle?: string;
   /** Meta description - required; the build fails without one. */
   readonly description: string;
+  /** Exclude utility and error routes from search indexing. */
+  readonly noIndex?: boolean;
 }
 
 export interface Page {

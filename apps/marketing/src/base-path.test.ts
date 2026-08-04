@@ -76,7 +76,7 @@ describe('stylesheet base-path safety', () => {
 });
 
 describe('absolutiseOpenGraph', () => {
-  it('makes og:image absolute and inserts og:url', () => {
+  it('makes og:image absolute and inserts canonical and og:url', () => {
     const html =
       '<meta property="og:title" content="T" />\n        <meta property="og:image" content="/Arq/assets/og.png" />';
     const out = absolutiseOpenGraph(html, 'https://ruddvz.github.io', '/Arq/product/');
@@ -84,5 +84,6 @@ describe('absolutiseOpenGraph', () => {
     expect(out).toContain(
       '<meta property="og:url" content="https://ruddvz.github.io/Arq/product/" />',
     );
+    expect(out).toContain('<link rel="canonical" href="https://ruddvz.github.io/Arq/product/" />');
   });
 });

@@ -69,10 +69,12 @@ describe('applyDefensiveOpenPolicy', () => {
     expect(() => driver.exec('CREATE TABLE should_be_created (id INTEGER)')).not.toThrow();
   });
 
+  // security-lint: allow - this test proves the call is rejected.
   it("SQLite's own default build already rejects load_extension() as a SQL function - verified directly, not assumed", () => {
     driver = createNodeArqfsDriver();
     createArqfsSchemaV1(driver);
 
+    // security-lint: allow - asserts the rejection, does not enable it.
     expect(() => driver.query("SELECT load_extension('anything')")).toThrow(/not authorized/i);
   });
 });

@@ -1,6 +1,6 @@
 # State language standard
 
-Arq has many explicit state machines. User copy must preserve their distinctions.
+ARQ has many explicit state machines. User copy must preserve their distinctions.
 
 ## State copy has three layers
 

@@ -19,12 +19,12 @@ export const ipadPage: Page = {
     route: '/ipad',
     title: 'iPad',
     description:
-      'Arq on iPad: the browser build has a touch layout checked across the repository’s viewport set. Native Files, Pencil and RoomPlan integration is Release 4 scope.',
+      'ARQ on iPad: the browser build has a touch layout checked across the repository’s viewport set. Native Files, Pencil and RoomPlan integration is Release 4 scope.',
   },
   render: () => html`
     ${hero({
       heading: 'The site desk is a desk too.',
-      lede: 'Arq treats the iPad as a working surface rather than a viewer. The browser build already lays itself out for touch. The native features that need Apple’s APIs come later, in the open.',
+      lede: 'ARQ treats the iPad as a working surface rather than a viewer. The browser build already lays itself out for touch. The native features that need Apple’s APIs come later, in the open.',
     })}
     ${notes([
       {
@@ -67,10 +67,10 @@ export const ipadPage: Page = {
         `,
       },
       {
-        title: 'What Arq will not claim about capture',
+        title: 'What ARQ will not claim about capture',
         body: html`
           <p>
-            Consumer LiDAR is useful and imprecise at the same time. Arq will never describe a phone
+            Consumer LiDAR is useful and imprecise at the same time. ARQ will never describe a phone
             or tablet scan as measured-survey accuracy, and imported capture will carry its
             provenance so a dimension from a scan is never mistaken for a dimension from a tape.
           </p>

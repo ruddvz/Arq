@@ -1,0 +1,695 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-04T00:00:00-04:00",
+  "repository": "ruddvz/Arq",
+  "remote_default_branch": "claude/arq-cad-platform-research-ba8rav",
+  "remote_head": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+  "package_audited_base": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+  "package_candidate": "9a3f5d54dd2ca50851b84fbe517e0fc1ff09b72f",
+  "package_candidate_remote_state": "not found in current remote history; package records local only",
+  "local_method": "Package SOURCE reconstructed to candidate, package patch reverse-applied to reproduce remote base, then reviewed patch reapplied. Local Git history is synthetic and is not release evidence.",
+  "entries": [
+    {
+      "id": "REC-001",
+      "package_change_or_finding": "Top-level STATUS truth reconciliation",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": ["PATCH/ARQ_TRUTH_RECONCILIATION.patch", "02_IMPLEMENTED_CHANGES.md"],
+      "current_paths": ["STATUS.md"],
+      "current_repository_evidence": "Current default branch remains 7f15889. STATUS contained stale counts, dates, exposure wording, and open-decision text. Current code and benchmarks prove a plan demo, local IndexedDB recovery, a 3D viewing surface, library-only arqfs and MCP, and no product-open pipeline.",
+      "live_site_evidence": "Not directly applicable.",
+      "state_before": "Implemented but stale documentation",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "Manual status prose was not kept aligned with revision-linked evidence.",
+      "blast_radius": "Release truth, public claims, engineering prioritisation",
+      "reversibility": "High",
+      "action": "Apply current evidence-backed status corrections and keep missing workflow proof visible.",
+      "required_evidence": [
+        "language source verification",
+        "claims verification",
+        "repository revision check"
+      ],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-002",
+      "package_change_or_finding": "Remaining-work and decision-register cleanup",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": [
+        "remaining/REMAINING-WORK.md",
+        "remaining/DECISIONS-REQUIRING-EVIDENCE.csv"
+      ],
+      "current_paths": [
+        "remaining/REMAINING-WORK.md",
+        "remaining/DECISIONS-REQUIRING-EVIDENCE.csv"
+      ],
+      "current_repository_evidence": "Completed planning items remained mixed with unresolved architecture, hardware, legal, market, integration, and release work.",
+      "live_site_evidence": "Not directly applicable.",
+      "state_before": "Present but stale",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "Backlog volume and generated planning surfaces obscured current blockers.",
+      "blast_radius": "Roadmap, owner decisions, release sequence",
+      "reversibility": "High",
+      "action": "Keep only open work, register ADR-0028 owner decision, and add stale PR #280 as a blocker.",
+      "required_evidence": ["source registry", "current ADR statuses", "current code reachability"],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-003",
+      "package_change_or_finding": "Persistence tiers treated as unresolved",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": ["01_EXECUTIVE_AUDIT.md", "05_OPEN_BLOCKERS_AND_DECISIONS.md"],
+      "current_paths": [
+        "docs/adr/0006-snapshots-and-local-journal.md",
+        "docs/adr/0019-arq-native-sqlite-file-format.md",
+        "docs/adr/0022-canonical-derived-data-separation.md",
+        "docs/adr/0024-sqlite-wasm-worker-and-opfs.md",
+        "packages/arqfs",
+        "packages/local-storage"
+      ],
+      "current_repository_evidence": "ADR-0019 and ADR-0022 are Proposed; ADR-0024 is approved for prototype. Both SQLite/OPFS and IndexedDB journal code are real. No accepted ADR assigns publication, working-copy, journal, recovery, and migration ownership.",
+      "live_site_evidence": "Public copy must not equate journal durability with portable project save.",
+      "state_before": "Blocked owner decision",
+      "applicability": "Applicable",
+      "severity": "Critical",
+      "root_cause": "Implementation foundations advanced before a complete accepted responsibility contract.",
+      "blast_radius": "Project data, recovery, migration, refresh, publication, sync",
+      "reversibility": "Low after product activation",
+      "action": "Add Proposed ADR-0028 with options, recommendation, ownership map, state machine, risks, evidence, and rollback. Do not implement dependent lifecycle until accepted.",
+      "required_evidence": [
+        "owner acceptance",
+        "real browser Worker and OPFS",
+        "migration and recovery tests",
+        "protected L4 approval"
+      ],
+      "final_disposition": "Applicable but blocked"
+    },
+    {
+      "id": "REC-004",
+      "package_change_or_finding": "Open draft PR #280 claims persistence is resolved and introduces ADR-0027",
+      "package_base_revision": "Older than current default branch",
+      "package_paths": ["01_EXECUTIVE_AUDIT.md", "05_OPEN_BLOCKERS_AND_DECISIONS.md"],
+      "current_paths": [
+        "docs/adr/0027-mcp-boundary-and-domain-profiles.md",
+        "docs/product/DECISION-REGISTER.csv"
+      ],
+      "current_repository_evidence": "GitHub reports PR #280 open, draft, unmerged, based on 9eab79a, with head 0c04584. It adds a different ADR-0027 and D-024 and marks the storage decision settled. Current default branch already uses ADR-0027 for MCP and still records persistence as open.",
+      "live_site_evidence": "Not directly applicable.",
+      "state_before": "Stale conflicting pull request",
+      "applicability": "Current finding",
+      "severity": "High",
+      "root_cause": "Long-lived branch drift and identifiers allocated before newer default-branch decisions landed.",
+      "blast_radius": "Architecture authority, decision registry, merge safety",
+      "reversibility": "High before merge",
+      "action": "Close PR #280 or rebuild it from current default branch with unique identifiers and current evidence. Do not merge as written.",
+      "required_evidence": [
+        "current-base diff",
+        "owner decision",
+        "current classifier and L4 checks"
+      ],
+      "final_disposition": "Rejected as stale"
+    },
+    {
+      "id": "REC-005",
+      "package_change_or_finding": "Canonical links on all generated marketing routes",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": [
+        "apps/marketing/src/layout.ts",
+        "apps/marketing/src/site.ts",
+        "apps/marketing/src/base-path.test.ts"
+      ],
+      "current_paths": [
+        "apps/marketing/src/layout.ts",
+        "apps/marketing/src/site.ts",
+        "apps/marketing/src/base-path.test.ts"
+      ],
+      "current_repository_evidence": "Current route generator had no canonical element and no regression test for canonical route output.",
+      "live_site_evidence": "Package audit observed all 17 linked deployed routes without canonical links on 2026-08-04.",
+      "state_before": "Defect present",
+      "applicability": "Applicable",
+      "severity": "Medium",
+      "root_cause": "Base-path routing was implemented without a canonical URL contract.",
+      "blast_radius": "Search indexing and route attribution",
+      "reversibility": "High",
+      "action": "Generate one base-path-aware canonical URL per route and test it.",
+      "required_evidence": [
+        "marketing build",
+        "route test",
+        "rendered route audit",
+        "post-deploy audit"
+      ],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-006",
+      "package_change_or_finding": "404 indexing directive",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": [
+        "apps/marketing/src/content/not-found.ts",
+        "apps/marketing/src/pages.test.ts"
+      ],
+      "current_paths": [
+        "apps/marketing/src/content/not-found.ts",
+        "apps/marketing/src/pages.test.ts"
+      ],
+      "current_repository_evidence": "The generated 404 page did not emit a no-index directive.",
+      "live_site_evidence": "The deployed 404 lacked `noindex, nofollow` in package observation.",
+      "state_before": "Defect present",
+      "applicability": "Applicable",
+      "severity": "Medium",
+      "root_cause": "Not-found content used the ordinary page metadata path.",
+      "blast_radius": "Search quality and stale error-page indexing",
+      "reversibility": "High",
+      "action": "Add explicit 404 robots metadata and test generated output.",
+      "required_evidence": ["marketing build", "rendered 404", "live post-deploy check"],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-007",
+      "package_change_or_finding": "Hero heading visible before optional entrance animation",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": ["apps/marketing/src/site.css"],
+      "current_paths": ["apps/marketing/src/site.css"],
+      "current_repository_evidence": "Hero headings began at opacity zero and depended on animation execution for visibility.",
+      "live_site_evidence": "Package observation found every primary heading initially hidden.",
+      "state_before": "Accessibility and resilience defect present",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "Decorative entrance animation controlled the content's base visible state.",
+      "blast_radius": "All public routes, reduced motion, script or style failure, first paint",
+      "reversibility": "High",
+      "action": "Make the content visible by default and keep motion optional.",
+      "required_evidence": ["rendered site", "reduced-motion check", "one visible H1 per route"],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-008",
+      "package_change_or_finding": "Exact deployed revision attribution",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": [
+        ".github/workflows/deploy-pages.yml",
+        "apps/marketing/src/build.ts",
+        "apps/marketing/src/layout.ts"
+      ],
+      "current_paths": [
+        ".github/workflows/deploy-pages.yml",
+        "apps/marketing/src/build.ts",
+        "apps/marketing/src/layout.ts"
+      ],
+      "current_repository_evidence": "Footer revision used a stale editorial label rather than the exact source SHA. The workflow did not pass the GitHub SHA to the build.",
+      "live_site_evidence": "Deployed footer reported `REV A · 2026-07`.",
+      "state_before": "Truth attribution defect present",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "Revision display was editorial content rather than a build input.",
+      "blast_radius": "Deployment provenance, support, public truth",
+      "reversibility": "High",
+      "action": "Pass `github.sha` as `SITE_REVISION`, render the short exact revision, and preserve local fallback wording.",
+      "required_evidence": [
+        "workflow controls",
+        "marketing build",
+        "deployed-site proof at exact SHA"
+      ],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-009",
+      "package_change_or_finding": "Public AI and MCP reachability wording",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": [
+        "apps/marketing/src/content/ai.ts",
+        "docs/product/voice/claim-registry.json",
+        "docs/product/voice/claim-binding-registry.json"
+      ],
+      "current_paths": [
+        "packages/mcp-server",
+        "apps/web",
+        "apps/marketing/src/content/ai.ts",
+        "docs/product/voice/claim-registry.json"
+      ],
+      "current_repository_evidence": "The 24-tool proposal-only MCP boundary is tested as a library. No product host, Review Centre, or real Claude Code, Codex, or Cursor client run exists.",
+      "live_site_evidence": "Public wording could be read as an available product workflow.",
+      "state_before": "Library capability blurred with product availability",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "A strong package implementation was promoted into broader product narrative before reachability evidence.",
+      "blast_radius": "AI trust, security expectations, product availability",
+      "reversibility": "High",
+      "action": "Register `mcp-proposal-boundary` as LIBRARY_ONLY and use explicit unavailable-product wording.",
+      "required_evidence": [
+        "claim binding",
+        "public copy inventory",
+        "language claims check",
+        "future real client evidence"
+      ],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-010",
+      "package_change_or_finding": "Security and privacy public wording",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": [
+        "apps/marketing/src/content/security.ts",
+        "apps/marketing/src/content/privacy.ts"
+      ],
+      "current_paths": [
+        "apps/marketing/src/content/security.ts",
+        "apps/marketing/src/content/privacy.ts",
+        "docs/product/voice/conflict-registry.json"
+      ],
+      "current_repository_evidence": "Same-origin network observation passed for the current exercised bundle, but an approved privacy statement and hosted-feature architecture do not exist. `apps/api` is a stub.",
+      "live_site_evidence": "Absolute or future-facing security wording exceeded current product evidence.",
+      "state_before": "Overbroad wording",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "Current local behaviour and intended hosted controls were described without state separation.",
+      "blast_radius": "Privacy, security, legal, user trust",
+      "reversibility": "High",
+      "action": "State current observed behaviour precisely, keep absolute transport claims blocked, and label hosted controls as intended or unavailable.",
+      "required_evidence": [
+        "network observation",
+        "claims check",
+        "privacy review",
+        "future hosted-path tests"
+      ],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-011",
+      "package_change_or_finding": "Home and changelog truth correction",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": [
+        "apps/marketing/src/content/home.ts",
+        "apps/marketing/src/content/changelog.ts"
+      ],
+      "current_paths": [
+        "apps/marketing/src/content/home.ts",
+        "apps/marketing/src/content/changelog.ts"
+      ],
+      "current_repository_evidence": "Current product proves wall drawing, local journal recovery, and 3D viewing, but not a complete portable project lifecycle or released 3D authoring.",
+      "live_site_evidence": "Stale date and capability framing were visible publicly.",
+      "state_before": "Public truth drift",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "Marketing copy outlived the evidence revision that originally informed it.",
+      "blast_radius": "Product expectations and trust",
+      "reversibility": "High",
+      "action": "Use current implementation states and exact availability boundaries.",
+      "required_evidence": ["claim registry", "current benchmarks", "rendered site"],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-012",
+      "package_change_or_finding": "Language context and public-copy inventory refresh",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": [
+        "docs/product/voice/generated-repo-context.json",
+        "docs/product/voice/language-context.json",
+        "docs/product/voice/context/REFRESH-LOG.json",
+        "docs/product/voice/public-copy-inventory.json"
+      ],
+      "current_paths": ["docs/product/voice"],
+      "current_repository_evidence": "Governed sources changed and the context contract requires regeneration and a refresh log in the same change.",
+      "live_site_evidence": "Supports the public-copy corrections but does not itself prove deployment.",
+      "state_before": "Generated context would become stale without refresh",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "Generated truth bundles are revision-bound by design.",
+      "blast_radius": "Claims, language checks, source authority",
+      "reversibility": "High",
+      "action": "Regenerate from authoritative sources and verify hashes, conflicts, claims, routes, adapters, and editorial policy.",
+      "required_evidence": [
+        "language refresh",
+        "source contract",
+        "bundle verification",
+        "hard audit"
+      ],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-013",
+      "package_change_or_finding": "Marketing layout classifier coverage",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": [
+        "engineering/ops/change-map.v5.json",
+        "engineering/fixtures/v5/classifier/22-marketing-layout.json"
+      ],
+      "current_paths": [
+        "engineering/ops/change-map.v5.json",
+        "engineering/fixtures/v5/classifier/22-marketing-layout.json"
+      ],
+      "current_repository_evidence": "A change to the shared marketing layout could avoid selecting the rendered marketing evidence it can invalidate.",
+      "live_site_evidence": "Layout changes affect every route.",
+      "state_before": "Engineering gate false-negative risk",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "Change-map coverage focused on route content and omitted the shared layout file.",
+      "blast_radius": "All public routes and deployment evidence",
+      "reversibility": "High",
+      "action": "Map the shared layout path and add a classifier fixture that proves selected evidence.",
+      "required_evidence": [
+        "classifier fixtures",
+        "policy validation",
+        "engineering context refresh"
+      ],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-014",
+      "package_change_or_finding": "Security lint scoped SQL matching and explicit clean fixture allowance",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": [
+        "scripts/zeus-security-lint.mjs",
+        "quality/fixtures/security-clean/open-project.sql"
+      ],
+      "current_paths": [
+        "scripts/zeus-security-lint.mjs",
+        "quality/fixtures/security-clean/open-project.sql"
+      ],
+      "current_repository_evidence": "The scanner matched broad file content, so denial or fixture text could trigger findings. Test-only SQL needs a narrow documented allowance, not a broad exclusion.",
+      "live_site_evidence": "Not directly applicable.",
+      "state_before": "False-positive and future broad-exclusion risk",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "Pattern matching did not respect statement scope and fixture intent was implicit.",
+      "blast_radius": "Security gate trust and developer pressure to weaken checks",
+      "reversibility": "High",
+      "action": "Match SQL by reviewed statement scope and add a narrow fixture allow annotation that remains scanned.",
+      "required_evidence": ["security lint", "clean fixture", "malicious fixture", "secret scan"],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-015",
+      "package_change_or_finding": "Direct deployment of package `DEPLOYMENT_READY_SITE`",
+      "package_base_revision": "Candidate 9a3f5d5 artifact",
+      "package_paths": ["DEPLOYMENT_READY_SITE"],
+      "current_paths": [".github/workflows/deploy-pages.yml", "apps/marketing"],
+      "current_repository_evidence": "The protected workflow builds the site from reviewed source and writes revision-bound proof. A detached directory cannot establish current source, approver, or rollback target.",
+      "live_site_evidence": "The live site remains tied to current deployed workflow state, not a local package directory.",
+      "state_before": "Package suggestion available",
+      "applicability": "Not applicable as deployment method",
+      "severity": "Critical",
+      "root_cause": "A convenient static artifact can be mistaken for release authority.",
+      "blast_radius": "Production provenance, rollback, public claims",
+      "reversibility": "Medium after manual upload",
+      "action": "Do not deploy the directory. Build and deploy from the reviewed repository revision through the protected Pages workflow only after authorisation.",
+      "required_evidence": [
+        "protected approval",
+        "workflow run",
+        "deployed SHA",
+        "post-deploy audit"
+      ],
+      "final_disposition": "Rejected as architecture conflict"
+    },
+    {
+      "id": "REC-016",
+      "package_change_or_finding": "Blind application of the package patch or recursive SOURCE copy",
+      "package_base_revision": "7f15889 and candidate 9a3f5d5",
+      "package_paths": ["PATCH/ARQ_TRUTH_RECONCILIATION.patch", "SOURCE"],
+      "current_paths": ["entire repository"],
+      "current_repository_evidence": "Current remote default remains the package base, so the narrow patch is applicable after path-level review. Recursive SOURCE replacement would erase any later or local work and bypass current source authority.",
+      "live_site_evidence": "Not directly applicable.",
+      "state_before": "Potential unsafe operating method",
+      "applicability": "Patch applicable only after comparison; SOURCE copy rejected",
+      "severity": "Critical",
+      "root_cause": "Snapshot packages combine evidence, source, and deployment artifacts that have different authority.",
+      "blast_radius": "Entire repository and user work",
+      "reversibility": "Low if uncommitted work is overwritten",
+      "action": "Review and apply the narrow diff only. Preserve local work. Never recursively replace the repository.",
+      "required_evidence": [
+        "working tree status",
+        "path-level diff",
+        "current branch and merge base"
+      ],
+      "final_disposition": "Applicable and implemented in this cycle"
+    },
+    {
+      "id": "REC-017",
+      "package_change_or_finding": "Portable `.arq` open lifecycle",
+      "package_base_revision": "Candidate and package roadmap",
+      "package_paths": ["04_COMPLETION_ROADMAP.md", "05_OPEN_BLOCKERS_AND_DECISIONS.md"],
+      "current_paths": [
+        "apps/web",
+        "packages/arqfs",
+        "workers/arqfs-worker",
+        "packages/local-storage"
+      ],
+      "current_repository_evidence": "File UI stops after preflight. No product service stages bytes, opens the OPFS Worker, migrates, hydrates semantic state, activates the workspace, closes, reopens, or recovers end to end.",
+      "live_site_evidence": "Public copy must not claim general project open or portable save.",
+      "state_before": "Not implemented",
+      "applicability": "Applicable after ADR acceptance",
+      "severity": "Critical",
+      "root_cause": "Foundational packages were built before the owner-approved responsibility split and product bridge.",
+      "blast_radius": "Project data and protected release slice",
+      "reversibility": "Low after user projects depend on it",
+      "action": "Do not implement across unresolved architecture. Use ADR-0028 and protected sequence after acceptance.",
+      "required_evidence": [
+        "accepted ADR",
+        "real Worker and OPFS browser test",
+        "negative scenarios",
+        "reopen and recovery"
+      ],
+      "final_disposition": "Applicable but blocked"
+    },
+    {
+      "id": "REC-018",
+      "package_change_or_finding": "Protected wall-to-PDF-to-reopen workflow",
+      "package_base_revision": "Package roadmap",
+      "package_paths": ["04_COMPLETION_ROADMAP.md", "05_OPEN_BLOCKERS_AND_DECISIONS.md"],
+      "current_paths": [
+        "apps/web",
+        "packages/bim-core",
+        "packages/operations",
+        "packages/model-renderer",
+        "packages/pdf-export"
+      ],
+      "current_repository_evidence": "Wall drawing and 3D viewing are user-reachable, but hosted openings, room derivation, semantic dimensions, sheets, scaled vector PDF, close, reopen, recovery, and invalid-operation atomicity are not proven as one workflow.",
+      "live_site_evidence": "Website must remain pre-release and avoid complete-workflow claims.",
+      "state_before": "Partially implemented components, no complete acceptance proof",
+      "applicability": "Applicable after project lifecycle",
+      "severity": "Critical",
+      "root_cause": "Product integration lags package and specification breadth.",
+      "blast_radius": "Release readiness and project identity",
+      "reversibility": "Medium",
+      "action": "Keep blocked behind Priority 1 and complete it as one identity-preserving vertical slice.",
+      "required_evidence": [
+        "cross-surface stable identity",
+        "vector PDF structure",
+        "reopen",
+        "recovery",
+        "invalid-operation proof"
+      ],
+      "final_disposition": "Applicable but blocked"
+    },
+    {
+      "id": "REC-019",
+      "package_change_or_finding": "Import, export, MCP host, sync, and collaboration expansion",
+      "package_base_revision": "Package audit and roadmap",
+      "package_paths": ["01_EXECUTIVE_AUDIT.md", "04_COMPLETION_ROADMAP.md"],
+      "current_paths": [
+        "packages/import-export-worker",
+        "packages/mcp-server",
+        "apps/api",
+        "packages/collaboration"
+      ],
+      "current_repository_evidence": "These are tested libraries or stubs without complete user-reachable product hosts and failure reporting.",
+      "live_site_evidence": "Availability claims remain restricted.",
+      "state_before": "Library-only or absent product workflow",
+      "applicability": "Applicable later",
+      "severity": "High",
+      "root_cause": "Breadth advanced ahead of the protected project lifecycle.",
+      "blast_radius": "Product scope, data fidelity, security, support",
+      "reversibility": "Medium",
+      "action": "Do not expand before local project integrity and the protected workflow pass. Preserve existing library work.",
+      "required_evidence": [
+        "reachable UI",
+        "fidelity reports",
+        "real client runs",
+        "auth and conflict tests"
+      ],
+      "final_disposition": "Applicable but blocked"
+    },
+    {
+      "id": "REC-020",
+      "package_change_or_finding": "Web application bundle size",
+      "package_base_revision": "Candidate 9a3f5d5 build evidence",
+      "package_paths": ["03_VERIFICATION_EVIDENCE.md"],
+      "current_paths": [
+        "apps/web",
+        "packages/model-renderer",
+        "packages/import-export-worker",
+        "packages/mcp-server"
+      ],
+      "current_repository_evidence": "Candidate build measured a 1,136.33 kB main JavaScript chunk before gzip and 325.72 kB after gzip. Current remote HEAD is the package base and the reconciliation patch does not optimise the app bundle.",
+      "live_site_evidence": "Applies to the editor app, not the static marketing site.",
+      "state_before": "Material build warning",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "Expensive editor, renderer, and optional capability code remains on a broad initial loading path.",
+      "blast_radius": "Startup, memory, minimum devices",
+      "reversibility": "High",
+      "action": "Measure current composition in a protected toolchain, add safe feature-level dynamic imports, and enforce an owner-approved budget. Not implemented in this cycle because no reproducible package manager or current build environment was available and the protected project lifecycle remains higher priority.",
+      "required_evidence": [
+        "current build composition",
+        "startup and interaction profile",
+        "bundle budget",
+        "visual and functional regression"
+      ],
+      "final_disposition": "Applicable but blocked"
+    },
+    {
+      "id": "REC-021",
+      "package_change_or_finding": "Editor visual hierarchy and professional-instrument quality",
+      "package_base_revision": "Current benchmark screenshots and package critique",
+      "package_paths": ["01_EXECUTIVE_AUDIT.md"],
+      "current_paths": ["apps/web", "packages/design-system", "packages/workspace"],
+      "current_repository_evidence": "Current rendered benchmark evidence proves responsive compositions, shared plan and 3D selection, file preflight, and recovery. It also shows an early, dense workspace with limited product-depth evidence for openings, rooms, dimensions, sheets, and repairable lifecycle states.",
+      "live_site_evidence": "Marketing polish is ahead of complete product footage and workflow proof.",
+      "state_before": "Functional shell with incomplete workflow depth",
+      "applicability": "Applicable but not a broad redesign mandate",
+      "severity": "Medium",
+      "root_cause": "UI infrastructure and registries advanced before the complete protected workflow supplied real states and content.",
+      "blast_radius": "Discoverability, trust, error recovery, visual consistency",
+      "reversibility": "Medium",
+      "action": "Preserve working shell surfaces. Refine only alongside implemented lifecycle states and visual regression proof. Do not redesign for novelty.",
+      "required_evidence": [
+        "rendered before and after",
+        "keyboard and focus",
+        "long-content and error states",
+        "protected workflow usability"
+      ],
+      "final_disposition": "Applicable but blocked"
+    },
+    {
+      "id": "REC-022",
+      "package_change_or_finding": "Public repository and proprietary/confidential licence conflict",
+      "package_base_revision": "Package audit",
+      "package_paths": ["05_OPEN_BLOCKERS_AND_DECISIONS.md"],
+      "current_paths": ["LICENSE", "NOTICE", "LICENSE-DECISION-REQUIRED.md", "CONTRIBUTING.md"],
+      "current_repository_evidence": "GitHub reports the repository as public. Repository legal files describe proprietary and confidential treatment and record a private-repository decision.",
+      "live_site_evidence": "Open-source and legal wording must not imply a settled distribution model.",
+      "state_before": "Material legal conflict",
+      "applicability": "Requires owner and legal decision",
+      "severity": "Critical",
+      "root_cause": "Repository setting and legal text evolved separately.",
+      "blast_radius": "Distribution rights, contributors, dependencies, public claims",
+      "reversibility": "Low after third-party reliance",
+      "action": "Report and block release wording. Do not change licence or visibility without owner and legal approval.",
+      "required_evidence": [
+        "owner decision",
+        "legal review",
+        "aligned repository setting and files"
+      ],
+      "final_disposition": "Requires legal or privacy review"
+    },
+    {
+      "id": "REC-023",
+      "package_change_or_finding": "Hardware and broad platform support claims",
+      "package_base_revision": "Package blocker register",
+      "package_paths": ["05_OPEN_BLOCKERS_AND_DECISIONS.md"],
+      "current_paths": [
+        "validation/BROWSER-AND-DEVICE-MATRIX.csv",
+        "apps/marketing/src/content/ipad.ts"
+      ],
+      "current_repository_evidence": "Chromium capability evidence exists. Physical iPad, Pencil, haptics, RoomPlan, LiDAR, native file-provider, Safari, and Firefox coverage is incomplete.",
+      "live_site_evidence": "Broad availability language remains restricted.",
+      "state_before": "Unverified platform claims",
+      "applicability": "Requires hardware evidence",
+      "severity": "High",
+      "root_cause": "Responsive UI and simulated pointer tests do not establish physical-device support.",
+      "blast_radius": "Compatibility, support, data safety",
+      "reversibility": "Medium",
+      "action": "Keep unsupported paths explicit and run the approved physical-device matrix before claims change.",
+      "required_evidence": [
+        "physical devices",
+        "supported browser matrix",
+        "failure and recovery scenarios"
+      ],
+      "final_disposition": "Requires hardware evidence"
+    },
+    {
+      "id": "REC-024",
+      "package_change_or_finding": "Protected L4 approval and deployment",
+      "package_base_revision": "Candidate evidence decision",
+      "package_paths": [
+        "EVIDENCE/engineering-evidence-decision.json",
+        "07_RELEASE_AND_DEPLOYMENT_RUNBOOK.md"
+      ],
+      "current_paths": [
+        "engineering",
+        ".github/workflows/engineering-gate.yml",
+        ".github/workflows/deploy-pages.yml"
+      ],
+      "current_repository_evidence": "Engineering OS remains in shadow mode and the candidate selected protected L4 approval as needs review. No push, approval, merge, deploy, rollback exercise, or post-deploy proof was performed.",
+      "live_site_evidence": "The live site remains stale until an authorised reviewed deployment completes.",
+      "state_before": "Approval and deployment absent",
+      "applicability": "Requires protected environment and authority",
+      "severity": "Critical",
+      "root_cause": "Correct intentional release boundary.",
+      "blast_radius": "Production and public claims",
+      "reversibility": "Medium",
+      "action": "Stop at reviewable local patch. Do not push, merge, or deploy without explicit authorisation and protected evidence.",
+      "required_evidence": [
+        "protected approval",
+        "CI at final SHA",
+        "Pages workflow",
+        "post-deploy audit",
+        "rollback record"
+      ],
+      "final_disposition": "Requires protected environment evidence"
+    },
+    {
+      "id": "REC-025",
+      "package_change_or_finding": "Large generic catalogue and planning expansion",
+      "package_base_revision": "Package critique",
+      "package_paths": ["01_EXECUTIVE_AUDIT.md", "04_COMPLETION_ROADMAP.md"],
+      "current_paths": ["backlog", "packages/workspace/src/registry", "packages/design-system"],
+      "current_repository_evidence": "The repository contains 242 backlog issues and broad component, icon, and command registries while the protected end-to-end workflow remains incomplete.",
+      "live_site_evidence": "Broad narrative without complete product footage increases generic positioning risk.",
+      "state_before": "Planning breadth ahead of product depth",
+      "applicability": "Reject further expansion in this cycle",
+      "severity": "Medium",
+      "root_cause": "Specifications are easier to add than cross-surface project lifecycle evidence.",
+      "blast_radius": "Cognitive load, roadmap dilution, false completeness",
+      "reversibility": "High",
+      "action": "Do not add parallel registries, speculative adapters, or catalogue breadth. Prioritise the protected lifecycle and workflow.",
+      "required_evidence": [
+        "protected workflow acceptance",
+        "user research",
+        "real consumer for any new abstraction"
+      ],
+      "final_disposition": "Rejected as generic"
+    },
+    {
+      "id": "REC-026",
+      "package_change_or_finding": "Active ARQ public-brand casing conflicts with the repository language system and marketing copy",
+      "package_base_revision": "7f15889ea66b672bd918a8b7ba61a904f6b4da3d",
+      "package_paths": ["05_UX_LANGUAGE_BRAND_AND_PUBLIC_CLAIMS.md"],
+      "current_paths": [
+        "apps/marketing/src/",
+        "docs/product/VOICE-SYSTEM.md",
+        "docs/product/PRODUCT-COPY-PRINCIPLES.md",
+        "docs/product/voice/"
+      ],
+      "current_repository_evidence": "The current repository canonicalised title-case Arq in public prose and generated all marketing routes with that form. The active governing source supplied for this cycle states: Use ARQ publicly; use lowercase arq only for code identifiers, packages, routes, and the .arq extension.",
+      "live_site_evidence": "The package live-site capture and candidate static output used title-case Arq in public route text, so the deployed public surface is expected to retain the same drift until a reviewed deployment is authorised.",
+      "state_before": "Implemented but conflicts with active brand authority",
+      "applicability": "Applicable",
+      "severity": "High",
+      "root_cause": "The repository language system encoded an older title-case prose rule that conflicts with the active ARQ brand source.",
+      "blast_radius": "All public marketing routes, product-facing language contracts, support wording, generated language context, search aliases, and future copy generation",
+      "reversibility": "High, provided the canonical language sources and generated contexts move together",
+      "action": "Make ARQ the canonical public name, retain Arq only as a recognised legacy alias, preserve case-sensitive /Arq deployment paths, update public route copy and active language standards, refresh generated contexts, and verify route output.",
+      "required_evidence": [
+        "active source authority review",
+        "language source and conflict checks",
+        "generated context freshness",
+        "marketing build",
+        "rendered route audit",
+        "base-path regression checks"
+      ],
+      "final_disposition": "Applicable and implemented in this cycle"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "files": ["apps/marketing/src/layout.ts"],
+  "expected": {
+    "lane": "L3",
+    "impactsInclude": ["public_claim", "deployment", "security"],
+    "evidenceInclude": ["marketing_build", "rendered_public_site"]
+  }
+}

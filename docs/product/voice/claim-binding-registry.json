@@ -64,7 +64,7 @@
       "sourcePath": "apps/marketing/src/content/architects.ts",
       "claimId": "lifetime-local-access",
       "assertionMode": "must-qualify",
-      "requiredRepair": "Describe the current local-first architecture without guaranteeing access if payment stops or Arq ceases to exist."
+      "requiredRepair": "Describe the current local-first architecture without guaranteeing access if payment stops or ARQ ceases to exist."
     },
     {
       "id": "pub-architects-model-integrity",
@@ -123,6 +123,14 @@
       "requiredRepair": "Keep current AI capability explicitly absent and describe guardrails as the required future contract."
     },
     {
+      "id": "pub-ai-mcp-boundary",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/ai.ts",
+      "claimId": "mcp-proposal-boundary",
+      "assertionMode": "must-qualify",
+      "requiredRepair": "State that the tested MCP package is library-only until apps/web supplies the real host and Review Centre surface and a client run is recorded."
+    },
+    {
       "id": "pub-interop-end-to-end",
       "surface": "public",
       "sourcePath": "apps/marketing/src/content/interoperability.ts",
@@ -136,7 +144,7 @@
       "sourcePath": "apps/marketing/src/content/interoperability.ts",
       "claimId": "lossless-exchange",
       "assertionMode": "must-qualify",
-      "requiredRepair": "Use Arq fidelity categories instead of a universal statement about all CAD or BIM exchange."
+      "requiredRepair": "Use ARQ fidelity categories instead of a universal statement about all CAD or BIM exchange."
     },
     {
       "id": "pub-ipad-touch-layout",
@@ -239,7 +247,7 @@
       "sourcePath": "apps/marketing/src/content/status.ts",
       "claimId": "lifetime-local-access",
       "assertionMode": "must-qualify",
-      "requiredRepair": "Remove the statement that an Arq outage can never affect a reader."
+      "requiredRepair": "Remove the statement that an ARQ outage can never affect a reader."
     },
     {
       "id": "pub-contact-channels",

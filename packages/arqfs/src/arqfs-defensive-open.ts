@@ -10,6 +10,7 @@ export interface DefensiveOpenOptions {
  * trusted) .arq file. Verified directly against this exact driver, not assumed from
  * SQLite's general documentation:
  *
+ * security-lint: allow - the next line documents rejection, it does not load.
  * - `load_extension()` as a SQL function is rejected by SQLite's own default build
  *   ("not authorized") - confirmed directly, not merely assumed - and this codebase
  *   never calls the driver-level `loadExtension()` API either, so no untrusted file

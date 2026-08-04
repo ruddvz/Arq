@@ -16,7 +16,12 @@ import { FOOTER_INDEX, PRIMARY_NAV, type PageMeta } from './site.js';
  * and focus styles that never rely on colour alone.
  */
 
-const REVISION = 'REV A · 2026-07';
+function revisionLabel(sourceRevision: string | undefined): string {
+  const shortRevision = sourceRevision?.match(/^[0-9a-f]{7,64}$/i)?.[0]?.slice(0, 7);
+  return shortRevision === undefined
+    ? 'REV B · 2026-08 · local build'
+    : `REV B · 2026-08 · source ${shortRevision}`;
+}
 
 function navLinks(activeRoute: string): SafeHtml {
   return html`${PRIMARY_NAV.map((item) =>
@@ -39,8 +44,10 @@ function footerIndex(): SafeHtml {
   )}`;
 }
 
-export function renderDocument(meta: PageMeta, body: SafeHtml): string {
-  const documentTitle = meta.documentTitle ?? `${meta.title} · Arq`;
+export function renderDocument(meta: PageMeta, body: SafeHtml, sourceRevision?: string): string {
+  const documentTitle = meta.documentTitle ?? `${meta.title} · ARQ`;
+  const robots =
+    meta.noIndex === true ? html`<meta name="robots" content="noindex, nofollow" />` : '';
   const page = html`<!doctype html>
     <html lang="en">
       <head>
@@ -48,13 +55,14 @@ export function renderDocument(meta: PageMeta, body: SafeHtml): string {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>${documentTitle}</title>
         <meta name="description" content="${meta.description}" />
+        ${robots}
         <meta name="theme-color" content="#0b6b50" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Arq" />
+        <meta property="og:site_name" content="ARQ" />
         <meta property="og:title" content="${documentTitle}" />
         <meta property="og:description" content="${meta.description}" />
         <meta property="og:image" content="/assets/brand/ARQ_OpenGraph_Green_1200x630.png" />
@@ -65,13 +73,13 @@ export function renderDocument(meta: PageMeta, body: SafeHtml): string {
         <a class="skip-link" href="#content">Skip to content</a>
         <header class="site-header">
           <div class="measure header-inner">
-            <a class="wordmark" href="/" aria-label="Arq home">
+            <a class="wordmark" href="/" aria-label="ARQ home">
               <picture>
                 <source
                   media="(prefers-color-scheme: dark)"
                   srcset="/assets/brand/ARQ_Wordmark_White.svg"
                 />
-                <img src="/assets/brand/ARQ_Wordmark_Black.svg" alt="Arq" width="76" height="28" />
+                <img src="/assets/brand/ARQ_Wordmark_Black.svg" alt="ARQ" width="76" height="28" />
               </picture>
             </a>
             <nav class="site-nav" aria-label="Primary">${navLinks(meta.route)}</nav>
@@ -87,16 +95,18 @@ export function renderDocument(meta: PageMeta, body: SafeHtml): string {
             <div class="footer-grid">${footerIndex()}</div>
             <div class="title-block" aria-label="Sheet information">
               <div>
-                <span class="tb-label">Project</span><span>Arq (architectural workspace)</span>
+                <span class="tb-label">Project</span><span>ARQ (architectural workspace)</span>
               </div>
               <div><span class="tb-label">Sheet</span><span>${meta.id} · ${meta.title}</span></div>
-              <div><span class="tb-label">Revision</span><span>${REVISION}</span></div>
+              <div>
+                <span class="tb-label">Revision</span><span>${revisionLabel(sourceRevision)}</span>
+              </div>
               <div>
                 <span class="tb-label">Status</span><span>Pre-release, in development</span>
               </div>
             </div>
             <p class="footer-fineprint">
-              Arq is in development and has not shipped. The
+              ARQ is in development and has not shipped. The
               <a href="/changelog">changelog</a> records what exists today.
             </p>
           </div>

@@ -1,4 +1,4 @@
-# Rules for anything that consumes the Arq voice system
+# Rules for anything that consumes the ARQ voice system
 
 Applies to:
 

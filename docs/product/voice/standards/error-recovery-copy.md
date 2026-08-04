@@ -83,7 +83,7 @@ Recovery copy must identify the source:
 Example only when the implementation can prove both statements:
 
 > **Recovered local edits**  
-> Arq replayed 12 journalled operations from the interrupted session. This recovery step did not modify the portable project file.
+> ARQ replayed 12 journalled operations from the interrupted session. This recovery step did not modify the portable project file.
 
 ## Sync conflict
 

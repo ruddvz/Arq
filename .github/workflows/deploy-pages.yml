@@ -14,7 +14,7 @@
 # coverage before the build, a rendered-copy audit that writes a commit-bound
 # proof into the artifact, and a post-deployment check that reads that proof
 # and every route hash back off the published URL. These are exactly the
-# controls Engineering OS 5.0's deploy-pages.v5.fragment.yml required — the
+# controls Engineering OS 5.0's deploy-pages.v5.fragment.yml required. The
 # static-artifact and post-deploy public-site proof model is now live.
 name: Deploy website
 
@@ -70,6 +70,7 @@ jobs:
         env:
           SITE_BASE_PATH: /Arq
           SITE_ORIGIN: https://ruddvz.github.io
+          SITE_REVISION: ${{ github.sha }}
       # Audits the rendered HTML, not the TypeScript source, then writes
       # arq-language-site-proof.json (this exact SHA plus a sha256 per route)
       # into the artifact so the deployed site can be checked against it.

@@ -22,6 +22,7 @@ const exts = new Set([
   '.sh',
   '.sql',
 ]);
+const ALLOW_MARKER = 'security-lint: allow';
 const rules = [
   [/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/, 'private key'],
   [
@@ -55,7 +56,20 @@ function walk(d) {
       } catch {
         continue;
       }
-      for (const [r, msg] of rules) if (r.test(t)) findings.push({ path: rel, message: msg });
+      const lines = t.split(/\r?\n/);
+      for (let index = 0; index < lines.length; index += 1) {
+        const line = lines[index];
+        // An exception is opt-in per line and must be written at the site it covers,
+        // so it stays visible in review. The previous line is honoured too, so a
+        // marker never has to be wedged into published prose. No file, directory or
+        // suffix is exempt as a class: a test that enables a dangerous pragma is
+        // exactly the kind of drift this gate exists to catch.
+        const previous = index > 0 ? lines[index - 1] : '';
+        if (line.includes(ALLOW_MARKER) || previous.includes(ALLOW_MARKER)) continue;
+        for (const [r, msg] of rules) {
+          if (r.test(line)) findings.push({ path: rel, line: index + 1, message: msg });
+        }
+      }
     }
   }
 }

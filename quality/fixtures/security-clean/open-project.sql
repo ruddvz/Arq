@@ -5,4 +5,6 @@ PRAGMA trusted_schema = OFF;
 PRAGMA foreign_keys = ON;
 PRAGMA journal_mode = WAL;
 
+-- load_extension('./documented-example.so') is intentionally inert here. security-lint: allow
+
 SELECT schema_version, application_version FROM arq_meta LIMIT 1;

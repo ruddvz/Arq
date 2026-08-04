@@ -15,9 +15,10 @@ export const notFoundPage: Page = {
     id: 'PUB-404',
     route: '/404',
     title: 'Page not found',
-    documentTitle: 'Page not found · Arq',
+    documentTitle: 'Page not found · ARQ',
     description:
       'This address does not match a page on this site. Nothing on your side was changed, and the links below route onward to the rest of the site.',
+    noIndex: true,
   },
   render: () => html`
     ${hero({

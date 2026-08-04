@@ -73,7 +73,7 @@
     {
       "id": "converted",
       "label": "Converted",
-      "meaning": "Mapped into a different Arq representation."
+      "meaning": "Mapped into a different ARQ representation."
     },
     {
       "id": "approximated",
@@ -98,7 +98,7 @@
     {
       "id": "opaque",
       "label": "Retained as opaque data",
-      "meaning": "Retained without Arq interpreting its semantics."
+      "meaning": "Retained without ARQ interpreting its semantics."
     },
     {
       "id": "failed",

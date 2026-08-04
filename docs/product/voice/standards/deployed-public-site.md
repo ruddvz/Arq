@@ -1,7 +1,7 @@
 # Deployed public-site standard
 
 Public copy is not compliant merely because its source module is reviewed. A
-visitor receives generated HTML from a deployed revision. Arq therefore checks
+visitor receives generated HTML from a deployed revision. ARQ therefore checks
 three different facts.
 
 1. The authored source uses canonical terms and passes hard language rules.
@@ -14,7 +14,7 @@ three different facts.
 
 Public and product UI copy must not contain U+2014. Use a full stop, colon,
 parentheses, semicolon, or a shorter direct sentence. This is a house-style
-constraint for clear, restrained Arq copy. It does not infer authorship and it
+constraint for clear, restrained ARQ copy. It does not infer authorship and it
 must not be represented as a detector result.
 
 The rule applies to visible text, headings, titles, summaries and attribute
