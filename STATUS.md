@@ -287,6 +287,19 @@ unreachable for the same reason.
   pass. One green run is not a rollout criterion, and
   `protected_l4_approval` still resolves to a deferred environment gate rather
   than an approval anybody granted.
+- **Deployed routing is Not inspected, and the owner holds the key.** The
+  `verify-routes` job runs `scripts/verify-vercel-routes.mjs` against the actual
+  preview origin, and it has failed on every pull request that triggers it -
+  including #294, which merged with it red. The cause is not a wrong route: the
+  Vercel project has Deployment Protection on, so every path returns the sign-in
+  interstitial and the script refuses to report on evidence it could not gather.
+  That refusal is the correct behaviour and must not be relaxed; an unreadable
+  origin is not evidence that routing is correct. Closing it is a Vercel settings
+  action nobody but the project owner can take: mint a Protection Bypass for
+  Automation token and store it as the `VERCEL_AUTOMATION_BYPASS_SECRET`
+  repository secret, which the script already sends as
+  `x-vercel-protection-bypass`. Until then the routing contract in `vercel.json`
+  is verified locally against the build and unverified against the deployment.
 - **Protected L4 release approval**: the complete plan-to-3D-to-sheet-to-PDF
   workflow, cross-platform matrix, rollback evidence and post-release proof do
   not exist. Production readiness remains blocked.
