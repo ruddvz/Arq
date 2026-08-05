@@ -31,3 +31,4 @@ export * from './canonical-length';
 export * from './tolerance-classes';
 export * from './stable-reference';
 export * from './deletion-policy';
+export * from './opening-host-transfer';
