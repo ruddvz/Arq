@@ -35,8 +35,8 @@ export interface ArqfsWorkerLike {
 }
 
 export interface ArqfsWorkerRequestOptions {
-  readonly signal?: AbortSignal;
-  readonly timeoutMs?: number;
+  readonly signal?: AbortSignal | undefined;
+  readonly timeoutMs?: number | undefined;
   /** Transfer only buffers whose ownership the caller is willing to give to the Worker. */
   readonly transfer?: readonly Transferable[];
 }

@@ -1,12 +1,37 @@
-import { useRef, useState, type ChangeEvent, type DragEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
 import { ArqModalDialog } from '@arq/design-system';
-import { reduceFileFlow, type FileFlowState } from './file-state-machine';
+import { reduceFileFlow, isProjectOpen, type FileFlowState } from './file-state-machine';
 import { evaluateSelectedFile } from './evaluate-selected-file';
 import { describeFileFlowState } from './describe-file-flow-state';
+import {
+  openNativeProject,
+  type OpenNativeProjectDependencies,
+  type OpenNativeProjectOutcome,
+} from '../project/open-native-project';
+import {
+  connectProjectWorker,
+  digestSourceBytes,
+  newProjectId,
+} from '../project/connect-project-worker';
 
 export interface FileOpenPanelProps {
   readonly isOpen: boolean;
   readonly onOpenChange: (isOpen: boolean) => void;
+  /**
+   * Called once a project has genuinely reached `workspace-active`, so the shell
+   * can adopt it. Nothing before that point is an open project, so nothing
+   * before that point is reported here.
+   */
+  readonly onProjectOpened?: (
+    outcome: Extract<OpenNativeProjectOutcome, { kind: 'workspace-active' }>,
+  ) => void;
+  /**
+   * Worker construction and digesting, injected so this component can be driven
+   * without a browser. Defaults to the real ones.
+   */
+  readonly transport?: Pick<OpenNativeProjectDependencies, 'connect' | 'digestSource'>;
+  /** Project id factory, injected for the same reason. */
+  readonly createProjectId?: () => string;
 }
 
 /**
@@ -19,18 +44,53 @@ export interface FileOpenPanelProps {
  * criteria ("wire preflightArqfsBytes into every file-open path") was
  * unimplemented on the UI side.
  *
- * Deliberately stops at reporting compatibility, not claiming a project
- * opened - see describe-file-flow-state.ts's own doc comment: this app has
- * no browser Worker/OPFS driver wired in yet (Phase 3 built the driver and
- * the Worker-crash transport, but nothing in apps/web constructs one), so
- * "this file is safe to open" and "this file is now open" are different, true
- * statements and only the first one is honest to make here.
+ * The preflight verdict is where this used to stop, because nothing in this app
+ * constructed the Worker that opens a project. It now continues: a file that
+ * routes as a native Arq project is staged into an ARQ-owned working project,
+ * opened through the real Worker, checked and hydrated by `openNativeProject`,
+ * which drives the same reducer this component renders. "This file is safe to
+ * open" and "this project is open" are still different statements - the
+ * difference is now the several lifecycle states between them, each of which
+ * has to actually succeed.
  */
 export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
-  const { isOpen, onOpenChange } = props;
+  const { isOpen, onOpenChange, onProjectOpened, transport, createProjectId } = props;
   const [state, setState] = useState<FileFlowState>({ kind: 'idle' });
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const openControllerRef = useRef<AbortController | null>(null);
+
+  // An open in flight when this component goes away would otherwise keep a
+  // Worker - and its exclusive handle on the project's OPFS file - alive with
+  // nothing left to receive the result.
+  useEffect(
+    () => () => {
+      openControllerRef.current?.abort();
+    },
+    [],
+  );
+
+  async function openNative(bytes: Uint8Array): Promise<void> {
+    const controller = new AbortController();
+    openControllerRef.current = controller;
+    try {
+      const outcome = await openNativeProject(
+        {
+          projectId: (createProjectId ?? newProjectId)(),
+          bytes,
+          signal: controller.signal,
+        },
+        {
+          connect: transport?.connect ?? connectProjectWorker,
+          digestSource: transport?.digestSource ?? digestSourceBytes,
+          emit: (event) => setState((current) => reduceFileFlow(current, event)),
+        },
+      );
+      if (outcome.kind === 'workspace-active') onProjectOpened?.(outcome);
+    } finally {
+      openControllerRef.current = null;
+    }
+  }
 
   async function evaluate(file: File): Promise<void> {
     setState((current) => reduceFileFlow(current, { type: 'acquire', name: file.name }));
@@ -77,6 +137,7 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
         sidecarDependency: preflight?.sidecarDependency ?? 'complete',
       }),
     );
+    await openNative(bytes);
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>): void {
@@ -93,11 +154,29 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
   }
 
   function reset(): void {
+    openControllerRef.current?.abort();
     setState({ kind: 'idle' });
   }
 
   const description = describeFileFlowState(state);
-  const busy = state.kind === 'acquiring' || state.kind === 'detecting';
+  // Every state where work is genuinely in flight, so `aria-busy` describes the
+  // whole open rather than only its first two steps.
+  const busy =
+    state.kind === 'acquiring' ||
+    state.kind === 'detecting' ||
+    state.kind === 'staging' ||
+    state.kind === 'staged' ||
+    state.kind === 'migration-verified' ||
+    state.kind === 'worker-open' ||
+    state.kind === 'hydrating' ||
+    state.kind === 'recovering' ||
+    state.kind === 'publishing';
+  const cancellable =
+    state.kind === 'staging' ||
+    state.kind === 'worker-open' ||
+    state.kind === 'hydrating' ||
+    state.kind === 'migration-verified' ||
+    state.kind === 'staged';
 
   return (
     <ArqModalDialog
@@ -197,8 +276,25 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
             </details>
           )}
         </div>
-        {state.kind !== 'idle' && (
-          <button type="button" className="arq-shell-button" onClick={reset}>
+        {cancellable && (
+          <button
+            type="button"
+            className="arq-shell-button"
+            onClick={() => openControllerRef.current?.abort()}
+          >
+            Stop opening
+          </button>
+        )}
+        {state.kind !== 'idle' && !cancellable && (
+          <button
+            type="button"
+            className="arq-shell-button"
+            onClick={reset}
+            // A project that is open is not something to walk away from by
+            // accident: the same button that restarts a failed attempt would
+            // otherwise discard a working project without saying so.
+            disabled={isProjectOpen(state)}
+          >
             Choose another file
           </button>
         )}

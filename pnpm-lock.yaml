@@ -52,6 +52,9 @@ importers:
       '@arq/arqfs':
         specifier: workspace:*
         version: link:../../packages/arqfs
+      '@arq/arqfs-worker':
+        specifier: workspace:*
+        version: link:../../workers/arqfs-worker
       '@arq/bim-core':
         specifier: workspace:*
         version: link:../../packages/bim-core
@@ -85,6 +88,9 @@ importers:
       '@arq/plan-renderer':
         specifier: workspace:*
         version: link:../../packages/plan-renderer
+      '@arq/project-loading':
+        specifier: workspace:*
+        version: link:../../packages/project-loading
       '@arq/validation':
         specifier: workspace:*
         version: link:../../packages/validation

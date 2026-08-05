@@ -11,6 +11,7 @@
  */
 import type { ArqfsOpenResult } from './arqfs-open';
 import type { ArqfsSidecarDependency } from './arqfs-preflight';
+import type { ArqfsIntegrityReport } from './arqfs-integrity';
 
 export type ArqfsWorkerRequest =
   | { readonly id: number; readonly type: 'open' }
@@ -38,6 +39,14 @@ export type ArqfsWorkerRequest =
       readonly type: 'putArchiveEntries';
       readonly entries: ReadonlyArray<readonly [string, Uint8Array]>;
     }
+  /**
+   * SQLite-level health of the working database. `checkArqfsIntegrity`'s own
+   * documented purpose is "before trusting an imported/copied file", and until
+   * this request existed nothing outside the Worker could ask for it - so a
+   * staged copy was opened and hydrated without anything having checked that
+   * the copy is sound.
+   */
+  | { readonly id: number; readonly type: 'checkIntegrity' }
   | { readonly id: number; readonly type: 'getArchiveEntry'; readonly path: string }
   | { readonly id: number; readonly type: 'listArchiveEntryPaths' }
   | { readonly id: number; readonly type: 'close' };
@@ -50,6 +59,7 @@ export type ArqfsWorkerResponsePayload =
       readonly sidecarDependency: ArqfsSidecarDependency;
       readonly byteLength: number;
     }
+  | { readonly kind: 'checkIntegrity'; readonly report: ArqfsIntegrityReport }
   | { readonly kind: 'putArchiveEntries' }
   | { readonly kind: 'getArchiveEntry'; readonly content: Uint8Array | null }
   | { readonly kind: 'listArchiveEntryPaths'; readonly paths: readonly string[] }

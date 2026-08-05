@@ -4,6 +4,7 @@ import { createArqfsSchemaLatest } from './arqfs-schema-v2';
 import { openArqfs, type ArqfsOpenResult } from './arqfs-open';
 import { applyDefensiveOpenPolicy } from './arqfs-defensive-open';
 import { putArchiveEntries, getArchiveEntry, listArchiveEntryPaths } from './arqfs-archive-store';
+import { checkArqfsIntegrity } from './arqfs-integrity';
 import {
   preflightArqfsBytes,
   DEFAULT_ARQFS_PREFLIGHT_POLICY,
@@ -277,6 +278,18 @@ export function handleArqfsWorkerRequest(
           projectId: context.projectId,
           ok: true,
           payload: { kind: 'putArchiveEntries' },
+        };
+      }
+      case 'checkIntegrity': {
+        const refusal = readRefusal(context.session);
+        if (refusal !== null) {
+          return refuse(context, request.id, refusal.code, refusal.error);
+        }
+        return {
+          id: request.id,
+          projectId: context.projectId,
+          ok: true,
+          payload: { kind: 'checkIntegrity', report: checkArqfsIntegrity(context.driver) },
         };
       }
       case 'getArchiveEntry': {

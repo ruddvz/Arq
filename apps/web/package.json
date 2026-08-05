@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@arq/arqfs": "workspace:*",
+    "@arq/arqfs-worker": "workspace:*",
     "@arq/bim-core": "workspace:*",
     "@arq/design-system": "workspace:*",
     "@arq/editor-shell": "workspace:*",
@@ -23,6 +24,7 @@
     "@arq/model-renderer": "workspace:*",
     "@arq/operations": "workspace:*",
     "@arq/plan-renderer": "workspace:*",
+    "@arq/project-loading": "workspace:*",
     "@arq/validation": "workspace:*",
     "@arq/workspace": "workspace:*",
     "react": "^18",

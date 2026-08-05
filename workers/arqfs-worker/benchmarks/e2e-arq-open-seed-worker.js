@@ -45,6 +45,16 @@ self.onmessage = async (event) => {
       // must refuse rather than initialise a schema over someone else's file.
       db.exec(`PRAGMA application_id = ${Number(request.applicationId)}`);
       db.exec('CREATE TABLE IF NOT EXISTS not_arq (id INTEGER PRIMARY KEY)');
+    } else if (request.type === 'exportBytes') {
+      // The bytes a file picker would hand the product: this project's whole
+      // database, read straight out of OPFS. Produced by the seeder rather than
+      // by the code under test, so the import case is importing a file from
+      // outside the Worker instead of one the Worker handed itself.
+      const bytes = poolUtil.exportFile(opfsFilenameForProject(projectId));
+      db.close();
+      db = null;
+      self.postMessage({ id: request.id, ok: true, projectId, bytes }, [bytes.buffer]);
+      return;
     } else {
       throw new Error(`unknown seed request: ${request.type}`);
     }

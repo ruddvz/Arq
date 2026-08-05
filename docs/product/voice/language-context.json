@@ -7,7 +7,7 @@
       "repo-facts-2026-07-27",
       "interface-2026-07-27"
     ],
-    "sourceSetDigest": "2c17281e46caf3d51f33c01f29e04fe703754f4968c550443d139650762fcc38",
+    "sourceSetDigest": "bbfc08de3de935be90f89fc1354d336cccd3530a79156b63faf99cda43ce0cd6",
     "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995"
   },
   "snapshotWarning": null,
@@ -7371,7 +7371,7 @@
     "schemaVersion": 4,
     "contractVersion": "4.1.0",
     "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-    "sourceSetDigest": "2c17281e46caf3d51f33c01f29e04fe703754f4968c550443d139650762fcc38",
+    "sourceSetDigest": "bbfc08de3de935be90f89fc1354d336cccd3530a79156b63faf99cda43ce0cd6",
     "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
     "sources": {
       "repository-readme": {
@@ -7714,22 +7714,22 @@
         "id": "file-open-ui",
         "kind": "directory",
         "path": "apps/web/src/file-handling",
-        "sha256": "bfd68b8bf1fc3172c48017ac7fcd8190e640ce4bb028977b1a8584710ae49e7c",
+        "sha256": "ec10f8764507a745e3907d6dc3b23dd3cb9f93a520524e7a92de4c2f102f1e12",
         "files": [
           {
             "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
-            "sha256": "8151fe0dd49168eb8d4fc1b88fb40ff83a2a75ecdaef7cda08e16c4cd9b0f2ef",
-            "bytes": 8057
+            "sha256": "c3d1984e473178787c88aeee3b1cef0bd33e8e5275fdea01e45994824cab9494",
+            "bytes": 11501
           },
           {
             "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",
-            "sha256": "2dd116745601409faf32b02367aa07580f38e63bbec8587983239e8f3aa9c253",
-            "bytes": 4526
+            "sha256": "906845b2a2e714d4a6c39a980319bd92dc081b9d655ec9acc31339eb9cbab274",
+            "bytes": 4731
           },
           {
             "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-            "sha256": "12b80d19822ee9d7847e8f9121b48d6756ac4a6568509feb84afb199344d61ec",
-            "bytes": 9700
+            "sha256": "73c5f426399bda598e778eafb2c2f96ad20ce82413d308a6960339032b3fed75",
+            "bytes": 9745
           },
           {
             "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",

@@ -3,14 +3,17 @@ import { describeFileFlowState } from './describe-file-flow-state';
 import type { FileFlowState } from './file-state-machine';
 
 describe('describeFileFlowState', () => {
-  it('never claims a project is open for the native-opening state - it is honest about the unwired boundary', () => {
+  it('never claims a project is open for the native-opening state - preflight passed, the open has not', () => {
     const description = describeFileFlowState({
       kind: 'native-opening',
       name: 'house.arq',
       sidecarDependency: 'complete',
     });
-    expect(description.headline).not.toMatch(/is open|opened successfully/i);
-    expect(description.detail).toMatch(/not wired/i);
+    // "Opening it" is the honest present tense for a state that has passed byte
+    // preflight and has not yet staged, opened, checked or hydrated anything.
+    expect(description.headline).not.toMatch(/is open\b|opened successfully/i);
+    expect(description.headline).toMatch(/opening/i);
+    expect(description.tone).toBe('progress');
   });
 
   /**
@@ -49,7 +52,7 @@ describe('describeFileFlowState', () => {
     });
 
     expect(complete.headline).not.toBe(incomplete.headline);
-    expect(complete.tone).toBe('neutral');
+    expect(complete.tone).toBe('progress');
     expect(incomplete.tone).toBe('warning');
   });
 
