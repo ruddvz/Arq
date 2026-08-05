@@ -35,3 +35,5 @@ export * from './opening-host-transfer';
 export * from './parse-typed-length';
 export * from './view-definition';
 export * from './view-visibility';
+export * from './sheet-viewport';
+export * from './sheet-schedule';
