@@ -23,6 +23,16 @@ describe('parseArqfsWorkerRequest', () => {
       { id: 1, type: 'importDatabase', bytes: new ArrayBuffer(4) },
     ],
     ['getArchiveEntry without a path', { id: 1, type: 'getArchiveEntry' }],
+    ['publish without a target name', { id: 1, type: 'publish' }],
+    ['publish with an empty target name', { id: 1, type: 'publish', targetName: '' }],
+    [
+      'publish with a fractional revision',
+      { id: 1, type: 'publish', targetName: 'out.arq', expectedRevision: 1.5 },
+    ],
+    [
+      'publish with a non-numeric revision',
+      { id: 1, type: 'publish', targetName: 'out.arq', expectedRevision: 'latest' },
+    ],
     ['getArchiveEntry with a non-string path', { id: 1, type: 'getArchiveEntry', path: 7 }],
     ['putArchiveEntries with a non-array', { id: 1, type: 'putArchiveEntries', entries: 'nope' }],
     [
@@ -42,6 +52,11 @@ describe('parseArqfsWorkerRequest', () => {
     ['listArchiveEntryPaths', { id: 2, type: 'listArchiveEntryPaths' }],
     ['readAllArchiveEntries', { id: 3, type: 'readAllArchiveEntries' }],
     ['close', { id: 4, type: 'close' }],
+    ['publish', { id: 7, type: 'publish', targetName: 'out.arq' }],
+    [
+      'publish with an expected revision',
+      { id: 8, type: 'publish', targetName: 'out.arq', expectedRevision: 12 },
+    ],
   ])('accepts a well-formed %s', (_label, value) => {
     expect(parseArqfsWorkerRequest(value)).toEqual(value);
   });
@@ -66,6 +81,16 @@ describe('parseArqfsWorkerRequest', () => {
 
   it('accepts id 0, which is falsy but a perfectly good correlation id', () => {
     expect(parseArqfsWorkerRequest({ id: 0, type: 'close' })).toEqual({ id: 0, type: 'close' });
+  });
+
+  it('keeps expectedRevision absent rather than present-and-undefined', () => {
+    const parsed = parseArqfsWorkerRequest({ id: 1, type: 'publish', targetName: 'out.arq' });
+
+    expect(parsed).not.toBeNull();
+    // Publishing "whatever is current" and publishing a revision that happens to
+    // be undefined are different requests, and only one of them survives
+    // structuredClone under exactOptionalPropertyTypes.
+    expect(parsed !== null && 'expectedRevision' in parsed).toBe(false);
   });
 });
 

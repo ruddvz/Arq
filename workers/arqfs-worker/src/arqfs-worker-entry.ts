@@ -83,6 +83,48 @@ async function openContext(): Promise<ArqfsWorkerContext> {
         db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
         driver = createSqliteWasmArqfsDriver(db);
       },
+      /**
+       * What `publishProjectFile` needs from this VFS.
+       *
+       * Publication only means anything if the reader shares nothing with the
+       * writer, and inside `opfs-sahpool` only this utility can produce one: it
+       * keeps databases in a pool of opaque files, so `VACUUM INTO` writes to a
+       * pool entry that nothing outside here can open. A main thread handed the
+       * bytes and asked to verify them would be checking a copy of a copy, which
+       * is not the property publication claims.
+       */
+      publication: {
+        environment: {
+          // A brand-new connection on the published pool entry - not `db`, and
+          // not a handle derived from it.
+          openFreshReader: (targetName: string) =>
+            createSqliteWasmArqfsDriver(
+              new poolUtil.OpfsSAHPoolDb(targetName) as unknown as Sqlite3Oo1DatabaseLike,
+            ),
+          /**
+           * Checked against the pool's own file list rather than assumed empty.
+           * `VACUUM INTO` produces a single settled database and sahpool does not
+           * keep sidecars as separate entries, so this is expected to be empty -
+           * but "expected empty" and "verified empty" are different claims, and
+           * the one publication makes to a user is that the file travels alone.
+           */
+          listSidecars: (targetName: string) =>
+            poolUtil
+              .getFileNames()
+              .filter(
+                (name: string) =>
+                  name === `${targetName}-wal` ||
+                  name === `${targetName}-shm` ||
+                  name === `${targetName}-journal`,
+              ),
+          byteLength: async (targetName: string) =>
+            (await poolUtil.exportFile(targetName)).byteLength,
+        },
+        readTarget: (targetName: string) => poolUtil.exportFile(targetName),
+        removeTarget: (targetName: string) => {
+          poolUtil.unlink(targetName);
+        },
+      },
     };
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);

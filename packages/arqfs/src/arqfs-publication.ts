@@ -54,8 +54,15 @@ export interface ArqfsPublicationEnvironment {
    * own, it silently loses whatever the sidecar held.
    */
   readonly listSidecars: (targetPath: string) => readonly string[];
-  /** Size of the published file, recorded on the receipt as handed-over evidence. */
-  readonly byteLength: (targetPath: string) => number;
+  /**
+   * Size of the published file, recorded on the receipt as handed-over evidence.
+   *
+   * Allowed to be async: the `opfs-sahpool` VFS this was written for reads a
+   * pool entry's bytes asynchronously, and there is no synchronous way to ask it
+   * how large a file is. The Node implementation answers immediately and is
+   * awaited harmlessly.
+   */
+  readonly byteLength: (targetPath: string) => number | Promise<number>;
 }
 
 /**
@@ -281,7 +288,7 @@ export async function publishProjectFile(
         semanticHashScheme: SEMANTIC_HASH_SCHEME,
         formatVersion: opened.header,
         entryCount: intendedEntryCount,
-        byteLength: environment.byteLength(targetPath),
+        byteLength: await environment.byteLength(targetPath),
         targetPath,
         verifiedBy: 'fresh-reader',
       },

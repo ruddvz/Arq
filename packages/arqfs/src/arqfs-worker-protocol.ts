@@ -10,6 +10,7 @@
  * operations").
  */
 import type { ArqfsOpenResult } from './arqfs-open';
+import type { ArqfsPublicationResult } from './arqfs-publication';
 
 export type ArqfsWorkerRequest =
   /**
@@ -45,6 +46,26 @@ export type ArqfsWorkerRequest =
    * batching rule exists to avoid.
    */
   | { readonly id: number; readonly type: 'readAllArchiveEntries' }
+  /**
+   * Publishes the working project to a portable file and verifies it with a
+   * fresh reader (`publishProjectFile`).
+   *
+   * It has to run here, and not on the main thread, for the same reason
+   * `importDatabase` does: `VACUUM INTO` writes through the VFS, and only this
+   * Worker has the `opfs-sahpool` pool utility that can then open the result as
+   * an independent connection. A main thread that asked for the bytes and
+   * verified them itself would be verifying a copy of a copy - which is exactly
+   * the reader-shares-nothing-with-the-writer property publication depends on,
+   * broken.
+   */
+  | {
+      readonly id: number;
+      readonly type: 'publish';
+      /** Name for the published file inside this Worker's VFS, not a user-facing path. */
+      readonly targetName: string;
+      /** Publish only if the working project is on this revision. */
+      readonly expectedRevision?: number;
+    }
   | { readonly id: number; readonly type: 'close' };
 
 export type ArqfsWorkerResponsePayload =
@@ -56,6 +77,19 @@ export type ArqfsWorkerResponsePayload =
   | {
       readonly kind: 'readAllArchiveEntries';
       readonly entries: ReadonlyArray<readonly [string, Uint8Array]>;
+    }
+  | {
+      readonly kind: 'publish';
+      readonly result: ArqfsPublicationResult;
+      /**
+       * The verified bytes, present only when `result.status` is `published`.
+       *
+       * Carried on the same response as the verdict so a caller cannot hand a
+       * file to a user without the receipt that says it was checked - the two
+       * would otherwise be separate round trips, and the file would be
+       * available first.
+       */
+      readonly bytes: Uint8Array | null;
     }
   | { readonly kind: 'close' };
 
@@ -75,6 +109,8 @@ export const ARQFS_WORKER_ERROR_CODES = {
   openRejected: 'ARQFS_WORKER_OPEN_REJECTED',
   /** The request was not a shape this protocol defines, so nothing was attempted. */
   malformedRequest: 'ARQFS_WORKER_MALFORMED_REQUEST',
+  /** This Worker has no way to publish - it is not backed by a VFS that can export and reopen a file. */
+  publishUnavailable: 'ARQFS_WORKER_PUBLISH_UNAVAILABLE',
   /** Anything unexpected. Deliberately last: a specific code is always preferred. */
   unexpected: 'ARQFS_WORKER_UNEXPECTED_ERROR',
 } as const;
@@ -155,6 +191,21 @@ export function parseArqfsWorkerRequest(value: unknown): ArqfsWorkerRequest | nu
       return { id, type: 'listArchiveEntryPaths' };
     case 'readAllArchiveEntries':
       return { id, type: 'readAllArchiveEntries' };
+    case 'publish': {
+      if (typeof candidate['targetName'] !== 'string' || candidate['targetName'] === '') {
+        return null;
+      }
+      const expected = candidate['expectedRevision'];
+      if (expected !== undefined && (typeof expected !== 'number' || !Number.isInteger(expected))) {
+        return null;
+      }
+      return {
+        id,
+        type: 'publish',
+        targetName: candidate['targetName'],
+        ...(expected === undefined ? {} : { expectedRevision: expected }),
+      };
+    }
     case 'close':
       return { id, type: 'close' };
     default:
