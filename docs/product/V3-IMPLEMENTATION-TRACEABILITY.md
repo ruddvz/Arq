@@ -76,10 +76,23 @@ branch:
   whatever it now said and become the project. Open refuses it now, before the
   archive is parsed.
 
+- **V3-090, V3-092–V3-096** — the eight snap sources and the inference engine
+  that ranks them had no path between them. `rankCandidates` took a
+  `SnapResult[]` and nothing built one, so every snap module in the package was
+  reachable only from its own tests. `inference-engine.ts` said so in its own
+  doc comment — "none of them answers the question the drawing tools actually
+  ask" — and then supplied the ranking half only. `collectSnapCandidates` is the
+  generation half, and its first test asserts that every source in the canonical
+  priority table can actually be reached through it.
+
 The lesson is about the disposition, not the tasks: "the module exists" and "the
 task is done" are different claims, and only the first one was ever checked. The
-sharpest case is V3-038, where the module existed, was correct, was well tested,
-and was wired to the one path that needed it least.
+sharpest cases are V3-038 and V3-090, where the modules existed, were correct,
+were well tested, and were wired to nothing that needed them.
+
+The check that found both was not the generator. It was asking, for each row's
+symbol, whether anything outside its own file and tests referred to it. A module
+with no caller can pass every test it has and still not be part of the product.
 
 Several P3 rows also named the wrong file — `stages.ts`, a 13-line table of
 open-stage descriptors, was cited as evidence for "validate hostile semantic

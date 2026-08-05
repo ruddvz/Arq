@@ -88,13 +88,13 @@ V3-086,P6,Complete Sheet and Viewport,pre-existing,packages/bim-core/src/sheet.t
 V3-087,P6,Add ScheduleDefinition,implemented-in-this-change,packages/bim-core/src/schedule.ts,createSchedule
 V3-088,P6,Add MaterialDefinition,implemented-in-this-change,packages/bim-core/src/material.ts,createMaterial
 V3-089,P6,Add relationship validation and deletion policy,implemented-in-this-change,packages/bim-core/src/deletion-policy.ts,DeletionDisposition
-V3-090,P7,Implement deterministic inference candidate generation,implemented-in-this-change,packages/editor-shell/src/inference-engine.ts,rankCandidates
+V3-090,P7,Implement deterministic inference candidate generation,implemented-in-this-change,packages/editor-shell/src/snap-candidate-collection.ts,collectSnapCandidates
 V3-091,P7,Implement candidate ranking,implemented-in-this-change,packages/editor-shell/src/inference-engine.ts,rankCandidates
-V3-092,P7,"Add endpoint, midpoint and intersection",pre-existing,packages/editor-shell/src/intersection-snap.ts,findIntersectionSnaps
-V3-093,P7,Add horizontal and vertical inference,pre-existing,packages/editor-shell/src/perpendicular-snap.ts,findPerpendicularSnaps
-V3-094,P7,Add parallel and perpendicular inference,pre-existing,packages/editor-shell/src/perpendicular-snap.ts,findPerpendicularSnaps
-V3-095,P7,Add extension inference,pre-existing,packages/editor-shell/src/extension-snap.ts,findExtensionSnaps
-V3-096,P7,Add grid and level inference,pre-existing,packages/editor-shell/src/grid-snap.ts,findGridSnap
+V3-092,P7,"Add endpoint, midpoint and intersection",pre-existing,packages/editor-shell/src/snap-candidate-collection.ts,findIntersectionSnaps
+V3-093,P7,Add horizontal and vertical inference,pre-existing,packages/editor-shell/src/snap-candidate-collection.ts,findPerpendicularSnaps
+V3-094,P7,Add parallel and perpendicular inference,pre-existing,packages/editor-shell/src/snap-candidate-collection.ts,findPerpendicularSnaps
+V3-095,P7,Add extension inference,pre-existing,packages/editor-shell/src/snap-candidate-collection.ts,findExtensionSnaps
+V3-096,P7,Add grid and level inference,pre-existing,packages/editor-shell/src/snap-candidate-collection.ts,findGridSnap
 V3-097,P7,Add inference cycling,implemented-in-this-change,packages/editor-shell/src/inference-engine.ts,rankCandidates
 V3-098,P7,Add inference suppression,implemented-in-this-change,packages/editor-shell/src/inference-engine.ts,rankCandidates
 V3-099,P7,Add numeric length and angle entry,pre-existing,packages/editor-shell/src/numeric-overlay.ts,NumericOverlayState

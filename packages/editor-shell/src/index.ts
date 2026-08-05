@@ -25,3 +25,4 @@ export * from './window-placement-tool';
 export * from './room-placement-tool';
 export * from './zoom-to-room-gap';
 export * from './inference-engine';
+export * from './snap-candidate-collection';
