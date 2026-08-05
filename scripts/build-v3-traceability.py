@@ -66,10 +66,16 @@ add(['V3-024','V3-025'], PRE,'packages/arqfs/src/arqfs-safe-mode.ts','resolveArq
 add(['V3-026','V3-027'], PRE,'packages/file-ingress/src/policy.ts','maxSourceBytes')
 
 # P3 staging and native open.
-add(['V3-033','V3-034','V3-035'], PRE,'packages/file-ingress/src/orchestrator.ts','PrepareImportResult')
-add(['V3-036','V3-037','V3-038'], PRE,'packages/arqfs/src/arqfs-entry-digests.ts','classifyEntryPath')
-add(['V3-039'], PRE,'packages/arqfs/src/arqfs-semantic-hash.ts','SEMANTIC_HASH_SCHEME')
-add(['V3-040','V3-041','V3-042','V3-043'], PRE,'packages/project-loading/src/stages.ts','OPEN_STAGES')
+add(['V3-033'], PRE,'apps/web/src/project/open-native-project.ts','workingCopyIdForBytes')
+add(['V3-034'], PRE,'apps/web/src/project/open-native-project.ts','importDatabase')
+add(['V3-035'], DIVERGENT,'apps/web/src/project/open-native-project.ts','verifyEntryDigestsOfEntries')
+add(['V3-036'], PRE,'apps/web/src/project/open-native-project.ts','ArqfsWorkerClient')
+add(['V3-037'], PRE,'apps/web/src/project/native-open-policy.ts','resolveNativeOpenCapabilities')
+add(['V3-038'], NEW,'apps/web/src/project/open-native-project.ts','ARQ_ENTRY_DIGEST_MISMATCH')
+add(['V3-039'], DIVERGENT,'apps/web/src/project/open-native-project.ts','semanticHashOfEntries')
+add(['V3-040','V3-041'], PRE,'packages/project-loading/src/native-project-model.ts','parseNativeProjectModel')
+add(['V3-042'], PRE,'apps/web/src/project/open-native-project.ts','adopted')
+add(['V3-043'], PRE,'apps/web/src/project/open-native-project.ts','activeWorkingCopyId')
 add(['V3-044'], PRE,'apps/web/src/file-handling/file-state-machine.ts','readOnlyReason')
 add(['V3-045'], NEW,'packages/model-renderer/src/gpu-resource-registry.ts','closeOwner')
 

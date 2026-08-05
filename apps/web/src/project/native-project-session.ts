@@ -39,6 +39,16 @@ export interface NativeProjectSnapshot {
    */
   readonly document: NativeProjectDocument | null;
   readonly journalSequence: number;
+  /**
+   * The project's semantic hash as opened, over every archive entry.
+   *
+   * Carried on the snapshot because `@arq/derived-cache` decides whether cached
+   * geometry still describes this project by comparing the hash it stored
+   * against the project's current one, and nothing produced a current one for an
+   * opened project. Not a verification of the file: no manifest or schema
+   * records an expected value to check this against.
+   */
+  readonly semanticHash: string;
   readonly readOnly: boolean;
   /** Which VFS actually backs the working copy - reported honestly, never assumed to be persistent. */
   readonly usedVfs: string;

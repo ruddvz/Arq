@@ -13,6 +13,11 @@
  */
 import { importArchive, type ArqManifest } from '@arq/project-format';
 import { evaluateArqfsSourceCompleteness } from '@arq/arqfs/src/arqfs-source-completeness';
+import {
+  describeEntryDigestFailure,
+  verifyEntryDigestsOfEntries,
+} from '@arq/arqfs/src/arqfs-entry-digests';
+import { semanticHashOfEntries } from '@arq/arqfs/src/arqfs-semantic-hash';
 import type { ArqfsOpenResult } from '@arq/arqfs/src/arqfs-open';
 import { ArqfsWorkerClient } from '@arq/arqfs/src/arqfs-worker-client';
 import { resolveNativeOpenCapabilities } from './native-open-policy';
@@ -144,7 +149,25 @@ export async function openNativeProject(
       return rejected('ARQ_READ_UNEXPECTED', 'The project did not return its contents.');
     }
 
-    const archive = await importArchive(new Map(entriesPayload.entries));
+    const entries = new Map(entriesPayload.entries);
+
+    // V3-038. `checksums.json` travels inside the file and records what every
+    // other entry should hash to, and until this call nothing on the open path
+    // read it - publication verified a file this build had just written, while
+    // open adopted a file from anywhere at all on trust. A corrupted `model.json`
+    // whose digest no longer matches would decode into whatever the damaged
+    // bytes happen to say and be adopted as the project.
+    //
+    // Refused before `importArchive`, so a file that fails its own recorded
+    // digests is never parsed. Derived-entry mismatches are not fatal here for
+    // the reason the module states: a thumbnail is regenerable and the project's
+    // meaning is not in it.
+    const digests = await verifyEntryDigestsOfEntries(entries);
+    if (!digests.ok) {
+      return rejected('ARQ_ENTRY_DIGEST_MISMATCH', describeEntryDigestFailure(digests));
+    }
+
+    const archive = await importArchive(entries);
     if (archive.status === 'rejected') {
       return rejected('ARQ_ARCHIVE_REJECTED', archive.reason);
     }
@@ -166,6 +189,14 @@ export async function openNativeProject(
       walls: decoded.model.walls,
       document: decoded.model.document,
       journalSequence: archive.operations.length,
+      // V3-039. Computed, not verified: no manifest, schema or file records an
+      // expected semantic hash, so there is nothing on disk to compare against
+      // and claiming a verification here would be a claim about a check that
+      // cannot run. What it is for is `@arq/derived-cache`'s freshness rule,
+      // which decides whether cached geometry still describes this project by
+      // comparing a stored hash against the current one - and had no source for
+      // "current" on an opened project at all.
+      semanticHash: await semanticHashOfEntries(entries),
       readOnly: capabilities.readOnly,
       usedVfs: openPayload.usedVfs,
       warnings: capabilities.warnings,

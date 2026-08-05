@@ -31,17 +31,17 @@ V3-029,P2,Release Worker on every rejection path,implemented-in-this-change,work
 V3-030,P2,Key writer locks per project,pre-existing,packages/arqfs/src/arqfs-single-writer-lock.ts,writerLockNameForProject
 V3-031,P2,Preserve rejection reason through protocol,implemented-in-this-change,packages/file-ingress/src/import-rejection.ts,IMPORT_REJECTION_CODES
 V3-032,P2,"Add protocol request ID, project ID and revision",implemented-differently,workers/arqfs-worker/src/arqfs-project-filename.ts,readProjectIdFromWorkerSearch
-V3-033,P3,Preserve selected source digest and provenance,pre-existing,packages/file-ingress/src/orchestrator.ts,PrepareImportResult
-V3-034,P3,Stage source bytes into ARQ-owned OPFS working project,pre-existing,packages/file-ingress/src/orchestrator.ts,PrepareImportResult
-V3-035,P3,Verify staged byte identity before open,pre-existing,packages/file-ingress/src/orchestrator.ts,PrepareImportResult
-V3-036,P3,Open through sqlite-wasm Worker,pre-existing,packages/arqfs/src/arqfs-entry-digests.ts,classifyEntryPath
-V3-037,P3,Validate application ID and compatibility floors,pre-existing,packages/arqfs/src/arqfs-entry-digests.ts,classifyEntryPath
-V3-038,P3,Validate required entries and digests,pre-existing,packages/arqfs/src/arqfs-entry-digests.ts,classifyEntryPath
-V3-039,P3,Verify semantic hash,pre-existing,packages/arqfs/src/arqfs-semantic-hash.ts,SEMANTIC_HASH_SCHEME
-V3-040,P3,Hydrate through one project-loading package,pre-existing,packages/project-loading/src/stages.ts,OPEN_STAGES
-V3-041,P3,Validate hostile semantic inputs,pre-existing,packages/project-loading/src/stages.ts,OPEN_STAGES
-V3-042,P3,Adopt candidate atomically,pre-existing,packages/project-loading/src/stages.ts,OPEN_STAGES
-V3-043,P3,Preserve previous active project until adoption,pre-existing,packages/project-loading/src/stages.ts,OPEN_STAGES
+V3-033,P3,Preserve selected source digest and provenance,pre-existing,apps/web/src/project/open-native-project.ts,workingCopyIdForBytes
+V3-034,P3,Stage source bytes into ARQ-owned OPFS working project,pre-existing,apps/web/src/project/open-native-project.ts,importDatabase
+V3-035,P3,Verify staged byte identity before open,implemented-differently,apps/web/src/project/open-native-project.ts,verifyEntryDigestsOfEntries
+V3-036,P3,Open through sqlite-wasm Worker,pre-existing,apps/web/src/project/open-native-project.ts,ArqfsWorkerClient
+V3-037,P3,Validate application ID and compatibility floors,pre-existing,apps/web/src/project/native-open-policy.ts,resolveNativeOpenCapabilities
+V3-038,P3,Validate required entries and digests,implemented-in-this-change,apps/web/src/project/open-native-project.ts,ARQ_ENTRY_DIGEST_MISMATCH
+V3-039,P3,Verify semantic hash,implemented-differently,apps/web/src/project/open-native-project.ts,semanticHashOfEntries
+V3-040,P3,Hydrate through one project-loading package,pre-existing,packages/project-loading/src/native-project-model.ts,parseNativeProjectModel
+V3-041,P3,Validate hostile semantic inputs,pre-existing,packages/project-loading/src/native-project-model.ts,parseNativeProjectModel
+V3-042,P3,Adopt candidate atomically,pre-existing,apps/web/src/project/open-native-project.ts,adopted
+V3-043,P3,Preserve previous active project until adoption,pre-existing,apps/web/src/project/open-native-project.ts,activeWorkingCopyId
 V3-044,P3,Support read-only newer-writer projects,pre-existing,apps/web/src/file-handling/file-state-machine.ts,readOnlyReason
 V3-045,P3,Dispose temporary resources after cancel or failure,implemented-in-this-change,packages/model-renderer/src/gpu-resource-registry.ts,closeOwner
 V3-046,P4,Define canonical operation envelope,implemented-in-this-change,packages/operations/src/operation-pipeline.ts,commitOperation

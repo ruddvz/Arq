@@ -90,7 +90,22 @@ export interface ArqfsEntryDigestReport {
 export async function verifyArqfsEntryDigests(
   driver: ArqfsDriver,
 ): Promise<ArqfsEntryDigestReport> {
-  const entries = readAllArchiveEntries(driver);
+  return verifyEntryDigestsOfEntries(readAllArchiveEntries(driver));
+}
+
+/**
+ * V3-038: the same verification, over entries a caller already holds.
+ *
+ * Split out because the driver form could only run inside the Worker, and so
+ * the only caller this check ever had was publication - which verifies a file
+ * this build has just written. The open path, which is handed a file from
+ * anywhere at all, read every entry across the Worker boundary and adopted them
+ * without ever comparing one against `checksums.json`. The trusted direction
+ * was verified and the untrusted one was not.
+ */
+export async function verifyEntryDigestsOfEntries(
+  entries: ReadonlyMap<string, Uint8Array>,
+): Promise<ArqfsEntryDigestReport> {
   const manifestBytes = entries.get(CHECKSUM_MANIFEST_PATH);
   if (manifestBytes === undefined) {
     return {

@@ -43,11 +43,11 @@ repository, and it cannot prove a row is answering the right question.
 
 | Disposition                  | Count | Meaning                                                                                                                                                                                                                |
 | ---------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `implemented-in-this-change` | 116   | Written on this branch. The evidence path is a module added or substantially changed here.                                                                                                                             |
-| `pre-existing`               | 57    | Already satisfied at the branch point, mostly by the ARQ-era work in P1–P3. Checked rather than assumed: each names a file and symbol that exists today.                                                               |
+| `implemented-in-this-change` | 117   | Written on this branch. The evidence path is a module added or substantially changed here.                                                                                                                             |
+| `pre-existing`               | 54    | Already satisfied at the branch point, mostly by the ARQ-era work in P1–P3. Checked rather than assumed: each names a file and symbol that exists today.                                                               |
 | `owner-authority`            | 28    | P0's verification steps and P14's release steps, plus workflow pinning and build provenance. These change GitHub settings, Vercel configuration, repository visibility or production state, and none of them are code. |
 | `blocked-no-evidence`        | 3     | V3-107 and V3-108 need benchmarks in a real browser against a real SQLite build; V3-117 needs SolveSpace or libslvs built to compare against. Guessing the numbers would be worse than leaving them open.              |
-| `implemented-differently`    | 1     | V3-032 — see below. The purpose is met somewhere other than where the task says to put it, deliberately.                                                                                                               |
+| `implemented-differently`    | 3     | V3-032, V3-035, V3-039 — see below. The purpose is met somewhere other than where the task says to put it, deliberately.                                                                                               |
 
 ### `pre-existing` was audited, and it did not hold
 
@@ -68,9 +68,49 @@ branch:
 - **V3-021** — neither Worker validated its incoming message. `handleArqfsWorkerRequest`
   returned `undefined` for an unrecognised type and the Worker posted that, so
   the caller waited out a timeout for a request refused on arrival.
+- **V3-038** — a `.arq` file carries `checksums.json`, recording what every other
+  entry should hash to. Nothing on the open path read it. `verifyArqfsEntryDigests`
+  existed, was tested, and had exactly one caller: publication. So a file this
+  build had just written was verified, and a file from anywhere else was adopted
+  on trust — a `model.json` edited to still be valid JSON would decode into
+  whatever it now said and become the project. Open refuses it now, before the
+  archive is parsed.
 
 The lesson is about the disposition, not the tasks: "the module exists" and "the
-task is done" are different claims, and only the first one was ever checked.
+task is done" are different claims, and only the first one was ever checked. The
+sharpest case is V3-038, where the module existed, was correct, was well tested,
+and was wired to the one path that needed it least.
+
+Several P3 rows also named the wrong file — `stages.ts`, a 13-line table of
+open-stage descriptors, was cited as evidence for "validate hostile semantic
+inputs" and "adopt candidate atomically". They now name
+`open-native-project.ts` and `native-project-model.ts`, which is where that work
+actually is.
+
+### The three `implemented-differently` rows
+
+Each of these is a task whose purpose the repository serves, in a place the task
+did not name. They are called out rather than filed as done, because "we did
+something else instead" is a claim a reviewer should get to disagree with.
+
+**V3-035, "verify staged byte identity before open."** The bytes are staged into
+an `opfs-sahpool` working copy, and that VFS does not keep the database at the
+filename it was handed — it lives inside a pool of opaque files the utility
+manages. There is no staged file to read back and compare, so byte-identity
+verification is not available through this VFS at all. What runs instead is
+stronger against the threat the task is aimed at: the file's own recorded
+per-entry digests are verified after open (V3-038), which checks that what was
+opened is what the file says it should be, rather than that a copy matched a
+copy.
+
+**V3-039, "verify semantic hash."** The hash is computed at open and carried on
+the snapshot, and it is not verified, because there is nothing to verify against
+— no manifest, schema or file records an expected value, as
+`arqfs-semantic-hash.ts` says in its own comment ("no digest is persisted in any
+schema, any file or any manifest"). Reporting this as a verification would
+describe a check that cannot run. What the computed hash is actually for is
+`@arq/derived-cache`, whose freshness rule compares a stored hash against the
+project's current one and had no source for "current" on an opened project.
 
 ### V3-032, and why it is not `pre-existing`
 

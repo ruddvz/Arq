@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "5f8d9dee8cf94b5ba47c90ea10dfb985277c6cfc24fcd06fa064afa7fb8f0660",
+  "source_hash": "d0db694d24b9650b0b8f20ab4c29e42f2d37b2399739bd96a3c6fb58fc3be506",
   "source_records": [
     {
       "scope": "package",
@@ -434,7 +434,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-entry-digests.ts",
-      "sha256": "67a4df739e4ea1042c43e2192c85277d2b3e52ed0ce0012d75fed9f00286155e"
+      "sha256": "06430b7fb84b82dec20dd98fb5845ba810fcc963d65ab82b470134c4e3a8f1fb"
     },
     {
       "scope": "repository",
@@ -644,7 +644,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-semantic-hash.ts",
-      "sha256": "3fde3e8b0b3e58a329b04fef36c281cf3cb749606dd35f10f2665f24802c4111"
+      "sha256": "869df07a7c4a2160a9fa73dadbfc5c9c72ddf59669fe563addb5996c9b93aa62"
     },
     {
       "scope": "repository",

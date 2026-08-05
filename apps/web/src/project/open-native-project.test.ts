@@ -250,4 +250,116 @@ describe('openNativeProject', () => {
       expect(result.snapshot.warnings[0]).toMatch(/migration/i);
     }
   });
+  /**
+   * V3-038. The file records what its own entries should hash to, in
+   * `checksums.json`. Until open read it, publication was the only thing that
+   * ever did - so a file this build wrote was verified and a file from anywhere
+   * else was not.
+   */
+  describe('entry digest verification', () => {
+    async function tamperedWith(path: string, bytes: Uint8Array) {
+      const entries = await archiveEntries([
+        { id: 'w1', start: { x: 0, y: 0 }, end: { x: 3000, y: 0 } },
+      ]);
+      return entries.map((entry) => (entry[0] === path ? ([path, bytes] as const) : entry));
+    }
+
+    it('refuses a project whose model.json no longer matches its recorded digest', async () => {
+      const fake = fakeWorker();
+      // Structurally valid JSON, so nothing downstream would have objected: it
+      // would have decoded and been adopted as the project.
+      fake.setEntries(
+        await tamperedWith(
+          'model.json',
+          new TextEncoder().encode('{"projectName":"Not the project","walls":[]}'),
+        ),
+      );
+
+      const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+
+      expect(result).toMatchObject({ status: 'rejected', code: 'ARQ_ENTRY_DIGEST_MISMATCH' });
+      if (result.status === 'rejected') {
+        expect(result.reason).toContain('model.json');
+      }
+      // Refused before the archive is parsed, and the Worker is released.
+      expect(fake.terminate).toHaveBeenCalled();
+    });
+
+    it('refuses a project whose manifest.json was altered', async () => {
+      const fake = fakeWorker();
+      fake.setEntries(
+        await tamperedWith(
+          'manifest.json',
+          new TextEncoder().encode(
+            '{"schemaVersion":0,"applicationVersion":"test","projectId":"00000000-0000-4000-8000-999999999999","createdAt":"2026-08-04T00:00:00.000Z"}',
+          ),
+        ),
+      );
+
+      const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+
+      expect(result).toMatchObject({ status: 'rejected', code: 'ARQ_ENTRY_DIGEST_MISMATCH' });
+    });
+
+    it('opens a project whose thumbnail is corrupt - derived entries are regenerable', async () => {
+      const fake = fakeWorker();
+      const entries = await archiveEntries([
+        { id: 'w1', start: { x: 0, y: 0 }, end: { x: 3000, y: 0 } },
+      ]);
+      // A derived entry that checksums.json does not describe is not a
+      // mismatch at all; one it does describe and that fails is reported and
+      // not fatal. Either way the project's meaning is intact.
+      fake.setEntries([...entries, ['thumbnails/plan.png', new Uint8Array([1, 2, 3])]]);
+
+      const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+
+      expect(result.status).toBe('opened');
+    });
+
+    it('opens a project carrying no checksums.json - an absent check is not a detected fault', async () => {
+      const fake = fakeWorker();
+      const entries = await archiveEntries();
+      fake.setEntries(entries.filter((entry) => entry[0] !== 'checksums.json'));
+
+      const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+
+      expect(result.status).toBe('opened');
+    });
+  });
+
+  /**
+   * V3-039. Computed at open rather than verified: nothing on disk records an
+   * expected value. It exists so @arq/derived-cache's freshness rule has a
+   * "current" hash to compare its stored one against.
+   */
+  describe('semantic hash', () => {
+    it('reports a semantic hash on the snapshot', async () => {
+      const fake = fakeWorker();
+      fake.setEntries(await archiveEntries());
+
+      const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+
+      expect(result.status).toBe('opened');
+      if (result.status === 'opened') {
+        expect(result.snapshot.semanticHash).toMatch(/^[0-9a-f]{64}$/);
+      }
+    });
+
+    it('reports a different hash for a project with different contents', async () => {
+      const one = fakeWorker();
+      one.setEntries(await archiveEntries());
+      const two = fakeWorker();
+      two.setEntries(
+        await archiveEntries([{ id: 'w1', start: { x: 0, y: 0 }, end: { x: 3000, y: 0 } }]),
+      );
+
+      const a = await openNativeProject(sqliteBytes(), one.factory, 'house.arq');
+      const b = await openNativeProject(sqliteBytes(), two.factory, 'house.arq');
+
+      expect(a.status === 'opened' && b.status === 'opened').toBe(true);
+      if (a.status === 'opened' && b.status === 'opened') {
+        expect(a.snapshot.semanticHash).not.toBe(b.snapshot.semanticHash);
+      }
+    });
+  });
 });

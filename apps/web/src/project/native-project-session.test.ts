@@ -19,6 +19,7 @@ function snapshot(overrides: Partial<NativeProjectSnapshot> = {}): NativeProject
     walls: [],
     document: null,
     journalSequence: 0,
+    semanticHash: 'a'.repeat(64),
     readOnly: false,
     usedVfs: 'opfs-sahpool',
     warnings: [],
