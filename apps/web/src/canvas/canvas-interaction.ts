@@ -1,5 +1,6 @@
 import {
   closestPointOnSegment,
+  DEFAULT_TOLERANCES,
   screenPoint,
   screenToWorld,
   segmentIntersection,
@@ -127,7 +128,7 @@ function segmentIntersectsBounds(start: WorldPoint, end: WorldPoint, bounds: Wor
   ];
   for (let i = 0; i < 4; i += 1) {
     const edge = { start: corners[i]!, end: corners[(i + 1) % 4]! };
-    if (segmentIntersection({ start, end }, edge, 1e-9) !== null) {
+    if (segmentIntersection({ start, end }, edge, DEFAULT_TOLERANCES.coordinateEpsilon) !== null) {
       return true;
     }
   }

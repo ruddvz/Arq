@@ -315,7 +315,7 @@ repository can support for it and the evidence that decided it. It is generated
 from `docs/product/implementation-pack-3.0-register.json` by
 `pnpm build:pack-register`, so the prose cannot drift from the data.
 
-52 verified, 19 implemented, 61 partially verified, 32 proposed, 17 blocked on
+52 verified, 19 implemented, 64 partially verified, 29 proposed, 17 blocked on
 owner action, 24 not inspected. Publication (P5) moved from proposed to
 verified in this pass, and the Worker protocol's project-id correlation
 (V3-032) moved from proposed to verified. The largest remaining gaps it names
@@ -326,6 +326,26 @@ settings rather than code.
 A pack is evidence and a proposed handoff, not repository authority; the
 register is reconciled against this repository rather than against the revision
 the pack observed.
+
+**The numeric and tolerance foundation has more real groundwork than the
+pack's own P8 items credit, short of the two decisions that actually gate
+it.** `packages/bim-core/src/length.ts` is a tested, typed length wrapper
+(five units, explicit conversion) - real, but it wraps any unit rather than
+committing to one, because which unit is canonical is ADR-0004/D-014, still
+open. `packages/geometry-2d/src/tolerance.ts` already implements the _policy_
+the tolerance-ladder ADR candidate asks for - named tolerance fields,
+required (never defaulted) tolerance parameters on every comparison function
+
+- consumed by four real modules; its own doc comment says plainly that the
+  actual magnitudes are provisional placeholders pending domain research, not
+  the calibrated ladder the ADR candidate proposes. A survey of six packages for
+  stray magic-number epsilons outside that module found exactly one
+  (`apps/web/src/canvas/canvas-interaction.ts`, a bare `1e-9`), now replaced
+  with `DEFAULT_TOLERANCES.coordinateEpsilon`. What remains genuinely blocked on
+  the ADRs: the canonical integer-micrometre-versus-float64 spike, benchmarks,
+  a committed canonical unit, calibrated tolerance magnitudes, stable semantic
+  references and the constraint solver - none of that exists, and none of it
+  should be built by guessing the decision the pack itself says is still open.
 
 ## Open decisions
 

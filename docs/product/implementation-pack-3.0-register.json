@@ -14,8 +14,8 @@
     "verified": 52,
     "implemented": 19,
     "blocked": 17,
-    "partially-verified": 61,
-    "proposed": 32,
+    "partially-verified": 64,
+    "proposed": 29,
     "not-inspected": 24
   },
   "taskCount": 205,
@@ -897,24 +897,24 @@
       "phase": "P8",
       "phaseName": "Units stable references and constraints",
       "task": "Implement typed canonical length wrapper",
-      "state": "proposed",
-      "evidence": "No canonical integer-micrometre length wrapper and no tolerance-class registry were found. geometry-2d has a tolerance module; the ladder the pack asks for does not exist."
+      "state": "partially-verified",
+      "evidence": "packages/bim-core/src/length.ts is a real, tested typed-length wrapper (Length/LengthUnit, mm/cm/m/in/ft, mm-pivot conversion) - genuine ADR-independent groundwork, since it wraps any of five units rather than committing to one canonical unit. It cannot become \"the canonical length wrapper\" until ADR-0004/D-014 (still open) picks the canonical storage representation."
     },
     {
       "id": "V3-111",
       "phase": "P8",
       "phaseName": "Units stable references and constraints",
       "task": "Implement tolerance class registry",
-      "state": "proposed",
-      "evidence": "No canonical integer-micrometre length wrapper and no tolerance-class registry were found. geometry-2d has a tolerance module; the ladder the pack asks for does not exist."
+      "state": "partially-verified",
+      "evidence": "packages/geometry-2d/src/tolerance.ts implements the policy the ADR candidate asks for: named ToleranceContext fields, tolerant-equality functions that require an explicit tolerance parameter rather than a hidden default, consumed by four real modules (wall-split, room-boundary-graph, wall-trim-extend, room-boundary-gap). Its own doc comment is explicit that DEFAULT_TOLERANCES magnitudes are provisional placeholders pending domain research, not the calibrated ladder the ADR candidate proposes, and the module's seven fields do not map one-to-one onto the candidate's eight named classes."
     },
     {
       "id": "V3-112",
       "phase": "P8",
       "phaseName": "Units stable references and constraints",
       "task": "Replace implicit epsilon uses",
-      "state": "proposed",
-      "evidence": "No canonical integer-micrometre length wrapper and no tolerance-class registry were found. geometry-2d has a tolerance module; the ladder the pack asks for does not exist."
+      "state": "partially-verified",
+      "evidence": "A survey of packages/geometry-2d, packages/editor-shell, packages/geometry-3d, packages/plan-renderer, packages/model-renderer and apps/web found one raw epsilon outside the tolerance module (apps/web/src/canvas/canvas-interaction.ts, a bare 1e-9), fixed in this pass to use DEFAULT_TOLERANCES.coordinateEpsilon. No other stray literals found in the surveyed packages; not audited repository-wide."
     },
     {
       "id": "V3-113",
