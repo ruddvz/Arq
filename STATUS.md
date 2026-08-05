@@ -252,6 +252,38 @@ the workspace says the project is open and not saved rather than claiming
 durability the product has not earned. Copy-on-write migration stays
 unreachable for the same reason.
 
+The working copy is now checked before anything trusts it. `open` reads the
+header and the metadata table, which a database with damaged pages anywhere
+else answers perfectly well, so a copy that arrived corrupt read as an ordinary
+healthy project until a decoder hit the bad page. A `checkIntegrity` request
+runs SQLite's own `quick_check` and `foreign_key_check` over the staged copy
+between the open decision and reading the contents, and refuses with the
+database's own finding. It is gated on an accepted open like every other read.
+
+A second file chosen while the first is still opening no longer drives the
+flow. The picker stays live during an open, so two attempts could reach one
+reducer: the older attempt's stage callbacks are each legal for the state they
+arrive in, so it walked the flow backwards and then adopted its project into
+the workspace - the wrong file, opened on purpose. An attempt guard gates every
+state change, and a superseded attempt closes its own session so the working
+copy's write lock is released rather than leaked.
+
+## What the Implementation Pack 3.0 asks for, and what is real
+
+`docs/product/IMPLEMENTATION-PACK-3.0-REGISTER.md` records all 205 tasks the
+ARQ CAD System Implementation Pack 3.0 proposes, each with the state this
+repository can support for it and the evidence that decided it. It is generated
+from `docs/product/implementation-pack-3.0-register.json` by
+`pnpm build:pack-register`, so the prose cannot drift from the data.
+
+41 verified, 19 implemented, 59 partially verified, 45 proposed, 17 blocked on
+owner action, 24 not inspected. The largest remaining gaps it names are
+portable publication, the numeric and tolerance foundation with everything that
+depends on it, and the release authority that is settings rather than code.
+A pack is evidence and a proposed handoff, not repository authority; the
+register is reconciled against this repository rather than against the revision
+the pack observed.
+
 ## Open decisions
 
 - **Local persistence overlap: settled.** ADR-0028 is Accepted (D-024). SQLite

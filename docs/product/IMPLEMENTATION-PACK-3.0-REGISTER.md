@@ -1,0 +1,329 @@
+# Implementation Pack 3.0: what is real, per item
+
+_Generated from `docs/product/implementation-pack-3.0-register.json`; regenerate that file rather than editing this one by hand._
+
+The ARQ CAD System Implementation Pack 3.0 proposes 205 tasks across fifteen
+phases. A pack is evidence and a proposed handoff, not repository authority -
+so every item below carries the state this repository can actually support for
+it, in the pack's own vocabulary, with the evidence that decided it.
+
+The pack was written against revision `62c5e5c` and observed a default branch
+and a set of open pull requests that have since moved. This register is
+reconciled against ruddvz/Arq, branch claude/arq-project-improvements-aulz73, merged with the integration branch at 1cdf160, not against what the pack saw.
+
+## What the states mean
+
+- **verified** (41) - Behaves as described and current evidence in this repository shows it.
+- **implemented** (19) - The code exists and is tested; no current run was made for this claim.
+- **partially-verified** (59) - Part of the item is real and part is not. The note says which.
+- **proposed** (45) - Not implemented here. The pack proposes it; nothing in the repository does it yet.
+- **blocked** (17) - Cannot be closed by changing code. It needs an owner decision or a setting outside the repository.
+- **not-inspected** (24) - This pass did not open the relevant code. A fact about this review, not about the repository.
+
+Only `verified` is green. `blocked` is not a failure and `not-inspected` is
+not a pass: both are the honest answer to a question this review could not
+close, and the pack's own rule is that Unknown, Blocked and Failed are not
+Green.
+
+## The largest remaining gaps
+
+1. **Publication (P5, `V3-063` to `V3-074`).** Opening works; saving writes
+   into the working copy. Nothing checkpoints a clean portable `.arq`, reopens
+   it with a fresh reader and compares project id, revision and semantic hash.
+   Until that exists no surface may say a project was published.
+2. **Units, tolerances and stable references (P8).** No canonical
+   integer-micrometre length type, no tolerance-class registry, no semantic
+   role references and no constraint solver. The pack makes the solver depend
+   on accepted unit and tolerance ADRs; neither is accepted.
+3. **Owner-blocked release authority (P14).** The default-branch migration,
+   repository visibility and licence, required reviewers, the Vercel automation
+   bypass and the release certificate are all settings and decisions outside
+   this repository. `verify-routes` fails today for exactly one of these: with
+   no `VERCEL_AUTOMATION_BYPASS_SECRET` the preview origin returns a sign-in
+   page, so routing is Not inspected rather than wrong.
+4. **Reachability, not absence.** Several libraries are complete and tested with
+   no product consumer - `packages/project-loading`, `packages/derived-cache`,
+   the sheet and PDF stack, and the MCP boundary. The pack counts a library
+   without a caller as unfinished, and so does this register.
+
+## Register
+
+### P0 - Authority and integration control
+
+| Item     | Task                                                                       | State       | Evidence                                                                                                                                                                    |
+| -------- | -------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `V3-001` | Resolve actual repository HEAD, default branch, worktree and open PR heads | verified    | HEAD, default branch, worktree and open PR heads resolved at the start of this session; base merged at 1cdf160.                                                             |
+| `V3-002` | Read CLAUDE.md and FAST-KERNEL at resolved HEAD                            | verified    | CLAUDE.md and .zeus/FAST-KERNEL.md read before actionable work; the UserPromptSubmit hook echoed the compiled contract.                                                     |
+| `V3-003` | Compile task with ZEUS and record contract                                 | verified    | Zeus compiled the prompt: implement / moderate / standard / local-green, owner ui-visual, module ui-visual.                                                                 |
+| `V3-004` | Build current file-level conflict map for PR-294, PR-296 and PR-298        | verified    | Conflict map resolved concretely rather than on paper: PR-294 merged mid-flight and every overlapping file was resolved to it (commit 6c29e70).                             |
+| `V3-005` | Create evidence transfer ledger                                            | implemented | This register is the evidence-transfer ledger; per-item state and evidence recorded here.                                                                                   |
+| `V3-006` | Verify ADR-0028 and ADR-0029 states                                        | verified    | ADR-0028 Accepted (D-024) and ADR-0029 Accepted (D-025) confirmed in docs/adr/ and DECISION-REGISTER.csv; pnpm check:decision-ids passes.                                   |
+| `V3-007` | Verify critical environment reviewer settings                              | blocked     | Owner action. Required reviewers for the arq-critical-change environment are GitHub settings; protected_l4_approval still resolves to a deferred gate.                      |
+| `V3-008` | Verify repository visibility and licence state                             | blocked     | Owner action. Repository is public with license NOASSERTION while LICENSE describes the contents as proprietary and confidential. Recorded in LICENSE-DECISION-REQUIRED.md. |
+| `V3-009` | Verify canonical Vercel project and surplus projects                       | blocked     | Owner action. Canonical project is arq-website; retiring surplus projects is a Vercel setting.                                                                              |
+| `V3-010` | Record delivery stop and prohibited mutations                              | verified    | Delivery stop recorded as local-green; no branch, release, settings or production state was mutated.                                                                        |
+
+### P1 - Lifecycle and language
+
+| Item     | Task                                                    | State              | Evidence                                                                                                                                                  |
+| -------- | ------------------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `V3-011` | Extend the existing lifecycle reducer only              | verified           | The existing reducer in apps/web/src/file-handling/file-state-machine.ts was extended, and the merge resolved to one implementation rather than a second. |
+| `V3-012` | Add no-false-open invariant                             | verified           | isProjectOpen answers true only for workspace-active; asserted by file-state-machine.test.ts and by open-attempt-guard.test.ts.                           |
+| `V3-013` | Carry capability and last-known-good through all states | implemented        | writable is decided once at Worker open and carried; lastKnownGoodProject rides on the failure states themselves.                                         |
+| `V3-014` | Add cancellation safe points                            | partially-verified | The cancelled state and its cancelledAt stages exist in the reducer; no UI control currently emits cancel on the merged panel.                            |
+| `V3-015` | Add project replacement policy                          | implemented        | Adoption is the caller’s and happens last, so a rejected candidate leaves the active project untouched.                                                   |
+| `V3-016` | Bind every state to Z Voice message IDs                 | verified           | Every state is bound in docs/product/voice/state-language-map.json; pnpm arq:language:state:verify passes for 10 workspace state machines.                |
+| `V3-017` | Add state coverage generator check                      | verified           | arq:language:state:verify is that check, and it runs in the language-system CI job.                                                                       |
+| `V3-018` | Add property-based transition tests                     | partially-verified | Transition tests exist in file-state-machine.test.ts; they are example-based, not property-based.                                                         |
+| `V3-019` | Add stale async event rejection                         | verified           | Closed on this branch (f8675f5): an attempt guard gates every emit, with tests driving the real reducer to show the defect without it.                    |
+| `V3-020` | Add close and teardown states                           | implemented        | close and closed states exist and carry last known good; NativeProjectSession.close releases the Worker and the working copy lock.                        |
+
+### P2 - Worker and source safety
+
+| Item     | Task                                                   | State       | Evidence                                                                                                                                                                                                                                                               |
+| -------- | ------------------------------------------------------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `V3-021` | Make Worker request input distributive and fully typed | verified    | Omit-over-a-union collapsed the request type; fixed with a distributive omit. Found independently on both branches.                                                                                                                                                    |
+| `V3-022` | Gate all archive reads on accepted open state          | verified    | readRefusal now gates getArchiveEntry, listArchiveEntryPaths, readAllArchiveEntries and checkIntegrity on an accepted open.                                                                                                                                            |
+| `V3-023` | Gate all writes on writable ownership                  | verified    | writeRefusal gates putArchiveEntries on canWrite and not safeModeRequired, with tests proving the file is unchanged after a refusal.                                                                                                                                   |
+| `V3-024` | Apply SQLite hardening before untrusted schema queries | verified    | applyDefensiveOpenPolicy runs at open, before any untrusted schema query; pinned by arqfs-worker-handler.test.ts.                                                                                                                                                      |
+| `V3-025` | Refuse missing WAL sidecar dependencies                | verified    | evaluateArqfsSourceCompleteness refuses a database whose -wal sidecar was not supplied, with a stable code and a remedy.                                                                                                                                               |
+| `V3-026` | Add source completeness policy                         | verified    | Source completeness is a policy module with its own tests (packages/arqfs/src/arqfs-source-completeness.ts).                                                                                                                                                           |
+| `V3-027` | Add source size and page-count bounds                  | verified    | DEFAULT_ARQFS_PREFLIGHT_POLICY bounds file bytes and page count; enforced by preflightArqfsBytes before any SQLite connection.                                                                                                                                         |
+| `V3-028` | Add Worker import database request                     | verified    | importDatabase exists and is the only route selected bytes have into the working copy; proven in headless Chromium by benchmark:file-open.                                                                                                                             |
+| `V3-029` | Release Worker on every rejection path                 | verified    | openNativeProject releases the Worker in a finally on every path that did not adopt; asserted by its tests.                                                                                                                                                            |
+| `V3-030` | Key writer locks per project                           | implemented | writerLockNameForProject keys the single-writer lock per project (packages/arqfs/src/arqfs-single-writer-lock.ts).                                                                                                                                                     |
+| `V3-031` | Preserve rejection reason through protocol             | verified    | Stable ARQFS_WORKER_ERROR_CODES carry the reason through the protocol rather than prose.                                                                                                                                                                               |
+| `V3-032` | Add protocol request ID, project ID and revision       | proposed    | Not implemented. Responses carry a request id but not a project id, so a client cannot tell a response from a Worker opened for another project. Implemented on this branch earlier and dropped in the reconciliation to avoid a parallel protocol; worth reproposing. |
+
+### P3 - Staging and native open
+
+| Item     | Task                                                   | State              | Evidence                                                                                                                                       |
+| -------- | ------------------------------------------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `V3-033` | Preserve selected source digest and provenance         | implemented        | The working-copy id is the SHA-256 of the selected bytes, so provenance is the identity rather than a separate record.                         |
+| `V3-034` | Stage source bytes into ARQ-owned OPFS working project | verified           | Selected bytes are staged into the project-scoped OPFS working copy through importDatabase.                                                    |
+| `V3-035` | Verify staged byte identity before open                | verified           | Closed on this branch (1605fc1): checkIntegrity runs SQLite quick_check and foreign_key_check over the staged copy before anything decodes it. |
+| `V3-036` | Open through sqlite-wasm Worker                        | verified           | Opened through the real sqlite-wasm Worker; proven by benchmark:e2e-arq-open and benchmark:file-open.                                          |
+| `V3-037` | Validate application ID and compatibility floors       | verified           | openArqfs validates application id and the reader/writer major floors; four outcomes proven in headless Chromium.                              |
+| `V3-038` | Validate required entries and digests                  | partially-verified | importArchive requires a manifest and a model and rejects otherwise; per-entry digests are not verified on this path.                          |
+| `V3-039` | Verify semantic hash                                   | proposed           | arqfs-semantic-hash.ts exists and computes the canonical hash; the open path does not verify it.                                               |
+| `V3-040` | Hydrate through one project-loading package            | partially-verified | One decode path (native-project-model.ts) is used. packages/project-loading remains without a product consumer.                                |
+| `V3-041` | Validate hostile semantic inputs                       | partially-verified | decodeNativeProjectModel rejects malformed models with its own tests; a hostile-input fixture matrix does not exist.                           |
+| `V3-042` | Adopt candidate atomically                             | verified           | Adoption is the last step and is the caller’s; nothing is replaced until the candidate is fully decoded.                                       |
+| `V3-043` | Preserve previous active project until adoption        | verified           | The panel never replaces the active project itself, and the reducer carries last known good through every failure.                             |
+| `V3-044` | Support read-only newer-writer projects                | verified           | A newer-writer file opens read-only and carries readOnly through to the snapshot; proven in the browser check.                                 |
+| `V3-045` | Dispose temporary resources after cancel or failure    | verified           | The finally in openNativeProject disposes the client and terminates the Worker whenever the candidate was not adopted.                         |
+
+### P4 - Editable operations
+
+| Item     | Task                                                            | State              | Evidence                                                                                                                   |
+| -------- | --------------------------------------------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `V3-046` | Define canonical operation envelope                             | implemented        | packages/operations defines the operation envelope with baseRevision and preconditions.                                    |
+| `V3-047` | Require base revision and preconditions                         | implemented        | baseRevision and preconditions exist on the envelope.                                                                      |
+| `V3-048` | Route UI edits through operation engine                         | partially-verified | The plan canvas commits typed operations validated by @arq/validation; not every editor surface routes through the engine. |
+| `V3-049` | Route script, MCP and plugin proposals through operation engine | partially-verified | The MCP boundary constructs operations through @arq/arqscript; no plugin host exists.                                      |
+| `V3-050` | Commit in Worker SQLite transaction                             | partially-verified | NativeProjectSession.save writes through the Worker; commit is not wrapped in a single SQLite transaction per operation.   |
+| `V3-051` | Validate complete candidate before commit                       | partially-verified | @arq/validation validates before commit on the canvas path.                                                                |
+| `V3-052` | Advance revision only after success                             | not-inspected      | Revision advance semantics on the save path were not inspected in this pass.                                               |
+| `V3-053` | Return stable diagnostic on rollback                            | implemented        | Stable diagnostic codes exist for the Worker boundary; operation-level rollback codes were not inspected.                  |
+| `V3-054` | Add grouped undo and redo                                       | partially-verified | packages/operations has an undo stack; grouping by user intent was not found.                                              |
+| `V3-055` | Add operation provenance                                        | not-inspected      | Operation provenance was not inspected in this pass.                                                                       |
+| `V3-056` | Add stale operation rejection                                   | not-inspected      | Stale operation rejection was not inspected in this pass.                                                                  |
+| `V3-057` | Invalidate affected derived products only                       | partially-verified | packages/derived-cache implements freshness by semantic hash; it has no product consumer.                                  |
+
+### P5 - Recovery and publication
+
+| Item     | Task                                                        | State              | Evidence                                                                                                                                                                                                                 |
+| -------- | ----------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `V3-058` | Define bounded IndexedDB recovery metadata                  | implemented        | IndexedDB is bounded to recovery and metadata roles by ADR-0028; apps/web journals plan edits through @arq/local-storage.                                                                                                |
+| `V3-059` | Detect newer recovery without auto-applying                 | partially-verified | The reducer has recovery-available and does not auto-apply; the native path does not detect it.                                                                                                                          |
+| `V3-060` | Review recovery difference                                  | proposed           | No recovery-difference review surface exists.                                                                                                                                                                            |
+| `V3-061` | Apply recovery through operations or accepted snapshot path | proposed           | Recovery is not applied through the native open path.                                                                                                                                                                    |
+| `V3-062` | Validate recovery before workspace activation               | implemented        | The reducer routes recovery back through hydrating rather than to active.                                                                                                                                                |
+| `V3-063` | Prepare exact working revision for publication              | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+| `V3-064` | Drain operation queue                                       | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+| `V3-065` | Checkpoint database                                         | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+| `V3-066` | Generate clean portable bytes                               | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+| `V3-067` | Verify no required WAL or SHM dependency                    | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+| `V3-068` | Run SQLite integrity checks                                 | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+| `V3-069` | Verify canonical entry digests                              | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+| `V3-070` | Fresh-reader reopen publication                             | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+| `V3-071` | Compare project ID, revision and semantic hash              | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+| `V3-072` | Record publication receipt                                  | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+| `V3-073` | Keep last known good after publish failure                  | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+| `V3-074` | Test interruption at every publication stage                | proposed           | Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening. |
+
+### P6 - Semantic architectural model
+
+| Item     | Task                                             | State              | Evidence                                                                                                                                 |
+| -------- | ------------------------------------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `V3-075` | Complete Project and Level contracts             | partially-verified | packages/bim-core carries Level, WallType/Instance, Opening, Door and Room contracts with tests; not all are reachable from the product. |
+| `V3-076` | Complete WallType and WallInstance contracts     | partially-verified | packages/bim-core carries Level, WallType/Instance, Opening, Door and Room contracts with tests; not all are reachable from the product. |
+| `V3-077` | Complete hosted Opening contract                 | partially-verified | packages/bim-core carries Level, WallType/Instance, Opening, Door and Room contracts with tests; not all are reachable from the product. |
+| `V3-078` | Complete DoorType and DoorInstance contracts     | partially-verified | packages/bim-core carries Level, WallType/Instance, Opening, Door and Room contracts with tests; not all are reachable from the product. |
+| `V3-079` | Complete WindowType and WindowInstance contracts | partially-verified | packages/bim-core carries Level, WallType/Instance, Opening, Door and Room contracts with tests; not all are reachable from the product. |
+| `V3-080` | Complete Room identity and review states         | partially-verified | packages/bim-core carries Level, WallType/Instance, Opening, Door and Room contracts with tests; not all are reachable from the product. |
+| `V3-081` | Add SlabType and SlabInstance                    | proposed           | Slab, Stair, Schedule and Material contracts were not found in packages/bim-core.                                                        |
+| `V3-082` | Add bounded StairType and StairInstance          | proposed           | Slab, Stair, Schedule and Material contracts were not found in packages/bim-core.                                                        |
+| `V3-083` | Complete Dimension stable references             | partially-verified | dimension-reference.ts and linear-dimension.ts exist; stable references across topology change are not proven.                           |
+| `V3-084` | Complete TextNote                                | partially-verified | TextNote, ViewDefinition and Sheet contracts exist in packages/bim-core (sheet.ts); reachability from the product is not established.    |
+| `V3-085` | Complete ViewDefinition                          | partially-verified | TextNote, ViewDefinition and Sheet contracts exist in packages/bim-core (sheet.ts); reachability from the product is not established.    |
+| `V3-086` | Complete Sheet and Viewport                      | partially-verified | TextNote, ViewDefinition and Sheet contracts exist in packages/bim-core (sheet.ts); reachability from the product is not established.    |
+| `V3-087` | Add ScheduleDefinition                           | proposed           | Slab, Stair, Schedule and Material contracts were not found in packages/bim-core.                                                        |
+| `V3-088` | Add MaterialDefinition                           | proposed           | Slab, Stair, Schedule and Material contracts were not found in packages/bim-core.                                                        |
+| `V3-089` | Add relationship validation and deletion policy  | not-inspected      | Relationship validation and deletion policy were not inspected in this pass.                                                             |
+
+### P7 - Plan authoring and inference
+
+| Item     | Task                                                   | State              | Evidence                                                                                                                                                      |
+| -------- | ------------------------------------------------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `V3-090` | Implement deterministic inference candidate generation | partially-verified | packages/editor-shell implements candidate generation, cycling and endpoint/centre snapping with tests; the canvas wires a subset (endpoint, midpoint, grid). |
+| `V3-091` | Implement candidate ranking                            | partially-verified | packages/editor-shell implements candidate generation, cycling and endpoint/centre snapping with tests; the canvas wires a subset (endpoint, midpoint, grid). |
+| `V3-092` | Add endpoint, midpoint and intersection                | partially-verified | packages/editor-shell implements candidate generation, cycling and endpoint/centre snapping with tests; the canvas wires a subset (endpoint, midpoint, grid). |
+| `V3-093` | Add horizontal and vertical inference                  | partially-verified | packages/editor-shell implements candidate generation, cycling and endpoint/centre snapping with tests; the canvas wires a subset (endpoint, midpoint, grid). |
+| `V3-094` | Add parallel and perpendicular inference               | partially-verified | packages/editor-shell implements candidate generation, cycling and endpoint/centre snapping with tests; the canvas wires a subset (endpoint, midpoint, grid). |
+| `V3-095` | Add extension inference                                | partially-verified | packages/editor-shell implements candidate generation, cycling and endpoint/centre snapping with tests; the canvas wires a subset (endpoint, midpoint, grid). |
+| `V3-096` | Add grid and level inference                           | partially-verified | packages/editor-shell implements candidate generation, cycling and endpoint/centre snapping with tests; the canvas wires a subset (endpoint, midpoint, grid). |
+| `V3-097` | Add inference cycling                                  | partially-verified | packages/editor-shell implements candidate generation, cycling and endpoint/centre snapping with tests; the canvas wires a subset (endpoint, midpoint, grid). |
+| `V3-098` | Add inference suppression                              | partially-verified | packages/editor-shell implements candidate generation, cycling and endpoint/centre snapping with tests; the canvas wires a subset (endpoint, midpoint, grid). |
+| `V3-099` | Add numeric length and angle entry                     | not-inspected      | Numeric and typed-unit entry and text-input ownership were not inspected in this pass.                                                                        |
+| `V3-100` | Add typed unit parsing                                 | not-inspected      | Numeric and typed-unit entry and text-input ownership were not inspected in this pass.                                                                        |
+| `V3-101` | Keep text input ownership isolated                     | not-inspected      | Numeric and typed-unit entry and text-input ownership were not inspected in this pass.                                                                        |
+| `V3-102` | Commit wall workflow as one undo group                 | partially-verified | The wall workflow commits as one typed operation; explicit undo grouping was not found.                                                                       |
+| `V3-103` | Host door and window semantically                      | partially-verified | Door and window hosting and room contracts exist as libraries; they are not wired to the canvas.                                                              |
+| `V3-104` | Recompute affected room boundaries                     | partially-verified | Door and window hosting and room contracts exist as libraries; they are not wired to the canvas.                                                              |
+| `V3-105` | Add structured non-canvas selection                    | partially-verified | accessible-selection-description.ts and explain-selection.ts provide non-canvas selection description.                                                        |
+
+### P8 - Units stable references and constraints
+
+| Item     | Task                                           | State    | Evidence                                                                                                                                                                    |
+| -------- | ---------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `V3-106` | Run integer micrometre versus float64 spike    | proposed | No canonical integer-micrometre length wrapper and no tolerance-class registry were found. geometry-2d has a tolerance module; the ladder the pack asks for does not exist. |
+| `V3-107` | Benchmark SQLite and Worker transport          | proposed | No canonical integer-micrometre length wrapper and no tolerance-class registry were found. geometry-2d has a tolerance module; the ladder the pack asks for does not exist. |
+| `V3-108` | Benchmark import and imperial conversion       | proposed | No canonical integer-micrometre length wrapper and no tolerance-class registry were found. geometry-2d has a tolerance module; the ladder the pack asks for does not exist. |
+| `V3-109` | Define safe project extent                     | proposed | No canonical integer-micrometre length wrapper and no tolerance-class registry were found. geometry-2d has a tolerance module; the ladder the pack asks for does not exist. |
+| `V3-110` | Implement typed canonical length wrapper       | proposed | No canonical integer-micrometre length wrapper and no tolerance-class registry were found. geometry-2d has a tolerance module; the ladder the pack asks for does not exist. |
+| `V3-111` | Implement tolerance class registry             | proposed | No canonical integer-micrometre length wrapper and no tolerance-class registry were found. geometry-2d has a tolerance module; the ladder the pack asks for does not exist. |
+| `V3-112` | Replace implicit epsilon uses                  | proposed | No canonical integer-micrometre length wrapper and no tolerance-class registry were found. geometry-2d has a tolerance module; the ladder the pack asks for does not exist. |
+| `V3-113` | Implement semantic role references             | proposed | Semantic role references, split/join lineage and a query-based reference resolver were not found.                                                                           |
+| `V3-114` | Implement lineage for split and join           | proposed | Semantic role references, split/join lineage and a query-based reference resolver were not found.                                                                           |
+| `V3-115` | Implement query-based reference resolver       | proposed | Semantic role references, split/join lineage and a query-based reference resolver were not found.                                                                           |
+| `V3-116` | Build ConstraintSolver interface               | proposed | No ConstraintSolver interface or implementation exists. The pack makes this dependent on accepted unit and solver ADRs, neither of which is accepted.                       |
+| `V3-117` | Compare solver candidates                      | proposed | No ConstraintSolver interface or implementation exists. The pack makes this dependent on accepted unit and solver ADRs, neither of which is accepted.                       |
+| `V3-118` | Implement first accepted constraint subset     | proposed | No ConstraintSolver interface or implementation exists. The pack makes this dependent on accepted unit and solver ADRs, neither of which is accepted.                       |
+| `V3-119` | Add conflict set diagnostics                   | proposed | No ConstraintSolver interface or implementation exists. The pack makes this dependent on accepted unit and solver ADRs, neither of which is accepted.                       |
+| `V3-120` | Add deterministic replay and convergence tests | proposed | No ConstraintSolver interface or implementation exists. The pack makes this dependent on accepted unit and solver ADRs, neither of which is accepted.                       |
+
+### P9 - Plan 3D sheets and output
+
+| Item     | Task                                      | State              | Evidence                                                                                                                                                                       |
+| -------- | ----------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `V3-121` | Preserve selection IDs across Plan and 3D | verified           | Shared selection between plan and 3D is proven by benchmark:model-canvas in headless Chromium, in both directions.                                                             |
+| `V3-122` | Generate 3D from semantic model           | partially-verified | packages/model-renderer and geometry-3d generate and render from the model; effect-based invalidation, stale-result rejection and GPU disposal were not individually verified. |
+| `V3-123` | Implement effect-based mesh invalidation  | partially-verified | packages/model-renderer and geometry-3d generate and render from the model; effect-based invalidation, stale-result rejection and GPU disposal were not individually verified. |
+| `V3-124` | Reject stale geometry results             | partially-verified | packages/model-renderer and geometry-3d generate and render from the model; effect-based invalidation, stale-result rejection and GPU disposal were not individually verified. |
+| `V3-125` | Dispose GPU resources on close            | partially-verified | packages/model-renderer and geometry-3d generate and render from the model; effect-based invalidation, stale-result rejection and GPU disposal were not individually verified. |
+| `V3-126` | Add origin rebasing                       | not-inspected      | Origin rebasing, section box and level/category visibility were not inspected in this pass.                                                                                    |
+| `V3-127` | Add section box and clipping              | not-inspected      | Origin rebasing, section box and level/category visibility were not inspected in this pass.                                                                                    |
+| `V3-128` | Add level and category visibility         | not-inspected      | Origin rebasing, section box and level/category visibility were not inspected in this pass.                                                                                    |
+| `V3-129` | Implement sheet model                     | partially-verified | Sheet contracts exist in bim-core; no sheet composition surface is reachable from the product.                                                                                 |
+| `V3-130` | Implement Plan viewport                   | partially-verified | Sheet contracts exist in bim-core; no sheet composition surface is reachable from the product.                                                                                 |
+| `V3-131` | Implement scale and crop                  | partially-verified | Sheet contracts exist in bim-core; no sheet composition surface is reachable from the product.                                                                                 |
+| `V3-132` | Implement dimensions and text on sheets   | partially-verified | Sheet contracts exist in bim-core; no sheet composition surface is reachable from the product.                                                                                 |
+| `V3-133` | Implement schedules                       | partially-verified | Sheet contracts exist in bim-core; no sheet composition surface is reachable from the product.                                                                                 |
+| `V3-134` | Generate PDF off main thread              | partially-verified | packages/pdf-export produces vector PDF with font embedding and export metadata; it is not reachable from the product and not proven off the main thread.                      |
+| `V3-135` | Verify PDF in independent readers         | proposed           | No independent-reader PDF verification exists.                                                                                                                                 |
+
+### P10 - Workspace and accessibility
+
+| Item     | Task                                            | State              | Evidence                                                                                                                                            |
+| -------- | ----------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `V3-136` | Implement top bar project and persistence state | implemented        | The top bar reports project and persistence state from the journal’s real condition.                                                                |
+| `V3-137` | Implement Project Browser hierarchy             | partially-verified | Browser and Inspector panels exist in packages/workspace; component coverage is 14 of 147 by the repository’s own registry check.                   |
+| `V3-138` | Implement Inspector property groups             | partially-verified | Browser and Inspector panels exist in packages/workspace; component coverage is 14 of 147 by the repository’s own registry check.                   |
+| `V3-139` | Implement Review Centre                         | proposed           | No Review Centre or Diagnostics panel renders in the product.                                                                                       |
+| `V3-140` | Implement Diagnostics panel                     | proposed           | No Review Centre or Diagnostics panel renders in the product.                                                                                       |
+| `V3-141` | Implement desktop composition                   | partially-verified | responsive.ts carries desktop, tablet and phone compositions with tests; only workspace layout is proven in a browser (benchmark:workspace-layout). |
+| `V3-142` | Implement tablet landscape composition          | partially-verified | responsive.ts carries desktop, tablet and phone compositions with tests; only workspace layout is proven in a browser (benchmark:workspace-layout). |
+| `V3-143` | Implement tablet portrait composition           | partially-verified | responsive.ts carries desktop, tablet and phone compositions with tests; only workspace layout is proven in a browser (benchmark:workspace-layout). |
+| `V3-144` | Implement phone inspection composition          | partially-verified | responsive.ts carries desktop, tablet and phone compositions with tests; only workspace layout is proven in a browser (benchmark:workspace-layout). |
+| `V3-145` | Implement Pencil ownership                      | partially-verified | benchmark:pencil-input is a capability check for pointer behaviour; Pencil ownership rules are not implemented.                                     |
+| `V3-146` | Expose disabled reasons accessibly              | partially-verified | The file-open surface exposes disabled and refusal reasons in text behind a disclosure.                                                             |
+| `V3-147` | Rate-limit live regions                         | not-inspected      | Live-region rate limiting was not inspected in this pass.                                                                                           |
+| `V3-148` | Add keyboard command registry                   | implemented        | packages/workspace/src/keyboard-map.ts is the keyboard command registry.                                                                            |
+| `V3-149` | Add screen-reader structured model navigation   | partially-verified | accessible-selection-description.ts describes selection structurally; a screen-reader model navigation path is not proven.                          |
+| `V3-150` | Test long names and responsive dialogs          | not-inspected      | Long-name, reduced-motion and high-contrast behaviour were not inspected in this pass.                                                              |
+| `V3-151` | Test reduced motion and high contrast           | not-inspected      | Long-name, reduced-motion and high-contrast behaviour were not inspected in this pass.                                                              |
+
+### P11 - Language System 5 integration
+
+| Item     | Task                                                         | State         | Evidence                                                                                                                                        |
+| -------- | ------------------------------------------------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `V3-152` | Map proposed lifecycle states into existing Z Voice registry | verified      | Lifecycle, persistence and diagnostic states are bound in the existing Z Voice registries; the ladder passes and the context refresh is logged. |
+| `V3-153` | Add persistence and publication message IDs                  | verified      | Lifecycle, persistence and diagnostic states are bound in the existing Z Voice registries; the ladder passes and the context refresh is logged. |
+| `V3-154` | Add diagnostic message records                               | verified      | Lifecycle, persistence and diagnostic states are bound in the existing Z Voice registries; the ladder passes and the context refresh is logged. |
+| `V3-155` | Add claim rules and prohibited upgrades                      | implemented   | Claim rules and the conflict registry gate what any surface may state; 36 claim bindings verified.                                              |
+| `V3-156` | Add AI Review Centre terms                                   | not-inspected | AI Review Centre, interoperability fidelity and production release terms were not inspected in this pass.                                       |
+| `V3-157` | Add interoperability fidelity terms                          | not-inspected | AI Review Centre, interoperability fidelity and production release terms were not inspected in this pass.                                       |
+| `V3-158` | Add production release terms                                 | not-inspected | AI Review Centre, interoperability fidelity and production release terms were not inspected in this pass.                                       |
+| `V3-159` | Add localisation placeholders                                | not-inspected | Localisation placeholders, announcement profiles and deprecation aliases were not inspected in this pass.                                       |
+| `V3-160` | Add accessibility announcement profiles                      | not-inspected | Localisation placeholders, announcement profiles and deprecation aliases were not inspected in this pass.                                       |
+| `V3-161` | Add deprecation aliases                                      | not-inspected | Localisation placeholders, announcement profiles and deprecation aliases were not inspected in this pass.                                       |
+| `V3-162` | Refresh governed context                                     | verified      | pnpm arq:language:refresh run for every governed change in this branch, with each refresh logged in REFRESH-LOG.json.                           |
+| `V3-163` | Run complete language ladder                                 | verified      | The ladder from sources:verify through audit:ci passes on this branch.                                                                          |
+
+### P12 - AI plugins and interoperability
+
+| Item     | Task                                        | State              | Evidence                                                                                                                                                                        |
+| -------- | ------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `V3-164` | Add proposal envelope with base revision    | implemented        | packages/mcp-server carries grants with scopes, expiry and revocation, and no commit or approve tool (ADR-0027).                                                                |
+| `V3-165` | Add scoped grants and revocation            | implemented        | packages/mcp-server carries grants with scopes, expiry and revocation, and no commit or approve tool (ADR-0027).                                                                |
+| `V3-166` | Add semantic diff                           | proposed           | Semantic diff, visual preview references, partial approval, stale proposal refusal and grouped apply are not implemented; no Review Centre renders.                             |
+| `V3-167` | Add visual preview references               | proposed           | Semantic diff, visual preview references, partial approval, stale proposal refusal and grouped apply are not implemented; no Review Centre renders.                             |
+| `V3-168` | Add partial approval dependency validation  | proposed           | Semantic diff, visual preview references, partial approval, stale proposal refusal and grouped apply are not implemented; no Review Centre renders.                             |
+| `V3-169` | Add stale proposal refusal                  | proposed           | Semantic diff, visual preview references, partial approval, stale proposal refusal and grouped apply are not implemented; no Review Centre renders.                             |
+| `V3-170` | Add prompt injection test                   | not-inspected      | A prompt-injection test was not inspected in this pass.                                                                                                                         |
+| `V3-171` | Add apply result and grouped undo           | proposed           | Semantic diff, visual preview references, partial approval, stale proposal refusal and grouped apply are not implemented; no Review Centre renders.                             |
+| `V3-172` | Add extension capability manifest           | proposed           | No extension capability manifest or isolated extension execution exists.                                                                                                        |
+| `V3-173` | Isolate untrusted extension execution       | proposed           | No extension capability manifest or isolated extension execution exists.                                                                                                        |
+| `V3-174` | Add import fidelity report                  | partially-verified | file-ingress carries detection, policy and staging with fidelity vocabulary, and the adapters are tested as libraries; no import or export path runs end to end in the product. |
+| `V3-175` | Add export fidelity report                  | partially-verified | file-ingress carries detection, policy and staging with fidelity vocabulary, and the adapters are tested as libraries; no import or export path runs end to end in the product. |
+| `V3-176` | Add unknown unit refusal                    | partially-verified | file-ingress carries detection, policy and staging with fidelity vocabulary, and the adapters are tested as libraries; no import or export path runs end to end in the product. |
+| `V3-177` | Add unsupported entity quarantine           | partially-verified | file-ingress carries detection, policy and staging with fidelity vocabulary, and the adapters are tested as libraries; no import or export path runs end to end in the product. |
+| `V3-178` | Add round-trip checks for supported subsets | partially-verified | file-ingress carries detection, policy and staging with fidelity vocabulary, and the adapters are tested as libraries; no import or export path runs end to end in the product. |
+
+### P13 - Security and observability
+
+| Item     | Task                                            | State         | Evidence                                                                                                                                   |
+| -------- | ----------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `V3-179` | Add recursive sensitive-field redaction         | not-inspected | Recursive redaction and support-bundle preview were not inspected in this pass.                                                            |
+| `V3-180` | Add support bundle preview                      | not-inspected | Recursive redaction and support-bundle preview were not inspected in this pass.                                                            |
+| `V3-181` | Add network observation negative control        | verified      | benchmark:network-observation records every request the real bundle attempts and fails on any that leaves the origin; proven by injection. |
+| `V3-182` | Add file decompression and size limits          | verified      | preflightArqfsBytes bounds file size and page count before any SQLite connection.                                                          |
+| `V3-183` | Add dependency and licence inventory            | verified      | pnpm check:dependency-licences runs in CI.                                                                                                 |
+| `V3-184` | Pin protected workflow actions                  | verified      | verify-workflow-controls.mjs asserts 15 controls against the live workflows named by installation-map.v5.json.                             |
+| `V3-185` | Test secret scanner non-vacuity                 | verified      | pnpm check:secrets:test is the scanner’s non-vacuity proof.                                                                                |
+| `V3-186` | Add build provenance check                      | implemented   | scripts/write-deployment-provenance.mjs writes build provenance, and verify-vercel-routes.mjs reads it.                                    |
+| `V3-187` | Add operation and lifecycle diagnostic receipts | implemented   | Stable diagnostic codes exist across the Worker boundary and the file flow.                                                                |
+| `V3-188` | Add incident evidence preservation              | not-inspected | Incident evidence preservation and the telemetry schema were not inspected in this pass.                                                   |
+| `V3-189` | Add privacy-safe telemetry schema               | not-inspected | Incident evidence preservation and the telemetry schema were not inspected in this pass.                                                   |
+
+### P14 - Release and production
+
+| Item     | Task                                                  | State       | Evidence                                                                                                                                                                           |
+| -------- | ----------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `V3-190` | Complete default branch migration                     | blocked     | Owner action. ADR-0029 accepts main; the migration has not been performed and the default branch is still claude/arq-cad-platform-research-ba8rav.                                 |
+| `V3-191` | Configure critical required reviewers                 | blocked     | Owner actions in GitHub and Vercel settings. verify-routes fails today for exactly this reason: no VERCEL_AUTOMATION_BYPASS_SECRET, so routing is Not inspected rather than wrong. |
+| `V3-192` | Resolve repository visibility and licence             | blocked     | Owner actions in GitHub and Vercel settings. verify-routes fails today for exactly this reason: no VERCEL_AUTOMATION_BYPASS_SECRET, so routing is Not inspected rather than wrong. |
+| `V3-193` | Configure Vercel automation bypass                    | blocked     | Owner actions in GitHub and Vercel settings. verify-routes fails today for exactly this reason: no VERCEL_AUTOMATION_BYPASS_SECRET, so routing is Not inspected rather than wrong. |
+| `V3-194` | Retire surplus Vercel projects                        | blocked     | Owner actions in GitHub and Vercel settings. verify-routes fails today for exactly this reason: no VERCEL_AUTOMATION_BYPASS_SECRET, so routing is Not inspected rather than wrong. |
+| `V3-195` | Separate deployment changes from project-data changes | verified    | Deployment work stayed out of this branch’s project-data commits; the Vercel build fix arrived separately through the base.                                                        |
+| `V3-196` | Build exact commit artifact                           | blocked     | Preview verification cannot gather evidence until the automation bypass exists.                                                                                                    |
+| `V3-197` | Verify preview routes and provenance                  | blocked     | Preview verification cannot gather evidence until the automation bypass exists.                                                                                                    |
+| `V3-198` | Run native workflow preview smoke                     | blocked     | Preview verification cannot gather evidence until the automation bypass exists.                                                                                                    |
+| `V3-199` | Review public claims                                  | implemented | Public claims are gated by the claim and conflict registries; no surface states a licence position or a no-network-transfer claim.                                                 |
+| `V3-200` | Create release certificate                            | blocked     | Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow.                         |
+| `V3-201` | Obtain human approval                                 | blocked     | Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow.                         |
+| `V3-202` | Promote exact deployment                              | blocked     | Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow.                         |
+| `V3-203` | Verify production routes and feature path             | blocked     | Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow.                         |
+| `V3-204` | Observe errors and performance                        | blocked     | Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow.                         |
+| `V3-205` | Rehearse rollback                                     | blocked     | Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow.                         |
