@@ -15,6 +15,19 @@ import type { ArqfsWorkerRequestInput } from '@arq/arqfs/src/arqfs-worker-client
 import { openNativeProject, type NativeWorkerFactory } from './open-native-project';
 import { publishNativeProject } from './publish-native-project';
 import type { NativeProjectSession } from './native-project-session';
+import type { ArqfsWriterLease } from '@arq/arqfs/src/arqfs-single-writer-lock';
+
+/**
+ * Grants the writer lock. Injected rather than left to the real implementation
+ * because this test environment has no `navigator.locks`, and the real one
+ * correctly degrades to a read-only lease when it is absent - publication's own
+ * write path is what these tests exercise, so leaving that degraded would test
+ * the wrong branch throughout this file (see open-native-project.test.ts, which
+ * establishes this same pattern).
+ */
+function grantsWriterLock(): Promise<ArqfsWriterLease> {
+  return Promise.resolve({ status: 'writer', handle: { release: () => undefined } });
+}
 
 const PROJECT_ID = '00000000-0000-4000-8000-000000000002';
 const OTHER_PROJECT_ID = '00000000-0000-4000-8000-000000000099';
@@ -153,9 +166,20 @@ describe('publishNativeProject', () => {
     dir = mkdtempSync(path.join(tmpdir(), 'arq-publish-'));
     realFactory = createRealWorkerFactory(dir);
     const bytes = await projectBytes(dir, 'source.arq');
-    const opened = await openNativeProject(bytes, realFactory.factory, 'house.arq');
+    const opened = await openNativeProject(
+      bytes,
+      realFactory.factory,
+      'house.arq',
+      undefined,
+      undefined,
+      grantsWriterLock,
+    );
     if (opened.status !== 'opened') {
-      throw new Error(`test setup failed to open the source project: ${opened.reason}`);
+      throw new Error(
+        `test setup failed to open the source project: ${
+          opened.status === 'rejected' ? opened.reason : `already open as ${opened.workingCopyId}`
+        }`,
+      );
     }
     session = opened.session;
   });
@@ -242,7 +266,14 @@ describe('publishNativeProject', () => {
       failError: 'simulated write failure',
     });
     const bytes = await projectBytes(dir, 'unsaved-source.arq');
-    const opened = await openNativeProject(bytes, failingFactory.factory, 'house.arq');
+    const opened = await openNativeProject(
+      bytes,
+      failingFactory.factory,
+      'house.arq',
+      undefined,
+      undefined,
+      grantsWriterLock,
+    );
     if (opened.status !== 'opened') throw new Error('expected the source to open');
     const failedWalls = [{ id: 'w1', start: worldPoint(0, 0), end: worldPoint(1, 0) }];
     await opened.session
@@ -267,7 +298,14 @@ describe('publishNativeProject', () => {
       failError: 'simulated checkpoint/export interruption',
     });
     const bytes = await projectBytes(dir, 'export-interrupt-source.arq');
-    const opened = await openNativeProject(bytes, failingFactory.factory, 'house.arq');
+    const opened = await openNativeProject(
+      bytes,
+      failingFactory.factory,
+      'house.arq',
+      undefined,
+      undefined,
+      grantsWriterLock,
+    );
     if (opened.status !== 'opened') throw new Error('expected the source to open');
 
     const before = failingFactory.constructedCount();
@@ -288,7 +326,14 @@ describe('publishNativeProject', () => {
   it('refuses to publish a read-only project', async () => {
     const readOnlyBytes = await projectBytes(dir, 'read-only-source.arq', { readOnly: true });
     const factory = createRealWorkerFactory(dir);
-    const opened = await openNativeProject(readOnlyBytes, factory.factory, 'read-only.arq');
+    const opened = await openNativeProject(
+      readOnlyBytes,
+      factory.factory,
+      'read-only.arq',
+      undefined,
+      undefined,
+      grantsWriterLock,
+    );
     if (opened.status !== 'opened') throw new Error('expected the read-only source to open');
     expect(opened.snapshot.readOnly).toBe(true);
 

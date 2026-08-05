@@ -155,11 +155,11 @@ never saw. That is Not inspected, not passing, and it stays that way until a
    What still does not exist, regardless of which publish path is used:
    nothing in `apps/web` calls `NativeProjectSession.save` from a canvas edit
    - the typed-operations commit pipeline in `packages/operations` is real and
-   tested as a library but is not wired to the plan canvas - so a publish
-   today republishes exactly what was opened, not the user's subsequent
-   edits, and the workspace still reports the project as open and not saved.
-   Copy-on-write migration stays unreachable until edits reach the working
-   copy, and a project opened read-only says why.
+     tested as a library but is not wired to the plan canvas - so a publish
+     today republishes exactly what was opened, not the user's subsequent
+     edits, and the workspace still reports the project as open and not saved.
+     Copy-on-write migration stays unreachable until edits reach the working
+     copy, and a project opened read-only says why.
 2. No import/export reachable from the UI: the import worker is never
    constructed by `apps/web` (adapters themselves are real - dxf, underlay,
    attachment and now ifc all resolve in the worker's default registry).
@@ -377,22 +377,42 @@ repository can support for it and the evidence that decided it. It is generated
 from `docs/product/implementation-pack-3.0-register.json` by
 `pnpm build:pack-register`, so the prose cannot drift from the data.
 
-62 verified, 19 implemented, 71 partially verified, 36 proposed, 17 blocked on
-owner action, 0 not inspected. Publication (P5) moved from proposed to
-verified in this pass, and the Worker protocol's project-id correlation
-(V3-032) moved from proposed to verified. Every item the pack originally left
-not-inspected has now been read against real code: interoperability fidelity
-terms (V3-157), recursive sensitive-field redaction (V3-179), support bundle
-preview (V3-180), incident evidence preservation (V3-188) and the privacy-safe
-telemetry schema (V3-189) all turned out to be real and tested; relationship
-deletion policy (V3-089), AI Review Centre terms (V3-156), production release
-terms (V3-158), origin rebasing, section box/clipping and level/category
-visibility (V3-126 through V3-128) and long-name/responsive-dialog test
-coverage (V3-150) were confirmed genuinely absent rather than merely unwired.
-The largest remaining gaps it names are the numeric and tolerance foundation
-with everything that depends on it, canvas edits not yet reaching the native
-session so publish operates on whatever was opened rather than live edits, and
-the release authority that is settings rather than code.
+144 verified, 19 implemented, 22 partially verified, 3 proposed, 17 blocked on
+owner action, 0 not inspected. Two independent branches worked this pack in
+parallel and both merged: this branch's own publication pipeline
+(`publishNativeProject`) and Worker project-id correlation (V3-032), and
+PR #301's much larger sweep across P4-P13 (typed operations, recovery,
+a second publication path, semantic-model completeness, inference, plan/3D/
+sheet output, accessibility, AI-proposal safety and security hardening).
+Reconciling the merge found one real integration gap the two branches'
+independent Worker-protocol extensions left behind - `parseArqfsWorkerRequest`
+validated `publish` but not `exportDatabase`/`computeSemanticHash`/
+`checkIntegrity`, and the `publish` case still built responses without the
+`projectId` V3-032 requires - both fixed in the merge commit, not carried as
+open work.
+PR #301 shipped its own generated, evidence-verified traceability record
+(`docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv`); every one of its 174
+non-owner-authority claims was mechanically checked here and the claimed
+symbol exists at the claimed path in every case, with a sample separately read
+in full for task-intent match. That sample caught one real overclaim -
+V3-139 "Implement Review Centre" was recorded as pre-existing on the strength
+of `ASSISTANT_TABS`, a tab-identifier list in `packages/mcp-server`, when this
+file's own reconciled text says plainly that no panel renders the Review
+Centre model; recorded here as partially-verified, not verified, against the
+upstream claim. The remaining "pre-existing" claims this register had not
+already resolved on its own are recorded partially-verified rather than
+verified for the same reason: real code confirmed present at the claimed
+location, not each one individually read for full task-intent match.
+Only three tasks (V3-107, V3-108, V3-117 - wasm transport/import benchmarks
+and a solver comparison against SolveSpace/libslvs) remain proposed as
+genuinely blocked on evidence neither branch can produce by writing more code.
+The largest remaining gaps: the numeric and tolerance foundation still gated
+on ADR-0004/D-014 and the tolerance-ladder ADR candidate; canvas edits still
+do not reach the native session, so either publish path operates on whatever
+was opened rather than live edits, and a second, unwired publication
+implementation (`publishProjectFile`, from PR #301) now needs reconciling
+into one canonical publish path; and the release authority that is settings
+rather than code.
 A pack is evidence and a proposed handoff, not repository authority; the
 register is reconciled against this repository rather than against the revision
 the pack observed.

@@ -53,6 +53,12 @@ describe('a second file chosen while the first is still opening', () => {
     name: 'second.arq',
     sidecarDependency: 'complete',
   };
+  const FACTS = {
+    projectName: 'House',
+    revision: 191,
+    sidecarDependency: 'complete',
+    conditionNote: null,
+  } as const;
 
   it('would let the superseded attempt drive the flow if it were not gated', () => {
     // The older attempt's remaining callbacks, arriving after the newer attempt
@@ -60,9 +66,9 @@ describe('a second file chosen while the first is still opening', () => {
     let state = reduceFileFlow(started, { type: 'stage-start' });
     state = reduceFileFlow(state, { type: 'stage-complete', projectId: 'first-project' });
     state = reduceFileFlow(state, { type: 'migration-verified' });
-    state = reduceFileFlow(state, { type: 'worker-opened', writable: true });
+    state = reduceFileFlow(state, { type: 'worker-opened', readOnlyReason: null });
     state = reduceFileFlow(state, { type: 'hydrate-start' });
-    state = reduceFileFlow(state, { type: 'hydrated' });
+    state = reduceFileFlow(state, { type: 'hydrated', facts: FACTS });
 
     // The flow now reports a project as open, under the second file's name,
     // carrying the first file's project id.
@@ -84,8 +90,8 @@ describe('a second file chosen while the first is still opening', () => {
     };
     emit({ type: 'stage-start' });
     emit({ type: 'stage-complete', projectId: 'first-project' });
-    emit({ type: 'worker-opened', writable: true });
-    emit({ type: 'hydrated' });
+    emit({ type: 'worker-opened', readOnlyReason: null });
+    emit({ type: 'hydrated', facts: FACTS });
 
     expect(state).toEqual(started);
     expect(isProjectOpen(state)).toBe(false);

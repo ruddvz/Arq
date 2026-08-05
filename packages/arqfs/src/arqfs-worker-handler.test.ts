@@ -582,6 +582,7 @@ describe('importing a database into the working copy', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
 
@@ -636,6 +637,7 @@ describe('publish', () => {
       context: {
         driver,
         usedVfs: 'test-node-driver',
+        projectId: TEST_PROJECT_ID,
         session: createArqfsWorkerSession(),
         publication: {
           environment: {

@@ -62,6 +62,17 @@ export async function publishNativeProject(
       `The published file did not reopen cleanly: ${reopened.code}: ${reopened.reason}`,
     );
   }
+  if (reopened.status === 'already-open') {
+    // No `activeWorkingCopyId` is ever passed to this reopen, so the working
+    // copy id this scratch reader derives from the exported bytes can never
+    // equal the caller's active one - this branch is unreachable in practice.
+    // Refusing rather than asserting: a fresh reader that unexpectedly found
+    // itself "already open" is not a state this verification can trust.
+    return rejected(
+      'ARQ_PUBLISH_VERIFICATION_FAILED',
+      `The published file's verification reader unexpectedly matched an already-open working copy (${reopened.workingCopyId}).`,
+    );
+  }
 
   try {
     const reopenedHash = await reopened.session.computeSemanticHash();

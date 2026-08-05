@@ -59,6 +59,8 @@ export interface ArqfsWorkerContext {
    * Genuinely asynchronous, not `void`-returning fire-and-forget: the pool
    * utility's own import is asynchronous, and the handler has to know when it
    * has actually finished before it can safely tell a caller the import
+   * succeeded - see the `exportDatabase` case's history note below.
+   */
   readonly importDatabase?: (bytes: Uint8Array) => Promise<void>;
   /**
    * Hands back the working copy's current bytes as a standalone file, after
@@ -427,6 +429,7 @@ export async function handleArqfsWorkerRequest(
         // over what a well-behaved caller sends; `request` arrives from another
         // execution context. A refusal is an answer, not a hang.
         return refuse(
+          context,
           (request as { readonly id: number }).id,
           ARQFS_WORKER_ERROR_CODES.malformedRequest,
           `Unrecognised request type: ${String((request as { readonly type?: unknown }).type)}. Nothing was attempted.`,
