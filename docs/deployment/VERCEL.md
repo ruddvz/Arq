@@ -31,8 +31,15 @@ pnpm ls --filter '*'              --depth Infinity | grep -c better-sqlite3 # 2
 
 No native module is in the deploy closure, so nothing is compiled.
 
-`buildCommand` builds only that package, with the environment a root-served
-host needs, and then writes the provenance record.
+`buildCommand` runs `scripts/vercel-build.sh`, which builds only that package
+with the environment a root-served host needs and then writes the provenance
+record.
+
+The build lives in a script rather than inline for two reasons. `vercel.json`
+caps `buildCommand` at 256 characters and the inline version was 265, which is
+how the first attempt failed. The better reason is that the environment
+juggling needs explaining, and a JSON string is a bad place to explain
+anything.
 
 `SITE_BASE_PATH` is deliberately empty. GitHub Pages serves this site from
 `/Arq`, so the Pages workflow sets `SITE_BASE_PATH=/Arq` and every internal URL
@@ -85,6 +92,22 @@ SITE_BASE_PATH= SITE_ORIGIN=https://example.invalid SITE_REVISION=$(git rev-pars
 node scripts/write-deployment-provenance.mjs --dist apps/marketing/dist --target vercel --allow-unpinned
 ```
 
+Or run exactly what Vercel runs, by supplying the variables it would:
+
+```
+VERCEL_URL=preview.example.invalid VERCEL_GIT_COMMIT_SHA=$(git rev-parse HEAD) \
+  bash scripts/vercel-build.sh
+```
+
 Then confirm the two things that differ from the Pages build: no asset path
 begins with `/Arq`, and every route carries a canonical URL on the host being
 deployed to.
+
+Three behaviours worth re-checking after any change here, because each one
+fails silently rather than loudly:
+
+| Given                                                     | Expect                                                            |
+| --------------------------------------------------------- | ----------------------------------------------------------------- |
+| `VERCEL_PROJECT_PRODUCTION_URL` and `VERCEL_URL` both set | canonical uses the production domain, not the deployment hostname |
+| `EXPECTED_SOURCE_SHA` set to a different revision         | build fails, despite `--allow-unpinned`                           |
+| `EXPECTED_SOURCE_SHA` set to the built revision           | build passes                                                      |
