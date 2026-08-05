@@ -181,20 +181,35 @@ async function openFixture(page, label = 'open') {
   await page.getByRole('dialog').waitFor({ timeout: 10_000 });
   await page.locator('input[type="file"]').setInputFiles(fixturePath);
   try {
+    // Waits on the workspace, not on the dialog. The dialog's own status line
+    // says "… is open · revision 191", but adoption closes the dialog, so that
+    // line is destroyed at the moment it becomes true - a wait on it is a race
+    // that passes or fails on render ordering. It passed locally and failed on
+    // CI for exactly that reason. The project panel's header is durable: it is
+    // there for as long as the project is.
     await page.waitForFunction(
-      () =>
-        document.body.textContent?.includes('Courtyard House Reference is open · revision 191') ===
-        true,
+      () => {
+        const text = document.body.textContent ?? '';
+        return text.includes('Courtyard House Reference') && text.includes('revision 191');
+      },
       undefined,
       { timeout: 120_000 },
     );
   } catch (error) {
-    const status = await page
+    const dialog = await page
       .getByRole('dialog')
       .innerText()
-      .catch(() => '(the dialog was gone)');
+      .catch(() => null);
+    const workspace = await page
+      .locator('body')
+      .innerText()
+      .catch(() => '(unreadable)');
     throw new Error(
-      `the ${label} never reached an opened project. The dialog said:\n${status}\n\n${String(error)}`,
+      `the ${label} never reached an opened project. ` +
+        (dialog === null
+          ? `The dialog had already closed, so the open was not refused - the workspace never showed the project. It showed:\n${workspace.slice(0, 1500)}`
+          : `The dialog said:\n${dialog}`) +
+        `\n\n${String(error)}`,
     );
   }
   // No confirmation step: adoption closes the dialog itself, so the reader is

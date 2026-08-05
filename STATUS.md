@@ -36,8 +36,11 @@ gate rather than an approval anybody granted - see
 `engineering/36_REQUIRED_CHECK_ROLLOUT.md` and the open decisions below.
 `e2e_arq_open` is no longer a standing proof gap - a real Worker and OPFS browser
 check closes it - but a green gate is a statement about the checks that ran, not
-about release. GitHub Actions has produced no run for any commit on this branch
-since `dabb6cb`, so the results above are local and CI has not re-confirmed them.
+about release. `verify-routes` fails on this branch and on its base for the same
+reason and reports it plainly: the preview origin is behind Vercel Deployment
+Protection, so the check can read nothing and refuses to report on routes it
+never saw. That is Not inspected, not passing, and it stays that way until a
+`VERCEL_AUTOMATION_BYPASS_SECRET` repository secret exists.
 
 - **Native `.arq` project open** (`apps/web/src/project` +
   `apps/web/src/file-handling` + `packages/project-loading` +
