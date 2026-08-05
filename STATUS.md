@@ -298,8 +298,12 @@ unreachable for the same reason.
   action nobody but the project owner can take: mint a Protection Bypass for
   Automation token and store it as the `VERCEL_AUTOMATION_BYPASS_SECRET`
   repository secret, which the script already sends as
-  `x-vercel-protection-bypass`. Until then the routing contract in `vercel.json`
-  is verified locally against the build and unverified against the deployment.
+  `x-vercel-protection-bypass`. Until then the rewrites, redirects, cache tiers
+  and security headers declared in `vercel.json` are **not verified at all**.
+  They are interpreted by Vercel's edge rather than by anything in this
+  repository, so a local build cannot exercise them and no local check stands in
+  for this one; what the build does verify is that the artifacts those rules
+  point at exist.
 - **Protected L4 release approval**: the complete plan-to-3D-to-sheet-to-PDF
   workflow, cross-platform matrix, rollback evidence and post-release proof do
   not exist. Production readiness remains blocked.
