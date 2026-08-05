@@ -1,0 +1,203 @@
+#!/usr/bin/env node
+/**
+ * Repository-native Vercel build: produces one static artifact holding both public
+ * surfaces - the marketing site at `/` and the browser editor at `/app/`.
+ *
+ * This is deliberately the same build contract `.github/workflows/deploy-pages.yml`
+ * runs, not a second one. Pages and Vercel differ in exactly two inputs: Pages serves
+ * the site under the `/Arq` project subpath and Vercel serves it at the root, so
+ * `SITE_BASE_PATH` differs and `/Arq/*` becomes a compatibility redirect (vercel.json).
+ * Everything else - the language-system gates, the route-coverage gate, the rendered
+ * public-copy audit and the commit-bound proof - runs identically, so a green Vercel
+ * build is evidence about the same product Pages already publishes and the two hosts
+ * stay a rollback pair rather than diverging deployments.
+ *
+ * One Vercel-specific install detail lives in vercel.json rather than here: the pnpm
+ * store is pinned inside `node_modules`. Vercel restores `node_modules` from its build
+ * cache but treats pnpm's default global store as a separate directory, so a cached
+ * `node_modules` could reference store entries that were not restored with it. The
+ * marketing build reads that store - `check-dependency-licences.mjs` shells out to
+ * `pnpm licenses list --json` to write the SBOM - and failed with
+ * ERR_PNPM_MISSING_PACKAGE_INDEX_FILE on the second and later deployments, while the
+ * first, uncached one succeeded. Keeping the store inside `node_modules` makes the two
+ * cache or miss together.
+ */
+import { execFileSync } from 'node:child_process';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+const root = process.cwd();
+const output = join(root, 'dist');
+const marketingDist = join(root, 'apps', 'marketing', 'dist');
+const editorDist = join(root, 'apps', 'web', 'dist');
+
+function run(command, args, env) {
+  process.stdout.write(`> ${command} ${args.join(' ')}\n`);
+  execFileSync(command, args, { cwd: root, env, stdio: 'inherit' });
+}
+
+function readJson(path) {
+  return JSON.parse(readFileSync(path, 'utf8'));
+}
+
+/**
+ * The proof file name is the Language System's to choose, not this script's - reading
+ * it back from the same contract the verifier writes against keeps a rename from
+ * silently producing a deployment with no provenance attached to it.
+ */
+const siteContract = readJson(
+  join(root, 'docs', 'product', 'voice', 'deployed-site-contract.json'),
+);
+const proofFileName = siteContract.proof?.fileName ?? 'arq-language-site-proof.json';
+
+function currentRevision() {
+  if (process.env.VERCEL_GIT_COMMIT_SHA) return process.env.VERCEL_GIT_COMMIT_SHA;
+  return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+}
+
+const sourceCommit = currentRevision();
+if (!/^[0-9a-f]{7,64}$/i.test(sourceCommit)) {
+  throw new Error(`Refusing to build without a resolvable source commit (got "${sourceCommit}").`);
+}
+
+/**
+ * A hosted build clones a *branch*, not a commit. Between the moment a release is
+ * approved at some revision and the moment Vercel checks out, the branch can move, and
+ * nothing downstream notices: the deployment reaches READY either way, the site looks
+ * right, and the revision written into the proof below comes from the same drifted
+ * checkout, so it agrees with itself and confirms nothing. The expectation therefore has
+ * to arrive from outside the checkout - `EXPECTED_SOURCE_SHA`, set as a Vercel project
+ * environment variable on the environment that carries approved releases.
+ *
+ * Absence is not a failure here, and deliberately so. A preview builds whatever its
+ * branch points at, so there is no independent expectation to check it against and
+ * demanding one would only produce a check that always passes. Set the variable on the
+ * production environment and a drifted branch stops the deployment; leave it unset on
+ * previews and they keep building freely. `.github/workflows/deploy-pages.yml` binds the
+ * same way through `scripts/write-deployment-provenance.mjs`, so the two hosts hold the
+ * published artifact to one rule rather than two.
+ *
+ * The check runs before any build step, so a mismatch costs nothing and cannot leave a
+ * half-built artifact behind.
+ */
+const expectedSourceCommit = (process.env.EXPECTED_SOURCE_SHA ?? '').trim();
+if (expectedSourceCommit !== '' && expectedSourceCommit !== sourceCommit) {
+  throw new Error(
+    `Source revision mismatch. Expected ${expectedSourceCommit}, checked out ${sourceCommit}. ` +
+      'The branch moved between approval and checkout; refusing to publish a revision nobody approved.',
+  );
+}
+const sourcePinned = expectedSourceCommit !== '';
+
+// Preview deployments get VERCEL_URL; production gets the project production URL. A
+// custom canonical domain overrides both through SITE_ORIGIN, which is what the
+// production cutover will set - so canonical URLs, the sitemap and the proof all name
+// the host the deployment is actually reachable at rather than a hardcoded one.
+const productionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+const deploymentHost = process.env.VERCEL_URL;
+const siteOrigin =
+  process.env.SITE_ORIGIN ??
+  (productionHost
+    ? `https://${productionHost}`
+    : deploymentHost
+      ? `https://${deploymentHost}`
+      : '');
+
+// The same store `vercel.json`'s install command uses, exported so every nested
+// pnpm agrees with it. `check-dependency-licences.mjs` - reached through
+// apps/marketing's `ensureSbom` - shells out to `pnpm licenses list --json`, which
+// reads the store rather than `node_modules`. Pinning the store on the install
+// alone left that child looking in pnpm's default global store, which the install
+// had just stopped populating, so it failed to find a package that was in fact
+// present. `npm_config_store_dir` is inherited by child processes, so one setting
+// covers every pnpm the build spawns. Set here rather than in a checked-in
+// `.npmrc` so local development keeps pnpm's shared global store.
+const storeDir = join(root, 'node_modules', '.pnpm-store');
+
+const buildEnv = {
+  ...process.env,
+  npm_config_store_dir: storeDir,
+  // Root-served, unlike Pages' `/Arq` project subpath. vercel.json redirects the old
+  // prefix so links published against the Pages URL keep resolving.
+  SITE_BASE_PATH: '',
+  SITE_ORIGIN: siteOrigin,
+};
+
+rmSync(output, { recursive: true, force: true });
+
+run('pnpm', ['arq:language:verify'], buildEnv);
+run('pnpm', ['arq:language:routes:verify'], buildEnv);
+run('pnpm', ['--filter', '@arq/marketing', 'build'], buildEnv);
+run(
+  'pnpm',
+  [
+    'arq:language:site:build:verify',
+    '--',
+    '--site-root',
+    'apps/marketing/dist',
+    '--write-proof',
+    '--commit',
+    sourceCommit,
+  ],
+  buildEnv,
+);
+// The editor is served from `/app/`, so its asset URLs have to be built for that
+// prefix; Vite would otherwise emit root-absolute `/assets/...` URLs that would
+// collide with the marketing site's own unhashed `/assets/` directory.
+run('pnpm', ['--filter', '@arq/web', 'exec', 'vite', 'build', '--base=/app/'], buildEnv);
+
+for (const requiredPath of [
+  join(marketingDist, 'index.html'),
+  join(marketingDist, '404.html'),
+  join(marketingDist, proofFileName),
+  join(editorDist, 'index.html'),
+]) {
+  if (!existsSync(requiredPath)) {
+    throw new Error(`Required Vercel artifact is missing: ${requiredPath}`);
+  }
+}
+
+mkdirSync(output, { recursive: true });
+cpSync(marketingDist, output, { recursive: true });
+cpSync(editorDist, join(output, 'app'), { recursive: true });
+
+// Provenance is written into the artifact, not just logged, so the deployed origin can
+// be checked against the exact commit it claims to come from after the fact.
+const proofPath = join(output, proofFileName);
+const proof = readJson(proofPath);
+proof.vercelDeployment = {
+  sourceRepository: process.env.VERCEL_GIT_REPO_SLUG ?? 'ruddvz/Arq',
+  sourceRef: process.env.VERCEL_GIT_COMMIT_REF ?? null,
+  sourceCommit,
+  // Recorded, not just enforced: a reader of the deployed artifact can tell an approved
+  // release from a preview that was free to build whatever its branch pointed at.
+  expectedSourceCommit: sourcePinned ? expectedSourceCommit : null,
+  sourcePinned,
+  siteOrigin: siteOrigin || null,
+  includesBrowserEditor: true,
+  deploymentMode: 'repository-native',
+};
+writeFileSync(proofPath, `${JSON.stringify(proof, null, 2)}\n`);
+
+writeFileSync(
+  join(output, 'deployment-source.json'),
+  `${JSON.stringify(
+    {
+      schemaVersion: 1,
+      repository: process.env.VERCEL_GIT_REPO_SLUG ?? 'ruddvz/Arq',
+      ref: process.env.VERCEL_GIT_COMMIT_REF ?? null,
+      commit: sourceCommit,
+      expectedCommit: sourcePinned ? expectedSourceCommit : null,
+      sourcePinned,
+      siteOrigin: siteOrigin || null,
+      surfaces: ['marketing', 'browser-editor'],
+      publicSiteProof: proofFileName,
+      compatibilityRedirect: '/Arq/* -> /*',
+      deploymentMode: 'repository-native',
+    },
+    null,
+    2,
+  )}\n`,
+);
+
+process.stdout.write(`Arq Vercel artifact prepared from ${sourceCommit}.\n`);

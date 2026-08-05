@@ -95,6 +95,7 @@ import {
   type WorkspaceOperation,
 } from './canvas/plan-document';
 import { createPlanJournal, type PlanJournal } from './canvas/plan-journal';
+import type { NativeProjectSession, NativeProjectSnapshot } from './project/native-project-session';
 import {
   AlignIcon,
   CommentIcon,
@@ -402,6 +403,52 @@ export function App(): JSX.Element {
   }, []);
 
   const [projectName, setProjectName] = useState('Untitled project');
+  /**
+   * The live native project, once one is open. Held in a ref rather than state
+   * because nothing renders from the session itself - the walls it decoded are
+   * what render - and because it must be closed on replacement: a session left
+   * behind keeps its Worker alive and with it the OPFS write lock on its
+   * working copy, which would make that project unopenable for the rest of the
+   * session.
+   */
+  const nativeSessionRef = useRef<NativeProjectSession | null>(null);
+
+  /**
+   * Replaces the workspace's project with one that has already been fully
+   * validated, decoded and adopted by the open pipeline. This runs only on
+   * success: a rejected or cancelled candidate never reaches here, so the
+   * previous project stays exactly as it was.
+   */
+  const adoptNativeProject = useCallback(
+    (opened: {
+      readonly session: NativeProjectSession;
+      readonly snapshot: NativeProjectSnapshot;
+    }) => {
+      const previous = nativeSessionRef.current;
+      nativeSessionRef.current = opened.session;
+      // Fire-and-forget, but never skipped: releasing the previous Worker is
+      // what frees its working copy. A failure to close cleanly is the previous
+      // project's problem and must not block adopting this one.
+      void previous?.close().catch(() => undefined);
+
+      setDrawnWalls(opened.snapshot.walls);
+      drawnWallsRef.current = opened.snapshot.walls;
+      wallIdCounterRef.current = highestWallIdSuffix(opened.snapshot.walls);
+      setProjectName(opened.snapshot.displayName);
+      // Read from the working copy, not written to it yet: "opened" is not
+      // "saved", and this build does not checkpoint edits back to the `.arq`
+      // file. Saying `saved` here would claim durability the product has not
+      // earned.
+      setSaveState('unsaved-changes');
+      setJournalLabel(
+        opened.snapshot.readOnly
+          ? 'Open for reading only · edits are not saved to this project'
+          : 'Open from a local working copy · edits are not saved to this project yet',
+      );
+      setFileOpenPanelOpen(false);
+    },
+    [],
+  );
   const [modeState, setModeState] = useState(() =>
     initialModeState({
       projectId: 'demo-project',
@@ -1224,7 +1271,11 @@ export function App(): JSX.Element {
 
       {/* Renders its own full-viewport ArqModalDialog (backdrop, focus trap),
           so it sits beside WorkspaceRoot rather than inside a layout slot. */}
-      <FileOpenPanel isOpen={fileOpenPanelOpen} onOpenChange={setFileOpenPanelOpen} />
+      <FileOpenPanel
+        isOpen={fileOpenPanelOpen}
+        onOpenChange={setFileOpenPanelOpen}
+        onProjectOpened={adoptNativeProject}
+      />
 
       {/* W135 ToastRegion replaces the previous ad-hoc validation notice,
           which sat at zIndex 9 (below every menu and the modal backdrop) and

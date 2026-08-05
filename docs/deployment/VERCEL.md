@@ -1,113 +1,163 @@
 # Vercel deployment
 
-## What was wrong
+Vercel builds one static artifact holding both public surfaces: the marketing
+site at `/` and the browser editor at `/app/`. `vercel.json` declares the
+contract; `scripts/build-vercel.mjs` produces the artifact;
+`scripts/verify-vercel-routes.mjs` checks the deployed origin actually behaves
+the way the contract says.
 
-The repository had no `vercel.json`, so Vercel auto-detected the project and
-did the only thing it could: `pnpm install` at the workspace root, then
-`pnpm build`, which is `turbo run build` across the whole monorepo.
+## The build
 
-Two things follow from that, and both are fatal for a static marketing site.
+| Setting           | Value                                                                 |
+| ----------------- | --------------------------------------------------------------------- |
+| `installCommand`  | `pnpm install --frozen-lockfile --store-dir node_modules/.pnpm-store` |
+| `buildCommand`    | `node scripts/build-vercel.mjs`                                       |
+| `outputDirectory` | `dist`                                                                |
 
-A root install resolves every workspace package, and `packages/arqfs` depends
-on `better-sqlite3`, a native addon that must be compiled against the running
-Node ABI. The static site does not use it, has never used it, and cannot use
-it: it is a build-time dependency of the `.arq` file layer. The deployment was
-compiling a native SQLite binding in order to render eighteen HTML pages.
+The install is a full workspace install, not a filtered one, because both
+`@arq/marketing` and `@arq/web` are built and the editor reaches into the
+shared packages.
 
-Then, with no `outputDirectory`, a build that did succeed still produced
-nothing Vercel could serve, because the pages land in `apps/marketing/dist`
-and nothing pointed there.
+The pnpm store is pinned inside `node_modules` rather than left at pnpm's
+global default. Vercel restores `node_modules` from its build cache but treats
+the global store as a separate directory, so a cached `node_modules` could
+reference store entries that were not restored alongside it. The marketing
+build reads that store — `check-dependency-licences.mjs` shells out to
+`pnpm licenses list --json` to write the SBOM — and failed with
+`ERR_PNPM_MISSING_PACKAGE_INDEX_FILE` on the second and later deployments while
+the first, uncached one succeeded. Keeping the store inside `node_modules` makes
+the two cache or miss together. `build-vercel.mjs` exports the same path as
+`npm_config_store_dir` so every nested pnpm agrees with the install.
 
-## What the configuration does
+`build-vercel.mjs` runs the same gates the Pages workflow runs — the language
+verify, the route-coverage verify, the rendered public-copy audit, the
+commit-bound proof — then builds the editor with `--base=/app/` and asserts the
+four artifacts that must exist (`index.html`, `404.html`, the site proof, and
+the editor shell) before assembling `dist/`. A missing artifact is a build
+failure, not a quietly thinner deployment.
 
-`installCommand` filters the install to `@arq/marketing...`, which is the
-marketing package and its dependency closure. That closure is one entry,
-`@types/node`. Measured rather than assumed:
-
-```
-pnpm ls --filter @arq/marketing... --depth Infinity | grep better-sqlite3   # no match
-pnpm ls --filter '*'              --depth Infinity | grep -c better-sqlite3 # 2
-```
-
-No native module is in the deploy closure, so nothing is compiled.
-
-`buildCommand` runs `scripts/vercel-build.sh`, which builds only that package
-with the environment a root-served host needs and then writes the provenance
-record.
-
-The build lives in a script rather than inline for two reasons. `vercel.json`
-caps `buildCommand` at 256 characters and the inline version was 265, which is
-how the first attempt failed. The better reason is that the environment
-juggling needs explaining, and a JSON string is a bad place to explain
+`buildCommand` is a script rather than an inline string partly because
+`vercel.json` caps it at 256 characters, but mainly because the environment
+juggling below needs explaining and a JSON string is a bad place to explain
 anything.
 
-`SITE_BASE_PATH` is deliberately empty. GitHub Pages serves this site from
-`/Arq`, so the Pages workflow sets `SITE_BASE_PATH=/Arq` and every internal URL
-is prefixed. Vercel serves from the domain root, so the same prefix would make
-every asset 404. The two hosts need different values and neither may be
-hardcoded in the build.
+## Why the two hosts differ in exactly two inputs
 
-`SITE_ORIGIN` prefers `VERCEL_PROJECT_PRODUCTION_URL` and falls back to
-`VERCEL_URL`, so canonical URLs on a production deployment point at the stable
-domain rather than at that deployment's unique hostname. A preview still gets
-its own hostname, which is correct: a preview should not claim to be canonical
-for the production URL.
+`SITE_BASE_PATH` is empty here. GitHub Pages serves this site from the `/Arq`
+project subpath, so `.github/workflows/deploy-pages.yml` sets
+`SITE_BASE_PATH=/Arq` and every internal URL is prefixed. Vercel serves from the
+domain root, so the same prefix would make every asset 404. Neither value may be
+hardcoded in the build. `vercel.json` redirects `/Arq` and `/Arq/:path*`
+permanently to the root equivalents, so links published against the Pages URL
+keep resolving.
 
-## Provenance and the expected SHA
+`SITE_ORIGIN` prefers an explicit override, then
+`VERCEL_PROJECT_PRODUCTION_URL`, then `VERCEL_URL`. Canonical URLs on a
+production deployment therefore name the stable domain rather than that
+deployment's unique hostname, while a preview still names its own hostname —
+which is correct, because a preview must not claim to be canonical for the
+production URL.
 
-The build ends by writing `arq-deployment-provenance.json` into the output:
-both SHAs, the toolchain, and a hash per route and per file.
+Everything else is the same build contract, which is what makes a green Vercel
+build evidence about the same product Pages publishes, and keeps the two hosts a
+rollback pair rather than diverging deployments.
 
-It runs with `--allow-unpinned`, which needs explaining because it looks like a
-weakened check. It is not. The flag only governs the case where no expected SHA
-was supplied at all. If `EXPECTED_SOURCE_SHA` is set as a project environment
-variable in Vercel, the build compares it against the actual checkout and fails
-on mismatch regardless of this flag.
+## Routing, caching and headers
 
-That is the honest split. A preview builds whatever the branch points at, so
-there is no independent expectation to check it against and demanding one would
-only produce a check that always passes. A production release is approved at a
-specific revision, so set `EXPECTED_SOURCE_SHA` for the production environment
-and a drifted branch stops the deployment instead of shipping a revision nobody
-approved.
+`/app` and `/app/:path*` rewrite to `/app/index.html` so deep editor routes fall
+back to the shell instead of 404ing.
 
-## What this does not do
+Three cache tiers, split by whether the filename carries a content hash:
 
-It does not deploy the editor. `apps/web` is not built or served here, and
-`/app/` is not routed. Only the marketing site is deployed.
+| Path            | `Cache-Control`                         |
+| --------------- | --------------------------------------- |
+| `/app/assets/*` | `public, max-age=31536000, immutable`   |
+| `/assets/*`     | `public, max-age=3600, must-revalidate` |
+| everything else | `public, max-age=0, must-revalidate`    |
 
-It does not make Vercel the production host. GitHub Pages remains the published
-site through `.github/workflows/deploy-pages.yml`, which is the workflow that
-carries the required-SHA check. Vercel builds previews. Making it production is
-a separate decision with its own record.
+Only the editor's Vite-hashed assets are immutable. The marketing site's
+`/assets/` filenames are not hashed, so marking them immutable would pin a stale
+file in every visitor's cache with no way to invalidate it.
 
-## Verifying a change locally
+Every response carries `X-Content-Type-Options: nosniff`,
+`X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin` and
+a `Permissions-Policy` that denies camera, microphone, geolocation, payment, USB
+and interest-cohort.
 
-Reproduce what Vercel runs, without the install filter, since a local checkout
-already has the workspace installed:
+## Binding a release to an approved revision
 
-```
-SITE_BASE_PATH= SITE_ORIGIN=https://example.invalid SITE_REVISION=$(git rev-parse HEAD) \
-  pnpm --filter @arq/marketing build
-node scripts/write-deployment-provenance.mjs --dist apps/marketing/dist --target vercel --allow-unpinned
-```
+A hosted build clones a _branch_, not a commit. Between the moment a release is
+approved at some revision and the moment Vercel checks out, the branch can move.
+Nothing downstream notices: the deployment reaches READY either way, the site
+looks right, and the revision recorded in the proof comes from the same drifted
+checkout, so it agrees with itself and confirms nothing.
 
-Or run exactly what Vercel runs, by supplying the variables it would:
+The expectation therefore has to arrive from outside the checkout. Set
+`EXPECTED_SOURCE_SHA` as a Vercel project environment variable on the
+environment that carries approved releases; `build-vercel.mjs` compares it
+against the checked-out revision before any build step runs and fails on
+mismatch.
+
+Absence is not a failure, and deliberately so. A preview builds whatever its
+branch points at, so there is no independent expectation to check it against and
+demanding one would produce a check that always passes. Leave the variable unset
+on previews; set it on production and a drifted branch stops the deployment
+instead of shipping a revision nobody approved.
+`.github/workflows/deploy-pages.yml` binds the same way through
+`scripts/write-deployment-provenance.mjs`, so both hosts hold the published
+artifact to one rule rather than two.
+
+The outcome is recorded, not just enforced: `deployment-source.json` and the
+`vercelDeployment` block inside the site proof both carry `expectedCommit` and
+`sourcePinned`, so a reader of the deployed artifact can tell an approved
+release from a preview that was free to build whatever it found.
+
+## Verifying
+
+Reproduce what Vercel runs, supplying the variables it would:
 
 ```
 VERCEL_URL=preview.example.invalid VERCEL_GIT_COMMIT_SHA=$(git rev-parse HEAD) \
-  bash scripts/vercel-build.sh
+  node scripts/build-vercel.mjs
 ```
 
 Then confirm the two things that differ from the Pages build: no asset path
 begins with `/Arq`, and every route carries a canonical URL on the host being
 deployed to.
 
-Three behaviours worth re-checking after any change here, because each one
-fails silently rather than loudly:
+A green build proves the artifact was produced. It proves nothing about how the
+origin serves it, so `.github/workflows/verify-deployment-routes.yml` runs
+`scripts/verify-vercel-routes.mjs` against the actual preview on every pull
+request that touches the deployment inputs. That job resolves the origin from
+the GitHub deployment Vercel records, waits for the origin to serve _this_
+commit before asserting anything — a branch alias points at whatever deployed
+most recently, so checking straight away can pass against the previous
+deployment — and then checks that `/app/` answers, deep editor routes fall back
+to the shell, `/Arq/...` still redirects, an unknown path is a branded 404 with a
+404 status, and the cache split does not mark unhashed assets immutable.
+
+To point it at any origin by hand:
+
+```
+node scripts/verify-vercel-routes.mjs --base-url https://<origin> --expected-commit $(git rev-parse HEAD)
+```
+
+If the project has deployment protection on, set
+`VERCEL_AUTOMATION_BYPASS_SECRET` (or pass `--bypass-token`) so a protected
+preview can be read without turning protection off for everyone. An unreadable
+protected origin is reported as not inspected, never as a pass.
+
+Three behaviours worth re-checking after any change here, because each fails
+silently rather than loudly:
 
 | Given                                                     | Expect                                                            |
 | --------------------------------------------------------- | ----------------------------------------------------------------- |
 | `VERCEL_PROJECT_PRODUCTION_URL` and `VERCEL_URL` both set | canonical uses the production domain, not the deployment hostname |
-| `EXPECTED_SOURCE_SHA` set to a different revision         | build fails, despite `--allow-unpinned`                           |
-| `EXPECTED_SOURCE_SHA` set to the built revision           | build passes                                                      |
+| `EXPECTED_SOURCE_SHA` set to a different revision         | the build fails before any build step runs                        |
+| `EXPECTED_SOURCE_SHA` unset                               | the build proceeds, and records `sourcePinned: false`             |
+
+## What this is not
+
+Vercel is not yet the production host. GitHub Pages remains the published site
+through `.github/workflows/deploy-pages.yml`. Making Vercel production is a
+separate decision with its own record.

@@ -48,15 +48,25 @@ export type FileFlowState =
   | { readonly kind: 'idle' }
   | { readonly kind: 'acquiring'; readonly name: string }
   | { readonly kind: 'detecting'; readonly name: string }
+  /**
+   * The candidate passed byte preflight *and* the source-completeness policy.
+   *
+   * It deliberately carries no sidecar field any more. A database depending on
+   * an absent `-wal` sidecar used to reach this state and be described as
+   * "compatible, but it may not be complete" - which meant the flow's one
+   * success state could represent a project silently missing the user's most
+   * recent saved work. That is now a `failed` state with
+   * `ARQ_WAL_SIDECAR_REQUIRED`, so reaching here means the bytes are whole.
+   */
   | {
       readonly kind: 'native-opening';
       readonly name: string;
       /**
-       * Whether the picked bytes are the whole database. A write-ahead-log
-       * database keeps its newest commits in a `-wal` sidecar, and a file
-       * picker hands over one file - so "compatible" and "complete" are
-       * different statements about the same accepted file, and the flow's own
-       * governed policy requires the distinct ones to stay distinct.
+       * Whether the picked bytes are the whole database. Kept required even
+       * though the completeness policy now refuses a dependent database before
+       * this state - a caller that has not decided must not be able to omit the
+       * answer and get the reassuring default, and that guarantee should not
+       * rest on a refusal happening to run first somewhere else.
        */
       readonly sidecarDependency: ArqfsSidecarDependency;
     }
