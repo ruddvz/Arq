@@ -60,6 +60,35 @@ if (!/^[0-9a-f]{7,64}$/i.test(sourceCommit)) {
   throw new Error(`Refusing to build without a resolvable source commit (got "${sourceCommit}").`);
 }
 
+/**
+ * A hosted build clones a *branch*, not a commit. Between the moment a release is
+ * approved at some revision and the moment Vercel checks out, the branch can move, and
+ * nothing downstream notices: the deployment reaches READY either way, the site looks
+ * right, and the revision written into the proof below comes from the same drifted
+ * checkout, so it agrees with itself and confirms nothing. The expectation therefore has
+ * to arrive from outside the checkout - `EXPECTED_SOURCE_SHA`, set as a Vercel project
+ * environment variable on the environment that carries approved releases.
+ *
+ * Absence is not a failure here, and deliberately so. A preview builds whatever its
+ * branch points at, so there is no independent expectation to check it against and
+ * demanding one would only produce a check that always passes. Set the variable on the
+ * production environment and a drifted branch stops the deployment; leave it unset on
+ * previews and they keep building freely. `.github/workflows/deploy-pages.yml` binds the
+ * same way through `scripts/write-deployment-provenance.mjs`, so the two hosts hold the
+ * published artifact to one rule rather than two.
+ *
+ * The check runs before any build step, so a mismatch costs nothing and cannot leave a
+ * half-built artifact behind.
+ */
+const expectedSourceCommit = (process.env.EXPECTED_SOURCE_SHA ?? '').trim();
+if (expectedSourceCommit !== '' && expectedSourceCommit !== sourceCommit) {
+  throw new Error(
+    `Source revision mismatch. Expected ${expectedSourceCommit}, checked out ${sourceCommit}. ` +
+      'The branch moved between approval and checkout; refusing to publish a revision nobody approved.',
+  );
+}
+const sourcePinned = expectedSourceCommit !== '';
+
 // Preview deployments get VERCEL_URL; production gets the project production URL. A
 // custom canonical domain overrides both through SITE_ORIGIN, which is what the
 // production cutover will set - so canonical URLs, the sitemap and the proof all name
@@ -140,6 +169,10 @@ proof.vercelDeployment = {
   sourceRepository: process.env.VERCEL_GIT_REPO_SLUG ?? 'ruddvz/Arq',
   sourceRef: process.env.VERCEL_GIT_COMMIT_REF ?? null,
   sourceCommit,
+  // Recorded, not just enforced: a reader of the deployed artifact can tell an approved
+  // release from a preview that was free to build whatever its branch pointed at.
+  expectedSourceCommit: sourcePinned ? expectedSourceCommit : null,
+  sourcePinned,
   siteOrigin: siteOrigin || null,
   includesBrowserEditor: true,
   deploymentMode: 'repository-native',
@@ -154,6 +187,8 @@ writeFileSync(
       repository: process.env.VERCEL_GIT_REPO_SLUG ?? 'ruddvz/Arq',
       ref: process.env.VERCEL_GIT_COMMIT_REF ?? null,
       commit: sourceCommit,
+      expectedCommit: sourcePinned ? expectedSourceCommit : null,
+      sourcePinned,
       siteOrigin: siteOrigin || null,
       surfaces: ['marketing', 'browser-editor'],
       publicSiteProof: proofFileName,

@@ -125,9 +125,17 @@ jobs:
 
       - name: Verify deployed routes, caching and security headers
         env:
-          # Present only if the owner has minted one. Absent is not fatal here:
-          # the script reports an unreadable protected origin as Not inspected
-          # and says exactly how to make it readable.
+          # Present only if the owner has minted one, and while it is absent
+          # this job fails on every run against a protected project - which is
+          # what has actually been happening. The comment here previously said
+          # absence was "not fatal"; the script exits non-zero, because an
+          # origin that only ever returned its sign-in page yielded no evidence
+          # about routing, and reporting no evidence as a pass is the failure
+          # this job exists to prevent. It says Not inspected rather than
+          # Passed, and it says exactly how to make the origin readable: mint a
+          # Protection Bypass for Automation token in the Vercel project and
+          # store it as this secret, which the script sends as
+          # x-vercel-protection-bypass.
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: >-
           node scripts/verify-vercel-routes.mjs
