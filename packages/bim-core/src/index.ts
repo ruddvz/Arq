@@ -34,3 +34,4 @@ export * from './deletion-policy';
 export * from './opening-host-transfer';
 export * from './parse-typed-length';
 export * from './view-definition';
+export * from './view-visibility';
