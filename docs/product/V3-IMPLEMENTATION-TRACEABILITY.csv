@@ -136,17 +136,17 @@ V3-134,P9,Generate PDF off main thread,implemented-in-this-change,packages/pdf-e
 V3-135,P9,Verify PDF in independent readers,implemented-in-this-change,packages/pdf-export/src/verify-exported-pdf.ts,verifyExportedPdf
 V3-136,P10,Implement top bar project and persistence state,pre-existing,packages/design-system/src/shell/top-bar-state.ts,describeSaveState
 V3-137,P10,Implement Project Browser hierarchy,pre-existing,packages/design-system/src/shell/model-panel-state.ts,filterModelPanelTree
-V3-138,P10,Implement Inspector property groups,pre-existing,packages/design-system/src/shell/inspector-groups.ts,INSPECTOR_GROUP_IDS
+V3-138,P10,Implement Inspector property groups,pre-existing,packages/design-system/src/shell/inspector-groups.ts,buildEmptyInspectorGroups
 V3-139,P10,Implement Review Centre,pre-existing,packages/mcp-server/src/review/review-centre.ts,ASSISTANT_TABS
 V3-140,P10,Implement Diagnostics panel,implemented-in-this-change,packages/design-system/src/shell/diagnostics-panel-state.ts,buildDiagnosticsPanel
 V3-141,P10,Implement desktop composition,pre-existing,packages/design-system/src/workspace/workspace-shell.css,.arq-workspace
-V3-142,P10,Implement tablet landscape composition,pre-existing,packages/design-system/src/shell/ipad-landscape-shell.tsx,IPadLandscapeShell
-V3-143,P10,Implement tablet portrait composition,pre-existing,packages/design-system/src/shell/ipad-portrait-shell.tsx,IPadPortraitShell
+V3-142,P10,Implement tablet landscape composition,implemented-differently,packages/workspace/src/responsive.ts,tablet-landscape
+V3-143,P10,Implement tablet portrait composition,implemented-differently,packages/workspace/src/responsive.ts,tablet-portrait
 V3-144,P10,Implement phone inspection composition,pre-existing,packages/design-system/src/workspace/phone-dock.tsx,PhoneDock
 V3-145,P10,Implement Pencil ownership,implemented-in-this-change,packages/input-system/src/pencil-ownership.ts,createPencilOwnershipTracker
 V3-146,P10,Expose disabled reasons accessibly,implemented-in-this-change,packages/design-system/src/interaction-foundation/interaction/disabled-reason.ts,describeDisabledState
 V3-147,P10,Rate-limit live regions,implemented-in-this-change,packages/design-system/src/interaction-foundation/feedback/live-region-queue.ts,createLiveRegionQueue
-V3-148,P10,Add keyboard command registry,pre-existing,packages/input-system/src/keyboard-baseline.ts,registerKeyboardBaseline
+V3-148,P10,Add keyboard command registry,implemented-differently,packages/workspace/src/keyboard-map.ts,shouldHandleShortcut
 V3-149,P10,Add screen-reader structured model navigation,implemented-in-this-change,packages/design-system/src/shell/model-tree-navigation.ts,modelTreeRowAria
 V3-150,P10,Test long names and responsive dialogs,implemented-in-this-change,packages/design-system/src/shell/text-fitting.ts,fitTextMiddle
 V3-151,P10,Test reduced motion and high contrast,implemented-in-this-change,packages/design-system/src/interaction-foundation/motion/display-preferences.ts,paletteModeFor

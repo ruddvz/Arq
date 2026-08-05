@@ -44,10 +44,10 @@ repository, and it cannot prove a row is answering the right question.
 | Disposition                  | Count | Meaning                                                                                                                                                                                                                |
 | ---------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `implemented-in-this-change` | 119   | Written on this branch. The evidence path is a module added or substantially changed here.                                                                                                                             |
-| `pre-existing`               | 52    | Already satisfied at the branch point, mostly by the ARQ-era work in P1–P3. Checked rather than assumed: each names a file and symbol that exists today.                                                               |
+| `pre-existing`               | 49    | Already satisfied at the branch point, mostly by the ARQ-era work in P1–P3. Checked rather than assumed: each names a file and symbol that exists today.                                                               |
 | `owner-authority`            | 28    | P0's verification steps and P14's release steps, plus workflow pinning and build provenance. These change GitHub settings, Vercel configuration, repository visibility or production state, and none of them are code. |
 | `blocked-no-evidence`        | 3     | V3-107 and V3-108 need benchmarks in a real browser against a real SQLite build; V3-117 needs SolveSpace or libslvs built to compare against. Guessing the numbers would be worse than leaving them open.              |
-| `implemented-differently`    | 3     | V3-032, V3-035, V3-039 — see below. The purpose is met somewhere other than where the task says to put it, deliberately.                                                                                               |
+| `implemented-differently`    | 6     | V3-032, V3-035, V3-039, V3-142, V3-143, V3-148 — see below. The purpose is met somewhere other than where the task says to put it, deliberately.                                                                       |
 
 ### `pre-existing` was audited, and it did not hold
 
@@ -139,6 +139,29 @@ schema, any file or any manifest"). Reporting this as a verification would
 describe a check that cannot run. What the computed hash is actually for is
 `@arq/derived-cache`, whose freshness rule compares a stored hash against the
 project's current one and had no source for "current" on an opened project.
+
+**V3-142 and V3-143, the iPad landscape and portrait shells.** Both shells
+exist, and nothing renders them. That looked like the same unwired-module
+finding as V3-030 until the components were read: they are ARQ-030 prototypes,
+described in their own doc comments as "a composition of the already-built shell
+components, not new controls". `workspace-root.tsx` is the Package 3.0 shell
+that replaced them, and it handles both tablet platforms itself —
+`resolveWorkspacePlatform` returns `tablet-landscape` and `tablet-portrait`,
+`panelDockingPolicy` puts both on drawers, and the root switches its own layout
+on them. Wiring the prototypes in would regress the shell to an older
+composition, so the rows point at the code that delivers the behaviour today.
+
+**V3-148, the keyboard baseline.** `registerKeyboardBaseline` has no caller, and
+the bindings it describes are implemented — `apps/web/src/App.tsx` handles them
+directly, and its comment cites `keyboard-baseline.ts` as the document they came
+from. The module's own comment is candid that its entries have "no backing
+implementation in this codebase yet". The behaviour is delivered through
+`shouldHandleShortcut`; the registry helper is not on that path.
+
+These two are worth stating plainly because they are what the caller-reachability
+check looks like when it is _wrong_. Three of its hits were real defects. Three
+were modules that are superseded or bypassed, where wiring them in would have
+made the product worse. The check finds candidates, not verdicts.
 
 ### V3-032, and why it is not `pre-existing`
 
