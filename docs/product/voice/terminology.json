@@ -251,6 +251,71 @@
       "canonical": "Failed",
       "definition": "Import/export fidelity category",
       "avoid": []
+    },
+    {
+      "canonical": "hidden",
+      "definition": "Not drawn in one view. The element is still in the project, still holds its relationships and still counts in every schedule.",
+      "avoid": ["removed", "deleted", "excluded from the model"]
+    },
+    {
+      "canonical": "clipped",
+      "definition": "Cut by a section box in one view. The project is unchanged and quantities are unaffected.",
+      "avoid": ["removed", "cut out of the project"]
+    },
+    {
+      "canonical": "quarantined",
+      "definition": "Imported content ARQ kept with its source payload and did not convert.",
+      "avoid": ["skipped", "ignored", "dropped"]
+    },
+    {
+      "canonical": "drawing unit",
+      "definition": "The unit an imported drawing was drawn in. Unknown until the file declares it or a person chooses it.",
+      "avoid": ["assumed unit", "default unit"]
+    },
+    {
+      "canonical": "derived geometry",
+      "definition": "Meshes and tessellations regenerated from the semantic model. Never a source of measurement.",
+      "avoid": ["the model", "model geometry"]
+    },
+    {
+      "canonical": "reversed",
+      "definition": "Applied and then undone, leaving the project as it was. Distinct from refused, where nothing ran.",
+      "avoid": ["rejected", "cancelled"]
+    },
+    {
+      "canonical": "receipt",
+      "definition": "A bounded, redacted record of one thing that happened, kept for diagnosis.",
+      "avoid": ["log", "audit trail"]
+    },
+    {
+      "canonical": "preserved evidence",
+      "definition": "A local copy of the files involved in an incident, kept before any repair and sent nowhere.",
+      "avoid": ["crash report", "uploaded diagnostics"]
+    },
+    {
+      "canonical": "grant",
+      "definition": "Permission a person gave, held separately from anything that asks for it.",
+      "avoid": ["scope", "claimed permission"]
+    },
+    {
+      "canonical": "release certificate",
+      "definition": "The record naming the exact commit, the evidence that passed and who approved it. A release without one is not certified, whatever else it is.",
+      "avoid": ["release notes", "changelog"]
+    },
+    {
+      "canonical": "exact commit artifact",
+      "definition": "A build bound to one commit, verified by digest rather than by branch name.",
+      "avoid": ["latest build", "the build from main"]
+    },
+    {
+      "canonical": "promotion",
+      "definition": "Making an already-built, already-verified artifact live. Never a rebuild.",
+      "avoid": ["deploy", "ship"]
+    },
+    {
+      "canonical": "rollback rehearsal",
+      "definition": "A rollback actually performed and observed before the release it protects.",
+      "avoid": ["rollback plan"]
     }
   ],
   "registryPointers": {
@@ -260,5 +325,72 @@
     "formats": "02-canonical/format-language-map.json",
     "aliases": "02-canonical/term-aliases.json",
     "interfaceSnapshot": "02-canonical/snapshots/interface-snapshot-2026-07-27.json"
-  }
+  },
+  "prohibitedUpgrades": [
+    {
+      "from": "hidden",
+      "to": "removed",
+      "reason": "Hiding is a drawing convention. Calling it removal tells a user their data is gone."
+    },
+    {
+      "from": "clipped",
+      "to": "deleted",
+      "reason": "A section box changes one view. Nothing leaves the project."
+    },
+    {
+      "from": "quarantined",
+      "to": "imported",
+      "reason": "Quarantined content was kept and not converted. Calling it imported claims a mapping that does not exist."
+    },
+    {
+      "from": "quarantined",
+      "to": "skipped",
+      "reason": "Skipped implies the data is gone. It is in the project."
+    },
+    {
+      "from": "reversed",
+      "to": "applied",
+      "reason": "A reversed proposal left the project unchanged."
+    },
+    {
+      "from": "refused",
+      "to": "failed",
+      "reason": "A refusal is a decision ARQ made deliberately, not a fault."
+    },
+    {
+      "from": "journal-saved",
+      "to": "published",
+      "reason": "A local journal append is not a portable file write."
+    },
+    {
+      "from": "written",
+      "to": "published",
+      "reason": "Published requires an independent reader to have re-read and accepted the bytes."
+    },
+    {
+      "from": "approved",
+      "to": "applied",
+      "reason": "Approval is a decision; applying is an event. They can differ."
+    },
+    {
+      "from": "mesh measurement",
+      "to": "dimension",
+      "reason": "A length read from a tessellation is an approximation, not a measurement."
+    },
+    {
+      "from": "built",
+      "to": "released",
+      "reason": "A build is an artifact. A release is a promotion someone approved."
+    },
+    {
+      "from": "deployed to preview",
+      "to": "live",
+      "reason": "A preview deployment is not production."
+    },
+    {
+      "from": "rollback plan",
+      "to": "rollback rehearsed",
+      "reason": "A plan nobody executed is not evidence that it works."
+    }
+  ]
 }

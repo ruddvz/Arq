@@ -30,7 +30,9 @@ import sqlite3InitModule from '@sqlite.org/sqlite-wasm';
 // `@arq/arqfs/src/arqfs-preflight` for the same reason.
 import {
   ARQFS_WORKER_ERROR_CODES,
-  type ArqfsWorkerRequest,
+  correlationIdOf,
+  parseArqfsWorkerRequest,
+  type ArqfsWorkerResponse,
 } from '@arq/arqfs/src/arqfs-worker-protocol';
 import {
   createArqfsWorkerSession,
@@ -82,6 +84,48 @@ async function openContext(): Promise<ArqfsWorkerContext> {
         db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
         driver = createSqliteWasmArqfsDriver(db);
       },
+      /**
+       * What `publishProjectFile` needs from this VFS.
+       *
+       * Publication only means anything if the reader shares nothing with the
+       * writer, and inside `opfs-sahpool` only this utility can produce one: it
+       * keeps databases in a pool of opaque files, so `VACUUM INTO` writes to a
+       * pool entry that nothing outside here can open. A main thread handed the
+       * bytes and asked to verify them would be checking a copy of a copy, which
+       * is not the property publication claims.
+       */
+      publication: {
+        environment: {
+          // A brand-new connection on the published pool entry - not `db`, and
+          // not a handle derived from it.
+          openFreshReader: (targetName: string) =>
+            createSqliteWasmArqfsDriver(
+              new poolUtil.OpfsSAHPoolDb(targetName) as unknown as Sqlite3Oo1DatabaseLike,
+            ),
+          /**
+           * Checked against the pool's own file list rather than assumed empty.
+           * `VACUUM INTO` produces a single settled database and sahpool does not
+           * keep sidecars as separate entries, so this is expected to be empty -
+           * but "expected empty" and "verified empty" are different claims, and
+           * the one publication makes to a user is that the file travels alone.
+           */
+          listSidecars: (targetName: string) =>
+            poolUtil
+              .getFileNames()
+              .filter(
+                (name: string) =>
+                  name === `${targetName}-wal` ||
+                  name === `${targetName}-shm` ||
+                  name === `${targetName}-journal`,
+              ),
+          byteLength: async (targetName: string) =>
+            (await poolUtil.exportFile(targetName)).byteLength,
+        },
+        readTarget: (targetName: string) => poolUtil.exportFile(targetName),
+        removeTarget: (targetName: string) => {
+          poolUtil.unlink(targetName);
+        },
+      },
     };
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
@@ -96,16 +140,53 @@ async function openContext(): Promise<ArqfsWorkerContext> {
 
 const contextPromise = openContext();
 
-self.onmessage = async (event: MessageEvent<ArqfsWorkerRequest>) => {
+/**
+ * The one way this file posts a response.
+ *
+ * `self.postMessage` takes `any`, which is how an un-awaited
+ * `handleArqfsWorkerRequest(...)` was posted as a *Promise* the moment that
+ * function became async: `structuredClone` cannot serialise one, so nothing
+ * reached the client and every request died at its timeout. tsc had no
+ * objection, and the unit tests call the handler directly, so the only thing
+ * that noticed was the headless-browser capability check.
+ *
+ * Typing the parameter is the fix. A Promise is not an `ArqfsWorkerResponse`,
+ * so the same mistake now fails to compile rather than failing in a browser.
+ */
+function post(response: ArqfsWorkerResponse): void {
+  self.postMessage(response);
+}
+
+self.onmessage = async (event: MessageEvent<unknown>) => {
+  // V3-021. `event.data` is whatever the other context posted, so it is parsed
+  // rather than annotated. The old signature said `MessageEvent<ArqfsWorkerRequest>`,
+  // which made the value look checked without anything having checked it.
+  const request = parseArqfsWorkerRequest(event.data);
+  if (request === null) {
+    const id = correlationIdOf(event.data);
+    // With no usable id there is nothing to correlate a refusal against, and
+    // posting one under an invented id would resolve some other request. Staying
+    // silent leaves only this caller to time out, which is the smaller harm.
+    if (id !== null) {
+      post({
+        id,
+        ok: false,
+        code: ARQFS_WORKER_ERROR_CODES.malformedRequest,
+        error:
+          'This request is not a shape the arqfs Worker protocol defines. Nothing was attempted.',
+      });
+    }
+    return;
+  }
   try {
     const context = await contextPromise;
-    self.postMessage(handleArqfsWorkerRequest(context, event.data));
+    post(await handleArqfsWorkerRequest(context, request));
   } catch (error) {
     // contextPromise rejects only for a Worker-construction mistake (missing/invalid
     // project id) that will never resolve on retry - every request gets a clear,
     // immediate error instead of silently hanging until the client's own timeout.
-    self.postMessage({
-      id: event.data.id,
+    post({
+      id: request.id,
       ok: false,
       code: ARQFS_WORKER_ERROR_CODES.unexpected,
       error: error instanceof Error ? error.message : String(error),

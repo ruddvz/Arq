@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "38490b681cebc16e2d6683facd3b69586e612ad827cd01f824c7e8cfe4b3b3b5",
+  "source_hash": "4d4007e25030f471f5273a64701f115a404d28d756949385306fd2ace8697683",
   "source_records": [
     {
       "scope": "package",
@@ -214,7 +214,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
-      "sha256": "929007932dba943a58eea2b0262916b86329709456c486da48076f464bdc4a5a"
+      "sha256": "ad36fbdc6dbba7f39ac72eeb99f1b9cd503d12f8c247412f9da7e4bdf88b1514"
     },
     {
       "scope": "repository",
@@ -384,7 +384,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "0a9eb4acbda935fc33eda25ad6830bbd53ada7ff055316ee7ac58e40d6609b2e"
+      "sha256": "a34222538e87c2494c96cd195e5a4e84bea3c6db3c1c808a8ae275086751c5db"
     },
     {
       "scope": "repository",
@@ -425,6 +425,16 @@
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-driver.ts",
       "sha256": "f9e83fc800974f4e7318c181035b6e115e46516197f1c3347f847e5ff0dffe84"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-entry-digests.test.ts",
+      "sha256": "a410d1889c53f17074f02bb866aafdb2c7fca2992b0eb54a1183e96ffcb9ab79"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-entry-digests.ts",
+      "sha256": "06430b7fb84b82dec20dd98fb5845ba810fcc963d65ab82b470134c4e3a8f1fb"
     },
     {
       "scope": "repository",
@@ -548,6 +558,16 @@
     },
     {
       "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-publication.test.ts",
+      "sha256": "05f43d052b7b5cb6d7b6a53780c6b771537163a5baa6bd005de20a9c32d60a4f"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-publication.ts",
+      "sha256": "6b500e4611fe4603b2c2207c776443a37dc7529d7e8b9ce6f738537516cb01a6"
+    },
+    {
+      "scope": "repository",
       "path": "packages/arqfs/src/arqfs-recovery-report.test.ts",
       "sha256": "0e8c320e23135a162712f71253b2a006d76bd39875fbe7d68dbd1c3579586964"
     },
@@ -624,7 +644,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-semantic-hash.ts",
-      "sha256": "3fde3e8b0b3e58a329b04fef36c281cf3cb749606dd35f10f2665f24802c4111"
+      "sha256": "869df07a7c4a2160a9fa73dadbfc5c9c72ddf59669fe563addb5996c9b93aa62"
     },
     {
       "scope": "repository",
@@ -659,17 +679,22 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.test.ts",
-      "sha256": "ca54ef2ea43f64f45caae39834767d169d87ef40042ac391e2ad51cde410cdd7"
+      "sha256": "4ac059ec9a8a60e9ead8b32ad36d09fb6269ad3ebbfce60b3da728aa95851ad1"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.ts",
-      "sha256": "42e4e212f08c736431b7ae74513f65736a5ad9ccffe1536d6afe7edfd0f510c3"
+      "sha256": "f0d75d106e004f07f0037c0afb7bb439daa9935dd9d637d51ce0258e2f31cb4a"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-worker-protocol.test.ts",
+      "sha256": "d9195eaab0a96ead9b8c03ea163cfb4bf16ea7d4b3047a7cb12609cb617a3e16"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-protocol.ts",
-      "sha256": "4d910ee476b4b5ebe51793c1903d0aeefb5cd22f8756784696e3e0674469f054"
+      "sha256": "2cb4c9bdb4b81014cbbd7dac02da8aa8beb2fa03e69989c12b8e782319ccad09"
     },
     {
       "scope": "repository",
@@ -684,7 +709,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/index.ts",
-      "sha256": "8ce3e05d2ac0e607484b3fb7058dcd5c950726b79f11351ea36d81fac4dbff48"
+      "sha256": "76bfdede97f95639275d9aaf285a58a962fb1975a5566db64a587f56cb074492"
     },
     {
       "scope": "repository",
@@ -719,7 +744,7 @@
     {
       "scope": "repository",
       "path": "packages/local-storage/src/index.ts",
-      "sha256": "56aaf74a3130a0ecd9c29a1a4fb6449887745fed44d08c2df480b65be72395e1"
+      "sha256": "0d560987900eb87fe5203e31787f5b03178dae286d216c0fc4d5841c3042df7f"
     },
     {
       "scope": "repository",
@@ -750,6 +775,16 @@
       "scope": "repository",
       "path": "packages/local-storage/src/quota-error.ts",
       "sha256": "b0f1ade602347159fdea0c8a6701cbd5a5c07e5f276af20a3456300d21112a73"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/recovery-plan.test.ts",
+      "sha256": "cbea1126e3053d45d2f8bf419d85780e19d7e5db2bbf23358fdc41fa17fa2437"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/recovery-plan.ts",
+      "sha256": "3fb6941a702de92fe12a71edcedc353bf4521b3b686d6a3856cf86338a97d930"
     },
     {
       "scope": "repository",
@@ -814,7 +849,7 @@
     {
       "scope": "repository",
       "path": "workers/arqfs-worker/src/arqfs-worker-entry.ts",
-      "sha256": "bdb6f52518451789d794c8d741ce10d2a52cf59aeeceb0c946b1803c208db378"
+      "sha256": "256be3fb87f7e283dbf71e312b7462a58c4e4549fba2c9ad7c33e91c82e8c715"
     },
     {
       "scope": "repository",
@@ -829,12 +864,12 @@
     {
       "scope": "repository",
       "path": "workers/import-export-worker/src/handler.test.ts",
-      "sha256": "39ef0128151077b7cdfb51a1398d67a925258f6ad9211e4c1a64bd406e31665a"
+      "sha256": "5efd86790a62ff2468e5269e2129deef41768551853c7ec21a00d7741453f6e9"
     },
     {
       "scope": "repository",
       "path": "workers/import-export-worker/src/handler.ts",
-      "sha256": "4f9918e70ffd9516c27df85615d117f2bdf23106784c7bdddc55e1027c71897e"
+      "sha256": "ed5b3df7105660efbacc6c0b46f71fe6e10550c110ad666a097d2075558b0277"
     },
     {
       "scope": "repository",
@@ -844,12 +879,17 @@
     {
       "scope": "repository",
       "path": "workers/import-export-worker/src/protocol.ts",
-      "sha256": "d80630e7ab2709524618cc8c5c21b36a869819c9b8a11985e0fdb5bbbe83b3d9"
+      "sha256": "3ebc3d87c9dfdb92a8ba744c1f1db4c179609dc00fa0c0d160cad52981b30946"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/import-export-worker/src/worker-runtime.test.ts",
+      "sha256": "648beab1c5326cb57deb079a39676327f3fedb837111ada073abfd46bc8f8692"
     },
     {
       "scope": "repository",
       "path": "workers/import-export-worker/src/worker-runtime.ts",
-      "sha256": "e04e00518826b808212213833973d7ef9cdfb78d31152efff69b43c14d421bb7"
+      "sha256": "5f42bd9a9410754f8a6bb0493ba9459009a9d2bcf979cd8bbd432008b40f6b6e"
     }
   ]
 }

@@ -19,6 +19,10 @@
  */
 import { exportArchive, type ArqManifest } from '@arq/project-format';
 import type { ArqfsWorkerClient } from '@arq/arqfs';
+import type {
+  ArqfsPublicationReceipt,
+  ArqfsPublicationRefusal,
+} from '@arq/arqfs/src/arqfs-publication';
 import type { NativeProjectModel as NativeProjectDocument } from '@arq/project-loading';
 import type { DrawnWall, WorkspaceOperation } from '../canvas/plan-document';
 import { encodeNativeProjectModel } from './native-project-model';
@@ -39,6 +43,16 @@ export interface NativeProjectSnapshot {
    */
   readonly document: NativeProjectDocument | null;
   readonly journalSequence: number;
+  /**
+   * The project's semantic hash as opened, over every archive entry.
+   *
+   * Carried on the snapshot because `@arq/derived-cache` decides whether cached
+   * geometry still describes this project by comparing the hash it stored
+   * against the project's current one, and nothing produced a current one for an
+   * opened project. Not a verification of the file: no manifest or schema
+   * records an expected value to check this against.
+   */
+  readonly semanticHash: string;
   readonly readOnly: boolean;
   /** Which VFS actually backs the working copy - reported honestly, never assumed to be persistent. */
   readonly usedVfs: string;
@@ -57,6 +71,26 @@ export interface NativeProjectWorkerHandle {
   readonly client: Pick<ArqfsWorkerClient, 'request' | 'dispose'>;
   readonly terminate: () => void;
 }
+
+/**
+ * What a caller gets back from `publish`. Deliberately not the raw
+ * `ArqfsPublicationResult`: a refusal that left bytes in the Worker's VFS is
+ * the Worker's problem to clean up and has already been dealt with by the time
+ * this returns, so `targetWritten` would describe a state the caller cannot
+ * observe and must not act on.
+ */
+export type NativePublishResult =
+  | {
+      readonly status: 'published';
+      readonly receipt: ArqfsPublicationReceipt;
+      /** The verified bytes, for the caller to hand to the user. */
+      readonly bytes: Uint8Array;
+    }
+  | {
+      readonly status: 'refused';
+      readonly reason: ArqfsPublicationRefusal;
+      readonly detail: string;
+    };
 
 export class NativeProjectReadOnlyError extends Error {
   constructor() {
@@ -83,16 +117,28 @@ export class NativeProjectSession {
   #lastWriteError: unknown = null;
   #closed = false;
 
+  /**
+   * Released when this session closes.
+   *
+   * Held by the session rather than by the open pipeline because the lease has
+   * to outlive the open and end with the project: a lock released as soon as the
+   * project finished opening would guarantee nothing, and one never released
+   * would keep every other tab read-only until this one is closed.
+   */
+  readonly #releaseWriterLease: () => void;
+
   constructor(
     handle: NativeProjectWorkerHandle,
     snapshot: NativeProjectSnapshot,
     manifest: ArqManifest,
     operations: readonly unknown[] = [],
+    releaseWriterLease: () => void = () => {},
   ) {
     this.#handle = handle;
     this.#snapshot = snapshot;
     this.#manifest = manifest;
     this.#operations = operations;
+    this.#releaseWriterLease = releaseWriterLease;
   }
 
   snapshot(): NativeProjectSnapshot {
@@ -124,6 +170,69 @@ export class NativeProjectSession {
       () => undefined,
     );
     return result;
+  }
+
+  /**
+   * Publishes the working project to a verified portable file.
+   *
+   * Queued behind in-flight writes, not run beside them. A publication is a
+   * claim about a committed revision, and `publishProjectFile` refuses outright
+   * if the working copy has an unsettled write - so racing a save would turn an
+   * ordinary "wait your turn" into a refusal the user has to understand and
+   * retry.
+   *
+   * Refused for a read-only project here as well as in the Worker, matching
+   * `save`: publication issues a WAL checkpoint and records its outcome, and a
+   * project this build must not write should not queue work that was never
+   * going to land.
+   */
+  publish(options: { readonly expectedRevision?: number } = {}): Promise<NativePublishResult> {
+    if (this.#closed) {
+      return Promise.reject(new Error('This project has been closed.'));
+    }
+    if (this.#snapshot.readOnly) {
+      return Promise.reject(new NativeProjectReadOnlyError());
+    }
+
+    const run = (): Promise<NativePublishResult> => this.#publish(options);
+    const result = this.#queue.then(run, run);
+    this.#queue = result.then(
+      () => undefined,
+      () => undefined,
+    );
+    return result;
+  }
+
+  async #publish(options: { readonly expectedRevision?: number }): Promise<NativePublishResult> {
+    const payload = await this.#handle.client.request({
+      type: 'publish',
+      // Named from the working copy rather than the display name: the display
+      // name is the user's and can contain anything, while this is a key inside
+      // the Worker's own VFS. What the user sees is decided when the bytes are
+      // saved, which is not this layer's business.
+      targetName: `${this.#snapshot.workingCopyId}-published`,
+      ...(options.expectedRevision === undefined
+        ? {}
+        : { expectedRevision: options.expectedRevision }),
+    });
+    if (payload.kind !== 'publish') {
+      throw new Error('The project did not report a publication result.');
+    }
+    if (payload.result.status !== 'published') {
+      return { status: 'refused', reason: payload.result.reason, detail: payload.result.detail };
+    }
+    if (payload.bytes === null) {
+      // The verdict said published and no bytes came back. Reported as a
+      // refusal rather than resolved: there is nothing to hand the user, and a
+      // success with no file is the one outcome that must not be described as
+      // success.
+      return {
+        status: 'refused',
+        reason: 'export-failed',
+        detail: 'The publication was verified but its bytes were not returned.',
+      };
+    }
+    return { status: 'published', receipt: payload.result.receipt, bytes: payload.bytes };
   }
 
   async #commit(change: NativeProjectChange): Promise<void> {
@@ -183,11 +292,15 @@ export class NativeProjectSession {
     } catch (error) {
       if (this.#lastWriteError === null) this.#lastWriteError = error;
     } finally {
-      // Rule 3. Both run even if `close` threw, because the Worker holds the
+      // Rule 3. All three run even if `close` threw, because the Worker holds the
       // OPFS write lock on this project's working copy and a leaked lock makes
-      // the project unopenable for the rest of the session.
+      // the project unopenable for the rest of the session. The writer lease is
+      // released for the same reason at origin scope: a lease this tab never
+      // gives back leaves every other tab read-only on this project until the
+      // tab is closed, which looks exactly like the lock being broken.
       this.#handle.client.dispose();
       this.#handle.terminate();
+      this.#releaseWriterLease();
     }
 
     if (this.#lastWriteError !== null) throw this.#lastWriteError;

@@ -47,7 +47,17 @@ export type ProjectReadOnlyReason =
    */
   | 'build-cannot-write'
   /** The file's format version is ahead of this build: readable, not writable. */
-  | 'newer-format-version';
+  | 'newer-format-version'
+  /**
+   * Another window or tab holds this project's writer lock (ADR-0024).
+   *
+   * Distinct from `newer-format-version` because the two differ in everything a
+   * reader would want to know: this one is about their own other window rather
+   * than the file, it is temporary rather than a property of the bytes, and it
+   * resolves by closing the other window rather than by upgrading anything.
+   * Collapsing them would tell someone their file is too new when it is not.
+   */
+  | 'another-window-is-editing';
 
 /**
  * What an open project can say about itself beyond its file name, learned by
@@ -82,7 +92,24 @@ export interface LastKnownGoodProject {
 
 export type FileFlowState =
   | { readonly kind: 'idle' }
-  | { readonly kind: 'acquiring'; readonly name: string }
+  | {
+      readonly kind: 'acquiring';
+      readonly name: string;
+      /**
+       * V3-015. The project that was open when this one was picked, if there
+       * was one.
+       *
+       * Opening a second file while a project is active is a replacement, and
+       * it is legitimate - the user asked for it. What is not legitimate is
+       * losing the outgoing project's identity on the way: without this the
+       * whole preflight sequence carried no `lastKnownGood`, so a replacement
+       * that failed at any point before hydration left the user at `failed`
+       * with nothing, having had a working project a moment earlier. The
+       * replacement is remembered here and handed to `failed`, so a refused
+       * replacement can offer the project it replaced.
+       */
+      readonly replacing?: LastKnownGoodProject;
+    }
   | { readonly kind: 'detecting'; readonly name: string }
   /**
    * The candidate passed byte preflight *and* the source-completeness policy.
@@ -121,6 +148,13 @@ export type FileFlowState =
       readonly name?: string;
       readonly code: string;
       readonly message: string;
+      /**
+       * The project that was open before this attempt, when the attempt was a
+       * replacement. A failed replacement must be able to say what it replaced;
+       * without it the user is told an open failed and is given no route back
+       * to the project they already had.
+       */
+      readonly lastKnownGood?: LastKnownGoodProject;
     }
   /**
    * Everything below is the lifecycle after the byte-safe preflight gate that
@@ -201,8 +235,53 @@ export type FileFlowState =
       readonly name: string;
       readonly projectId: string;
       readonly fraction: number;
+      /**
+       * Carried so publishing a read-only project cannot return as a writable
+       * one, and so resuming restores the project the user actually had rather
+       * than a fresh one that happens to share its id.
+       */
+      readonly readOnlyReason: ProjectReadOnlyReason | null;
+      readonly facts: OpenProjectFacts;
     }
-  | { readonly kind: 'published'; readonly name: string; readonly projectId: string }
+  /**
+   * Portable bytes exist, and nothing may call them a published project yet.
+   *
+   * A successful write is not a successful publication: the file still has to be
+   * reopened by a reader that shares nothing with the writer and found to hold
+   * the same project, the same revision and the same semantic hash
+   * (`publishProjectFile` in @arq/arqfs). Until that returns, the only honest
+   * thing to say about the file on disk is that it is being checked. Collapsing
+   * this into `published` is the publication equivalent of the false open this
+   * flow already refuses.
+   */
+  | {
+      readonly kind: 'publication-verifying';
+      readonly name: string;
+      readonly projectId: string;
+      readonly readOnlyReason: ProjectReadOnlyReason | null;
+      readonly facts: OpenProjectFacts;
+    }
+  /**
+   * Verified. The revision and semantic hash are the fresh reader's own findings,
+   * carried on the state so the copy can name the exact revision it proved rather
+   * than the one the writer intended.
+   */
+  | {
+      readonly kind: 'published';
+      readonly name: string;
+      readonly projectId: string;
+      readonly readOnlyReason: ProjectReadOnlyReason | null;
+      readonly facts: OpenProjectFacts;
+      /**
+       * The fresh reader's own findings. Deliberately separate from
+       * `facts.revision`: that is the revision hydration read out of the working
+       * project, and this is the revision an independent reader found in the
+       * published file. They agree when publication succeeded, and keeping one
+       * field would remove the ability to notice when they do not.
+       */
+      readonly revision: number;
+      readonly semanticHash: string;
+    }
   | { readonly kind: 'closed'; readonly lastKnownGood: LastKnownGoodProject | null };
 
 export type FileFlowEvent =
@@ -212,8 +291,15 @@ export type FileFlowEvent =
   | { readonly type: 'route-native'; readonly sidecarDependency: ArqfsSidecarDependency }
   | { readonly type: 'route-import'; readonly formatId: string }
   | { readonly type: 'import-start'; readonly requestId: string }
-  | { readonly type: 'progress'; readonly fraction: number }
-  | { readonly type: 'staged' }
+  /**
+   * Both carry the request they came from, so the reducer can tell a live
+   * import's events from an abandoned one's. Required rather than optional: an
+   * emitter that has not said which request it is reporting on is exactly the
+   * one whose events cannot be trusted, and an optional field would let it
+   * through under the reassuring default.
+   */
+  | { readonly type: 'progress'; readonly requestId: string; readonly fraction: number }
+  | { readonly type: 'staged'; readonly requestId: string }
   | { readonly type: 'safe-mode'; readonly reason: string }
   | { readonly type: 'fail'; readonly code: string; readonly message: string }
   | { readonly type: 'reset' }
@@ -245,7 +331,16 @@ export type FileFlowEvent =
   | { readonly type: 'recovered' }
   | { readonly type: 'publish-start' }
   | { readonly type: 'publish-progress'; readonly fraction: number }
-  | { readonly type: 'published' }
+  /** The bytes are written and an independent reader is now checking them. */
+  | { readonly type: 'publish-verify-start' }
+  /**
+   * Verification passed. The evidence is required on the event, not optional: a
+   * caller that has not actually reopened and compared the file has nothing to
+   * put here, and so cannot reach `published` by mistake.
+   */
+  | { readonly type: 'published'; readonly revision: number; readonly semanticHash: string }
+  /** Back to editing after a publication, the project itself unchanged by it. */
+  | { readonly type: 'resume-editing' }
   | { readonly type: 'close' };
 
 /**
@@ -276,7 +371,17 @@ export function isProjectWritable(state: FileFlowState): boolean {
  * only when this session never had one.
  */
 export function lastKnownGoodProject(state: FileFlowState): LastKnownGoodProject | null {
-  if (state.kind === 'workspace-active') {
+  // Publishing reads the working project; it never replaces or invalidates it. So
+  // the project stays the last known good one throughout, and a publication that
+  // fails still knows which project the user's changes are safe in. Leaving these
+  // out made `project-failed` after a failed publish carry `lastKnownGood: null`,
+  // which contradicted the very reassurance its copy gives.
+  if (
+    state.kind === 'workspace-active' ||
+    state.kind === 'publishing' ||
+    state.kind === 'publication-verifying' ||
+    state.kind === 'published'
+  ) {
     return { projectId: state.projectId, name: state.name };
   }
   if (
@@ -292,13 +397,25 @@ export function lastKnownGoodProject(state: FileFlowState): LastKnownGoodProject
 
 export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): FileFlowState {
   if (event.type === 'reset') return { kind: 'idle' };
-  if (event.type === 'acquire') return { kind: 'acquiring', name: event.name };
+  if (event.type === 'acquire') {
+    // V3-015. A replacement carries the outgoing project forward, so failing
+    // part-way through does not leave the user with nothing when they had a
+    // working project a moment ago.
+    const replaced = lastKnownGoodProject(state);
+    return {
+      kind: 'acquiring',
+      name: event.name,
+      ...(replaced === null ? {} : { replacing: replaced }),
+    };
+  }
   if (event.type === 'fail') {
+    const replaced = state.kind === 'acquiring' ? state.replacing : lastKnownGoodProject(state);
     return {
       kind: 'failed',
       ...('name' in state ? { name: state.name } : {}),
       code: event.code,
       message: event.message,
+      ...(replaced === null || replaced === undefined ? {} : { lastKnownGood: replaced }),
     };
   }
   if (event.type === 'safe-mode' && 'name' in state) {
@@ -320,10 +437,23 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
   if (state.kind === 'import-options' && event.type === 'import-start') {
     return { kind: 'importing', name: state.name, requestId: event.requestId, fraction: 0 };
   }
+  // V3-019. `importing` has always carried the request id and never compared
+  // it. An import is asynchronous and cancellable, so a superseded request goes
+  // on emitting until it notices - and its progress and completion were driving
+  // the current one. A `staged` from the abandoned request moved the flow to
+  // `staged-review` over bytes the user is no longer importing, which is the
+  // workspace registry's own "stale asynchronous results never overwrite newer
+  // document revision" happening to the import flow.
   if (state.kind === 'importing' && event.type === 'progress') {
+    if (event.requestId !== state.requestId) {
+      return state;
+    }
     return { ...state, fraction: Math.max(0, Math.min(1, event.fraction)) };
   }
   if (state.kind === 'importing' && event.type === 'staged') {
+    if (event.requestId !== state.requestId) {
+      return state;
+    }
     return { kind: 'staged-review', name: state.name, requestId: state.requestId };
   }
 
@@ -357,6 +487,12 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
                 : null;
     // Only cancellable stages are cancellable. A cancel arriving in a state
     // with nothing in flight must not invent an undo that did not happen.
+    //
+    // `publication-verifying` is deliberately absent. By then a file exists on
+    // disk whose soundness is precisely what is unknown, and cancelling would
+    // leave the user holding it with no verdict attached. That resolves to
+    // published or to a publication failure, never to "cancelled, nothing
+    // changed" - which would be false about the file that is now there.
     if (cancelledAt !== null) {
       return { kind: 'cancelled', name: state.name, cancelledAt, lastKnownGood: carried };
     }
@@ -455,13 +591,57 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
     };
   }
   if (state.kind === 'workspace-active' && event.type === 'publish-start') {
-    return { kind: 'publishing', name: state.name, projectId: state.projectId, fraction: 0 };
+    return {
+      kind: 'publishing',
+      name: state.name,
+      projectId: state.projectId,
+      fraction: 0,
+      readOnlyReason: state.readOnlyReason,
+      facts: state.facts,
+    };
   }
   if (state.kind === 'publishing' && event.type === 'publish-progress') {
     return { ...state, fraction: Math.max(0, Math.min(1, event.fraction)) };
   }
-  if (state.kind === 'publishing' && event.type === 'published') {
-    return { kind: 'published', name: state.name, projectId: state.projectId };
+  if (state.kind === 'publishing' && event.type === 'publish-verify-start') {
+    return {
+      kind: 'publication-verifying',
+      name: state.name,
+      projectId: state.projectId,
+      readOnlyReason: state.readOnlyReason,
+      facts: state.facts,
+    };
+  }
+  // Only from `publication-verifying`. `publishing` deliberately has no route to
+  // `published`: writing the bytes is the step that can succeed while producing an
+  // unusable file, so it is exactly the step that must not be allowed to declare
+  // success on its own.
+  if (state.kind === 'publication-verifying' && event.type === 'published') {
+    return {
+      kind: 'published',
+      name: state.name,
+      projectId: state.projectId,
+      readOnlyReason: state.readOnlyReason,
+      facts: state.facts,
+      revision: event.revision,
+      semanticHash: event.semanticHash,
+    };
+  }
+  // Publication is a read of the working project, so the project the user was
+  // editing is still open and still exactly as it was. Without this the flow
+  // dead-ended at `published` and the only way back to editing was reopening the
+  // project the user already had.
+  if (state.kind === 'published' && event.type === 'resume-editing') {
+    return {
+      kind: 'workspace-active',
+      name: state.name,
+      projectId: state.projectId,
+      readOnlyReason: state.readOnlyReason,
+      // The same facts hydration read, not re-read: publishing did not change
+      // the working project, so re-deriving them would invite a different
+      // answer for a project that did not move.
+      facts: state.facts,
+    };
   }
 
   return state;

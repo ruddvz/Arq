@@ -68,12 +68,40 @@ function lengthPrefix64(length: number): Uint8Array {
  */
 export async function computeProjectSemanticHash(driver: ArqfsDriver): Promise<string> {
   const paths = listArchiveEntryPaths(driver);
+  const entries = new Map<string, Uint8Array>();
+  for (const path of paths) {
+    const content = getArchiveEntry(driver, path);
+    if (content !== null) {
+      entries.set(path, content);
+    }
+  }
+  return semanticHashOfEntries(entries);
+}
+
+/**
+ * V3-039: the same hash, over entries a caller already holds.
+ *
+ * The driver form above is the only one that existed, which meant only code
+ * running inside the Worker could compute this. The open path reads every entry
+ * across the Worker boundary anyway, and then had no way to hash what it had
+ * just been handed without asking the Worker to read it all a second time.
+ *
+ * `listArchiveEntryPaths` sorts in SQL (`ORDER BY path`); a Map does not, so the
+ * ordering is re-established here rather than inherited. Both forms therefore
+ * agree by construction instead of by the caller remembering to sort - the kind
+ * of agreement that has to be structural, because a hash that silently depends
+ * on insertion order fails only on the projects that happen to be inserted
+ * differently.
+ */
+export async function semanticHashOfEntries(
+  entries: ReadonlyMap<string, Uint8Array>,
+): Promise<string> {
   const encoder = new TextEncoder();
   const parts: Uint8Array[] = [encoder.encode(SEMANTIC_HASH_SCHEME)];
 
-  for (const path of paths) {
-    const content = getArchiveEntry(driver, path);
-    if (content === null) {
+  for (const path of [...entries.keys()].sort()) {
+    const content = entries.get(path);
+    if (content === undefined) {
       continue;
     }
     const pathBytes = encoder.encode(path);

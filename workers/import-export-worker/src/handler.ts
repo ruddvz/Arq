@@ -1,5 +1,8 @@
 import {
   AdapterRegistry,
+  IMPORT_REJECTION_CODES,
+  ImportRejection,
+  importRejectionCode,
   deserialiseImportPolicy,
   detectFormat,
   executeAdapter,
@@ -33,8 +36,16 @@ export function createImportWorkerHandler(dependencies: ImportWorkerDependencies
     post: (response: ImportWorkerResponse, transfer?: Transferable[]) => void,
   ): Promise<void> => {
     if (request.type === 'cancel') {
-      active.get(request.requestId)?.abort();
-      cancelledRequestIds.add(request.requestId);
+      const controller = active.get(request.requestId);
+      controller?.abort();
+      if (controller !== undefined) {
+        // V3-029. Only a request that is actually in flight can settle late, so
+        // only that one needs suppressing. Remembering every cancelled id grew
+        // the set without bound in a long-lived worker, and left a trap: if an
+        // id were ever reused, the stale entry would silently swallow the new
+        // request's final message and the caller would never hear back.
+        cancelledRequestIds.add(request.requestId);
+      }
       post({ type: 'cancelled', requestId: request.requestId });
       return;
     }
@@ -66,17 +77,33 @@ export function createImportWorkerHandler(dependencies: ImportWorkerDependencies
 
       const format = formatById(request.formatId);
       if (!format || format.id === 'arq-native') {
-        throw new Error('Native Arq files use the direct open path.');
+        throw new ImportRejection(
+          IMPORT_REJECTION_CODES.nativeFileMisrouted,
+          'Native Arq files use the direct open path.',
+        );
       }
       if (format.adapterId !== request.adapterId && request.adapterId !== 'attachment') {
-        throw new Error('Adapter does not match detected format route.');
+        throw new ImportRejection(
+          IMPORT_REJECTION_CODES.adapterRouteMismatch,
+          'Adapter does not match detected format route.',
+        );
       }
       const adapter = dependencies.adapters.get(request.adapterId);
-      if (!adapter) throw new Error(`Adapter unavailable: ${request.adapterId}`);
+      if (!adapter)
+        throw new ImportRejection(
+          IMPORT_REJECTION_CODES.adapterUnavailable,
+          `Adapter unavailable: ${request.adapterId}`,
+        );
 
       const sourceSha256 = await sha256Hex(bytes);
       if (request.expectedSourceSha256 && request.expectedSourceSha256 !== sourceSha256) {
-        throw new Error('Source hash changed between acquisition and conversion.');
+        // The bytes changed underneath an import already in progress. This must
+        // not reach the caller wearing the same code as a configuration
+        // mistake: one is worth warning about and the other is worth retrying.
+        throw new ImportRejection(
+          IMPORT_REJECTION_CODES.sourceDigestChanged,
+          'Source hash changed between acquisition and conversion.',
+        );
       }
 
       const result = await executeAdapter({
@@ -102,7 +129,9 @@ export function createImportWorkerHandler(dependencies: ImportWorkerDependencies
         postFinal({
           type: 'failed',
           requestId: request.requestId,
-          code: 'IMPORT_WORKER_FAILED',
+          // V3-031. An error nobody classified keeps the generic code, which is
+          // honest: it is one nobody has decided how to handle.
+          code: importRejectionCode(error, 'IMPORT_WORKER_FAILED'),
           message: error instanceof Error ? error.message : String(error),
         });
       }

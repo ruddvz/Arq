@@ -61,6 +61,21 @@
       "id": "system",
       "titlePattern": "{surface} could not continue",
       "safeRule": "Give stable error code in details, not as the only user explanation."
+    },
+    {
+      "id": "publication",
+      "titlePattern": "Portable file {result}",
+      "safeRule": "A refused publication leaves the target file in a stated condition. Never report a refused publication as published, and always name the check that refused."
+    },
+    {
+      "id": "extension",
+      "titlePattern": "{extension} was not allowed to {action}",
+      "safeRule": "Name the capability or origin that was not declared. Never let a request establish the permission it asks for, and never imply the extension is malicious."
+    },
+    {
+      "id": "input-limit",
+      "titlePattern": "ARQ stopped reading {object}",
+      "safeRule": "State the limit reached as a property of the input. Never accuse the file or its sender, and say what was kept."
     }
   ]
 }

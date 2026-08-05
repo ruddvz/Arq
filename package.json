@@ -78,7 +78,8 @@
     "zeus": "node scripts/zeus.mjs",
     "zeus:verify": "node scripts/zeus-verify.mjs",
     "zeus:validate": "node scripts/zeus-validate.mjs",
-    "zeus:test": "bash scripts/test-zeus-system.sh"
+    "zeus:test": "bash scripts/test-zeus-system.sh",
+    "spike:canonical-units": "node scripts/run-canonical-units-spike.mjs"
   },
   "devDependencies": {
     "canvaskit-wasm": "^0.41.1",

@@ -1,6 +1,26 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createManifest, exportArchive } from '@arq/project-format';
 import { openNativeProject, type NativeWorkerHandle } from './open-native-project';
+import type { ArqfsWriterLease } from '@arq/arqfs/src/arqfs-single-writer-lock';
+
+/**
+ * Grants the writer lock. Injected rather than left to the real implementation
+ * because jsdom has no `navigator.locks`, and the real one correctly degrades to
+ * a read-only lease when it is absent - so a test that did not inject would
+ * exercise only that branch and quietly assert nothing about the writable path.
+ */
+const releaseWriterLease = vi.fn();
+function grantsWriterLock(): Promise<ArqfsWriterLease> {
+  return Promise.resolve({ status: 'writer', handle: { release: releaseWriterLease } });
+}
+function refusesWriterLock(
+  reason:
+    | 'another-context-is-writing'
+    | 'locks-unavailable'
+    | 'lock-request-refused' = 'another-context-is-writing',
+): () => Promise<ArqfsWriterLease> {
+  return () => Promise.resolve({ status: 'read-only', reason });
+}
 
 const PROJECT_ID = '00000000-0000-4000-8000-000000000001';
 
@@ -96,7 +116,14 @@ describe('openNativeProject', () => {
       await archiveEntries([{ id: 'w1', start: { x: 0, y: 0 }, end: { x: 3000, y: 0 } }]),
     );
 
-    const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+    const result = await openNativeProject(
+      sqliteBytes(),
+      fake.factory,
+      'house.arq',
+      undefined,
+      null,
+      grantsWriterLock,
+    );
 
     expect(result.status).toBe('opened');
     if (result.status === 'opened') {
@@ -122,7 +149,14 @@ describe('openNativeProject', () => {
   it('refuses a missing -wal sidecar without constructing a Worker at all', async () => {
     const fake = fakeWorker();
 
-    const result = await openNativeProject(sqliteBytes('wal'), fake.factory, 'house.arq');
+    const result = await openNativeProject(
+      sqliteBytes('wal'),
+      fake.factory,
+      'house.arq',
+      undefined,
+      null,
+      grantsWriterLock,
+    );
 
     expect(result).toMatchObject({ status: 'rejected', code: 'ARQ_WAL_SIDECAR_REQUIRED' });
     expect(fake.seen).toEqual([]);
@@ -140,7 +174,14 @@ describe('openNativeProject', () => {
     fake.setEntries(await archiveEntries());
     const bytes = sqliteBytes();
 
-    const first = await openNativeProject(bytes, fake.factory, 'house.arq');
+    const first = await openNativeProject(
+      bytes,
+      fake.factory,
+      'house.arq',
+      undefined,
+      null,
+      grantsWriterLock,
+    );
     expect(first.status).toBe('opened');
     if (first.status !== 'opened') return;
     const held = first.snapshot.workingCopyId;
@@ -212,7 +253,14 @@ describe('openNativeProject', () => {
   ])('releases the Worker after %s', async (_label, overrides, code) => {
     const fake = fakeWorker(overrides as Record<string, () => Promise<unknown>>);
 
-    const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+    const result = await openNativeProject(
+      sqliteBytes(),
+      fake.factory,
+      'house.arq',
+      undefined,
+      null,
+      grantsWriterLock,
+    );
 
     expect(result).toMatchObject({ status: 'rejected', code });
     expect(fake.terminate).toHaveBeenCalledOnce();
@@ -223,7 +271,14 @@ describe('openNativeProject', () => {
     const fake = fakeWorker();
     fake.setEntries([]);
 
-    const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+    const result = await openNativeProject(
+      sqliteBytes(),
+      fake.factory,
+      'house.arq',
+      undefined,
+      null,
+      grantsWriterLock,
+    );
 
     expect(result).toMatchObject({ status: 'rejected', code: 'ARQ_ARCHIVE_REJECTED' });
     expect(fake.terminate).toHaveBeenCalledOnce();
@@ -242,12 +297,299 @@ describe('openNativeProject', () => {
     });
     fake.setEntries(await archiveEntries());
 
-    const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+    const result = await openNativeProject(
+      sqliteBytes(),
+      fake.factory,
+      'house.arq',
+      undefined,
+      null,
+      grantsWriterLock,
+    );
 
     expect(result.status).toBe('opened');
     if (result.status === 'opened') {
       expect(result.snapshot.readOnly).toBe(true);
       expect(result.snapshot.warnings[0]).toMatch(/migration/i);
     }
+  });
+  /**
+   * V3-038. The file records what its own entries should hash to, in
+   * `checksums.json`. Until open read it, publication was the only thing that
+   * ever did - so a file this build wrote was verified and a file from anywhere
+   * else was not.
+   */
+  describe('entry digest verification', () => {
+    async function tamperedWith(path: string, bytes: Uint8Array) {
+      const entries = await archiveEntries([
+        { id: 'w1', start: { x: 0, y: 0 }, end: { x: 3000, y: 0 } },
+      ]);
+      return entries.map((entry) => (entry[0] === path ? ([path, bytes] as const) : entry));
+    }
+
+    it('refuses a project whose model.json no longer matches its recorded digest', async () => {
+      const fake = fakeWorker();
+      // Structurally valid JSON, so nothing downstream would have objected: it
+      // would have decoded and been adopted as the project.
+      fake.setEntries(
+        await tamperedWith(
+          'model.json',
+          new TextEncoder().encode('{"projectName":"Not the project","walls":[]}'),
+        ),
+      );
+
+      const result = await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+
+      expect(result).toMatchObject({ status: 'rejected', code: 'ARQ_ENTRY_DIGEST_MISMATCH' });
+      if (result.status === 'rejected') {
+        expect(result.reason).toContain('model.json');
+      }
+      // Refused before the archive is parsed, and the Worker is released.
+      expect(fake.terminate).toHaveBeenCalled();
+    });
+
+    it('refuses a project whose manifest.json was altered', async () => {
+      const fake = fakeWorker();
+      fake.setEntries(
+        await tamperedWith(
+          'manifest.json',
+          new TextEncoder().encode(
+            '{"schemaVersion":0,"applicationVersion":"test","projectId":"00000000-0000-4000-8000-999999999999","createdAt":"2026-08-04T00:00:00.000Z"}',
+          ),
+        ),
+      );
+
+      const result = await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+
+      expect(result).toMatchObject({ status: 'rejected', code: 'ARQ_ENTRY_DIGEST_MISMATCH' });
+    });
+
+    it('opens a project whose thumbnail is corrupt - derived entries are regenerable', async () => {
+      const fake = fakeWorker();
+      const entries = await archiveEntries([
+        { id: 'w1', start: { x: 0, y: 0 }, end: { x: 3000, y: 0 } },
+      ]);
+      // A derived entry that checksums.json does not describe is not a
+      // mismatch at all; one it does describe and that fails is reported and
+      // not fatal. Either way the project's meaning is intact.
+      fake.setEntries([...entries, ['thumbnails/plan.png', new Uint8Array([1, 2, 3])]]);
+
+      const result = await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+
+      expect(result.status).toBe('opened');
+    });
+
+    it('opens a project carrying no checksums.json - an absent check is not a detected fault', async () => {
+      const fake = fakeWorker();
+      const entries = await archiveEntries();
+      fake.setEntries(entries.filter((entry) => entry[0] !== 'checksums.json'));
+
+      const result = await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+
+      expect(result.status).toBe('opened');
+    });
+  });
+
+  /**
+   * V3-039. Computed at open rather than verified: nothing on disk records an
+   * expected value. It exists so @arq/derived-cache's freshness rule has a
+   * "current" hash to compare its stored one against.
+   */
+  describe('semantic hash', () => {
+    it('reports a semantic hash on the snapshot', async () => {
+      const fake = fakeWorker();
+      fake.setEntries(await archiveEntries());
+
+      const result = await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+
+      expect(result.status).toBe('opened');
+      if (result.status === 'opened') {
+        expect(result.snapshot.semanticHash).toMatch(/^[0-9a-f]{64}$/);
+      }
+    });
+
+    it('reports a different hash for a project with different contents', async () => {
+      const one = fakeWorker();
+      one.setEntries(await archiveEntries());
+      const two = fakeWorker();
+      two.setEntries(
+        await archiveEntries([{ id: 'w1', start: { x: 0, y: 0 }, end: { x: 3000, y: 0 } }]),
+      );
+
+      const a = await openNativeProject(
+        sqliteBytes(),
+        one.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+      const b = await openNativeProject(
+        sqliteBytes(),
+        two.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+
+      expect(a.status === 'opened' && b.status === 'opened').toBe(true);
+      if (a.status === 'opened' && b.status === 'opened') {
+        expect(a.snapshot.semanticHash).not.toBe(b.snapshot.semanticHash);
+      }
+    });
+  });
+  /**
+   * V3-030. ADR-0024's single-writer rule. `acquireSingleWriterLock` existed,
+   * was tested, and had no caller: `readOnly` came only from the file's
+   * writer-version floor, so two windows could open one project writable and
+   * each believe it was the writer.
+   */
+  describe('writer lock', () => {
+    it('opens read-only when another window already holds the writer lock', async () => {
+      const fake = fakeWorker();
+      fake.setEntries(await archiveEntries());
+
+      const result = await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        undefined,
+        null,
+        refusesWriterLock(),
+      );
+
+      expect(result.status).toBe('opened');
+      if (result.status === 'opened') {
+        expect(result.snapshot.readOnly).toBe(true);
+        // The file itself is perfectly writable - the warning must say which of
+        // the two causes this is, or it reads as the file being at fault.
+        expect(result.snapshot.warnings.join(' ')).toMatch(/another/i);
+      }
+    });
+
+    it('reports the lock as the read-only cause, not the file version', async () => {
+      const fake = fakeWorker();
+      fake.setEntries(await archiveEntries());
+      const reasons: (string | null)[] = [];
+
+      await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        {
+          onStaged: () => {},
+          onWorkerOpened: (writable, lockReason) => {
+            reasons.push(writable ? null : lockReason);
+          },
+          onHydrateStart: () => {},
+        },
+        null,
+        refusesWriterLock(),
+      );
+
+      expect(reasons).toEqual(['another-window-is-editing']);
+    });
+
+    it('takes the lock before constructing a Worker, so a contended project is never imported', async () => {
+      const fake = fakeWorker();
+      fake.setEntries(await archiveEntries());
+      const order: string[] = [];
+
+      await openNativeProject(
+        sqliteBytes(),
+        () => {
+          order.push('worker');
+          return fake.factory();
+        },
+        'house.arq',
+        undefined,
+        null,
+        () => {
+          order.push('lock');
+          return grantsWriterLock();
+        },
+      );
+
+      expect(order).toEqual(['lock', 'worker']);
+    });
+
+    it('releases the lease when the open fails, rather than holding it for a project it never opened', async () => {
+      releaseWriterLease.mockClear();
+      const fake = fakeWorker({
+        readAllArchiveEntries: () => Promise.reject(new Error('worker died')),
+      });
+
+      const result = await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+
+      expect(result.status).toBe('rejected');
+      expect(releaseWriterLease).toHaveBeenCalled();
+    });
+
+    it('keeps the lease held on a successful open, and releases it when the session closes', async () => {
+      releaseWriterLease.mockClear();
+      const fake = fakeWorker();
+      fake.setEntries(await archiveEntries());
+
+      const result = await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+
+      expect(result.status).toBe('opened');
+      // Held: a lease released as soon as the open finished would guarantee
+      // nothing for the lifetime that matters.
+      expect(releaseWriterLease).not.toHaveBeenCalled();
+
+      if (result.status === 'opened') {
+        await result.session.close();
+        expect(releaseWriterLease).toHaveBeenCalled();
+      }
+    });
   });
 });

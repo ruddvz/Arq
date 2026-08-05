@@ -1,5 +1,11 @@
-import { describe, expect, it, afterEach } from 'vitest';
+import { describe, expect, it, afterEach, beforeEach } from 'vitest';
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { createNodeArqfsDriver } from './arqfs-node-driver';
+import { createArqfsSchemaV1 } from './arqfs-schema';
+import { initializeWorkingCopyState } from './arqfs-working-copy';
+import { putArchiveEntry } from './arqfs-archive-store';
 import {
   createArqfsWorkerSession,
   handleArqfsWorkerRequest,
@@ -22,10 +28,10 @@ describe('handleArqfsWorkerRequest', () => {
     return context;
   }
 
-  it("initialises the latest schema (not v1) on 'open' for a brand new (application_id = 0) database", () => {
+  it("initialises the latest schema (not v1) on 'open' for a brand new (application_id = 0) database", async () => {
     const ctx = freshContext();
 
-    const response = handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    const response = await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
 
     expect(response.ok).toBe(true);
     if (response.ok && response.payload.kind === 'open') {
@@ -40,11 +46,11 @@ describe('handleArqfsWorkerRequest', () => {
     }
   });
 
-  it("'open' is idempotent - opening an already-initialised database again does not fail or re-create the schema", () => {
+  it("'open' is idempotent - opening an already-initialised database again does not fail or re-create the schema", async () => {
     const ctx = freshContext();
-    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
 
-    const second = handleArqfsWorkerRequest(ctx, { id: 2, type: 'open' });
+    const second = await handleArqfsWorkerRequest(ctx, { id: 2, type: 'open' });
 
     expect(second.ok).toBe(true);
     if (second.ok && second.payload.kind === 'open') {
@@ -52,19 +58,19 @@ describe('handleArqfsWorkerRequest', () => {
     }
   });
 
-  it('round-trips archive entries through putArchiveEntries/getArchiveEntry/listArchiveEntryPaths', () => {
+  it('round-trips archive entries through putArchiveEntries/getArchiveEntry/listArchiveEntryPaths', async () => {
     const ctx = freshContext();
-    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
 
     const content = new TextEncoder().encode('{"walls":[]}');
-    const putResponse = handleArqfsWorkerRequest(ctx, {
+    const putResponse = await handleArqfsWorkerRequest(ctx, {
       id: 2,
       type: 'putArchiveEntries',
       entries: [['model.json', content]],
     });
     expect(putResponse.ok).toBe(true);
 
-    const getResponse = handleArqfsWorkerRequest(ctx, {
+    const getResponse = await handleArqfsWorkerRequest(ctx, {
       id: 3,
       type: 'getArchiveEntry',
       path: 'model.json',
@@ -74,18 +80,21 @@ describe('handleArqfsWorkerRequest', () => {
       expect(getResponse.payload.content).toEqual(content);
     }
 
-    const listResponse = handleArqfsWorkerRequest(ctx, { id: 4, type: 'listArchiveEntryPaths' });
+    const listResponse = await handleArqfsWorkerRequest(ctx, {
+      id: 4,
+      type: 'listArchiveEntryPaths',
+    });
     expect(listResponse.ok).toBe(true);
     if (listResponse.ok && listResponse.payload.kind === 'listArchiveEntryPaths') {
       expect(listResponse.payload.paths).toEqual(['model.json']);
     }
   });
 
-  it("'getArchiveEntry' for a missing path returns null, not an error", () => {
+  it("'getArchiveEntry' for a missing path returns null, not an error", async () => {
     const ctx = freshContext();
-    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
 
-    const response = handleArqfsWorkerRequest(ctx, {
+    const response = await handleArqfsWorkerRequest(ctx, {
       id: 2,
       type: 'getArchiveEntry',
       path: 'missing.json',
@@ -96,25 +105,25 @@ describe('handleArqfsWorkerRequest', () => {
     }
   });
 
-  it("'close' closes the driver and reports ok", () => {
+  it("'close' closes the driver and reports ok", async () => {
     const ctx = freshContext();
-    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
 
-    const response = handleArqfsWorkerRequest(ctx, { id: 2, type: 'close' });
+    const response = await handleArqfsWorkerRequest(ctx, { id: 2, type: 'close' });
     expect(response).toEqual({ id: 2, ok: true, payload: { kind: 'close' } });
   });
 
-  it('reports a failed request as ok: false rather than throwing past the handler', () => {
+  it('reports a failed request as ok: false rather than throwing past the handler', async () => {
     const ctx = freshContext();
-    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
-    handleArqfsWorkerRequest(ctx, { id: 2, type: 'close' });
+    await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(ctx, { id: 2, type: 'close' });
 
     // Deliberately `open` and not an archive read. The driver is closed, so this
     // reaches the driver and throws, which is the try/catch this test is about.
     // An archive read would now be turned away by the read gate before touching
     // the driver at all - a true `ok: false`, but produced by a different
     // mechanism, leaving the crash-containment path unexercised.
-    const response = handleArqfsWorkerRequest(ctx, { id: 3, type: 'open' });
+    const response = await handleArqfsWorkerRequest(ctx, { id: 3, type: 'open' });
     expect(response.ok).toBe(false);
     if (!response.ok) {
       expect(response.code).toBe('ARQFS_WORKER_UNEXPECTED_ERROR');
@@ -150,10 +159,10 @@ describe('the read gate', () => {
     { type: 'readAllArchiveEntries' },
   ] as const;
 
-  it.each(readRequests)('refuses $type before any open', (request) => {
+  it.each(readRequests)('refuses $type before any open', async (request) => {
     const ctx = context();
 
-    const response = handleArqfsWorkerRequest(ctx, { id: 1, ...request });
+    const response = await handleArqfsWorkerRequest(ctx, { id: 1, ...request });
 
     expect(response.ok).toBe(false);
     if (!response.ok) {
@@ -162,19 +171,19 @@ describe('the read gate', () => {
     }
   });
 
-  it.each(readRequests)('refuses $type after an open this build rejected', (request) => {
+  it.each(readRequests)('refuses $type after an open this build rejected', async (request) => {
     const ctx = context();
-    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
     // Author a file openArqfs must reject outright, then re-open so the session
     // carries the rejection.
     ctx.driver.exec(`UPDATE arqfs_meta SET value = 'not-a-number' WHERE key = 'format_major'`);
-    const reopened = handleArqfsWorkerRequest(ctx, { id: 2, type: 'open' });
+    const reopened = await handleArqfsWorkerRequest(ctx, { id: 2, type: 'open' });
     expect(reopened.ok).toBe(true);
     if (reopened.ok && reopened.payload.kind === 'open') {
       expect(reopened.payload.result.status).toBe('rejected');
     }
 
-    const response = handleArqfsWorkerRequest(ctx, { id: 3, ...request });
+    const response = await handleArqfsWorkerRequest(ctx, { id: 3, ...request });
 
     expect(response.ok).toBe(false);
     if (!response.ok) {
@@ -185,11 +194,11 @@ describe('the read gate', () => {
 
   it.each(readRequests)(
     'refuses $type for a file that opened only in safe mode, whose semantics this build does not fully understand',
-    (request) => {
+    async (request) => {
       const ctx = context();
-      handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+      await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
       ctx.driver.exec(`UPDATE arqfs_meta SET value = '99' WHERE key = 'min_reader_major'`);
-      const reopened = handleArqfsWorkerRequest(ctx, { id: 2, type: 'open' });
+      const reopened = await handleArqfsWorkerRequest(ctx, { id: 2, type: 'open' });
       expect(reopened.ok).toBe(true);
       if (reopened.ok && reopened.payload.kind === 'open') {
         expect(reopened.payload.result.status).toBe('opened');
@@ -199,7 +208,7 @@ describe('the read gate', () => {
         }
       }
 
-      const response = handleArqfsWorkerRequest(ctx, { id: 3, ...request });
+      const response = await handleArqfsWorkerRequest(ctx, { id: 3, ...request });
 
       expect(response.ok).toBe(false);
       if (!response.ok) {
@@ -208,10 +217,10 @@ describe('the read gate', () => {
     },
   );
 
-  it('allows reads once the file is genuinely open, and returns every entry in one call', () => {
+  it('allows reads once the file is genuinely open, and returns every entry in one call', async () => {
     const ctx = context();
-    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
-    handleArqfsWorkerRequest(ctx, {
+    await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(ctx, {
       id: 2,
       type: 'putArchiveEntries',
       entries: [
@@ -220,7 +229,7 @@ describe('the read gate', () => {
       ],
     });
 
-    const response = handleArqfsWorkerRequest(ctx, { id: 3, type: 'readAllArchiveEntries' });
+    const response = await handleArqfsWorkerRequest(ctx, { id: 3, type: 'readAllArchiveEntries' });
 
     expect(response.ok).toBe(true);
     if (response.ok && response.payload.kind === 'readAllArchiveEntries') {
@@ -235,17 +244,17 @@ describe('the read gate', () => {
     }
   });
 
-  it('closing forgets the open decision, so a later read is refused again', () => {
+  it('closing forgets the open decision, so a later read is refused again', async () => {
     const ctx = context();
-    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
-    handleArqfsWorkerRequest(ctx, {
+    await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(ctx, {
       id: 2,
       type: 'putArchiveEntries',
       entries: [['model.json', new TextEncoder().encode('{"walls":[]}')]],
     });
-    handleArqfsWorkerRequest(ctx, { id: 3, type: 'close' });
+    await handleArqfsWorkerRequest(ctx, { id: 3, type: 'close' });
 
-    const response = handleArqfsWorkerRequest(ctx, { id: 4, type: 'listArchiveEntryPaths' });
+    const response = await handleArqfsWorkerRequest(ctx, { id: 4, type: 'listArchiveEntryPaths' });
 
     expect(response.ok).toBe(false);
     if (!response.ok) {
@@ -261,14 +270,14 @@ describe('the write gate', () => {
     driver?.close();
   });
 
-  function openedContext(): ArqfsWorkerContext {
+  async function openedContext(): Promise<ArqfsWorkerContext> {
     driver = createNodeArqfsDriver();
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
       session: createArqfsWorkerSession(),
     };
-    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
     return context;
   }
 
@@ -276,7 +285,7 @@ describe('the write gate', () => {
     ['model.json', new TextEncoder().encode('{"walls":[]}')],
   ];
 
-  it('refuses a write that arrives before any open', () => {
+  it('refuses a write that arrives before any open', async () => {
     driver = createNodeArqfsDriver();
     const context: ArqfsWorkerContext = {
       driver,
@@ -284,7 +293,7 @@ describe('the write gate', () => {
       session: createArqfsWorkerSession(),
     };
 
-    const response = handleArqfsWorkerRequest(context, {
+    const response = await handleArqfsWorkerRequest(context, {
       id: 1,
       type: 'putArchiveEntries',
       entries: entry,
@@ -300,11 +309,11 @@ describe('the write gate', () => {
    * The defect this gate exists for: `open` decided this build must not write
    * the file, and the very next message wrote it anyway.
    */
-  it('refuses a write to a file that declares a newer writer, and leaves it unchanged', () => {
-    const context = openedContext();
+  it('refuses a write to a file that declares a newer writer, and leaves it unchanged', async () => {
+    const context = await openedContext();
     // Author a file this build may read but must not write.
     context.driver.exec(`UPDATE arqfs_meta SET value = '99' WHERE key = 'min_writer_major'`);
-    const reopened = handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
+    const reopened = await handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
     expect(reopened.ok).toBe(true);
     if (reopened.ok && reopened.payload.kind === 'open') {
       expect(reopened.payload.result.status).toBe('opened');
@@ -314,13 +323,16 @@ describe('the write gate', () => {
       }
     }
 
-    const before = handleArqfsWorkerRequest(context, { id: 3, type: 'listArchiveEntryPaths' });
-    const response = handleArqfsWorkerRequest(context, {
+    const before = await handleArqfsWorkerRequest(context, {
+      id: 3,
+      type: 'listArchiveEntryPaths',
+    });
+    const response = await handleArqfsWorkerRequest(context, {
       id: 4,
       type: 'putArchiveEntries',
       entries: entry,
     });
-    const after = handleArqfsWorkerRequest(context, { id: 5, type: 'listArchiveEntryPaths' });
+    const after = await handleArqfsWorkerRequest(context, { id: 5, type: 'listArchiveEntryPaths' });
 
     expect(response.ok).toBe(false);
     if (!response.ok) {
@@ -331,17 +343,20 @@ describe('the write gate', () => {
     expect(after).toEqual({ ...before, id: 5 });
   });
 
-  it('still allows a write to a file this build is qualified to write', () => {
-    const context = openedContext();
+  it('still allows a write to a file this build is qualified to write', async () => {
+    const context = await openedContext();
 
-    const response = handleArqfsWorkerRequest(context, {
+    const response = await handleArqfsWorkerRequest(context, {
       id: 2,
       type: 'putArchiveEntries',
       entries: entry,
     });
 
     expect(response.ok).toBe(true);
-    const listed = handleArqfsWorkerRequest(context, { id: 3, type: 'listArchiveEntryPaths' });
+    const listed = await handleArqfsWorkerRequest(context, {
+      id: 3,
+      type: 'listArchiveEntryPaths',
+    });
     if (listed.ok && listed.payload.kind === 'listArchiveEntryPaths') {
       expect(listed.payload.paths).toContain('model.json');
     } else {
@@ -349,11 +364,11 @@ describe('the write gate', () => {
     }
   });
 
-  it('closing forgets the open decision, so a later write is refused again', () => {
-    const context = openedContext();
-    handleArqfsWorkerRequest(context, { id: 2, type: 'close' });
+  it('closing forgets the open decision, so a later write is refused again', async () => {
+    const context = await openedContext();
+    await handleArqfsWorkerRequest(context, { id: 2, type: 'close' });
 
-    const response = handleArqfsWorkerRequest(context, {
+    const response = await handleArqfsWorkerRequest(context, {
       id: 3,
       type: 'putArchiveEntries',
       entries: entry,
@@ -379,14 +394,14 @@ describe('the defensive open policy', () => {
    * declared REFERENCES and ON DELETE CASCADE in schema v1 and v2 inert, and
    * trusted_schema was on for a file Arq did not write.
    */
-  it('is in force after an open, not merely available', () => {
+  it('is in force after an open, not merely available', async () => {
     driver = createNodeArqfsDriver();
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
       session: createArqfsWorkerSession(),
     };
-    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
 
     // Set every pragma the policy owns to the wrong value first. Asserting a
     // "before" state instead would test the driver's defaults rather than the
@@ -399,41 +414,41 @@ describe('the defensive open policy', () => {
     expect(driver.pragma('foreign_keys')).toBe(0);
     expect(driver.pragma('trusted_schema')).toBe(1);
 
-    handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
+    await handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
 
     expect(driver.pragma('foreign_keys')).toBe(1);
     expect(driver.pragma('trusted_schema')).toBe(0);
     expect(driver.pragma('query_only')).toBe(0);
   });
 
-  it('clears query-only again when a later open finds the file writable', () => {
+  it('clears query-only again when a later open finds the file writable', async () => {
     driver = createNodeArqfsDriver();
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
       session: createArqfsWorkerSession(),
     };
-    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
     driver.exec('PRAGMA query_only = ON');
 
-    handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
+    await handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
 
     // A pragma is connection state, not a one-way switch. Leaving it alone on
     // the writable path would strand a connection read-only for its lifetime.
     expect(driver.pragma('query_only')).toBe(0);
   });
 
-  it('opens a file it must not write in query-only mode, so even a direct write fails', () => {
+  it('opens a file it must not write in query-only mode, so even a direct write fails', async () => {
     driver = createNodeArqfsDriver();
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
       session: createArqfsWorkerSession(),
     };
-    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
     context.driver.exec(`UPDATE arqfs_meta SET value = '99' WHERE key = 'min_writer_major'`);
 
-    handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
+    await handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
 
     expect(driver.pragma('query_only')).toBe(1);
     // Belt and braces: the gate refuses the request, and SQLite itself would
@@ -475,11 +490,15 @@ describe('importing a database into the working copy', () => {
     };
   }
 
-  it('hands the selected bytes to the Worker that owns the pool', () => {
+  it('hands the selected bytes to the Worker that owns the pool', async () => {
     const { context, imported } = contextWithImporter();
     const bytes = new Uint8Array([1, 2, 3, 4]);
 
-    const response = handleArqfsWorkerRequest(context, { id: 1, type: 'importDatabase', bytes });
+    const response = await handleArqfsWorkerRequest(context, {
+      id: 1,
+      type: 'importDatabase',
+      bytes,
+    });
 
     expect(response.ok).toBe(true);
     if (response.ok && response.payload.kind === 'importDatabase') {
@@ -495,26 +514,26 @@ describe('importing a database into the working copy', () => {
    * wrong file - and, in the worst case, let a rejected file's replacement be
    * read without ever being opened.
    */
-  it('forgets what the previous open decided, forcing a fresh open', () => {
+  it('forgets what the previous open decided, forcing a fresh open', async () => {
     const { context } = contextWithImporter();
-    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
     expect(context.session.openResult).not.toBeNull();
 
-    handleArqfsWorkerRequest(context, {
+    await handleArqfsWorkerRequest(context, {
       id: 2,
       type: 'importDatabase',
       bytes: new Uint8Array([1]),
     });
 
     expect(context.session.openResult).toBeNull();
-    const read = handleArqfsWorkerRequest(context, { id: 3, type: 'listArchiveEntryPaths' });
+    const read = await handleArqfsWorkerRequest(context, { id: 3, type: 'listArchiveEntryPaths' });
     expect(read.ok).toBe(false);
     if (!read.ok) {
       expect(read.code).toBe('ARQFS_WORKER_NOT_OPENED');
     }
   });
 
-  it('refuses rather than silently ignoring an import it cannot perform', () => {
+  it('refuses rather than silently ignoring an import it cannot perform', async () => {
     driver = createNodeArqfsDriver();
     const context: ArqfsWorkerContext = {
       driver,
@@ -522,7 +541,7 @@ describe('importing a database into the working copy', () => {
       session: createArqfsWorkerSession(),
     };
 
-    const response = handleArqfsWorkerRequest(context, {
+    const response = await handleArqfsWorkerRequest(context, {
       id: 1,
       type: 'importDatabase',
       bytes: new Uint8Array([1]),
@@ -531,6 +550,223 @@ describe('importing a database into the working copy', () => {
     expect(response.ok).toBe(false);
     if (!response.ok) {
       expect(response.error).toContain('cannot import');
+    }
+  });
+  it('refuses an unrecognised request type instead of returning nothing at all', async () => {
+    driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      session: createArqfsWorkerSession(),
+    };
+
+    // V3-021. The switch covers every union member, so TypeScript reads it as
+    // exhaustive - but `request` crosses a Worker boundary, where the union is a
+    // claim about the caller rather than a fact about the value. Without the
+    // `default` this returned `undefined`, the Worker posted that, and the caller
+    // waited out its whole timeout for a request refused the moment it arrived.
+    const response = await handleArqfsWorkerRequest(context, {
+      id: 11,
+      type: 'exec',
+      sql: 'DROP TABLE archive_entries',
+    } as never);
+
+    expect(response).toBeDefined();
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.id).toBe(11);
+      expect(response.code).toBe('ARQFS_WORKER_MALFORMED_REQUEST');
+      expect(response.error).toContain('Nothing was attempted');
+    }
+  });
+});
+
+/**
+ * The Worker publish command. Publication only means anything if the reader
+ * shares nothing with the writer, and only the Worker's VFS can produce such a
+ * reader - which is why this command exists rather than the main thread asking
+ * for bytes and checking them itself.
+ */
+describe('publish', () => {
+  let driver: ArqfsDriver;
+  let workDir: string;
+
+  beforeEach(() => {
+    workDir = mkdtempSync(join(tmpdir(), 'arqfs-worker-publish-'));
+  });
+
+  afterEach(() => {
+    driver?.close();
+    rmSync(workDir, { recursive: true, force: true });
+  });
+
+  function publishingContext(): { context: ArqfsWorkerContext; removed: string[] } {
+    driver = createNodeArqfsDriver(join(workDir, 'working.arq'));
+    createArqfsSchemaV1(driver);
+    initializeWorkingCopyState(driver, 'project-alpha');
+    putArchiveEntry(driver, 'model.json', new TextEncoder().encode('{"walls":[{"id":"w1"}]}'));
+    const removed: string[] = [];
+    return {
+      removed,
+      context: {
+        driver,
+        usedVfs: 'test-node-driver',
+        session: createArqfsWorkerSession(),
+        publication: {
+          environment: {
+            openFreshReader: (target) => createNodeArqfsDriver(target),
+            listSidecars: (target) =>
+              [`${target}-wal`, `${target}-shm`].filter((sidecar) => existsSync(sidecar)),
+            byteLength: (target) => statSync(target).size,
+          },
+          readTarget: (target) => new Uint8Array(readFileSync(target)),
+          removeTarget: (target) => {
+            removed.push(target);
+            rmSync(target, { force: true });
+          },
+        },
+      },
+    };
+  }
+
+  function target(name = 'published.arq'): string {
+    return join(workDir, name);
+  }
+
+  it('publishes, verifies and returns the bytes together with the receipt', async () => {
+    const { context } = publishingContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+
+    const response = await handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'publish',
+      targetName: target(),
+    });
+
+    expect(response.ok).toBe(true);
+    if (response.ok && response.payload.kind === 'publish') {
+      expect(response.payload.result.status).toBe('published');
+      // The bytes and the verdict arrive together, so no caller can hand over a
+      // file without the receipt saying it was checked.
+      expect(response.payload.bytes).toBeInstanceOf(Uint8Array);
+      expect((response.payload.bytes?.byteLength ?? 0) > 0).toBe(true);
+      if (response.payload.result.status === 'published') {
+        expect(response.payload.result.receipt.verifiedBy).toBe('fresh-reader');
+        expect(response.payload.result.receipt.projectId).toBe('project-alpha');
+      }
+    }
+  });
+
+  it('records the outcome on the working project', async () => {
+    const { context } = publishingContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+
+    await handleArqfsWorkerRequest(context, { id: 2, type: 'publish', targetName: target() });
+
+    const [row] = context.driver.query<{ publication_state: string }>(
+      'SELECT publication_state FROM working_copy_state WHERE id = 1',
+    );
+    expect(row?.publication_state).toBe('current');
+  });
+
+  it('refuses a revision the working project is not on, and writes nothing', async () => {
+    const { context } = publishingContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+
+    const response = await handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'publish',
+      targetName: target(),
+      expectedRevision: 99,
+    });
+
+    expect(response.ok).toBe(true);
+    if (response.ok && response.payload.kind === 'publish') {
+      expect(response.payload.result.status).toBe('refused');
+      expect(response.payload.bytes).toBeNull();
+    }
+    expect(existsSync(target())).toBe(false);
+  });
+
+  it('removes a target it wrote but could not verify, so the next attempt is not refused for target-exists', async () => {
+    const { context, removed } = publishingContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    // A reader that rejects everything: the bytes are written by VACUUM INTO and
+    // then fail verification, which is exactly the case that leaves a file behind.
+    const failing: ArqfsWorkerContext = {
+      ...context,
+      publication: {
+        ...context.publication!,
+        environment: {
+          ...context.publication!.environment,
+          openFreshReader: () => {
+            throw new Error('reader unavailable');
+          },
+        },
+      },
+    };
+
+    const response = await handleArqfsWorkerRequest(failing, {
+      id: 2,
+      type: 'publish',
+      targetName: target(),
+    });
+
+    expect(response.ok).toBe(true);
+    if (response.ok && response.payload.kind === 'publish') {
+      expect(response.payload.result.status).toBe('refused');
+    }
+    expect(removed).toEqual([target()]);
+    expect(existsSync(target())).toBe(false);
+  });
+
+  it('records a failure on the working project when publication is refused', async () => {
+    const { context } = publishingContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+
+    await handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'publish',
+      targetName: target(),
+      expectedRevision: 99,
+    });
+
+    const [row] = context.driver.query<{ publication_state: string }>(
+      'SELECT publication_state FROM working_copy_state WHERE id = 1',
+    );
+    expect(row?.publication_state).toBe('failed');
+  });
+
+  it('refuses to publish before any open', async () => {
+    const { context } = publishingContext();
+
+    const response = await handleArqfsWorkerRequest(context, {
+      id: 1,
+      type: 'publish',
+      targetName: target(),
+    });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_NOT_OPENED');
+    }
+    expect(existsSync(target())).toBe(false);
+  });
+
+  it('refuses rather than silently skipping publication it cannot perform', async () => {
+    const { context } = publishingContext();
+    const { publication: _publication, ...withoutPublication } = context;
+    await handleArqfsWorkerRequest(withoutPublication, { id: 1, type: 'open' });
+
+    const response = await handleArqfsWorkerRequest(withoutPublication, {
+      id: 2,
+      type: 'publish',
+      targetName: target(),
+    });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_PUBLISH_UNAVAILABLE');
     }
   });
 });

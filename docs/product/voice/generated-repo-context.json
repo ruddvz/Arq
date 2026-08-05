@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "d7e1a232761bb153427c24ce08efea71cc9e109440b83f987cbe1088a461078e",
+  "sourceSetDigest": "49f983ddfda3c49b06ebf653cf1fca5d113b1d60c65a5cd96c04958df5777a6b",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -256,7 +256,7 @@
       "id": "workspace-registries",
       "kind": "directory",
       "path": "packages/workspace/src/registry",
-      "sha256": "61dd360b3d5fd190f0cf5faead674b86c2eaafad10cd866d65f51ede25e17daa",
+      "sha256": "babbb7978c4e2b31ed1bc13f9ea1d4460d8ed232170a6436440d3a13756918bf",
       "files": [
         {
           "rel": "packages/workspace/src/registry/workspace-capability-gates.json",
@@ -305,8 +305,8 @@
         },
         {
           "rel": "packages/workspace/src/registry/workspace-state-machines.json",
-          "sha256": "c6c7330385e8aa5e9ec5e1c8b2946202dafd1e8b6c40f03a073b326635cb6954",
-          "bytes": 1692
+          "sha256": "a7d24b3dfb382b1fbae70533536135d97e3c3bf7ba0034366931e7582ba2713e",
+          "bytes": 2337
         },
         {
           "rel": "packages/workspace/src/registry/workspace-surface-registry.json",
@@ -350,12 +350,12 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "4192dd87017f0a4e07dfb4ee38d9bac2741112d72a0aff243ea76e47287b0fce",
+      "sha256": "3f4ed3a13e64a71a79e9b87b14f6876a37ec2da98f5ac42dba0ae5f8edad74a5",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
-          "sha256": "929007932dba943a58eea2b0262916b86329709456c486da48076f464bdc4a5a",
-          "bytes": 13245
+          "sha256": "ad36fbdc6dbba7f39ac72eeb99f1b9cd503d12f8c247412f9da7e4bdf88b1514",
+          "bytes": 13473
         },
         {
           "rel": "apps/web/src/file-handling/create-arqfs-worker.ts",
@@ -364,13 +364,13 @@
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",
-          "sha256": "52ea4ad9750583d5064f9887c0c32920b2e9d8a2364e0bd4342b8319f24c4121",
-          "bytes": 11860
+          "sha256": "621b7c990b40669497a68b510d944b4658ce23b64ce7862511539697c79d7230",
+          "bytes": 15630
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-          "sha256": "aee890cba5510f8354c18d016fa1d2ec27b7b5f653362e41cc1f3135a472015f",
-          "bytes": 11750
+          "sha256": "b75f4748e94715c6200354751838c0ab97083fd4305126de6baad0ae32358f79",
+          "bytes": 12750
         },
         {
           "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
@@ -384,13 +384,13 @@
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.test.ts",
-          "sha256": "a14cba0d83d4cd1809877250eff1a25c4b7946de51e1acfe66a578a88a87f6b8",
-          "bytes": 13371
+          "sha256": "80097d2046543c7ed020b7c4744037afedb386eeaae9932b5eceace26101bf3c",
+          "bytes": 26065
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.ts",
-          "sha256": "874f3757e8a5af1404a9fe0e698f9d0c027c2a5b20fcdcce3b22912974652e15",
-          "bytes": 19224
+          "sha256": "1583186831fd1b81a425e5d67a24e0e616e6141d4bb9c98c148d9442943fa6cd",
+          "bytes": 27444
         },
         {
           "rel": "apps/web/src/file-handling/index.ts",
@@ -441,7 +441,7 @@
       "id": "local-storage",
       "kind": "directory",
       "path": "packages/local-storage/src",
-      "sha256": "e95faf42a2ab091798c15db2d785b0f44a9d890a5f82ff4034c45b6ccb77aa34",
+      "sha256": "34b19fc646984e5153ae26fa9414afec6e139665f8ff8ee0441f60a524a589e4",
       "files": [
         {
           "rel": "packages/local-storage/src/archive-export.test.ts",
@@ -475,8 +475,8 @@
         },
         {
           "rel": "packages/local-storage/src/index.ts",
-          "sha256": "56aaf74a3130a0ecd9c29a1a4fb6449887745fed44d08c2df480b65be72395e1",
-          "bytes": 288
+          "sha256": "0d560987900eb87fe5203e31787f5b03178dae286d216c0fc4d5841c3042df7f",
+          "bytes": 321
         },
         {
           "rel": "packages/local-storage/src/journal-append.test.ts",
@@ -507,6 +507,16 @@
           "rel": "packages/local-storage/src/quota-error.ts",
           "sha256": "b0f1ade602347159fdea0c8a6701cbd5a5c07e5f276af20a3456300d21112a73",
           "bytes": 2130
+        },
+        {
+          "rel": "packages/local-storage/src/recovery-plan.test.ts",
+          "sha256": "cbea1126e3053d45d2f8bf419d85780e19d7e5db2bbf23358fdc41fa17fa2437",
+          "bytes": 10760
+        },
+        {
+          "rel": "packages/local-storage/src/recovery-plan.ts",
+          "sha256": "3fb6941a702de92fe12a71edcedc353bf4521b3b686d6a3856cf86338a97d930",
+          "bytes": 12824
         },
         {
           "rel": "packages/local-storage/src/recovery-report.test.ts",
@@ -1512,6 +1522,7 @@
           "ready-to-apply",
           "applying",
           "applied",
+          "reversed",
           "rejected",
           "stale"
         ],
@@ -1524,13 +1535,31 @@
           "partial",
           "succeeded",
           "failed"
+        ],
+        "view-visibility": [
+          "visible",
+          "element-shown",
+          "element-hidden",
+          "not-isolated",
+          "level-not-in-view",
+          "category-hidden"
+        ],
+        "section-box": ["off", "element-inside", "element-straddling", "element-outside"],
+        "import-units": [
+          "resolved-declared",
+          "resolved-user",
+          "unresolved-undeclared",
+          "unresolved-unitless",
+          "unresolved-unrecognised"
         ]
       },
       "invariants": [
         "Local save and remote sync are separate machines.",
         "View/tab close never deletes model data by implication.",
         "Tool preview never becomes canonical until transaction commit.",
-        "Stale asynchronous results never overwrite newer document revision."
+        "Stale asynchronous results never overwrite newer document revision.",
+        "Visibility and section-box states describe one view. They never imply the project contains less.",
+        "An unresolved import unit is a question, not a failure, and never resolves to a default."
       ]
     },
     "capabilities": {
@@ -2860,6 +2889,7 @@
       "recovery-available",
       "recovering",
       "publishing",
+      "publication-verifying",
       "published",
       "closed"
     ],

@@ -7,6 +7,7 @@ import {
   type ImportAdapter,
   type ImportAdapterResult,
 } from '@arq/file-ingress';
+import { IMPORT_REJECTION_CODES } from '@arq/file-ingress';
 import { createImportWorkerHandler } from './handler';
 import type { ImportWorkerRequest, ImportWorkerResponse } from './protocol';
 
@@ -73,8 +74,15 @@ describe('createImportWorkerHandler', () => {
 
     await handler(request, post);
 
+    // V3-031. This used to assert `IMPORT_WORKER_FAILED`, the code every
+    // rejection wore. The test's own name says which refusal this is, so the
+    // code it reports should say so too.
     expect(post).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'failed', requestId: 'r3', code: 'IMPORT_WORKER_FAILED' }),
+      expect.objectContaining({
+        type: 'failed',
+        requestId: 'r3',
+        code: IMPORT_REJECTION_CODES.adapterUnavailable,
+      }),
     );
   });
 
@@ -186,5 +194,83 @@ describe('createImportWorkerHandler', () => {
     expect(postedTypes).toEqual(['cancelled']);
     expect(postedTypes).not.toContain('converted');
     expect(postedTypes).not.toContain('failed');
+  });
+
+  it('reports why it refused, not just that it did', () => {
+    // V3-031. The protocol has carried a code field since it was written and
+    // every refusal was IMPORT_WORKER_FAILED, so a caller could not tell an
+    // adapter misconfiguration from the source bytes changing under an import.
+    const handle = createImportWorkerHandler({ adapters: registry() });
+    const post = vi.fn<(response: ImportWorkerResponse) => void>();
+
+    return handle(
+      {
+        type: 'convert',
+        requestId: 'req-1',
+        bytes: PDF_BYTES.buffer as ArrayBuffer,
+        source: { name: 'a.pdf', byteLength: PDF_BYTES.byteLength },
+        formatId: 'pdf',
+        adapterId: 'nonexistent-adapter',
+        policy: serialiseImportPolicy(DEFAULT_IMPORT_POLICY),
+      },
+      post,
+    ).then(() => {
+      expect(post).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'failed',
+          code: IMPORT_REJECTION_CODES.adapterRouteMismatch,
+        }),
+      );
+    });
+  });
+
+  it('reports a source that changed under the import distinctly', async () => {
+    // The one worth telling apart: retrying reads whatever the bytes are now.
+    const handle = createImportWorkerHandler({ adapters: registry() });
+    const post = vi.fn<(response: ImportWorkerResponse) => void>();
+
+    await handle(
+      {
+        type: 'convert',
+        requestId: 'req-1',
+        bytes: PDF_BYTES.buffer as ArrayBuffer,
+        source: { name: 'a.pdf', byteLength: PDF_BYTES.byteLength },
+        expectedSourceSha256: 'a-digest-these-bytes-do-not-have',
+        formatId: 'pdf',
+        adapterId: 'underlay',
+        policy: serialiseImportPolicy(DEFAULT_IMPORT_POLICY),
+      },
+      post,
+    );
+
+    expect(post).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'failed',
+        code: IMPORT_REJECTION_CODES.sourceDigestChanged,
+      }),
+    );
+  });
+
+  it('does not let a cancel for an unknown request swallow a later one', async () => {
+    // V3-029. Remembering every cancelled id left a trap: a reused id would
+    // silently suppress the new request's final message and the caller would
+    // never hear back.
+    const handle = createImportWorkerHandler({ adapters: registry() });
+    const post = vi.fn<(response: ImportWorkerResponse) => void>();
+
+    await handle({ type: 'cancel', requestId: 'req-1' }, post);
+    post.mockClear();
+
+    await handle(
+      {
+        type: 'detect',
+        requestId: 'req-1',
+        bytes: PDF_BYTES.buffer as ArrayBuffer,
+        source: { name: 'a.pdf', byteLength: PDF_BYTES.byteLength },
+      },
+      post,
+    );
+
+    expect(post.mock.calls.map((call) => call[0]?.type)).toEqual(['detected']);
   });
 });

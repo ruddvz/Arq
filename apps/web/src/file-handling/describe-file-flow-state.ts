@@ -198,10 +198,22 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
         detail: 'Writing a single project file you can move or share.',
         tone: 'progress',
       };
-    case 'published':
+    case 'publication-verifying':
+      // Not "published". The bytes exist; whether they are a usable project is
+      // the open question this state represents.
       return {
-        headline: `${state.name} was published.`,
-        detail: 'The published file was reopened and checked before it was handed over.',
+        headline: `Checking the project file for ${state.name}…`,
+        detail: 'Reopening the new file to confirm it holds this exact revision.',
+        tone: 'progress',
+      };
+    case 'published':
+      // Reachable only through `publication-verifying`, so this claim is backed
+      // by a fresh reader having reopened the file and matched its revision and
+      // semantic hash. Naming the revision keeps the claim specific enough to be
+      // falsifiable rather than a reassuring generality.
+      return {
+        headline: `${state.name} was published at revision ${state.revision}.`,
+        detail: 'The new file was reopened and checked. Your project is still open here.',
         tone: 'neutral',
       };
     case 'closed':
@@ -214,8 +226,10 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
 }
 
 /**
- * One sentence per cause. Both are true statements a reader can act on: the
- * first says the limit is this build, the second says the limit is the file.
+ * One sentence per cause. Each is a true statement a reader can act on, and each
+ * names a different limit: this build, the file, or another window of their own.
+ * The third is the only one with a remedy the reader holds, which is why it says
+ * what to do rather than only what is true.
  */
 function describeReadOnlyReason(
   reason: Exclude<Extract<FileFlowState, { kind: 'workspace-active' }>['readOnlyReason'], null>,
@@ -225,6 +239,8 @@ function describeReadOnlyReason(
       return 'It is open for inspection: this build does not edit or save a .arq project, and the file you chose is unchanged.';
     case 'newer-format-version':
       return 'This project was written by a newer version of ARQ, so it can be read but not changed.';
+    case 'another-window-is-editing':
+      return 'This project is being edited in another window, so it is open here for reading. Close it there to edit it here.';
   }
 }
 
