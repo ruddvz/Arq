@@ -14,7 +14,8 @@ normal case, not the exception.
 ## Zeus binding
 
 - Owner role: `geometry-bim` (`.zeus/role-registry.json`)
-- Modules usually routed: geometry, numerics-coordinates, semantic model
+- Modules usually routed: geometry (canonical units, coordinate spaces and tolerances
+  are covered inside that module's own content, not a separate module)
 - Independent reviewer: `arq-geometry-reviewer`
 - Typical tier: deep; geometry and tolerance work never runs on cached passes.
 

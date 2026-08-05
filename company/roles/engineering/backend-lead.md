@@ -13,7 +13,8 @@ they lose one that nobody designed for.
 ## Zeus binding
 
 - Owner role: `arqfs-recovery` (`.zeus/role-registry.json`)
-- Modules usually routed: arqfs, interoperability, sync
+- Modules usually routed: arqfs, interoperability (sync and recovery are covered
+  inside the `arqfs` module's own content, not a separate module)
 - Independent reviewer: `arq-file-integrity-reviewer`
 - Typical tier: deep; `.arq`, migration, recovery and sync work never runs on cached
   passes.

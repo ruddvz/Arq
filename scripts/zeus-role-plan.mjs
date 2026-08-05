@@ -14,7 +14,6 @@ const writers = roles.filter((x, i) => roles.indexOf(x) === i && !/qa|security/.
 // Company-layer faces for Zeus owner roles; the mapping is documented in
 // company/ZEUS-BRIDGE.md and adds a named senior owner, never authority.
 const companyFace = {
-  executor: 'Chief of Staff',
   'product-architecture': 'CTO',
   'geometry-bim': 'Geometry/BIM Lead',
   'editor-interaction': 'Frontend Lead',
@@ -29,13 +28,25 @@ const companyFace = {
   'qa-release': 'QA & Release Lead',
   'delivery-reliability': 'VP Engineering',
 };
+// `executor` is one Zeus owner id shared by four company roles (CEO, Chief of
+// Staff, Product Manager, Marketing & Comms — see company/ROSTER.md); Zeus has
+// no signal for CEO sponsorship or routing-only work, both human-invoked, so
+// this disambiguates only the two cases the task's own scope already names.
+const executorFace = (scopes) =>
+  scopes.has('mkt')
+    ? 'Marketing & Comms'
+    : scopes.has('prod')
+      ? 'Product Manager'
+      : 'Chief of Staff';
+const faceOf = (role) =>
+  role === 'executor'
+    ? executorFace(new Set(c.methods.scopes))
+    : (companyFace[role] ?? 'Chief of Staff');
 console.log(
   JSON.stringify(
     {
       accountable: c.owner,
-      company: Object.fromEntries(
-        [...new Set(roles)].map((r) => [r, companyFace[r] ?? 'Chief of Staff']),
-      ),
+      company: Object.fromEntries([...new Set(roles)].map((r) => [r, faceOf(r)])),
       roles: [...new Set(roles)],
       waves: [
         { wave: 0, name: 'evidence', roles: [c.owner] },

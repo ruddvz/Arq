@@ -13,7 +13,8 @@ its validation and its undo.
 ## Zeus binding
 
 - Owner role: `ai-arqscript` (`.zeus/role-registry.json`)
-- Modules usually routed: ai, typed operations
+- Modules usually routed: ai (typed-operation validation is this module's own subject,
+  not a separate module — Zeus has no `typed-operations` id)
 - Independent reviewer: `arq-security-ai-reviewer`
 - Typical tier: deep for AI apply paths; standard for prompt and retrieval work.
 

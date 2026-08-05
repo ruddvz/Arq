@@ -616,7 +616,16 @@ const methodLine = (label, tag) => {
   return `- **${tag}** \`${label}\`${m?.effect ? ` — ${m.effect}` : ''}`;
 };
 
-export function executionPrompt(c) {
+/**
+ * @param {object} c - a compiled contract from compile()
+ * @param {object} [opts]
+ * @param {boolean} [opts.omitContractDuplicates] - when the execution prompt is
+ *   rendered directly under the compact contract (see markdown() above), the
+ *   contract already states Acceptance and Checks; repeating both lists in full
+ *   is pure duplication within one hook output, not new information. Set this
+ *   when both are shown together so each block appears exactly once.
+ */
+export function executionPrompt(c, opts = {}) {
   const moduleLines = c.modules.length
     ? c.modules.map((id, i) => {
         const m = MODULES.find((x) => x.id === id);
@@ -635,19 +644,29 @@ export function executionPrompt(c) {
     c.reviewAgents.length ? `independent agents: ${c.reviewAgents.join(', ')}` : null,
   ].filter(Boolean);
 
+  // Every line of the task text is quoted, including blank ones (as a bare `>`),
+  // so a blank line inside user-supplied task text can never close the blockquote
+  // early and let the remainder render as ordinary top-level prose that could be
+  // mistaken for Zeus-authored instructions.
+  const quotedIntent = c.intent
+    .split('\n')
+    .map((line) => (line ? `> ${line}` : '>'))
+    .join('\n');
+
   return [
     '# Zeus 5 Execution Prompt',
     '',
     '_The full prompt compiled for this request — what the executor is told to do._',
     '',
+    '**Role**',
     `You are the Arq **${c.owner}**, accountable for this ${c.tier}-tier ${c.mode} task.`,
     `Risk **${c.risk}** · blast radius **${c.blastRadius}** · reversibility **${c.reversibility}**.`,
     `Deliver to **${c.deliveryStop}** and stop there; later stages are non-goals.`,
     '',
     '**Task**',
-    `> ${c.intent}`,
+    quotedIntent,
     '',
-    '**1. Load** `.zeus/FAST-KERNEL.md` plus only the routed modules:',
+    '**1. Load** `.zeus/FAST-KERNEL.md` plus only the routed modules (context):',
     ...moduleLines,
     '',
     `**2. Retrieve** ranked evidence within budget (${c.budget.sources} sources, ${c.budget.contextChars} chars):`,
@@ -660,10 +679,14 @@ export function executionPrompt(c) {
     ...c.nonGoals.map((g) => `- non-goal: ${g}`),
     '',
     `**5. Verify** with the ${c.tier} check ladder: \`node scripts/zeus.mjs check --tier ${c.tier}\` (${c.cachePolicy}).`,
-    ...c.checks.map((x) => `- ${x}`),
+    ...(opts.omitContractDuplicates
+      ? ['- checks: see the compact contract above']
+      : c.checks.map((x) => `- ${x}`)),
     '',
     '**6. Prove acceptance** — every box needs current evidence, and only `verified` is green:',
-    ...c.acceptance.map((x) => `- [ ] ${x}`),
+    ...(opts.omitContractDuplicates
+      ? ['- acceptance: see the compact contract above']
+      : c.acceptance.map((x) => `- [ ] ${x}`)),
     '',
     `**7. Review and report** — ${reviewers.length ? reviewers.join(' · ') : 'self-review; no independent reviewers routed at this tier'}.`,
     `Report each claim with its evidence state (verified, partially-verified, inferred, assumed, blocked, not-inspected, failed). Repair within ${c.budget.repairRounds} rounds, then report what still fails.`,

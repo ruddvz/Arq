@@ -13,7 +13,8 @@ outcomes a QA lead can falsify, not wishes.
 
 - Owner role: `executor` (`.zeus/role-registry.json`); the PM defines, engineering
   leads execute.
-- Modules usually consulted: product-ux, docs-and-claims
+- Modules usually consulted: none directly — the PM works through `executor`; read
+  `ui-visual`, `accessibility` and whichever domain module the feature touches
 - Independent reviewer: `arq-ux-accessibility-reviewer` for shipped behaviour claims.
 
 ## Decides

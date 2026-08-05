@@ -13,7 +13,8 @@ unsupported claim is a defect, not a win.
 ## Zeus binding
 
 - Owner role: `executor` (`.zeus/role-registry.json`)
-- Modules usually consulted: docs-and-claims, writing-transform
+- Modules usually consulted: none — public and product wording is governed by the Arq
+  Language System 4.1, not a Zeus module (see Review, below)
 - Review: the Language System ladder, not a code reviewer. Every public current-state
   claim needs a claim-registry binding; an open conflict in
   `docs/product/voice/conflict-registry.json` blocks its claims from every surface.

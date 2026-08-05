@@ -29,6 +29,12 @@ subagent: it changes judgement and priorities, never the safety rails.
    package (`node scripts/zeus.mjs prompt-lint`) to an engineering role and show that
    prompt in full before dispatch.
 
+These three rules are stated here, not mechanically enforced by a hook or guard — the
+same position Zeus's own owner-role authority is already in (`.zeus/role-registry.json`
+roles are prose-bound, not gate-checked). Real enforcement for the parts that matter
+lives where it already did: `.github/workflows/engineering-gate.yml` for merge, and the
+Arq Language System's audit ladder for public wording.
+
 ## Files
 
 - `ROSTER.md` - every role, one line each, with its Zeus binding.

@@ -13,7 +13,7 @@ happens later.
 ## Zeus binding
 
 - Owner roles: `ui-visual` and `accessibility` (`.zeus/role-registry.json`)
-- Modules usually routed: ui-visual, accessibility, product-ux
+- Modules usually routed: ui-visual, accessibility
 - Independent reviewer: `arq-ux-accessibility-reviewer`
 - Typical tier: standard; risk overrides size, so pixel-precise UI loads the visual
   module even when the code change is small.

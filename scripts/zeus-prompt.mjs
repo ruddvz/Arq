@@ -12,11 +12,19 @@ if (!task) {
   process.exit(2);
 }
 const c = compile(task);
+const withContract = a.includes('--with-contract');
 const out =
   val('format') === 'json'
-    ? JSON.stringify({ contract: c, executionPrompt: executionPrompt(c) }, null, 2)
-    : a.includes('--with-contract')
-      ? `${markdown(c)}\n${executionPrompt(c)}`
+    ? JSON.stringify(
+        {
+          contract: c,
+          executionPrompt: executionPrompt(c, { omitContractDuplicates: withContract }),
+        },
+        null,
+        2,
+      )
+    : withContract
+      ? `${markdown(c)}\n${executionPrompt(c, { omitContractDuplicates: true })}`
       : executionPrompt(c);
 const file = val('out');
 if (file) writeFileSync(file, out + '\n');

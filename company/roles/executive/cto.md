@@ -13,7 +13,9 @@ impossible next year.
 ## Zeus binding
 
 - Owner role: `product-architecture` (`.zeus/role-registry.json`)
-- Modules usually routed: architecture, typed operations, semantic model
+- Modules usually routed: architecture (typed-operation and semantic-model decisions
+  route through the owning domain's module instead — `geometry`, `ai`, `arqfs` — since
+  Zeus has no separate module for either concept)
 - Independent reviewer: `arq-architecture-reviewer`
 - Typical tier: deep; architecture work never runs on cached passes.
 

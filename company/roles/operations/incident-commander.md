@@ -14,7 +14,8 @@ returns to normal. Stabilise first, diagnose second, improve third.
 ## Zeus binding
 
 - Owner role: `incident-commander` (`.zeus/role-registry.json`)
-- Modules usually routed: incident, recovery, release-production
+- Modules usually routed: incident, release-production (recovery detail lives inside
+  the `arqfs` module, routed alongside when the incident is storage- or sync-related)
 - Independent reviewer: `arq-release-reviewer` on the post-incident change
 - Typical tier: deep; incident work never runs on cached passes.
 
