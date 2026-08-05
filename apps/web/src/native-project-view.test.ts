@@ -1,15 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import {
-  parseNativeProjectModel,
-  type NativeProjectModel,
-  type StagedNativeProject,
-} from '@arq/project-loading';
+import { parseNativeProjectModel, type NativeProjectModel } from '@arq/project-loading';
 import {
   buildNativeAccessibleDescription,
   buildNativeInspectorGroups,
   buildNativeProjectTree,
   findNativeElement,
   nativeProjectNotices,
+  type OpenNativeProject,
   nativeSelectionTypeName,
   planRoomsForLevel,
   planWallsForLevel,
@@ -102,13 +99,13 @@ function model(): NativeProjectModel {
   return parsed.model;
 }
 
-function stagedFrom(nativeModel: NativeProjectModel): StagedNativeProject {
+function stagedFrom(nativeModel: NativeProjectModel): OpenNativeProject {
   return {
     model: nativeModel,
-    authoringUnavailableReason: 'This build opens a .arq project for inspection only.',
-    safeModePlan: { kind: 'healthy', reason: 'healthy' },
-    corruptOptionalPaths: [],
-  } as unknown as StagedNativeProject;
+    writeVerdict: 'read-only',
+    writeReason: 'This build opens a .arq project for inspection only.',
+    conditions: [],
+  };
 }
 
 describe('native project projection', () => {

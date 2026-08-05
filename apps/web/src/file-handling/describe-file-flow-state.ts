@@ -33,30 +33,21 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
       return { headline: `Reading ${state.name}…`, detail: null, tone: 'progress' };
     case 'detecting':
       return { headline: `Checking ${state.name}…`, detail: null, tone: 'progress' };
-    case 'native-opening': {
-      // The compatibility verdict, which is now a step on the way to an open
-      // rather than the end of the road. It is still its own state, and still
-      // says only what it knows: the bytes are a readable Arq project. Whether
-      // this project opens is decided by the checks that follow.
-      const next = 'Opening it now.';
-      if (state.sidecarDependency === 'write-ahead-log-sidecar') {
-        // Compatible but possibly incomplete: two different facts about one
-        // accepted file, which the file-flow language policy requires be kept
-        // distinct. This is a caution rather than a rejection because the file
-        // is genuinely readable - what cannot be promised is that it is the
-        // newest version of the user's work.
-        return {
-          headline: `${state.name} is a compatible Arq project, but it may not be complete.`,
-          detail: `${WRITE_AHEAD_LOG_DETAIL} ${next}`,
-          tone: 'warning',
-        };
-      }
+    case 'native-opening':
+      // Progress, not a verdict. The file passed byte preflight and the
+      // source-completeness policy and is now being copied into a local working
+      // copy and opened - which is work, not a formality, so it gets its own
+      // state rather than being folded into success.
+      //
+      // There is no longer a "compatible, but may not be complete" branch. A
+      // database depending on an absent `-wal` sidecar is refused before it
+      // reaches this state, because the caution it used to show sat next to a
+      // project that could be silently missing the user's most recent work.
       return {
-        headline: `${state.name} is a compatible Arq project.`,
-        detail: next,
-        tone: 'neutral',
+        headline: `Opening ${state.name}…`,
+        detail: 'Copying this project into a local working copy on this device.',
+        tone: 'progress',
       };
-    }
     case 'import-options':
       return {
         headline: `${state.name} needs conversion before it can be opened.`,
@@ -158,7 +149,12 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
             ? `${facts.projectName} is open · revision ${facts.revision}`
             : `${facts.projectName} is open, read-only · revision ${facts.revision}`,
         detail: parts.length > 0 ? parts.join(' ') : null,
-        tone: incomplete ? 'warning' : 'neutral',
+        // Tone follows the cause, not the mere fact of read-only. A file this
+        // build cannot write because the file is ahead of it is a caution: the
+        // limit is on the reader's own project. A build with no save path yet is
+        // the normal condition of this build, and dressing it as a warning would
+        // cry wolf on every single open.
+        tone: incomplete || state.readOnlyReason === 'newer-format-version' ? 'warning' : 'neutral',
       };
     }
     case 'quarantined':

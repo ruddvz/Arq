@@ -1,167 +1,196 @@
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
-import { ArqModalDialog, useViewportProbe } from '@arq/design-system';
-import { isProjectOpen, reduceFileFlow, type FileFlowState } from './file-state-machine';
+import { ArqModalDialog } from '@arq/design-system';
+import { reduceFileFlow, type FileFlowEvent, type FileFlowState } from './file-state-machine';
+import { evaluateSelectedFile } from './evaluate-selected-file';
 import { describeFileFlowState } from './describe-file-flow-state';
-import { openNativeProject, type NativeOpenAttempt } from './open-native-project';
-import type { ArqfsWorkerFactory } from './arqfs-worker-transport';
+import {
+  openNativeProject,
+  type NativeOpenResult,
+  type NativeWorkerFactory,
+} from '../project/open-native-project';
+import { createBrowserArqfsWorker } from '../project/browser-worker-factory';
 
 export interface FileOpenPanelProps {
   readonly isOpen: boolean;
   readonly onOpenChange: (isOpen: boolean) => void;
-  /** Injected so the panel can be exercised without a real Worker, and so the app owns Worker construction. */
-  readonly createWorker: ArqfsWorkerFactory;
   /**
-   * Called once a project has really opened. The panel hands the attempt over
-   * rather than activating anything itself: whether this project replaces the
-   * one on screen is the workspace's decision, and keeping it there is what
-   * guarantees a failed open leaves the current project alone.
+   * Called once a candidate has been fully validated, decoded and adopted -
+   * never before. The workspace replaces its project only at this point, so a
+   * rejected or cancelled candidate leaves whatever was already open untouched.
    */
-  readonly onProjectOpened: (attempt: Extract<NativeOpenAttempt, { status: 'opened' }>) => void;
-  /** Whether a native project is currently open, so the panel can say what opening another will do. */
-  readonly hasOpenProject: boolean;
+  readonly onProjectOpened?: (opened: NativeOpenSuccess) => void;
+  /** Injected so tests and the capability check can drive the flow without a real browser Worker. */
+  readonly createWorker?: NativeWorkerFactory;
 }
 
+type NativeOpenSuccess = Extract<NativeOpenResult, { status: 'opened' }>;
+
 /**
- * The file-open surface: a picker and drop target wired to the real read-only
- * open path - byte preflight and format routing on the main thread
- * (`evaluateSelectedFile`), then the Worker-owned SQLite open, integrity,
- * checksum and semantic checks (`openNativeProject`).
+ * UI-011: the real file-open surface - a file picker/drop target wired to the
+ * actual byte-safe preflight gate (`evaluateSelectedFile`, which calls
+ * `@arq/arqfs`'s `preflightArqfsBytes`) and format routing
+ * (`routeBrowserFile`), both real, both already tested independently of any
+ * UI. Before this component, `packages/arqfs`'s Phase 1 hardening had no
+ * file-open path calling it at all in this app - ARQFS-001's own acceptance
+ * criteria ("wire preflightArqfsBytes into every file-open path") was
+ * unimplemented on the UI side.
  *
- * It used to stop at "this file is safe to open", because nothing in this
- * application could open one. Now that something can, the panel's job changes
- * shape: the thing it must be careful about is no longer overclaiming an open,
- * it is being clear about what an open does and does not give the reader. Hence
- * the read-only sentence beside the success state, the replacement warning when
- * a project is already open, and an explicit close.
+ * It now opens what it accepts, rather than stopping at "this file is safe to
+ * open": a Worker is constructed, the bytes are imported into an OPFS working
+ * copy, and the decoded project is handed to the caller. The order matters and
+ * is load-bearing - every byte-level check runs first, so a refusal costs no
+ * working copy and leaves nothing behind.
+ *
+ * Adoption stays the caller's. The panel never replaces the active project
+ * itself, so a rejected or cancelled candidate leaves whatever was already open
+ * exactly as it was.
+ *
+ * The gate is completeness, not bare compatibility. A database whose `-wal`
+ * sidecar was not supplied is compatible and readable, and SQLite would open it
+ * without complaint as of its last checkpoint - so it is refused here rather
+ * than accepted behind a caution, because a caution shown beside a project that
+ * is already on screen cannot undo the impression that the user's newest work
+ * is present.
  */
 export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
-  const { isOpen, onOpenChange, createWorker, onProjectOpened, hasOpenProject } = props;
+  const { isOpen, onOpenChange, onProjectOpened, createWorker = createBrowserArqfsWorker } = props;
   const [state, setState] = useState<FileFlowState>({ kind: 'idle' });
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const chooseRef = useRef<HTMLDivElement>(null);
-  const probe = useViewportProbe({ widthPx: 1024, heightPx: 768, coarsePointer: false });
-  /** Bumped per attempt so a slow open that has been superseded cannot write state. */
-  const attemptRef = useRef(0);
 
-  // The dialog restores focus to its opener on close, but on open the reader
-  // should land on the action rather than on the heading, so the first Tab is not
-  // spent getting to the only control that matters.
+  /**
+   * The panel is not always closed by the person using it: adopting a project
+   * closes it from the workspace, without going through `onOpenChange`. So the
+   * reset belongs to the closed transition itself rather than to the dismiss
+   * handler - otherwise reopening the dialog after an open would still be
+   * showing the previous file's verdict, and "house.arq is open." would sit
+   * above a picker offering to open something else.
+   */
   useEffect(() => {
-    if (isOpen) {
-      chooseRef.current?.focus();
-    }
+    if (!isOpen) setState({ kind: 'idle' });
   }, [isOpen]);
 
-  async function open(file: File): Promise<void> {
-    const attempt = (attemptRef.current += 1);
-    const isCurrent = (): boolean => attemptRef.current === attempt;
-    const advance = (event: Parameters<typeof reduceFileFlow>[1]): void => {
-      if (isCurrent()) {
-        setState((current) => reduceFileFlow(current, event));
-      }
-    };
-
-    advance({ type: 'acquire', name: file.name });
-    // Reading the file and preflighting it happen inside openNativeProject, which
-    // is what keeps the "preflight before any Worker exists" order in one place
-    // instead of split between here and there.
-    advance({ type: 'acquired' });
-
-    const result = await openNativeProject({
-      file,
-      createWorker,
-      attemptId: `open-${attempt}`,
-    });
-    if (!isCurrent()) {
-      // A superseded attempt still owns a Worker if it succeeded; releasing it
-      // here is the difference between a replaced open and a leaked one.
-      if (result.status === 'opened') {
-        result.session.dispose();
-      }
+  async function evaluate(file: File): Promise<void> {
+    setState((current) => reduceFileFlow(current, { type: 'acquire', name: file.name }));
+    let bytes: Uint8Array;
+    try {
+      bytes = new Uint8Array(await file.arrayBuffer());
+    } catch (error) {
+      setState((current) =>
+        reduceFileFlow(current, {
+          type: 'fail',
+          code: 'READ_FAILED',
+          message: error instanceof Error ? error.message : String(error),
+        }),
+      );
       return;
     }
+    setState((current) => reduceFileFlow(current, { type: 'acquired' }));
 
-    if (result.status === 'needs-import') {
-      advance({ type: 'route-import', formatId: result.formatId });
+    const evaluation = evaluateSelectedFile(bytes, file.name, file.type || undefined);
+    const { route, completeness } = evaluation;
+    if (route.kind === 'reject') {
+      const { code, detail } = route;
+      setState((current) => reduceFileFlow(current, { type: 'fail', code, message: detail }));
       return;
     }
-    if (result.status === 'failed') {
-      advance({ type: 'fail', code: result.code, message: result.reason });
+    if (route.kind === 'import') {
+      const { formatId } = route;
+      setState((current) => reduceFileFlow(current, { type: 'route-import', formatId }));
       return;
     }
-
-    // Success. The lifecycle's own states are walked in order rather than
-    // jumped, because the sequence is what the governed file-flow policy
-    // requires be kept distinct - and because the reader saw those states go by.
+    // route.kind === 'open-native-arq'
     //
-    // Staging and migration are skipped, and the skip is the honest report:
-    // this open never copies the selected bytes anywhere. `open-in-place` is
-    // the only transition that reaches the lifecycle without them, and it is
-    // read-only by construction.
-    const { staged } = result;
-    const sidecarDependency =
-      result.preflight?.status === 'accepted' ? result.preflight.sidecarDependency : 'complete';
-    advance({ type: 'route-native', sidecarDependency });
-    // The projectId of an in-place open is the session, not a working copy:
-    // there is no copy on disk for an id to name.
-    advance({ type: 'open-in-place', projectId: `open-${attempt}` });
-    advance({ type: 'hydrate-start' });
-    advance({
+    // One rejection path for every reason a native candidate can be turned
+    // away, including the one a file picker makes routine: a write-ahead-log
+    // database arrives without the `-wal` sidecar holding its newest commits,
+    // and is refused rather than opened behind a caution. The completeness
+    // policy carries its own stable code, so truncation, "not an Arq file" and
+    // a missing sidecar stay distinguishable in the reported detail.
+    if (completeness === undefined || completeness.status === 'rejected') {
+      const { code, reason } = completeness ?? {
+        code: 'ARQ_SOURCE_NOT_EVALUATED',
+        reason: 'This file was not checked, so it was not opened.',
+      };
+      setState((current) => reduceFileFlow(current, { type: 'fail', code, message: reason }));
+      return;
+    }
+    // Always 'complete' by this point - a dependent database was refused above -
+    // but read from the preflight rather than hard-coded, so the state carries
+    // what was actually measured and cannot drift from it.
+    const { sidecarDependency } = completeness.preflight;
+    setState((current) => reduceFileFlow(current, { type: 'route-native', sidecarDependency }));
+
+    // Only now is a Worker constructed and a working copy created. Everything
+    // above this line is byte-level and leaves no trace if it refuses.
+    //
+    // The lifecycle states are driven from the pipeline's own boundaries rather
+    // than announced in a burst at the end, so `workspace-active` - the only
+    // state anything treats as open - is reached exactly once the project is.
+    const emit = (event: FileFlowEvent) => setState((current) => reduceFileFlow(current, event));
+    emit({ type: 'stage-start' });
+    const opened = await openNativeProject(bytes, createWorker, file.name, {
+      onStaged: (projectId) => {
+        emit({ type: 'stage-complete', projectId });
+        emit({ type: 'migration-verified' });
+      },
+      onWorkerOpened: (writable) =>
+        emit({
+          // A file this build may read but not write is read-only because of the
+          // file's own format version - the only cause a staged open can have,
+          // since the working copy it holds is writable by construction.
+          type: 'worker-opened',
+          readOnlyReason: writable ? null : 'newer-format-version',
+        }),
+      onHydrateStart: () => emit({ type: 'hydrate-start' }),
+    });
+    if (opened.status === 'rejected') {
+      const { code, reason } = opened;
+      emit({ type: 'fail', code, message: reason });
+      return;
+    }
+    // Adoption is the last step, and it is the caller's: the panel never
+    // replaces the active project itself. `hydrated` follows it, so nothing
+    // reports the project as open before the workspace actually holds it.
+    onProjectOpened?.(opened);
+    emit({
       type: 'hydrated',
       facts: {
-        projectName: staged.model.summary.projectName,
-        revision: staged.model.summary.revision,
-        sidecarDependency,
-        conditionNote: conditionNoteFor(staged),
+        projectName: opened.snapshot.displayName,
+        // The reference model's own revision when the file carried one. A
+        // project this build wrote records none, and 0 is the honest answer for
+        // "this project has no revision" rather than an invented first one.
+        revision: opened.snapshot.document?.summary.revision ?? 0,
+        sidecarDependency: 'complete',
+        conditionNote: opened.snapshot.warnings[0] ?? null,
       },
     });
-    onProjectOpened(result);
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>): void {
     const file = event.target.files?.[0];
     event.target.value = '';
-    if (file !== undefined) void open(file);
+    if (file !== undefined) void evaluate(file);
   }
 
   function handleDrop(event: DragEvent<HTMLDivElement>): void {
     event.preventDefault();
     setIsDraggedOver(false);
     const file = event.dataTransfer.files[0];
-    if (file !== undefined) void open(file);
+    if (file !== undefined) void evaluate(file);
   }
 
   function reset(): void {
-    // Invalidates any attempt still in flight, so its result cannot land after
-    // the reader has moved on.
-    attemptRef.current += 1;
     setState({ kind: 'idle' });
   }
 
   const description = describeFileFlowState(state);
-  const busy =
-    state.kind === 'acquiring' ||
-    state.kind === 'detecting' ||
-    state.kind === 'worker-open' ||
-    state.kind === 'hydrating';
-  // The one predicate that decides whether a project is open, rather than this
-  // panel testing state kinds and drifting from every other surface.
-  const finished = isProjectOpen(state);
-  // A pointer that cannot drag must not be told to drop. On a phone the drop
-  // target is just a button, and calling it a drop zone describes a gesture the
-  // reader does not have.
-  const chooseLabel = probe.coarsePointer
-    ? 'Choose a project file'
-    : 'Choose a file or drop it here';
+  const busy = state.kind === 'acquiring' || state.kind === 'detecting';
 
   return (
     <ArqModalDialog
       isOpen={isOpen}
-      onOpenChange={(next) => {
-        if (!next) reset();
-        onOpenChange(next);
-      }}
+      onOpenChange={onOpenChange}
       // Points at the visible <h2> rather than repeating its text as an
       // aria-label, so the dialog's accessible name and its visible heading can
       // never drift apart.
@@ -172,29 +201,15 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
           display: 'flex',
           flexDirection: 'column',
           gap: 'var(--arq-space-panel)',
-          // Was a fixed 480px, which overflowed every phone viewport. The dialog
-          // now fits the space it is given and stops growing on a desktop.
-          width: '100%',
-          maxWidth: 480,
+          width: 480,
         }}
       >
         <h2 id="arq-file-open-title" style={{ margin: 0, font: 'inherit', fontWeight: 600 }}>
           Open project
         </h2>
-        {hasOpenProject && !finished && (
-          <p style={{ margin: 0, color: 'var(--arq-ui-text-secondary)' }}>
-            {/* Said before the choice, not after it: the reader is about to
-                replace what is on screen. Nothing is lost - an opened project is
-                read-only, so there are no unsaved edits to lose - and saying so
-                is what stops the warning reading as a threat. */}
-            Opening a project replaces the one currently open. Nothing is lost: an open project is
-            read-only, so it has no unsaved changes.
-          </p>
-        )}
         <div
           role="button"
           tabIndex={0}
-          ref={chooseRef}
           // No aria-label: the visible text below is the accessible name. An
           // aria-label of "Choose a file to open, or drop it here" over visible
           // text "Choose a file or drop it here" broke WCAG 2.5.3 (Label in
@@ -218,13 +233,11 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
           style={{
             justifyContent: 'center',
             minHeight: 120,
-            // Dashed, not filled: this is a region that accepts a file, and the
-            // filled primary treatment belongs to the button that ends the task.
             border: `1px dashed var(--arq-ui-line-${isDraggedOver ? 'strong' : 'default'})`,
             background: isDraggedOver ? 'var(--arq-ui-surface-2)' : 'transparent',
           }}
         >
-          {chooseLabel}
+          Choose a file or drop it here
         </div>
         <input
           ref={inputRef}
@@ -247,13 +260,10 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
               fontWeight: description.tone === 'error' ? 600 : 400,
               color:
                 description.tone === 'error' ? 'var(--arq-ui-ink)' : 'var(--arq-ui-text-primary)',
-              // A project name or file name can be long, and a clipped name is
-              // the one word in this dialog the reader most needs to read.
-              overflowWrap: 'anywhere',
             }}
           >
             {/* No spinner glyph: `describeFileFlowState` already renders busy
-                states as "Reading …"/"Opening …", so an emoji added nothing
+                states as "Reading …"/"Checking …", so an emoji added nothing
                 sighted users could not already read, while a screen reader
                 announced it as literal "hourglass" noise inside a live region.
                 `aria-busy` conveys the same state to assistive tech properly,
@@ -262,65 +272,22 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
             {description.headline}
           </p>
           {description.detail !== null && (
-            <details
-              style={{ marginTop: 'var(--arq-space-micro)' }}
-              // A failure's diagnostic is the reason the reader opened the
-              // disclosure, so it is already open for one. Progress and success
-              // detail stays folded away.
-              open={description.tone === 'error'}
-            >
+            <details style={{ marginTop: 'var(--arq-space-micro)' }}>
               <summary style={{ color: 'var(--arq-ui-text-muted)', cursor: 'pointer' }}>
-                {description.tone === 'error' ? 'Why it could not be opened' : 'Details'}
+                Details
               </summary>
-              <p style={{ color: 'var(--arq-ui-text-secondary)', overflowWrap: 'anywhere' }}>
+              <p style={{ color: 'var(--arq-ui-text-secondary)', wordBreak: 'break-word' }}>
                 {description.detail}
               </p>
             </details>
           )}
         </div>
-        <div style={{ display: 'flex', gap: 'var(--arq-space-micro)', flexWrap: 'wrap' }}>
-          {/* One clear way out, always. Before this the only close paths were the
-              backdrop and Escape, neither of which is discoverable, and a phone
-              reader had no visible way to dismiss the dialog at all. */}
-          {finished ? (
-            <button
-              type="button"
-              className="arq-shell-button arq-shell-button--primary"
-              onClick={() => {
-                reset();
-                onOpenChange(false);
-              }}
-            >
-              View project
-            </button>
-          ) : (
-            <button type="button" className="arq-shell-button" onClick={() => onOpenChange(false)}>
-              Cancel
-            </button>
-          )}
-          {state.kind !== 'idle' && !finished && (
-            <button type="button" className="arq-shell-button" onClick={reset}>
-              Choose another file
-            </button>
-          )}
-        </div>
+        {state.kind !== 'idle' && (
+          <button type="button" className="arq-shell-button" onClick={reset}>
+            Choose another file
+          </button>
+        )}
       </div>
     </ArqModalDialog>
   );
-}
-
-/**
- * A one-sentence note about the file's condition, or null when there is nothing
- * worth saying. Derived from what the open actually found, never from a guess.
- */
-function conditionNoteFor(
-  staged: Extract<NativeOpenAttempt, { status: 'opened' }>['staged'],
-): string | null {
-  if (staged.safeModePlan.kind === 'interrupted-write') {
-    return 'A previous write to this project did not finish, so it may be missing its most recent changes.';
-  }
-  if (staged.corruptOptionalPaths.length > 0) {
-    return `Some optional project content could not be read: ${staged.corruptOptionalPaths.join(', ')}.`;
-  }
-  return null;
 }

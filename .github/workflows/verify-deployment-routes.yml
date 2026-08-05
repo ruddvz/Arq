@@ -1,0 +1,138 @@
+# Verifies the routing contract in vercel.json against the actual deployed origin.
+#
+# A green Vercel build proves the artifact was produced. It proves nothing about
+# whether `/app/` answers, whether a deep editor route falls back to the shell,
+# whether `/Arq/...` still redirects, or whether an unknown path returns a real
+# 404 rather than a styled page served with 200. Those are properties of the
+# deployment, and the only place to check them is the deployment.
+#
+# This runs in Actions rather than locally on purpose: the runner can reach the
+# preview origin, and the result lands as a check on the pull request instead of
+# in someone's terminal scrollback.
+#
+# The job waits for the origin to serve THIS commit before asserting anything.
+# A branch alias points at whatever deployed most recently, so checking straight
+# away can pass against the previous deployment - a result that reads as evidence
+# for a commit it never touched.
+name: Verify deployment routes
+
+on:
+  pull_request:
+    paths:
+      - 'vercel.json'
+      - 'scripts/build-vercel.mjs'
+      - 'scripts/verify-vercel-routes.mjs'
+      - 'apps/marketing/**'
+      - 'apps/web/**'
+      - '.github/workflows/verify-deployment-routes.yml'
+  workflow_dispatch:
+    inputs:
+      base-url:
+        description: 'Deployed origin to verify, e.g. https://arq-website-....vercel.app'
+        required: true
+      expected-commit:
+        description: 'Commit the origin must be serving (optional; skips the wait when empty)'
+        required: false
+
+# A newer commit supersedes an in-flight check of an older one.
+concurrency:
+  group: verify-deployment-routes-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  # Vercel records each preview as a GitHub deployment, which is where this job
+  # learns the origin from - no repository variable to keep in sync by hand.
+  deployments: read
+
+jobs:
+  verify-routes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Vercel creates a GitHub deployment per preview and attaches the origin to
+      # its status, so the URL is discoverable from GitHub itself rather than
+      # needing a Vercel token or a hand-maintained repository variable. A manual
+      # dispatch can name any origin instead.
+      #
+      # The wait is bounded and its expiry is a failure: "the preview never
+      # appeared" is not the same as "the routes are fine", and must not be
+      # reported as one.
+      - name: Resolve the origin to verify
+        id: origin
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DISPATCH_URL: ${{ inputs.base-url }}
+          DISPATCH_COMMIT: ${{ inputs.expected-commit }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "${DISPATCH_URL:-}" ]; then
+            echo "base-url=${DISPATCH_URL}" >> "$GITHUB_OUTPUT"
+            echo "expected-commit=${DISPATCH_COMMIT:-}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          url=""
+          for attempt in $(seq 1 60); do
+            # A preview that has not reported a status yet simply has no
+            # environment_url, so this keeps looking rather than failing.
+            candidates="$(gh api "repos/${REPO}/deployments?sha=${HEAD_SHA}&per_page=100" \
+              --jq '.[].id' 2>/dev/null \
+              | while read -r id; do
+                  gh api "repos/${REPO}/deployments/${id}/statuses?per_page=100" \
+                    --jq '.[] | select(.state == "success") | .environment_url // empty' 2>/dev/null
+                done | grep '^https://' | sort -u || true)"
+
+            # More than one Vercel project connected to this repository means
+            # more than one deployment record per commit, and only one of them
+            # serves this artifact. Keep waiting for that one specifically rather
+            # than taking whichever reported first - the sibling projects finish
+            # sooner, so accepting the first candidate reliably picks the wrong
+            # product and then times out waiting for a commit it will never serve.
+            url="$(echo "$candidates" | grep -m1 'arq-website' || true)"
+            if [ -n "$url" ]; then
+              echo "Candidate origins for ${HEAD_SHA}:"
+              echo "$candidates" | sed 's/^/  /'
+              break
+            fi
+            if [ -n "$candidates" ]; then
+              echo "  ${HEAD_SHA} has deployments, but none from arq-website yet (attempt ${attempt}/60)"
+            else
+              echo "  no successful preview deployment for ${HEAD_SHA} yet (attempt ${attempt}/60)"
+            fi
+            sleep 15
+          done
+
+          if [ -z "$url" ]; then
+            echo "::error::No successful arq-website preview reported for ${HEAD_SHA}; nothing to verify."
+            exit 1
+          fi
+          echo "Verifying ${url}"
+          echo "base-url=${url}" >> "$GITHUB_OUTPUT"
+          echo "expected-commit=${HEAD_SHA}" >> "$GITHUB_OUTPUT"
+
+      # The live probe only reports on a real origin, so the logic deciding
+      # "we were never shown the deployment" has no other place to be checked.
+      - name: Self-test the deployment-protection detector
+        run: node scripts/verify-vercel-routes.mjs --self-test
+
+      - name: Verify deployed routes, caching and security headers
+        env:
+          # Present only if the owner has minted one. Absent is not fatal here:
+          # the script reports an unreadable protected origin as Not inspected
+          # and says exactly how to make it readable.
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: >-
+          node scripts/verify-vercel-routes.mjs
+          --base-url "${{ steps.origin.outputs.base-url }}"
+          --expected-commit "${{ steps.origin.outputs.expected-commit }}"
+          --attempts 5
+          --delay-ms 10000
+          --wait-for-commit-ms 900000

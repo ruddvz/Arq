@@ -88,6 +88,9 @@ importers:
       '@arq/plan-renderer':
         specifier: workspace:*
         version: link:../../packages/plan-renderer
+      '@arq/project-format':
+        specifier: workspace:*
+        version: link:../../packages/project-format
       '@arq/project-loading':
         specifier: workspace:*
         version: link:../../packages/project-loading

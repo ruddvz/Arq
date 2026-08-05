@@ -25,7 +25,7 @@ describe('evaluateSelectedFile', () => {
       const result = evaluateSelectedFile(bytes, 'project.arq');
 
       expect(result.route.kind).toBe('open-native-arq');
-      expect(result.preflight?.status).toBe('accepted');
+      expect(result.completeness?.status).toBe('complete');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -44,7 +44,7 @@ describe('evaluateSelectedFile', () => {
       const result = evaluateSelectedFile(truncated, 'project.arq');
 
       expect(result.route.kind).toBe('open-native-arq');
-      expect(result.preflight).toMatchObject({ status: 'rejected', code: 'ARQ_FILE_TRUNCATED' });
+      expect(result.completeness).toMatchObject({ status: 'rejected', code: 'ARQ_FILE_TRUNCATED' });
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -62,7 +62,7 @@ describe('evaluateSelectedFile', () => {
       const result = evaluateSelectedFile(bytes, 'other.sqlite3');
 
       expect(result.route).toMatchObject({ kind: 'reject', code: 'NOT_ARQ_SQLITE' });
-      expect(result.preflight).toBeUndefined();
+      expect(result.completeness).toBeUndefined();
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -73,7 +73,7 @@ describe('evaluateSelectedFile', () => {
     const result = evaluateSelectedFile(bytes, 'plan.dxf');
 
     expect(result.route).toMatchObject({ kind: 'import', formatId: 'dxf' });
-    expect(result.preflight).toBeUndefined();
+    expect(result.completeness).toBeUndefined();
   });
 
   /**
@@ -89,6 +89,6 @@ describe('evaluateSelectedFile', () => {
     const result = evaluateSelectedFile(bytes, 'mystery.bin');
 
     expect(result.route).toMatchObject({ kind: 'import', formatId: 'unknown' });
-    expect(result.preflight).toBeUndefined();
+    expect(result.completeness).toBeUndefined();
   });
 });

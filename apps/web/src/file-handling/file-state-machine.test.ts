@@ -27,22 +27,26 @@ describe('reduceFileFlow', () => {
   });
 
   /**
-   * A write-ahead-log project keeps its newest commits in a `-wal` sidecar, and
-   * a file picker hands over one file. The reducer must carry that finding into
-   * the state rather than flattening every accepted file to the same one, or
-   * the copy layer has nothing to distinguish "compatible" from "complete".
+   * A database depending on an absent `-wal` sidecar no longer has a route into
+   * `native-opening` at all. It used to arrive there carrying a flag that made
+   * the copy layer say "compatible, but may not be complete" - one success state
+   * that could mean a project silently missing the user's newest work. The
+   * completeness policy now refuses it before routing, so the only way it can
+   * reach the reducer is as a failure.
    */
-  it('carries a write-ahead-log sidecar dependency into native-opening', () => {
+  it('routes a database with a missing write-ahead-log sidecar to failure, not to native-opening', () => {
     const detecting: FileFlowState = { kind: 'detecting', name: 'project.arq' };
-    expect(
-      reduceFileFlow(detecting, {
-        type: 'route-native',
-        sidecarDependency: 'write-ahead-log-sidecar',
-      }),
-    ).toEqual({
-      kind: 'native-opening',
+
+    const state = reduceFileFlow(detecting, {
+      type: 'fail',
+      code: 'ARQ_WAL_SIDECAR_REQUIRED',
+      message: 'This database depends on a companion "-wal" file that was not included.',
+    });
+
+    expect(state).toMatchObject({
+      kind: 'failed',
       name: 'project.arq',
-      sidecarDependency: 'write-ahead-log-sidecar',
+      code: 'ARQ_WAL_SIDECAR_REQUIRED',
     });
   });
 

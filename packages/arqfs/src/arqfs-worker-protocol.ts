@@ -10,21 +10,26 @@
  * operations").
  */
 import type { ArqfsOpenResult } from './arqfs-open';
-import type { ArqfsRecoveryReport } from './arqfs-recovery-report';
-import type { ArqfsWorkingCopyState } from './arqfs-working-copy';
 
 export type ArqfsWorkerRequest =
-  | { readonly id: number; readonly type: 'open' }
   /**
-   * Open bytes the user selected, rather than this Worker's own project file.
+   * Seeds this Worker's project-scoped working copy from the bytes a user
+   * selected, before any open.
    *
-   * A separate request type rather than an argument to `open` because the two
-   * have opposite defaults: `open` may initialise a schema on a database this
-   * build owns, and this must never do so on a file it was handed. The Worker
-   * entry, not the shared handler, turns the bytes into a connection; the
-   * handler decides what may be done with it (see `ArqfsWorkerContext.source`).
+   * This exists because there is no other way in. `opfs-sahpool` does not store
+   * databases as plain OPFS files under the name it was given - it keeps them
+   * inside a pool of opaque files it manages itself - so the main thread cannot
+   * write a selected `.arq` to a path and have SQLite find it. Only the pool
+   * utility, which lives in the Worker, can import bytes into that pool. Without
+   * this command the Worker can only ever create an empty database, which is why
+   * native project opening was not reachable at all.
+   *
+   * Deliberately a separate command rather than an argument to `open`: importing
+   * replaces the working copy's entire contents, which is not something an open
+   * should do implicitly.
    */
-  | { readonly id: number; readonly type: 'openSelectedBytes'; readonly bytes: Uint8Array }
+  | { readonly id: number; readonly type: 'importDatabase'; readonly bytes: Uint8Array }
+  | { readonly id: number; readonly type: 'open' }
   | {
       readonly id: number;
       readonly type: 'putArchiveEntries';
@@ -32,19 +37,26 @@ export type ArqfsWorkerRequest =
     }
   | { readonly id: number; readonly type: 'getArchiveEntry'; readonly path: string }
   | { readonly id: number; readonly type: 'listArchiveEntryPaths' }
-  /** The facts arqfs-recovery-report.ts computes: open result, required entries, SQLite health, interrupted write. */
-  | { readonly id: number; readonly type: 'recoveryReport' }
-  /** Project identity and revision as the file itself records them. */
-  | { readonly id: number; readonly type: 'readWorkingCopyState' }
+  /**
+   * Every logical entry in one round trip. A native open needs the manifest and the
+   * model together before it may adopt anything, and asking for them one path at a
+   * time would cross the Worker boundary once per entry for a decision that is only
+   * ever made on the whole set - exactly the "frequent small calls" this protocol's
+   * batching rule exists to avoid.
+   */
+  | { readonly id: number; readonly type: 'readAllArchiveEntries' }
   | { readonly id: number; readonly type: 'close' };
 
 export type ArqfsWorkerResponsePayload =
+  | { readonly kind: 'importDatabase'; readonly byteLength: number }
   | { readonly kind: 'open'; readonly result: ArqfsOpenResult; readonly usedVfs: string }
   | { readonly kind: 'putArchiveEntries' }
   | { readonly kind: 'getArchiveEntry'; readonly content: Uint8Array | null }
   | { readonly kind: 'listArchiveEntryPaths'; readonly paths: readonly string[] }
-  | { readonly kind: 'recoveryReport'; readonly report: ArqfsRecoveryReport }
-  | { readonly kind: 'readWorkingCopyState'; readonly state: ArqfsWorkingCopyState | null }
+  | {
+      readonly kind: 'readAllArchiveEntries';
+      readonly entries: ReadonlyArray<readonly [string, Uint8Array]>;
+    }
   | { readonly kind: 'close' };
 
 /**
@@ -59,14 +71,8 @@ export const ARQFS_WORKER_ERROR_CODES = {
   notOpened: 'ARQFS_WORKER_NOT_OPENED',
   /** The open succeeded for reading, and this build must not write this file. */
   notWritable: 'ARQFS_WORKER_FILE_NOT_WRITABLE',
-  /** The open itself was rejected; nothing may be done with this file. */
+  /** The open itself was rejected, or it succeeded only in a form this build must not read from; nothing may be handed back from this file. */
   openRejected: 'ARQFS_WORKER_OPEN_REJECTED',
-  /**
-   * The connection holds bytes the user selected. Those bytes are an immutable
-   * copy of a file this build does not own, so no write is permitted regardless
-   * of what the file's own version floors would otherwise allow.
-   */
-  selectedSourceReadOnly: 'ARQFS_WORKER_SELECTED_SOURCE_READ_ONLY',
   /** Anything unexpected. Deliberately last: a specific code is always preferred. */
   unexpected: 'ARQFS_WORKER_UNEXPECTED_ERROR',
 } as const;

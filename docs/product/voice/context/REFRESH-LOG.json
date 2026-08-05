@@ -2,15 +2,9 @@
   "schemaVersion": 1,
   "entries": [
     {
-      "generatedAt": "2026-08-05T02:36:30.978Z",
-      "sourceSetDigest": "6f9318b251d0a56d41781a538a5fc26f8383cb29329c29c077271d8f4bde4950",
-      "previousSourceSetDigest": "96744a98c88b7c671521588c4ba3cd501eb378148b93186505247a9af2f134fe",
-      "changedSourceSets": ["status"]
-    },
-    {
-      "generatedAt": "2026-08-05T02:27:06.757Z",
-      "sourceSetDigest": "96744a98c88b7c671521588c4ba3cd501eb378148b93186505247a9af2f134fe",
-      "previousSourceSetDigest": "2c17281e46caf3d51f33c01f29e04fe703754f4968c550443d139650762fcc38",
+      "generatedAt": "2026-08-05T03:24:27.533Z",
+      "sourceSetDigest": "0dbd6bff6f7d4909c9dc6ffa3c16d516a1baae1874f24552f62ad8b93723fb95",
+      "previousSourceSetDigest": "c7363463f31857fce21a4e997e682877c9ac12503a933237507f70768cda2a87",
       "changedSourceSets": [
         "accepted-adrs",
         "file-open-ui",
@@ -21,6 +15,12 @@
         "workspace-registries",
         "workspace-types"
       ]
+    },
+    {
+      "generatedAt": "2026-08-05T02:21:26.650Z",
+      "sourceSetDigest": "c7363463f31857fce21a4e997e682877c9ac12503a933237507f70768cda2a87",
+      "previousSourceSetDigest": "2c17281e46caf3d51f33c01f29e04fe703754f4968c550443d139650762fcc38",
+      "changedSourceSets": ["accepted-adrs", "file-open-ui", "status", "web-app"]
     },
     {
       "generatedAt": "2026-08-04T23:19:21.283Z",

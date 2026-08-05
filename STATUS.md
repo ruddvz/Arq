@@ -26,7 +26,7 @@ passing tests across 264 files, all uncached. The same revision defines
 workspace-registry, licence/SBOM, secret-scan and Rust gates, and CI wires
 fourteen of the fifteen headless-Chromium capability checks
 (`benchmark:arq-core-worker` is defined but not run in CI); the fifteenth,
-`benchmark:native-open`, is new in this change and is wired into CI with the
+`benchmark:native-open`, is added by this change and wired into CI with the
 others. The Rust gates were not run in that local pass. Of the browser checks,
 `benchmark:native-open` was run locally on this branch and passed; the rest were
 not, and CI is what runs them all. These are revision-scoped results, not a claim
@@ -34,28 +34,36 @@ that the protected workflow or production release gate is green: the gate stays 
 shadow mode, and `protected_l4_approval` still resolves to a deferred environment
 gate rather than an approval anybody granted - see
 `engineering/36_REQUIRED_CHECK_ROLLOUT.md` and the open decisions below.
+`e2e_arq_open` is no longer a standing proof gap - a real Worker and OPFS browser
+check closes it - but a green gate is a statement about the checks that ran, not
+about release.
 
-- **Read-only native `.arq` project open** (`apps/web/src/file-handling` +
-  `packages/project-loading` + `workers/arqfs-worker`): a user can choose a
-  `.arq` file and get that project in the workspace - its own name, revision,
-  levels, walls and rooms in the plan, the same canonical ids extruded in 3D,
-  shared selection, a real inspector, level switching, and close/replace.
+- **Native `.arq` project open** (`apps/web/src/project` +
+  `apps/web/src/file-handling` + `packages/project-loading` +
+  `workers/arqfs-worker`): a user can choose a `.arq` file and get that project
+  in the workspace. The bytes are imported into a project-scoped OPFS working
+  copy in the Worker (ADR-0030), never edited in place, and the chosen file is
+  not written to.
+  Two model shapes are read. The flat shape this build writes - a project name
+  and a wall list - and the reference project model, which has no root project
+  name at all and instead carries its own summary, revision, levels, wall types,
+  rooms and views. Reading only the first meant the product could open the files
+  it had written and refused the reference fixture with "model.json has no
+  project name"; `@arq/project-loading` now decodes the second, and a project
+  that carries one gets a project browser showing its levels, per-level wall and
+  room counts, its own model tree and an inspector reading through real wall
+  types.
   Verified by `pnpm benchmark:native-open`
   (`scripts/run-native-open-capability-check.mjs`) in headless Chromium against
-  the vite-built bundle and the unmodified golden fixture
-  (`fixtures/`): the project opens at revision 191, the ground floor reports its
-  37 of 79 walls, switching level changes what the plan draws, a wall selected
-  from the model tree highlights in 3D, the wall tool is disabled with its
-  reason, the shell says `Read-only · nothing to save`, three opens leave one
-  Worker and closing leaves none, no request leaves the origin, and the
+  the vite-built bundle and the unmodified golden fixture (`fixtures/`): the
+  project opens at revision 191, the ground floor reports its 37 of 79 walls,
+  switching level changes what the plan draws, a wall selected from the model
+  tree by the project's own id highlights in 3D, the shell states that changes
+  live in a local working copy and never says "Saved locally", three opens leave
+  one Worker and closing leaves none, no request leaves the origin, and the
   fixture's SHA-256 is identical before and after.
-  It is read-only by construction, not by convention: the bytes are
-  deserialized with `SQLITE_DESERIALIZE_READONLY` into the Worker's own heap, no
-  OPFS file is opened, no schema is created over a selected file, and the Worker
-  refuses every write for a selected source whatever the file's own version
-  floors allow. Nothing is persisted, so opening a project decides nothing that
-  ADR-0028 has still to decide. What this is not: editing, saving, publishing,
-  migration or import. See the first gap above.
+  What this is not: saving. Nothing checkpoints back to the working copy and
+  nothing writes the chosen file. See the first gap above.
 - **`.arq` file format** (`packages/arqfs`): schema v1/v2, capability-gated
   open, byte preflight, copy-on-write migration with reopen+integrity
   verification, recovery reporting, fuzz tests. Now reachable from the product
@@ -63,8 +71,10 @@ gate rather than an approval anybody granted - see
   whether the bytes it was handed are the whole database: a write-ahead-log
   project keeps its newest commits in a `-wal` sidecar that a file picker does
   not supply, and SQLite reads such a file without the sidecar as of its last
-  checkpoint rather than failing - so the file-open surface says "compatible"
-  and "may not be complete" as the separate facts they are. A failed migration
+  checkpoint rather than failing - so such a file is now **refused** with
+  `ARQ_WAL_SIDECAR_REQUIRED` rather than opened behind a caution, because a
+  warning shown beside a project already on screen cannot undo the impression
+  that the newest work is present. A failed migration
   can now be quarantined instead of deleted, because the half-migrated copy is
   the only evidence of a bug that corrupts projects during upgrade.
 - **Workspace shell** (`apps/web` + `packages/workspace` +
@@ -120,11 +130,15 @@ gate rather than an approval anybody granted - see
 
 ## Biggest known gaps (in rough priority order)
 
-1. No editing or saving of an opened project. A native `.arq` project can now
-   be opened read-only and inspected (see below); nothing can change it, and
-   nothing can write a `.arq` file. ADR-0028 being Accepted unblocks that work
-   and does not perform it: an editable working copy has to be built, in the
-   Worker over OPFS as the accepted split requires, with its own evidence.
+1. Opening works; saving does not. Choosing a `.arq` file constructs the OPFS
+   Worker, imports the bytes into a working copy, decodes the archive and puts
+   the project in the workspace - proven in a browser by `benchmark:file-open`
+   and, for the reference project format, by `benchmark:native-open`.
+   Nothing writes back: edits stay in memory, no checkpoint reaches the working
+   copy and no export reaches the chosen file, so the workspace reports the
+   project as open and not saved. Copy-on-write migration stays unreachable
+   until a write path exists, and a project opened read-only says why.
+
 2. No import/export reachable from the UI: the import worker is never
    constructed by `apps/web` (adapters themselves are real - dxf, underlay,
    attachment and now ifc all resolve in the worker's default registry).
@@ -275,13 +289,16 @@ Writing it found a real defect. `arqfs-worker-entry.ts` imported the
 for a browser at all, and nothing had noticed because nothing had ever built it
 for one. Both worker modules now deep-import, as `apps/web` already did.
 
-**This does not make the product able to open a project.** `apps/web` still
-does not construct this Worker, so there is still no user-reachable
-open-project workflow, and the first gap listed above stands unchanged. What
-closed is the evidence gap the gate names: the Worker and OPFS open path is now
-proven rather than assumed. Building the product pipeline on top of it needs
-the persistence responsibility split accepted first, which is ADR-0028 and
-still open.
+`apps/web` now constructs this Worker. Choosing a `.arq` file imports its bytes
+into an OPFS working copy, opens them through sqlite-wasm, decodes the archive
+and puts the project in the workspace; `benchmark:file-open` proves that in a
+browser against the real bundle, and records the refusals for a truncated file,
+a non-Arq database and one missing its `-wal` sidecar.
+
+**Opening is not saving.** Nothing checkpoints edits back to the `.arq` file, so
+the workspace says the project is open and not saved rather than claiming
+durability the product has not earned. Copy-on-write migration stays
+unreachable for the same reason.
 
 ## Open decisions
 

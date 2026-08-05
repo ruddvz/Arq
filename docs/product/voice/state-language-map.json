@@ -480,8 +480,8 @@
       },
       {
         "internal": "native-opening",
-        "labelTemplate": "{name} is a compatible ARQ project",
-        "explain": "Do not say opened until the live project pipeline has actually loaded it.",
+        "labelTemplate": "Opening {name}…",
+        "explain": "Progress, not a verdict. The bytes were accepted and the project is being copied into a local working copy; the decode and adoption that would make \"open\" true have not happened yet. Name where the copy goes, so this does not read as uploading.",
         "exposure": "product"
       },
       {

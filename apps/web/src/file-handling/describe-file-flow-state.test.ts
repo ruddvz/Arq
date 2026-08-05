@@ -4,59 +4,110 @@ import type { FileFlowState } from './file-state-machine';
 
 describe('describeFileFlowState', () => {
   /**
-   * `native-opening` is a compatibility verdict, not an open. That was true when
-   * nothing in this build could open a project and it is still true now that
-   * something can: the checks that decide whether this project opens have not
-   * run yet, so this state must not speak for them.
+   * `native-opening` is progress, not a verdict: the bytes were accepted and the
+   * project is being copied into a local working copy. It must not claim the
+   * project is open, because the decode and adoption that make that true have
+   * not happened yet - `workspace-active` is the only state entitled to say so.
    */
-  it('never claims a project is open for the native-opening state', () => {
+  it('reports native-opening as work in progress, not as an opened project', () => {
     const description = describeFileFlowState({
       kind: 'native-opening',
       name: 'house.arq',
       sidecarDependency: 'complete',
     });
-    expect(description.headline).not.toMatch(/is open|opened successfully/i);
-    expect(description.headline).toMatch(/compatible/i);
+
+    expect(description.tone).toBe('progress');
+    expect(description.headline).toMatch(/opening/i);
+    expect(description.headline).not.toMatch(/is open\b|opened successfully/i);
+    // Names where the copy goes, so "opening" does not read as "uploading".
+    expect(description.detail).toMatch(/local working copy/i);
+  });
+
+  it('says a project is open only once it has actually been adopted', () => {
+    const description = describeFileFlowState({
+      kind: 'workspace-active',
+      name: 'house.arq',
+      projectId: 'p1',
+      readOnlyReason: null,
+      facts: {
+        projectName: 'Courtyard House',
+        revision: 12,
+        sidecarDependency: 'complete',
+        conditionNote: null,
+      },
+    });
+
+    expect(description.tone).toBe('neutral');
+    // The project's own name, not the file's: a file renamed on disk is not a
+    // renamed project, and the name the reader recognises is the one inside.
+    expect(description.headline).toBe('Courtyard House is open · revision 12');
   });
 
   /**
-   * The silent-staleness case. SQLite opened without a write-ahead log's `-wal`
-   * sidecar does not fail - it returns the database as of the last checkpoint -
-   * so an accepted file can be missing the user's most recent saved work with
-   * nothing reporting a problem. The copy has to name the companion file and a
-   * way out, because a caution the reader cannot act on is only alarming.
+   * A project that silently refuses edits is a bug report; one that says so is a
+   * product. Read-only rides on the state decided at Worker open, so a file that
+   * opened read-only is provably still read-only when the workspace renders it.
    */
-  it('warns that a write-ahead-log project may be missing its newest work, and says how to get it', () => {
+  it('says so when a project opened read-only', () => {
     const description = describeFileFlowState({
-      kind: 'native-opening',
+      kind: 'workspace-active',
       name: 'house.arq',
-      sidecarDependency: 'write-ahead-log-sidecar',
+      projectId: 'p1',
+      readOnlyReason: 'newer-format-version',
+      facts: {
+        projectName: 'House',
+        revision: 4,
+        sidecarDependency: 'complete',
+        conditionNote: null,
+      },
     });
 
     expect(description.tone).toBe('warning');
-    expect(description.headline).toMatch(/may not be complete/i);
-    // Names the actual artifact the user has to find, not just "a companion file".
-    expect(description.detail).toMatch(/-wal/);
-    expect(description.detail).toMatch(/reopen and close|Choose the/i);
-    // Still never claims the project is open.
-    expect(description.headline).not.toMatch(/is open|opened successfully/i);
+    expect(description.headline).toMatch(/read-only/i);
+    // The reason travels with the state rather than leaving the user to find it
+    // by trying to draw.
+    expect(description.detail).toContain('newer version');
   });
 
-  it('says something materially different for a complete file than an incomplete one', () => {
-    const complete = describeFileFlowState({
+  /**
+   * The silent-staleness case, now handled by refusing rather than cautioning.
+   *
+   * SQLite opened without a write-ahead log's `-wal` sidecar does not fail - it
+   * returns the database as of the last checkpoint - so an accepted file can be
+   * missing the user's most recent saved work with nothing reporting a problem.
+   * That used to reach `native-opening` and be described as "compatible, but it
+   * may not be complete". A caution shown beside a project that is already on
+   * screen is not a safeguard, so the state is now a failure with its own code.
+   */
+  it('reports a missing write-ahead-log sidecar as a failure, naming the file and the way out', () => {
+    const description = describeFileFlowState({
+      kind: 'failed',
+      name: 'house.arq',
+      code: 'ARQ_WAL_SIDECAR_REQUIRED',
+      message:
+        'This database depends on a companion "-wal" file that was not included, so it may be missing the newest saved work. Reopen the project in the application that created it and close it cleanly, which folds the companion file back into the database, then choose the database again.',
+    });
+
+    expect(description.tone).toBe('error');
+    expect(description.headline).toMatch(/could not be opened/i);
+    // Names the actual artifact the user has to find, and the remedy.
+    expect(description.detail).toMatch(/-wal/);
+    expect(description.detail).toMatch(/close it cleanly/i);
+    expect(description.detail).toContain('ARQ_WAL_SIDECAR_REQUIRED');
+  });
+
+  /**
+   * There is no longer a variant of `native-opening` that means "accepted, but
+   * possibly stale" - if the flow reaches it at all, the bytes are whole.
+   */
+  it('has no state that hedges about completeness', () => {
+    const description = describeFileFlowState({
       kind: 'native-opening',
       name: 'house.arq',
       sidecarDependency: 'complete',
     });
-    const incomplete = describeFileFlowState({
-      kind: 'native-opening',
-      name: 'house.arq',
-      sidecarDependency: 'write-ahead-log-sidecar',
-    });
 
-    expect(complete.headline).not.toBe(incomplete.headline);
-    expect(complete.tone).toBe('neutral');
-    expect(incomplete.tone).toBe('warning');
+    expect(description.headline).not.toMatch(/may not be complete/i);
   });
 
   it('surfaces the real failure code and message, not a generic error string', () => {
@@ -97,7 +148,30 @@ describe('describeFileFlowState', () => {
       { kind: 'acquiring', name: 'a.arq' },
       { kind: 'detecting', name: 'a.arq' },
       { kind: 'native-opening', name: 'a.arq', sidecarDependency: 'complete' },
-      { kind: 'native-opening', name: 'a.arq', sidecarDependency: 'write-ahead-log-sidecar' },
+      {
+        kind: 'workspace-active',
+        name: 'a.arq',
+        projectId: 'p1',
+        readOnlyReason: null,
+        facts: {
+          projectName: 'A',
+          revision: 1,
+          sidecarDependency: 'complete',
+          conditionNote: null,
+        },
+      },
+      {
+        kind: 'workspace-active',
+        name: 'a.arq',
+        projectId: 'p1',
+        readOnlyReason: 'build-cannot-write',
+        facts: {
+          projectName: 'A',
+          revision: 1,
+          sidecarDependency: 'complete',
+          conditionNote: null,
+        },
+      },
       { kind: 'import-options', name: 'a.dxf', formatId: 'dxf' },
       { kind: 'importing', name: 'a.dxf', requestId: 'r1', fraction: 0.5 },
       { kind: 'staged-review', name: 'a.dxf', requestId: 'r1' },

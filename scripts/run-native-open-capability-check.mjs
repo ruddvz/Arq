@@ -24,9 +24,11 @@
  *  - 3D holds the same canonical wall ids: a wall selected from the model tree
  *    (the project's own id) highlights in 3D. The highlight is phthalo green in
  *    an otherwise monochrome scene, so green-dominant pixels can only be it.
- *  - authoring is refused everywhere it is offered: the wall tool carries the
- *    read-only reason, and the shell reports "Read-only · nothing to save"
- *    rather than any form of "Saved".
+ *  - the shell says where a change would land, and never says it was saved. The
+ *    project opens from a local OPFS working copy (ADR-0030), so editing is
+ *    allowed and durability is not: the status reports the working copy and
+ *    never "Saved locally", because nothing is checkpointed back to the `.arq`
+ *    file. The project panel says the same thing in the same words.
  *  - Workers are terminated. `page.workers()` is counted: one while a project is
  *    open, zero after close, one (not three) after three opens without a close.
  *    A Worker per open that is never released holds a whole database resident.
@@ -157,11 +159,15 @@ async function openFixture(page) {
   await page.getByRole('dialog').waitFor({ timeout: 10_000 });
   await page.locator('input[type="file"]').setInputFiles(fixturePath);
   await page.waitForFunction(
-    () => document.body.textContent?.includes('is open, read-only · revision 191') === true,
+    () =>
+      document.body.textContent?.includes('Courtyard House Reference is open · revision 191') ===
+      true,
     undefined,
     { timeout: 120_000 },
   );
-  await page.getByRole('button', { name: 'View project' }).click();
+  // No confirmation step: adoption closes the dialog itself, so the reader is
+  // returned to the workspace with the project in it rather than being asked to
+  // acknowledge work that has already finished.
   await page.getByRole('dialog').waitFor({ state: 'detached', timeout: 10_000 });
 }
 
@@ -240,13 +246,18 @@ async function run() {
     // project total against one level is how a check comes to pin the wrong fact.
     observed.groundFloorLabel = /Ground floor[\s\S]{0,40}37 walls/.test(panelText);
     check(observed.groundFloorLabel, 'the ground floor did not report its 37 walls');
+    // Where a change goes, and what has not happened. Both halves matter: the
+    // working copy is real and editable, and nothing in it has reached the file
+    // the reader chose.
+    observed.workingCopyStated = /Working copy\./.test(panelText);
+    check(observed.workingCopyStated, 'the project panel did not say where a change would land');
     check(
-      panelText.includes('Read-only · nothing to save'),
-      'the shell did not report the read-only save state',
+      /not written back to the .arq file/i.test(panelText),
+      'the panel did not say the chosen file is not written back to',
     );
     check(
       !/\bSaved locally\b/.test(panelText),
-      'the shell claimed a local save for a read-only project',
+      'the shell claimed a local save for a project it has not checkpointed',
     );
 
     /* ---------------------------------------------------------------- */
@@ -309,7 +320,7 @@ async function run() {
     writeFileSync(screenshotPath, workspaceShot);
 
     /* ---------------------------------------------------------------- */
-    /* Authoring is refused                                              */
+    /* Authoring is allowed, and does not claim to have been saved       */
     /* ---------------------------------------------------------------- */
     await page
       .getByRole('tab', { name: /Ground floor|Level 1 Plan|Plan/ })
@@ -325,12 +336,15 @@ async function run() {
     const wallTool = page
       .getByRole('group', { name: 'Draw tools' })
       .getByRole('button', { name: /^Wall\b/ });
+    // Enabled, and that is correct now: the project is open from a writable
+    // OPFS working copy, so the tool would have somewhere to put a wall. What
+    // must not appear is a claim that the result reached the `.arq` file, and
+    // that is asserted on the status text rather than on the tool.
     observed.wallToolDisabled = await wallTool.isDisabled();
     observed.wallToolAccessibleName = await wallTool.getAttribute('aria-label');
-    check(observed.wallToolDisabled, 'the wall tool is offered over a read-only project');
     check(
-      (observed.wallToolAccessibleName ?? '').includes('inspection only'),
-      'the disabled wall tool does not announce why it is unavailable',
+      !observed.wallToolDisabled,
+      'the wall tool is refused over a project open from a writable working copy',
     );
 
     /* ---------------------------------------------------------------- */
@@ -363,8 +377,8 @@ async function run() {
     // expired yet.
     const afterCloseText = await page.locator('body').innerText();
     check(
-      !afterCloseText.includes('Read-only · nothing to save'),
-      'the shell still reports a read-only project after closing it',
+      !afterCloseText.includes('Working copy.'),
+      'the shell still reports an open project after closing it',
     );
     check(
       afterCloseText.includes('Journal current'),
@@ -376,7 +390,7 @@ async function run() {
     observed.wallToolEnabledAfterClose = !(await wallToolAfterClose.isDisabled());
     check(
       observed.wallToolEnabledAfterClose,
-      'authoring did not come back after the read-only project was closed',
+      "authoring did not come back on the workspace's own document after the project was closed",
     );
 
     await openFixture(page);
@@ -430,7 +444,7 @@ async function run() {
     failures,
     ok: failures.length === 0,
     limitation:
-      'Chromium only. Proves a user-reachable read-only open, level switching, shared plan/3D ids, refused authoring, Worker teardown and same-origin behaviour. Proves nothing about editing, saving, migration or any other browser engine.',
+      'Chromium only. Proves a user-reachable open of the reference project fixture, level switching, shared plan/3D ids, the working-copy statement, Worker teardown and same-origin behaviour. Proves nothing about checkpointing edits back to the .arq file, migration or any other browser engine.',
     ...(screenshotPath === null ? {} : { screenshot: path.relative(repoRoot, screenshotPath) }),
   };
 

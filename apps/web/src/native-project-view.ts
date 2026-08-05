@@ -26,7 +26,31 @@ import {
   wallsOnLevel,
   type NativeProjectModel,
 } from '@arq/project-loading';
-import type { StagedNativeProject } from '@arq/project-loading';
+/**
+ * What the read-only project surfaces need from an open project, and nothing
+ * more. Named here rather than taken from the open pipeline so the surfaces
+ * depend on the facts they render, not on how the project was opened - the
+ * pipeline underneath has already been replaced once.
+ */
+export interface OpenNativeProject {
+  readonly model: NativeProjectModel;
+  /**
+   * A one-word verdict on where a change to this project would land, and the
+   * sentence that explains it. Both are needed and neither substitutes for the
+   * other: "Read-only" without a cause reads as a defect, and a cause without
+   * the verdict makes a reader work out the consequence themselves.
+   *
+   * There are two real answers, and they are not the same promise. A project
+   * this build may not write at all is read-only. A project open from a local
+   * working copy may be changed, but nothing written to that copy reaches the
+   * `.arq` file the reader chose - calling that "read-only" would be false, and
+   * calling it "saved" would be worse.
+   */
+  readonly writeVerdict: 'read-only' | 'working-copy';
+  readonly writeReason: string;
+  /** Conditions the open reported: an interrupted write, unreadable optional content. */
+  readonly conditions: readonly string[];
+}
 import type { DrawnWall } from './canvas/plan-document';
 import type { PlanRoom } from './canvas/canvas-interaction';
 
@@ -442,23 +466,18 @@ export function buildNativeAccessibleDescription(
  * the open found. This is the list that keeps a partial view of a project from
  * being mistaken for the whole project.
  */
-export function nativeProjectNotices(staged: StagedNativeProject): readonly string[] {
-  const notices: string[] = [staged.authoringUnavailableReason];
-  if (staged.safeModePlan.kind !== 'healthy') {
-    notices.push(`This file opened with a condition: ${staged.safeModePlan.reason}.`);
+export function nativeProjectNotices(project: OpenNativeProject): readonly string[] {
+  const notices: string[] = [project.writeReason];
+  for (const condition of project.conditions) {
+    notices.push(`This file opened with a condition: ${condition}.`);
   }
-  for (const entry of staged.model.unsupported) {
+  for (const entry of project.model.unsupported) {
     notices.push(`${entry.count} ${entry.section}: ${entry.reason}`);
   }
-  for (const view of staged.model.views) {
+  for (const view of project.model.views) {
     if (!view.supported) {
       notices.push(`View "${view.name}" is not shown. ${view.unsupportedReason ?? ''}`.trim());
     }
-  }
-  if (staged.corruptOptionalPaths.length > 0) {
-    notices.push(
-      `Optional project content that could not be read: ${staged.corruptOptionalPaths.join(', ')}.`,
-    );
   }
   return notices;
 }

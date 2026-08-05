@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
-import type { StagedNativeProject } from '@arq/project-loading';
-import { nativeProjectNotices } from './native-project-view';
+
+import { nativeProjectNotices, type OpenNativeProject } from './native-project-view';
 
 export interface NativeProjectPanelProps {
   readonly fileName: string;
-  readonly staged: StagedNativeProject;
+  readonly staged: OpenNativeProject;
   readonly activeLevelId: string;
   readonly onShowLevel: (levelId: string) => void;
   readonly onCloseProject: () => void;
@@ -14,7 +14,7 @@ export interface NativeProjectPanelProps {
 
 /**
  * The header of the project browser's Project section when a native `.arq`
- * project is open: what is open, which revision, why it cannot be edited, which
+ * project is open: what is open, which revision, where a change to it would go, which
  * level is on show, what the file contains that is not being drawn, and how to
  * close it.
  *
@@ -52,7 +52,8 @@ export function NativeProjectPanel(props: NativeProjectPanelProps): JSX.Element 
         {/* Section 126: status is never colour alone - this is a word, and the
             reason is spelled out rather than left to a badge. */}
         <p style={{ margin: 0 }}>
-          <strong>Read-only.</strong> {staged.authoringUnavailableReason}
+          <strong>{staged.writeVerdict === 'read-only' ? 'Read-only.' : 'Working copy.'}</strong>{' '}
+          {staged.writeReason}
         </p>
 
         <fieldset

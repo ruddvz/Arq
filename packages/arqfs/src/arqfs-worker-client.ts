@@ -4,21 +4,19 @@ import type {
   ArqfsWorkerResponsePayload,
 } from './arqfs-worker-protocol';
 
-export type { ArqfsWorkerResponsePayload };
-
 /**
- * A request without its correlation id.
+ * Distributes over the request union before removing `id`.
  *
- * Distributed over the union member by member. A plain `Omit<ArqfsWorkerRequest,
- * 'id'>` keeps only the properties every member shares, so `type` survived and
- * `path`, `entries` and `bytes` did not - which made every request that carries a
- * payload fail to typecheck at the call site.
+ * A plain `Omit<ArqfsWorkerRequest, 'id'>` is not the same type: `keyof` a union
+ * is only the keys *common* to every member, so it collapses to `{ type: ... }`
+ * and silently discards `path` and `entries`. That made every parameterized
+ * request untypeable - a caller could ask to write archive entries, but not say
+ * which - so the only requests this client could actually express were the
+ * argument-free ones.
  */
-export type ArqfsWorkerRequestInput = ArqfsWorkerRequest extends infer Request
-  ? Request extends { readonly id: number }
-    ? Omit<Request, 'id'>
-    : never
-  : never;
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
+export type ArqfsWorkerRequestInput = DistributiveOmit<ArqfsWorkerRequest, 'id'>;
 
 export interface ArqfsWorkerLike {
   postMessage(message: ArqfsWorkerRequest, transfer?: Transferable[]): void;

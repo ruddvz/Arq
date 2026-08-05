@@ -28,11 +28,11 @@
  * not, the fresh Worker would have initialised a new schema and reported the
  * 'valid' outcome, so those cases fail rather than silently passing.
  *
- * What this check does NOT establish: that a user can reach any of it. It drives
- * the Worker directly, so it says nothing about the application around it. That
- * is `scripts/run-native-open-capability-check.mjs` (browser_native_open), which
- * drives the built `apps/web` bundle instead - `apps/web` does now construct this
- * Worker, in its read-only selected-bytes mode.
+ * What this check does NOT establish: that `apps/web` reaches this path from a
+ * file someone chose, or that the decoded project arrives in the workspace. It
+ * drives the Worker directly, so it would keep passing if the UI were wired to
+ * nothing at all. `benchmark:file-open` is the check that makes that claim, by
+ * driving the real interface.
  *
  * Usage: node scripts/run-e2e-arq-open-capability-check.mjs
  */
@@ -335,7 +335,7 @@ async function main() {
     unservedUrls: [...new Set([...missingResources, ...unservedUrls])],
     ok: process.exitCode !== 1,
     limitation:
-      'Proves the Worker and OPFS open path for these four outcomes, driving the Worker directly. Says nothing about the application around it: that is browser_native_open.',
+      'Proves the Worker and OPFS open path for these four outcomes, driving the Worker directly. That apps/web reaches this path from a chosen file, and that the decoded project arrives in the workspace, is the separate claim benchmark:file-open makes by driving the real UI.',
   };
   const outDir = path.join(repoRoot, 'benchmarks/results');
   mkdirSync(outDir, { recursive: true });
