@@ -1,4 +1,5 @@
 import { detectFormat } from './detect-format';
+import { IMPORT_REJECTION_CODES, ImportRejection } from './import-rejection';
 import { formatById } from './formats';
 import { sha256Hex } from './hash';
 import type {
@@ -23,12 +24,18 @@ export interface ExecuteAdapterInput {
 
 export async function executeAdapter(input: ExecuteAdapterInput): Promise<ImportAdapterResult> {
   if (input.bytes.byteLength !== input.source.byteLength)
-    throw new Error('Source byte length changed.');
+    throw new ImportRejection(
+      IMPORT_REJECTION_CODES.sourceLengthChanged,
+      'Source byte length changed.',
+    );
   if (input.bytes.byteLength > input.policy.maxSourceBytes)
-    throw new Error('Source exceeds import policy.');
+    throw new ImportRejection(
+      IMPORT_REJECTION_CODES.sourceTooLarge,
+      'Source exceeds import policy.',
+    );
   if (input.signal.aborted) throw new DOMException('Cancelled', 'AbortError');
   if (input.policy.deadlineUnixMs !== undefined && Date.now() > input.policy.deadlineUnixMs) {
-    throw new Error('Import deadline expired.');
+    throw new ImportRejection(IMPORT_REJECTION_CODES.deadlineExpired, 'Import deadline expired.');
   }
 
   const context: ImportAdapterContext = {
@@ -42,7 +49,10 @@ export async function executeAdapter(input: ExecuteAdapterInput): Promise<Import
   input.onProgress?.({ stage: 'converting', fraction: 0, message: `Running ${input.adapter.id}` });
   const result = await input.adapter.convert(context);
   if (result.stagedElements.length > input.policy.maxStagedElements)
-    throw new Error('Adapter exceeded staged-element policy.');
+    throw new ImportRejection(
+      IMPORT_REJECTION_CODES.tooManyStagedElements,
+      'Adapter exceeded staged-element policy.',
+    );
   input.onProgress?.({ stage: 'complete', fraction: 1, message: 'Import staged for review' });
   return result;
 }
@@ -58,8 +68,15 @@ export async function prepareImport(
   policy: ImportPolicy,
 ): Promise<PrepareImportResult> {
   if (bytes.byteLength !== source.byteLength)
-    throw new Error('Descriptor length does not match acquired bytes.');
-  if (bytes.byteLength > policy.maxSourceBytes) throw new Error('Source exceeds import policy.');
+    throw new ImportRejection(
+      IMPORT_REJECTION_CODES.sourceLengthChanged,
+      'Descriptor length does not match acquired bytes.',
+    );
+  if (bytes.byteLength > policy.maxSourceBytes)
+    throw new ImportRejection(
+      IMPORT_REJECTION_CODES.sourceTooLarge,
+      'Source exceeds import policy.',
+    );
   const candidates = detectFormat(bytes.subarray(0, Math.min(bytes.byteLength, 1_048_576)), source);
   const sourceSha256 = await sha256Hex(bytes);
   return { sourceSha256, candidates };

@@ -12,3 +12,4 @@ export * from './unit-resolution';
 export * from './quarantine';
 export * from './export-fidelity';
 export * from './decompression-limits';
+export * from './import-rejection';

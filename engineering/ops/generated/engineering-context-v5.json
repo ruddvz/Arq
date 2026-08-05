@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "a7c0b2c9fc2455a43f054dbb9d13f635171e3f1e7d2ef45316baa3cbfd7be484",
+  "source_hash": "e4de1727e0e5a7d9ec7354d0251794ffdf508eb05fe5ace3a613d10d57743284",
   "source_records": [
     {
       "scope": "package",
@@ -859,12 +859,12 @@
     {
       "scope": "repository",
       "path": "workers/import-export-worker/src/handler.test.ts",
-      "sha256": "39ef0128151077b7cdfb51a1398d67a925258f6ad9211e4c1a64bd406e31665a"
+      "sha256": "5efd86790a62ff2468e5269e2129deef41768551853c7ec21a00d7741453f6e9"
     },
     {
       "scope": "repository",
       "path": "workers/import-export-worker/src/handler.ts",
-      "sha256": "4f9918e70ffd9516c27df85615d117f2bdf23106784c7bdddc55e1027c71897e"
+      "sha256": "ed5b3df7105660efbacc6c0b46f71fe6e10550c110ad666a097d2075558b0277"
     },
     {
       "scope": "repository",
