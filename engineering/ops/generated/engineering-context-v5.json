@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "fefd508ca2c7090ed5c7c4873da0dfca402b5c9bf91cc39eb2c9e433081a7c02",
+  "source_hash": "b7826e275d127539a9e207dc96977b8c3dfa63a55897581a6ea1ea1378ac5178",
   "source_records": [
     {
       "scope": "package",
@@ -214,7 +214,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
-      "sha256": "492e881fadb72b54484c1256ebc402491111effb579a574f683ea7d94359375d"
+      "sha256": "908e90c439e43c5d41a4cc24e62f4281618faf5d115e3a0d53be86d74821544c"
     },
     {
       "scope": "repository",

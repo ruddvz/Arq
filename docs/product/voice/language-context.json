@@ -7,7 +7,7 @@
       "repo-facts-2026-07-27",
       "interface-2026-07-27"
     ],
-    "sourceSetDigest": "c7363463f31857fce21a4e997e682877c9ac12503a933237507f70768cda2a87",
+    "sourceSetDigest": "7db1bcce0b2e9b3853244ba72811f7164dbfe56ab9873b28d8367b1071a737e6",
     "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995"
   },
   "snapshotWarning": null,
@@ -7371,7 +7371,7 @@
     "schemaVersion": 4,
     "contractVersion": "4.1.0",
     "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-    "sourceSetDigest": "c7363463f31857fce21a4e997e682877c9ac12503a933237507f70768cda2a87",
+    "sourceSetDigest": "7db1bcce0b2e9b3853244ba72811f7164dbfe56ab9873b28d8367b1071a737e6",
     "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
     "sources": {
       "repository-readme": {
@@ -7719,12 +7719,12 @@
         "id": "file-open-ui",
         "kind": "directory",
         "path": "apps/web/src/file-handling",
-        "sha256": "e5dfba769cd4b550a1602c27138030a1ad1f6c07555d1e3206d340493ae87ffa",
+        "sha256": "d6b7078616740e8d648af2a66640a363124e0422c928363e7ccc516da5a2396a",
         "files": [
           {
             "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
-            "sha256": "492e881fadb72b54484c1256ebc402491111effb579a574f683ea7d94359375d",
-            "bytes": 11752
+            "sha256": "908e90c439e43c5d41a4cc24e62f4281618faf5d115e3a0d53be86d74821544c",
+            "bytes": 12922
           },
           {
             "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",

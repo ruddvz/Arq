@@ -9,6 +9,7 @@ import {
   type NativeWorkerFactory,
 } from '../project/open-native-project';
 import { createBrowserArqfsWorker } from '../project/browser-worker-factory';
+import { createOpenAttemptGuard } from '../project/open-attempt-guard';
 
 export interface FileOpenPanelProps {
   readonly isOpen: boolean;
@@ -57,6 +58,19 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
   const [state, setState] = useState<FileFlowState>({ kind: 'idle' });
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  /**
+   * Which open attempt owns the flow.
+   *
+   * The picker and the drop target stay live while an open is in progress, so a
+   * second file can be chosen while the first is still staging. Both attempts
+   * then drive one reducer: the older one's stage callbacks arrive after the
+   * newer one has started, walking the flow backwards through states it has
+   * already left, and - worse - the older one still calls `onProjectOpened`, so
+   * the workspace adopts a project the user moved on from. Every emit and the
+   * adoption are gated on this counter, and a superseded attempt closes its own
+   * session instead of handing it over.
+   */
+  const attemptGuard = useRef(createOpenAttemptGuard());
 
   /**
    * The panel is not always closed by the person using it: adopting a project
@@ -71,32 +85,37 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
   }, [isOpen]);
 
   async function evaluate(file: File): Promise<void> {
-    setState((current) => reduceFileFlow(current, { type: 'acquire', name: file.name }));
+    const isCurrent = attemptGuard.current.begin();
+    // Every state change in this attempt goes through here, so a superseded
+    // attempt cannot reach the reducer at all rather than being filtered at
+    // each of the dozen call sites and missed at one of them.
+    const emit = (event: FileFlowEvent): void => {
+      if (isCurrent()) setState((current) => reduceFileFlow(current, event));
+    };
+    emit({ type: 'acquire', name: file.name });
     let bytes: Uint8Array;
     try {
       bytes = new Uint8Array(await file.arrayBuffer());
     } catch (error) {
-      setState((current) =>
-        reduceFileFlow(current, {
-          type: 'fail',
-          code: 'READ_FAILED',
-          message: error instanceof Error ? error.message : String(error),
-        }),
-      );
+      emit({
+        type: 'fail',
+        code: 'READ_FAILED',
+        message: error instanceof Error ? error.message : String(error),
+      });
       return;
     }
-    setState((current) => reduceFileFlow(current, { type: 'acquired' }));
+    emit({ type: 'acquired' });
 
     const evaluation = evaluateSelectedFile(bytes, file.name, file.type || undefined);
     const { route, completeness } = evaluation;
     if (route.kind === 'reject') {
       const { code, detail } = route;
-      setState((current) => reduceFileFlow(current, { type: 'fail', code, message: detail }));
+      emit({ type: 'fail', code, message: detail });
       return;
     }
     if (route.kind === 'import') {
       const { formatId } = route;
-      setState((current) => reduceFileFlow(current, { type: 'route-import', formatId }));
+      emit({ type: 'route-import', formatId });
       return;
     }
     // route.kind === 'open-native-arq'
@@ -112,14 +131,14 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
         code: 'ARQ_SOURCE_NOT_EVALUATED',
         reason: 'This file was not checked, so it was not opened.',
       };
-      setState((current) => reduceFileFlow(current, { type: 'fail', code, message: reason }));
+      emit({ type: 'fail', code, message: reason });
       return;
     }
     // Always 'complete' by this point - a dependent database was refused above -
     // but read from the preflight rather than hard-coded, so the state carries
     // what was actually measured and cannot drift from it.
     const { sidecarDependency } = completeness.preflight;
-    setState((current) => reduceFileFlow(current, { type: 'route-native', sidecarDependency }));
+    emit({ type: 'route-native', sidecarDependency });
 
     // Only now is a Worker constructed and a working copy created. Everything
     // above this line is byte-level and leaves no trace if it refuses.
@@ -127,7 +146,6 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
     // The lifecycle states are driven from the pipeline's own boundaries rather
     // than announced in a burst at the end, so `workspace-active` - the only
     // state anything treats as open - is reached exactly once the project is.
-    const emit = (event: FileFlowEvent) => setState((current) => reduceFileFlow(current, event));
     emit({ type: 'stage-start' });
     const opened = await openNativeProject(bytes, createWorker, file.name, {
       onStaged: (projectId) => {
@@ -140,6 +158,14 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
     if (opened.status === 'rejected') {
       const { code, reason } = opened;
       emit({ type: 'fail', code, message: reason });
+      return;
+    }
+    if (!isCurrent()) {
+      // A newer attempt owns the flow. This project is real and fully open, and
+      // it is not the one the user is waiting for - so it is closed here rather
+      // than adopted or leaked. Closing releases the Worker and with it the
+      // working copy's write lock, which a later reopen of the same file needs.
+      void opened.session.close();
       return;
     }
     // Adoption is the last step, and it is the caller's: the panel never
