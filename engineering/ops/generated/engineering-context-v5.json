@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "d0985f547ae7211d273b1462d32c2006d3bbf8a88e5063eb5b88cfbd10c07c72",
+  "source_hash": "dedea5aeb0ede9d56863fc6aad9a62006f5f8d4a6943e107098302e7201f0960",
   "source_records": [
     {
       "scope": "package",
@@ -204,7 +204,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/App.tsx",
-      "sha256": "ec6867db19f9291d4e8d09b8baf6c867e05f4ec135f0cc8e48085c898d1d51cc"
+      "sha256": "55758a67d73e139946921e34a8918eed5f54f8880aa8a308d6e0f2f7cb63f336"
     },
     {
       "scope": "repository",
@@ -214,7 +214,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
-      "sha256": "9c5f910a0a869908ac9a747db8c12816afa3397181ae2552b4c0b7af751fa1f7"
+      "sha256": "929007932dba943a58eea2b0262916b86329709456c486da48076f464bdc4a5a"
     },
     {
       "scope": "repository",
@@ -794,7 +794,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "fd935d2a7da34e0432524611a938e551489af62f92bc7dc392ab08cddf37c5a2"
+      "sha256": "23e129aefdec0056fa6c1b424320709aacefe61ed52b10ae30eadc925f9d1d8a"
     },
     {
       "scope": "repository",
