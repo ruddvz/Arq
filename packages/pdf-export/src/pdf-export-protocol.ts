@@ -102,9 +102,7 @@ export type PdfExportResponse =
  * where the caller is, not after a worker spin-up and a message round trip that
  * makes a typo look like a rendering failure.
  */
-export function validatePdfExportRequest(
-  request: Extract<PdfExportRequest, { type: 'export' }>,
-): {
+export function validatePdfExportRequest(request: Extract<PdfExportRequest, { type: 'export' }>): {
   readonly code: PdfExportFailureCode;
   readonly message: string;
   readonly sheetId?: string;
@@ -163,9 +161,7 @@ export function createPdfExportSession(requestId: string, sheetsRequested: numbe
   }
 
   /** Whether the caller may act on a response, and why not when it may not. */
-  function accept(
-    response: PdfExportResponse,
-  ):
+  function accept(response: PdfExportResponse):
     | { readonly acted: true; readonly response: PdfExportResponse }
     | {
         readonly acted: false;
