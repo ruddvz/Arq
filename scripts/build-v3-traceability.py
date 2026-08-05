@@ -34,6 +34,10 @@ OWNER='owner-authority'
 BLOCKED='blocked-no-evidence'
 PRE='pre-existing'
 NEW='implemented-in-this-change'
+# The repository satisfies the task's purpose somewhere other than where the task
+# says to put it, on purpose. Not a synonym for done: the divergence is the claim,
+# and V3-IMPLEMENTATION-TRACEABILITY.md has to say what it was and why.
+DIVERGENT='implemented-differently'
 
 add([f'V3-{n:03d}' for n in range(1,11)], OWNER, '', '')
 add([f'V3-{n:03d}' for n in range(190,206)], OWNER, '', '')
@@ -41,23 +45,31 @@ add(['V3-107','V3-108'], BLOCKED, '', '')
 add(['V3-117'], BLOCKED, '', '')
 
 # P1 lifecycle - pre-existing reducer, extended here for publication states.
-add(['V3-011','V3-012','V3-013','V3-014','V3-015','V3-019','V3-020'], PRE,
+add(['V3-011','V3-013','V3-014','V3-020'], PRE,
     'apps/web/src/file-handling/file-state-machine.ts','lastKnownGoodProject')
+add(['V3-012','V3-015'], NEW,'apps/web/src/file-handling/file-state-machine.ts','LastKnownGoodProject')
+add(['V3-019'], NEW,'apps/web/src/file-handling/file-state-machine.ts','requestId')
 add(['V3-016'], PRE,'docs/product/voice/state-language-map.json','file-flow')
 add(['V3-017'], PRE,'scripts/verify-arq-state-language-coverage.mjs','verifyMachine')
-add(['V3-018'], PRE,'apps/web/src/file-handling/file-state-machine.test.ts','describe')
+add(['V3-018'], NEW,'apps/web/src/file-handling/file-state-machine.test.ts','every state and event pair')
 
 # P2 worker and source safety.
-add(['V3-021','V3-028','V3-031','V3-032'], PRE,'workers/import-export-worker/src/protocol.ts','ImportWorkerRequest')
-add(['V3-022','V3-023','V3-029','V3-030'], PRE,'workers/import-export-worker/src/worker-runtime.ts','')
-add(['V3-024','V3-025'], PRE,'packages/arqfs/src/arqfs-safe-mode.ts','')
+add(['V3-021'], NEW,'packages/arqfs/src/arqfs-worker-protocol.ts','parseArqfsWorkerRequest')
+add(['V3-022'], PRE,'packages/arqfs/src/arqfs-worker-handler.ts','readRefusal')
+add(['V3-023'], PRE,'packages/arqfs/src/arqfs-worker-handler.ts','writeRefusal')
+add(['V3-028'], PRE,'packages/arqfs/src/arqfs-worker-protocol.ts','importDatabase')
+add(['V3-029'], NEW,'workers/import-export-worker/src/handler.ts','cancelledRequestIds')
+add(['V3-030'], PRE,'packages/arqfs/src/arqfs-single-writer-lock.ts','writerLockNameForProject')
+add(['V3-031'], NEW,'packages/file-ingress/src/import-rejection.ts','IMPORT_REJECTION_CODES')
+add(['V3-032'], DIVERGENT,'workers/arqfs-worker/src/arqfs-project-filename.ts','readProjectIdFromWorkerSearch')
+add(['V3-024','V3-025'], PRE,'packages/arqfs/src/arqfs-safe-mode.ts','resolveArqfsSafeModePlan')
 add(['V3-026','V3-027'], PRE,'packages/file-ingress/src/policy.ts','maxSourceBytes')
 
 # P3 staging and native open.
-add(['V3-033','V3-034','V3-035'], PRE,'packages/file-ingress/src/orchestrator.ts','')
+add(['V3-033','V3-034','V3-035'], PRE,'packages/file-ingress/src/orchestrator.ts','PrepareImportResult')
 add(['V3-036','V3-037','V3-038'], PRE,'packages/arqfs/src/arqfs-entry-digests.ts','classifyEntryPath')
-add(['V3-039'], PRE,'packages/arqfs/src/arqfs-semantic-hash.ts','')
-add(['V3-040','V3-041','V3-042','V3-043'], PRE,'packages/project-loading/src/stages.ts','')
+add(['V3-039'], PRE,'packages/arqfs/src/arqfs-semantic-hash.ts','SEMANTIC_HASH_SCHEME')
+add(['V3-040','V3-041','V3-042','V3-043'], PRE,'packages/project-loading/src/stages.ts','OPEN_STAGES')
 add(['V3-044'], PRE,'apps/web/src/file-handling/file-state-machine.ts','readOnlyReason')
 add(['V3-045'], NEW,'packages/model-renderer/src/gpu-resource-registry.ts','closeOwner')
 
@@ -75,29 +87,29 @@ add(['V3-063','V3-064','V3-065','V3-066','V3-067','V3-068','V3-070','V3-071','V3
 add(['V3-069'], NEW,'packages/arqfs/src/arqfs-entry-digests.ts','CANONICAL_ENTRY_PATHS')
 
 # P6 semantic model.
-add(['V3-075'], PRE,'packages/bim-core/src/level.ts','')
-add(['V3-076'], PRE,'packages/bim-core/src/wall-type.ts','')
-add(['V3-077'], PRE,'packages/bim-core/src/opening.ts','')
-add(['V3-078'], PRE,'packages/bim-core/src/door-type.ts','')
-add(['V3-079'], PRE,'packages/bim-core/src/window-type.ts','')
+add(['V3-075'], PRE,'packages/bim-core/src/level.ts','createLevel')
+add(['V3-076'], PRE,'packages/bim-core/src/wall-type.ts','WallType')
+add(['V3-077'], PRE,'packages/bim-core/src/opening.ts','CreateOpeningInput')
+add(['V3-078'], PRE,'packages/bim-core/src/door-type.ts','CreateDoorTypeInput')
+add(['V3-079'], PRE,'packages/bim-core/src/window-type.ts','CreateWindowTypeInput')
 add(['V3-080'], PRE,'packages/bim-core/src/room.ts','RoomStatus')
 add(['V3-081'], NEW,'packages/bim-core/src/slab.ts','SlabDatumFace')
 add(['V3-082'], NEW,'packages/bim-core/src/stair.ts','validateStairFlight')
-add(['V3-083'], PRE,'packages/bim-core/src/dimension-reference.ts','')
-add(['V3-084'], PRE,'packages/bim-core/src/text-note.ts','')
+add(['V3-083'], PRE,'packages/bim-core/src/dimension-reference.ts','DimensionReference')
+add(['V3-084'], PRE,'packages/bim-core/src/text-note.ts','CreateTextNoteInput')
 add(['V3-085'], NEW,'packages/bim-core/src/view-definition.ts','createViewDefinition')
 add(['V3-086'], PRE,'packages/bim-core/src/sheet.ts','createSheet')
 add(['V3-087'], NEW,'packages/bim-core/src/schedule.ts','createSchedule')
 add(['V3-088'], NEW,'packages/bim-core/src/material.ts','createMaterial')
-add(['V3-089'], NEW,'packages/bim-core/src/deletion-policy.ts','')
+add(['V3-089'], NEW,'packages/bim-core/src/deletion-policy.ts','DeletionDisposition')
 
 # P7 authoring and inference.
 add(['V3-090','V3-091','V3-097','V3-098'], NEW,'packages/editor-shell/src/inference-engine.ts','rankCandidates')
-add(['V3-092'], PRE,'packages/editor-shell/src/intersection-snap.ts','')
-add(['V3-093','V3-094'], PRE,'packages/editor-shell/src/perpendicular-snap.ts','')
-add(['V3-095'], PRE,'packages/editor-shell/src/extension-snap.ts','')
-add(['V3-096'], PRE,'packages/editor-shell/src/grid-snap.ts','')
-add(['V3-099'], PRE,'packages/editor-shell/src/numeric-overlay.ts','')
+add(['V3-092'], PRE,'packages/editor-shell/src/intersection-snap.ts','findIntersectionSnaps')
+add(['V3-093','V3-094'], PRE,'packages/editor-shell/src/perpendicular-snap.ts','findPerpendicularSnaps')
+add(['V3-095'], PRE,'packages/editor-shell/src/extension-snap.ts','findExtensionSnaps')
+add(['V3-096'], PRE,'packages/editor-shell/src/grid-snap.ts','findGridSnap')
+add(['V3-099'], PRE,'packages/editor-shell/src/numeric-overlay.ts','NumericOverlayState')
 add(['V3-100'], NEW,'packages/bim-core/src/parse-typed-length.ts','parseTypedLength')
 add(['V3-101'], NEW,'packages/input-system/src/input-ownership.ts','routeKeySample')
 add(['V3-102'], NEW,'packages/operations/src/wall-workflow-commit.ts','abandonWallWorkflow')
@@ -125,15 +137,15 @@ add(['V3-134'], NEW,'packages/pdf-export/src/pdf-export-protocol.ts','createPdfE
 add(['V3-135'], NEW,'packages/pdf-export/src/verify-exported-pdf.ts','verifyExportedPdf')
 
 # P10 workspace and accessibility.
-add(['V3-136'], PRE,'packages/design-system/src/shell/top-bar-state.ts','')
+add(['V3-136'], PRE,'packages/design-system/src/shell/top-bar-state.ts','describeSaveState')
 add(['V3-137'], PRE,'packages/design-system/src/shell/model-panel-state.ts','filterModelPanelTree')
-add(['V3-138'], PRE,'packages/design-system/src/shell/inspector-groups.ts','')
-add(['V3-139'], PRE,'packages/mcp-server/src/review/review-centre.ts','')
+add(['V3-138'], PRE,'packages/design-system/src/shell/inspector-groups.ts','INSPECTOR_GROUP_IDS')
+add(['V3-139'], PRE,'packages/mcp-server/src/review/review-centre.ts','ASSISTANT_TABS')
 add(['V3-140'], NEW,'packages/design-system/src/shell/diagnostics-panel-state.ts','buildDiagnosticsPanel')
-add(['V3-141'], PRE,'packages/design-system/src/workspace/workspace-shell.css','')
-add(['V3-142'], PRE,'packages/design-system/src/shell/ipad-landscape-shell.tsx','')
-add(['V3-143'], PRE,'packages/design-system/src/shell/ipad-portrait-shell.tsx','')
-add(['V3-144'], PRE,'packages/design-system/src/workspace/phone-dock.tsx','')
+add(['V3-141'], PRE,'packages/design-system/src/workspace/workspace-shell.css','.arq-workspace')
+add(['V3-142'], PRE,'packages/design-system/src/shell/ipad-landscape-shell.tsx','IPadLandscapeShell')
+add(['V3-143'], PRE,'packages/design-system/src/shell/ipad-portrait-shell.tsx','IPadPortraitShell')
+add(['V3-144'], PRE,'packages/design-system/src/workspace/phone-dock.tsx','PhoneDock')
 add(['V3-145'], NEW,'packages/input-system/src/pencil-ownership.ts','createPencilOwnershipTracker')
 add(['V3-146'], NEW,'packages/design-system/src/interaction-foundation/interaction/disabled-reason.ts','describeDisabledState')
 add(['V3-147'], NEW,'packages/design-system/src/interaction-foundation/feedback/live-region-queue.ts','createLiveRegionQueue')
@@ -196,11 +208,17 @@ for r in rows:
     if not os.path.exists(full):
         problems.append(f'{tid}: {path} does not exist')
         continue
-    if symbol:
-        text=open(full, encoding='utf-8', errors='replace').read()
-        if symbol not in text:
-            problems.append(f'{tid}: {path} does not contain "{symbol}"')
-            continue
+    # A symbol is required, not optional. While it was optional, a row could pass
+    # on nothing but "this path exists" - which is how four P2 rows came to name
+    # workers/import-export-worker for tasks that live in the arqfs Worker, and
+    # verified clean. Existence is not evidence; existence of the named thing is.
+    if not symbol:
+        problems.append(f'{tid}: {path} is claimed with no symbol to verify')
+        continue
+    text=open(full, encoding='utf-8', errors='replace').read()
+    if symbol not in text:
+        problems.append(f'{tid}: {path} does not contain "{symbol}"')
+        continue
     out.append((tid, r['phase'], r['task'], disp, path, symbol))
 
 if problems:

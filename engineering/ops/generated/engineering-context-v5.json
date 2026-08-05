@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "e4de1727e0e5a7d9ec7354d0251794ffdf508eb05fe5ace3a613d10d57743284",
+  "source_hash": "5f8d9dee8cf94b5ba47c90ea10dfb985277c6cfc24fcd06fa064afa7fb8f0660",
   "source_records": [
     {
       "scope": "package",
@@ -679,17 +679,22 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.test.ts",
-      "sha256": "ca54ef2ea43f64f45caae39834767d169d87ef40042ac391e2ad51cde410cdd7"
+      "sha256": "bd8be0b829b60a0101ecff9431ed9af4731d4e258f68cbec873aa32780b57abb"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.ts",
-      "sha256": "42e4e212f08c736431b7ae74513f65736a5ad9ccffe1536d6afe7edfd0f510c3"
+      "sha256": "b6d49e7e9b486f66997bf4bd0c9e63d4586d2e4d9b5a50d085b582d8f616af22"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-worker-protocol.test.ts",
+      "sha256": "5e419d0304ff84b3b8ec40968b7f444e320fff47d94b291d3dea11ac8798747f"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-protocol.ts",
-      "sha256": "4d910ee476b4b5ebe51793c1903d0aeefb5cd22f8756784696e3e0674469f054"
+      "sha256": "db06e3bf01affd9287ad9fc0cef31ed18005ffa1e757025d65f4d43b610dd7f7"
     },
     {
       "scope": "repository",
@@ -844,7 +849,7 @@
     {
       "scope": "repository",
       "path": "workers/arqfs-worker/src/arqfs-worker-entry.ts",
-      "sha256": "bdb6f52518451789d794c8d741ce10d2a52cf59aeeceb0c946b1803c208db378"
+      "sha256": "4ab23f7f8e475d7b9362d73389d509c50c245431300db9681617def8054c1985"
     },
     {
       "scope": "repository",
@@ -874,12 +879,17 @@
     {
       "scope": "repository",
       "path": "workers/import-export-worker/src/protocol.ts",
-      "sha256": "d80630e7ab2709524618cc8c5c21b36a869819c9b8a11985e0fdb5bbbe83b3d9"
+      "sha256": "3ebc3d87c9dfdb92a8ba744c1f1db4c179609dc00fa0c0d160cad52981b30946"
+    },
+    {
+      "scope": "repository",
+      "path": "workers/import-export-worker/src/worker-runtime.test.ts",
+      "sha256": "648beab1c5326cb57deb079a39676327f3fedb837111ada073abfd46bc8f8692"
     },
     {
       "scope": "repository",
       "path": "workers/import-export-worker/src/worker-runtime.ts",
-      "sha256": "e04e00518826b808212213833973d7ef9cdfb78d31152efff69b43c14d421bb7"
+      "sha256": "5f42bd9a9410754f8a6bb0493ba9459009a9d2bcf979cd8bbd432008b40f6b6e"
     }
   ]
 }

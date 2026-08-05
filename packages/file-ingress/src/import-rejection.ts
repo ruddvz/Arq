@@ -32,6 +32,8 @@ export const IMPORT_REJECTION_CODES = {
   adapterUnavailable: 'ARQ_IMPORT_ADAPTER_UNAVAILABLE',
   adapterRouteMismatch: 'ARQ_IMPORT_ADAPTER_ROUTE_MISMATCH',
   nativeFileMisrouted: 'ARQ_IMPORT_NATIVE_FILE_MISROUTED',
+  /** The request was not a shape the worker protocol defines, so nothing was attempted. */
+  malformedRequest: 'ARQ_IMPORT_MALFORMED_REQUEST',
 } as const;
 
 export type ImportRejectionCode =

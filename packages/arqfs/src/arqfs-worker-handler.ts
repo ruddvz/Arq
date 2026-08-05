@@ -142,7 +142,10 @@ function readRefusal(
  * `ArqfsDriver` interface (e.g. the better-sqlite3 driver already used by
  * arqfs-schema.test.ts) without needing a real browser Worker or sqlite-wasm at all.
  * Never throws - every branch is caught and reported as an `ok: false` response, so a
- * single bad request cannot crash the worker's message loop.
+ * single bad request cannot crash the worker's message loop. That includes a request
+ * whose `type` is outside the union: see the `default` case, which is reachable
+ * precisely because `request` crosses a Worker boundary and its static type is a
+ * claim about the caller rather than a fact about the value.
  */
 export function handleArqfsWorkerRequest(
   context: ArqfsWorkerContext,
@@ -237,6 +240,18 @@ export function handleArqfsWorkerRequest(
         context.session.openResult = null;
         return { id: request.id, ok: true, payload: { kind: 'close' } };
       }
+      default:
+        // V3-021. TypeScript reads the cases above as exhaustive, so without
+        // this the function fell off the end and returned `undefined` for any
+        // `type` outside the union - and the Worker posted that, leaving the
+        // caller to wait out its whole timeout. The union is only exhaustive
+        // over what a well-behaved caller sends; `request` arrives from another
+        // execution context. A refusal is an answer, not a hang.
+        return refuse(
+          (request as { readonly id: number }).id,
+          ARQFS_WORKER_ERROR_CODES.malformedRequest,
+          `Unrecognised request type: ${String((request as { readonly type?: unknown }).type)}. Nothing was attempted.`,
+        );
     }
   } catch (error) {
     return refuse(

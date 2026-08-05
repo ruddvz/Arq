@@ -30,7 +30,8 @@ import sqlite3InitModule from '@sqlite.org/sqlite-wasm';
 // `@arq/arqfs/src/arqfs-preflight` for the same reason.
 import {
   ARQFS_WORKER_ERROR_CODES,
-  type ArqfsWorkerRequest,
+  correlationIdOf,
+  parseArqfsWorkerRequest,
 } from '@arq/arqfs/src/arqfs-worker-protocol';
 import {
   createArqfsWorkerSession,
@@ -96,16 +97,36 @@ async function openContext(): Promise<ArqfsWorkerContext> {
 
 const contextPromise = openContext();
 
-self.onmessage = async (event: MessageEvent<ArqfsWorkerRequest>) => {
+self.onmessage = async (event: MessageEvent<unknown>) => {
+  // V3-021. `event.data` is whatever the other context posted, so it is parsed
+  // rather than annotated. The old signature said `MessageEvent<ArqfsWorkerRequest>`,
+  // which made the value look checked without anything having checked it.
+  const request = parseArqfsWorkerRequest(event.data);
+  if (request === null) {
+    const id = correlationIdOf(event.data);
+    // With no usable id there is nothing to correlate a refusal against, and
+    // posting one under an invented id would resolve some other request. Staying
+    // silent leaves only this caller to time out, which is the smaller harm.
+    if (id !== null) {
+      self.postMessage({
+        id,
+        ok: false,
+        code: ARQFS_WORKER_ERROR_CODES.malformedRequest,
+        error:
+          'This request is not a shape the arqfs Worker protocol defines. Nothing was attempted.',
+      });
+    }
+    return;
+  }
   try {
     const context = await contextPromise;
-    self.postMessage(handleArqfsWorkerRequest(context, event.data));
+    self.postMessage(handleArqfsWorkerRequest(context, request));
   } catch (error) {
     // contextPromise rejects only for a Worker-construction mistake (missing/invalid
     // project id) that will never resolve on retry - every request gets a clear,
     // immediate error instead of silently hanging until the client's own timeout.
     self.postMessage({
-      id: event.data.id,
+      id: request.id,
       ok: false,
       code: ARQFS_WORKER_ERROR_CODES.unexpected,
       error: error instanceof Error ? error.message : String(error),

@@ -533,4 +533,31 @@ describe('importing a database into the working copy', () => {
       expect(response.error).toContain('cannot import');
     }
   });
+  it('refuses an unrecognised request type instead of returning nothing at all', () => {
+    driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      session: createArqfsWorkerSession(),
+    };
+
+    // V3-021. The switch covers every union member, so TypeScript reads it as
+    // exhaustive - but `request` crosses a Worker boundary, where the union is a
+    // claim about the caller rather than a fact about the value. Without the
+    // `default` this returned `undefined`, the Worker posted that, and the caller
+    // waited out its whole timeout for a request refused the moment it arrived.
+    const response = handleArqfsWorkerRequest(context, {
+      id: 11,
+      type: 'exec',
+      sql: 'DROP TABLE archive_entries',
+    } as never);
+
+    expect(response).toBeDefined();
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.id).toBe(11);
+      expect(response.code).toBe('ARQFS_WORKER_MALFORMED_REQUEST');
+      expect(response.error).toContain('Nothing was attempted');
+    }
+  });
 });

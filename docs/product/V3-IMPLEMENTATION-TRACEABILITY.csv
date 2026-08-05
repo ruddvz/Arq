@@ -10,38 +10,38 @@ V3-008,P0,Verify repository visibility and licence state,owner-authority,,
 V3-009,P0,Verify canonical Vercel project and surplus projects,owner-authority,,
 V3-010,P0,Record delivery stop and prohibited mutations,owner-authority,,
 V3-011,P1,Extend the existing lifecycle reducer only,pre-existing,apps/web/src/file-handling/file-state-machine.ts,lastKnownGoodProject
-V3-012,P1,Add no-false-open invariant,pre-existing,apps/web/src/file-handling/file-state-machine.ts,lastKnownGoodProject
+V3-012,P1,Add no-false-open invariant,implemented-in-this-change,apps/web/src/file-handling/file-state-machine.ts,LastKnownGoodProject
 V3-013,P1,Carry capability and last-known-good through all states,pre-existing,apps/web/src/file-handling/file-state-machine.ts,lastKnownGoodProject
 V3-014,P1,Add cancellation safe points,pre-existing,apps/web/src/file-handling/file-state-machine.ts,lastKnownGoodProject
-V3-015,P1,Add project replacement policy,pre-existing,apps/web/src/file-handling/file-state-machine.ts,lastKnownGoodProject
+V3-015,P1,Add project replacement policy,implemented-in-this-change,apps/web/src/file-handling/file-state-machine.ts,LastKnownGoodProject
 V3-016,P1,Bind every state to Z Voice message IDs,pre-existing,docs/product/voice/state-language-map.json,file-flow
 V3-017,P1,Add state coverage generator check,pre-existing,scripts/verify-arq-state-language-coverage.mjs,verifyMachine
-V3-018,P1,Add property-based transition tests,pre-existing,apps/web/src/file-handling/file-state-machine.test.ts,describe
-V3-019,P1,Add stale async event rejection,pre-existing,apps/web/src/file-handling/file-state-machine.ts,lastKnownGoodProject
+V3-018,P1,Add property-based transition tests,implemented-in-this-change,apps/web/src/file-handling/file-state-machine.test.ts,every state and event pair
+V3-019,P1,Add stale async event rejection,implemented-in-this-change,apps/web/src/file-handling/file-state-machine.ts,requestId
 V3-020,P1,Add close and teardown states,pre-existing,apps/web/src/file-handling/file-state-machine.ts,lastKnownGoodProject
-V3-021,P2,Make Worker request input distributive and fully typed,pre-existing,workers/import-export-worker/src/protocol.ts,ImportWorkerRequest
-V3-022,P2,Gate all archive reads on accepted open state,pre-existing,workers/import-export-worker/src/worker-runtime.ts,
-V3-023,P2,Gate all writes on writable ownership,pre-existing,workers/import-export-worker/src/worker-runtime.ts,
-V3-024,P2,Apply SQLite hardening before untrusted schema queries,pre-existing,packages/arqfs/src/arqfs-safe-mode.ts,
-V3-025,P2,Refuse missing WAL sidecar dependencies,pre-existing,packages/arqfs/src/arqfs-safe-mode.ts,
+V3-021,P2,Make Worker request input distributive and fully typed,implemented-in-this-change,packages/arqfs/src/arqfs-worker-protocol.ts,parseArqfsWorkerRequest
+V3-022,P2,Gate all archive reads on accepted open state,pre-existing,packages/arqfs/src/arqfs-worker-handler.ts,readRefusal
+V3-023,P2,Gate all writes on writable ownership,pre-existing,packages/arqfs/src/arqfs-worker-handler.ts,writeRefusal
+V3-024,P2,Apply SQLite hardening before untrusted schema queries,pre-existing,packages/arqfs/src/arqfs-safe-mode.ts,resolveArqfsSafeModePlan
+V3-025,P2,Refuse missing WAL sidecar dependencies,pre-existing,packages/arqfs/src/arqfs-safe-mode.ts,resolveArqfsSafeModePlan
 V3-026,P2,Add source completeness policy,pre-existing,packages/file-ingress/src/policy.ts,maxSourceBytes
 V3-027,P2,Add source size and page-count bounds,pre-existing,packages/file-ingress/src/policy.ts,maxSourceBytes
-V3-028,P2,Add Worker import database request,pre-existing,workers/import-export-worker/src/protocol.ts,ImportWorkerRequest
-V3-029,P2,Release Worker on every rejection path,pre-existing,workers/import-export-worker/src/worker-runtime.ts,
-V3-030,P2,Key writer locks per project,pre-existing,workers/import-export-worker/src/worker-runtime.ts,
-V3-031,P2,Preserve rejection reason through protocol,pre-existing,workers/import-export-worker/src/protocol.ts,ImportWorkerRequest
-V3-032,P2,"Add protocol request ID, project ID and revision",pre-existing,workers/import-export-worker/src/protocol.ts,ImportWorkerRequest
-V3-033,P3,Preserve selected source digest and provenance,pre-existing,packages/file-ingress/src/orchestrator.ts,
-V3-034,P3,Stage source bytes into ARQ-owned OPFS working project,pre-existing,packages/file-ingress/src/orchestrator.ts,
-V3-035,P3,Verify staged byte identity before open,pre-existing,packages/file-ingress/src/orchestrator.ts,
+V3-028,P2,Add Worker import database request,pre-existing,packages/arqfs/src/arqfs-worker-protocol.ts,importDatabase
+V3-029,P2,Release Worker on every rejection path,implemented-in-this-change,workers/import-export-worker/src/handler.ts,cancelledRequestIds
+V3-030,P2,Key writer locks per project,pre-existing,packages/arqfs/src/arqfs-single-writer-lock.ts,writerLockNameForProject
+V3-031,P2,Preserve rejection reason through protocol,implemented-in-this-change,packages/file-ingress/src/import-rejection.ts,IMPORT_REJECTION_CODES
+V3-032,P2,"Add protocol request ID, project ID and revision",implemented-differently,workers/arqfs-worker/src/arqfs-project-filename.ts,readProjectIdFromWorkerSearch
+V3-033,P3,Preserve selected source digest and provenance,pre-existing,packages/file-ingress/src/orchestrator.ts,PrepareImportResult
+V3-034,P3,Stage source bytes into ARQ-owned OPFS working project,pre-existing,packages/file-ingress/src/orchestrator.ts,PrepareImportResult
+V3-035,P3,Verify staged byte identity before open,pre-existing,packages/file-ingress/src/orchestrator.ts,PrepareImportResult
 V3-036,P3,Open through sqlite-wasm Worker,pre-existing,packages/arqfs/src/arqfs-entry-digests.ts,classifyEntryPath
 V3-037,P3,Validate application ID and compatibility floors,pre-existing,packages/arqfs/src/arqfs-entry-digests.ts,classifyEntryPath
 V3-038,P3,Validate required entries and digests,pre-existing,packages/arqfs/src/arqfs-entry-digests.ts,classifyEntryPath
-V3-039,P3,Verify semantic hash,pre-existing,packages/arqfs/src/arqfs-semantic-hash.ts,
-V3-040,P3,Hydrate through one project-loading package,pre-existing,packages/project-loading/src/stages.ts,
-V3-041,P3,Validate hostile semantic inputs,pre-existing,packages/project-loading/src/stages.ts,
-V3-042,P3,Adopt candidate atomically,pre-existing,packages/project-loading/src/stages.ts,
-V3-043,P3,Preserve previous active project until adoption,pre-existing,packages/project-loading/src/stages.ts,
+V3-039,P3,Verify semantic hash,pre-existing,packages/arqfs/src/arqfs-semantic-hash.ts,SEMANTIC_HASH_SCHEME
+V3-040,P3,Hydrate through one project-loading package,pre-existing,packages/project-loading/src/stages.ts,OPEN_STAGES
+V3-041,P3,Validate hostile semantic inputs,pre-existing,packages/project-loading/src/stages.ts,OPEN_STAGES
+V3-042,P3,Adopt candidate atomically,pre-existing,packages/project-loading/src/stages.ts,OPEN_STAGES
+V3-043,P3,Preserve previous active project until adoption,pre-existing,packages/project-loading/src/stages.ts,OPEN_STAGES
 V3-044,P3,Support read-only newer-writer projects,pre-existing,apps/web/src/file-handling/file-state-machine.ts,readOnlyReason
 V3-045,P3,Dispose temporary resources after cancel or failure,implemented-in-this-change,packages/model-renderer/src/gpu-resource-registry.ts,closeOwner
 V3-046,P4,Define canonical operation envelope,implemented-in-this-change,packages/operations/src/operation-pipeline.ts,commitOperation
@@ -73,31 +73,31 @@ V3-071,P5,"Compare project ID, revision and semantic hash",implemented-in-this-c
 V3-072,P5,Record publication receipt,implemented-in-this-change,packages/arqfs/src/arqfs-publication.ts,publishProjectFile
 V3-073,P5,Keep last known good after publish failure,implemented-in-this-change,packages/arqfs/src/arqfs-publication.ts,publishProjectFile
 V3-074,P5,Test interruption at every publication stage,implemented-in-this-change,packages/arqfs/src/arqfs-publication.ts,publishProjectFile
-V3-075,P6,Complete Project and Level contracts,pre-existing,packages/bim-core/src/level.ts,
-V3-076,P6,Complete WallType and WallInstance contracts,pre-existing,packages/bim-core/src/wall-type.ts,
-V3-077,P6,Complete hosted Opening contract,pre-existing,packages/bim-core/src/opening.ts,
-V3-078,P6,Complete DoorType and DoorInstance contracts,pre-existing,packages/bim-core/src/door-type.ts,
-V3-079,P6,Complete WindowType and WindowInstance contracts,pre-existing,packages/bim-core/src/window-type.ts,
+V3-075,P6,Complete Project and Level contracts,pre-existing,packages/bim-core/src/level.ts,createLevel
+V3-076,P6,Complete WallType and WallInstance contracts,pre-existing,packages/bim-core/src/wall-type.ts,WallType
+V3-077,P6,Complete hosted Opening contract,pre-existing,packages/bim-core/src/opening.ts,CreateOpeningInput
+V3-078,P6,Complete DoorType and DoorInstance contracts,pre-existing,packages/bim-core/src/door-type.ts,CreateDoorTypeInput
+V3-079,P6,Complete WindowType and WindowInstance contracts,pre-existing,packages/bim-core/src/window-type.ts,CreateWindowTypeInput
 V3-080,P6,Complete Room identity and review states,pre-existing,packages/bim-core/src/room.ts,RoomStatus
 V3-081,P6,Add SlabType and SlabInstance,implemented-in-this-change,packages/bim-core/src/slab.ts,SlabDatumFace
 V3-082,P6,Add bounded StairType and StairInstance,implemented-in-this-change,packages/bim-core/src/stair.ts,validateStairFlight
-V3-083,P6,Complete Dimension stable references,pre-existing,packages/bim-core/src/dimension-reference.ts,
-V3-084,P6,Complete TextNote,pre-existing,packages/bim-core/src/text-note.ts,
+V3-083,P6,Complete Dimension stable references,pre-existing,packages/bim-core/src/dimension-reference.ts,DimensionReference
+V3-084,P6,Complete TextNote,pre-existing,packages/bim-core/src/text-note.ts,CreateTextNoteInput
 V3-085,P6,Complete ViewDefinition,implemented-in-this-change,packages/bim-core/src/view-definition.ts,createViewDefinition
 V3-086,P6,Complete Sheet and Viewport,pre-existing,packages/bim-core/src/sheet.ts,createSheet
 V3-087,P6,Add ScheduleDefinition,implemented-in-this-change,packages/bim-core/src/schedule.ts,createSchedule
 V3-088,P6,Add MaterialDefinition,implemented-in-this-change,packages/bim-core/src/material.ts,createMaterial
-V3-089,P6,Add relationship validation and deletion policy,implemented-in-this-change,packages/bim-core/src/deletion-policy.ts,
+V3-089,P6,Add relationship validation and deletion policy,implemented-in-this-change,packages/bim-core/src/deletion-policy.ts,DeletionDisposition
 V3-090,P7,Implement deterministic inference candidate generation,implemented-in-this-change,packages/editor-shell/src/inference-engine.ts,rankCandidates
 V3-091,P7,Implement candidate ranking,implemented-in-this-change,packages/editor-shell/src/inference-engine.ts,rankCandidates
-V3-092,P7,"Add endpoint, midpoint and intersection",pre-existing,packages/editor-shell/src/intersection-snap.ts,
-V3-093,P7,Add horizontal and vertical inference,pre-existing,packages/editor-shell/src/perpendicular-snap.ts,
-V3-094,P7,Add parallel and perpendicular inference,pre-existing,packages/editor-shell/src/perpendicular-snap.ts,
-V3-095,P7,Add extension inference,pre-existing,packages/editor-shell/src/extension-snap.ts,
-V3-096,P7,Add grid and level inference,pre-existing,packages/editor-shell/src/grid-snap.ts,
+V3-092,P7,"Add endpoint, midpoint and intersection",pre-existing,packages/editor-shell/src/intersection-snap.ts,findIntersectionSnaps
+V3-093,P7,Add horizontal and vertical inference,pre-existing,packages/editor-shell/src/perpendicular-snap.ts,findPerpendicularSnaps
+V3-094,P7,Add parallel and perpendicular inference,pre-existing,packages/editor-shell/src/perpendicular-snap.ts,findPerpendicularSnaps
+V3-095,P7,Add extension inference,pre-existing,packages/editor-shell/src/extension-snap.ts,findExtensionSnaps
+V3-096,P7,Add grid and level inference,pre-existing,packages/editor-shell/src/grid-snap.ts,findGridSnap
 V3-097,P7,Add inference cycling,implemented-in-this-change,packages/editor-shell/src/inference-engine.ts,rankCandidates
 V3-098,P7,Add inference suppression,implemented-in-this-change,packages/editor-shell/src/inference-engine.ts,rankCandidates
-V3-099,P7,Add numeric length and angle entry,pre-existing,packages/editor-shell/src/numeric-overlay.ts,
+V3-099,P7,Add numeric length and angle entry,pre-existing,packages/editor-shell/src/numeric-overlay.ts,NumericOverlayState
 V3-100,P7,Add typed unit parsing,implemented-in-this-change,packages/bim-core/src/parse-typed-length.ts,parseTypedLength
 V3-101,P7,Keep text input ownership isolated,implemented-in-this-change,packages/input-system/src/input-ownership.ts,routeKeySample
 V3-102,P7,Commit wall workflow as one undo group,implemented-in-this-change,packages/operations/src/wall-workflow-commit.ts,abandonWallWorkflow
@@ -134,15 +134,15 @@ V3-132,P9,Implement dimensions and text on sheets,implemented-in-this-change,pac
 V3-133,P9,Implement schedules,implemented-in-this-change,packages/bim-core/src/sheet-schedule.ts,paginateSchedule
 V3-134,P9,Generate PDF off main thread,implemented-in-this-change,packages/pdf-export/src/pdf-export-protocol.ts,createPdfExportSession
 V3-135,P9,Verify PDF in independent readers,implemented-in-this-change,packages/pdf-export/src/verify-exported-pdf.ts,verifyExportedPdf
-V3-136,P10,Implement top bar project and persistence state,pre-existing,packages/design-system/src/shell/top-bar-state.ts,
+V3-136,P10,Implement top bar project and persistence state,pre-existing,packages/design-system/src/shell/top-bar-state.ts,describeSaveState
 V3-137,P10,Implement Project Browser hierarchy,pre-existing,packages/design-system/src/shell/model-panel-state.ts,filterModelPanelTree
-V3-138,P10,Implement Inspector property groups,pre-existing,packages/design-system/src/shell/inspector-groups.ts,
-V3-139,P10,Implement Review Centre,pre-existing,packages/mcp-server/src/review/review-centre.ts,
+V3-138,P10,Implement Inspector property groups,pre-existing,packages/design-system/src/shell/inspector-groups.ts,INSPECTOR_GROUP_IDS
+V3-139,P10,Implement Review Centre,pre-existing,packages/mcp-server/src/review/review-centre.ts,ASSISTANT_TABS
 V3-140,P10,Implement Diagnostics panel,implemented-in-this-change,packages/design-system/src/shell/diagnostics-panel-state.ts,buildDiagnosticsPanel
-V3-141,P10,Implement desktop composition,pre-existing,packages/design-system/src/workspace/workspace-shell.css,
-V3-142,P10,Implement tablet landscape composition,pre-existing,packages/design-system/src/shell/ipad-landscape-shell.tsx,
-V3-143,P10,Implement tablet portrait composition,pre-existing,packages/design-system/src/shell/ipad-portrait-shell.tsx,
-V3-144,P10,Implement phone inspection composition,pre-existing,packages/design-system/src/workspace/phone-dock.tsx,
+V3-141,P10,Implement desktop composition,pre-existing,packages/design-system/src/workspace/workspace-shell.css,.arq-workspace
+V3-142,P10,Implement tablet landscape composition,pre-existing,packages/design-system/src/shell/ipad-landscape-shell.tsx,IPadLandscapeShell
+V3-143,P10,Implement tablet portrait composition,pre-existing,packages/design-system/src/shell/ipad-portrait-shell.tsx,IPadPortraitShell
+V3-144,P10,Implement phone inspection composition,pre-existing,packages/design-system/src/workspace/phone-dock.tsx,PhoneDock
 V3-145,P10,Implement Pencil ownership,implemented-in-this-change,packages/input-system/src/pencil-ownership.ts,createPencilOwnershipTracker
 V3-146,P10,Expose disabled reasons accessibly,implemented-in-this-change,packages/design-system/src/interaction-foundation/interaction/disabled-reason.ts,describeDisabledState
 V3-147,P10,Rate-limit live regions,implemented-in-this-change,packages/design-system/src/interaction-foundation/feedback/live-region-queue.ts,createLiveRegionQueue
