@@ -315,14 +315,22 @@ repository can support for it and the evidence that decided it. It is generated
 from `docs/product/implementation-pack-3.0-register.json` by
 `pnpm build:pack-register`, so the prose cannot drift from the data.
 
-52 verified, 19 implemented, 64 partially verified, 29 proposed, 17 blocked on
-owner action, 24 not inspected. Publication (P5) moved from proposed to
+62 verified, 19 implemented, 71 partially verified, 36 proposed, 17 blocked on
+owner action, 0 not inspected. Publication (P5) moved from proposed to
 verified in this pass, and the Worker protocol's project-id correlation
-(V3-032) moved from proposed to verified. The largest remaining gaps it names
-are the numeric and tolerance foundation with everything that depends on it,
-canvas edits not yet reaching the native session so publish operates on
-whatever was opened rather than live edits, and the release authority that is
-settings rather than code.
+(V3-032) moved from proposed to verified. Every item the pack originally left
+not-inspected has now been read against real code: interoperability fidelity
+terms (V3-157), recursive sensitive-field redaction (V3-179), support bundle
+preview (V3-180), incident evidence preservation (V3-188) and the privacy-safe
+telemetry schema (V3-189) all turned out to be real and tested; relationship
+deletion policy (V3-089), AI Review Centre terms (V3-156), production release
+terms (V3-158), origin rebasing, section box/clipping and level/category
+visibility (V3-126 through V3-128) and long-name/responsive-dialog test
+coverage (V3-150) were confirmed genuinely absent rather than merely unwired.
+The largest remaining gaps it names are the numeric and tolerance foundation
+with everything that depends on it, canvas edits not yet reaching the native
+session so publish operates on whatever was opened rather than live edits, and
+the release authority that is settings rather than code.
 A pack is evidence and a proposed handoff, not repository authority; the
 register is reconciled against this repository rather than against the revision
 the pack observed.

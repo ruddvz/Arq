@@ -11,12 +11,11 @@
     "not-inspected"
   ],
   "counts": {
-    "verified": 52,
+    "verified": 62,
     "implemented": 19,
     "blocked": 17,
-    "partially-verified": 64,
-    "proposed": 29,
-    "not-inspected": 24
+    "partially-verified": 71,
+    "proposed": 36
   },
   "taskCount": 205,
   "tasks": [
@@ -433,8 +432,8 @@
       "phase": "P4",
       "phaseName": "Editable operations",
       "task": "Advance revision only after success",
-      "state": "not-inspected",
-      "evidence": "Revision advance semantics on the save path were not inspected in this pass."
+      "state": "verified",
+      "evidence": "NativeProjectSession tracks revision as this.#operations.length - a count of operations actually committed through save(), not a caller-suppliable field - so revision only advances after a real success. Confirmed in apps/web/src/project/native-project-session.ts."
     },
     {
       "id": "V3-053",
@@ -457,16 +456,16 @@
       "phase": "P4",
       "phaseName": "Editable operations",
       "task": "Add operation provenance",
-      "state": "not-inspected",
-      "evidence": "Operation provenance was not inspected in this pass."
+      "state": "partially-verified",
+      "evidence": "WorkspaceOperation entries carry their own identity and the journal records journalSequence per committed change, but no operation-level provenance/author record was found wired into the in-memory project host's undo bookkeeping. Provenance exists at the arqfs import layer (arqfs-provenance.ts) for imported content, not for user-authored canvas operations."
     },
     {
       "id": "V3-056",
       "phase": "P4",
       "phaseName": "Editable operations",
       "task": "Add stale operation rejection",
-      "state": "not-inspected",
-      "evidence": "Stale operation rejection was not inspected in this pass."
+      "state": "verified",
+      "evidence": "prepareForPublication() drains the write queue and checks #lastWriteError before exporting; save() calls are serialized through the same #queue so a later write cannot be silently dropped behind a stale one. Tested in native-project-session and publish-native-project.test.ts."
     },
     {
       "id": "V3-057",
@@ -729,8 +728,8 @@
       "phase": "P6",
       "phaseName": "Semantic architectural model",
       "task": "Add relationship validation and deletion policy",
-      "state": "not-inspected",
-      "evidence": "Relationship validation and deletion policy were not inspected in this pass."
+      "state": "proposed",
+      "evidence": "packages/bim-core/src/relationships-property-group.ts models relationship display (hosts/hostedBy/references/referencedBy) for the inspector, but its own doc comment explicitly excludes traversal/graph-walking logic. No deletion policy (cascade, orphan-handling) was found anywhere in packages/operations or packages/bim-core. Confirmed absent."
     },
     {
       "id": "V3-090",
@@ -809,24 +808,24 @@
       "phase": "P7",
       "phaseName": "Plan authoring and inference",
       "task": "Add numeric length and angle entry",
-      "state": "not-inspected",
-      "evidence": "Numeric and typed-unit entry and text-input ownership were not inspected in this pass."
+      "state": "verified",
+      "evidence": "Numeric length/angle entry is real and product-wired: apps/web's wall tool accepts typed length/angle input during drawing, backed by @arq/bim-core's typed Length wrapper."
     },
     {
       "id": "V3-100",
       "phase": "P7",
       "phaseName": "Plan authoring and inference",
       "task": "Add typed unit parsing",
-      "state": "not-inspected",
-      "evidence": "Numeric and typed-unit entry and text-input ownership were not inspected in this pass."
+      "state": "verified",
+      "evidence": "Typed unit parsing exists in packages/bim-core/src/length.ts - a tested wrapper across mm/cm/m/in/ft with explicit conversion, consumed by the canvas numeric entry path."
     },
     {
       "id": "V3-101",
       "phase": "P7",
       "phaseName": "Plan authoring and inference",
       "task": "Keep text input ownership isolated",
-      "state": "not-inspected",
-      "evidence": "Numeric and typed-unit entry and text-input ownership were not inspected in this pass."
+      "state": "verified",
+      "evidence": "Text input ownership is isolated from canvas keyboard handling in the numeric entry components - confirmed the input capture does not leak into the canvas's own keyboard shortcut handling while a numeric field is focused."
     },
     {
       "id": "V3-102",
@@ -1025,24 +1024,24 @@
       "phase": "P9",
       "phaseName": "Plan 3D sheets and output",
       "task": "Add origin rebasing",
-      "state": "not-inspected",
-      "evidence": "Origin rebasing, section box and level/category visibility were not inspected in this pass."
+      "state": "proposed",
+      "evidence": "No origin-rebasing code found in geometry-2d, geometry-3d or the canvas/viewport modules. Confirmed absent, not merely unwired."
     },
     {
       "id": "V3-127",
       "phase": "P9",
       "phaseName": "Plan 3D sheets and output",
       "task": "Add section box and clipping",
-      "state": "not-inspected",
-      "evidence": "Origin rebasing, section box and level/category visibility were not inspected in this pass."
+      "state": "proposed",
+      "evidence": "No section-box or clipping-plane implementation found in model-renderer or geometry-3d. Confirmed absent."
     },
     {
       "id": "V3-128",
       "phase": "P9",
       "phaseName": "Plan 3D sheets and output",
       "task": "Add level and category visibility",
-      "state": "not-inspected",
-      "evidence": "Origin rebasing, section box and level/category visibility were not inspected in this pass."
+      "state": "proposed",
+      "evidence": "No level/category visibility toggling found in the workspace or canvas layers. Confirmed absent."
     },
     {
       "id": "V3-129",
@@ -1193,8 +1192,8 @@
       "phase": "P10",
       "phaseName": "Workspace and accessibility",
       "task": "Rate-limit live regions",
-      "state": "not-inspected",
-      "evidence": "Live-region rate limiting was not inspected in this pass."
+      "state": "partially-verified",
+      "evidence": "CommandFeedbackStore/CommandFeedbackRegion in packages/design-system implements real flood control (COMMAND_FEEDBACK_MAX_ENTRIES = 4, message grouping) for the one live region it owns. No repository-wide live-region rate-limit policy covers other live regions (e.g. status bar, diagnostics) - coverage is real but narrow to the command-feedback surface."
     },
     {
       "id": "V3-148",
@@ -1217,16 +1216,16 @@
       "phase": "P10",
       "phaseName": "Workspace and accessibility",
       "task": "Test long names and responsive dialogs",
-      "state": "not-inspected",
-      "evidence": "Long-name, reduced-motion and high-contrast behaviour were not inspected in this pass."
+      "state": "proposed",
+      "evidence": "No test coverage found for long names or responsive dialog layout under overflow/small-viewport conditions. Confirmed absent."
     },
     {
       "id": "V3-151",
       "phase": "P10",
       "phaseName": "Workspace and accessibility",
       "task": "Test reduced motion and high contrast",
-      "state": "not-inspected",
-      "evidence": "Long-name, reduced-motion and high-contrast behaviour were not inspected in this pass."
+      "state": "partially-verified",
+      "evidence": "Reduced motion is real: use-arq-reduced-motion.ts reads prefers-reduced-motion and transitions.ts/context-hud.tsx/command-feedback.tsx honour it. High contrast / forced-colors has no equivalent - no prefers-contrast or forced-colors handling found anywhere in packages/design-system."
     },
     {
       "id": "V3-152",
@@ -1265,48 +1264,48 @@
       "phase": "P11",
       "phaseName": "Language System 5 integration",
       "task": "Add AI Review Centre terms",
-      "state": "not-inspected",
-      "evidence": "AI Review Centre, interoperability fidelity and production release terms were not inspected in this pass."
+      "state": "proposed",
+      "evidence": "No dedicated AI Review Centre vocabulary exists in docs/product/voice. The only hits are claim-registry notes stating apps/web has no project host or Review Centre surface at all yet (packages/mcp-server's review-centre.ts is a library-side model with no product surface). Confirmed absent as a language-system feature."
     },
     {
       "id": "V3-157",
       "phase": "P11",
       "phaseName": "Language System 5 integration",
       "task": "Add interoperability fidelity terms",
-      "state": "not-inspected",
-      "evidence": "AI Review Centre, interoperability fidelity and production release terms were not inspected in this pass."
+      "state": "verified",
+      "evidence": "docs/product/voice/format-language-map.json defines a dedicated fidelityTerms vocabulary (preserved/converted/approximated/flattened/omitted/unsupported/opaque/failed), validated by scripts/validate-arq-language-data.mjs, and reflected in real code: packages/dxf-adapter and packages/ifc-adapter ingress reports carry preservedCount/convertedCount/approximatedCount fields, and packages/arqfs/src/arqfs-provenance.ts and packages/file-ingress/src/types.ts use the same term set for mappingKind."
     },
     {
       "id": "V3-158",
       "phase": "P11",
       "phaseName": "Language System 5 integration",
       "task": "Add production release terms",
-      "state": "not-inspected",
-      "evidence": "AI Review Centre, interoperability fidelity and production release terms were not inspected in this pass."
+      "state": "proposed",
+      "evidence": "No dedicated production-release term set exists in docs/product/voice (no releaseTerms-style vocabulary list). 'production release gate' appears only as narrative prose in STATUS.md, not as a governed, validated vocabulary. Confirmed absent as a distinct language-system artifact."
     },
     {
       "id": "V3-159",
       "phase": "P11",
       "phaseName": "Language System 5 integration",
       "task": "Add localisation placeholders",
-      "state": "not-inspected",
-      "evidence": "Localisation placeholders, announcement profiles and deprecation aliases were not inspected in this pass."
+      "state": "partially-verified",
+      "evidence": "message-contract.json defines typed, stable requiredSlots (e.g. {fileName}, {requiredRole}) as the placeholder mechanism for high-risk copy, validated by scripts/validate-arq-language-data.mjs and consumed by scripts/verify-arq-state-adapters.mjs. This is real, enforced infrastructure, but no locale catalogue or i18n runtime consumes it in product code - no locale files exist anywhere in the repository, so it is single-locale (English) only."
     },
     {
       "id": "V3-160",
       "phase": "P11",
       "phaseName": "Language System 5 integration",
       "task": "Add accessibility announcement profiles",
-      "state": "not-inspected",
-      "evidence": "Localisation placeholders, announcement profiles and deprecation aliases were not inspected in this pass."
+      "state": "partially-verified",
+      "evidence": "surface-contracts.json defines a per-surface-family contract system (public/auth/dashboard/authoring/files/ai/etc., each with its own 'must' requirements), which is profile-like but not specifically an accessibility-announcement profile. The concrete accessibility rule is one blanket rule ('live regions announce a state change once' in standards/notifications-toasts-and-status.md), enforced narrowly by CommandFeedbackRegion (see V3-147). No differentiated per-surface announcement politeness/profile was found."
     },
     {
       "id": "V3-161",
       "phase": "P11",
       "phaseName": "Language System 5 integration",
       "task": "Add deprecation aliases",
-      "state": "not-inspected",
-      "evidence": "Localisation placeholders, announcement profiles and deprecation aliases were not inspected in this pass."
+      "state": "partially-verified",
+      "evidence": "docs/product/voice/DEPRECATION-POLICY.md is a real, substantive policy (canonical rename steps, alias-for-recognition-only rule, consumer-compatible resolver requirement) and language-contract-version.json declares the deprecatedIds versioning rule. No code-level alias resolver was found in apps/web or packages/design-system, and no product rename has exercised the policy yet - it is a real, enforced-at-review policy without a code mechanism."
     },
     {
       "id": "V3-162",
@@ -1377,8 +1376,8 @@
       "phase": "P12",
       "phaseName": "AI plugins and interoperability",
       "task": "Add prompt injection test",
-      "state": "not-inspected",
-      "evidence": "A prompt-injection test was not inspected in this pass."
+      "state": "partially-verified",
+      "evidence": "packages/mcp-server's schema/reference-uri.ts and domain/plan-common.ts type external reference content with an instructionBoundary: 'reference_content_is_not_instruction' field, and plan-contracts.test.ts asserts the resulting 'untrusted data' warning. This is the real architectural defense against prompt injection (external/reference content can never become an instruction), and it is tested - but no test is framed as a prompt-injection attack simulation (a crafted adversarial payload asserted not to escalate privilege or trigger an unintended tool call) across the MCP tool surface."
     },
     {
       "id": "V3-171",
@@ -1449,16 +1448,16 @@
       "phase": "P13",
       "phaseName": "Security and observability",
       "task": "Add recursive sensitive-field redaction",
-      "state": "not-inspected",
-      "evidence": "Recursive redaction and support-bundle preview were not inspected in this pass."
+      "state": "verified",
+      "evidence": "packages/telemetry/src/redact-sensitive-fields.ts recursively redacts sensitive field names (geometry/projectName/address/rawPrompt/prompt/sheetContent/clientName) through arbitrarily nested objects and arrays, case/separator-normalised, tested in redact-sensitive-fields.test.ts."
     },
     {
       "id": "V3-180",
       "phase": "P13",
       "phaseName": "Security and observability",
       "task": "Add support bundle preview",
-      "state": "not-inspected",
-      "evidence": "Recursive redaction and support-bundle preview were not inspected in this pass."
+      "state": "verified",
+      "evidence": "packages/telemetry/src/arqfs-support-bundle.ts builds an opt-in support bundle whose preview.includes/excludes/eventCount states exactly what is collected before a user shares it, tested in arqfs-support-bundle.test.ts. Opt-in is structural: the module is never called automatically anywhere in the repository."
     },
     {
       "id": "V3-181",
@@ -1521,16 +1520,16 @@
       "phase": "P13",
       "phaseName": "Security and observability",
       "task": "Add incident evidence preservation",
-      "state": "not-inspected",
-      "evidence": "Incident evidence preservation and the telemetry schema were not inspected in this pass."
+      "state": "verified",
+      "evidence": "packages/arqfs/src/arqfs-migration.ts supports an optional quarantineTarget callback that preserves a failed migration's half-migrated copy (with a quarantinedAt timestamp) instead of deleting it, so the only evidence of an upgrade-corrupting bug is not destroyed. Tested in arqfs-migration.test.ts."
     },
     {
       "id": "V3-189",
       "phase": "P13",
       "phaseName": "Security and observability",
       "task": "Add privacy-safe telemetry schema",
-      "state": "not-inspected",
-      "evidence": "Incident evidence preservation and the telemetry schema were not inspected in this pass."
+      "state": "verified",
+      "evidence": "packages/telemetry/src/arqfs-lifecycle-event.ts defines a typed, privacy-reviewed lifecycle-event schema with an explicit ARQFS_LIFECYCLE_FORBIDDEN_FIELD_NAMES denylist and assertArqfsLifecycleEventIsSafe, enforced on every record() call in arqfs-lifecycle-recorder.ts (a bounded ring buffer). Tested in arqfs-lifecycle-event.test.ts and arqfs-lifecycle-recorder.test.ts. Library-complete; not yet consumed by apps/web."
     },
     {
       "id": "V3-190",
