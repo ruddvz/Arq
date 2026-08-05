@@ -8,3 +8,6 @@ export * from './orchestrator';
 export * from './policy';
 export * from './types';
 export * from './underlay-adapter';
+export * from './unit-resolution';
+export * from './quarantine';
+export * from './export-fidelity';
