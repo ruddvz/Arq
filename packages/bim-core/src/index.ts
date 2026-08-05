@@ -25,3 +25,4 @@ export * from './text-note';
 export * from './sheet';
 export * from './canonical-length';
 export * from './tolerance-classes';
+export * from './stable-reference';
