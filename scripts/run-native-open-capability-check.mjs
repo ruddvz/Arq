@@ -153,18 +153,36 @@ function check(condition, message) {
   return condition;
 }
 
-/** Opens the fixture through the real dialog and waits for the real opened state. */
-async function openFixture(page) {
+/**
+ * Opens the fixture through the real dialog and waits for the real opened state.
+ *
+ * The wait reports what it actually saw when it gives up. A bare
+ * "Timeout 120000ms exceeded" says only that a string never appeared, which is
+ * the one thing already known - the dialog's own status line is where the
+ * product explains why, and a check that throws it away makes a real product
+ * failure look like a flaky test.
+ */
+async function openFixture(page, label = 'open') {
   await page.getByRole('button', { name: 'Open', exact: true }).click();
   await page.getByRole('dialog').waitFor({ timeout: 10_000 });
   await page.locator('input[type="file"]').setInputFiles(fixturePath);
-  await page.waitForFunction(
-    () =>
-      document.body.textContent?.includes('Courtyard House Reference is open · revision 191') ===
-      true,
-    undefined,
-    { timeout: 120_000 },
-  );
+  try {
+    await page.waitForFunction(
+      () =>
+        document.body.textContent?.includes('Courtyard House Reference is open · revision 191') ===
+        true,
+      undefined,
+      { timeout: 120_000 },
+    );
+  } catch (error) {
+    const status = await page
+      .getByRole('dialog')
+      .innerText()
+      .catch(() => '(the dialog was gone)');
+    throw new Error(
+      `the ${label} never reached an opened project. The dialog said:\n${status}\n\n${String(error)}`,
+    );
+  }
   // No confirmation step: adoption closes the dialog itself, so the reader is
   // returned to the workspace with the project in it rather than being asked to
   // acknowledge work that has already finished.
@@ -393,7 +411,7 @@ async function run() {
       "authoring did not come back on the workspace's own document after the project was closed",
     );
 
-    await openFixture(page);
+    await openFixture(page, 'reopen after close');
     check(page.workers().length === 1, 'reopening after a close did not produce a working project');
     const reopenedText = await page.locator('body').innerText();
     check(
