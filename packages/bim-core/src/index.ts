@@ -32,3 +32,5 @@ export * from './tolerance-classes';
 export * from './stable-reference';
 export * from './deletion-policy';
 export * from './opening-host-transfer';
+export * from './parse-typed-length';
+export * from './view-definition';
