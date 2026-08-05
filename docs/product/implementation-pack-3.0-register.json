@@ -11,11 +11,11 @@
     "not-inspected"
   ],
   "counts": {
-    "verified": 41,
+    "verified": 51,
     "implemented": 19,
     "blocked": 17,
-    "partially-verified": 59,
-    "proposed": 45,
+    "partially-verified": 61,
+    "proposed": 33,
     "not-inspected": 24
   },
   "taskCount": 205,
@@ -138,7 +138,7 @@
       "phaseName": "Lifecycle and language",
       "task": "Add project replacement policy",
       "state": "implemented",
-      "evidence": "Adoption is the caller’s and happens last, so a rejected candidate leaves the active project untouched."
+      "evidence": "Adoption is the caller\u2019s and happens last, so a rejected candidate leaves the active project untouched."
     },
     {
       "id": "V3-016",
@@ -354,7 +354,7 @@
       "phaseName": "Staging and native open",
       "task": "Adopt candidate atomically",
       "state": "verified",
-      "evidence": "Adoption is the last step and is the caller’s; nothing is replaced until the candidate is fully decoded."
+      "evidence": "Adoption is the last step and is the caller\u2019s; nothing is replaced until the candidate is fully decoded."
     },
     {
       "id": "V3-043",
@@ -521,96 +521,96 @@
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Prepare exact working revision for publication",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "verified",
+      "evidence": "NativeProjectSession.prepareForPublication drains the queue, checks closed/read-only/unsaved-failure, then checkpoints and exports - the exact working revision, tested by publish-native-project.test.ts."
     },
     {
       "id": "V3-064",
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Drain operation queue",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "verified",
+      "evidence": "prepareForPublication is queued as a step in the same #queue chain save() uses, not merely awaiting a snapshot of it; a concurrent save cannot race the export (tested)."
     },
     {
       "id": "V3-065",
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Checkpoint database",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "verified",
+      "evidence": "exportDatabase runs PRAGMA journal_mode=DELETE before reading bytes back. An earlier wal_checkpoint(TRUNCATE)-only implementation was caught by an adversarial test as insufficient (it left the header still declaring WAL) and replaced."
     },
     {
       "id": "V3-066",
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Generate clean portable bytes",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "verified",
+      "evidence": "exportDatabase returns the checkpointed working copy as standalone bytes; round-tripped through an independent driver and through the real open pipeline in tests."
     },
     {
       "id": "V3-067",
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Verify no required WAL or SHM dependency",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "verified",
+      "evidence": "The fresh-reader reopen runs the exported bytes through openNativeProject, which runs the same evaluateArqfsSourceCompleteness gate a user-picked file goes through; a WAL-mode source is adversarially tested to export as sidecar-free."
     },
     {
       "id": "V3-068",
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Run SQLite integrity checks",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "verified",
+      "evidence": "The fresh-reader reopen runs checkIntegrity as part of openNativeProject before decoding, so a damaged publication is caught before it could be called published."
     },
     {
       "id": "V3-069",
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Verify canonical entry digests",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "partially-verified",
+      "evidence": "No per-entry digest check exists. The whole-archive semantic hash comparison (computeSemanticHash, compared between source and fresh reader) is a stronger content-equivalence check than per-entry digests would be, but it is not literally what this item names."
     },
     {
       "id": "V3-070",
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Fresh-reader reopen publication",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "verified",
+      "evidence": "publishNativeProject reopens the exported bytes on a Worker the caller constructs fresh, never the source session's own Worker; tested including the case where the fresh reader cannot reopen at all."
     },
     {
       "id": "V3-071",
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Compare project ID, revision and semantic hash",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "verified",
+      "evidence": "Project id, revision (#operations.length, not the caller-overridable journalSequence) and semantic hash are compared; any disagreement is collected and reported together as ARQ_PUBLISH_VERIFICATION_MISMATCH, tested by substituting a different project's bytes into the fresh reader."
     },
     {
       "id": "V3-072",
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Record publication receipt",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "verified",
+      "evidence": "PublicationReceipt carries projectId, workingCopyId, revision, semanticHash, byteLength and publishedAtIso, asserted in tests."
     },
     {
       "id": "V3-073",
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Keep last known good after publish failure",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "verified",
+      "evidence": "The source session is untouched by a failed publish on every tested path (closed, read-only, unsaved-failure, export interruption, verification mismatch, reopen failure); the workspace never adopts the verification session."
     },
     {
       "id": "V3-074",
       "phase": "P5",
       "phaseName": "Recovery and publication",
       "task": "Test interruption at every publication stage",
-      "state": "proposed",
-      "evidence": "Portable publication is not implemented. Saving writes into the working copy; nothing checkpoints a clean portable file, reopens it with a fresh reader or compares it. This is the largest remaining gap after opening."
+      "state": "partially-verified",
+      "evidence": "Tested: unsaved-failure precheck, export/checkpoint interruption, fresh-reader-open failure, verification mismatch, a concurrent save racing publish. Not tested: interruption at the sub-request level inside a single Worker call, and none of this has been run as a real-browser interruption (no benchmark:publish capability check exists yet)."
     },
     {
       "id": "V3-075",
@@ -1106,7 +1106,7 @@
       "phaseName": "Workspace and accessibility",
       "task": "Implement top bar project and persistence state",
       "state": "implemented",
-      "evidence": "The top bar reports project and persistence state from the journal’s real condition."
+      "evidence": "The top bar reports project and persistence state from the journal\u2019s real condition."
     },
     {
       "id": "V3-137",
@@ -1114,7 +1114,7 @@
       "phaseName": "Workspace and accessibility",
       "task": "Implement Project Browser hierarchy",
       "state": "partially-verified",
-      "evidence": "Browser and Inspector panels exist in packages/workspace; component coverage is 14 of 147 by the repository’s own registry check."
+      "evidence": "Browser and Inspector panels exist in packages/workspace; component coverage is 14 of 147 by the repository\u2019s own registry check."
     },
     {
       "id": "V3-138",
@@ -1122,7 +1122,7 @@
       "phaseName": "Workspace and accessibility",
       "task": "Implement Inspector property groups",
       "state": "partially-verified",
-      "evidence": "Browser and Inspector panels exist in packages/workspace; component coverage is 14 of 147 by the repository’s own registry check."
+      "evidence": "Browser and Inspector panels exist in packages/workspace; component coverage is 14 of 147 by the repository\u2019s own registry check."
     },
     {
       "id": "V3-139",
@@ -1498,7 +1498,7 @@
       "phaseName": "Security and observability",
       "task": "Test secret scanner non-vacuity",
       "state": "verified",
-      "evidence": "pnpm check:secrets:test is the scanner’s non-vacuity proof."
+      "evidence": "pnpm check:secrets:test is the scanner\u2019s non-vacuity proof."
     },
     {
       "id": "V3-186",
@@ -1578,7 +1578,7 @@
       "phaseName": "Release and production",
       "task": "Separate deployment changes from project-data changes",
       "state": "verified",
-      "evidence": "Deployment work stayed out of this branch’s project-data commits; the Vercel build fix arrived separately through the base."
+      "evidence": "Deployment work stayed out of this branch\u2019s project-data commits; the Vercel build fix arrived separately through the base."
     },
     {
       "id": "V3-196",

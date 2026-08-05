@@ -7,7 +7,7 @@
       "repo-facts-2026-07-27",
       "interface-2026-07-27"
     ],
-    "sourceSetDigest": "a9ccefaddc57bf5e925f112dfdaf7383da25dc730f61832f8b0d4a3d1905899e",
+    "sourceSetDigest": "278ea77afb8ef1e28e6ba69e10e506d774935e57aa0a3e5c45f036d350a36b30",
     "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995"
   },
   "snapshotWarning": null,
@@ -7371,7 +7371,7 @@
     "schemaVersion": 4,
     "contractVersion": "4.1.0",
     "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-    "sourceSetDigest": "a9ccefaddc57bf5e925f112dfdaf7383da25dc730f61832f8b0d4a3d1905899e",
+    "sourceSetDigest": "278ea77afb8ef1e28e6ba69e10e506d774935e57aa0a3e5c45f036d350a36b30",
     "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
     "sources": {
       "repository-readme": {
@@ -7784,8 +7784,8 @@
         "id": "web-app",
         "kind": "file",
         "path": "apps/web/src/App.tsx",
-        "sha256": "af28f2dbd80b2f4bf805bc8e5c2df63e12f6bdcab122007ba8023711d1086405",
-        "bytes": 48578
+        "sha256": "bccc8e35023908888b96f4a598f15e10e981a089317481f93a8411acda36ab13",
+        "bytes": 53557
       },
       "plan-canvas": {
         "id": "plan-canvas",

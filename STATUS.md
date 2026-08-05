@@ -98,13 +98,20 @@ but a green gate is a statement about the checks that ran, not about release.
 
 ## Biggest known gaps (in rough priority order)
 
-1. Opening works; saving does not. Choosing a `.arq` file constructs the OPFS
-   Worker, imports the bytes into a working copy, decodes the archive and puts
-   the project in the workspace - proven in a browser by `benchmark:file-open`.
-   Nothing writes back: edits stay in memory, no checkpoint reaches the working
-   copy and no export reaches the chosen file, so the workspace reports the
-   project as open and not saved. Copy-on-write migration stays unreachable
-   until a write path exists, and a project opened read-only says why.
+1. Opening works, and publishing the working copy now works - canvas edits
+   reaching the working copy in the first place does not. Choosing a `.arq`
+   file constructs the OPFS Worker, imports the bytes into a working copy,
+   decodes the archive and puts the project in the workspace - proven in a
+   browser by `benchmark:file-open`. `publishNativeProject` checkpoints that
+   working copy, exports it and verifies it with a fresh reader before calling
+   it published, reachable from the command palette - proven against the real
+   Worker request handler, not yet proven in a real browser the way opening is
+   (no `benchmark:publish` exists yet). What still does not exist: nothing in
+   `apps/web` calls `NativeProjectSession.save` from a canvas edit, so a
+   publish today republishes exactly what was opened, not the user's
+   subsequent edits, and the workspace still reports the project as open and
+   not saved. Copy-on-write migration stays unreachable until edits reach the
+   working copy, and a project opened read-only says why.
 2. No import/export reachable from the UI: the import worker is never
    constructed by `apps/web` (adapters themselves are real - dxf, underlay,
    attachment and now ifc all resolve in the worker's default registry).
@@ -268,6 +275,29 @@ the workspace - the wrong file, opened on purpose. An attempt guard gates every
 state change, and a superseded attempt closes its own session so the working
 copy's write lock is released rather than leaked.
 
+**Publishing now exists.** `publishNativeProject` checkpoints the open
+project's working copy, exports it, and reopens the exported bytes through a
+completely independent Worker before calling anything published - matching
+the pack's own rule that a publication that was not freshly reopened and
+compared was not published. It compares project id, revision and semantic
+hash between the source and the fresh reader; any disagreement is reported
+together and nothing is called published. Reachable from the command palette
+and the phone project menu as "Publish project…", with a real disabled reason
+when there is no project open or it is read-only, and its outcome reported
+through the same command-feedback region every other real command uses.
+
+This is real and tested against the actual Worker request handler - not yet
+proven end to end in a real browser over real OPFS the way opening is
+(`benchmark:file-open`, `benchmark:e2e-arq-open`); that capability check does
+not exist yet and is recorded as open work below. It also inherits a limit
+worth stating plainly: canvas edits do not currently reach the native
+session at all - nothing in `apps/web` calls `NativeProjectSession.save`, so
+publishing today republishes exactly what was opened, not a user's
+subsequent edits. Wiring canvas edits through `save` is separate, tracked
+work (P4 in the register below), and publish is honest about operating on
+whatever the working copy actually holds rather than claiming to capture
+edits it cannot yet see.
+
 ## What the Implementation Pack 3.0 asks for, and what is real
 
 `docs/product/IMPLEMENTATION-PACK-3.0-REGISTER.md` records all 205 tasks the
@@ -276,10 +306,12 @@ repository can support for it and the evidence that decided it. It is generated
 from `docs/product/implementation-pack-3.0-register.json` by
 `pnpm build:pack-register`, so the prose cannot drift from the data.
 
-41 verified, 19 implemented, 59 partially verified, 45 proposed, 17 blocked on
-owner action, 24 not inspected. The largest remaining gaps it names are
-portable publication, the numeric and tolerance foundation with everything that
-depends on it, and the release authority that is settings rather than code.
+51 verified, 19 implemented, 61 partially verified, 33 proposed, 17 blocked on
+owner action, 24 not inspected. Publication (P5) moved from proposed to
+verified in this pass. The largest remaining gaps it names are the numeric and
+tolerance foundation with everything that depends on it, canvas edits not yet
+reaching the native session so publish operates on whatever was opened rather
+than live edits, and the release authority that is settings rather than code.
 A pack is evidence and a proposed handoff, not repository authority; the
 register is reconciled against this repository rather than against the revision
 the pack observed.
