@@ -33,6 +33,18 @@ export type NativeOpenResult =
       readonly session: NativeProjectSession;
       readonly snapshot: NativeProjectSnapshot;
     }
+  /**
+   * The chosen file is the project already open. Not an error and not a second
+   * open: the working copy is content-addressed, so the same bytes name the same
+   * OPFS file, and the session holding it is the one the reader already has.
+   *
+   * Constructing a second Worker for it is what used to happen, and it failed -
+   * the new Worker cannot take a working copy the live one still holds, so
+   * choosing the open project again reported "could not be opened" about a
+   * project sitting on screen. Answering honestly is both correct and cheaper
+   * than tearing down a session to rebuild it identically.
+   */
+  | { readonly status: 'already-open'; readonly workingCopyId: string }
   | { readonly status: 'rejected'; readonly code: string; readonly reason: string };
 
 function rejected(code: string, reason: string): NativeOpenResult {
@@ -77,6 +89,12 @@ export async function openNativeProject(
   createWorker: NativeWorkerFactory,
   displayName: string,
   progress?: NativeOpenProgress,
+  /**
+   * The working copy the caller already holds open, if any. Passed in rather
+   * than discovered here because ownership of the live session belongs to the
+   * workspace, and this function must not reach into it.
+   */
+  activeWorkingCopyId?: string | null,
 ): Promise<NativeOpenResult> {
   // Byte checks first: no Worker, no OPFS, nothing to clean up if these refuse.
   const completeness = evaluateArqfsSourceCompleteness(bytes);
@@ -85,6 +103,12 @@ export async function openNativeProject(
   }
 
   const workingCopyId = await workingCopyIdForBytes(bytes);
+  // Checked before any Worker exists, for the same reason byte preflight is: a
+  // question answerable without constructing anything must not construct
+  // anything, and here constructing would actively fail.
+  if (workingCopyId === activeWorkingCopyId) {
+    return { status: 'already-open', workingCopyId };
+  }
   const handle = createWorker(workingCopyId);
   // Every failure past this point has a Worker to release. A leaked Worker keeps
   // the OPFS write lock on its working copy, which makes the project unopenable

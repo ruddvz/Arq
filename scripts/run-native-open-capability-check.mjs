@@ -29,9 +29,11 @@
  *    allowed and durability is not: the status reports the working copy and
  *    never "Saved locally", because nothing is checkpointed back to the `.arq`
  *    file. The project panel says the same thing in the same words.
- *  - Workers are terminated. `page.workers()` is counted: one while a project is
- *    open, zero after close, one (not three) after three opens without a close.
- *    A Worker per open that is never released holds a whole database resident.
+ *  - Workers are terminated, and not duplicated. `page.workers()` is counted:
+ *    one while a project is open, zero after close, and still one after choosing
+ *    the same project twice more. A Worker per open that is never released holds
+ *    a whole database resident, and a second Worker over one working copy cannot
+ *    open it at all.
  *  - nothing leaves the origin. Every request the page makes is recorded and
  *    checked against the local server, so "the project never leaves the device"
  *    is observed rather than asserted.
@@ -154,6 +156,18 @@ function check(condition, message) {
 }
 
 /**
+ * Chooses the fixture when it is already the open project. The dialog closes
+ * without reporting anything, because there is nothing to report: this is the
+ * project the reader already has.
+ */
+async function chooseFixtureAgain(page) {
+  await page.getByRole('button', { name: 'Open', exact: true }).click();
+  await page.getByRole('dialog').waitFor({ timeout: 10_000 });
+  await page.locator('input[type="file"]').setInputFiles(fixturePath);
+  await page.getByRole('dialog').waitFor({ state: 'detached', timeout: 30_000 });
+}
+
+/**
  * Opens the fixture through the real dialog and waits for the real opened state.
  *
  * The wait reports what it actually saw when it gives up. A bare
@@ -270,7 +284,7 @@ async function run() {
     observed.workingCopyStated = /Working copy\./.test(panelText);
     check(observed.workingCopyStated, 'the project panel did not say where a change would land');
     check(
-      /not written back to the .arq file/i.test(panelText),
+      /Nothing is written back to the \.arq file you chose/i.test(panelText),
       'the panel did not say the chosen file is not written back to',
     );
     check(
@@ -366,14 +380,23 @@ async function run() {
     );
 
     /* ---------------------------------------------------------------- */
-    /* Replace, close, and reopen - without leaking a Worker             */
+    /* Choosing the open project again, close, and reopen                */
     /* ---------------------------------------------------------------- */
-    await openFixture(page);
-    await openFixture(page);
+    // The working copy is content-addressed, so choosing this file again names
+    // the working copy the live session already holds. That must be recognised,
+    // not attempted: a second Worker cannot take it, and trying reported "could
+    // not be opened" about a project sitting on screen.
+    await chooseFixtureAgain(page);
+    await chooseFixtureAgain(page);
     observed.workersAfterThreeOpens = page.workers().length;
     check(
       observed.workersAfterThreeOpens === 1,
-      `three opens left ${observed.workersAfterThreeOpens} Workers running; each replacement must terminate the one before`,
+      `choosing the open project again left ${observed.workersAfterThreeOpens} Workers running; it must reuse the session, not build a second`,
+    );
+    const afterReChoose = await page.locator('body').innerText();
+    check(
+      !/could not be opened/i.test(afterReChoose),
+      'choosing the already-open project was reported as a failure',
     );
 
     await page.getByRole('button', { name: 'Close project' }).click();

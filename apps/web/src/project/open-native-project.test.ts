@@ -129,6 +129,51 @@ describe('openNativeProject', () => {
     expect(fake.terminate).not.toHaveBeenCalled();
   });
 
+  /**
+   * The working copy is content-addressed, so choosing the same file again names
+   * the working copy the live session already holds. A second Worker cannot take
+   * it - so before this was recognised, choosing the open project reported "could
+   * not be opened" about a project sitting on screen.
+   */
+  it('recognises the project already open instead of building a second Worker for it', async () => {
+    const fake = fakeWorker();
+    fake.setEntries(await archiveEntries());
+    const bytes = sqliteBytes();
+
+    const first = await openNativeProject(bytes, fake.factory, 'house.arq');
+    expect(first.status).toBe('opened');
+    if (first.status !== 'opened') return;
+    const held = first.snapshot.workingCopyId;
+
+    const seenBefore = [...fake.seen];
+    const again = await openNativeProject(bytes, fake.factory, 'house.arq', undefined, held);
+
+    expect(again).toEqual({ status: 'already-open', workingCopyId: held });
+    // Recognised before anything is constructed, like every other answer this
+    // function can give without a Worker.
+    expect(fake.seen).toEqual(seenBefore);
+    // And the live session is left alone: it is the one the reader is using.
+    expect(fake.terminate).not.toHaveBeenCalled();
+  });
+
+  it('opens a different project while one is already open', async () => {
+    const fake = fakeWorker();
+    fake.setEntries(await archiveEntries());
+    const held = 'project-0000000000000000000000000000000f';
+
+    const result = await openNativeProject(
+      sqliteBytes(),
+      fake.factory,
+      'house.arq',
+      undefined,
+      held,
+    );
+
+    // A different working copy is a real open. The already-open answer must not
+    // become a way for any second open to be quietly skipped.
+    expect(result.status).toBe('opened');
+  });
+
   it('refuses a non-Arq file before constructing a Worker', async () => {
     const fake = fakeWorker();
 

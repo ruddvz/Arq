@@ -21,6 +21,12 @@ export interface FileOpenPanelProps {
   readonly onProjectOpened?: (opened: NativeOpenSuccess) => void;
   /** Injected so tests and the capability check can drive the flow without a real browser Worker. */
   readonly createWorker?: NativeWorkerFactory;
+  /**
+   * The working copy the workspace currently holds, so choosing the project that
+   * is already open is recognised rather than attempted. The panel does not own
+   * the session and must not read it directly.
+   */
+  readonly activeWorkingCopyId?: string | null;
 }
 
 type NativeOpenSuccess = Extract<NativeOpenResult, { status: 'opened' }>;
@@ -53,7 +59,13 @@ type NativeOpenSuccess = Extract<NativeOpenResult, { status: 'opened' }>;
  * is present.
  */
 export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
-  const { isOpen, onOpenChange, onProjectOpened, createWorker = createBrowserArqfsWorker } = props;
+  const {
+    isOpen,
+    onOpenChange,
+    onProjectOpened,
+    createWorker = createBrowserArqfsWorker,
+    activeWorkingCopyId = null,
+  } = props;
   const [state, setState] = useState<FileFlowState>({ kind: 'idle' });
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -129,21 +141,34 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
     // state anything treats as open - is reached exactly once the project is.
     const emit = (event: FileFlowEvent) => setState((current) => reduceFileFlow(current, event));
     emit({ type: 'stage-start' });
-    const opened = await openNativeProject(bytes, createWorker, file.name, {
-      onStaged: (projectId) => {
-        emit({ type: 'stage-complete', projectId });
-        emit({ type: 'migration-verified' });
+    const opened = await openNativeProject(
+      bytes,
+      createWorker,
+      file.name,
+      {
+        onStaged: (projectId) => {
+          emit({ type: 'stage-complete', projectId });
+          emit({ type: 'migration-verified' });
+        },
+        onWorkerOpened: (writable) =>
+          emit({
+            // A file this build may read but not write is read-only because of the
+            // file's own format version - the only cause a staged open can have,
+            // since the working copy it holds is writable by construction.
+            type: 'worker-opened',
+            readOnlyReason: writable ? null : 'newer-format-version',
+          }),
+        onHydrateStart: () => emit({ type: 'hydrate-start' }),
       },
-      onWorkerOpened: (writable) =>
-        emit({
-          // A file this build may read but not write is read-only because of the
-          // file's own format version - the only cause a staged open can have,
-          // since the working copy it holds is writable by construction.
-          type: 'worker-opened',
-          readOnlyReason: writable ? null : 'newer-format-version',
-        }),
-      onHydrateStart: () => emit({ type: 'hydrate-start' }),
-    });
+      activeWorkingCopyId,
+    );
+    if (opened.status === 'already-open') {
+      // Nothing to do and nothing to say beyond the truth: this project is the
+      // one already open. The dialog closes rather than reporting a failure it
+      // would be inventing.
+      onOpenChange(false);
+      return;
+    }
     if (opened.status === 'rejected') {
       const { code, reason } = opened;
       emit({ type: 'fail', code, message: reason });
