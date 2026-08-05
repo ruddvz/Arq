@@ -19,12 +19,12 @@ Update this file in the same change._
 
 ## What is real today
 
-Re-measured on this branch over revision `7f15889` plus the changes in the
+Re-measured on this branch over revision `1cdf160` plus the changes in the
 commit containing this file: `pnpm typecheck` across all 37 workspace packages
-plus `contracts/`, the repository ESLint gate, `pnpm format:check`, and 2,380
-passing tests across 259 files, all uncached. The same revision defines
+plus `contracts/`, the repository ESLint gate, `pnpm format:check`, and 2,453
+passing tests across 264 files, all uncached. The same revision defines
 workspace-registry, licence/SBOM, secret-scan and Rust gates, and CI wires
-thirteen of the fourteen headless-Chromium capability checks
+fourteen of the fifteen headless-Chromium capability checks
 (`benchmark:arq-core-worker` is defined but not run in CI). The Rust gates and
 the capability checks were not run in that local pass; CI ran both on this
 branch and both passed. These are revision-scoped results, not a claim that
@@ -34,8 +34,13 @@ but a green gate is a statement about the checks that ran, not about release.
 
 - **`.arq` file format** (`packages/arqfs`): schema v1/v2, capability-gated
   open, byte preflight, copy-on-write migration with reopen+integrity
-  verification, recovery reporting, fuzz tests. Library-complete; not yet
-  reachable from the product (no open-project pipeline). Preflight now reports
+  verification, recovery reporting, fuzz tests. It is now reachable from the
+  product: choosing a `.arq` file in `apps/web` runs preflight, copies the bytes
+  into an ARQ-owned dedicated Worker over OPFS and adopts the project into the
+  workspace, verified end to end by `pnpm benchmark:file-open` against a real
+  production build in headless Chromium - a valid project adopts and its name
+  reaches the shell, while truncated, WAL-dependent and foreign-SQLite files are
+  each refused with their own diagnostic. Preflight now reports
   whether the bytes it was handed are the whole database: a write-ahead-log
   project keeps its newest commits in a `-wal` sidecar that a file picker does
   not supply, and SQLite reads such a file without the sidecar as of its last
@@ -259,9 +264,10 @@ unreachable for the same reason.
   project. IndexedDB is bounded to recovery bridging, source provenance,
   last-known-good pointers, resumable publication metadata, device preferences
   and replaceable derived caches during migration. A journal append is not a
-  portable save, and no surface may describe one as the other. Acceptance
-  unblocks the open-project pipeline; it does not implement it, and nothing here
-  claims it exists.
+  portable save, and no surface may describe one as the other. The open-project
+  pipeline that acceptance unblocked is now built on that split and reachable
+  from the product; editing an opened project through it is not, so nothing here
+  claims a round trip.
 - **Repository visibility and licence wording**: still the owner's decision, now
   with the conflict verified rather than reported. The GitHub API returns
   `visibility: public`, `private: false`, `allow_forking: true` and
