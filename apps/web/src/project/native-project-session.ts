@@ -57,6 +57,24 @@ export class NativeProjectReadOnlyError extends Error {
   }
 }
 
+/**
+ * What `prepareForPublication` hands to `publishNativeProject` once the working
+ * copy is genuinely ready to be exported: everything drained, checkpointed and
+ * read back, with nothing left for the caller to coordinate against this
+ * session's private state.
+ */
+export type NativeProjectPublicationPreparation =
+  | {
+      readonly status: 'ready';
+      readonly projectId: string;
+      readonly displayName: string;
+      /** The number of operations this working copy has actually committed - not a caller-suppliable counter, so it cannot drift from what was really applied. */
+      readonly revision: number;
+      readonly sourceSemanticHash: string;
+      readonly bytes: Uint8Array;
+    }
+  | { readonly status: 'rejected'; readonly code: string; readonly reason: string };
+
 export class NativeProjectSession {
   /**
    * The committed state: what the working copy is known to contain. Replaced
@@ -153,6 +171,101 @@ export class NativeProjectSession {
     this.#snapshot = next;
     this.#operations = nextOperations;
     this.#lastWriteError = null;
+  }
+
+  /**
+   * The canonical semantic hash of this project's current committed content. A
+   * plain passthrough - used by `publishNativeProject` on both the source
+   * session and a freshly reopened verification session, since proving the two
+   * mean the same thing takes a comparison neither connection can make alone.
+   *
+   * Not gated on `readOnly`: hashing is a read, and a read-only project's
+   * content is exactly as hashable as a writable one's.
+   */
+  async computeSemanticHash(): Promise<string> {
+    if (this.#closed) {
+      throw new Error('This project has been closed.');
+    }
+    const payload = await this.#handle.client.request({ type: 'computeSemanticHash' });
+    if (payload.kind !== 'computeSemanticHash') {
+      throw new Error(`unexpected computeSemanticHash response: ${payload.kind}`);
+    }
+    return payload.hash;
+  }
+
+  /**
+   * Drains every in-flight write, then checkpoints and exports the working
+   * copy - the state a publication has to be built from, and the only moment
+   * "exact working revision" (ARQ's own phrase for this) is actually true: not
+   * before the queue is empty, and not after some later write has landed.
+   *
+   * Queued through the same `#queue` chain `save` uses, for the same reason
+   * `save` serializes through it: a publish that merely awaited a snapshot of
+   * `#queue` could still race a `save` called moments later, exporting bytes
+   * that were correct when the export request was issued and stale by the time
+   * it actually ran. Becoming a step in the queue instead of a spectator of it
+   * closes that window structurally.
+   */
+  prepareForPublication(): Promise<NativeProjectPublicationPreparation> {
+    if (this.#closed) {
+      return Promise.resolve({
+        status: 'rejected',
+        code: 'ARQ_PUBLISH_CLOSED',
+        reason: 'This project has been closed, so it cannot be published.',
+      });
+    }
+    if (this.#snapshot.readOnly) {
+      return Promise.resolve({
+        status: 'rejected',
+        code: 'ARQ_PUBLISH_READ_ONLY',
+        reason: 'This project is open for reading only, so it cannot be published.',
+      });
+    }
+
+    const run = (): Promise<NativeProjectPublicationPreparation> => this.#prepare();
+    const result = this.#queue.then(run, run);
+    this.#queue = result.then(
+      () => undefined,
+      () => undefined,
+    );
+    return result;
+  }
+
+  async #prepare(): Promise<NativeProjectPublicationPreparation> {
+    // Read after draining, not before: this is the queue's own last write
+    // outcome, not whatever it was when `prepareForPublication` was called.
+    if (this.#lastWriteError !== null) {
+      return {
+        status: 'rejected',
+        code: 'ARQ_PUBLISH_UNSAVED_FAILURE',
+        reason:
+          'The last change to this project failed to reach the working copy, so it was not published.',
+      };
+    }
+    try {
+      const hashPayload = await this.#handle.client.request({ type: 'computeSemanticHash' });
+      if (hashPayload.kind !== 'computeSemanticHash') {
+        throw new Error(`unexpected computeSemanticHash response: ${hashPayload.kind}`);
+      }
+      const exportPayload = await this.#handle.client.request({ type: 'exportDatabase' });
+      if (exportPayload.kind !== 'exportDatabase') {
+        throw new Error(`unexpected exportDatabase response: ${exportPayload.kind}`);
+      }
+      return {
+        status: 'ready',
+        projectId: this.#snapshot.projectId,
+        displayName: this.#snapshot.displayName,
+        revision: this.#operations.length,
+        sourceSemanticHash: hashPayload.hash,
+        bytes: exportPayload.bytes,
+      };
+    } catch (error) {
+      return {
+        status: 'rejected',
+        code: 'ARQ_PUBLISH_EXPORT_FAILED',
+        reason: error instanceof Error ? error.message : 'The working copy could not be exported.',
+      };
+    }
   }
 
   /**
