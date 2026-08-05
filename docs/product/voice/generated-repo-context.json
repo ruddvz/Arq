@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "fb34b0dc9b462bf4526ec93dc55fff43495f2a86a8a926d9b29962128aad8c89",
+  "sourceSetDigest": "5fbc8bd8a25b4260f5cbd4bd435c859ca0b0a7810cc599ae11b5bee379847ee7",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -256,7 +256,7 @@
       "id": "workspace-registries",
       "kind": "directory",
       "path": "packages/workspace/src/registry",
-      "sha256": "61dd360b3d5fd190f0cf5faead674b86c2eaafad10cd866d65f51ede25e17daa",
+      "sha256": "babbb7978c4e2b31ed1bc13f9ea1d4460d8ed232170a6436440d3a13756918bf",
       "files": [
         {
           "rel": "packages/workspace/src/registry/workspace-capability-gates.json",
@@ -305,8 +305,8 @@
         },
         {
           "rel": "packages/workspace/src/registry/workspace-state-machines.json",
-          "sha256": "c6c7330385e8aa5e9ec5e1c8b2946202dafd1e8b6c40f03a073b326635cb6954",
-          "bytes": 1692
+          "sha256": "a7d24b3dfb382b1fbae70533536135d97e3c3bf7ba0034366931e7582ba2713e",
+          "bytes": 2337
         },
         {
           "rel": "packages/workspace/src/registry/workspace-surface-registry.json",
@@ -1522,6 +1522,7 @@
           "ready-to-apply",
           "applying",
           "applied",
+          "reversed",
           "rejected",
           "stale"
         ],
@@ -1534,13 +1535,31 @@
           "partial",
           "succeeded",
           "failed"
+        ],
+        "view-visibility": [
+          "visible",
+          "element-shown",
+          "element-hidden",
+          "not-isolated",
+          "level-not-in-view",
+          "category-hidden"
+        ],
+        "section-box": ["off", "element-inside", "element-straddling", "element-outside"],
+        "import-units": [
+          "resolved-declared",
+          "resolved-user",
+          "unresolved-undeclared",
+          "unresolved-unitless",
+          "unresolved-unrecognised"
         ]
       },
       "invariants": [
         "Local save and remote sync are separate machines.",
         "View/tab close never deletes model data by implication.",
         "Tool preview never becomes canonical until transaction commit.",
-        "Stale asynchronous results never overwrite newer document revision."
+        "Stale asynchronous results never overwrite newer document revision.",
+        "Visibility and section-box states describe one view. They never imply the project contains less.",
+        "An unresolved import unit is a question, not a failure, and never resolves to a default."
       ]
     },
     "capabilities": {

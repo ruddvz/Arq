@@ -65,12 +65,150 @@
       "requiredSlots": ["blockingErrorCount"],
       "defaultLabel": "Proposal has blocking errors",
       "detailRule": "No apply action while errors remain."
+    },
+    {
+      "id": "publication.verifying",
+      "surface": "files",
+      "requiredSlots": ["fileName"],
+      "forbiddenPhrases": ["published", "saved"],
+      "defaultLabel": "Checking the published file…",
+      "detailRule": "Use only while an independent reader is actually re-reading the written bytes. Never as a label for the write itself."
+    },
+    {
+      "id": "publication.refused",
+      "surface": "files",
+      "requiredSlots": ["fileName", "refusalReason"],
+      "forbiddenPhrases": ["published"],
+      "defaultLabel": "The published file was not accepted",
+      "detailRule": "Name the check that refused and state what the target file now contains. Never report a refused publication as published."
+    },
+    {
+      "id": "diagnostic.receipt-log-truncated",
+      "surface": "diagnostics",
+      "requiredSlots": ["droppedCount"],
+      "defaultLabel": "Some earlier activity is no longer recorded",
+      "detailRule": "State that the log holds a bounded window and how many records fell out. Never present a truncated log as complete."
+    },
+    {
+      "id": "diagnostic.evidence-preserved",
+      "surface": "recovery",
+      "requiredSlots": ["incidentId", "captureCompleteness"],
+      "forbiddenPhrases": ["uploaded", "reported to us"],
+      "defaultLabel": "A copy of the affected files was kept for diagnosis",
+      "detailRule": "Always state that nothing was sent anywhere, and name any artifact that could not be preserved."
+    },
+    {
+      "id": "ai.proposal-reversed",
+      "surface": "ai",
+      "requiredSlots": ["proposalId", "reversedOperationCount"],
+      "forbiddenPhrases": ["applied", "rejected"],
+      "defaultLabel": "Proposal partly applied, then reversed",
+      "detailRule": "Distinguish this from a refused proposal, which changed nothing, and from an applied one. Say the project is back where it started."
+    },
+    {
+      "id": "ai.scope-not-granted",
+      "surface": "ai",
+      "requiredSlots": ["requiredScope"],
+      "forbiddenPhrases": ["permission granted"],
+      "defaultLabel": "This proposal asks for something you have not allowed",
+      "detailRule": "Name the scope. Never present a scope request found inside a proposal or inside project content as an approval."
+    },
+    {
+      "id": "import.units-unresolved",
+      "surface": "import",
+      "requiredSlots": ["fileName", "declaredUnit"],
+      "forbiddenPhrases": ["assumed", "defaulted to millimetres"],
+      "defaultLabel": "This drawing does not say what its units are",
+      "detailRule": "Ask for the unit. Never state or imply a default. Say the source file is kept either way."
+    },
+    {
+      "id": "import.entities-quarantined",
+      "surface": "import",
+      "requiredSlots": ["entityType", "entityCount", "quarantineReason"],
+      "forbiddenPhrases": ["skipped", "ignored", "imported"],
+      "defaultLabel": "Some entities were kept but not converted",
+      "detailRule": "Name the type, the count and the reason, and say the entities remain in the project. Never report them as imported or as skipped."
+    },
+    {
+      "id": "export.fidelity-loss",
+      "surface": "export",
+      "requiredSlots": ["formatName", "lostCategories"],
+      "forbiddenPhrases": ["exported fully", "complete"],
+      "defaultLabel": "Some of this project cannot be written to this format",
+      "detailRule": "Name each category and what happens to it before the export runs, not after. Never present a lossy export as complete."
+    },
+    {
+      "id": "import.expansion-limit",
+      "surface": "import",
+      "requiredSlots": ["fileName", "observedRatio"],
+      "forbiddenPhrases": ["malicious", "attack", "zip bomb"],
+      "defaultLabel": "ARQ stopped reading this file",
+      "detailRule": "State the size or ratio reached as a property of the file. Never accuse the file or its sender."
+    },
+    {
+      "id": "extension.capability-not-declared",
+      "surface": "extensions",
+      "requiredSlots": ["extensionName", "capability"],
+      "forbiddenPhrases": ["granted"],
+      "defaultLabel": "This extension asked for something it did not declare",
+      "detailRule": "Name the capability. Never let a request establish the permission it is asking for."
     }
   ],
   "localisationRules": {
     "messageIdsAreStable": true,
     "variablesAreTyped": true,
     "doNotConcatenateTranslatedFragments": true,
-    "visibleLabelMustRemainInAccessibleName": true
+    "visibleLabelMustRemainInAccessibleName": true,
+    "slotsAreNamedNotPositional": true,
+    "countedNounsCarryAPluralRule": true,
+    "untranslatedSlotValuesAreNeverInflected": true
+  },
+  "announcementProfiles": {
+    "purpose": "How a message reaches a screen reader. A profile is chosen per message, not per surface: two messages in one status bar can need different urgency, and picking by surface is how a coordinate readout ends up as urgent as a refusal.",
+    "profiles": [
+      {
+        "id": "continuous",
+        "politeness": "polite",
+        "coalescing": "newest-only",
+        "minIntervalMs": 500,
+        "appliesTo": ["pointer coordinates", "active snap", "selection count", "zoom level"],
+        "rule": "Only the newest message in a region survives. An intermediate value is not information the user asked for; the current one is, and queueing the rest makes the reader announce a position from thirty seconds ago."
+      },
+      {
+        "id": "state-change",
+        "politeness": "polite",
+        "coalescing": "newest-only",
+        "minIntervalMs": 500,
+        "appliesTo": ["save state", "sync state", "publication state", "tool state"],
+        "rule": "Announce the state, not the transition. A repeat of an unchanged state carries a repeat marker so the reader speaks it again, because \"still read-only\" is what a user re-checking needs to hear."
+      },
+      {
+        "id": "refusal",
+        "politeness": "assertive",
+        "coalescing": "never",
+        "minIntervalMs": 0,
+        "appliesTo": [
+          "validation refusal",
+          "operation rejection",
+          "publication refusal",
+          "proposal refusal",
+          "import refusal"
+        ],
+        "rule": "Never delayed, never coalesced, never dropped. Two different refusals are two things the user has to hear. A rate limit exists to protect these announcements, not to throttle them."
+      },
+      {
+        "id": "destructive-confirmation",
+        "politeness": "assertive",
+        "coalescing": "never",
+        "minIntervalMs": 0,
+        "appliesTo": ["deletion cascade", "recovery apply", "overwrite on publish"],
+        "rule": "Announce what will change before it changes, and name the count. A confirmation a user did not hear is a confirmation they did not give."
+      }
+    ],
+    "invariants": [
+      "A visible label is always present in the accessible name; an announcement never replaces it.",
+      "An element hidden from a view stays reachable in structured navigation, so visibility never removes an announcement path.",
+      "A disabled control announces the reason it is disabled, which requires it to stay focusable."
+    ]
   }
 }

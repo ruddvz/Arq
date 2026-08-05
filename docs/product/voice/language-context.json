@@ -7,7 +7,7 @@
       "repo-facts-2026-07-27",
       "interface-2026-07-27"
     ],
-    "sourceSetDigest": "d7e1a232761bb153427c24ce08efea71cc9e109440b83f987cbe1088a461078e",
+    "sourceSetDigest": "5fbc8bd8a25b4260f5cbd4bd435c859ca0b0a7810cc599ae11b5bee379847ee7",
     "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995"
   },
   "snapshotWarning": null,
@@ -635,6 +635,111 @@
         "canonical": "Failed",
         "definition": "Import/export fidelity category",
         "avoid": []
+      },
+      {
+        "canonical": "hidden",
+        "definition": "Not drawn in one view. The element is still in the project, still holds its relationships and still counts in every schedule.",
+        "avoid": [
+          "removed",
+          "deleted",
+          "excluded from the model"
+        ]
+      },
+      {
+        "canonical": "clipped",
+        "definition": "Cut by a section box in one view. The project is unchanged and quantities are unaffected.",
+        "avoid": [
+          "removed",
+          "cut out of the project"
+        ]
+      },
+      {
+        "canonical": "quarantined",
+        "definition": "Imported content ARQ kept with its source payload and did not convert.",
+        "avoid": [
+          "skipped",
+          "ignored",
+          "dropped"
+        ]
+      },
+      {
+        "canonical": "drawing unit",
+        "definition": "The unit an imported drawing was drawn in. Unknown until the file declares it or a person chooses it.",
+        "avoid": [
+          "assumed unit",
+          "default unit"
+        ]
+      },
+      {
+        "canonical": "derived geometry",
+        "definition": "Meshes and tessellations regenerated from the semantic model. Never a source of measurement.",
+        "avoid": [
+          "the model",
+          "model geometry"
+        ]
+      },
+      {
+        "canonical": "reversed",
+        "definition": "Applied and then undone, leaving the project as it was. Distinct from refused, where nothing ran.",
+        "avoid": [
+          "rejected",
+          "cancelled"
+        ]
+      },
+      {
+        "canonical": "receipt",
+        "definition": "A bounded, redacted record of one thing that happened, kept for diagnosis.",
+        "avoid": [
+          "log",
+          "audit trail"
+        ]
+      },
+      {
+        "canonical": "preserved evidence",
+        "definition": "A local copy of the files involved in an incident, kept before any repair and sent nowhere.",
+        "avoid": [
+          "crash report",
+          "uploaded diagnostics"
+        ]
+      },
+      {
+        "canonical": "grant",
+        "definition": "Permission a person gave, held separately from anything that asks for it.",
+        "avoid": [
+          "scope",
+          "claimed permission"
+        ]
+      },
+      {
+        "canonical": "release certificate",
+        "definition": "The record naming the exact commit, the evidence that passed and who approved it. A release without one is not certified, whatever else it is.",
+        "avoid": [
+          "release notes",
+          "changelog"
+        ]
+      },
+      {
+        "canonical": "exact commit artifact",
+        "definition": "A build bound to one commit, verified by digest rather than by branch name.",
+        "avoid": [
+          "latest build",
+          "the build from main"
+        ]
+      },
+      {
+        "canonical": "promotion",
+        "definition": "Making an already-built, already-verified artifact live. Never a rebuild.",
+        "avoid": [
+          "deploy",
+          "ship"
+        ]
+      },
+      {
+        "canonical": "rollback rehearsal",
+        "definition": "A rollback actually performed and observed before the release it protects.",
+        "avoid": [
+          "rollback plan"
+        ]
       }
     ],
     "registryPointers": {
@@ -644,7 +749,74 @@
       "formats": "02-canonical/format-language-map.json",
       "aliases": "02-canonical/term-aliases.json",
       "interfaceSnapshot": "02-canonical/snapshots/interface-snapshot-2026-07-27.json"
-    }
+    },
+    "prohibitedUpgrades": [
+      {
+        "from": "hidden",
+        "to": "removed",
+        "reason": "Hiding is a drawing convention. Calling it removal tells a user their data is gone."
+      },
+      {
+        "from": "clipped",
+        "to": "deleted",
+        "reason": "A section box changes one view. Nothing leaves the project."
+      },
+      {
+        "from": "quarantined",
+        "to": "imported",
+        "reason": "Quarantined content was kept and not converted. Calling it imported claims a mapping that does not exist."
+      },
+      {
+        "from": "quarantined",
+        "to": "skipped",
+        "reason": "Skipped implies the data is gone. It is in the project."
+      },
+      {
+        "from": "reversed",
+        "to": "applied",
+        "reason": "A reversed proposal left the project unchanged."
+      },
+      {
+        "from": "refused",
+        "to": "failed",
+        "reason": "A refusal is a decision ARQ made deliberately, not a fault."
+      },
+      {
+        "from": "journal-saved",
+        "to": "published",
+        "reason": "A local journal append is not a portable file write."
+      },
+      {
+        "from": "written",
+        "to": "published",
+        "reason": "Published requires an independent reader to have re-read and accepted the bytes."
+      },
+      {
+        "from": "approved",
+        "to": "applied",
+        "reason": "Approval is a decision; applying is an event. They can differ."
+      },
+      {
+        "from": "mesh measurement",
+        "to": "dimension",
+        "reason": "A length read from a tessellation is an approximation, not a measurement."
+      },
+      {
+        "from": "built",
+        "to": "released",
+        "reason": "A build is an artifact. A release is a promotion someone approved."
+      },
+      {
+        "from": "deployed to preview",
+        "to": "live",
+        "reason": "A preview deployment is not production."
+      },
+      {
+        "from": "rollback plan",
+        "to": "rollback rehearsed",
+        "reason": "A plan nobody executed is not evidence that it works."
+      }
+    ]
   },
   "states": {
     "schemaVersion": 3,
@@ -686,7 +858,10 @@
       "arqfs-safe-mode": "Translate the underlying file condition before exposing read-only handling.",
       "file-flow": "Compatibility, migration, staging, opening and opened project states are distinct. A read-only opened project is an opened project, and is never described as saved or editable.",
       "ai-proposal": "Apply requires current base revision and no blocking validation errors.",
-      "web-plan-journal-status": "The web build's saveState union reports the local IndexedDB operation journal for its own plan document. A label here never implies that a portable .arq file was written, that a user project was opened, or that anything was synced. When a native .arq project is open the shell reports the `save` machine's read-only state instead of any of these."
+      "web-plan-journal-status": "The web build's saveState union reports the local IndexedDB operation journal for its own plan document. A label here never implies that a portable .arq file was written, that a user project was opened, or that anything was synced. When a native .arq project is open the shell reports the `save` machine's read-only state instead of any of these.",
+      "view-visibility": "Visibility is a property of one view. A hidden element is still in the project, still bounds its rooms and still appears in every schedule; never describe it as removed, deleted or excluded from the model. Always name the rule that hid it.",
+      "section-box": "A section box clips what is drawn and changes nothing in the project. Never describe an element outside the box as removed, and never let a quantity or schedule agree with the clipped view.",
+      "import-units": "An unresolved drawing unit is a question for the user, never a failure and never a default. Say what the file declared. The source file is preserved either way, so never imply the import was discarded."
     },
     "machines": {
       "workspace-open": [
@@ -1023,6 +1198,12 @@
           "exposure": "product"
         },
         {
+          "internal": "reversed",
+          "label": "Proposal partly applied, then reversed",
+          "explain": "Some operations committed and were undone. The project is back where it started.",
+          "exposure": "product"
+        },
+        {
           "internal": "rejected",
           "label": "Proposal rejected",
           "exposure": "product"
@@ -1245,9 +1426,15 @@
           "exposure": "product"
         },
         {
+          "internal": "publication-verifying",
+          "labelTemplate": "Checking the project file for {name}…",
+          "explain": "Portable bytes exist and have not been verified. A fresh reader that shares nothing with the writer is reopening the file to confirm the project, the revision and the semantic hash. Never say published here.",
+          "exposure": "product"
+        },
+        {
           "internal": "published",
-          "labelTemplate": "{name} was published",
-          "explain": "Only after the published file was reopened and verified.",
+          "labelTemplate": "{name} was published at revision {revision}",
+          "explain": "Only after the published file was reopened and verified. Reachable only from publication-verifying, and the revision named is the one the fresh reader itself found.",
           "exposure": "product"
         },
         {
@@ -1286,6 +1473,96 @@
           "internal": "recovered",
           "label": "Recovered locally",
           "explain": "State was replayed from the local operation journal on start-up. State what was recovered; nothing was read from or written to a portable .arq file.",
+          "exposure": "product"
+        }
+      ],
+      "view-visibility": [
+        {
+          "internal": "visible",
+          "label": "Shown in this view",
+          "exposure": "product"
+        },
+        {
+          "internal": "element-shown",
+          "label": "Shown in this view",
+          "explain": "Shown because you unhid it here, overriding this view's other rules.",
+          "exposure": "product"
+        },
+        {
+          "internal": "element-hidden",
+          "label": "Hidden in this view",
+          "explain": "Hidden because you hid it here. It is still in the project and still counts in schedules.",
+          "exposure": "product"
+        },
+        {
+          "internal": "not-isolated",
+          "label": "Outside the current isolation",
+          "explain": "Only the isolated elements are drawn. Everything else is still in the project.",
+          "exposure": "product"
+        },
+        {
+          "internal": "level-not-in-view",
+          "label": "Not on a level this view includes",
+          "exposure": "product"
+        },
+        {
+          "internal": "category-hidden",
+          "label": "This view hides this category",
+          "exposure": "product"
+        }
+      ],
+      "section-box": [
+        {
+          "internal": "off",
+          "label": "Section box off",
+          "exposure": "product"
+        },
+        {
+          "internal": "element-inside",
+          "label": "Inside the section box",
+          "exposure": "product"
+        },
+        {
+          "internal": "element-straddling",
+          "label": "Cut by the section box",
+          "explain": "The section box cuts through this element. A cut face is drawn where it crosses.",
+          "exposure": "product"
+        },
+        {
+          "internal": "element-outside",
+          "label": "Outside the section box",
+          "explain": "Not drawn while the section box is on. Nothing has been removed from the project.",
+          "exposure": "product"
+        }
+      ],
+      "import-units": [
+        {
+          "internal": "resolved-declared",
+          "labelTemplate": "Drawing unit: {unit}, from the file",
+          "exposure": "product"
+        },
+        {
+          "internal": "resolved-user",
+          "labelTemplate": "Drawing unit: {unit}, chosen by you",
+          "explain": "The file did not give a usable unit. This is the unit you selected.",
+          "exposure": "product"
+        },
+        {
+          "internal": "unresolved-undeclared",
+          "label": "This drawing does not say what its units are",
+          "explain": "Choose the unit it was drawn in. The source file is kept either way.",
+          "exposure": "product"
+        },
+        {
+          "internal": "unresolved-unitless",
+          "label": "This drawing states that it has no units",
+          "explain": "Choose the unit it was drawn in. The source file is kept either way.",
+          "exposure": "product"
+        },
+        {
+          "internal": "unresolved-unrecognised",
+          "labelTemplate": "This drawing declares “{declaredUnit}”, which ARQ does not read",
+          "explain": "Choose the unit it was drawn in. The source file is kept either way.",
           "exposure": "product"
         }
       ]
@@ -1575,6 +1852,21 @@
         "id": "failed",
         "label": "Failed",
         "meaning": "Processing did not complete for the item."
+      },
+      {
+        "id": "quarantined",
+        "label": "Quarantined",
+        "meaning": "Kept in the project with its source payload intact, and not converted. Distinct from omitted, which is not kept, and from unsupported, which describes the mapping rather than what happened to the data."
+      },
+      {
+        "id": "substituted",
+        "label": "Substituted",
+        "meaning": "Written to the target format as a different concept, because the target has no equivalent. A room written as a closed polyline is substituted, not converted."
+      },
+      {
+        "id": "simplified",
+        "label": "Simplified",
+        "meaning": "Written with detail the target format cannot express dropped. Distinct from approximated, where a value changed; here the value is exact and the structure is poorer."
       }
     ]
   },
@@ -1722,6 +2014,49 @@
           "3D model"
         ],
         "notes": "Do not imply renderer mesh is authoritative model data."
+      },
+      {
+        "canonical": "hidden",
+        "aliases": [
+          "turned off",
+          "switched off",
+          "filtered out"
+        ],
+        "notes": "Recognise these when a user asks why something is not drawn. Answer with the rule that hid it, and never say removed."
+      },
+      {
+        "canonical": "quarantined",
+        "aliases": [
+          "not imported",
+          "skipped on import",
+          "unsupported entity"
+        ],
+        "notes": "A user reporting \"it skipped my splines\" means quarantined. The entities are in the project; say so."
+      },
+      {
+        "canonical": "drawing unit",
+        "aliases": [
+          "scale",
+          "file units",
+          "insunits"
+        ],
+        "notes": "Scale is a drawing property and a different thing. Resolve which the user means before answering."
+      },
+      {
+        "canonical": "reversed",
+        "aliases": [
+          "rolled back",
+          "undone"
+        ],
+        "notes": "Undone is accurate in conversation. In product copy about a proposal, reversed is the registered state."
+      },
+      {
+        "canonical": "preserved evidence",
+        "aliases": [
+          "crash log",
+          "diagnostic copy"
+        ],
+        "notes": "Recognise these, and always restate that nothing was sent anywhere."
       }
     ]
   },
@@ -2978,6 +3313,21 @@
         "id": "system",
         "titlePattern": "{surface} could not continue",
         "safeRule": "Give stable error code in details, not as the only user explanation."
+      },
+      {
+        "id": "publication",
+        "titlePattern": "Portable file {result}",
+        "safeRule": "A refused publication leaves the target file in a stated condition. Never report a refused publication as published, and always name the check that refused."
+      },
+      {
+        "id": "extension",
+        "titlePattern": "{extension} was not allowed to {action}",
+        "safeRule": "Name the capability or origin that was not declared. Never let a request establish the permission it asks for, and never imply the extension is malicious."
+      },
+      {
+        "id": "input-limit",
+        "titlePattern": "ARQ stopped reading {object}",
+        "safeRule": "State the limit reached as a property of the input. Never accuse the file or its sender, and say what was kept."
       }
     ]
   },
@@ -4439,13 +4789,225 @@
         ],
         "defaultLabel": "Proposal has blocking errors",
         "detailRule": "No apply action while errors remain."
+      },
+      {
+        "id": "publication.verifying",
+        "surface": "files",
+        "requiredSlots": [
+          "fileName"
+        ],
+        "forbiddenPhrases": [
+          "published",
+          "saved"
+        ],
+        "defaultLabel": "Checking the published file…",
+        "detailRule": "Use only while an independent reader is actually re-reading the written bytes. Never as a label for the write itself."
+      },
+      {
+        "id": "publication.refused",
+        "surface": "files",
+        "requiredSlots": [
+          "fileName",
+          "refusalReason"
+        ],
+        "forbiddenPhrases": [
+          "published"
+        ],
+        "defaultLabel": "The published file was not accepted",
+        "detailRule": "Name the check that refused and state what the target file now contains. Never report a refused publication as published."
+      },
+      {
+        "id": "diagnostic.receipt-log-truncated",
+        "surface": "diagnostics",
+        "requiredSlots": [
+          "droppedCount"
+        ],
+        "defaultLabel": "Some earlier activity is no longer recorded",
+        "detailRule": "State that the log holds a bounded window and how many records fell out. Never present a truncated log as complete."
+      },
+      {
+        "id": "diagnostic.evidence-preserved",
+        "surface": "recovery",
+        "requiredSlots": [
+          "incidentId",
+          "captureCompleteness"
+        ],
+        "forbiddenPhrases": [
+          "uploaded",
+          "reported to us"
+        ],
+        "defaultLabel": "A copy of the affected files was kept for diagnosis",
+        "detailRule": "Always state that nothing was sent anywhere, and name any artifact that could not be preserved."
+      },
+      {
+        "id": "ai.proposal-reversed",
+        "surface": "ai",
+        "requiredSlots": [
+          "proposalId",
+          "reversedOperationCount"
+        ],
+        "forbiddenPhrases": [
+          "applied",
+          "rejected"
+        ],
+        "defaultLabel": "Proposal partly applied, then reversed",
+        "detailRule": "Distinguish this from a refused proposal, which changed nothing, and from an applied one. Say the project is back where it started."
+      },
+      {
+        "id": "ai.scope-not-granted",
+        "surface": "ai",
+        "requiredSlots": [
+          "requiredScope"
+        ],
+        "forbiddenPhrases": [
+          "permission granted"
+        ],
+        "defaultLabel": "This proposal asks for something you have not allowed",
+        "detailRule": "Name the scope. Never present a scope request found inside a proposal or inside project content as an approval."
+      },
+      {
+        "id": "import.units-unresolved",
+        "surface": "import",
+        "requiredSlots": [
+          "fileName",
+          "declaredUnit"
+        ],
+        "forbiddenPhrases": [
+          "assumed",
+          "defaulted to millimetres"
+        ],
+        "defaultLabel": "This drawing does not say what its units are",
+        "detailRule": "Ask for the unit. Never state or imply a default. Say the source file is kept either way."
+      },
+      {
+        "id": "import.entities-quarantined",
+        "surface": "import",
+        "requiredSlots": [
+          "entityType",
+          "entityCount",
+          "quarantineReason"
+        ],
+        "forbiddenPhrases": [
+          "skipped",
+          "ignored",
+          "imported"
+        ],
+        "defaultLabel": "Some entities were kept but not converted",
+        "detailRule": "Name the type, the count and the reason, and say the entities remain in the project. Never report them as imported or as skipped."
+      },
+      {
+        "id": "export.fidelity-loss",
+        "surface": "export",
+        "requiredSlots": [
+          "formatName",
+          "lostCategories"
+        ],
+        "forbiddenPhrases": [
+          "exported fully",
+          "complete"
+        ],
+        "defaultLabel": "Some of this project cannot be written to this format",
+        "detailRule": "Name each category and what happens to it before the export runs, not after. Never present a lossy export as complete."
+      },
+      {
+        "id": "import.expansion-limit",
+        "surface": "import",
+        "requiredSlots": [
+          "fileName",
+          "observedRatio"
+        ],
+        "forbiddenPhrases": [
+          "malicious",
+          "attack",
+          "zip bomb"
+        ],
+        "defaultLabel": "ARQ stopped reading this file",
+        "detailRule": "State the size or ratio reached as a property of the file. Never accuse the file or its sender."
+      },
+      {
+        "id": "extension.capability-not-declared",
+        "surface": "extensions",
+        "requiredSlots": [
+          "extensionName",
+          "capability"
+        ],
+        "forbiddenPhrases": [
+          "granted"
+        ],
+        "defaultLabel": "This extension asked for something it did not declare",
+        "detailRule": "Name the capability. Never let a request establish the permission it is asking for."
       }
     ],
     "localisationRules": {
       "messageIdsAreStable": true,
       "variablesAreTyped": true,
       "doNotConcatenateTranslatedFragments": true,
-      "visibleLabelMustRemainInAccessibleName": true
+      "visibleLabelMustRemainInAccessibleName": true,
+      "slotsAreNamedNotPositional": true,
+      "countedNounsCarryAPluralRule": true,
+      "untranslatedSlotValuesAreNeverInflected": true
+    },
+    "announcementProfiles": {
+      "purpose": "How a message reaches a screen reader. A profile is chosen per message, not per surface: two messages in one status bar can need different urgency, and picking by surface is how a coordinate readout ends up as urgent as a refusal.",
+      "profiles": [
+        {
+          "id": "continuous",
+          "politeness": "polite",
+          "coalescing": "newest-only",
+          "minIntervalMs": 500,
+          "appliesTo": [
+            "pointer coordinates",
+            "active snap",
+            "selection count",
+            "zoom level"
+          ],
+          "rule": "Only the newest message in a region survives. An intermediate value is not information the user asked for; the current one is, and queueing the rest makes the reader announce a position from thirty seconds ago."
+        },
+        {
+          "id": "state-change",
+          "politeness": "polite",
+          "coalescing": "newest-only",
+          "minIntervalMs": 500,
+          "appliesTo": [
+            "save state",
+            "sync state",
+            "publication state",
+            "tool state"
+          ],
+          "rule": "Announce the state, not the transition. A repeat of an unchanged state carries a repeat marker so the reader speaks it again, because \"still read-only\" is what a user re-checking needs to hear."
+        },
+        {
+          "id": "refusal",
+          "politeness": "assertive",
+          "coalescing": "never",
+          "minIntervalMs": 0,
+          "appliesTo": [
+            "validation refusal",
+            "operation rejection",
+            "publication refusal",
+            "proposal refusal",
+            "import refusal"
+          ],
+          "rule": "Never delayed, never coalesced, never dropped. Two different refusals are two things the user has to hear. A rate limit exists to protect these announcements, not to throttle them."
+        },
+        {
+          "id": "destructive-confirmation",
+          "politeness": "assertive",
+          "coalescing": "never",
+          "minIntervalMs": 0,
+          "appliesTo": [
+            "deletion cascade",
+            "recovery apply",
+            "overwrite on publish"
+          ],
+          "rule": "Announce what will change before it changes, and name the count. A confirmation a user did not hear is a confirmation they did not give."
+        }
+      ],
+      "invariants": [
+        "A visible label is always present in the accessible name; an announcement never replaces it.",
+        "An element hidden from a view stays reachable in structured navigation, so visibility never removes an announcement path.",
+        "A disabled control announces the reason it is disabled, which requires it to stay focusable."
+      ]
     }
   },
   "editorialAuthenticity": {
@@ -7395,7 +7957,7 @@
     "schemaVersion": 4,
     "contractVersion": "4.1.0",
     "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-    "sourceSetDigest": "d7e1a232761bb153427c24ce08efea71cc9e109440b83f987cbe1088a461078e",
+    "sourceSetDigest": "5fbc8bd8a25b4260f5cbd4bd435c859ca0b0a7810cc599ae11b5bee379847ee7",
     "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
     "sources": {
       "repository-readme": {
@@ -7649,7 +8211,7 @@
         "id": "workspace-registries",
         "kind": "directory",
         "path": "packages/workspace/src/registry",
-        "sha256": "61dd360b3d5fd190f0cf5faead674b86c2eaafad10cd866d65f51ede25e17daa",
+        "sha256": "babbb7978c4e2b31ed1bc13f9ea1d4460d8ed232170a6436440d3a13756918bf",
         "files": [
           {
             "rel": "packages/workspace/src/registry/workspace-capability-gates.json",
@@ -7698,8 +8260,8 @@
           },
           {
             "rel": "packages/workspace/src/registry/workspace-state-machines.json",
-            "sha256": "c6c7330385e8aa5e9ec5e1c8b2946202dafd1e8b6c40f03a073b326635cb6954",
-            "bytes": 1692
+            "sha256": "a7d24b3dfb382b1fbae70533536135d97e3c3bf7ba0034366931e7582ba2713e",
+            "bytes": 2337
           },
           {
             "rel": "packages/workspace/src/registry/workspace-surface-registry.json",
@@ -7743,7 +8305,7 @@
         "id": "file-open-ui",
         "kind": "directory",
         "path": "apps/web/src/file-handling",
-        "sha256": "4192dd87017f0a4e07dfb4ee38d9bac2741112d72a0aff243ea76e47287b0fce",
+        "sha256": "e65a60ab6665440bf6f87982625d2038df5073b8c88dc8adbbba478fb2de3f5f",
         "files": [
           {
             "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
@@ -7757,13 +8319,13 @@
           },
           {
             "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",
-            "sha256": "52ea4ad9750583d5064f9887c0c32920b2e9d8a2364e0bd4342b8319f24c4121",
-            "bytes": 11860
+            "sha256": "621b7c990b40669497a68b510d944b4658ce23b64ce7862511539697c79d7230",
+            "bytes": 15630
           },
           {
             "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-            "sha256": "aee890cba5510f8354c18d016fa1d2ec27b7b5f653362e41cc1f3135a472015f",
-            "bytes": 11750
+            "sha256": "ddb0b7e55d5200397b315b4c5ff34857eb3f7f7cb1af993d2acf9074f76d40ea",
+            "bytes": 12448
           },
           {
             "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
@@ -7777,13 +8339,13 @@
           },
           {
             "rel": "apps/web/src/file-handling/file-state-machine.test.ts",
-            "sha256": "a14cba0d83d4cd1809877250eff1a25c4b7946de51e1acfe66a578a88a87f6b8",
-            "bytes": 13371
+            "sha256": "51474418007a4c8c10ec4a32ec3e48a257878078318c473b5885a2a0268e6ef7",
+            "bytes": 17221
           },
           {
             "rel": "apps/web/src/file-handling/file-state-machine.ts",
-            "sha256": "874f3757e8a5af1404a9fe0e698f9d0c027c2a5b20fcdcce3b22912974652e15",
-            "bytes": 19224
+            "sha256": "44ccd539b7c758635146b8a98d34023a8eca2d456711717129c1cf0bbd1159e3",
+            "bytes": 24171
           },
           {
             "rel": "apps/web/src/file-handling/index.ts",
@@ -7834,7 +8396,7 @@
         "id": "local-storage",
         "kind": "directory",
         "path": "packages/local-storage/src",
-        "sha256": "e95faf42a2ab091798c15db2d785b0f44a9d890a5f82ff4034c45b6ccb77aa34",
+        "sha256": "34b19fc646984e5153ae26fa9414afec6e139665f8ff8ee0441f60a524a589e4",
         "files": [
           {
             "rel": "packages/local-storage/src/archive-export.test.ts",
@@ -7868,8 +8430,8 @@
           },
           {
             "rel": "packages/local-storage/src/index.ts",
-            "sha256": "56aaf74a3130a0ecd9c29a1a4fb6449887745fed44d08c2df480b65be72395e1",
-            "bytes": 288
+            "sha256": "0d560987900eb87fe5203e31787f5b03178dae286d216c0fc4d5841c3042df7f",
+            "bytes": 321
           },
           {
             "rel": "packages/local-storage/src/journal-append.test.ts",
@@ -7900,6 +8462,16 @@
             "rel": "packages/local-storage/src/quota-error.ts",
             "sha256": "b0f1ade602347159fdea0c8a6701cbd5a5c07e5f276af20a3456300d21112a73",
             "bytes": 2130
+          },
+          {
+            "rel": "packages/local-storage/src/recovery-plan.test.ts",
+            "sha256": "cbea1126e3053d45d2f8bf419d85780e19d7e5db2bbf23358fdc41fa17fa2437",
+            "bytes": 10760
+          },
+          {
+            "rel": "packages/local-storage/src/recovery-plan.ts",
+            "sha256": "3fb6941a702de92fe12a71edcedc353bf4521b3b686d6a3856cf86338a97d930",
+            "bytes": 12824
           },
           {
             "rel": "packages/local-storage/src/recovery-report.test.ts",
@@ -9014,6 +9586,7 @@
             "ready-to-apply",
             "applying",
             "applied",
+            "reversed",
             "rejected",
             "stale"
           ],
@@ -9026,13 +9599,36 @@
             "partial",
             "succeeded",
             "failed"
+          ],
+          "view-visibility": [
+            "visible",
+            "element-shown",
+            "element-hidden",
+            "not-isolated",
+            "level-not-in-view",
+            "category-hidden"
+          ],
+          "section-box": [
+            "off",
+            "element-inside",
+            "element-straddling",
+            "element-outside"
+          ],
+          "import-units": [
+            "resolved-declared",
+            "resolved-user",
+            "unresolved-undeclared",
+            "unresolved-unitless",
+            "unresolved-unrecognised"
           ]
         },
         "invariants": [
           "Local save and remote sync are separate machines.",
           "View/tab close never deletes model data by implication.",
           "Tool preview never becomes canonical until transaction commit.",
-          "Stale asynchronous results never overwrite newer document revision."
+          "Stale asynchronous results never overwrite newer document revision.",
+          "Visibility and section-box states describe one view. They never imply the project contains less.",
+          "An unresolved import unit is a question, not a failure, and never resolves to a default."
         ]
       },
       "capabilities": {
@@ -10385,6 +10981,7 @@
         "recovery-available",
         "recovering",
         "publishing",
+        "publication-verifying",
         "published",
         "closed"
       ],

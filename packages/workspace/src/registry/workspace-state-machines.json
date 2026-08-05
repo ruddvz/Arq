@@ -35,6 +35,7 @@
       "ready-to-apply",
       "applying",
       "applied",
+      "reversed",
       "rejected",
       "stale"
     ],
@@ -47,12 +48,30 @@
       "partial",
       "succeeded",
       "failed"
+    ],
+    "view-visibility": [
+      "visible",
+      "element-shown",
+      "element-hidden",
+      "not-isolated",
+      "level-not-in-view",
+      "category-hidden"
+    ],
+    "section-box": ["off", "element-inside", "element-straddling", "element-outside"],
+    "import-units": [
+      "resolved-declared",
+      "resolved-user",
+      "unresolved-undeclared",
+      "unresolved-unitless",
+      "unresolved-unrecognised"
     ]
   },
   "invariants": [
     "Local save and remote sync are separate machines.",
     "View/tab close never deletes model data by implication.",
     "Tool preview never becomes canonical until transaction commit.",
-    "Stale asynchronous results never overwrite newer document revision."
+    "Stale asynchronous results never overwrite newer document revision.",
+    "Visibility and section-box states describe one view. They never imply the project contains less.",
+    "An unresolved import unit is a question, not a failure, and never resolves to a default."
   ]
 }

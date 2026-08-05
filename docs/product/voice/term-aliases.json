@@ -82,6 +82,31 @@
       "canonical": "3D view",
       "aliases": ["model view", "3D model"],
       "notes": "Do not imply renderer mesh is authoritative model data."
+    },
+    {
+      "canonical": "hidden",
+      "aliases": ["turned off", "switched off", "filtered out"],
+      "notes": "Recognise these when a user asks why something is not drawn. Answer with the rule that hid it, and never say removed."
+    },
+    {
+      "canonical": "quarantined",
+      "aliases": ["not imported", "skipped on import", "unsupported entity"],
+      "notes": "A user reporting \"it skipped my splines\" means quarantined. The entities are in the project; say so."
+    },
+    {
+      "canonical": "drawing unit",
+      "aliases": ["scale", "file units", "insunits"],
+      "notes": "Scale is a drawing property and a different thing. Resolve which the user means before answering."
+    },
+    {
+      "canonical": "reversed",
+      "aliases": ["rolled back", "undone"],
+      "notes": "Undone is accurate in conversation. In product copy about a proposal, reversed is the registered state."
+    },
+    {
+      "canonical": "preserved evidence",
+      "aliases": ["crash log", "diagnostic copy"],
+      "notes": "Recognise these, and always restate that nothing was sent anywhere."
     }
   ]
 }
