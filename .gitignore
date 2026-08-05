@@ -45,3 +45,9 @@ rust/target/
 /engineering-selected-evidence.json
 /engineering-evidence-decision.json
 /.engineering-changed-files
+
+# Generated mid-run by scripts/run-e2e-arq-open-capability-check.mjs, which
+# bundles the real Worker entry with esbuild and removes it afterwards. Ignored
+# so a run that dies in between does not leave an untracked build artifact
+# looking like a source change.
+workers/arqfs-worker/.e2e-open-bundle/

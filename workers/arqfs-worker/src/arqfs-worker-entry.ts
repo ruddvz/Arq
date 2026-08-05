@@ -32,6 +32,7 @@ import {
   ARQFS_WORKER_ERROR_CODES,
   correlationIdOf,
   parseArqfsWorkerRequest,
+  type ArqfsWorkerResponse,
 } from '@arq/arqfs/src/arqfs-worker-protocol';
 import {
   createArqfsWorkerSession,
@@ -139,6 +140,23 @@ async function openContext(): Promise<ArqfsWorkerContext> {
 
 const contextPromise = openContext();
 
+/**
+ * The one way this file posts a response.
+ *
+ * `self.postMessage` takes `any`, which is how an un-awaited
+ * `handleArqfsWorkerRequest(...)` was posted as a *Promise* the moment that
+ * function became async: `structuredClone` cannot serialise one, so nothing
+ * reached the client and every request died at its timeout. tsc had no
+ * objection, and the unit tests call the handler directly, so the only thing
+ * that noticed was the headless-browser capability check.
+ *
+ * Typing the parameter is the fix. A Promise is not an `ArqfsWorkerResponse`,
+ * so the same mistake now fails to compile rather than failing in a browser.
+ */
+function post(response: ArqfsWorkerResponse): void {
+  self.postMessage(response);
+}
+
 self.onmessage = async (event: MessageEvent<unknown>) => {
   // V3-021. `event.data` is whatever the other context posted, so it is parsed
   // rather than annotated. The old signature said `MessageEvent<ArqfsWorkerRequest>`,
@@ -150,7 +168,7 @@ self.onmessage = async (event: MessageEvent<unknown>) => {
     // posting one under an invented id would resolve some other request. Staying
     // silent leaves only this caller to time out, which is the smaller harm.
     if (id !== null) {
-      self.postMessage({
+      post({
         id,
         ok: false,
         code: ARQFS_WORKER_ERROR_CODES.malformedRequest,
@@ -162,12 +180,12 @@ self.onmessage = async (event: MessageEvent<unknown>) => {
   }
   try {
     const context = await contextPromise;
-    self.postMessage(handleArqfsWorkerRequest(context, request));
+    post(await handleArqfsWorkerRequest(context, request));
   } catch (error) {
     // contextPromise rejects only for a Worker-construction mistake (missing/invalid
     // project id) that will never resolve on retry - every request gets a clear,
     // immediate error instead of silently hanging until the client's own timeout.
-    self.postMessage({
+    post({
       id: request.id,
       ok: false,
       code: ARQFS_WORKER_ERROR_CODES.unexpected,
