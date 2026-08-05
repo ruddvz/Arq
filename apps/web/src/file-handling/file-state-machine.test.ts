@@ -58,7 +58,7 @@ describe('reduceFileFlow', () => {
     state = reduceFileFlow(state, { type: 'import-start', requestId: 'req-1' });
     expect(state).toEqual({ kind: 'importing', name: 'plan.dxf', requestId: 'req-1', fraction: 0 });
 
-    state = reduceFileFlow(state, { type: 'progress', fraction: 0.5 });
+    state = reduceFileFlow(state, { type: 'progress', requestId: 'req-1', fraction: 0.5 });
     expect(state).toEqual({
       kind: 'importing',
       name: 'plan.dxf',
@@ -66,17 +66,17 @@ describe('reduceFileFlow', () => {
       fraction: 0.5,
     });
 
-    state = reduceFileFlow(state, { type: 'staged' });
+    state = reduceFileFlow(state, { type: 'staged', requestId: 'req-1' });
     expect(state).toEqual({ kind: 'staged-review', name: 'plan.dxf', requestId: 'req-1' });
   });
 
   it('clamps progress fraction into [0, 1]', () => {
     const importing: FileFlowState = { kind: 'importing', name: 'x', requestId: 'r', fraction: 0 };
-    expect(reduceFileFlow(importing, { type: 'progress', fraction: 1.5 })).toEqual({
+    expect(reduceFileFlow(importing, { type: 'progress', requestId: 'r', fraction: 1.5 })).toEqual({
       ...importing,
       fraction: 1,
     });
-    expect(reduceFileFlow(importing, { type: 'progress', fraction: -1 })).toEqual({
+    expect(reduceFileFlow(importing, { type: 'progress', requestId: 'r', fraction: -1 })).toEqual({
       ...importing,
       fraction: 0,
     });
@@ -122,7 +122,7 @@ describe('reduceFileFlow', () => {
   });
 
   it('ignores an event that does not apply to the current state', () => {
-    expect(reduceFileFlow(IDLE, { type: 'staged' })).toBe(IDLE);
+    expect(reduceFileFlow(IDLE, { type: 'staged', requestId: 'r' })).toBe(IDLE);
   });
 
   it('lets an open fail from any point in the open, keeping the file name', () => {
@@ -455,5 +455,249 @@ describe('project lifecycle after preflight', () => {
     // The cause survives the round trip too: resuming must not downgrade "this
     // file is from a newer ARQ" into a generic read-only.
     expect(readOnly).toMatchObject({ readOnlyReason: 'newer-format-version' });
+  });
+});
+
+describe('V3-019: a superseded import cannot drive the current one', () => {
+  const importing: FileFlowState = {
+    kind: 'importing',
+    name: 'plan.dxf',
+    requestId: 'req-2',
+    fraction: 0.1,
+  };
+
+  it('ignores progress from an abandoned request', () => {
+    // The request id has been on this state since it was written and was never
+    // compared, so an abandoned import's progress drove the live one's bar.
+    expect(reduceFileFlow(importing, { type: 'progress', requestId: 'req-1', fraction: 0.9 })).toBe(
+      importing,
+    );
+  });
+
+  it('ignores completion from an abandoned request', () => {
+    // The damaging one: `staged` moved the flow to review over bytes the user
+    // is no longer importing.
+    expect(reduceFileFlow(importing, { type: 'staged', requestId: 'req-1' })).toBe(importing);
+  });
+
+  it('still accepts events from the live request', () => {
+    const progressed = reduceFileFlow(importing, {
+      type: 'progress',
+      requestId: 'req-2',
+      fraction: 0.5,
+    });
+    expect(progressed).toMatchObject({ kind: 'importing', fraction: 0.5 });
+
+    expect(reduceFileFlow(importing, { type: 'staged', requestId: 'req-2' })).toMatchObject({
+      kind: 'staged-review',
+      requestId: 'req-2',
+    });
+  });
+});
+
+describe('V3-015: replacing an open project keeps the one it replaced', () => {
+  function activeProject(): FileFlowState {
+    return {
+      kind: 'workspace-active',
+      name: 'house.arq',
+      projectId: 'project-1',
+      readOnlyReason: null,
+      facts: {
+        projectName: 'House',
+        revision: 4,
+        sidecarDependency: 'complete',
+        conditionNote: null,
+      },
+    };
+  }
+
+  it('records the outgoing project when a second file is picked', () => {
+    // Opening another file while a project is active is legitimate. Losing the
+    // outgoing project's identity on the way is not.
+    const acquiring = reduceFileFlow(activeProject(), { type: 'acquire', name: 'flat.arq' });
+
+    expect(acquiring).toMatchObject({
+      kind: 'acquiring',
+      name: 'flat.arq',
+      replacing: { projectId: 'project-1', name: 'house.arq' },
+    });
+  });
+
+  it('hands the replaced project to a failure, so there is a route back', () => {
+    // Before this, a replacement failing anywhere in preflight left the user at
+    // `failed` with nothing, having had a working project a moment earlier.
+    let state = reduceFileFlow(activeProject(), { type: 'acquire', name: 'flat.arq' });
+    state = reduceFileFlow(state, { type: 'fail', code: 'ARQ_UNREADABLE', message: 'bad bytes' });
+
+    expect(state).toMatchObject({
+      kind: 'failed',
+      code: 'ARQ_UNREADABLE',
+      lastKnownGood: { projectId: 'project-1', name: 'house.arq' },
+    });
+  });
+
+  it('records nothing to replace when no project was open', () => {
+    expect(reduceFileFlow(IDLE, { type: 'acquire', name: 'first.arq' })).toEqual({
+      kind: 'acquiring',
+      name: 'first.arq',
+    });
+  });
+
+  it('carries a project through a failure that is not a replacement', () => {
+    const state = reduceFileFlow(activeProject(), {
+      type: 'fail',
+      code: 'ARQ_X',
+      message: 'x',
+    });
+
+    expect(state).toMatchObject({ lastKnownGood: { projectId: 'project-1' } });
+  });
+});
+
+describe('V3-012 and V3-018: invariants across every state and event pair', () => {
+  const STATES: readonly FileFlowState[] = [
+    { kind: 'idle' },
+    { kind: 'acquiring', name: 'a.arq' },
+    { kind: 'detecting', name: 'a.arq' },
+    { kind: 'native-opening', name: 'a.arq', sidecarDependency: 'complete' },
+    { kind: 'import-options', name: 'a.dxf', formatId: 'dxf' },
+    { kind: 'importing', name: 'a.dxf', requestId: 'r', fraction: 0.2 },
+    { kind: 'staged-review', name: 'a.dxf', requestId: 'r' },
+    { kind: 'migrating', name: 'a.arq', fraction: 0.3 },
+    { kind: 'read-only-safe-mode', name: 'a.arq', reason: 'locked' },
+    { kind: 'failed', name: 'a.arq', code: 'X', message: 'm' },
+    { kind: 'staging', name: 'a.arq', fraction: 0.4 },
+    { kind: 'staged', name: 'a.arq', projectId: 'p1' },
+    { kind: 'migration-verified', name: 'a.arq', projectId: 'p1' },
+    { kind: 'worker-open', name: 'a.arq', projectId: 'p1', readOnlyReason: null },
+    { kind: 'hydrating', name: 'a.arq', projectId: 'p1', readOnlyReason: null },
+    {
+      kind: 'workspace-active',
+      name: 'a.arq',
+      projectId: 'p1',
+      readOnlyReason: null,
+      facts: {
+        projectName: 'House',
+        revision: 4,
+        sidecarDependency: 'complete',
+        conditionNote: null,
+      },
+    },
+    { kind: 'closed', lastKnownGood: { projectId: 'p1', name: 'a.arq' } },
+  ];
+
+  const EVENTS: readonly Parameters<typeof reduceFileFlow>[1][] = [
+    { type: 'reset' },
+    { type: 'acquire', name: 'b.arq' },
+    { type: 'acquired' },
+    { type: 'route-native', sidecarDependency: 'complete' },
+    { type: 'route-import', formatId: 'dxf' },
+    { type: 'import-start', requestId: 'r2' },
+    { type: 'progress', requestId: 'r', fraction: 0.7 },
+    { type: 'staged', requestId: 'r' },
+    { type: 'safe-mode', reason: 'locked' },
+    { type: 'fail', code: 'X', message: 'm' },
+    { type: 'stage-start' },
+    { type: 'stage-progress', fraction: 0.6 },
+    { type: 'stage-complete', projectId: 'p2' },
+    { type: 'migration-verified' },
+    { type: 'worker-opened', readOnlyReason: null },
+    { type: 'hydrate-start' },
+    {
+      type: 'hydrated',
+      facts: {
+        projectName: 'House',
+        revision: 4,
+        sidecarDependency: 'complete',
+        conditionNote: null,
+      },
+    },
+    { type: 'project-fail', reason: 'corrupt', detail: 'm' },
+    { type: 'quarantine', quarantinePath: '/q' },
+    { type: 'cancel' },
+    { type: 'publish-start' },
+    { type: 'publish-verify-start' },
+    { type: 'published', revision: 3, semanticHash: 'h' },
+    { type: 'resume-editing' },
+    { type: 'close' },
+  ];
+
+  /**
+   * V3-012, swept rather than sampled. The reducer's own comment says skipping
+   * a stage is the dangerous direction, and the way that regresses is a new
+   * event handled without naming the state it comes from - which no single
+   * example test would catch.
+   */
+  it('never opens a project without having hydrated one', () => {
+    for (const state of STATES) {
+      for (const event of EVENTS) {
+        const next = reduceFileFlow(state, event);
+        if (!isProjectOpen(next) || isProjectOpen(state)) {
+          continue;
+        }
+        // The only way to reach an open project from a closed one is to
+        // hydrate, or to resume editing a project that is already open behind
+        // a publication.
+        expect(['hydrated', 'resume-editing']).toContain(event.type);
+      }
+    }
+  });
+
+  it('never returns a writable project from a read-only one without an explicit event', () => {
+    const readOnly: FileFlowState = {
+      kind: 'workspace-active',
+      name: 'a.arq',
+      projectId: 'p1',
+      readOnlyReason: 'newer-format-version',
+      facts: {
+        projectName: 'House',
+        revision: 4,
+        sidecarDependency: 'complete',
+        conditionNote: null,
+      },
+    };
+
+    for (const event of EVENTS) {
+      const next = reduceFileFlow(readOnly, event);
+      if (isProjectWritable(next)) {
+        // Only a fresh open can produce a writable project from this one.
+        expect(['hydrated', 'worker-opened']).toContain(event.type);
+      }
+    }
+  });
+
+  it('always returns a state, and never mutates the one it was given', () => {
+    for (const state of STATES) {
+      const before = JSON.stringify(state);
+      for (const event of EVENTS) {
+        const next = reduceFileFlow(state, event);
+        expect(next).toBeDefined();
+        expect(typeof next.kind).toBe('string');
+      }
+      expect(JSON.stringify(state)).toBe(before);
+    }
+  });
+
+  it('offers back only a project that was actually open', () => {
+    // Holding a project id is not the same as being a project the user can
+    // return to. `staged`, `migration-verified`, `worker-open` and `hydrating`
+    // each carry an id for a working copy that has never hydrated - there is no
+    // semantic model behind it - so offering one as "last known good" would
+    // offer something that was never good. Only a project that reached
+    // `workspace-active`, and the publication states that read it, qualify.
+    const everOpen = new Set([
+      'workspace-active',
+      'publishing',
+      'publication-verifying',
+      'published',
+    ]);
+
+    for (const state of STATES) {
+      if (everOpen.has(state.kind)) {
+        expect(lastKnownGoodProject(state)).not.toBeNull();
+      } else if ('projectId' in state && typeof state.projectId === 'string') {
+        expect(lastKnownGoodProject(state)).toBeNull();
+      }
+    }
   });
 });

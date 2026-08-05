@@ -82,7 +82,24 @@ export interface LastKnownGoodProject {
 
 export type FileFlowState =
   | { readonly kind: 'idle' }
-  | { readonly kind: 'acquiring'; readonly name: string }
+  | {
+      readonly kind: 'acquiring';
+      readonly name: string;
+      /**
+       * V3-015. The project that was open when this one was picked, if there
+       * was one.
+       *
+       * Opening a second file while a project is active is a replacement, and
+       * it is legitimate - the user asked for it. What is not legitimate is
+       * losing the outgoing project's identity on the way: without this the
+       * whole preflight sequence carried no `lastKnownGood`, so a replacement
+       * that failed at any point before hydration left the user at `failed`
+       * with nothing, having had a working project a moment earlier. The
+       * replacement is remembered here and handed to `failed`, so a refused
+       * replacement can offer the project it replaced.
+       */
+      readonly replacing?: LastKnownGoodProject;
+    }
   | { readonly kind: 'detecting'; readonly name: string }
   /**
    * The candidate passed byte preflight *and* the source-completeness policy.
@@ -121,6 +138,13 @@ export type FileFlowState =
       readonly name?: string;
       readonly code: string;
       readonly message: string;
+      /**
+       * The project that was open before this attempt, when the attempt was a
+       * replacement. A failed replacement must be able to say what it replaced;
+       * without it the user is told an open failed and is given no route back
+       * to the project they already had.
+       */
+      readonly lastKnownGood?: LastKnownGoodProject;
     }
   /**
    * Everything below is the lifecycle after the byte-safe preflight gate that
@@ -257,8 +281,15 @@ export type FileFlowEvent =
   | { readonly type: 'route-native'; readonly sidecarDependency: ArqfsSidecarDependency }
   | { readonly type: 'route-import'; readonly formatId: string }
   | { readonly type: 'import-start'; readonly requestId: string }
-  | { readonly type: 'progress'; readonly fraction: number }
-  | { readonly type: 'staged' }
+  /**
+   * Both carry the request they came from, so the reducer can tell a live
+   * import's events from an abandoned one's. Required rather than optional: an
+   * emitter that has not said which request it is reporting on is exactly the
+   * one whose events cannot be trusted, and an optional field would let it
+   * through under the reassuring default.
+   */
+  | { readonly type: 'progress'; readonly requestId: string; readonly fraction: number }
+  | { readonly type: 'staged'; readonly requestId: string }
   | { readonly type: 'safe-mode'; readonly reason: string }
   | { readonly type: 'fail'; readonly code: string; readonly message: string }
   | { readonly type: 'reset' }
@@ -356,13 +387,25 @@ export function lastKnownGoodProject(state: FileFlowState): LastKnownGoodProject
 
 export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): FileFlowState {
   if (event.type === 'reset') return { kind: 'idle' };
-  if (event.type === 'acquire') return { kind: 'acquiring', name: event.name };
+  if (event.type === 'acquire') {
+    // V3-015. A replacement carries the outgoing project forward, so failing
+    // part-way through does not leave the user with nothing when they had a
+    // working project a moment ago.
+    const replaced = lastKnownGoodProject(state);
+    return {
+      kind: 'acquiring',
+      name: event.name,
+      ...(replaced === null ? {} : { replacing: replaced }),
+    };
+  }
   if (event.type === 'fail') {
+    const replaced = state.kind === 'acquiring' ? state.replacing : lastKnownGoodProject(state);
     return {
       kind: 'failed',
       ...('name' in state ? { name: state.name } : {}),
       code: event.code,
       message: event.message,
+      ...(replaced === null || replaced === undefined ? {} : { lastKnownGood: replaced }),
     };
   }
   if (event.type === 'safe-mode' && 'name' in state) {
@@ -384,10 +427,23 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
   if (state.kind === 'import-options' && event.type === 'import-start') {
     return { kind: 'importing', name: state.name, requestId: event.requestId, fraction: 0 };
   }
+  // V3-019. `importing` has always carried the request id and never compared
+  // it. An import is asynchronous and cancellable, so a superseded request goes
+  // on emitting until it notices - and its progress and completion were driving
+  // the current one. A `staged` from the abandoned request moved the flow to
+  // `staged-review` over bytes the user is no longer importing, which is the
+  // workspace registry's own "stale asynchronous results never overwrite newer
+  // document revision" happening to the import flow.
   if (state.kind === 'importing' && event.type === 'progress') {
+    if (event.requestId !== state.requestId) {
+      return state;
+    }
     return { ...state, fraction: Math.max(0, Math.min(1, event.fraction)) };
   }
   if (state.kind === 'importing' && event.type === 'staged') {
+    if (event.requestId !== state.requestId) {
+      return state;
+    }
     return { kind: 'staged-review', name: state.name, requestId: state.requestId };
   }
 

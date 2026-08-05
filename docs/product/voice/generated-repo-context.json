@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "5fbc8bd8a25b4260f5cbd4bd435c859ca0b0a7810cc599ae11b5bee379847ee7",
+  "sourceSetDigest": "56f5ba0dc8afc531e5dd0d9067cf42ff2f0a6a4bebb6d2453d8caed2088d0d5b",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -350,7 +350,7 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "e65a60ab6665440bf6f87982625d2038df5073b8c88dc8adbbba478fb2de3f5f",
+      "sha256": "3b857986484aa48ee7870262205f6444ed68529621f506400383b0391ce44fbc",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
@@ -384,13 +384,13 @@
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.test.ts",
-          "sha256": "51474418007a4c8c10ec4a32ec3e48a257878078318c473b5885a2a0268e6ef7",
-          "bytes": 17221
+          "sha256": "80097d2046543c7ed020b7c4744037afedb386eeaae9932b5eceace26101bf3c",
+          "bytes": 26065
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.ts",
-          "sha256": "44ccd539b7c758635146b8a98d34023a8eca2d456711717129c1cf0bbd1159e3",
-          "bytes": 24171
+          "sha256": "bc863d47988649d29061ca181fb44da6956410325645ff3c102c22a171db7b2a",
+          "bytes": 26927
         },
         {
           "rel": "apps/web/src/file-handling/index.ts",
