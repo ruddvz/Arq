@@ -5,6 +5,7 @@ import {
   isProjectOpen,
   isProjectWritable,
   lastKnownGoodProject,
+  type ProjectReadOnlyReason,
 } from './file-state-machine';
 
 const IDLE: FileFlowState = { kind: 'idle' };
@@ -123,6 +124,108 @@ describe('reduceFileFlow', () => {
   it('ignores an event that does not apply to the current state', () => {
     expect(reduceFileFlow(IDLE, { type: 'staged' })).toBe(IDLE);
   });
+
+  it('lets an open fail from any point in the open, keeping the file name', () => {
+    const failed = reduceFileFlow(
+      {
+        kind: 'worker-open',
+        name: 'house.arq',
+        projectId: 'open-1',
+        readOnlyReason: 'build-cannot-write',
+      },
+      { type: 'fail', code: 'CHECKSUM_MISMATCH', message: 'model.json' },
+    );
+
+    expect(failed).toEqual({
+      kind: 'failed',
+      name: 'house.arq',
+      code: 'CHECKSUM_MISMATCH',
+      message: 'model.json',
+    });
+  });
+});
+
+/**
+ * The open this build actually performs. It reaches the same lifecycle as a
+ * staged open, through a transition that reports the truth about itself: no
+ * working copy was made, so the project can only ever be read.
+ */
+describe('in-place read-only open', () => {
+  const compatible: FileFlowState = {
+    kind: 'native-opening',
+    name: 'house.arq',
+    sidecarDependency: 'complete',
+  };
+  const FACTS = {
+    projectName: 'House',
+    revision: 191,
+    sidecarDependency: 'complete',
+    conditionNote: null,
+  } as const;
+
+  it('only starts from a file already found compatible', () => {
+    expect(reduceFileFlow(compatible, { type: 'open-in-place', projectId: 'open-1' })).toEqual({
+      kind: 'worker-open',
+      name: 'house.arq',
+      projectId: 'open-1',
+      readOnlyReason: 'build-cannot-write',
+    });
+    // Preflight cannot be skipped: an open cannot begin from acquisition or detection.
+    for (const state of [
+      { kind: 'idle' } as const,
+      { kind: 'acquiring', name: 'house.arq' } as const,
+      { kind: 'detecting', name: 'house.arq' } as const,
+    ]) {
+      expect(reduceFileFlow(state, { type: 'open-in-place', projectId: 'open-1' })).toBe(state);
+    }
+  });
+
+  it('cannot reach an active workspace writable, however it is driven', () => {
+    const active = [
+      { type: 'open-in-place', projectId: 'open-1' } as const,
+      { type: 'hydrate-start' } as const,
+      { type: 'hydrated', facts: FACTS } as const,
+    ].reduce<FileFlowState>(reduceFileFlow, compatible);
+
+    expect(active.kind).toBe('workspace-active');
+    expect(isProjectOpen(active)).toBe(true);
+    // The guarantee: an open with no working copy behind it never becomes
+    // writable, and says which of the two causes applies.
+    expect(isProjectWritable(active)).toBe(false);
+    expect(active).toMatchObject({ readOnlyReason: 'build-cannot-write', facts: FACTS });
+  });
+
+  it('is not open until hydration finishes', () => {
+    const workerOpen = reduceFileFlow(compatible, { type: 'open-in-place', projectId: 'open-1' });
+    const hydrating = reduceFileFlow(workerOpen, { type: 'hydrate-start' });
+    for (const state of [workerOpen, hydrating]) {
+      expect(isProjectOpen(state)).toBe(false);
+    }
+  });
+
+  /**
+   * A successful open does not make an absent `-wal` sidecar's missing commits
+   * reappear, so the caution has to survive into the opened state.
+   */
+  it('carries a write-ahead-log dependency into the opened project', () => {
+    const active = [
+      { type: 'open-in-place', projectId: 'open-1' } as const,
+      { type: 'hydrate-start' } as const,
+      {
+        type: 'hydrated',
+        facts: { ...FACTS, sidecarDependency: 'write-ahead-log-sidecar' },
+      } as const,
+    ].reduce<FileFlowState>(reduceFileFlow, {
+      kind: 'native-opening',
+      name: 'house.arq',
+      sidecarDependency: 'write-ahead-log-sidecar',
+    });
+
+    expect(active).toMatchObject({
+      kind: 'workspace-active',
+      facts: { sidecarDependency: 'write-ahead-log-sidecar' },
+    });
+  });
 });
 
 describe('project lifecycle after preflight', () => {
@@ -132,14 +235,21 @@ describe('project lifecycle after preflight', () => {
     sidecarDependency: 'complete',
   };
 
-  function openFully(writable = true): FileFlowState {
+  const FACTS = {
+    projectName: 'House',
+    revision: 191,
+    sidecarDependency: 'complete',
+    conditionNote: null,
+  } as const;
+
+  function openFully(readOnlyReason: ProjectReadOnlyReason | null = null): FileFlowState {
     return [
       { type: 'stage-start' } as const,
       { type: 'stage-complete', projectId: 'p1' } as const,
       { type: 'migration-verified' } as const,
-      { type: 'worker-opened', writable } as const,
+      { type: 'worker-opened', readOnlyReason } as const,
       { type: 'hydrate-start' } as const,
-      { type: 'hydrated' } as const,
+      { type: 'hydrated', facts: FACTS } as const,
     ].reduce<FileFlowState>(reduceFileFlow, preflighted);
   }
 
@@ -162,8 +272,8 @@ describe('project lifecycle after preflight', () => {
       { kind: 'staging', name: 'a', fraction: 0.5 },
       { kind: 'staged', name: 'a', projectId: 'p1' },
       { kind: 'migration-verified', name: 'a', projectId: 'p1' },
-      { kind: 'worker-open', name: 'a', projectId: 'p1', writable: true },
-      { kind: 'hydrating', name: 'a', projectId: 'p1', writable: true },
+      { kind: 'worker-open', name: 'a', projectId: 'p1', readOnlyReason: null },
+      { kind: 'hydrating', name: 'a', projectId: 'p1', readOnlyReason: null },
     ];
     for (const state of states) {
       expect(isProjectOpen(state)).toBe(false);
@@ -175,21 +285,21 @@ describe('project lifecycle after preflight', () => {
     // Worker open without migration verification must not advance.
     const skipped = reduceFileFlow(
       { kind: 'staged', name: 'a', projectId: 'p1' },
-      { type: 'worker-opened', writable: true },
+      { type: 'worker-opened', readOnlyReason: null },
     );
     expect(skipped.kind).toBe('staged');
 
     // Hydrated without hydrating must not produce an active workspace.
     const notHydrated = reduceFileFlow(
-      { kind: 'worker-open', name: 'a', projectId: 'p1', writable: true },
-      { type: 'hydrated' },
+      { kind: 'worker-open', name: 'a', projectId: 'p1', readOnlyReason: null },
+      { type: 'hydrated', facts: FACTS },
     );
     expect(notHydrated.kind).toBe('worker-open');
     expect(isProjectOpen(notHydrated)).toBe(false);
   });
 
   it('keeps a read-only file read-only all the way to active', () => {
-    const active = openFully(false);
+    const active = openFully('newer-format-version');
     expect(active.kind).toBe('workspace-active');
     expect(isProjectOpen(active)).toBe(true);
     expect(isProjectWritable(active)).toBe(false);
@@ -237,7 +347,7 @@ describe('project lifecycle after preflight', () => {
       { type: 'stage-start' } as const,
       { type: 'stage-complete', projectId: 'p1' } as const,
       { type: 'migration-verified' } as const,
-      { type: 'worker-opened', writable: true } as const,
+      { type: 'worker-opened', readOnlyReason: null } as const,
       { type: 'recovery-found', journalledOperations: 3 } as const,
       { type: 'recover-start' } as const,
       { type: 'recovered' } as const,

@@ -45,3 +45,36 @@ export function readProjectIdFromWorkerSearch(search: string): string {
   validateArqfsProjectId(projectId);
   return projectId;
 }
+
+/**
+ * The query string for a Worker that will be handed bytes a user selected
+ * instead of owning a project file of its own.
+ *
+ * It carries no project id because the identity of a selected file is a fact
+ * inside that file, not something the caller knows before opening it - and
+ * because this Worker must never touch OPFS at all, so there is no filename for
+ * an id to select. The mode is in the URL rather than in the first message for
+ * the same reason the project id is: a Worker has to know what it is before a
+ * request can race it.
+ */
+export function arqfsSelectedBytesWorkerUrlSearch(): string {
+  return `?source=${ARQFS_WORKER_SELECTED_BYTES}`;
+}
+
+export const ARQFS_WORKER_SELECTED_BYTES = 'selected-bytes';
+
+/**
+ * Which of the two Worker modes this URL asks for. Unrecognised values are an
+ * error rather than a fallback: silently treating a typo as the owned-project
+ * mode would put a Worker that was meant to be a reader in charge of a file.
+ */
+export function readWorkerSourceFromSearch(search: string): 'owned-project' | 'selected-bytes' {
+  const source = new URLSearchParams(search).get('source');
+  if (source === null || source === 'owned-project') {
+    return 'owned-project';
+  }
+  if (source === ARQFS_WORKER_SELECTED_BYTES) {
+    return ARQFS_WORKER_SELECTED_BYTES;
+  }
+  throw new Error(`arqfs Worker does not have a "${source}" source mode`);
+}

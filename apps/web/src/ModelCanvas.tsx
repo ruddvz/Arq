@@ -61,10 +61,29 @@ const TOKEN_TREATMENT: Readonly<
 };
 const DEFAULT_WALL_COLOR = 0x8a8a8a;
 
+/** Per-wall solid dimensions, so an opened project extrudes at its own wall types. */
+export interface WallSolidDimensions {
+  readonly thicknessMm: number;
+  readonly heightMm: number;
+}
+
 export interface ModelCanvasProps {
   readonly walls: readonly DrawnWall[];
   readonly selection: PlanSelectionState<string>;
   readonly onSelectElement: (elementId: string | null) => void;
+  /**
+   * Thickness and height per wall id. A wall with no entry uses the workspace's
+   * own demo wall type, which is the only type the drawing tools have. An opened
+   * project supplies every wall, so its walls are extruded at the dimensions its
+   * own wall types declare rather than at a single borrowed default.
+   */
+  readonly wallDimensions?: ReadonlyMap<string, WallSolidDimensions>;
+  /**
+   * Whether to draw the workspace's own starting room outline. Off for an opened
+   * project: a fixture outline laid over someone's building is a claim about their
+   * model that is not true.
+   */
+  readonly showDemoRoom?: boolean;
 }
 
 interface ModelRefs {
@@ -76,17 +95,17 @@ interface ModelRefs {
   aspect: number;
 }
 
-function toMesh(wall: DrawnWall): THREE.BufferGeometry | null {
+function toMesh(wall: DrawnWall, dimensions: WallSolidDimensions): THREE.BufferGeometry | null {
   const outline = wallOutline(
     { start: wall.start, end: wall.end },
-    WALL_THICKNESS_MM,
+    dimensions.thicknessMm,
     'centre',
     1e-6,
   );
   if (outline === null) {
     return null;
   }
-  const mesh = extrudePolygonMesh(outline, 0, WALL_HEIGHT_MM);
+  const mesh = extrudePolygonMesh(outline, 0, dimensions.heightMm);
   if (mesh === null) {
     return null;
   }
@@ -97,11 +116,17 @@ function toMesh(wall: DrawnWall): THREE.BufferGeometry | null {
   return geometry;
 }
 
-function contentSphere(walls: readonly DrawnWall[]): {
+function contentSphere(
+  walls: readonly DrawnWall[],
+  includeDemoRoom: boolean,
+): {
   readonly center: THREE.Vector3;
   readonly radius: number;
 } {
-  const points = [...DEMO_ROOM_POLYGON, ...walls.flatMap((wall) => [wall.start, wall.end])];
+  const points = [
+    ...(includeDemoRoom ? DEMO_ROOM_POLYGON : []),
+    ...walls.flatMap((wall) => [wall.start, wall.end]),
+  ];
   let minX = Number.POSITIVE_INFINITY;
   let minZ = Number.POSITIVE_INFINITY;
   let maxX = Number.NEGATIVE_INFINITY;
@@ -118,7 +143,15 @@ function contentSphere(walls: readonly DrawnWall[]): {
 }
 
 export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
-  const { walls, selection, onSelectElement } = props;
+  const { walls, selection, onSelectElement, wallDimensions, showDemoRoom = true } = props;
+  const dimensionsFor = useCallback(
+    (wallId: string): WallSolidDimensions =>
+      wallDimensions?.get(wallId) ?? {
+        thicknessMm: WALL_THICKNESS_MM,
+        heightMm: WALL_HEIGHT_MM,
+      },
+    [wallDimensions],
+  );
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const refsRef = useRef<ModelRefs | null>(null);
   const dragRef = useRef<{
@@ -155,19 +188,22 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
     wallGroup.name = 'arq-drawn-walls';
     scene.add(wallGroup);
 
-    // The demo room fixture appears as a floor outline, labelled by its
-    // absence of mass - fixture context, not claimed geometry.
-    const roomOutline = new THREE.LineLoop(
-      new THREE.BufferGeometry().setFromPoints(
-        DEMO_ROOM_POLYGON.map((point) => new THREE.Vector3(point.x, 1, point.y)),
-      ),
-      new THREE.LineBasicMaterial({ color: 0x111111 }),
-    );
-    roomOutline.name = 'demo-room-outline';
-    scene.add(roomOutline);
+    // The workspace's own starting room appears as a floor outline, labelled by
+    // its absence of mass - fixture context, not claimed geometry. Omitted
+    // entirely for an opened project.
+    if (showDemoRoom) {
+      const roomOutline = new THREE.LineLoop(
+        new THREE.BufferGeometry().setFromPoints(
+          DEMO_ROOM_POLYGON.map((point) => new THREE.Vector3(point.x, 1, point.y)),
+        ),
+        new THREE.LineBasicMaterial({ color: 0x111111 }),
+      );
+      roomOutline.name = 'demo-room-outline';
+      scene.add(roomOutline);
+    }
 
     const camera = createOrthographicCamera({ aspect, viewSize: 12000, far: 200000 });
-    const sphere = contentSphere([]);
+    const sphere = contentSphere(walls, showDemoRoom);
     const orbit = fitBoundingSphere(
       { ...DEFAULT_ORBIT_CAMERA_STATE, distance: 40000 },
       sphere.center,
@@ -220,7 +256,7 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
       if (wallLength(wall) === 0) {
         continue;
       }
-      const geometry = toMesh(wall);
+      const geometry = toMesh(wall, dimensionsFor(wall.id));
       if (geometry === null) {
         continue;
       }
@@ -245,7 +281,7 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
       }
     }
     renderNow();
-  }, [walls, selection, renderNow]);
+  }, [walls, selection, dimensionsFor, renderNow]);
 
   /* Orbit / pan / zoom / pick. */
   function handlePointerDown(event: ReactPointerEvent<HTMLCanvasElement>): void {
@@ -322,7 +358,7 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
     if (refs === null) {
       return;
     }
-    const sphere = contentSphere(walls);
+    const sphere = contentSphere(walls, showDemoRoom);
     refs.orbit = fitBoundingSphere(refs.orbit, sphere.center, sphere.radius, refs.aspect);
     renderNow();
   }

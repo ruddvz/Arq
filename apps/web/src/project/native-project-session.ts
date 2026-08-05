@@ -19,6 +19,7 @@
  */
 import { exportArchive, type ArqManifest } from '@arq/project-format';
 import type { ArqfsWorkerClient } from '@arq/arqfs';
+import type { NativeProjectModel as NativeProjectDocument } from '@arq/project-loading';
 import type { DrawnWall, WorkspaceOperation } from '../canvas/plan-document';
 import { encodeNativeProjectModel } from './native-project-model';
 
@@ -30,6 +31,13 @@ export interface NativeProjectSnapshot {
   readonly projectId: string;
   readonly displayName: string;
   readonly walls: readonly DrawnWall[];
+  /**
+   * The reference-format model when the file carried one, so a surface can show
+   * levels, wall types and rooms rather than only the walls the plan canvas
+   * edits. Null for a project written by this build, which has none of that to
+   * show - the absence is the honest answer, not a missing feature.
+   */
+  readonly document: NativeProjectDocument | null;
   readonly journalSequence: number;
   readonly readOnly: boolean;
   /** Which VFS actually backs the working copy - reported honestly, never assumed to be persistent. */

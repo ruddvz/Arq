@@ -26,9 +26,9 @@
     "sync": "Remote status is always independent of local save/journal status.",
     "workspace-open": "Project ready requires a usable project context, not a compatible file.",
     "arqfs-safe-mode": "Translate the underlying file condition before exposing read-only handling.",
-    "file-flow": "Compatibility, migration, staging and opened project states are distinct.",
+    "file-flow": "Compatibility, migration, staging, opening and opened project states are distinct. A read-only opened project is an opened project, and is never described as saved or editable.",
     "ai-proposal": "Apply requires current base revision and no blocking validation errors.",
-    "web-plan-journal-status": "The web build's saveState union reports the local IndexedDB operation journal for the demo plan. A label here never implies that a portable .arq file was written, that a user project was opened, or that anything was synced."
+    "web-plan-journal-status": "The web build's saveState union reports the local IndexedDB operation journal for its own plan document. A label here never implies that a portable .arq file was written, that a user project was opened, or that anything was synced. When a native .arq project is open the shell reports the `save` machine's read-only state instead of any of these."
   },
   "machines": {
     "workspace-open": [
@@ -209,6 +209,12 @@
         "internal": "local-save-failed",
         "label": "Local save failed",
         "explain": "Current changes may not be durably persisted locally. Never describe this as a sync error.",
+        "exposure": "product"
+      },
+      {
+        "internal": "read-only",
+        "label": "Read-only · nothing to save",
+        "explain": "The open project is inspected, not authored: this build performs no local save for it, and the file it was opened from is unchanged. Never present this as a completed save, and never as a failure.",
         "exposure": "product"
       }
     ],
@@ -541,7 +547,7 @@
       {
         "internal": "workspace-active",
         "labelTemplate": "{name} is open",
-        "explain": "The only state that may say open. Worker open, integrity, hydration and activation have all succeeded.",
+        "explain": "The only state that may say open. Worker open, integrity, hydration and activation have all succeeded. When the project is read-only, say so in the same sentence that says open, and name the cause: a build with no save path and a file from a newer ARQ are different facts, and the wrong one is a false statement about the reader's own work. Never describe a read-only open project as saved, editable or published.",
         "exposure": "product"
       },
       {

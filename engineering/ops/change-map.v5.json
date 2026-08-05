@@ -118,7 +118,9 @@
         "workers/arqfs-worker/**",
         "packages/project-loading/**",
         "packages/file-ingress/**",
-        "apps/web/src/file-handling/**"
+        "apps/web/src/file-handling/**",
+        "apps/web/src/native-project-view.ts",
+        "apps/web/src/NativeProjectPanel.tsx"
       ],
       "minLane": "L4",
       "impacts": [
@@ -136,6 +138,7 @@
         "browser_arqfs_writer_lock",
         "browser_arqfs_project_isolation",
         "e2e_arq_open",
+        "browser_native_open",
         "protected_l4_approval"
       ]
     },

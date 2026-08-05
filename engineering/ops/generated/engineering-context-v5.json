@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "8d2dcba353d73279cb8c0bd5d770a36ff223d64e1547af4f991d27770b0d7381",
+  "source_hash": "38490b681cebc16e2d6683facd3b69586e612ad827cd01f824c7e8cfe4b3b3b5",
   "source_records": [
     {
       "scope": "package",
@@ -54,7 +54,7 @@
     {
       "scope": "package",
       "path": "ops/change-map.v5.json",
-      "sha256": "185ac4ae060c74964bcbbea29c746de8d2583e50bdf61e1190c6b263c260a6ad"
+      "sha256": "5ce22f915b78d97013b85237bd50a14f0b13c4fd4e20dda701e8cd0f96a22f64"
     },
     {
       "scope": "package",
@@ -74,7 +74,7 @@
     {
       "scope": "package",
       "path": "ops/evidence-catalog.v5.json",
-      "sha256": "16e81773b7a74a4769fea60428f127b54ee6f7c02d44de8318ec9dcab43383fb"
+      "sha256": "b044212096de1ac77f32734095bf188244e7e7ebd881acd035cefbd5ba849220"
     },
     {
       "scope": "package",
@@ -89,7 +89,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "14f497ae65da1e68c6096948ef42f93903d5dcfc21896a31d0ee236724a2f98f"
+      "sha256": "ac877ae31a607d825da146f02d29d9a56cfd52a586a44d4b654dafb8c35adbb9"
     },
     {
       "scope": "repository",
@@ -204,7 +204,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/App.tsx",
-      "sha256": "af28f2dbd80b2f4bf805bc8e5c2df63e12f6bdcab122007ba8023711d1086405"
+      "sha256": "55758a67d73e139946921e34a8918eed5f54f8880aa8a308d6e0f2f7cb63f336"
     },
     {
       "scope": "repository",
@@ -214,17 +214,17 @@
     {
       "scope": "repository",
       "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
-      "sha256": "492e881fadb72b54484c1256ebc402491111effb579a574f683ea7d94359375d"
+      "sha256": "929007932dba943a58eea2b0262916b86329709456c486da48076f464bdc4a5a"
     },
     {
       "scope": "repository",
       "path": "apps/web/src/ModelCanvas.tsx",
-      "sha256": "4799613f1ef01c0cbc293b045c486b6a16fe009ded99afe3df7c1a2fa57a4221"
+      "sha256": "ce3c57c32591813a618eb21c388aac2cafc4d2264dea365b1de814eafecd71cd"
     },
     {
       "scope": "repository",
       "path": "apps/web/src/PlanCanvas.tsx",
-      "sha256": "2a80833450186831bd6a70f98b944f67dce0856c71441365a3ef9dbe12456bd3"
+      "sha256": "7a84db5853dc4c05301d74434ccbbf44fa733289ec6ea548c3fe75f5c81ac5c3"
     },
     {
       "scope": "repository",
@@ -369,7 +369,7 @@
     {
       "scope": "repository",
       "path": "docs/adr/0028-persistence-responsibility-split.md",
-      "sha256": "e42ece23a268f59a1b094daa8ca4585fa831a5282dff7ebd61219b3b85bb349e"
+      "sha256": "c5c5b7b8ed5bc6219efd83c5727502712f9ec8bb9cd5a355e2caf6907ff7880b"
     },
     {
       "scope": "repository",
@@ -384,7 +384,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "66d49e9f4d31ededfa1aac7a0b915ffcb12ea33f8002573ada51f6209d2315f7"
+      "sha256": "0a9eb4acbda935fc33eda25ad6830bbd53ada7ff055316ee7ac58e40d6609b2e"
     },
     {
       "scope": "repository",
@@ -794,7 +794,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "c2c5ba924aafe4b2a149c511e5a0f799cca80ffd9384e4984eada58fce88031c"
+      "sha256": "965ddf6875db8a52d9eb9c6c4678ca866ead6226b1ff8f1444790fdbcbe67b8d"
     },
     {
       "scope": "repository",
@@ -804,12 +804,12 @@
     {
       "scope": "repository",
       "path": "workers/arqfs-worker/src/arqfs-project-filename.test.ts",
-      "sha256": "c9de26ca87fe790d916a3d2760e7e48d764a54e580f7ae30d6339d763735dbd1"
+      "sha256": "3ffb5ee5bf75dc6a07ad6e6f640a74987dfa3b6110c22b7979d8b52df03d540e"
     },
     {
       "scope": "repository",
       "path": "workers/arqfs-worker/src/arqfs-project-filename.ts",
-      "sha256": "02954beb5100d4411d73430823581228646c2375276c4528ff877d0128f677e0"
+      "sha256": "0f09ecb884f14b25e144966b95f8e81d28094306b8ee1a3bc36c2ddc582790f6"
     },
     {
       "scope": "repository",

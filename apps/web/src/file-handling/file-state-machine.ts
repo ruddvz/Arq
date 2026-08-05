@@ -34,6 +34,42 @@ export type ProjectOpenFailureReason =
   | 'recovery-failed';
 
 /**
+ * Why an open project may not be written. There is more than one cause and they
+ * are not interchangeable: a file from a newer ARQ is read-only because of the
+ * file, and a project opened by this build is read-only because of the build.
+ * Telling a reader the wrong one is a false statement about their own work, so
+ * the cause travels with the state and the copy layer branches on it.
+ */
+export type ProjectReadOnlyReason =
+  /**
+   * ADR-0028: this build owns no working copy and has no durable write path, so
+   * every project it opens is an inspection of bytes it will never modify.
+   */
+  | 'build-cannot-write'
+  /** The file's format version is ahead of this build: readable, not writable. */
+  | 'newer-format-version';
+
+/**
+ * What an open project can say about itself beyond its file name, learned by
+ * hydration and not before. Grouped rather than spread across the state because
+ * these four facts arrive together, from one read of one project, and a state
+ * holding some of them would invite a surface to render half an identity.
+ */
+export interface OpenProjectFacts {
+  readonly projectName: string;
+  readonly revision: number;
+  /**
+   * Carried into the opened state rather than left behind at preflight: a
+   * write-ahead-log project that opens successfully is still missing whatever
+   * its absent `-wal` sidecar held, and a successful open must not be allowed to
+   * swallow that caution.
+   */
+  readonly sidecarDependency: ArqfsSidecarDependency;
+  /** Present when the file opened with a condition worth stating (interrupted write, missing optional content). */
+  readonly conditionNote: string | null;
+}
+
+/**
  * The last project this session had fully active, carried through every failed
  * transition. ADR-0028 requires that a failure never silently replaces the last
  * known good project, so this rides on the failure states themselves rather
@@ -104,21 +140,23 @@ export type FileFlowState =
       readonly kind: 'worker-open';
       readonly name: string;
       readonly projectId: string;
-      /** False for a file this build may read but must not write. */
-      readonly writable: boolean;
+      /** Null when this project may be written; otherwise why it may not. */
+      readonly readOnlyReason: ProjectReadOnlyReason | null;
     }
   | {
       readonly kind: 'hydrating';
       readonly name: string;
       readonly projectId: string;
       /** Decided once at Worker open and carried, never re-derived. */
-      readonly writable: boolean;
+      readonly readOnlyReason: ProjectReadOnlyReason | null;
     }
   | {
       readonly kind: 'workspace-active';
       readonly name: string;
       readonly projectId: string;
-      readonly writable: boolean;
+      readonly readOnlyReason: ProjectReadOnlyReason | null;
+      /** What hydration read out of the project, so a surface names the project rather than the file. */
+      readonly facts: OpenProjectFacts;
     }
   /**
    * A migration that failed leaves its half-migrated copy in place instead of
@@ -150,13 +188,13 @@ export type FileFlowState =
       readonly name: string;
       readonly projectId: string;
       readonly journalledOperations: number;
-      readonly writable: boolean;
+      readonly readOnlyReason: ProjectReadOnlyReason | null;
     }
   | {
       readonly kind: 'recovering';
       readonly name: string;
       readonly projectId: string;
-      readonly writable: boolean;
+      readonly readOnlyReason: ProjectReadOnlyReason | null;
     }
   | {
       readonly kind: 'publishing';
@@ -183,9 +221,18 @@ export type FileFlowEvent =
   | { readonly type: 'stage-progress'; readonly fraction: number }
   | { readonly type: 'stage-complete'; readonly projectId: string }
   | { readonly type: 'migration-verified' }
-  | { readonly type: 'worker-opened'; readonly writable: boolean }
+  | { readonly type: 'worker-opened'; readonly readOnlyReason: ProjectReadOnlyReason | null }
+  /**
+   * The open this build actually performs: the Worker holds the selected bytes
+   * in memory and no working copy was ever staged. It skips staging and
+   * migration because neither happened, and it cannot lie about that - there is
+   * no writable form of this event, because a project with no working copy has
+   * nowhere for a write to go (ADR-0028).
+   */
+  | { readonly type: 'open-in-place'; readonly projectId: string }
   | { readonly type: 'hydrate-start' }
-  | { readonly type: 'hydrated' }
+  /** Hydration is where a project's own identity is first read, so it is where the facts enter the flow. */
+  | { readonly type: 'hydrated'; readonly facts: OpenProjectFacts }
   | {
       readonly type: 'project-fail';
       readonly reason: ProjectOpenFailureReason;
@@ -221,7 +268,7 @@ export function isProjectOpen(state: FileFlowState): boolean {
  * half-open project by checking only that something is loaded.
  */
 export function isProjectWritable(state: FileFlowState): boolean {
-  return state.kind === 'workspace-active' && state.writable;
+  return state.kind === 'workspace-active' && state.readOnlyReason === null;
 }
 
 /**
@@ -322,6 +369,19 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
   if (state.kind === 'native-opening' && event.type === 'stage-start') {
     return { kind: 'staging', name: state.name, fraction: 0 };
   }
+  // The one legal way into the lifecycle without a staging copy, and the only
+  // open this build performs. It starts from `native-opening` for the same
+  // reason `stage-start` does - preflight cannot be skipped - and it lands
+  // read-only for a reason no caller gets to choose: there is no working copy,
+  // so there is nothing a write could be written to.
+  if (state.kind === 'native-opening' && event.type === 'open-in-place') {
+    return {
+      kind: 'worker-open',
+      name: state.name,
+      projectId: event.projectId,
+      readOnlyReason: 'build-cannot-write',
+    };
+  }
   if (state.kind === 'staging' && event.type === 'stage-progress') {
     return { ...state, fraction: Math.max(0, Math.min(1, event.fraction)) };
   }
@@ -344,7 +404,7 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
       kind: 'worker-open',
       name: state.name,
       projectId: state.projectId,
-      writable: event.writable,
+      readOnlyReason: event.readOnlyReason,
     };
   }
   if (state.kind === 'worker-open' && event.type === 'recovery-found') {
@@ -353,7 +413,7 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
       name: state.name,
       projectId: state.projectId,
       journalledOperations: event.journalledOperations,
-      writable: state.writable,
+      readOnlyReason: state.readOnlyReason,
     };
   }
   if (state.kind === 'recovery-available' && event.type === 'recover-start') {
@@ -361,7 +421,7 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
       kind: 'recovering',
       name: state.name,
       projectId: state.projectId,
-      writable: state.writable,
+      readOnlyReason: state.readOnlyReason,
     };
   }
   if (state.kind === 'recovering' && event.type === 'recovered') {
@@ -371,7 +431,7 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
       kind: 'hydrating',
       name: state.name,
       projectId: state.projectId,
-      writable: state.writable,
+      readOnlyReason: state.readOnlyReason,
     };
   }
   if (state.kind === 'worker-open' && event.type === 'hydrate-start') {
@@ -379,7 +439,7 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
       kind: 'hydrating',
       name: state.name,
       projectId: state.projectId,
-      writable: state.writable,
+      readOnlyReason: state.readOnlyReason,
     };
   }
   if (state.kind === 'hydrating' && event.type === 'hydrated') {
@@ -390,7 +450,8 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
       // A file opened read-only stays read-only through hydration. The answer
       // is decided once, at Worker open, and carried on the state itself rather
       // than recomputed somewhere it could drift optimistic.
-      writable: state.writable,
+      readOnlyReason: state.readOnlyReason,
+      facts: event.facts,
     };
   }
   if (state.kind === 'workspace-active' && event.type === 'publish-start') {

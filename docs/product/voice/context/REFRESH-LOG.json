@@ -2,6 +2,27 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "generatedAt": "2026-08-05T03:58:36.884Z",
+      "sourceSetDigest": "d7e1a232761bb153427c24ce08efea71cc9e109440b83f987cbe1088a461078e",
+      "previousSourceSetDigest": "0dc565d3eaadf6698b1b1b7bd01deecd8e96241b2efe56cad74267c2b97e3d6d",
+      "changedSourceSets": ["status"]
+    },
+    {
+      "generatedAt": "2026-08-05T03:47:16.611Z",
+      "sourceSetDigest": "0dc565d3eaadf6698b1b1b7bd01deecd8e96241b2efe56cad74267c2b97e3d6d",
+      "previousSourceSetDigest": "48a4d0022d953b157b4bd42c421ee907f811ead310c8c385880d5b2e8dd4bd69",
+      "changedSourceSets": [
+        "accepted-adrs",
+        "file-open-ui",
+        "model-canvas",
+        "plan-canvas",
+        "status",
+        "web-app",
+        "workspace-registries",
+        "workspace-types"
+      ]
+    },
+    {
       "generatedAt": "2026-08-05T02:52:29.533Z",
       "sourceSetDigest": "48a4d0022d953b157b4bd42c421ee907f811ead310c8c385880d5b2e8dd4bd69",
       "previousSourceSetDigest": "49b849b1f741f8f580400d65a31c4e5de8d8f1c2d0622611ccab735f29802dc1",

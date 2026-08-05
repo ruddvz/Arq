@@ -2,10 +2,16 @@
   "name": "@arq/project-loading",
   "private": true,
   "version": "0.0.0",
-  "description": "Monotonic staged project-open state machine and progressive representation contracts.",
+  "description": "Staged project-open state machine, native .arq read-only open pipeline, and progressive representation contracts.",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@arq/arqfs": "workspace:*",
+    "@arq/bim-core": "workspace:*",
+    "@arq/geometry-2d": "workspace:*",
+    "@arq/project-format": "workspace:*"
   }
 }

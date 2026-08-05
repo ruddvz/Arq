@@ -74,7 +74,15 @@ export interface WorkspaceSelection {
  * them into one status enum is how "network failure presents as local data
  * loss" bugs get written.
  */
-export type LocalSaveState = 'saved-local' | 'saving-local' | 'local-save-failed';
+/**
+ * `read-only` is the honest value for an open project that has no save path at
+ * all - a native `.arq` project opened for inspection. The other three each
+ * assert something about a local write: leaving `saved-local` on a read-only
+ * project would record, in canonical state, that committed state had been
+ * persisted somewhere, which is how an unrendered wrong value becomes a rendered
+ * wrong claim later.
+ */
+export type LocalSaveState = 'saved-local' | 'saving-local' | 'local-save-failed' | 'read-only';
 
 export type RemoteSyncState =
   'not-configured' | 'offline' | 'queued' | 'syncing' | 'synced' | 'conflict' | 'sync-failed';

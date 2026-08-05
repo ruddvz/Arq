@@ -18,12 +18,33 @@
  * the one place the rest of the app is entitled to assume they are branded.
  */
 import { worldPoint, type WorldPoint } from '@arq/geometry-2d';
+import {
+  parseNativeProjectModel,
+  type NativeProjectModel as NativeProjectDocument,
+} from '@arq/project-loading';
 import type { DrawnWall } from '../canvas/plan-document';
 
-/** The `model.json` payload this build writes. Kept explicit so a change to it is a visible format change. */
+/**
+ * A decoded `model.json`, from either of the two shapes that legitimately
+ * appear in one.
+ *
+ * The flat shape is what this build writes: a project name and a wall list, and
+ * nothing the plan canvas cannot already edit. The reference shape is the actual
+ * Arq project model - a project summary with its own revision, levels, wall
+ * types, rooms and views - which a project authored anywhere else carries and
+ * which has no root `projectName` at all. Decoding only the first meant the
+ * product could open the files it had written and refused the reference fixture
+ * with "model.json has no project name".
+ *
+ * `walls` is the common denominator both shapes can always supply, so the plan
+ * canvas needs no knowledge of which one arrived. `document` is the richer model
+ * when there was one, for the surfaces that can show more than walls.
+ */
 export interface NativeProjectModel {
   readonly projectName: string;
   readonly walls: readonly DrawnWall[];
+  /** The reference-format document, or null for a project this build wrote. */
+  readonly document: NativeProjectDocument | null;
 }
 
 export type NativeProjectModelDecodeResult =
@@ -71,8 +92,11 @@ export function decodeNativeProjectModel(value: unknown): NativeProjectModelDeco
     return { status: 'rejected', reason: 'model.json is not an object' };
   }
   const { projectName, walls } = value;
+  // No root project name means this is not the flat shape. Before rejecting,
+  // try the reference model - the format a project written by anything other
+  // than this build actually uses.
   if (typeof projectName !== 'string') {
-    return { status: 'rejected', reason: 'model.json has no project name' };
+    return decodeReferenceModel(value);
   }
   if (!Array.isArray(walls)) {
     return { status: 'rejected', reason: 'model.json has no wall list' };
@@ -96,7 +120,32 @@ export function decodeNativeProjectModel(value: unknown): NativeProjectModelDeco
     decoded.push(result);
   }
 
-  return { status: 'decoded', model: { projectName, walls: decoded } };
+  return { status: 'decoded', model: { projectName, walls: decoded, document: null } };
+}
+
+/**
+ * The reference project model. Validation belongs to `@arq/project-loading`,
+ * which refuses a model whose walls point at levels or types it does not
+ * contain; this only projects the result onto what the plan canvas draws.
+ *
+ * The walls need no coordinate re-validation here: the parser has already built
+ * them through the branded constructors, so re-deriving them would be a second
+ * opinion about the same bytes rather than a check.
+ */
+function decodeReferenceModel(value: unknown): NativeProjectModelDecodeResult {
+  const parsed = parseNativeProjectModel(value);
+  if (parsed.status === 'rejected') {
+    return { status: 'rejected', reason: parsed.reason };
+  }
+  const document = parsed.model;
+  return {
+    status: 'decoded',
+    model: {
+      projectName: document.summary.projectName,
+      walls: document.walls.map((wall) => ({ id: wall.id, start: wall.start, end: wall.end })),
+      document,
+    },
+  };
 }
 
 /**
@@ -104,7 +153,9 @@ export function decodeNativeProjectModel(value: unknown): NativeProjectModelDeco
  * structural rather than lossy - written explicitly so the stored shape is
  * decided here and not by whatever happens to be in memory.
  */
-export function encodeNativeProjectModel(model: NativeProjectModel): unknown {
+export function encodeNativeProjectModel(
+  model: Pick<NativeProjectModel, 'projectName' | 'walls'>,
+): unknown {
   return {
     projectName: model.projectName,
     walls: model.walls.map((wall) => ({

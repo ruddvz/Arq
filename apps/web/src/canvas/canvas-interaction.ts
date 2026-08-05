@@ -25,16 +25,27 @@ import type { DrawnWall } from './plan-document';
 
 /**
  * Pure interaction helpers for the plan canvas: the snapping pipeline and
- * hit-testing over the content this build renders (the demo room fixture
- * plus user-drawn walls). Kept free of React and canvas state so the
- * behaviour is unit-testable the same way the editor-shell libraries are.
+ * hit-testing over the content the canvas renders. Kept free of React and canvas
+ * state so the behaviour is unit-testable the same way the editor-shell libraries
+ * are.
+ *
+ * `rooms` is a list rather than the single demo room this file used to assume.
+ * That assumption was fine while the only content was a fixture; a real opened
+ * project has as many rooms as it has rooms (the golden fixture has 34), and a
+ * plan that drew one of them would be a plan of a different building.
  */
 
 export const GRID_SPACING_MM = 250;
 
+export interface PlanRoom {
+  readonly id: string;
+  /** What the plan labels the room, already formatted by whoever owns the model. */
+  readonly label: string;
+  readonly polygon: readonly WorldPoint[];
+}
+
 export interface PlanContent {
-  readonly roomId: string;
-  readonly roomPolygon: readonly WorldPoint[];
+  readonly rooms: readonly PlanRoom[];
   readonly walls: readonly DrawnWall[];
 }
 
@@ -50,7 +61,7 @@ export function computeSnap(
   viewport: Viewport,
 ): SnapResult | undefined {
   const endpoints = [
-    ...content.roomPolygon.map((point) => ({ point })),
+    ...content.rooms.flatMap((room) => room.polygon.map((point) => ({ point }))),
     ...content.walls.flatMap((wall) => [{ point: wall.start }, { point: wall.end }]),
   ];
   const segments = content.walls.map((wall) => ({ start: wall.start, end: wall.end }));
@@ -77,24 +88,24 @@ function segmentCandidate(id: string, start: WorldPoint, end: WorldPoint): HitCa
 }
 
 /**
- * Hit candidates in pick-priority order: drawn walls first (latest on
- * top, matching paint order), then the room fixture's boundary - so a
- * wall drawn along the room edge is selectable in preference to the room.
+ * Hit candidates in pick-priority order: walls first (latest on top, matching
+ * paint order), then room boundaries - so a wall running along a room edge is
+ * selectable in preference to the room, which is what a click on a wall means.
  */
 export function buildHitCandidates(content: PlanContent): readonly HitCandidate<string>[] {
   const wallCandidates = [...content.walls]
     .reverse()
     .map((wall) => segmentCandidate(wall.id, wall.start, wall.end));
-  const roomEdges: HitCandidate<string> = {
-    id: content.roomId,
-    hitTest: (point, toleranceWorld) =>
-      content.roomPolygon.some((vertex, index) => {
-        const next = content.roomPolygon[(index + 1) % content.roomPolygon.length]!;
+  const roomEdges = content.rooms.map((room) => ({
+    id: room.id,
+    hitTest: (point: WorldPoint, toleranceWorld: number) =>
+      room.polygon.some((vertex, index) => {
+        const next = room.polygon[(index + 1) % room.polygon.length]!;
         const closest = closestPointOnSegment({ start: vertex, end: next }, point);
         return Math.hypot(closest.x - point.x, closest.y - point.y) <= toleranceWorld;
       }),
-  };
-  return [...wallCandidates, roomEdges];
+  }));
+  return [...wallCandidates, ...roomEdges];
 }
 
 /** pickAt over the build's content - null when the click lands on empty canvas. */
@@ -143,11 +154,10 @@ function wallRegionCandidate(wall: DrawnWall): RegionCandidate<string> {
 }
 
 /**
- * Marquee selection over the drawn walls, using the editor-shell
- * window/crossing contract (ARQ-041). The room fixture is deliberately not
- * region-selectable: a marquee over the plan almost always encloses the
- * fixture, and "everything you dragged over plus the demo room" is never
- * what the drag meant.
+ * Marquee selection over the walls, using the editor-shell window/crossing
+ * contract (ARQ-041). Rooms are deliberately not region-selectable: a marquee
+ * over a plan almost always encloses whole rooms, and "everything you dragged
+ * over plus the rooms containing it" is never what the drag meant.
  */
 export function selectWallsInRegion(
   content: PlanContent,
@@ -163,7 +173,7 @@ export function contentBounds(content: PlanContent): {
   readonly max: WorldPoint;
 } {
   const points: WorldPoint[] = [
-    ...content.roomPolygon,
+    ...content.rooms.flatMap((room) => room.polygon),
     ...content.walls.flatMap((wall) => [wall.start, wall.end]),
   ];
   let minX = Number.POSITIVE_INFINITY;

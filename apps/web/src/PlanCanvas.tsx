@@ -49,6 +49,7 @@ import {
   type PlanContent,
 } from './canvas/canvas-interaction';
 import type { DrawnWall } from './canvas/plan-document';
+import type { PlanRoom } from './canvas/canvas-interaction';
 
 /**
  * The interactive plan surface: the previously library-only editor-shell
@@ -62,24 +63,71 @@ import type { DrawnWall } from './canvas/plan-document';
  * something measurable to snap to, exactly like a template would.
  */
 
+/**
+ * The workspace's own starting room, used when no project is open. It gives a new
+ * canvas something measurable to snap to, exactly like a template would, and it
+ * is labelled as a fixture so it is never mistaken for project content. When a
+ * real project is open the caller passes that project's rooms instead and this is
+ * not rendered at all - a demo room drawn over someone's house would be a lie
+ * about their model.
+ */
 const DEMO_ROOM_WIDTH_MM = 4200;
 const DEMO_ROOM_HEIGHT_MM = 3600;
-const DEMO_ROOM_ID = 'demo-room';
 
-const DEMO_ROOM_POLYGON: readonly WorldPoint[] = [
-  worldPoint(0, 0),
-  worldPoint(DEMO_ROOM_WIDTH_MM, 0),
-  worldPoint(DEMO_ROOM_WIDTH_MM, DEMO_ROOM_HEIGHT_MM),
-  worldPoint(0, DEMO_ROOM_HEIGHT_MM),
+const DEMO_ROOMS: readonly PlanRoom[] = [
+  {
+    id: 'demo-room',
+    label: '4.20 m x 3.60 m (demo fixture)',
+    polygon: [
+      worldPoint(0, 0),
+      worldPoint(DEMO_ROOM_WIDTH_MM, 0),
+      worldPoint(DEMO_ROOM_WIDTH_MM, DEMO_ROOM_HEIGHT_MM),
+      worldPoint(0, DEMO_ROOM_HEIGHT_MM),
+    ],
+  },
 ];
 
 const EMPTY_SET: ReadonlySet<string> = new Set<string>();
 
+/**
+ * Area centroid of a simple polygon, so a room label sits inside a room of any
+ * shape. Falls back to the vertex average for a degenerate (zero-area) ring,
+ * which cannot be a real room but can be a malformed one.
+ */
+function polygonCentroid(polygon: readonly WorldPoint[]): WorldPoint {
+  let twiceArea = 0;
+  let x = 0;
+  let y = 0;
+  for (let index = 0; index < polygon.length; index += 1) {
+    const current = polygon[index]!;
+    const next = polygon[(index + 1) % polygon.length]!;
+    const cross = current.x * next.y - next.x * current.y;
+    twiceArea += cross;
+    x += (current.x + next.x) * cross;
+    y += (current.y + next.y) * cross;
+  }
+  if (twiceArea === 0) {
+    const count = Math.max(1, polygon.length);
+    return worldPoint(
+      polygon.reduce((sum, point) => sum + point.x, 0) / count,
+      polygon.reduce((sum, point) => sum + point.y, 0) / count,
+    );
+  }
+  return worldPoint(x / (3 * twiceArea), y / (3 * twiceArea));
+}
+
 export interface PlanCanvasProps {
   /** The workspace's active tool id - the canvas responds to select/wall/pan/fit. */
   readonly activeToolId: string | null;
-  /** User-drawn walls (owned by the App so undo/redo and panels share them). */
+  /** The walls to draw - the workspace's own drawn walls, or an opened project's walls for the level on show. */
   readonly walls: readonly DrawnWall[];
+  /**
+   * The rooms to draw. Omitted means the workspace's own starting fixture; an
+   * opened project passes its own rooms, and passing an empty list draws none.
+   */
+  readonly rooms?: readonly PlanRoom[];
+  /** True when the canvas must refuse to author - an opened .arq project is inspected, not edited. */
+  readonly readOnly?: boolean;
   /** Current selection, shared with the model panel and inspector. */
   readonly selection: PlanSelectionState<string>;
   /** Canvas click selected an element (null = clicked empty space). */
@@ -117,7 +165,8 @@ interface PinchState {
 
 export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   const {
-    activeToolId,
+    activeToolId: requestedToolId,
+    readOnly = false,
     walls,
     selection,
     onSelectElement,
@@ -128,6 +177,14 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     onPointerWorldPositionChange,
     onViewportPixelsPerUnitChange,
   } = props;
+
+  /**
+   * An authoring tool never arms over a read-only project, however it was
+   * activated - rail, command palette or keyboard. The shell also hides those
+   * tools, but a canvas that would draw if asked is one forgotten branch away
+   * from drawing on a project this build must not modify.
+   */
+  const activeToolId = readOnly && requestedToolId === 'wall' ? 'select' : requestedToolId;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [viewport, setViewport] = useState<Viewport | null>(null);
@@ -167,10 +224,8 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     readonly moved: boolean;
   } | null>(null);
 
-  const content: PlanContent = useMemo(
-    () => ({ roomId: DEMO_ROOM_ID, roomPolygon: DEMO_ROOM_POLYGON, walls }),
-    [walls],
-  );
+  const rooms = props.rooms ?? DEMO_ROOMS;
+  const content: PlanContent = useMemo(() => ({ rooms, walls }), [rooms, walls]);
 
   /* ------------------------------------------------------------------ */
   /* Painting                                                            */
@@ -212,13 +267,19 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     }
 
     const inputs: PlanPrimitiveInput<string>[] = [
-      { kind: 'polygon', elementId: DEMO_ROOM_ID, points: DEMO_ROOM_POLYGON },
-      {
+      ...rooms.map((room): PlanPrimitiveInput<string> => ({
+        kind: 'polygon',
+        elementId: room.id,
+        points: room.polygon,
+      })),
+      ...rooms.map((room): PlanPrimitiveInput<string> => ({
         kind: 'text',
-        elementId: 'demo-room-label',
-        anchor: worldPoint(DEMO_ROOM_WIDTH_MM / 2, DEMO_ROOM_HEIGHT_MM / 2),
-        text: '4.20 m x 3.60 m (demo fixture)',
-      },
+        // Labelled at the polygon's centroid rather than a fixed offset, so a
+        // room of any shape carries its label inside itself.
+        elementId: `${room.id}-label`,
+        anchor: polygonCentroid(room.polygon),
+        text: room.label,
+      })),
       ...walls.map((wall): PlanPrimitiveInput<string> => ({
         kind: 'line',
         elementId: wall.id,
@@ -297,7 +358,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       );
       ctx.setLineDash([]);
     }
-  }, [viewport, walls, selection, draftPoints, previewPoint, snapPoint, hoveredId, marquee]);
+  }, [viewport, rooms, walls, selection, draftPoints, previewPoint, snapPoint, hoveredId, marquee]);
 
   useEffect(() => {
     paint();
@@ -324,11 +385,9 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       canvas.height = Math.max(1, Math.round(rect.height * devicePixelRatio));
       setViewport((current) => {
         if (current === null) {
-          const fitted = fitToBounds(
-            contentBounds({ roomId: DEMO_ROOM_ID, roomPolygon: DEMO_ROOM_POLYGON, walls: [] }),
-            rect.width,
-            rect.height,
-          );
+          // Fit to what is actually there on first paint: for an opened project
+          // that is the project, not a fixture room it does not contain.
+          const fitted = fitToBounds(contentBounds({ rooms, walls }), rect.width, rect.height);
           onViewportPixelsPerUnitChange?.(fitted.pixelsPerUnit);
           return {
             ...fitted,
