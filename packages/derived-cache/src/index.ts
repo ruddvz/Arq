@@ -7,3 +7,4 @@ export * from './invalidation';
 export * from './freshness';
 export * from './store';
 export * from './effect-invalidation';
+export * from './derived-geometry-contract';
