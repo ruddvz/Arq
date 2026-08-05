@@ -1,6 +1,6 @@
 # ARQ: where the project stands
 
-_Last reconciled: 2026-08-04 against upstream repository revision `7f15889` plus
+_Last reconciled: 2026-08-05 against upstream repository revision `0336cfa` plus
 the candidate changes in the commit containing this file. This is
 the top-level summary the buried triage notes
 (`docs/research/incoming/README.md`) used to be the only source of. When code,
@@ -19,19 +19,55 @@ Update this file in the same change._
 
 ## What is real today
 
-Re-measured on this branch over revision `1cdf160` plus the changes in the
+Re-measured on this branch over revision `5408179` plus the changes in the
 commit containing this file: `pnpm typecheck` across all 37 workspace packages
-plus `contracts/`, the repository ESLint gate, `pnpm format:check`, and 2,453
-passing tests across 264 files, all uncached. The same revision defines
+plus `contracts/`, the repository ESLint gate, `pnpm format:check`, and 2,500
+passing tests across 266 files, all uncached. The same revision defines
 workspace-registry, licence/SBOM, secret-scan and Rust gates, and CI wires
 fourteen of the fifteen headless-Chromium capability checks
-(`benchmark:arq-core-worker` is defined but not run in CI). The Rust gates and
-the capability checks were not run in that local pass; CI ran both on this
-branch and both passed. These are revision-scoped results, not a claim that
-the protected workflow or production release gate is green. `e2e_arq_open` is no
-longer a standing proof gap - a real Worker and OPFS browser check now closes it -
-but a green gate is a statement about the checks that ran, not about release.
+(`benchmark:arq-core-worker` is defined but not run in CI); the fifteenth,
+`benchmark:native-open`, is added by this change and wired into CI with the
+others. The Rust gates were not run in that local pass. Of the browser checks,
+`benchmark:native-open` was run locally on this branch and passed; the rest were
+not, and CI is what runs them all. These are revision-scoped results, not a claim
+that the protected workflow or production release gate is green: the gate stays in
+shadow mode, and `protected_l4_approval` still resolves to a deferred environment
+gate rather than an approval anybody granted - see
+`engineering/36_REQUIRED_CHECK_ROLLOUT.md` and the open decisions below.
+`e2e_arq_open` is no longer a standing proof gap - a real Worker and OPFS browser
+check closes it - but a green gate is a statement about the checks that ran, not
+about release. `verify-routes` fails on this branch and on its base for the same
+reason and reports it plainly: the preview origin is behind Vercel Deployment
+Protection, so the check can read nothing and refuses to report on routes it
+never saw. That is Not inspected, not passing, and it stays that way until a
+`VERCEL_AUTOMATION_BYPASS_SECRET` repository secret exists.
 
+- **Native `.arq` project open** (`apps/web/src/project` +
+  `apps/web/src/file-handling` + `packages/project-loading` +
+  `workers/arqfs-worker`): a user can choose a `.arq` file and get that project
+  in the workspace. The bytes are imported into a project-scoped OPFS working
+  copy in the Worker (ADR-0030), never edited in place, and the chosen file is
+  not written to.
+  Two model shapes are read. The flat shape this build writes - a project name
+  and a wall list - and the reference project model, which has no root project
+  name at all and instead carries its own summary, revision, levels, wall types,
+  rooms and views. Reading only the first meant the product could open the files
+  it had written and refused the reference fixture with "model.json has no
+  project name"; `@arq/project-loading` now decodes the second, and a project
+  that carries one gets a project browser showing its levels, per-level wall and
+  room counts, its own model tree and an inspector reading through real wall
+  types.
+  Verified by `pnpm benchmark:native-open`
+  (`scripts/run-native-open-capability-check.mjs`) in headless Chromium against
+  the vite-built bundle and the unmodified golden fixture (`fixtures/`): the
+  project opens at revision 191, the ground floor reports its 37 of 79 walls,
+  switching level changes what the plan draws, a wall selected from the model
+  tree by the project's own id highlights in 3D, the shell states that changes
+  live in a local working copy and never says "Saved locally", three opens leave
+  one Worker and closing leaves none, no request leaves the origin, and the
+  fixture's SHA-256 is identical before and after.
+  What this is not: saving. Nothing checkpoints back to the working copy and
+  nothing writes the chosen file. See the first gap above.
 - **`.arq` file format** (`packages/arqfs`): schema v1/v2, capability-gated
   open, byte preflight, copy-on-write migration with reopen+integrity
   verification, recovery reporting, fuzz tests. It is now reachable from the
@@ -104,27 +140,35 @@ but a green gate is a statement about the checks that ran, not about release.
 ## Biggest known gaps (in rough priority order)
 
 1. Opening works, and publishing the working copy now works - canvas edits
-   reaching the working copy in the first place does not. Choosing a `.arq`
-   file constructs the OPFS Worker, imports the bytes into a working copy,
-   decodes the archive and puts the project in the workspace - proven in a
-   browser by `benchmark:file-open`. `publishNativeProject` checkpoints that
-   working copy, exports it and verifies it with a fresh reader before calling
-   it published, reachable from the command palette - proven against the real
+   reaching the working copy in the first place still does not. Choosing a
+   `.arq` file constructs the OPFS Worker, imports the bytes into a working
+   copy, decodes the archive and puts the project in the workspace - proven in
+   a browser by `benchmark:file-open` and, for the reference project format,
+   by `benchmark:native-open`. `publishNativeProject` checkpoints that working
+   copy, exports it and verifies it with a fresh reader before calling it
+   published, reachable from the command palette - proven against the real
    Worker request handler, not yet proven in a real browser the way opening is
-   (no `benchmark:publish` exists yet). What still does not exist: nothing in
-   `apps/web` calls `NativeProjectSession.save` from a canvas edit, so a
-   publish today republishes exactly what was opened, not the user's
-   subsequent edits, and the workspace still reports the project as open and
-   not saved. Copy-on-write migration stays unreachable until edits reach the
-   working copy, and a project opened read-only says why.
+   (no `benchmark:publish` exists yet). A second, unwired publication path
+   (`publishProjectFile`) also exists in `packages/arqfs`, built to the same
+   fresh-reader-verification standard but not reachable from any command;
+   reconciling the two into one canonical publish path is itself open work.
+   What still does not exist, regardless of which publish path is used:
+   nothing in `apps/web` calls `NativeProjectSession.save` from a canvas edit
+   - the typed-operations commit pipeline in `packages/operations` is real and
+   tested as a library but is not wired to the plan canvas - so a publish
+   today republishes exactly what was opened, not the user's subsequent
+   edits, and the workspace still reports the project as open and not saved.
+   Copy-on-write migration stays unreachable until edits reach the working
+   copy, and a project opened read-only says why.
 2. No import/export reachable from the UI: the import worker is never
    constructed by `apps/web` (adapters themselves are real - dxf, underlay,
    attachment and now ifc all resolve in the worker's default registry).
 3. `apps/api` is an `export {}` stub; sync has protocol logic but no
    transport or backend.
-4. Three data-layer libraries still have zero product consumers
-   (`derived-cache`, `project-loading`, `collaboration`); `model-context` has
-   only narrow use.
+4. Two data-layer libraries still have zero product consumers
+   (`derived-cache`, `collaboration`); `model-context` has only narrow use.
+   `project-loading` is now a consumer-facing package: it owns the native open
+   pipeline `apps/web` runs.
 5. Component coverage: ~25 of 84 spec'd components, 40 of 215 icons,
    11 of 54 tool commands (tracked by `scripts/check-workspace-registries.mjs`,
    report-only by design).
@@ -137,17 +181,30 @@ of 1,136.33 kB (325.72 kB gzipped).
 
 The 3D surface is now fetched when the `3d` tab is first opened instead of at
 start-up, because it carries three.js and the model renderer and is the largest
-single contributor. That splits the output into a 613.85 kB start-up chunk
-(193.31 kB gzipped) and a 520.88 kB deferred chunk (132.18 kB gzipped): a 46%
-reduction in raw start-up bytes and 40.7% gzipped. The split follows the
-existing surface boundary rather than an arbitrary chunk size.
+single contributor. That splits the output into a 656.36 kB start-up chunk
+(206.11 kB gzipped) and a 521.04 kB deferred chunk (132.29 kB gzipped): a 42.2%
+reduction in raw start-up bytes and 36.7% gzipped. The split follows the
+existing surface boundary rather than an arbitrary chunk size. The reduction was
+larger before the open pipeline was added to the start-up path; the figures here
+are this tree's, not the split's best moment.
 
 No regression was observed: `benchmark:model-canvas` still activates the real
 `3D` tab, renders through WebGL2 and shares selection with the plan canvas in
 both directions with zero console errors, and `benchmark:workspace-layout`,
 `benchmark:wall-hud` and `benchmark:network-observation` pass. The deferred
-chunk is same-origin, so all nine observed requests remain on the app's origin
-and the privacy observation is unchanged.
+chunks are same-origin, and `benchmark:native-open` records every request an
+opened project makes - including the Worker's, which the page's own request
+events do not see - with none leaving the origin.
+
+Opening a project adds two more deferred chunks, both fetched only when a user
+actually opens one: the SQLite Worker at 239.25 kB and sqlite-wasm's
+`sqlite3.wasm` at 864.75 kB. Neither is on the start-up path - the Worker is
+constructed by the file-open dialog, and nothing loads the WebAssembly until that
+Worker starts. The start-up chunk itself grew from 620.05 kB to 656.36 kB raw
+(194.92 kB to 206.11 kB gzipped) for the open pipeline's own main-thread code:
++36.31 kB raw, +5.9%. Both figures are builds of this repository - the first of
+the branch point, the second of this tree - so the delta is the open pipeline's
+and not another change's.
 
 The start-up chunk is still above Vite's 500 kB warning threshold. No budget
 gate is wired yet, so bundle size stays open work.

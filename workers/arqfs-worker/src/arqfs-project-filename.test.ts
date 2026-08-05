@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   opfsFilenameForProject,
   arqfsWorkerUrlSearch,
+  arqfsSelectedBytesWorkerUrlSearch,
   readProjectIdFromWorkerSearch,
   readProjectIdOrUnknown,
   UNKNOWN_ARQFS_PROJECT_ID,
+  readWorkerSourceFromSearch,
 } from './arqfs-project-filename';
 
 describe('arqfs project-scoped OPFS filename', () => {
@@ -56,5 +58,23 @@ describe('arqfs project-scoped OPFS filename', () => {
 
   it('answers with the real project id when the URL has a usable one', () => {
     expect(readProjectIdOrUnknown('?project=project-a')).toBe('project-a');
+  });
+});
+
+describe('arqfs Worker source mode', () => {
+  it('round-trips the selected-bytes mode through the Worker URL', () => {
+    expect(readWorkerSourceFromSearch(arqfsSelectedBytesWorkerUrlSearch())).toBe('selected-bytes');
+  });
+
+  it('treats a Worker constructed for a project as the owned-project mode', () => {
+    expect(readWorkerSourceFromSearch(arqfsWorkerUrlSearch('project-a'))).toBe('owned-project');
+    expect(readWorkerSourceFromSearch('')).toBe('owned-project');
+  });
+
+  it('refuses an unrecognised mode rather than defaulting to the writable one', () => {
+    // A typo must not silently produce a Worker that owns a project file.
+    for (const search of ['?source=selectedbytes', '?source=SELECTED-BYTES', '?source=readonly']) {
+      expect(() => readWorkerSourceFromSearch(search)).toThrow();
+    }
   });
 });

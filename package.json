@@ -33,6 +33,7 @@
     "benchmark:wall-hud": "node scripts/run-wall-hud-capability-check.mjs",
     "benchmark:mcp-protocol": "node scripts/run-mcp-protocol-capability-check.mjs",
     "benchmark:e2e-arq-open": "node scripts/run-e2e-arq-open-capability-check.mjs",
+    "benchmark:native-open": "node scripts/run-native-open-capability-check.mjs",
     "rust:test": "cargo test --manifest-path rust/Cargo.toml",
     "rust:fmt-check": "cargo fmt --manifest-path rust/Cargo.toml --check",
     "rust:clippy": "cargo clippy --manifest-path rust/Cargo.toml --all-targets",
@@ -78,7 +79,8 @@
     "zeus": "node scripts/zeus.mjs",
     "zeus:verify": "node scripts/zeus-verify.mjs",
     "zeus:validate": "node scripts/zeus-validate.mjs",
-    "zeus:test": "bash scripts/test-zeus-system.sh"
+    "zeus:test": "bash scripts/test-zeus-system.sh",
+    "spike:canonical-units": "node scripts/run-canonical-units-spike.mjs"
   },
   "devDependencies": {
     "canvaskit-wasm": "^0.41.1",

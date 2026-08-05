@@ -26,7 +26,16 @@
  * all (section 118 / this repository's "no fake state in a production surface"
  * rule).
  */
-export type SaveState = 'no-project' | 'saved' | 'saving' | 'unsaved-changes' | 'recovered';
+/**
+ * `read-only` exists for the same reason `no-project` does, one boundary further
+ * on. Once a native `.arq` project can actually be opened, a shell showing one
+ * has a project - so `no-project` is false - but nothing is being saved, because
+ * this build does not author an opened `.arq` project at all. Every other member
+ * would be a claim about a save that did not happen, and `saved` in particular
+ * would say "Saved locally" over a file this build has not written a byte to.
+ */
+export type SaveState =
+  'no-project' | 'read-only' | 'saved' | 'saving' | 'unsaved-changes' | 'recovered';
 
 /**
  * `not-configured` exists for the same reason `no-project` does above: without
@@ -56,6 +65,10 @@ export function describeSaveState(state: SaveState): string {
   switch (state) {
     case 'no-project':
       return 'No project open';
+    case 'read-only':
+      // Names the absence of a save rather than a save state, so it cannot be
+      // read as either a completed save or a failed one.
+      return 'Read-only · nothing to save';
     case 'saved':
       return 'Saved locally';
     case 'saving':

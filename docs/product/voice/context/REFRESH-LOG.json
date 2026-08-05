@@ -2,10 +2,73 @@
   "schemaVersion": 1,
   "entries": [
     {
-      "generatedAt": "2026-08-05T04:33:57.023Z",
-      "sourceSetDigest": "a8fa9d9e6e62f3e64228628ed6bfc18df92e05862bdfe6538845ddc84cd05fd0",
+      "generatedAt": "2026-08-05T21:33:06.362Z",
+      "sourceSetDigest": "49f983ddfda3c49b06ebf653cf1fca5d113b1d60c65a5cd96c04958df5777a6b",
+      "previousSourceSetDigest": "56f5ba0dc8afc531e5dd0d9067cf42ff2f0a6a4bebb6d2453d8caed2088d0d5b",
+      "changedSourceSets": ["file-open-ui"]
+    },
+    {
+      "generatedAt": "2026-08-05T20:51:09.233Z",
+      "sourceSetDigest": "56f5ba0dc8afc531e5dd0d9067cf42ff2f0a6a4bebb6d2453d8caed2088d0d5b",
+      "previousSourceSetDigest": "5fbc8bd8a25b4260f5cbd4bd435c859ca0b0a7810cc599ae11b5bee379847ee7",
+      "changedSourceSets": ["file-open-ui"]
+    },
+    {
+      "generatedAt": "2026-08-05T20:08:22.550Z",
+      "sourceSetDigest": "5fbc8bd8a25b4260f5cbd4bd435c859ca0b0a7810cc599ae11b5bee379847ee7",
+      "previousSourceSetDigest": "fb34b0dc9b462bf4526ec93dc55fff43495f2a86a8a926d9b29962128aad8c89",
+      "changedSourceSets": ["workspace-registries"]
+    },
+    {
+      "generatedAt": "2026-08-05T16:18:59.702Z",
+      "sourceSetDigest": "fb34b0dc9b462bf4526ec93dc55fff43495f2a86a8a926d9b29962128aad8c89",
+      "previousSourceSetDigest": "60c21e0b25b9bacdcf03d270f394f616d92153db2aed6bcc052bdcf4d59aaf17",
+      "changedSourceSets": ["file-open-ui"]
+    },
+    {
+      "generatedAt": "2026-08-05T16:14:28.695Z",
+      "sourceSetDigest": "60c21e0b25b9bacdcf03d270f394f616d92153db2aed6bcc052bdcf4d59aaf17",
+      "previousSourceSetDigest": "d7e1a232761bb153427c24ce08efea71cc9e109440b83f987cbe1088a461078e",
+      "changedSourceSets": ["file-open-ui", "local-storage"]
+    },
+    {
+      "generatedAt": "2026-08-05T15:45:05.492Z",
+      "sourceSetDigest": "a520c00dc935692b4e66c01759164151e5beb17b5e4fe7471bfc81bbcf436033",
+      "previousSourceSetDigest": "a96bf9247a2244b17657feea709747b4ab71ac0f44168176951932efcbb694f5",
+      "changedSourceSets": ["local-storage"]
+    },
+    {
+      "generatedAt": "2026-08-05T03:58:36.884Z",
+      "sourceSetDigest": "d7e1a232761bb153427c24ce08efea71cc9e109440b83f987cbe1088a461078e",
+      "previousSourceSetDigest": "0dc565d3eaadf6698b1b1b7bd01deecd8e96241b2efe56cad74267c2b97e3d6d",
+      "changedSourceSets": ["status"]
+    },
+    {
+      "generatedAt": "2026-08-05T03:55:40.864Z",
+      "sourceSetDigest": "a96bf9247a2244b17657feea709747b4ab71ac0f44168176951932efcbb694f5",
+      "previousSourceSetDigest": "591b726cfe7bab8fa950af34426088796c5949903a2203be4fab93faf3026979",
+      "changedSourceSets": ["file-open-ui"]
+    },
+    {
+      "generatedAt": "2026-08-05T03:47:16.611Z",
+      "sourceSetDigest": "0dc565d3eaadf6698b1b1b7bd01deecd8e96241b2efe56cad74267c2b97e3d6d",
       "previousSourceSetDigest": "48a4d0022d953b157b4bd42c421ee907f811ead310c8c385880d5b2e8dd4bd69",
-      "changedSourceSets": ["file-open-ui", "status", "web-app"]
+      "changedSourceSets": [
+        "accepted-adrs",
+        "file-open-ui",
+        "model-canvas",
+        "plan-canvas",
+        "status",
+        "web-app",
+        "workspace-registries",
+        "workspace-types"
+      ]
+    },
+    {
+      "generatedAt": "2026-08-05T03:43:14.373Z",
+      "sourceSetDigest": "591b726cfe7bab8fa950af34426088796c5949903a2203be4fab93faf3026979",
+      "previousSourceSetDigest": "48a4d0022d953b157b4bd42c421ee907f811ead310c8c385880d5b2e8dd4bd69",
+      "changedSourceSets": ["file-open-ui"]
     },
     {
       "generatedAt": "2026-08-05T02:52:29.533Z",

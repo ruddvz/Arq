@@ -17,12 +17,22 @@ function snapshot(overrides: Partial<NativeProjectSnapshot> = {}): NativeProject
     projectId: PROJECT_ID,
     displayName: 'Existing project',
     walls: [],
+    document: null,
     journalSequence: 0,
+    semanticHash: 'a'.repeat(64),
     readOnly: false,
     usedVfs: 'opfs-sahpool',
     warnings: [],
     ...overrides,
   };
+}
+
+function manifest() {
+  return createManifest({
+    projectId: PROJECT_ID,
+    applicationVersion: 'test',
+    createdAt: '2026-08-04T00:00:00.000Z',
+  });
 }
 
 function wall(id: string, endX: number): DrawnWall {
@@ -219,5 +229,178 @@ describe('NativeProjectSession shutdown', () => {
     await session.close();
 
     await expect(session.save({ walls: [wall('w1', 1000)] })).rejects.toThrow('has been closed');
+  });
+});
+
+/**
+ * V3 publish wiring. The lifecycle has carried `publishing`,
+ * `publication-verifying` and `published` since it was written, and nothing
+ * could reach them: verified publication existed in @arq/arqfs with no route
+ * from the browser to it.
+ */
+describe('NativeProjectSession.publish', () => {
+  function publishingHandle(
+    response: unknown,
+    seen: { type: string; [key: string]: unknown }[] = [],
+  ): NativeProjectWorkerHandle {
+    return {
+      client: {
+        request: async (request: { type: string }) => {
+          seen.push(request as { type: string });
+          if (request.type === 'publish') return response;
+          return { kind: 'close' };
+        },
+        dispose: vi.fn(),
+      } as unknown as NativeProjectWorkerHandle['client'],
+      terminate: vi.fn(),
+    };
+  }
+
+  const RECEIPT = {
+    projectId: PROJECT_ID,
+    revision: 3,
+    semanticHash: 'a'.repeat(64),
+    semanticHashScheme: 'arq.semantic-hash.v2',
+    formatVersion: { major: 1, minor: 0, schema: 2, minReaderMajor: 1, minWriterMajor: 1 },
+    entryCount: 4,
+    byteLength: 2048,
+    targetPath: 'out.arq',
+    verifiedBy: 'fresh-reader' as const,
+  };
+
+  it('returns the receipt and the bytes when publication is verified', async () => {
+    const bytes = new Uint8Array([1, 2, 3]);
+    const session = new NativeProjectSession(
+      publishingHandle({
+        kind: 'publish',
+        result: { status: 'published', receipt: RECEIPT },
+        bytes,
+      }),
+      snapshot(),
+      manifest(),
+    );
+
+    const result = await session.publish();
+
+    expect(result.status).toBe('published');
+    if (result.status === 'published') {
+      expect(result.receipt.verifiedBy).toBe('fresh-reader');
+      expect(result.bytes).toBe(bytes);
+    }
+  });
+
+  it('reports a refusal with its reason rather than throwing', async () => {
+    const session = new NativeProjectSession(
+      publishingHandle({
+        kind: 'publish',
+        result: {
+          status: 'refused',
+          reason: 'semantic-mismatch',
+          detail: 'the meaning did not survive the write',
+          targetWritten: true,
+        },
+        bytes: null,
+      }),
+      snapshot(),
+      manifest(),
+    );
+
+    const result = await session.publish();
+
+    expect(result).toMatchObject({ status: 'refused', reason: 'semantic-mismatch' });
+  });
+
+  it('treats a verified publication with no bytes as a refusal, not a success', async () => {
+    // A success with no file is the one outcome that must never be described as
+    // success: there is nothing to hand the user.
+    const session = new NativeProjectSession(
+      publishingHandle({
+        kind: 'publish',
+        result: { status: 'published', receipt: RECEIPT },
+        bytes: null,
+      }),
+      snapshot(),
+      manifest(),
+    );
+
+    const result = await session.publish();
+
+    expect(result.status).toBe('refused');
+  });
+
+  it('refuses to publish a read-only project without troubling the Worker', async () => {
+    const seen: { type: string }[] = [];
+    const session = new NativeProjectSession(
+      publishingHandle({ kind: 'publish' }, seen),
+      snapshot({ readOnly: true }),
+      manifest(),
+    );
+
+    await expect(session.publish()).rejects.toBeInstanceOf(NativeProjectReadOnlyError);
+    expect(seen).toEqual([]);
+  });
+
+  it('refuses to publish a closed project', async () => {
+    const session = new NativeProjectSession(
+      publishingHandle({ kind: 'publish' }),
+      snapshot(),
+      manifest(),
+    );
+    await session.close();
+
+    await expect(session.publish()).rejects.toThrow(/closed/);
+  });
+
+  it('passes an expected revision through, so a shown revision cannot be silently swapped', async () => {
+    const seen: { type: string; [key: string]: unknown }[] = [];
+    const session = new NativeProjectSession(
+      publishingHandle(
+        {
+          kind: 'publish',
+          result: { status: 'published', receipt: RECEIPT },
+          bytes: new Uint8Array([1]),
+        },
+        seen,
+      ),
+      snapshot(),
+      manifest(),
+    );
+
+    await session.publish({ expectedRevision: 3 });
+
+    expect(seen.find((request) => request.type === 'publish')).toMatchObject({
+      expectedRevision: 3,
+    });
+  });
+
+  it('queues behind an in-flight save rather than racing it into a refusal', async () => {
+    // publishProjectFile refuses outright when the working copy has an unsettled
+    // write, so racing a save would turn "wait your turn" into an error the user
+    // has to understand and retry.
+    const order: string[] = [];
+    const handle: NativeProjectWorkerHandle = {
+      client: {
+        request: async (request: { type: string }) => {
+          order.push(request.type);
+          if (request.type === 'publish') {
+            return {
+              kind: 'publish',
+              result: { status: 'published', receipt: RECEIPT },
+              bytes: new Uint8Array([1]),
+            };
+          }
+          return { kind: 'putArchiveEntries' };
+        },
+        dispose: vi.fn(),
+      } as unknown as NativeProjectWorkerHandle['client'],
+      terminate: vi.fn(),
+    };
+    const session = new NativeProjectSession(handle, snapshot(), manifest());
+
+    const saved = session.save({ displayName: 'Renamed' });
+    const published = session.publish();
+    await Promise.all([saved, published]);
+
+    expect(order).toEqual(['putArchiveEntries', 'publish']);
   });
 });

@@ -104,6 +104,21 @@
       "id": "failed",
       "label": "Failed",
       "meaning": "Processing did not complete for the item."
+    },
+    {
+      "id": "quarantined",
+      "label": "Quarantined",
+      "meaning": "Kept in the project with its source payload intact, and not converted. Distinct from omitted, which is not kept, and from unsupported, which describes the mapping rather than what happened to the data."
+    },
+    {
+      "id": "substituted",
+      "label": "Substituted",
+      "meaning": "Written to the target format as a different concept, because the target has no equivalent. A room written as a closed polyline is substituted, not converted."
+    },
+    {
+      "id": "simplified",
+      "label": "Simplified",
+      "meaning": "Written with detail the target format cannot express dropped. Distinct from approximated, where a value changed; here the value is exact and the structure is poorer."
     }
   ]
 }

@@ -11,6 +11,8 @@ import {
   listArchiveEntryPaths,
   readAllArchiveEntries,
 } from './arqfs-archive-store';
+import { publishProjectFile, recordPublicationOutcome } from './arqfs-publication';
+import type { ArqfsPublicationEnvironment } from './arqfs-publication';
 import {
   ARQFS_WORKER_ERROR_CODES,
   type ArqfsWorkerErrorCode,
@@ -57,8 +59,6 @@ export interface ArqfsWorkerContext {
    * Genuinely asynchronous, not `void`-returning fire-and-forget: the pool
    * utility's own import is asynchronous, and the handler has to know when it
    * has actually finished before it can safely tell a caller the import
-   * succeeded - see the `exportDatabase` case's history note below.
-   */
   readonly importDatabase?: (bytes: Uint8Array) => Promise<void>;
   /**
    * Hands back the working copy's current bytes as a standalone file, after
@@ -71,6 +71,22 @@ export interface ArqfsWorkerContext {
    * something that will not survive a reload.
    */
   readonly exportDatabase?: () => Promise<Uint8Array>;
+  /**
+   * What publication needs from this Worker's VFS: a fresh independent reader on
+   * the published file, its sidecars, its size, and the bytes to hand back.
+   *
+   * Optional for the same reason `importDatabase` is. A context backed by a
+   * plain driver has no VFS that can export a file and reopen it as a separate
+   * connection, and publication without an independent reader is not
+   * publication - so it is refused rather than performed unverified.
+   */
+  readonly publication?: {
+    readonly environment: ArqfsPublicationEnvironment;
+    /** The published bytes, to hand to the caller. Async for the same reason `byteLength` is. */
+    readonly readTarget: (targetName: string) => Uint8Array | Promise<Uint8Array>;
+    /** Removes a target this publication wrote but could not verify. */
+    readonly removeTarget: (targetName: string) => void | Promise<void>;
+  };
 }
 
 function refuse(
@@ -170,8 +186,18 @@ function readRefusal(
  * `self.onmessage` wiring so it is unit-testable in Node against the same
  * `ArqfsDriver` interface (e.g. the better-sqlite3 driver already used by
  * arqfs-schema.test.ts) without needing a real browser Worker or sqlite-wasm at all.
+ * Async because this is the postMessage RPC layer, where `arqfs-driver.ts`'s own
+ * comment says asynchrony belongs ("it is the postMessage RPC one layer further
+ * out that is async, not this interface"). Uniformly so, not per-request: a
+ * caller that had to know which request types happen to be synchronous would be
+ * coupled to an implementation detail that changes whenever one of them grows a
+ * verification step - which is precisely what `publish` did.
+ *
  * Never throws - every branch is caught and reported as an `ok: false` response, so a
- * single bad request cannot crash the worker's message loop.
+ * single bad request cannot crash the worker's message loop. That includes a request
+ * whose `type` is outside the union: see the `default` case, which is reachable
+ * precisely because `request` crosses a Worker boundary and its static type is a
+ * claim about the caller rather than a fact about the value.
  *
  * Asynchronous because `importDatabase` and `exportDatabase` genuinely are: both
  * cross into the sqlite-wasm pool utility, which returns Promises. This closes a
@@ -363,6 +389,26 @@ export async function handleArqfsWorkerRequest(
           payload: { kind: 'readAllArchiveEntries', entries },
         };
       }
+      case 'publish': {
+        const publication = context.publication;
+        if (publication === undefined) {
+          return refuse(
+            context,
+            request.id,
+            ARQFS_WORKER_ERROR_CODES.publishUnavailable,
+            'This Worker cannot publish a portable file. Nothing was written.',
+          );
+        }
+        // Gated on the write gate, not the read gate, even though publication
+        // reads. It issues a WAL checkpoint against the working project and
+        // records the outcome in `publication_state`, and a build that has
+        // declared itself unqualified to write this file must not do either.
+        const refusal = writeRefusal(context.session);
+        if (refusal !== null) {
+          return refuse(context, request.id, refusal.code, refusal.error);
+        }
+        return await publishThroughWorker(context, publication, request);
+      }
       case 'close': {
         context.driver.close();
         context.session.openResult = null;
@@ -373,8 +419,95 @@ export async function handleArqfsWorkerRequest(
           payload: { kind: 'close' },
         };
       }
+      default:
+        // V3-021. TypeScript reads the cases above as exhaustive, so without
+        // this the function fell off the end and returned `undefined` for any
+        // `type` outside the union - and the Worker posted that, leaving the
+        // caller to wait out its whole timeout. The union is only exhaustive
+        // over what a well-behaved caller sends; `request` arrives from another
+        // execution context. A refusal is an answer, not a hang.
+        return refuse(
+          (request as { readonly id: number }).id,
+          ARQFS_WORKER_ERROR_CODES.malformedRequest,
+          `Unrecognised request type: ${String((request as { readonly type?: unknown }).type)}. Nothing was attempted.`,
+        );
     }
   } catch (error) {
+    return refuse(
+      context,
+      request.id,
+      ARQFS_WORKER_ERROR_CODES.unexpected,
+      error instanceof Error ? error.message : String(error),
+    );
+  }
+}
+
+/**
+ * Runs a verified publication and reports the verdict with the bytes.
+ *
+ * Separate and `async` because `publishProjectFile` is, and the enclosing
+ * handler's `try` is synchronous - a promise rejecting inside it would escape
+ * the catch entirely and reach `self.onmessage` as an unhandled rejection,
+ * which is the one way this handler's "never throws" contract could still be
+ * broken. So this catches its own.
+ *
+ * A refusal that left bytes at the target removes them. The alternative is a
+ * file sitting in the VFS that failed verification, and the next publication to
+ * the same name would then be refused for `target-exists` - reporting a stale
+ * failure as the reason a fresh attempt could not run. `targetWritten` is the
+ * flag that says whether there is anything to remove, and it exists for exactly
+ * this.
+ */
+async function publishThroughWorker(
+  context: ArqfsWorkerContext,
+  publication: NonNullable<ArqfsWorkerContext['publication']>,
+  request: Extract<ArqfsWorkerRequest, { type: 'publish' }>,
+): Promise<ArqfsWorkerResponse> {
+  try {
+    const result = await publishProjectFile(
+      context.driver,
+      request.targetName,
+      publication.environment,
+      request.expectedRevision === undefined ? {} : { expectedRevision: request.expectedRevision },
+    );
+
+    if (result.status !== 'published') {
+      if (result.targetWritten) {
+        try {
+          await publication.removeTarget(request.targetName);
+        } catch {
+          // A target that cannot be removed is not worth converting a specific
+          // refusal into a generic failure: the caller still needs to be told
+          // why publication was refused, which is the more useful of the two.
+        }
+      }
+      recordPublicationOutcome(context.driver, 'failed');
+      return {
+        id: request.id,
+        projectId: context.projectId,
+        ok: true,
+        payload: { kind: 'publish', result, bytes: null },
+      };
+    }
+
+    // Read before recording success: if the bytes cannot be handed back there is
+    // nothing to publish, whatever the verification concluded.
+    const bytes = await publication.readTarget(request.targetName);
+    recordPublicationOutcome(context.driver, 'current');
+    return {
+      id: request.id,
+      projectId: context.projectId,
+      ok: true,
+      payload: { kind: 'publish', result, bytes },
+    };
+  } catch (error) {
+    try {
+      recordPublicationOutcome(context.driver, 'failed');
+    } catch {
+      // The working project may itself be the thing that failed. Reporting the
+      // original error matters more than recording a state against a driver
+      // that is not answering.
+    }
     return refuse(
       context,
       request.id,

@@ -11,6 +11,7 @@
  */
 import type { ArqfsOpenResult } from './arqfs-open';
 import type { ArqfsIntegrityReport } from './arqfs-integrity';
+import type { ArqfsPublicationResult } from './arqfs-publication';
 
 export type ArqfsWorkerRequest =
   /**
@@ -77,6 +78,26 @@ export type ArqfsWorkerRequest =
    * batching rule exists to avoid.
    */
   | { readonly id: number; readonly type: 'readAllArchiveEntries' }
+  /**
+   * Publishes the working project to a portable file and verifies it with a
+   * fresh reader (`publishProjectFile`).
+   *
+   * It has to run here, and not on the main thread, for the same reason
+   * `importDatabase` does: `VACUUM INTO` writes through the VFS, and only this
+   * Worker has the `opfs-sahpool` pool utility that can then open the result as
+   * an independent connection. A main thread that asked for the bytes and
+   * verified them itself would be verifying a copy of a copy - which is exactly
+   * the reader-shares-nothing-with-the-writer property publication depends on,
+   * broken.
+   */
+  | {
+      readonly id: number;
+      readonly type: 'publish';
+      /** Name for the published file inside this Worker's VFS, not a user-facing path. */
+      readonly targetName: string;
+      /** Publish only if the working project is on this revision. */
+      readonly expectedRevision?: number;
+    }
   | { readonly id: number; readonly type: 'close' };
 
 export type ArqfsWorkerResponsePayload =
@@ -91,6 +112,19 @@ export type ArqfsWorkerResponsePayload =
   | {
       readonly kind: 'readAllArchiveEntries';
       readonly entries: ReadonlyArray<readonly [string, Uint8Array]>;
+    }
+  | {
+      readonly kind: 'publish';
+      readonly result: ArqfsPublicationResult;
+      /**
+       * The verified bytes, present only when `result.status` is `published`.
+       *
+       * Carried on the same response as the verdict so a caller cannot hand a
+       * file to a user without the receipt that says it was checked - the two
+       * would otherwise be separate round trips, and the file would be
+       * available first.
+       */
+      readonly bytes: Uint8Array | null;
     }
   | { readonly kind: 'close' };
 
@@ -110,6 +144,10 @@ export const ARQFS_WORKER_ERROR_CODES = {
   openRejected: 'ARQFS_WORKER_OPEN_REJECTED',
   /** This context has no way to hand back the working copy's raw bytes (e.g. the in-memory fallback used when OPFS is unavailable). */
   exportUnsupported: 'ARQFS_WORKER_EXPORT_UNSUPPORTED',
+  /** The request was not a shape this protocol defines, so nothing was attempted. */
+  malformedRequest: 'ARQFS_WORKER_MALFORMED_REQUEST',
+  /** This Worker has no way to publish - it is not backed by a VFS that can export and reopen a file. */
+  publishUnavailable: 'ARQFS_WORKER_PUBLISH_UNAVAILABLE',
   /** Anything unexpected. Deliberately last: a specific code is always preferred. */
   unexpected: 'ARQFS_WORKER_UNEXPECTED_ERROR',
 } as const;
@@ -141,3 +179,111 @@ export type ArqfsWorkerResponse =
       readonly code: ArqfsWorkerErrorCode;
       readonly error: string;
     };
+
+/**
+ * V3-021: the request boundary, checked at runtime rather than asserted.
+ *
+ * `ArqfsWorkerRequest` describes what a caller is supposed to send. Until this
+ * function existed, nothing checked that they had: the Worker entry typed
+ * `event.data` as `ArqfsWorkerRequest` and handed it straight to the handler.
+ * A type annotation on a postMessage payload is a note about intent, not a
+ * guarantee - the value arrives from another execution context and is whatever
+ * that context posted.
+ *
+ * The asymmetry is the tell. `ArqfsWorkerClient.onMessage` already validates
+ * responses before trusting `response.id`, because a malformed response was
+ * understood to be possible. Requests cross the same kind of boundary in the
+ * other direction and were taken on faith.
+ *
+ * What that cost concretely: `handleArqfsWorkerRequest`'s `switch` covers every
+ * member of the union, so TypeScript reads it as exhaustive and allows the
+ * implicit fall-through. At runtime an unrecognised `type` fell out of the
+ * switch, the function returned `undefined`, and the Worker posted that -
+ * so the client's correlation map never matched, and the caller waited out its
+ * full timeout for a request that was rejected the moment it arrived. The
+ * handler's own doc comment promised "every branch is caught and reported as an
+ * `ok: false` response"; for an unrecognised type that was not true.
+ *
+ * Structural checks only - the fields each variant needs, at the types the
+ * handler will use them at. This is not schema validation and does not try to
+ * be: `path` being a string is checkable here, `path` naming a real entry is
+ * the store's business.
+ */
+export function parseArqfsWorkerRequest(value: unknown): ArqfsWorkerRequest | null {
+  if (value === null || typeof value !== 'object') return null;
+  const candidate = value as Record<string, unknown>;
+  // `id` correlates the response. A request without a usable one cannot be
+  // answered at all, so it is rejected before its type is even considered.
+  if (typeof candidate['id'] !== 'number' || !Number.isFinite(candidate['id'])) return null;
+  const id = candidate['id'];
+
+  switch (candidate['type']) {
+    case 'importDatabase':
+      return candidate['bytes'] instanceof Uint8Array
+        ? { id, type: 'importDatabase', bytes: candidate['bytes'] }
+        : null;
+    case 'open':
+      return { id, type: 'open' };
+    case 'exportDatabase':
+      return { id, type: 'exportDatabase' };
+    case 'computeSemanticHash':
+      return { id, type: 'computeSemanticHash' };
+    case 'checkIntegrity':
+      return { id, type: 'checkIntegrity' };
+    case 'putArchiveEntries': {
+      const entries = candidate['entries'];
+      if (!Array.isArray(entries)) return null;
+      const checked: (readonly [string, Uint8Array])[] = [];
+      for (const entry of entries) {
+        if (!Array.isArray(entry) || entry.length !== 2) return null;
+        const [path, content] = entry as [unknown, unknown];
+        if (typeof path !== 'string' || !(content instanceof Uint8Array)) return null;
+        checked.push([path, content]);
+      }
+      return { id, type: 'putArchiveEntries', entries: checked };
+    }
+    case 'getArchiveEntry':
+      return typeof candidate['path'] === 'string'
+        ? { id, type: 'getArchiveEntry', path: candidate['path'] }
+        : null;
+    case 'listArchiveEntryPaths':
+      return { id, type: 'listArchiveEntryPaths' };
+    case 'readAllArchiveEntries':
+      return { id, type: 'readAllArchiveEntries' };
+    case 'publish': {
+      if (typeof candidate['targetName'] !== 'string' || candidate['targetName'] === '') {
+        return null;
+      }
+      const expected = candidate['expectedRevision'];
+      if (expected !== undefined && (typeof expected !== 'number' || !Number.isInteger(expected))) {
+        return null;
+      }
+      return {
+        id,
+        type: 'publish',
+        targetName: candidate['targetName'],
+        ...(expected === undefined ? {} : { expectedRevision: expected }),
+      };
+    }
+    case 'close':
+      return { id, type: 'close' };
+    default:
+      return null;
+  }
+}
+
+/**
+ * The `id` to answer a request under when the request itself did not parse.
+ *
+ * A malformed request usually still carries a usable correlation id - the
+ * common case is a caller on a newer protocol version sending a `type` this
+ * build does not know, not a caller sending garbage. Answering under that id
+ * turns a timeout into an immediate, specific refusal. When there is no usable
+ * id there is nothing to correlate against and the caller can only time out;
+ * `null` says so rather than inventing one.
+ */
+export function correlationIdOf(value: unknown): number | null {
+  if (value === null || typeof value !== 'object') return null;
+  const id = (value as Record<string, unknown>)['id'];
+  return typeof id === 'number' && Number.isFinite(id) ? id : null;
+}

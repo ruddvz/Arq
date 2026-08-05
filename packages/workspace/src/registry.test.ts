@@ -137,14 +137,28 @@ describe('state machines and invariants', () => {
    * These four sentences are the reason several modules in this package are
    * shaped the way they are. If the registry ever stops carrying them, the
    * design rationale in those files has lost its source.
+   *
+   * Pinned by content, not by count. The registry is a list of design
+   * invariants and it is meant to grow as the design does - a new state machine
+   * that needs a rule should be able to add one - so an exact-length assertion
+   * would be enforcing something this test never set out to say, and would make
+   * every future invariant look like a regression.
    */
-  it('still carries the four workspace invariants', () => {
-    expect(WORKSPACE_INVARIANTS).toHaveLength(4);
-    expect(WORKSPACE_INVARIANTS.join(' ')).toContain('Local save and remote sync are separate');
-    expect(WORKSPACE_INVARIANTS.join(' ')).toContain('never deletes model data');
-    expect(WORKSPACE_INVARIANTS.join(' ')).toContain(
-      'never becomes canonical until transaction commit',
-    );
-    expect(WORKSPACE_INVARIANTS.join(' ')).toContain('never overwrite newer document revision');
+  it('still carries the four founding workspace invariants', () => {
+    const text = WORKSPACE_INVARIANTS.join(' ');
+
+    expect(text).toContain('Local save and remote sync are separate');
+    expect(text).toContain('never deletes model data');
+    expect(text).toContain('never becomes canonical until transaction commit');
+    expect(text).toContain('never overwrite newer document revision');
+  });
+
+  it('states a rule for every state machine that needs one', () => {
+    // The machines added for view visibility, section clipping and import units
+    // each carry a rule about what their states must never be taken to mean.
+    const text = WORKSPACE_INVARIANTS.join(' ');
+
+    expect(text).toContain('never imply the project contains less');
+    expect(text).toContain('never resolves to a default');
   });
 });

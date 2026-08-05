@@ -16,3 +16,6 @@ export * from './command-palette';
 export * from './ipad-shell-state';
 export * from './ipad-landscape-shell';
 export * from './ipad-portrait-shell';
+export * from './model-tree-navigation';
+export * from './diagnostics-panel-state';
+export * from './text-fitting';

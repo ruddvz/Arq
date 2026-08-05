@@ -94,3 +94,10 @@ export function viewId(value: string): ViewId {
 export function sheetId(value: string): SheetId {
   return value as SheetId;
 }
+
+export type SlabId = Brand<ElementId, 'SlabId'>;
+export type SlabTypeId = Brand<string, 'SlabTypeId'>;
+export type StairId = Brand<ElementId, 'StairId'>;
+export type StairTypeId = Brand<string, 'StairTypeId'>;
+export type MaterialId = Brand<string, 'MaterialId'>;
+export type ScheduleId = Brand<string, 'ScheduleId'>;

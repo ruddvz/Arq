@@ -1,0 +1,15 @@
+{
+  "_comment": "The read-only open path spans a Worker, a pipeline package and three files in apps/web. Before this fixture, the two app-side files that render an opened project (native-project-view.ts, NativeProjectPanel.tsx) classified as unknown_runtime_surface, so a change to how a project is displayed - which level, which walls, whether the read-only reason is shown - could avoid selecting browser_native_open entirely.",
+  "files": [
+    "apps/web/src/file-handling/open-native-project.ts",
+    "apps/web/src/native-project-view.ts",
+    "apps/web/src/NativeProjectPanel.tsx",
+    "packages/project-loading/src/native-open-pipeline.ts",
+    "workers/arqfs-worker/src/arqfs-selected-bytes-db.ts"
+  ],
+  "expected": {
+    "lane": "L4",
+    "impactsInclude": ["document", "persistence", "security", "worker_wasm"],
+    "evidenceInclude": ["e2e_arq_open", "browser_native_open", "protected_l4_approval"]
+  }
+}

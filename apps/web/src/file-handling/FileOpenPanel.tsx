@@ -22,6 +22,12 @@ export interface FileOpenPanelProps {
   readonly onProjectOpened?: (opened: NativeOpenSuccess) => void;
   /** Injected so tests and the capability check can drive the flow without a real browser Worker. */
   readonly createWorker?: NativeWorkerFactory;
+  /**
+   * The working copy the workspace currently holds, so choosing the project that
+   * is already open is recognised rather than attempted. The panel does not own
+   * the session and must not read it directly.
+   */
+  readonly activeWorkingCopyId?: string | null;
 }
 
 type NativeOpenSuccess = Extract<NativeOpenResult, { status: 'opened' }>;
@@ -54,7 +60,13 @@ type NativeOpenSuccess = Extract<NativeOpenResult, { status: 'opened' }>;
  * is present.
  */
 export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
-  const { isOpen, onOpenChange, onProjectOpened, createWorker = createBrowserArqfsWorker } = props;
+  const {
+    isOpen,
+    onOpenChange,
+    onProjectOpened,
+    createWorker = createBrowserArqfsWorker,
+    activeWorkingCopyId = null,
+  } = props;
   const [state, setState] = useState<FileFlowState>({ kind: 'idle' });
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -147,14 +159,37 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
     // than announced in a burst at the end, so `workspace-active` - the only
     // state anything treats as open - is reached exactly once the project is.
     emit({ type: 'stage-start' });
-    const opened = await openNativeProject(bytes, createWorker, file.name, {
-      onStaged: (projectId) => {
-        emit({ type: 'stage-complete', projectId });
-        emit({ type: 'migration-verified' });
+    const opened = await openNativeProject(
+      bytes,
+      createWorker,
+      file.name,
+      {
+        onStaged: (projectId) => {
+          emit({ type: 'stage-complete', projectId });
+          emit({ type: 'migration-verified' });
+        },
+        onWorkerOpened: (writable, lockReason) =>
+          emit({
+            // Two independent causes, and they are not interchangeable. The
+            // file's own format version being ahead of this build is a property
+            // of the bytes; another window holding the writer lock (ADR-0024) is
+            // a property of this session, and resolves by closing that window.
+            // The lock reason wins when both apply, because it is the one the
+            // reader can actually act on.
+            type: 'worker-opened',
+            readOnlyReason: writable ? null : (lockReason ?? 'newer-format-version'),
+          }),
+        onHydrateStart: () => emit({ type: 'hydrate-start' }),
       },
-      onWorkerOpened: (writable) => emit({ type: 'worker-opened', writable }),
-      onHydrateStart: () => emit({ type: 'hydrate-start' }),
-    });
+      activeWorkingCopyId,
+    );
+    if (opened.status === 'already-open') {
+      // Nothing to do and nothing to say beyond the truth: this project is the
+      // one already open. The dialog closes rather than reporting a failure it
+      // would be inventing.
+      onOpenChange(false);
+      return;
+    }
     if (opened.status === 'rejected') {
       const { code, reason } = opened;
       emit({ type: 'fail', code, message: reason });
@@ -172,7 +207,18 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
     // replaces the active project itself. `hydrated` follows it, so nothing
     // reports the project as open before the workspace actually holds it.
     onProjectOpened?.(opened);
-    emit({ type: 'hydrated' });
+    emit({
+      type: 'hydrated',
+      facts: {
+        projectName: opened.snapshot.displayName,
+        // The reference model's own revision when the file carried one. A
+        // project this build wrote records none, and 0 is the honest answer for
+        // "this project has no revision" rather than an invented first one.
+        revision: opened.snapshot.document?.summary.revision ?? 0,
+        sidecarDependency: 'complete',
+        conditionNote: opened.snapshot.warnings[0] ?? null,
+      },
+    });
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>): void {

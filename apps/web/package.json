@@ -25,6 +25,7 @@
     "@arq/operations": "workspace:*",
     "@arq/plan-renderer": "workspace:*",
     "@arq/project-format": "workspace:*",
+    "@arq/project-loading": "workspace:*",
     "@arq/validation": "workspace:*",
     "@arq/workspace": "workspace:*",
     "react": "^18",

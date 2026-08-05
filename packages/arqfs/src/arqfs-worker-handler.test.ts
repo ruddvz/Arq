@@ -1,8 +1,11 @@
 import { describe, expect, it, afterEach, beforeEach } from 'vitest';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import path from 'node:path';
+import path, { join } from 'node:path';
 import { createNodeArqfsDriver } from './arqfs-node-driver';
+import { createArqfsSchemaV1 } from './arqfs-schema';
+import { initializeWorkingCopyState } from './arqfs-working-copy';
+import { putArchiveEntry } from './arqfs-archive-store';
 import {
   createArqfsWorkerSession,
   handleArqfsWorkerRequest,
@@ -572,6 +575,223 @@ describe('importing a database into the working copy', () => {
     expect(response.ok).toBe(false);
     if (!response.ok) {
       expect(response.error).toContain('cannot import');
+    }
+  });
+  it('refuses an unrecognised request type instead of returning nothing at all', async () => {
+    driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      session: createArqfsWorkerSession(),
+    };
+
+    // V3-021. The switch covers every union member, so TypeScript reads it as
+    // exhaustive - but `request` crosses a Worker boundary, where the union is a
+    // claim about the caller rather than a fact about the value. Without the
+    // `default` this returned `undefined`, the Worker posted that, and the caller
+    // waited out its whole timeout for a request refused the moment it arrived.
+    const response = await handleArqfsWorkerRequest(context, {
+      id: 11,
+      type: 'exec',
+      sql: 'DROP TABLE archive_entries',
+    } as never);
+
+    expect(response).toBeDefined();
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.id).toBe(11);
+      expect(response.code).toBe('ARQFS_WORKER_MALFORMED_REQUEST');
+      expect(response.error).toContain('Nothing was attempted');
+    }
+  });
+});
+
+/**
+ * The Worker publish command. Publication only means anything if the reader
+ * shares nothing with the writer, and only the Worker's VFS can produce such a
+ * reader - which is why this command exists rather than the main thread asking
+ * for bytes and checking them itself.
+ */
+describe('publish', () => {
+  let driver: ArqfsDriver;
+  let workDir: string;
+
+  beforeEach(() => {
+    workDir = mkdtempSync(join(tmpdir(), 'arqfs-worker-publish-'));
+  });
+
+  afterEach(() => {
+    driver?.close();
+    rmSync(workDir, { recursive: true, force: true });
+  });
+
+  function publishingContext(): { context: ArqfsWorkerContext; removed: string[] } {
+    driver = createNodeArqfsDriver(join(workDir, 'working.arq'));
+    createArqfsSchemaV1(driver);
+    initializeWorkingCopyState(driver, 'project-alpha');
+    putArchiveEntry(driver, 'model.json', new TextEncoder().encode('{"walls":[{"id":"w1"}]}'));
+    const removed: string[] = [];
+    return {
+      removed,
+      context: {
+        driver,
+        usedVfs: 'test-node-driver',
+        session: createArqfsWorkerSession(),
+        publication: {
+          environment: {
+            openFreshReader: (target) => createNodeArqfsDriver(target),
+            listSidecars: (target) =>
+              [`${target}-wal`, `${target}-shm`].filter((sidecar) => existsSync(sidecar)),
+            byteLength: (target) => statSync(target).size,
+          },
+          readTarget: (target) => new Uint8Array(readFileSync(target)),
+          removeTarget: (target) => {
+            removed.push(target);
+            rmSync(target, { force: true });
+          },
+        },
+      },
+    };
+  }
+
+  function target(name = 'published.arq'): string {
+    return join(workDir, name);
+  }
+
+  it('publishes, verifies and returns the bytes together with the receipt', async () => {
+    const { context } = publishingContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+
+    const response = await handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'publish',
+      targetName: target(),
+    });
+
+    expect(response.ok).toBe(true);
+    if (response.ok && response.payload.kind === 'publish') {
+      expect(response.payload.result.status).toBe('published');
+      // The bytes and the verdict arrive together, so no caller can hand over a
+      // file without the receipt saying it was checked.
+      expect(response.payload.bytes).toBeInstanceOf(Uint8Array);
+      expect((response.payload.bytes?.byteLength ?? 0) > 0).toBe(true);
+      if (response.payload.result.status === 'published') {
+        expect(response.payload.result.receipt.verifiedBy).toBe('fresh-reader');
+        expect(response.payload.result.receipt.projectId).toBe('project-alpha');
+      }
+    }
+  });
+
+  it('records the outcome on the working project', async () => {
+    const { context } = publishingContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+
+    await handleArqfsWorkerRequest(context, { id: 2, type: 'publish', targetName: target() });
+
+    const [row] = context.driver.query<{ publication_state: string }>(
+      'SELECT publication_state FROM working_copy_state WHERE id = 1',
+    );
+    expect(row?.publication_state).toBe('current');
+  });
+
+  it('refuses a revision the working project is not on, and writes nothing', async () => {
+    const { context } = publishingContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+
+    const response = await handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'publish',
+      targetName: target(),
+      expectedRevision: 99,
+    });
+
+    expect(response.ok).toBe(true);
+    if (response.ok && response.payload.kind === 'publish') {
+      expect(response.payload.result.status).toBe('refused');
+      expect(response.payload.bytes).toBeNull();
+    }
+    expect(existsSync(target())).toBe(false);
+  });
+
+  it('removes a target it wrote but could not verify, so the next attempt is not refused for target-exists', async () => {
+    const { context, removed } = publishingContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    // A reader that rejects everything: the bytes are written by VACUUM INTO and
+    // then fail verification, which is exactly the case that leaves a file behind.
+    const failing: ArqfsWorkerContext = {
+      ...context,
+      publication: {
+        ...context.publication!,
+        environment: {
+          ...context.publication!.environment,
+          openFreshReader: () => {
+            throw new Error('reader unavailable');
+          },
+        },
+      },
+    };
+
+    const response = await handleArqfsWorkerRequest(failing, {
+      id: 2,
+      type: 'publish',
+      targetName: target(),
+    });
+
+    expect(response.ok).toBe(true);
+    if (response.ok && response.payload.kind === 'publish') {
+      expect(response.payload.result.status).toBe('refused');
+    }
+    expect(removed).toEqual([target()]);
+    expect(existsSync(target())).toBe(false);
+  });
+
+  it('records a failure on the working project when publication is refused', async () => {
+    const { context } = publishingContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+
+    await handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'publish',
+      targetName: target(),
+      expectedRevision: 99,
+    });
+
+    const [row] = context.driver.query<{ publication_state: string }>(
+      'SELECT publication_state FROM working_copy_state WHERE id = 1',
+    );
+    expect(row?.publication_state).toBe('failed');
+  });
+
+  it('refuses to publish before any open', async () => {
+    const { context } = publishingContext();
+
+    const response = await handleArqfsWorkerRequest(context, {
+      id: 1,
+      type: 'publish',
+      targetName: target(),
+    });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_NOT_OPENED');
+    }
+    expect(existsSync(target())).toBe(false);
+  });
+
+  it('refuses rather than silently skipping publication it cannot perform', async () => {
+    const { context } = publishingContext();
+    const { publication: _publication, ...withoutPublication } = context;
+    await handleArqfsWorkerRequest(withoutPublication, { id: 1, type: 'open' });
+
+    const response = await handleArqfsWorkerRequest(withoutPublication, {
+      id: 2,
+      type: 'publish',
+      targetName: target(),
+    });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_PUBLISH_UNAVAILABLE');
     }
   });
 });

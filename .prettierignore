@@ -52,6 +52,14 @@ docs/product/voice/marketing-claim-test.fragment.ts
 /engineering-evidence-decision.json
 /.engineering-changed-files
 
+# The e2e-open capability check's esbuild bundle of the real Worker entry. It is
+# written into the workspace mid-run and removed afterwards; the ignore is here
+# because a run that dies between those two points must not turn into a style
+# failure in generated code. Belt and braces with the `finally` in
+# scripts/run-e2e-arq-open-capability-check.mjs, since a hard crash can still
+# skip a `finally`.
+workers/arqfs-worker/.e2e-open-bundle/
+
 # Build output.
 **/dist/
 **/coverage/

@@ -26,9 +26,12 @@
     "sync": "Remote status is always independent of local save/journal status.",
     "workspace-open": "Project ready requires a usable project context, not a compatible file.",
     "arqfs-safe-mode": "Translate the underlying file condition before exposing read-only handling.",
-    "file-flow": "Compatibility, migration, staging and opened project states are distinct.",
+    "file-flow": "Compatibility, migration, staging, opening and opened project states are distinct. A read-only opened project is an opened project, and is never described as saved or editable.",
     "ai-proposal": "Apply requires current base revision and no blocking validation errors.",
-    "web-plan-journal-status": "The web build's saveState union reports the local IndexedDB operation journal for the demo plan. A label here never implies that a portable .arq file was written, that a user project was opened, or that anything was synced."
+    "web-plan-journal-status": "The web build's saveState union reports the local IndexedDB operation journal for its own plan document. A label here never implies that a portable .arq file was written, that a user project was opened, or that anything was synced. When a native .arq project is open the shell reports the `save` machine's read-only state instead of any of these.",
+    "view-visibility": "Visibility is a property of one view. A hidden element is still in the project, still bounds its rooms and still appears in every schedule; never describe it as removed, deleted or excluded from the model. Always name the rule that hid it.",
+    "section-box": "A section box clips what is drawn and changes nothing in the project. Never describe an element outside the box as removed, and never let a quantity or schedule agree with the clipped view.",
+    "import-units": "An unresolved drawing unit is a question for the user, never a failure and never a default. Say what the file declared. The source file is preserved either way, so never imply the import was discarded."
   },
   "machines": {
     "workspace-open": [
@@ -210,6 +213,12 @@
         "label": "Local save failed",
         "explain": "Current changes may not be durably persisted locally. Never describe this as a sync error.",
         "exposure": "product"
+      },
+      {
+        "internal": "read-only",
+        "label": "Read-only · nothing to save",
+        "explain": "The open project is inspected, not authored: this build performs no local save for it, and the file it was opened from is unchanged. Never present this as a completed save, and never as a failure.",
+        "exposure": "product"
       }
     ],
     "sync": [
@@ -356,6 +365,12 @@
       {
         "internal": "applied",
         "label": "Proposal applied",
+        "exposure": "product"
+      },
+      {
+        "internal": "reversed",
+        "label": "Proposal partly applied, then reversed",
+        "explain": "Some operations committed and were undone. The project is back where it started.",
         "exposure": "product"
       },
       {
@@ -541,7 +556,7 @@
       {
         "internal": "workspace-active",
         "labelTemplate": "{name} is open",
-        "explain": "The only state that may say open. Worker open, integrity, hydration and activation have all succeeded.",
+        "explain": "The only state that may say open. Worker open, integrity, hydration and activation have all succeeded. When the project is read-only, say so in the same sentence that says open, and name the cause: a build with no save path and a file from a newer ARQ are different facts, and the wrong one is a false statement about the reader's own work. Never describe a read-only open project as saved, editable or published.",
         "exposure": "product"
       },
       {
@@ -581,9 +596,15 @@
         "exposure": "product"
       },
       {
+        "internal": "publication-verifying",
+        "labelTemplate": "Checking the project file for {name}…",
+        "explain": "Portable bytes exist and have not been verified. A fresh reader that shares nothing with the writer is reopening the file to confirm the project, the revision and the semantic hash. Never say published here.",
+        "exposure": "product"
+      },
+      {
         "internal": "published",
-        "labelTemplate": "{name} was published",
-        "explain": "Only after the published file was reopened and verified.",
+        "labelTemplate": "{name} was published at revision {revision}",
+        "explain": "Only after the published file was reopened and verified. Reachable only from publication-verifying, and the revision named is the one the fresh reader itself found.",
         "exposure": "product"
       },
       {
@@ -622,6 +643,96 @@
         "internal": "recovered",
         "label": "Recovered locally",
         "explain": "State was replayed from the local operation journal on start-up. State what was recovered; nothing was read from or written to a portable .arq file.",
+        "exposure": "product"
+      }
+    ],
+    "view-visibility": [
+      {
+        "internal": "visible",
+        "label": "Shown in this view",
+        "exposure": "product"
+      },
+      {
+        "internal": "element-shown",
+        "label": "Shown in this view",
+        "explain": "Shown because you unhid it here, overriding this view's other rules.",
+        "exposure": "product"
+      },
+      {
+        "internal": "element-hidden",
+        "label": "Hidden in this view",
+        "explain": "Hidden because you hid it here. It is still in the project and still counts in schedules.",
+        "exposure": "product"
+      },
+      {
+        "internal": "not-isolated",
+        "label": "Outside the current isolation",
+        "explain": "Only the isolated elements are drawn. Everything else is still in the project.",
+        "exposure": "product"
+      },
+      {
+        "internal": "level-not-in-view",
+        "label": "Not on a level this view includes",
+        "exposure": "product"
+      },
+      {
+        "internal": "category-hidden",
+        "label": "This view hides this category",
+        "exposure": "product"
+      }
+    ],
+    "section-box": [
+      {
+        "internal": "off",
+        "label": "Section box off",
+        "exposure": "product"
+      },
+      {
+        "internal": "element-inside",
+        "label": "Inside the section box",
+        "exposure": "product"
+      },
+      {
+        "internal": "element-straddling",
+        "label": "Cut by the section box",
+        "explain": "The section box cuts through this element. A cut face is drawn where it crosses.",
+        "exposure": "product"
+      },
+      {
+        "internal": "element-outside",
+        "label": "Outside the section box",
+        "explain": "Not drawn while the section box is on. Nothing has been removed from the project.",
+        "exposure": "product"
+      }
+    ],
+    "import-units": [
+      {
+        "internal": "resolved-declared",
+        "labelTemplate": "Drawing unit: {unit}, from the file",
+        "exposure": "product"
+      },
+      {
+        "internal": "resolved-user",
+        "labelTemplate": "Drawing unit: {unit}, chosen by you",
+        "explain": "The file did not give a usable unit. This is the unit you selected.",
+        "exposure": "product"
+      },
+      {
+        "internal": "unresolved-undeclared",
+        "label": "This drawing does not say what its units are",
+        "explain": "Choose the unit it was drawn in. The source file is kept either way.",
+        "exposure": "product"
+      },
+      {
+        "internal": "unresolved-unitless",
+        "label": "This drawing states that it has no units",
+        "explain": "Choose the unit it was drawn in. The source file is kept either way.",
+        "exposure": "product"
+      },
+      {
+        "internal": "unresolved-unrecognised",
+        "labelTemplate": "This drawing declares “{declaredUnit}”, which ARQ does not read",
+        "explain": "Choose the unit it was drawn in. The source file is kept either way.",
         "exposure": "product"
       }
     ]

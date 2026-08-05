@@ -13,6 +13,16 @@
  */
 import { importArchive, type ArqManifest } from '@arq/project-format';
 import { evaluateArqfsSourceCompleteness } from '@arq/arqfs/src/arqfs-source-completeness';
+import {
+  describeEntryDigestFailure,
+  verifyEntryDigestsOfEntries,
+} from '@arq/arqfs/src/arqfs-entry-digests';
+import { semanticHashOfEntries } from '@arq/arqfs/src/arqfs-semantic-hash';
+import {
+  acquireSingleWriterLock,
+  describeReadOnlyReason,
+  type ArqfsWriterLease,
+} from '@arq/arqfs/src/arqfs-single-writer-lock';
 import type { ArqfsOpenResult } from '@arq/arqfs/src/arqfs-open';
 import { ArqfsWorkerClient } from '@arq/arqfs/src/arqfs-worker-client';
 import { resolveNativeOpenCapabilities } from './native-open-policy';
@@ -33,6 +43,18 @@ export type NativeOpenResult =
       readonly session: NativeProjectSession;
       readonly snapshot: NativeProjectSnapshot;
     }
+  /**
+   * The chosen file is the project already open. Not an error and not a second
+   * open: the working copy is content-addressed, so the same bytes name the same
+   * OPFS file, and the session holding it is the one the reader already has.
+   *
+   * Constructing a second Worker for it is what used to happen, and it failed -
+   * the new Worker cannot take a working copy the live one still holds, so
+   * choosing the open project again reported "could not be opened" about a
+   * project sitting on screen. Answering honestly is both correct and cheaper
+   * than tearing down a session to rebuild it identically.
+   */
+  | { readonly status: 'already-open'; readonly workingCopyId: string }
   | { readonly status: 'rejected'; readonly code: string; readonly reason: string };
 
 function rejected(code: string, reason: string): NativeOpenResult {
@@ -68,7 +90,11 @@ function manifestOf(value: unknown): ArqManifest | null {
  */
 export interface NativeOpenProgress {
   readonly onStaged: (projectId: string) => void;
-  readonly onWorkerOpened: (writable: boolean) => void;
+  readonly onWorkerOpened: (
+    writable: boolean,
+    /** Set when this context lost the writer lock, which is not the file's doing. */
+    lockReason: 'another-window-is-editing' | null,
+  ) => void;
   readonly onHydrateStart: () => void;
 }
 
@@ -77,6 +103,21 @@ export async function openNativeProject(
   createWorker: NativeWorkerFactory,
   displayName: string,
   progress?: NativeOpenProgress,
+  /**
+   * The working copy the caller already holds open, if any. Passed in rather
+   * than discovered here because ownership of the live session belongs to the
+   * workspace, and this function must not reach into it.
+   */
+  activeWorkingCopyId?: string | null,
+  /**
+   * Asks to be this project's writer. Injected so the pipeline is testable
+   * without `navigator.locks`, which jsdom does not provide - the real
+   * implementation already degrades to a read-only lease when it is absent, so
+   * an un-injected test would silently exercise only that branch.
+   */
+  acquireWriterLease: (options: {
+    readonly projectId: string;
+  }) => Promise<ArqfsWriterLease> = acquireSingleWriterLock,
 ): Promise<NativeOpenResult> {
   // Byte checks first: no Worker, no OPFS, nothing to clean up if these refuse.
   const completeness = evaluateArqfsSourceCompleteness(bytes);
@@ -85,6 +126,29 @@ export async function openNativeProject(
   }
 
   const workingCopyId = await workingCopyIdForBytes(bytes);
+  // Checked before any Worker exists, for the same reason byte preflight is: a
+  // question answerable without constructing anything must not construct
+  // anything, and here constructing would actively fail.
+  if (workingCopyId === activeWorkingCopyId) {
+    return { status: 'already-open', workingCopyId };
+  }
+  // V3-030. ADR-0024's one-active-writer rule, finally asked for.
+  // `acquireSingleWriterLock` was written, tested and exported, and had no
+  // caller outside its own tests - so `readOnly` was decided purely by the
+  // file's writer-version floor, and two tabs could open the same project
+  // writable, each believing it was the writer.
+  //
+  // Keyed on the working copy id because that is what actually contends: the
+  // Worker is constructed with it (`createWorker(workingCopyId)`), which is what
+  // `opfsFilenameForProject` scopes the OPFS file by. The lock module requires
+  // the lock name to match that scoping exactly, and here it does.
+  //
+  // Taken before the Worker exists, for the same reason the byte checks run
+  // before it: a project another context is already writing should not first be
+  // imported into a working copy that context holds.
+  const lease = await acquireWriterLease({ projectId: workingCopyId });
+  const writerLocked = lease.status !== 'writer';
+
   const handle = createWorker(workingCopyId);
   // Every failure past this point has a Worker to release. A leaked Worker keeps
   // the OPFS write lock on its working copy, which makes the project unopenable
@@ -104,6 +168,10 @@ export async function openNativeProject(
       return rejected('ARQ_OPEN_REJECTED', openResult.reason);
     }
     const capabilities = resolveNativeOpenCapabilities(openResult);
+    const readOnly = capabilities.readOnly || writerLocked;
+    const warnings = writerLocked
+      ? [...capabilities.warnings, describeReadOnlyReason(lease.reason)]
+      : capabilities.warnings;
     if (!openResult.capabilities.canRead) {
       return rejected('ARQ_OPEN_NOT_READABLE', capabilities.warnings[0] ?? 'Not readable.');
     }
@@ -127,7 +195,11 @@ export async function openNativeProject(
     // The working copy exists and the database behind it opened. Reported here,
     // between the two facts, because that is where each becomes true.
     progress?.onStaged(workingCopyId);
-    progress?.onWorkerOpened(!capabilities.readOnly);
+    // Reports the whole truth about writability, which now has two independent
+    // causes: the file's own writer-version floor, and whether this context won
+    // the writer lock. Reporting only the first would announce a writable
+    // project and then hand back a read-only one.
+    progress?.onWorkerOpened(!readOnly, writerLocked ? 'another-window-is-editing' : null);
     progress?.onHydrateStart();
 
     // Reads are gated on the open above; a rejected or safe-mode open refuses
@@ -137,7 +209,25 @@ export async function openNativeProject(
       return rejected('ARQ_READ_UNEXPECTED', 'The project did not return its contents.');
     }
 
-    const archive = await importArchive(new Map(entriesPayload.entries));
+    const entries = new Map(entriesPayload.entries);
+
+    // V3-038. `checksums.json` travels inside the file and records what every
+    // other entry should hash to, and until this call nothing on the open path
+    // read it - publication verified a file this build had just written, while
+    // open adopted a file from anywhere at all on trust. A corrupted `model.json`
+    // whose digest no longer matches would decode into whatever the damaged
+    // bytes happen to say and be adopted as the project.
+    //
+    // Refused before `importArchive`, so a file that fails its own recorded
+    // digests is never parsed. Derived-entry mismatches are not fatal here for
+    // the reason the module states: a thumbnail is regenerable and the project's
+    // meaning is not in it.
+    const digests = await verifyEntryDigestsOfEntries(entries);
+    if (!digests.ok) {
+      return rejected('ARQ_ENTRY_DIGEST_MISMATCH', describeEntryDigestFailure(digests));
+    }
+
+    const archive = await importArchive(entries);
     if (archive.status === 'rejected') {
       return rejected('ARQ_ARCHIVE_REJECTED', archive.reason);
     }
@@ -157,10 +247,19 @@ export async function openNativeProject(
       // disk without that being a rename of the project.
       displayName: decoded.model.projectName || displayName,
       walls: decoded.model.walls,
+      document: decoded.model.document,
       journalSequence: archive.operations.length,
-      readOnly: capabilities.readOnly,
+      // V3-039. Computed, not verified: no manifest, schema or file records an
+      // expected semantic hash, so there is nothing on disk to compare against
+      // and claiming a verification here would be a claim about a check that
+      // cannot run. What it is for is `@arq/derived-cache`'s freshness rule,
+      // which decides whether cached geometry still describes this project by
+      // comparing a stored hash against the current one - and had no source for
+      // "current" on an opened project at all.
+      semanticHash: await semanticHashOfEntries(entries),
+      readOnly,
       usedVfs: openPayload.usedVfs,
-      warnings: capabilities.warnings,
+      warnings,
     };
 
     const session = new NativeProjectSession(
@@ -168,6 +267,7 @@ export async function openNativeProject(
       snapshot,
       manifest,
       archive.operations,
+      lease.status === 'writer' ? () => lease.handle.release() : undefined,
     );
     adopted = true;
     return { status: 'opened', session, snapshot };
@@ -180,6 +280,10 @@ export async function openNativeProject(
     if (!adopted) {
       handle.client.dispose();
       handle.worker.terminate();
+      // The lease is taken before the Worker and so outlives every failure
+      // between. Not releasing it here would leave this tab holding the writer
+      // lock for a project it never opened, and every other tab read-only on it.
+      if (lease.status === 'writer') lease.handle.release();
     }
   }
 }

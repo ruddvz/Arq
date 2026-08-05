@@ -133,6 +133,12 @@ jobs:
       # read-only, old-reader and foreign-file outcomes, each on a freshly
       # constructed Worker so the file has to survive Worker teardown in OPFS.
       - run: pnpm benchmark:e2e-arq-open
+      # The product-integration half of the same path: the vite-built apps/web
+      # bundle, driven through its real controls, opening the unmodified golden
+      # fixture. e2e-arq-open proves the Worker; this proves a user can reach it,
+      # that the project reaches the workspace, that authoring stays refused, that
+      # Workers are released, and that the selected file's bytes do not change.
+      - run: pnpm benchmark:native-open
       - uses: actions/upload-artifact@v4
         if: always()
         with:
