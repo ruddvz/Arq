@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { reduceFileFlow, type FileFlowState } from './file-state-machine';
+import {
+  reduceFileFlow,
+  type FileFlowState,
+  isProjectOpen,
+  isProjectWritable,
+  lastKnownGoodProject,
+} from './file-state-machine';
 
 const IDLE: FileFlowState = { kind: 'idle' };
 
@@ -11,8 +17,12 @@ describe('reduceFileFlow', () => {
     state = reduceFileFlow(state, { type: 'acquired' });
     expect(state).toEqual({ kind: 'detecting', name: 'project.arq' });
 
-    state = reduceFileFlow(state, { type: 'route-native' });
-    expect(state).toEqual({ kind: 'native-opening', name: 'project.arq' });
+    state = reduceFileFlow(state, { type: 'route-native', sidecarDependency: 'complete' });
+    expect(state).toEqual({
+      kind: 'native-opening',
+      name: 'project.arq',
+      sidecarDependency: 'complete',
+    });
   });
 
   /**
@@ -112,5 +122,134 @@ describe('reduceFileFlow', () => {
 
   it('ignores an event that does not apply to the current state', () => {
     expect(reduceFileFlow(IDLE, { type: 'staged' })).toBe(IDLE);
+  });
+});
+
+describe('project lifecycle after preflight', () => {
+  const preflighted: FileFlowState = {
+    kind: 'native-opening',
+    name: 'house.arq',
+    sidecarDependency: 'complete',
+  };
+
+  function openFully(writable = true): FileFlowState {
+    return [
+      { type: 'stage-start' } as const,
+      { type: 'stage-complete', projectId: 'p1' } as const,
+      { type: 'migration-verified' } as const,
+      { type: 'worker-opened', writable } as const,
+      { type: 'hydrate-start' } as const,
+      { type: 'hydrated' } as const,
+    ].reduce<FileFlowState>(reduceFileFlow, preflighted);
+  }
+
+  it('reaches an active workspace only through every stage in order', () => {
+    const active = openFully();
+    expect(active.kind).toBe('workspace-active');
+    expect(isProjectOpen(active)).toBe(true);
+    expect(isProjectWritable(active)).toBe(true);
+  });
+
+  // The rule this whole state machine exists to enforce. Before it, the flow
+  // stopped at "compatible Arq project" and anything downstream had to decide
+  // for itself whether that meant open.
+  it('reports no state before workspace-active as open', () => {
+    const states: FileFlowState[] = [
+      { kind: 'idle' },
+      { kind: 'acquiring', name: 'a' },
+      { kind: 'detecting', name: 'a' },
+      preflighted,
+      { kind: 'staging', name: 'a', fraction: 0.5 },
+      { kind: 'staged', name: 'a', projectId: 'p1' },
+      { kind: 'migration-verified', name: 'a', projectId: 'p1' },
+      { kind: 'worker-open', name: 'a', projectId: 'p1', writable: true },
+      { kind: 'hydrating', name: 'a', projectId: 'p1', writable: true },
+    ];
+    for (const state of states) {
+      expect(isProjectOpen(state)).toBe(false);
+      expect(isProjectWritable(state)).toBe(false);
+    }
+  });
+
+  it('refuses to skip a stage', () => {
+    // Worker open without migration verification must not advance.
+    const skipped = reduceFileFlow(
+      { kind: 'staged', name: 'a', projectId: 'p1' },
+      { type: 'worker-opened', writable: true },
+    );
+    expect(skipped.kind).toBe('staged');
+
+    // Hydrated without hydrating must not produce an active workspace.
+    const notHydrated = reduceFileFlow(
+      { kind: 'worker-open', name: 'a', projectId: 'p1', writable: true },
+      { type: 'hydrated' },
+    );
+    expect(notHydrated.kind).toBe('worker-open');
+    expect(isProjectOpen(notHydrated)).toBe(false);
+  });
+
+  it('keeps a read-only file read-only all the way to active', () => {
+    const active = openFully(false);
+    expect(active.kind).toBe('workspace-active');
+    expect(isProjectOpen(active)).toBe(true);
+    expect(isProjectWritable(active)).toBe(false);
+  });
+
+  it('carries the last known good project through every failure', () => {
+    const active = openFully();
+    for (const event of [
+      { type: 'project-fail', reason: 'worker-failed', detail: 'x' } as const,
+      { type: 'close' } as const,
+    ]) {
+      const failed = reduceFileFlow(active, event);
+      expect(lastKnownGoodProject(failed)).toEqual({ projectId: 'p1', name: 'house.arq' });
+      expect(isProjectOpen(failed)).toBe(false);
+    }
+  });
+
+  it('keeps the half-migrated copy when migration fails', () => {
+    const quarantined = reduceFileFlow(
+      { kind: 'staged', name: 'house.arq', projectId: 'p1' },
+      { type: 'quarantine', quarantinePath: '/quarantine/p1.sqlite3' },
+    );
+    expect(quarantined).toMatchObject({
+      kind: 'quarantined',
+      quarantinePath: '/quarantine/p1.sqlite3',
+    });
+    expect(isProjectOpen(quarantined)).toBe(false);
+  });
+
+  it('only cancels a stage that has something in flight', () => {
+    const cancelled = reduceFileFlow(
+      { kind: 'staging', name: 'a', fraction: 0.2 },
+      { type: 'cancel' },
+    );
+    expect(cancelled).toMatchObject({ kind: 'cancelled', cancelledAt: 'staging' });
+
+    // Nothing is in flight in an active workspace, so cancel must not invent an
+    // undo that never happened.
+    const active = openFully();
+    expect(reduceFileFlow(active, { type: 'cancel' })).toBe(active);
+  });
+
+  it('sends recovery back through hydration rather than straight to active', () => {
+    const withRecovery = [
+      { type: 'stage-start' } as const,
+      { type: 'stage-complete', projectId: 'p1' } as const,
+      { type: 'migration-verified' } as const,
+      { type: 'worker-opened', writable: true } as const,
+      { type: 'recovery-found', journalledOperations: 3 } as const,
+      { type: 'recover-start' } as const,
+      { type: 'recovered' } as const,
+    ].reduce<FileFlowState>(reduceFileFlow, preflighted);
+    expect(withRecovery.kind).toBe('hydrating');
+    expect(isProjectOpen(withRecovery)).toBe(false);
+  });
+
+  it('does not treat publishing as a save that already happened', () => {
+    const publishing = reduceFileFlow(openFully(), { type: 'publish-start' });
+    expect(publishing.kind).toBe('publishing');
+    const published = reduceFileFlow(publishing, { type: 'published' });
+    expect(published.kind).toBe('published');
   });
 });

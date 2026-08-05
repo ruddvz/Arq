@@ -59,10 +59,24 @@ function manifestOf(value: unknown): ArqManifest | null {
   return typeof manifest.projectId === 'string' ? manifest : null;
 }
 
+/**
+ * Reported as each stage actually completes, so the flow's lifecycle states
+ * describe work that has happened rather than being replayed in a burst once
+ * everything is already done. A caller that emitted them all at the end would
+ * satisfy the state machine while telling the user a story - the opposite of
+ * the rule the lifecycle exists to enforce.
+ */
+export interface NativeOpenProgress {
+  readonly onStaged: (projectId: string) => void;
+  readonly onWorkerOpened: (writable: boolean) => void;
+  readonly onHydrateStart: () => void;
+}
+
 export async function openNativeProject(
   bytes: Uint8Array,
   createWorker: NativeWorkerFactory,
   displayName: string,
+  progress?: NativeOpenProgress,
 ): Promise<NativeOpenResult> {
   // Byte checks first: no Worker, no OPFS, nothing to clean up if these refuse.
   const completeness = evaluateArqfsSourceCompleteness(bytes);
@@ -93,6 +107,11 @@ export async function openNativeProject(
     if (!openResult.capabilities.canRead) {
       return rejected('ARQ_OPEN_NOT_READABLE', capabilities.warnings[0] ?? 'Not readable.');
     }
+    // The working copy exists and the database behind it opened. Reported here,
+    // between the two facts, because that is where each becomes true.
+    progress?.onStaged(workingCopyId);
+    progress?.onWorkerOpened(!capabilities.readOnly);
+    progress?.onHydrateStart();
 
     // Reads are gated on the open above; a rejected or safe-mode open refuses
     // here rather than handing back bytes this build cannot interpret.

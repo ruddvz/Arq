@@ -7,7 +7,7 @@
       "repo-facts-2026-07-27",
       "interface-2026-07-27"
     ],
-    "sourceSetDigest": "e4996cd16dd196aaf2c582e243d2d9b0322ab1d7a3ad51248def653c4b8df585",
+    "sourceSetDigest": "2c17281e46caf3d51f33c01f29e04fe703754f4968c550443d139650762fcc38",
     "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995"
   },
   "snapshotWarning": null,
@@ -1164,6 +1164,90 @@
         {
           "internal": "failed",
           "labelTemplate": "{name} could not be opened",
+          "exposure": "product"
+        },
+        {
+          "internal": "staging",
+          "labelTemplate": "Copying {name} to work on… {percent}%",
+          "explain": "Copying, not opening. The selected source file is never written to; work happens on the copy.",
+          "exposure": "product"
+        },
+        {
+          "internal": "staged",
+          "labelTemplate": "{name} is copied and ready to check",
+          "explain": "A copy exists. Nothing has been verified or opened yet.",
+          "exposure": "product"
+        },
+        {
+          "internal": "migration-verified",
+          "labelTemplate": "{name} was upgraded and checked",
+          "explain": "The upgrade ran on the copy and was verified. This is not an open project.",
+          "exposure": "product"
+        },
+        {
+          "internal": "worker-open",
+          "labelTemplate": "{name} is loading…",
+          "explain": "The Worker holds the project file. No semantic content has been read yet, so never say open here.",
+          "exposure": "product"
+        },
+        {
+          "internal": "hydrating",
+          "labelTemplate": "Reading the contents of {name}…",
+          "explain": "Semantic content is being read. The workspace is not active yet.",
+          "exposure": "product"
+        },
+        {
+          "internal": "workspace-active",
+          "labelTemplate": "{name} is open",
+          "explain": "The only state that may say open. Worker open, integrity, hydration and activation have all succeeded.",
+          "exposure": "product"
+        },
+        {
+          "internal": "quarantined",
+          "labelTemplate": "{name} could not be upgraded",
+          "explain": "The half-upgraded copy is kept as evidence. Say where it is, and that the original file and any previously open project are unchanged.",
+          "exposure": "product"
+        },
+        {
+          "internal": "cancelled",
+          "labelTemplate": "Opening {name} was cancelled",
+          "explain": "Name the stage that was undone. Never imply a partial project remains.",
+          "exposure": "product"
+        },
+        {
+          "internal": "project-failed",
+          "labelTemplate": "{name} could not be opened",
+          "explain": "Give the specific cause in the user's terms. The previously open project is untouched.",
+          "exposure": "product"
+        },
+        {
+          "internal": "recovery-available",
+          "labelTemplate": "{name} has unsaved changes from last time",
+          "explain": "Journalled changes live on this device and are not in the project file. Never call them saved to the file.",
+          "exposure": "product"
+        },
+        {
+          "internal": "recovering",
+          "labelTemplate": "Restoring your changes to {name}…",
+          "explain": "Replay is in progress and still has to be hydrated and validated.",
+          "exposure": "product"
+        },
+        {
+          "internal": "publishing",
+          "labelTemplate": "Publishing {name}… {percent}%",
+          "explain": "Publication writes a standalone portable file. A journal append is not a publication.",
+          "exposure": "product"
+        },
+        {
+          "internal": "published",
+          "labelTemplate": "{name} was published",
+          "explain": "Only after the published file was reopened and verified.",
+          "exposure": "product"
+        },
+        {
+          "internal": "closed",
+          "label": "No project is open",
+          "explain": "Name the project that was closed when there was one.",
           "exposure": "product"
         }
       ],
@@ -7287,7 +7371,7 @@
     "schemaVersion": 4,
     "contractVersion": "4.1.0",
     "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-    "sourceSetDigest": "e4996cd16dd196aaf2c582e243d2d9b0322ab1d7a3ad51248def653c4b8df585",
+    "sourceSetDigest": "2c17281e46caf3d51f33c01f29e04fe703754f4968c550443d139650762fcc38",
     "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
     "sources": {
       "repository-readme": {
@@ -7630,7 +7714,7 @@
         "id": "file-open-ui",
         "kind": "directory",
         "path": "apps/web/src/file-handling",
-        "sha256": "abdb8c2a4a27956adea458a8b8fcdaeee9df01b0d7e1e3ac92ba783cdcc62e00",
+        "sha256": "bfd68b8bf1fc3172c48017ac7fcd8190e640ce4bb028977b1a8584710ae49e7c",
         "files": [
           {
             "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
@@ -7644,8 +7728,8 @@
           },
           {
             "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-            "sha256": "ac1edc9a28918080106b2126867528c067caaf9a7ef48292f8bbac8d694f71cd",
-            "bytes": 3976
+            "sha256": "12b80d19822ee9d7847e8f9121b48d6756ac4a6568509feb84afb199344d61ec",
+            "bytes": 9700
           },
           {
             "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
@@ -7659,13 +7743,13 @@
           },
           {
             "rel": "apps/web/src/file-handling/file-state-machine.test.ts",
-            "sha256": "d69973f182e87aecc89cb4e7dd51feaefcbd5bbb055c7387133e2e58dcec1ef0",
-            "bytes": 4267
+            "sha256": "5f62c270166f9091c1359aef7849273e52d1f46ef6eab40d86e1b2f886f7e93b",
+            "bytes": 9328
           },
           {
             "rel": "apps/web/src/file-handling/file-state-machine.ts",
-            "sha256": "b8fd15a857e0cd5271cc71ea037f46234b7e7c8cbb149cd9a0aa872098de0fae",
-            "bytes": 4253
+            "sha256": "733a032dc525a2a87982ab158fadb8e7b742092501841be915974b2d485b26dc",
+            "bytes": 15427
           },
           {
             "rel": "apps/web/src/file-handling/index.ts",
@@ -10253,7 +10337,21 @@
         "staged-review",
         "migrating",
         "read-only-safe-mode",
-        "failed"
+        "failed",
+        "staging",
+        "staged",
+        "migration-verified",
+        "worker-open",
+        "hydrating",
+        "workspace-active",
+        "quarantined",
+        "cancelled",
+        "project-failed",
+        "recovery-available",
+        "recovering",
+        "publishing",
+        "published",
+        "closed"
       ],
       "web-plan-journal-status": [
         "recovered",

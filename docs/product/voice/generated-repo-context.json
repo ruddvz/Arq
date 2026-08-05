@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "208dc3b67a3bc496d1373395a912107dbf4a0a2885367921e055de884cc544dc",
+  "sourceSetDigest": "c7363463f31857fce21a4e997e682877c9ac12503a933237507f70768cda2a87",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -350,22 +350,22 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "4be97f35123dbc9f4746a2ca827dc54c22a08d04cdadafd707e4661c355e9345",
+      "sha256": "e5dfba769cd4b550a1602c27138030a1ad1f6c07555d1e3206d340493ae87ffa",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
-          "sha256": "53e623fbc100d5bb694cea303e5b2dff73495c83bcd59e71a6e5d8a8a222723c",
-          "bytes": 10860
+          "sha256": "492e881fadb72b54484c1256ebc402491111effb579a574f683ea7d94359375d",
+          "bytes": 11752
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",
-          "sha256": "e319e11a255c472f9fffcf1ff1bf70c69e608ae5932ebaf451521d38f73b37f3",
-          "bytes": 6216
+          "sha256": "e9f13d48880f3cb81c0c19157587e008c43a6446cc68db5090802a9513af152d",
+          "bytes": 6455
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-          "sha256": "dcc30f7176208b2471d52f7317b3d7e75a9318163b4a0f3da5fee901466cc98e",
-          "bytes": 3928
+          "sha256": "53a109c1eb80dd1e79039338f4be52f9c35759642877a9d7efd906416c4a5a3f",
+          "bytes": 9079
         },
         {
           "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
@@ -379,13 +379,13 @@
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.test.ts",
-          "sha256": "1ca603f83cbb65bea8cba9c683b8c5f3ed204066293831dfbd06284d5a6eb760",
-          "bytes": 4393
+          "sha256": "67d22f26917181b0c7d4d654f08651fd6c4a56545c7334307871d775bc9579d6",
+          "bytes": 9539
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.ts",
-          "sha256": "a2cd8660d570947f2a234db294d4470f1466d2ed393a428bf36f7e20b5f9e305",
-          "bytes": 4811
+          "sha256": "c05c2227d3260a33269871b4f7318f44a53b803ad6fd07450708dc4127c91838",
+          "bytes": 15975
         },
         {
           "rel": "apps/web/src/file-handling/index.ts",
@@ -2837,13 +2837,26 @@
       "acquiring",
       "detecting",
       "native-opening",
-      "native-opened",
       "import-options",
       "importing",
       "staged-review",
       "migrating",
       "read-only-safe-mode",
-      "failed"
+      "failed",
+      "staging",
+      "staged",
+      "migration-verified",
+      "worker-open",
+      "hydrating",
+      "workspace-active",
+      "quarantined",
+      "cancelled",
+      "project-failed",
+      "recovery-available",
+      "recovering",
+      "publishing",
+      "published",
+      "closed"
     ],
     "web-plan-journal-status": [
       "recovered",

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
 import { ArqModalDialog } from '@arq/design-system';
-import { reduceFileFlow, type FileFlowState } from './file-state-machine';
+import { reduceFileFlow, type FileFlowEvent, type FileFlowState } from './file-state-machine';
 import { evaluateSelectedFile } from './evaluate-selected-file';
 import { describeFileFlowState } from './describe-file-flow-state';
 import {
@@ -115,26 +115,38 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
       setState((current) => reduceFileFlow(current, { type: 'fail', code, message: reason }));
       return;
     }
-    setState((current) => reduceFileFlow(current, { type: 'route-native' }));
+    // Always 'complete' by this point - a dependent database was refused above -
+    // but read from the preflight rather than hard-coded, so the state carries
+    // what was actually measured and cannot drift from it.
+    const { sidecarDependency } = completeness.preflight;
+    setState((current) => reduceFileFlow(current, { type: 'route-native', sidecarDependency }));
 
     // Only now is a Worker constructed and a working copy created. Everything
     // above this line is byte-level and leaves no trace if it refuses.
-    const opened = await openNativeProject(bytes, createWorker, file.name);
+    //
+    // The lifecycle states are driven from the pipeline's own boundaries rather
+    // than announced in a burst at the end, so `workspace-active` - the only
+    // state anything treats as open - is reached exactly once the project is.
+    const emit = (event: FileFlowEvent) => setState((current) => reduceFileFlow(current, event));
+    emit({ type: 'stage-start' });
+    const opened = await openNativeProject(bytes, createWorker, file.name, {
+      onStaged: (projectId) => {
+        emit({ type: 'stage-complete', projectId });
+        emit({ type: 'migration-verified' });
+      },
+      onWorkerOpened: (writable) => emit({ type: 'worker-opened', writable }),
+      onHydrateStart: () => emit({ type: 'hydrate-start' }),
+    });
     if (opened.status === 'rejected') {
       const { code, reason } = opened;
-      setState((current) => reduceFileFlow(current, { type: 'fail', code, message: reason }));
+      emit({ type: 'fail', code, message: reason });
       return;
     }
     // Adoption is the last step, and it is the caller's: the panel never
-    // replaces the active project itself.
+    // replaces the active project itself. `hydrated` follows it, so nothing
+    // reports the project as open before the workspace actually holds it.
     onProjectOpened?.(opened);
-    setState((current) =>
-      reduceFileFlow(current, {
-        type: 'native-opened',
-        readOnly: opened.snapshot.readOnly,
-        warnings: opened.snapshot.warnings,
-      }),
-    );
+    emit({ type: 'hydrated' });
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>): void {

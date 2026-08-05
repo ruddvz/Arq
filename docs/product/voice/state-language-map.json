@@ -479,12 +479,6 @@
         "exposure": "product"
       },
       {
-        "internal": "native-opened",
-        "labelTemplate": "{name} is open.",
-        "explain": "The only state entitled to say a project is open: its contents have been decoded and adopted into the workspace. When it opened read-only the label becomes \"{name} is open for reading only.\" and carries the reason, because a project that silently refuses edits reads as a bug rather than as a decision.",
-        "exposure": "product"
-      },
-      {
         "internal": "import-options",
         "labelTemplate": "{name} needs conversion before it can be opened",
         "exposure": "product"
@@ -512,6 +506,90 @@
       {
         "internal": "failed",
         "labelTemplate": "{name} could not be opened",
+        "exposure": "product"
+      },
+      {
+        "internal": "staging",
+        "labelTemplate": "Copying {name} to work on… {percent}%",
+        "explain": "Copying, not opening. The selected source file is never written to; work happens on the copy.",
+        "exposure": "product"
+      },
+      {
+        "internal": "staged",
+        "labelTemplate": "{name} is copied and ready to check",
+        "explain": "A copy exists. Nothing has been verified or opened yet.",
+        "exposure": "product"
+      },
+      {
+        "internal": "migration-verified",
+        "labelTemplate": "{name} was upgraded and checked",
+        "explain": "The upgrade ran on the copy and was verified. This is not an open project.",
+        "exposure": "product"
+      },
+      {
+        "internal": "worker-open",
+        "labelTemplate": "{name} is loading…",
+        "explain": "The Worker holds the project file. No semantic content has been read yet, so never say open here.",
+        "exposure": "product"
+      },
+      {
+        "internal": "hydrating",
+        "labelTemplate": "Reading the contents of {name}…",
+        "explain": "Semantic content is being read. The workspace is not active yet.",
+        "exposure": "product"
+      },
+      {
+        "internal": "workspace-active",
+        "labelTemplate": "{name} is open",
+        "explain": "The only state that may say open. Worker open, integrity, hydration and activation have all succeeded.",
+        "exposure": "product"
+      },
+      {
+        "internal": "quarantined",
+        "labelTemplate": "{name} could not be upgraded",
+        "explain": "The half-upgraded copy is kept as evidence. Say where it is, and that the original file and any previously open project are unchanged.",
+        "exposure": "product"
+      },
+      {
+        "internal": "cancelled",
+        "labelTemplate": "Opening {name} was cancelled",
+        "explain": "Name the stage that was undone. Never imply a partial project remains.",
+        "exposure": "product"
+      },
+      {
+        "internal": "project-failed",
+        "labelTemplate": "{name} could not be opened",
+        "explain": "Give the specific cause in the user's terms. The previously open project is untouched.",
+        "exposure": "product"
+      },
+      {
+        "internal": "recovery-available",
+        "labelTemplate": "{name} has unsaved changes from last time",
+        "explain": "Journalled changes live on this device and are not in the project file. Never call them saved to the file.",
+        "exposure": "product"
+      },
+      {
+        "internal": "recovering",
+        "labelTemplate": "Restoring your changes to {name}…",
+        "explain": "Replay is in progress and still has to be hydrated and validated.",
+        "exposure": "product"
+      },
+      {
+        "internal": "publishing",
+        "labelTemplate": "Publishing {name}… {percent}%",
+        "explain": "Publication writes a standalone portable file. A journal append is not a publication.",
+        "exposure": "product"
+      },
+      {
+        "internal": "published",
+        "labelTemplate": "{name} was published",
+        "explain": "Only after the published file was reopened and verified.",
+        "exposure": "product"
+      },
+      {
+        "internal": "closed",
+        "label": "No project is open",
+        "explain": "Name the project that was closed when there was one.",
         "exposure": "product"
       }
     ],

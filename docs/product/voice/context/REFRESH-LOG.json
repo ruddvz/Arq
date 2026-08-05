@@ -2,22 +2,16 @@
   "schemaVersion": 1,
   "entries": [
     {
-      "generatedAt": "2026-08-04T23:40:37.595Z",
-      "sourceSetDigest": "208dc3b67a3bc496d1373395a912107dbf4a0a2885367921e055de884cc544dc",
-      "previousSourceSetDigest": "7d996b5533d3ba12bf9238cc3ac34ffccba0e936b654c575406ad0cfe3ecff18",
-      "changedSourceSets": ["accepted-adrs", "file-open-ui", "status"]
-    },
-    {
-      "generatedAt": "2026-08-04T23:32:13.206Z",
-      "sourceSetDigest": "7d996b5533d3ba12bf9238cc3ac34ffccba0e936b654c575406ad0cfe3ecff18",
-      "previousSourceSetDigest": "ec0043fe66bcde472d7865928d8af422628f8b1ba469d9091fca2698f67c1f43",
-      "changedSourceSets": ["accepted-adrs"]
-    },
-    {
-      "generatedAt": "2026-08-04T23:25:43.077Z",
-      "sourceSetDigest": "ec0043fe66bcde472d7865928d8af422628f8b1ba469d9091fca2698f67c1f43",
-      "previousSourceSetDigest": "e4996cd16dd196aaf2c582e243d2d9b0322ab1d7a3ad51248def653c4b8df585",
+      "generatedAt": "2026-08-05T02:21:26.650Z",
+      "sourceSetDigest": "c7363463f31857fce21a4e997e682877c9ac12503a933237507f70768cda2a87",
+      "previousSourceSetDigest": "2c17281e46caf3d51f33c01f29e04fe703754f4968c550443d139650762fcc38",
       "changedSourceSets": ["accepted-adrs", "file-open-ui", "status", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-04T23:19:21.283Z",
+      "sourceSetDigest": "2c17281e46caf3d51f33c01f29e04fe703754f4968c550443d139650762fcc38",
+      "previousSourceSetDigest": "e4996cd16dd196aaf2c582e243d2d9b0322ab1d7a3ad51248def653c4b8df585",
+      "changedSourceSets": ["file-open-ui"]
     },
     {
       "generatedAt": "2026-08-04T21:30:56.125Z",
