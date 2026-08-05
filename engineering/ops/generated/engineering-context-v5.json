@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "a02a07d9ac37df6046743f0677b9d34aacbfbbf9bb0e97df81f513006751d623",
+  "source_hash": "ee80aafb46460d106b3f405a1df09284ce062b82300277d4a4871e1755cff34e",
   "source_records": [
     {
       "scope": "package",
@@ -384,7 +384,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "66d49e9f4d31ededfa1aac7a0b915ffcb12ea33f8002573ada51f6209d2315f7"
+      "sha256": "9541b8c8b1144d889ab435577b6f2abb7a4d51894c7a0681eb253ea8111217ad"
     },
     {
       "scope": "repository",
@@ -425,6 +425,16 @@
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-driver.ts",
       "sha256": "f9e83fc800974f4e7318c181035b6e115e46516197f1c3347f847e5ff0dffe84"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-entry-digests.test.ts",
+      "sha256": "a410d1889c53f17074f02bb866aafdb2c7fca2992b0eb54a1183e96ffcb9ab79"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-entry-digests.ts",
+      "sha256": "67a4df739e4ea1042c43e2192c85277d2b3e52ed0ce0012d75fed9f00286155e"
     },
     {
       "scope": "repository",
@@ -549,12 +559,12 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-publication.test.ts",
-      "sha256": "d481c067ebc86e3c97d396627db75f05f3aa64c659b1777464b1a5045dd61c13"
+      "sha256": "05f43d052b7b5cb6d7b6a53780c6b771537163a5baa6bd005de20a9c32d60a4f"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-publication.ts",
-      "sha256": "fa14ab81885fa953c19044cdf997461f736950127b1ba231512ee9e2eaa48d4c"
+      "sha256": "996d1faa394fb8ba2836662daada12863c3004a41538e2253f3040bca6f2b9a4"
     },
     {
       "scope": "repository",
@@ -694,7 +704,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/index.ts",
-      "sha256": "c009c30722f2698b17372d7b9fcbaf3c2383013d8835b6812e98010125ef2768"
+      "sha256": "76bfdede97f95639275d9aaf285a58a962fb1975a5566db64a587f56cb074492"
     },
     {
       "scope": "repository",
@@ -729,7 +739,7 @@
     {
       "scope": "repository",
       "path": "packages/local-storage/src/index.ts",
-      "sha256": "56aaf74a3130a0ecd9c29a1a4fb6449887745fed44d08c2df480b65be72395e1"
+      "sha256": "0d560987900eb87fe5203e31787f5b03178dae286d216c0fc4d5841c3042df7f"
     },
     {
       "scope": "repository",
@@ -760,6 +770,16 @@
       "scope": "repository",
       "path": "packages/local-storage/src/quota-error.ts",
       "sha256": "b0f1ade602347159fdea0c8a6701cbd5a5c07e5f276af20a3456300d21112a73"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/recovery-plan.test.ts",
+      "sha256": "cbea1126e3053d45d2f8bf419d85780e19d7e5db2bbf23358fdc41fa17fa2437"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/local-storage/src/recovery-plan.ts",
+      "sha256": "3fb6941a702de92fe12a71edcedc353bf4521b3b686d6a3856cf86338a97d930"
     },
     {
       "scope": "repository",

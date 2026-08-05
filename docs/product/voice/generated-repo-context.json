@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "a96bf9247a2244b17657feea709747b4ab71ac0f44168176951932efcbb694f5",
+  "sourceSetDigest": "a520c00dc935692b4e66c01759164151e5beb17b5e4fe7471bfc81bbcf436033",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -436,7 +436,7 @@
       "id": "local-storage",
       "kind": "directory",
       "path": "packages/local-storage/src",
-      "sha256": "e95faf42a2ab091798c15db2d785b0f44a9d890a5f82ff4034c45b6ccb77aa34",
+      "sha256": "34b19fc646984e5153ae26fa9414afec6e139665f8ff8ee0441f60a524a589e4",
       "files": [
         {
           "rel": "packages/local-storage/src/archive-export.test.ts",
@@ -470,8 +470,8 @@
         },
         {
           "rel": "packages/local-storage/src/index.ts",
-          "sha256": "56aaf74a3130a0ecd9c29a1a4fb6449887745fed44d08c2df480b65be72395e1",
-          "bytes": 288
+          "sha256": "0d560987900eb87fe5203e31787f5b03178dae286d216c0fc4d5841c3042df7f",
+          "bytes": 321
         },
         {
           "rel": "packages/local-storage/src/journal-append.test.ts",
@@ -502,6 +502,16 @@
           "rel": "packages/local-storage/src/quota-error.ts",
           "sha256": "b0f1ade602347159fdea0c8a6701cbd5a5c07e5f276af20a3456300d21112a73",
           "bytes": 2130
+        },
+        {
+          "rel": "packages/local-storage/src/recovery-plan.test.ts",
+          "sha256": "cbea1126e3053d45d2f8bf419d85780e19d7e5db2bbf23358fdc41fa17fa2437",
+          "bytes": 10760
+        },
+        {
+          "rel": "packages/local-storage/src/recovery-plan.ts",
+          "sha256": "3fb6941a702de92fe12a71edcedc353bf4521b3b686d6a3856cf86338a97d930",
+          "bytes": 12824
         },
         {
           "rel": "packages/local-storage/src/recovery-report.test.ts",

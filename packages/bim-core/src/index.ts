@@ -23,3 +23,5 @@ export * from './dimension-reference';
 export * from './linear-dimension';
 export * from './text-note';
 export * from './sheet';
+export * from './canonical-length';
+export * from './tolerance-classes';
