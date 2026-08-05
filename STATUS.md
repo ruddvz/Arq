@@ -1,6 +1,6 @@
 # ARQ: where the project stands
 
-_Last reconciled: 2026-08-04 against upstream repository revision `7f15889` plus
+_Last reconciled: 2026-08-05 against upstream repository revision `0336cfa` plus
 the candidate changes in the commit containing this file. This is
 the top-level summary the buried triage notes
 (`docs/research/incoming/README.md`) used to be the only source of. When code,
@@ -19,9 +19,9 @@ Update this file in the same change._
 
 ## What is real today
 
-Re-measured on this branch over revision `4c31107` plus the changes in the
+Re-measured on this branch over revision `0336cfa` plus the changes in the
 commit containing this file: `pnpm typecheck` across all 37 workspace packages
-plus `contracts/`, the repository ESLint gate, `pnpm format:check`, and 2,453
+plus `contracts/`, the repository ESLint gate, `pnpm format:check`, and 2,465
 passing tests across 264 files, all uncached. The same revision defines
 workspace-registry, licence/SBOM, secret-scan and Rust gates, and CI wires
 fourteen of the fifteen headless-Chromium capability checks
@@ -146,10 +146,12 @@ of 1,136.33 kB (325.72 kB gzipped).
 
 The 3D surface is now fetched when the `3d` tab is first opened instead of at
 start-up, because it carries three.js and the model renderer and is the largest
-single contributor. That splits the output into a 613.85 kB start-up chunk
-(193.31 kB gzipped) and a 520.88 kB deferred chunk (132.18 kB gzipped): a 46%
-reduction in raw start-up bytes and 40.7% gzipped. The split follows the
-existing surface boundary rather than an arbitrary chunk size.
+single contributor. That splits the output into a 656.36 kB start-up chunk
+(206.11 kB gzipped) and a 521.04 kB deferred chunk (132.29 kB gzipped): a 42.2%
+reduction in raw start-up bytes and 36.7% gzipped. The split follows the
+existing surface boundary rather than an arbitrary chunk size. The reduction was
+larger before the open pipeline was added to the start-up path; the figures here
+are this tree's, not the split's best moment.
 
 No regression was observed: `benchmark:model-canvas` still activates the real
 `3D` tab, renders through WebGL2 and shares selection with the plan canvas in
@@ -160,12 +162,14 @@ opened project makes - including the Worker's, which the page's own request
 events do not see - with none leaving the origin.
 
 Opening a project adds two more deferred chunks, both fetched only when a user
-actually opens one: the SQLite Worker at 239.06 kB and sqlite-wasm's
+actually opens one: the SQLite Worker at 239.25 kB and sqlite-wasm's
 `sqlite3.wasm` at 864.75 kB. Neither is on the start-up path - the Worker is
 constructed by the file-open dialog, and nothing loads the WebAssembly until that
-Worker starts. The start-up chunk itself grew from 613.85 kB to 650.26 kB raw
-(193.31 kB to 204.59 kB gzipped) for the open pipeline's own main-thread code:
-+36.41 kB raw, +5.9%.
+Worker starts. The start-up chunk itself grew from 620.05 kB to 656.36 kB raw
+(194.92 kB to 206.11 kB gzipped) for the open pipeline's own main-thread code:
++36.31 kB raw, +5.9%. Both figures are builds of this repository - the first of
+the branch point, the second of this tree - so the delta is the open pipeline's
+and not another change's.
 
 The start-up chunk is still above Vite's 500 kB warning threshold. No budget
 gate is wired yet, so bundle size stays open work.

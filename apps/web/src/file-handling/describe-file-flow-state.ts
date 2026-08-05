@@ -222,10 +222,7 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
  * first says the limit is this build, the second says the limit is the file.
  */
 function describeReadOnlyReason(
-  reason: Exclude<
-    Extract<FileFlowState, { kind: 'workspace-active' }>['readOnlyReason'],
-    null
-  >,
+  reason: Exclude<Extract<FileFlowState, { kind: 'workspace-active' }>['readOnlyReason'], null>,
 ): string {
   switch (reason) {
     case 'build-cannot-write':
