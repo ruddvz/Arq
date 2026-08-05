@@ -3,6 +3,7 @@ import { createArqfsSchemaV1 } from './arqfs-schema';
 import { createArqfsSchemaLatest } from './arqfs-schema-v2';
 import { openArqfs, type ArqfsOpenResult } from './arqfs-open';
 import { applyDefensiveOpenPolicy } from './arqfs-defensive-open';
+import { checkArqfsIntegrity } from './arqfs-integrity';
 import {
   putArchiveEntries,
   getArchiveEntry,
@@ -207,6 +208,21 @@ export function handleArqfsWorkerRequest(
         }
         putArchiveEntries(context.driver, new Map(request.entries));
         return { id: request.id, ok: true, payload: { kind: 'putArchiveEntries' } };
+      }
+      case 'checkIntegrity': {
+        // Gated on the same accepted open as every other read: a health report
+        // about a file this build has refused to open is not a value worth
+        // producing, and producing it would mean running pragmas against a
+        // connection whose hardening has not been decided.
+        const refusal = readRefusal(context.session);
+        if (refusal !== null) {
+          return refuse(request.id, refusal.code, refusal.error);
+        }
+        return {
+          id: request.id,
+          ok: true,
+          payload: { kind: 'checkIntegrity', report: checkArqfsIntegrity(context.driver) },
+        };
       }
       case 'getArchiveEntry': {
         const refusal = readRefusal(context.session);

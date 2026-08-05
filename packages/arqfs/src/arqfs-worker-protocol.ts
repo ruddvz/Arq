@@ -10,6 +10,7 @@
  * operations").
  */
 import type { ArqfsOpenResult } from './arqfs-open';
+import type { ArqfsIntegrityReport } from './arqfs-integrity';
 
 export type ArqfsWorkerRequest =
   /**
@@ -35,6 +36,17 @@ export type ArqfsWorkerRequest =
       readonly type: 'putArchiveEntries';
       readonly entries: ReadonlyArray<readonly [string, Uint8Array]>;
     }
+  /**
+   * SQLite's own health check over the working copy.
+   *
+   * `checkArqfsIntegrity`'s documented purpose is "before trusting an
+   * imported/copied file", and nothing outside the Worker could ask for it - so
+   * a working copy seeded by `importDatabase` was opened and decoded with
+   * nothing having established that the copy is sound. `open` does not cover
+   * this: it reads the header and the metadata table, which a database with
+   * damaged pages elsewhere answers perfectly well.
+   */
+  | { readonly id: number; readonly type: 'checkIntegrity' }
   | { readonly id: number; readonly type: 'getArchiveEntry'; readonly path: string }
   | { readonly id: number; readonly type: 'listArchiveEntryPaths' }
   /**
@@ -50,6 +62,7 @@ export type ArqfsWorkerRequest =
 export type ArqfsWorkerResponsePayload =
   | { readonly kind: 'importDatabase'; readonly byteLength: number }
   | { readonly kind: 'open'; readonly result: ArqfsOpenResult; readonly usedVfs: string }
+  | { readonly kind: 'checkIntegrity'; readonly report: ArqfsIntegrityReport }
   | { readonly kind: 'putArchiveEntries' }
   | { readonly kind: 'getArchiveEntry'; readonly content: Uint8Array | null }
   | { readonly kind: 'listArchiveEntryPaths'; readonly paths: readonly string[] }

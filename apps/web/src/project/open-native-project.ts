@@ -107,6 +107,23 @@ export async function openNativeProject(
     if (!openResult.capabilities.canRead) {
       return rejected('ARQ_OPEN_NOT_READABLE', capabilities.warnings[0] ?? 'Not readable.');
     }
+
+    // The working copy is checked before anything trusts it. `open` reads the
+    // header and the metadata table, which a database with damaged pages
+    // elsewhere answers perfectly well - so a copy that arrived corrupt, or was
+    // damaged in transit into OPFS, reads as an ordinary healthy project right
+    // up until a decoder hits the bad page. This is the caller
+    // `checkArqfsIntegrity` documents itself for and never had.
+    const integrityPayload = await handle.client.request({ type: 'checkIntegrity' });
+    if (integrityPayload.kind !== 'checkIntegrity') {
+      return rejected('ARQ_INTEGRITY_UNEXPECTED', 'The project did not report its integrity.');
+    }
+    if (!integrityPayload.report.ok) {
+      const detail =
+        integrityPayload.report.quickCheck.filter((line) => line !== 'ok').join('; ') ||
+        `${integrityPayload.report.foreignKeyViolations.length} relationships point at rows that are not there`;
+      return rejected('ARQ_INTEGRITY_FAILED', `This project file is damaged: ${detail}`);
+    }
     // The working copy exists and the database behind it opened. Reported here,
     // between the two facts, because that is where each becomes true.
     progress?.onStaged(workingCopyId);

@@ -534,3 +534,48 @@ describe('importing a database into the working copy', () => {
     }
   });
 });
+
+/**
+ * `checkArqfsIntegrity` had no caller outside its own test. Its documented
+ * purpose is "before trusting an imported/copied file", which is exactly what
+ * the native open path does with a working copy it has just seeded.
+ */
+describe('the working-copy integrity check', () => {
+  let driver: ArqfsDriver;
+
+  afterEach(() => {
+    driver?.close();
+  });
+
+  function context(): ArqfsWorkerContext {
+    driver = createNodeArqfsDriver();
+    return { driver, usedVfs: 'test-node-driver', session: createArqfsWorkerSession() };
+  }
+
+  it('reports a healthy working copy as ok', () => {
+    const ctx = context();
+    handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+
+    const response = handleArqfsWorkerRequest(ctx, { id: 2, type: 'checkIntegrity' });
+
+    expect(response.ok).toBe(true);
+    if (response.ok && response.payload.kind === 'checkIntegrity') {
+      expect(response.payload.report.ok).toBe(true);
+      expect(response.payload.report.quickCheck).toEqual(['ok']);
+    } else {
+      throw new Error('expected a checkIntegrity payload');
+    }
+  });
+
+  it('is gated on an accepted open, like every other read', () => {
+    // A health report about a file this build has refused to open is not a value
+    // worth producing, and producing it would run pragmas against a connection
+    // whose hardening has not been decided.
+    const response = handleArqfsWorkerRequest(context(), { id: 1, type: 'checkIntegrity' });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_NOT_OPENED');
+    }
+  });
+});
