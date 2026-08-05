@@ -2,21 +2,9 @@
   "schemaVersion": 1,
   "entries": [
     {
-      "generatedAt": "2026-08-05T03:43:18.823Z",
-      "sourceSetDigest": "15127a5d9cdfd9a2a379d5b60b00e8125fb0426c6b6e5fd2f22f803b95ace04a",
-      "previousSourceSetDigest": "6fbb4b6c7adc7a0622f849b40e58ca07c37f2b80a5a6ce4c56168edd270c6bc3",
-      "changedSourceSets": ["status"]
-    },
-    {
-      "generatedAt": "2026-08-05T03:42:51.375Z",
-      "sourceSetDigest": "6fbb4b6c7adc7a0622f849b40e58ca07c37f2b80a5a6ce4c56168edd270c6bc3",
-      "previousSourceSetDigest": "0dbd6bff6f7d4909c9dc6ffa3c16d516a1baae1874f24552f62ad8b93723fb95",
-      "changedSourceSets": ["file-open-ui", "status", "web-app"]
-    },
-    {
-      "generatedAt": "2026-08-05T03:24:27.533Z",
-      "sourceSetDigest": "0dbd6bff6f7d4909c9dc6ffa3c16d516a1baae1874f24552f62ad8b93723fb95",
-      "previousSourceSetDigest": "c7363463f31857fce21a4e997e682877c9ac12503a933237507f70768cda2a87",
+      "generatedAt": "2026-08-05T03:47:16.611Z",
+      "sourceSetDigest": "0dc565d3eaadf6698b1b1b7bd01deecd8e96241b2efe56cad74267c2b97e3d6d",
+      "previousSourceSetDigest": "48a4d0022d953b157b4bd42c421ee907f811ead310c8c385880d5b2e8dd4bd69",
       "changedSourceSets": [
         "accepted-adrs",
         "file-open-ui",
@@ -27,6 +15,24 @@
         "workspace-registries",
         "workspace-types"
       ]
+    },
+    {
+      "generatedAt": "2026-08-05T02:52:29.533Z",
+      "sourceSetDigest": "48a4d0022d953b157b4bd42c421ee907f811ead310c8c385880d5b2e8dd4bd69",
+      "previousSourceSetDigest": "49b849b1f741f8f580400d65a31c4e5de8d8f1c2d0622611ccab735f29802dc1",
+      "changedSourceSets": ["status"]
+    },
+    {
+      "generatedAt": "2026-08-05T02:50:36.404Z",
+      "sourceSetDigest": "49b849b1f741f8f580400d65a31c4e5de8d8f1c2d0622611ccab735f29802dc1",
+      "previousSourceSetDigest": "10e3867c59abb4576b7d721e62fcedc303de2092853f4c7b1fcb0157f1136099",
+      "changedSourceSets": ["status"]
+    },
+    {
+      "generatedAt": "2026-08-05T02:43:54.598Z",
+      "sourceSetDigest": "10e3867c59abb4576b7d721e62fcedc303de2092853f4c7b1fcb0157f1136099",
+      "previousSourceSetDigest": "c7363463f31857fce21a4e997e682877c9ac12503a933237507f70768cda2a87",
+      "changedSourceSets": ["status"]
     },
     {
       "generatedAt": "2026-08-05T02:21:26.650Z",

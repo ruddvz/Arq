@@ -19,10 +19,10 @@ Update this file in the same change._
 
 ## What is real today
 
-Re-measured on this branch over revision `0336cfa` plus the changes in the
+Re-measured on this branch over revision `5408179` plus the changes in the
 commit containing this file: `pnpm typecheck` across all 37 workspace packages
 plus `contracts/`, the repository ESLint gate, `pnpm format:check`, and 2,500
-passing tests across 264 files, all uncached. The same revision defines
+passing tests across 266 files, all uncached. The same revision defines
 workspace-registry, licence/SBOM, secret-scan and Rust gates, and CI wires
 fourteen of the fifteen headless-Chromium capability checks
 (`benchmark:arq-core-worker` is defined but not run in CI); the fifteenth,
@@ -36,7 +36,8 @@ gate rather than an approval anybody granted - see
 `engineering/36_REQUIRED_CHECK_ROLLOUT.md` and the open decisions below.
 `e2e_arq_open` is no longer a standing proof gap - a real Worker and OPFS browser
 check closes it - but a green gate is a statement about the checks that ran, not
-about release.
+about release. GitHub Actions has produced no run for any commit on this branch
+since `dabb6cb`, so the results above are local and CI has not re-confirmed them.
 
 - **Native `.arq` project open** (`apps/web/src/project` +
   `apps/web/src/file-handling` + `packages/project-loading` +
@@ -66,8 +67,13 @@ about release.
   nothing writes the chosen file. See the first gap above.
 - **`.arq` file format** (`packages/arqfs`): schema v1/v2, capability-gated
   open, byte preflight, copy-on-write migration with reopen+integrity
-  verification, recovery reporting, fuzz tests. Now reachable from the product
-  through the open path above. Preflight reports
+  verification, recovery reporting, fuzz tests. It is now reachable from the
+  product: choosing a `.arq` file in `apps/web` runs preflight, copies the bytes
+  into an ARQ-owned dedicated Worker over OPFS and adopts the project into the
+  workspace, verified end to end by `pnpm benchmark:file-open` against a real
+  production build in headless Chromium - a valid project adopts and its name
+  reaches the shell, while truncated, WAL-dependent and foreign-SQLite files are
+  each refused with their own diagnostic. Preflight now reports
   whether the bytes it was handed are the whole database: a write-ahead-log
   project keeps its newest commits in a `-wal` sidecar that a file picker does
   not supply, and SQLite reads such a file without the sidecar as of its last
@@ -307,14 +313,10 @@ unreachable for the same reason.
   project. IndexedDB is bounded to recovery bridging, source provenance,
   last-known-good pointers, resumable publication metadata, device preferences
   and replaceable derived caches during migration. A journal append is not a
-  portable save, and no surface may describe one as the other. Acceptance
-  unblocks the open-project pipeline; it does not implement it. The separate
-  change the acceptance anticipates is now delivered as far as opening goes,
-  described above with its evidence: the working copy is a project-scoped OPFS
-  database in the Worker, which is where the accepted split puts it. What is not
-  delivered is the write half - nothing checkpoints into that working copy and
-  nothing exports back to the chosen `.arq` file, so no surface may describe an
-  open project as saved. ADR-0030 records the two tiers and their boundaries.
+  portable save, and no surface may describe one as the other. The open-project
+  pipeline that acceptance unblocked is now built on that split and reachable
+  from the product; editing an opened project through it is not, so nothing here
+  claims a round trip.
 - **Repository visibility and licence wording**: still the owner's decision, now
   with the conflict verified rather than reported. The GitHub API returns
   `visibility: public`, `private: false`, `allow_forking: true` and
@@ -334,6 +336,23 @@ unreachable for the same reason.
   pass. One green run is not a rollout criterion, and
   `protected_l4_approval` still resolves to a deferred environment gate rather
   than an approval anybody granted.
+- **Deployed routing is Not inspected, and the owner holds the key.** The
+  `verify-routes` job runs `scripts/verify-vercel-routes.mjs` against the actual
+  preview origin, and it has failed on every pull request that triggers it -
+  including #294, which merged with it red. The cause is not a wrong route: the
+  Vercel project has Deployment Protection on, so every path returns the sign-in
+  interstitial and the script refuses to report on evidence it could not gather.
+  That refusal is the correct behaviour and must not be relaxed; an unreadable
+  origin is not evidence that routing is correct. Closing it is a Vercel settings
+  action nobody but the project owner can take: mint a Protection Bypass for
+  Automation token and store it as the `VERCEL_AUTOMATION_BYPASS_SECRET`
+  repository secret, which the script already sends as
+  `x-vercel-protection-bypass`. Until then the rewrites, redirects, cache tiers
+  and security headers declared in `vercel.json` are **not verified at all**.
+  They are interpreted by Vercel's edge rather than by anything in this
+  repository, so a local build cannot exercise them and no local check stands in
+  for this one; what the build does verify is that the artifacts those rules
+  point at exist.
 - **Protected L4 release approval**: the complete plan-to-3D-to-sheet-to-PDF
   workflow, cross-platform matrix, rollback evidence and post-release proof do
   not exist. Production readiness remains blocked.

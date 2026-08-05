@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-08-05T02:47:35.371Z",
+  "environment": "headless Chromium 141.0.7390.37, real production apps/web build, real arqfs fixtures from the Node driver",
+  "ok": true,
+  "truncatedFile": {
+    "headline": "truncated.arq could not be opened.",
+    "detail": "ARQ_FILE_TRUNCATED: SQLite file bytes do not contain complete pages."
+  },
+  "validFile": {
+    "adoptedProjectName": "Capability check project",
+    "dialogDismissedOnAdoption": true,
+    "reopenedStatus": "Choose a file to open."
+  },
+  "nonArqSqliteFile": {
+    "headline": "other.sqlite3 could not be opened.",
+    "detail": "NOT_ARQ_SQLITE: This is a SQLite database, but its application ID does not identify an Arq project."
+  },
+  "walDependentFile": {
+    "headline": "wal-dependent.arq could not be opened.",
+    "detail": "ARQ_WAL_SIDECAR_REQUIRED: This database depends on a companion \"-wal\" file that was not included, so it may be missing the newest saved work. Reopen the project in the application that created it and close it cleanly, which folds the companion file back into the database, then choose the database again."
+  },
+  "accessibility": {
+    "dropZoneVisibleText": "Choose a file or drop it here",
+    "dropZoneAccessibleName": "Choose a file or drop it here",
+    "labelInNameHolds": true
+  },
+  "consoleErrors": []
+}
