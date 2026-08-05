@@ -17,22 +17,22 @@ waves and the company role that fronts each wave.
 
 ## Mapping table
 
-| Zeus owner role | Fronting company role |
-| --- | --- |
-| executor | Chief of Staff |
-| product-architecture | CTO |
-| geometry-bim | Geometry/BIM Lead |
-| editor-interaction | Frontend Lead |
-| rendering-performance | Frontend Lead |
-| arqfs-recovery | Backend Lead |
-| ui-visual | Design Lead |
-| accessibility | Design Lead |
-| security | Security Lead |
-| ai-arqscript | AI Lead |
-| interoperability | Backend Lead |
-| incident-commander | Incident Commander |
-| qa-release | QA & Release Lead |
-| delivery-reliability | VP Engineering |
+| Zeus owner role       | Fronting company role |
+| --------------------- | --------------------- |
+| executor              | Chief of Staff        |
+| product-architecture  | CTO                   |
+| geometry-bim          | Geometry/BIM Lead     |
+| editor-interaction    | Frontend Lead         |
+| rendering-performance | Frontend Lead         |
+| arqfs-recovery        | Backend Lead          |
+| ui-visual             | Design Lead           |
+| accessibility         | Design Lead           |
+| security              | Security Lead         |
+| ai-arqscript          | AI Lead               |
+| interoperability      | Backend Lead          |
+| incident-commander    | Incident Commander    |
+| qa-release            | QA & Release Lead     |
+| delivery-reliability  | VP Engineering        |
 
 ## Rules that keep the bridge honest
 
