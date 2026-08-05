@@ -10,59 +10,53 @@
  * operations").
  */
 import type { ArqfsOpenResult } from './arqfs-open';
-import type { ArqfsSidecarDependency } from './arqfs-preflight';
-import type { ArqfsIntegrityReport } from './arqfs-integrity';
 
 export type ArqfsWorkerRequest =
+  /**
+   * Seeds this Worker's project-scoped working copy from the bytes a user
+   * selected, before any open.
+   *
+   * This exists because there is no other way in. `opfs-sahpool` does not store
+   * databases as plain OPFS files under the name it was given - it keeps them
+   * inside a pool of opaque files it manages itself - so the main thread cannot
+   * write a selected `.arq` to a path and have SQLite find it. Only the pool
+   * utility, which lives in the Worker, can import bytes into that pool. Without
+   * this command the Worker can only ever create an empty database, which is why
+   * native project opening was not reachable at all.
+   *
+   * Deliberately a separate command rather than an argument to `open`: importing
+   * replaces the working copy's entire contents, which is not something an open
+   * should do implicitly.
+   */
+  | { readonly id: number; readonly type: 'importDatabase'; readonly bytes: Uint8Array }
   | { readonly id: number; readonly type: 'open' }
-  | {
-      /**
-       * Replace this Worker's working database with the selected source bytes.
-       *
-       * This is the request that makes an ARQ-owned OPFS working project
-       * reachable at all: a file picker hands the main thread bytes, and until
-       * they are inside the Worker's own OPFS file there is nothing for `open`
-       * to open but an empty database this build just created. Without it the
-       * only openable project was one this build had authored itself.
-       *
-       * Deliberately separate from `open`, and only legal before it: `open`
-       * decides what this build may do with this file, and swapping the file
-       * out from under that decision would leave every later write measured
-       * against a database that is no longer there.
-       */
-      readonly id: number;
-      readonly type: 'importDatabase';
-      readonly bytes: Uint8Array;
-    }
   | {
       readonly id: number;
       readonly type: 'putArchiveEntries';
       readonly entries: ReadonlyArray<readonly [string, Uint8Array]>;
     }
-  /**
-   * SQLite-level health of the working database. `checkArqfsIntegrity`'s own
-   * documented purpose is "before trusting an imported/copied file", and until
-   * this request existed nothing outside the Worker could ask for it - so a
-   * staged copy was opened and hydrated without anything having checked that
-   * the copy is sound.
-   */
-  | { readonly id: number; readonly type: 'checkIntegrity' }
   | { readonly id: number; readonly type: 'getArchiveEntry'; readonly path: string }
   | { readonly id: number; readonly type: 'listArchiveEntryPaths' }
+  /**
+   * Every logical entry in one round trip. A native open needs the manifest and the
+   * model together before it may adopt anything, and asking for them one path at a
+   * time would cross the Worker boundary once per entry for a decision that is only
+   * ever made on the whole set - exactly the "frequent small calls" this protocol's
+   * batching rule exists to avoid.
+   */
+  | { readonly id: number; readonly type: 'readAllArchiveEntries' }
   | { readonly id: number; readonly type: 'close' };
 
 export type ArqfsWorkerResponsePayload =
+  | { readonly kind: 'importDatabase'; readonly byteLength: number }
   | { readonly kind: 'open'; readonly result: ArqfsOpenResult; readonly usedVfs: string }
-  | {
-      readonly kind: 'importDatabase';
-      /** What byte preflight found in the imported source, so the caller need not re-read it. */
-      readonly sidecarDependency: ArqfsSidecarDependency;
-      readonly byteLength: number;
-    }
-  | { readonly kind: 'checkIntegrity'; readonly report: ArqfsIntegrityReport }
   | { readonly kind: 'putArchiveEntries' }
   | { readonly kind: 'getArchiveEntry'; readonly content: Uint8Array | null }
   | { readonly kind: 'listArchiveEntryPaths'; readonly paths: readonly string[] }
+  | {
+      readonly kind: 'readAllArchiveEntries';
+      readonly entries: ReadonlyArray<readonly [string, Uint8Array]>;
+    }
   | { readonly kind: 'close' };
 
 /**
@@ -73,24 +67,12 @@ export type ArqfsWorkerResponsePayload =
  * changes when someone improves the wording. These are the contract.
  */
 export const ARQFS_WORKER_ERROR_CODES = {
-  /** A read or write arrived before any successful open. */
+  /** A write arrived before any successful open. */
   notOpened: 'ARQFS_WORKER_NOT_OPENED',
   /** The open succeeded for reading, and this build must not write this file. */
   notWritable: 'ARQFS_WORKER_FILE_NOT_WRITABLE',
-  /**
-   * The open produced a result this build must not read from: a safe-mode open,
-   * where the file could not be fully understood. Distinct from `openRejected`,
-   * which is a file that was never opened at all.
-   */
-  notReadable: 'ARQFS_WORKER_FILE_NOT_READABLE',
-  /** The open itself was rejected; nothing may be done with this file. */
+  /** The open itself was rejected, or it succeeded only in a form this build must not read from; nothing may be handed back from this file. */
   openRejected: 'ARQFS_WORKER_OPEN_REJECTED',
-  /** An import arrived after this session had already opened or closed its database. */
-  importNotAllowed: 'ARQFS_WORKER_IMPORT_NOT_ALLOWED',
-  /** This Worker's storage backend cannot import a database (no OPFS in this context). */
-  importUnsupported: 'ARQFS_WORKER_IMPORT_UNSUPPORTED',
-  /** The bytes offered for import failed byte preflight; nothing was imported. */
-  sourceRejected: 'ARQFS_WORKER_SOURCE_REJECTED',
   /** Anything unexpected. Deliberately last: a specific code is always preferred. */
   unexpected: 'ARQFS_WORKER_UNEXPECTED_ERROR',
 } as const;
@@ -98,27 +80,10 @@ export const ARQFS_WORKER_ERROR_CODES = {
 export type ArqfsWorkerErrorCode =
   (typeof ARQFS_WORKER_ERROR_CODES)[keyof typeof ARQFS_WORKER_ERROR_CODES];
 
-/**
- * Every response names the project it came from, not only the request it answers.
- *
- * A request id is unique inside one client, so id correlation alone cannot tell a
- * client that the message it just received came from a Worker opened for a
- * different project - and OPFS is shared at the origin, so "a different project"
- * means "different bytes at the same storage". Two Workers alive at once during a
- * project switch is the ordinary case, not an exotic one, which is why the answer
- * carries its own identity rather than relying on the caller having wired the
- * transport correctly.
- */
 export type ArqfsWorkerResponse =
+  | { readonly id: number; readonly ok: true; readonly payload: ArqfsWorkerResponsePayload }
   | {
       readonly id: number;
-      readonly projectId: string;
-      readonly ok: true;
-      readonly payload: ArqfsWorkerResponsePayload;
-    }
-  | {
-      readonly id: number;
-      readonly projectId: string;
       readonly ok: false;
       readonly code: ArqfsWorkerErrorCode;
       readonly error: string;

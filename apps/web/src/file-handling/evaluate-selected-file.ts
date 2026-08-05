@@ -1,4 +1,7 @@
-import { preflightArqfsBytes, type ArqfsBytePreflightResult } from '@arq/arqfs/src/arqfs-preflight';
+import {
+  evaluateArqfsSourceCompleteness,
+  type ArqfsSourceCompletenessResult,
+} from '@arq/arqfs/src/arqfs-source-completeness';
 import { routeBrowserFile, type BrowserFileRoute } from './route-file';
 
 /**
@@ -19,8 +22,16 @@ import { routeBrowserFile, type BrowserFileRoute } from './route-file';
  */
 export interface EvaluatedFile {
   readonly route: BrowserFileRoute;
-  /** Only meaningful when `route.kind === 'open-native-arq'` - the deeper, whole-file gate `routeBrowserFile`'s own lighter header check does not run. */
-  readonly preflight?: ArqfsBytePreflightResult;
+  /**
+   * Only meaningful when `route.kind === 'open-native-arq'` - the deeper,
+   * whole-file gate `routeBrowserFile`'s own lighter header check does not run.
+   *
+   * Completeness rather than bare preflight, because "this file is a compatible
+   * Arq project" and "this file is the user's whole project" are different
+   * statements and only the second one makes it safe to open. A database whose
+   * `-wal` sidecar was not supplied passes preflight and is refused here.
+   */
+  readonly completeness?: ArqfsSourceCompletenessResult;
 }
 
 export function evaluateSelectedFile(
@@ -32,5 +43,5 @@ export function evaluateSelectedFile(
   if (route.kind !== 'open-native-arq') {
     return { route };
   }
-  return { route, preflight: preflightArqfsBytes(bytes) };
+  return { route, completeness: evaluateArqfsSourceCompleteness(bytes) };
 }

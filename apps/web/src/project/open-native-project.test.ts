@@ -1,350 +1,208 @@
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import path from 'node:path';
-import { createHash } from 'node:crypto';
-import { createNodeArqfsDriver } from '@arq/arqfs/src/arqfs-node-driver';
-import {
-  createArqfsWorkerSession,
-  handleArqfsWorkerRequest,
-  type ArqfsWorkerContext,
-} from '@arq/arqfs/src/arqfs-worker-handler';
-import type { ArqfsWorkerRequestInput } from '@arq/arqfs/src/arqfs-worker-client';
-import type { ArqfsWorkerResponsePayload } from '@arq/arqfs/src/arqfs-worker-protocol';
-import type { ArqfsDriver } from '@arq/arqfs/src/arqfs-driver';
-import {
-  openNativeProject,
-  REQUIRED_PROJECT_ENTRY,
-  type ProjectWorkerConnection,
-} from './open-native-project';
-import {
-  reduceFileFlow,
-  isProjectOpen,
-  isProjectWritable,
-  lastKnownGoodProject,
-  type FileFlowEvent,
-  type FileFlowState,
-} from '../file-handling/file-state-machine';
+import { describe, expect, it, vi } from 'vitest';
+import { createManifest, exportArchive } from '@arq/project-format';
+import { openNativeProject, type NativeWorkerHandle } from './open-native-project';
 
-/**
- * The real Worker request handler, over a real SQLite database on disk, reached
- * through the same request/response shapes the browser Worker uses. Only the
- * transport is stood in for - `postMessage` becomes a direct call - so what is
- * under test is the open sequence rather than a reimplementation of it.
- */
-class LocalWorkerConnection implements ProjectWorkerConnection {
-  private nextId = 1;
-  disposed = false;
-  disposeReason: string | undefined;
-  readonly sent: ArqfsWorkerRequestInput[] = [];
+const PROJECT_ID = '00000000-0000-4000-8000-000000000001';
 
-  constructor(
-    private readonly context: ArqfsWorkerContext,
-    private readonly onDispose: () => void,
-  ) {}
-
-  async request(
-    input: ArqfsWorkerRequestInput,
-    options: { readonly signal?: AbortSignal | undefined } = {},
-  ): Promise<ArqfsWorkerResponsePayload> {
-    if (this.disposed) throw new Error('connection disposed');
-    if (options.signal?.aborted === true) {
-      throw new DOMException('The request was aborted.', 'AbortError');
-    }
-    this.sent.push(input);
-    const response = handleArqfsWorkerRequest(this.context, {
-      ...input,
-      id: this.nextId++,
-    } as Parameters<typeof handleArqfsWorkerRequest>[1]);
-    if (!response.ok) throw new Error(`${response.code}: ${response.error}`);
-    return response.payload;
-  }
-
-  dispose(reason?: string): void {
-    if (this.disposed) return;
-    this.disposed = true;
-    this.disposeReason = reason;
-    this.onDispose();
-  }
+/** A structurally valid Arq SQLite header. `wal` sets the file-format versions SQLite writes for a write-ahead log. */
+function sqliteBytes(journal: 'rollback' | 'wal' = 'rollback'): Uint8Array {
+  const bytes = new Uint8Array(4096);
+  bytes.set(new TextEncoder().encode('SQLite format 3\0'));
+  bytes[16] = 0x10;
+  const version = journal === 'wal' ? 2 : 1;
+  bytes[18] = version;
+  bytes[19] = version;
+  bytes[21] = 64;
+  bytes[22] = 32;
+  bytes[23] = 32;
+  bytes[63] = 2;
+  // Arq application id 0x41525131.
+  bytes[68] = 0x41;
+  bytes[69] = 0x52;
+  bytes[70] = 0x51;
+  bytes[71] = 0x31;
+  return bytes;
 }
 
-function sha256Hex(bytes: Uint8Array): string {
-  return createHash('sha256').update(bytes).digest('hex');
+const WRITABLE = {
+  status: 'opened',
+  header: { major: 1, minor: 0, schema: 2, minReaderMajor: 1, minWriterMajor: 1 },
+  capabilities: {
+    canRead: true,
+    canWrite: true,
+    canMigrate: false,
+    safeModeRequired: false,
+    unsupportedRequiredFeatures: [],
+  },
+} as const;
+
+async function archiveEntries(walls: unknown[] = []) {
+  const entries = await exportArchive({
+    manifest: createManifest({
+      projectId: PROJECT_ID,
+      applicationVersion: 'test',
+      createdAt: '2026-08-04T00:00:00.000Z',
+    }),
+    model: { projectName: 'Existing project', walls },
+    operations: [],
+  });
+  return [...entries];
+}
+
+/**
+ * A fake Worker that answers the pipeline's requests. `overrides` replaces the
+ * answer for one request type, which is how each failure path is driven.
+ */
+function fakeWorker(overrides: Record<string, () => Promise<unknown>> = {}) {
+  const terminate = vi.fn();
+  const dispose = vi.fn();
+  const seen: string[] = [];
+  let entries: ReadonlyArray<readonly [string, Uint8Array]> = [];
+  const factory = (): NativeWorkerHandle => {
+    const client = {
+      request: async (request: { type: string }) => {
+        seen.push(request.type);
+        const override = overrides[request.type];
+        if (override) return override();
+        if (request.type === 'importDatabase') return { kind: 'importDatabase', byteLength: 0 };
+        if (request.type === 'open')
+          return { kind: 'open', result: WRITABLE, usedVfs: 'opfs-sahpool' };
+        if (request.type === 'readAllArchiveEntries')
+          return { kind: 'readAllArchiveEntries', entries };
+        return { kind: 'close' };
+      },
+      dispose,
+    };
+    return {
+      worker: { terminate } as unknown as Worker,
+      client: client as unknown as NativeWorkerHandle['client'],
+    };
+  };
+  return {
+    factory,
+    terminate,
+    dispose,
+    seen,
+    setEntries: (next: ReadonlyArray<readonly [string, Uint8Array]>) => {
+      entries = next;
+    },
+  };
 }
 
 describe('openNativeProject', () => {
-  let dir: string;
-  let drivers: ArqfsDriver[];
-  let connections: LocalWorkerConnection[];
-  let events: FileFlowEvent[];
+  it('opens a valid project and returns its decoded contents', async () => {
+    const fake = fakeWorker();
+    fake.setEntries(
+      await archiveEntries([{ id: 'w1', start: { x: 0, y: 0 }, end: { x: 3000, y: 0 } }]),
+    );
 
-  beforeEach(() => {
-    dir = mkdtempSync(path.join(tmpdir(), 'arq-open-native-'));
-    drivers = [];
-    connections = [];
-    events = [];
-  });
+    const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
 
-  afterEach(() => {
-    for (const driver of drivers) {
-      try {
-        driver.close();
-      } catch {
-        // Already closed by the code under test.
-      }
+    expect(result.status).toBe('opened');
+    if (result.status === 'opened') {
+      expect(result.snapshot.projectId).toBe(PROJECT_ID);
+      expect(result.snapshot.displayName).toBe('Existing project');
+      expect(result.snapshot.walls).toHaveLength(1);
+      expect(result.snapshot.readOnly).toBe(false);
+      expect(result.snapshot.usedVfs).toBe('opfs-sahpool');
     }
-    rmSync(dir, { recursive: true, force: true });
+    // The bytes are imported before the open, so the open reads the user's
+    // project rather than an empty database this Worker created.
+    expect(fake.seen.slice(0, 2)).toEqual(['importDatabase', 'open']);
+    // Adopted: the Worker stays alive to serve the session.
+    expect(fake.terminate).not.toHaveBeenCalled();
   });
 
-  function track(driver: ArqfsDriver): ArqfsDriver {
-    drivers.push(driver);
-    return driver;
-  }
+  /**
+   * The cheap checks run first and leave nothing behind. A database whose `-wal`
+   * sidecar was not supplied must be refused before it can occupy a working
+   * copy - if a Worker were constructed first, a refusal would still have cost
+   * an OPFS import.
+   */
+  it('refuses a missing -wal sidecar without constructing a Worker at all', async () => {
+    const fake = fakeWorker();
 
-  /** A complete Arq project written by this build, as the bytes a file picker would hand over. */
-  function sourceBytes(options: { readonly withModel?: boolean } = {}): Uint8Array {
-    const file = path.join(dir, `source-${drivers.length}.arq`);
-    const driver = createNodeArqfsDriver(file);
-    const context: ArqfsWorkerContext = {
-      driver,
-      usedVfs: 'test-node-driver',
-      projectId: 'source',
-      session: createArqfsWorkerSession(),
-    };
-    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
-    if (options.withModel !== false) {
-      handleArqfsWorkerRequest(context, {
-        id: 2,
-        type: 'putArchiveEntries',
-        entries: [[REQUIRED_PROJECT_ENTRY, new TextEncoder().encode('{"walls":[]}')]],
-      });
-    }
-    driver.close();
-    return new Uint8Array(readFileSync(file));
-  }
+    const result = await openNativeProject(sqliteBytes('wal'), fake.factory, 'house.arq');
 
-  /** A file this build may read but must not write. */
-  function readOnlySourceBytes(): Uint8Array {
-    const file = path.join(dir, `read-only-${drivers.length}.arq`);
-    const driver = createNodeArqfsDriver(file);
-    const context: ArqfsWorkerContext = {
-      driver,
-      usedVfs: 'test-node-driver',
-      projectId: 'source',
-      session: createArqfsWorkerSession(),
-    };
-    handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
-    handleArqfsWorkerRequest(context, {
-      id: 2,
-      type: 'putArchiveEntries',
-      entries: [[REQUIRED_PROJECT_ENTRY, new TextEncoder().encode('{"walls":[]}')]],
-    });
-    driver.exec(`UPDATE arqfs_meta SET value = '99' WHERE key = 'min_writer_major'`);
-    driver.close();
-    return new Uint8Array(readFileSync(file));
-  }
-
-  function connect(projectId: string): Promise<ProjectWorkerConnection> {
-    const workingFile = path.join(dir, `${projectId}.working.sqlite3`);
-    const context: ArqfsWorkerContext = {
-      driver: track(createNodeArqfsDriver(workingFile)),
-      usedVfs: 'test-node-driver',
-      projectId,
-      session: createArqfsWorkerSession(),
-      importDatabase: (bytes) => {
-        context.driver.close();
-        writeFileSync(workingFile, bytes);
-        return track(createNodeArqfsDriver(workingFile));
-      },
-    };
-    const connection = new LocalWorkerConnection(context, () => {
-      try {
-        context.driver.close();
-      } catch {
-        // Already closed.
-      }
-    });
-    connections.push(connection);
-    return Promise.resolve(connection);
-  }
-
-  const dependencies = {
-    connect,
-    emit: (event: FileFlowEvent) => events.push(event),
-    digestSource: (bytes: Uint8Array) => Promise.resolve(sha256Hex(bytes)),
-  };
-
-  /** Replays the emitted events through the reducer, starting where routing left the flow. */
-  function replay(): FileFlowState {
-    let state: FileFlowState = {
-      kind: 'native-opening',
-      name: 'project.arq',
-      sidecarDependency: 'complete',
-    };
-    for (const event of events) state = reduceFileFlow(state, event);
-    return state;
-  }
-
-  it('reaches workspace-active through every lifecycle state, in order', async () => {
-    const bytes = sourceBytes();
-
-    const outcome = await openNativeProject(
-      { projectId: 'project-a', bytes },
-      { ...dependencies, emit: (event) => events.push(event) },
-    );
-
-    expect(outcome.kind).toBe('workspace-active');
-    if (outcome.kind !== 'workspace-active') throw new Error('expected workspace-active');
-    expect(outcome.writable).toBe(true);
-    expect(outcome.sourceDigest).toBe(sha256Hex(bytes));
-    expect(outcome.sidecarDependency).toBe('complete');
-    // Every blocking stage of the shared open state machine actually completed,
-    // rather than the flow reporting a project while the machine still thinks it
-    // is at stage zero.
-    expect(outcome.snapshot.authoringReady).toBe(true);
-
-    // The order is the contract: nothing may be skipped, because skipping is how
-    // a project reaches "active" without having been hydrated.
-    expect(events.map((event) => event.type)).toEqual([
-      'stage-start',
-      'stage-progress',
-      'stage-progress',
-      'stage-progress',
-      'stage-complete',
-      'migration-verified',
-      'worker-opened',
-      'hydrate-start',
-      'hydrated',
-    ]);
-
-    const state = replay();
-    expect(state.kind).toBe('workspace-active');
-    expect(isProjectOpen(state)).toBe(true);
-    expect(isProjectWritable(state)).toBe(true);
+    expect(result).toMatchObject({ status: 'rejected', code: 'ARQ_WAL_SIDECAR_REQUIRED' });
+    expect(fake.seen).toEqual([]);
+    expect(fake.terminate).not.toHaveBeenCalled();
   });
 
-  it('opens a project the working copy actually contains, not an empty database', async () => {
-    const bytes = sourceBytes();
+  it('refuses a non-Arq file before constructing a Worker', async () => {
+    const fake = fakeWorker();
 
-    await openNativeProject({ projectId: 'project-a', bytes }, dependencies);
+    const result = await openNativeProject(new Uint8Array(4096), fake.factory, 'notes.txt');
 
-    const connection = connections[0];
-    expect(connection).toBeDefined();
-    // The Worker was asked to import before it was asked to open. Reversing those
-    // would open the empty database this build creates for a fresh project and
-    // then refuse the import, which is exactly the false open being prevented.
-    expect(connection?.sent.map((request) => request.type)).toEqual([
-      'importDatabase',
-      'open',
-      'checkIntegrity',
-      'listArchiveEntryPaths',
-      'getArchiveEntry',
-    ]);
+    expect(result).toMatchObject({ status: 'rejected', code: 'ARQ_NOT_SQLITE' });
+    expect(fake.seen).toEqual([]);
   });
 
-  it('carries a read-only file all the way to workspace-active as read-only', async () => {
-    const outcome = await openNativeProject(
-      { projectId: 'project-a', bytes: readOnlySourceBytes() },
-      dependencies,
-    );
-
-    // A file this build may read but not write is a project, not a failure.
-    expect(outcome.kind).toBe('workspace-active');
-    if (outcome.kind !== 'workspace-active') throw new Error('expected workspace-active');
-    expect(outcome.writable).toBe(false);
-    const state = replay();
-    expect(isProjectOpen(state)).toBe(true);
-    expect(isProjectWritable(state)).toBe(false);
-  });
-
-  it('refuses a project with no model to hydrate rather than opening an empty workspace', async () => {
-    const outcome = await openNativeProject(
-      { projectId: 'project-a', bytes: sourceBytes({ withModel: false }) },
-      dependencies,
-    );
-
-    expect(outcome).toMatchObject({ kind: 'failed', reason: 'hydration-failed' });
-    const state = replay();
-    expect(state.kind).toBe('project-failed');
-    expect(isProjectOpen(state)).toBe(false);
-  });
-
-  it('refuses source bytes that are not an Arq database, and never reaches an open', async () => {
-    const outcome = await openNativeProject(
-      { projectId: 'project-a', bytes: new TextEncoder().encode('not a database') },
-      dependencies,
-    );
-
-    expect(outcome.kind).toBe('failed');
-    expect(events.some((event) => event.type === 'worker-opened')).toBe(false);
-    expect(isProjectOpen(replay())).toBe(false);
-  });
-
-  it('releases the Worker on every failure path', async () => {
-    await openNativeProject(
-      { projectId: 'project-a', bytes: new TextEncoder().encode('not a database') },
-      dependencies,
-    );
-
-    // A Worker left alive holds the project's OPFS file, and the next attempt to
-    // open that project would block behind it.
-    expect(connections).toHaveLength(1);
-    expect(connections[0]?.disposed).toBe(true);
-    expect(connections[0]?.disposeReason).toBe('project open failed');
-  });
-
-  it('reports a cancellation as cancelled, not as a damaged project, and releases the Worker', async () => {
-    const controller = new AbortController();
-    const bytes = sourceBytes();
-
-    const outcome = await openNativeProject(
-      { projectId: 'project-a', bytes, signal: controller.signal },
+  /**
+   * Every failure past Worker construction must release it. A leaked Worker
+   * keeps the OPFS write lock on its working copy, which makes that project
+   * unopenable for the rest of the session - so this is the property worth
+   * testing on each rejection, not just the returned code.
+   */
+  it.each([
+    [
+      'a rejected open',
       {
-        ...dependencies,
-        // Cancel while the source digest is in flight - the first genuinely
-        // interruptible moment, before anything has been staged.
-        digestSource: (value: Uint8Array) => {
-          controller.abort();
-          return Promise.resolve(sha256Hex(value));
+        open: async () => ({
+          kind: 'open',
+          result: { status: 'rejected', reason: 'not an Arq file' },
+        }),
+      },
+      'ARQ_OPEN_REJECTED',
+    ],
+    [
+      'a Worker that throws',
+      {
+        open: async () => {
+          throw new Error('worker exploded');
         },
       },
-    );
+      'ARQ_OPEN_FAILED',
+    ],
+  ])('releases the Worker after %s', async (_label, overrides, code) => {
+    const fake = fakeWorker(overrides as Record<string, () => Promise<unknown>>);
 
-    expect(outcome).toEqual({ kind: 'cancelled' });
-    expect(events.at(-1)).toEqual({ type: 'cancel' });
-    expect(connections).toHaveLength(0);
+    const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+
+    expect(result).toMatchObject({ status: 'rejected', code });
+    expect(fake.terminate).toHaveBeenCalledOnce();
+    expect(fake.dispose).toHaveBeenCalledOnce();
   });
 
-  it('leaves the previously active project untouched when an open fails', async () => {
-    // A session that already has a project open.
-    const active: FileFlowState = {
-      kind: 'workspace-active',
-      name: 'first.arq',
-      projectId: 'project-first',
-      writable: true,
-    };
+  it('releases the Worker when the archive has no usable model', async () => {
+    const fake = fakeWorker();
+    fake.setEntries([]);
 
-    await openNativeProject(
-      { projectId: 'project-second', bytes: new TextEncoder().encode('not a database') },
-      dependencies,
-    );
+    const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
 
-    let state: FileFlowState = active;
-    for (const event of events) state = reduceFileFlow(state, event);
-    // ADR-0028: a failure never silently replaces the last known good project.
-    expect(lastKnownGoodProject(state)).toEqual({ projectId: 'project-first', name: 'first.arq' });
+    expect(result).toMatchObject({ status: 'rejected', code: 'ARQ_ARCHIVE_REJECTED' });
+    expect(fake.terminate).toHaveBeenCalledOnce();
   });
 
-  it('reports a Worker that cannot be constructed as worker-failed', async () => {
-    const outcome = await openNativeProject(
-      { projectId: 'project-a', bytes: sourceBytes() },
-      {
-        ...dependencies,
-        connect: () => Promise.reject(new Error('SecurityError: Worker construction blocked')),
-      },
-    );
+  it('opens an older-schema project read-only rather than editable', async () => {
+    const fake = fakeWorker({
+      open: async () => ({
+        kind: 'open',
+        result: {
+          ...WRITABLE,
+          capabilities: { ...WRITABLE.capabilities, canMigrate: true },
+        },
+        usedVfs: 'opfs-sahpool',
+      }),
+    });
+    fake.setEntries(await archiveEntries());
 
-    expect(outcome).toMatchObject({ kind: 'failed', reason: 'worker-failed' });
-    expect(isProjectOpen(replay())).toBe(false);
+    const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+
+    expect(result.status).toBe('opened');
+    if (result.status === 'opened') {
+      expect(result.snapshot.readOnly).toBe(true);
+      expect(result.snapshot.warnings[0]).toMatch(/migration/i);
+    }
   });
 });

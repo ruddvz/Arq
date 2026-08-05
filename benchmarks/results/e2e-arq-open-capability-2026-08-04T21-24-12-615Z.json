@@ -1,6 +1,6 @@
 {
   "evidenceId": "e2e_arq_open",
-  "timestamp": "2026-08-05T02:48:06.115Z",
+  "timestamp": "2026-08-04T21:24:12.615Z",
   "environment": "headless Chromium 141.0.7390.37 - real sqlite-wasm over OPFS, driving a bundle of the real workers/arqfs-worker/src/arqfs-worker-entry.ts",
   "workerBundle": "workers/arqfs-worker/.e2e-open-bundle/e2e-arq-open-worker.js",
   "vfsUsed": [
@@ -93,27 +93,8 @@
       "passed": true
     }
   ],
-  "importCase": {
-    "case": "import",
-    "describe": "bytes selected from outside the Worker become the project it opens",
-    "sourceProjectId": "e2e-import-source",
-    "targetProjectId": "e2e-import-target",
-    "sourceByteLength": 237568,
-    "importedByteLength": 237568,
-    "openedCapabilities": {
-      "canRead": true,
-      "canWrite": true,
-      "canMigrate": false,
-      "safeModeRequired": false,
-      "unsupportedRequiredFeatures": []
-    },
-    "archiveEntryPaths": [
-      "model.json"
-    ],
-    "passed": true
-  },
   "consoleErrors": [],
   "unservedUrls": [],
   "ok": true,
-  "limitation": "Proves the Worker and OPFS open path for these four outcomes, plus that bytes selected from outside the Worker become the project it opens. Does not itself drive apps/web: the product open sequence over this Worker is covered by apps/web/src/project/open-native-project.test.ts against the same request handler."
+  "limitation": "Proves the Worker and OPFS open path for these four outcomes. Does not prove a user-reachable open-project workflow: apps/web does not construct this Worker."
 }

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "entries": [
     {
-      "generatedAt": "2026-08-05T02:50:29.110Z",
-      "sourceSetDigest": "bbfc08de3de935be90f89fc1354d336cccd3530a79156b63faf99cda43ce0cd6",
+      "generatedAt": "2026-08-05T02:21:26.650Z",
+      "sourceSetDigest": "c7363463f31857fce21a4e997e682877c9ac12503a933237507f70768cda2a87",
       "previousSourceSetDigest": "2c17281e46caf3d51f33c01f29e04fe703754f4968c550443d139650762fcc38",
-      "changedSourceSets": ["file-open-ui"]
+      "changedSourceSets": ["accepted-adrs", "file-open-ui", "status", "web-app"]
     },
     {
       "generatedAt": "2026-08-04T23:19:21.283Z",

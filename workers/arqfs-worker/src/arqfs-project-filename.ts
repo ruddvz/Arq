@@ -34,23 +34,6 @@ export function arqfsWorkerUrlSearch(projectId: string): string {
   return `?project=${encodeURIComponent(projectId)}`;
 }
 
-/**
- * The project id a refusal should name when the Worker could not be constructed
- * at all - which is exactly the case where the id was missing or invalid, so
- * `readProjectIdFromWorkerSearch` would throw a second time and lose the original
- * error. Every response carries a project id, including this one; an unknown
- * sender is still a fact worth stating rather than a field left off.
- */
-export const UNKNOWN_ARQFS_PROJECT_ID = 'unknown';
-
-export function readProjectIdOrUnknown(search: string): string {
-  try {
-    return readProjectIdFromWorkerSearch(search);
-  } catch {
-    return UNKNOWN_ARQFS_PROJECT_ID;
-  }
-}
-
 /** The inverse of `arqfsWorkerUrlSearch` - what `arqfs-worker-entry.ts` reads back out of its own `self.location.search`. */
 export function readProjectIdFromWorkerSearch(search: string): string {
   const projectId = new URLSearchParams(search).get('project');

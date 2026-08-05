@@ -37,70 +37,12 @@
         });
       }
 
-      /**
-       * Several requests in order on ONE Worker. The import case needs this and
-       * the single-request helper cannot express it: importing and then opening
-       * on two different Workers would be two different sessions, and the
-       * import gate is defined in terms of one session's own history.
-       */
-      function runSequenceOnFreshWorker(scriptUrl, projectId, requests, timeoutMs = 60_000) {
-        return new Promise((resolve, reject) => {
-          const worker = new Worker(`${scriptUrl}?project=${encodeURIComponent(projectId)}`, {
-            type: 'module',
-          });
-          const responses = [];
-          const timer = setTimeout(() => {
-            worker.terminate();
-            reject(new Error(`worker timed out after ${timeoutMs}ms`));
-          }, timeoutMs);
-          const finish = (settle, value) => {
-            clearTimeout(timer);
-            worker.terminate();
-            settle(value);
-          };
-          worker.onmessage = (event) => {
-            responses.push(event.data);
-            if (event.data.ok !== true || responses.length === requests.length) {
-              finish(resolve, responses);
-              return;
-            }
-            worker.postMessage({ id: nextId++, ...requests[responses.length] });
-          };
-          worker.onerror = (event) => {
-            finish(reject, new Error(event.message || 'worker error'));
-          };
-          worker.postMessage({ id: nextId++, ...requests[0] });
-        });
-      }
-
       // The real bundled arqfs-worker-entry.ts, not a reimplementation of it.
       window.__arqOpen = (projectId) =>
         runOnFreshWorker('./e2e-arq-open-worker.js', projectId, { type: 'open' });
 
-      window.__arqSequence = (projectId, requests) =>
-        runSequenceOnFreshWorker('./e2e-arq-open-worker.js', projectId, requests);
-
       window.__arqSeed = (projectId, request) =>
         runOnFreshWorker('./e2e-arq-open-seed-worker.js', projectId, request);
-
-      /**
-       * Holds the exported bytes inside the page. They cannot cross back to the
-       * test runner - a Uint8Array does not survive that boundary - and they do
-       * not need to: what the check is proving happens entirely in the browser.
-       */
-      window.__arqExportBytes = async (projectId) => {
-        const response = await window.__arqSeed(projectId, { type: 'exportBytes' });
-        if (response.ok !== true) return { ok: false, error: response.error };
-        window.__ARQ_EXPORTED_BYTES__ = response.bytes;
-        return { ok: true, byteLength: response.bytes.byteLength };
-      };
-
-      window.__arqImportAndOpen = (projectId) =>
-        window.__arqSequence(projectId, [
-          { type: 'importDatabase', bytes: window.__ARQ_EXPORTED_BYTES__ },
-          { type: 'open' },
-          { type: 'listArchiveEntryPaths' },
-        ]);
 
       window.__ARQ_E2E_OPEN_READY__ = true;
     </script>

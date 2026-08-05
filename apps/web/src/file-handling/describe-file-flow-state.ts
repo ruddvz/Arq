@@ -23,34 +23,21 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
       return { headline: `Reading ${state.name}…`, detail: null, tone: 'progress' };
     case 'detecting':
       return { headline: `Checking ${state.name}…`, detail: null, tone: 'progress' };
-    case 'native-opening': {
-      // The byte-safe preflight gate passed and the open is about to begin.
-      // "Accepted" is as far as this state goes: the project is not open until
-      // it has been staged, opened by the Worker, checked and hydrated, and
-      // saying otherwise here is the false open the whole flow exists to
-      // prevent.
-      if (state.sidecarDependency === 'write-ahead-log-sidecar') {
-        // Compatible but possibly incomplete: two different facts about one
-        // accepted file, which the file-flow language policy requires be kept
-        // distinct. This is a caution rather than a rejection because the file
-        // is genuinely readable - what cannot be promised is that it is the
-        // newest version of the user's work.
-        return {
-          headline: `${state.name} is a compatible Arq project, but it may not be complete.`,
-          detail:
-            'This project was last written with a write-ahead log, so anything saved since its ' +
-            'last checkpoint lives in a companion file ending in "-wal" that was not included. ' +
-            'Choose the "-wal" file alongside it, or reopen and close the project in the app that ' +
-            'wrote it, to be sure you have the newest version.',
-          tone: 'warning',
-        };
-      }
+    case 'native-opening':
+      // Progress, not a verdict. The file passed byte preflight and the
+      // source-completeness policy and is now being copied into a local working
+      // copy and opened - which is work, not a formality, so it gets its own
+      // state rather than being folded into success.
+      //
+      // There is no longer a "compatible, but may not be complete" branch. A
+      // database depending on an absent `-wal` sidecar is refused before it
+      // reaches this state, because the caution it used to show sat next to a
+      // project that could be silently missing the user's most recent work.
       return {
-        headline: `${state.name} is a compatible Arq project. Opening it…`,
-        detail: null,
+        headline: `Opening ${state.name}…`,
+        detail: 'Copying this project into a local working copy on this device.',
         tone: 'progress',
       };
-    }
     case 'import-options':
       return {
         headline: `${state.name} needs conversion before it can be opened.`,

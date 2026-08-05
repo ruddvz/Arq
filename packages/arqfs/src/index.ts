@@ -25,5 +25,6 @@ export * from './arqfs-import-session';
 export * from './arqfs-import-commit';
 export * from './arqfs-integrity';
 export * from './arqfs-preflight';
+export * from './arqfs-source-completeness';
 export * from './arqfs-policy';
 export * from './arqfs-worker-client';

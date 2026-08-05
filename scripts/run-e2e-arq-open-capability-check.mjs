@@ -28,9 +28,11 @@
  * not, the fresh Worker would have initialised a new schema and reported the
  * 'valid' outcome, so those cases fail rather than silently passing.
  *
- * What this check does NOT establish: a user-reachable open-project workflow in
- * `apps/web`. The product still does not construct this Worker. That gap is a
- * product-integration gap and remains recorded in STATUS.md.
+ * What this check does NOT establish: that `apps/web` reaches this path from a
+ * file someone chose, or that the decoded project arrives in the workspace. It
+ * drives the Worker directly, so it would keep passing if the UI were wired to
+ * nothing at all. `benchmark:file-open` is the check that makes that claim, by
+ * driving the real interface.
  *
  * Usage: node scripts/run-e2e-arq-open-capability-check.mjs
  */
@@ -229,81 +231,6 @@ const CASES = [
   },
 ];
 
-/**
- * The case the product's own open path depends on: bytes that came from outside
- * this Worker become the project it opens.
- *
- * Every other case above opens a database the Worker created for itself, which
- * is the one thing a user never does. Until `importDatabase` existed there was
- * no way to do anything else, so the product had a proven Worker and still no
- * openable project. The source is authored on one project id, exported straight
- * out of OPFS by the seeder, and imported into a second project id by a freshly
- * constructed real Worker - so the bytes genuinely cross the boundary rather
- * than the Worker handing itself its own file.
- */
-const IMPORT_SOURCE_PROJECT = 'e2e-import-source';
-const IMPORT_TARGET_PROJECT = 'e2e-import-target';
-const IMPORT_ENTRY_PATH = 'model.json';
-
-async function runImportCase(page) {
-  const authored = await page.evaluate(
-    ([projectId, entryPath]) =>
-      window.__arqSequence(projectId, [
-        { type: 'open' },
-        {
-          type: 'putArchiveEntries',
-          entries: [[entryPath, new TextEncoder().encode('{"walls":[]}')]],
-        },
-      ]),
-    [IMPORT_SOURCE_PROJECT, IMPORT_ENTRY_PATH],
-  );
-  if (!authored.every((response) => response.ok === true)) {
-    throw new Error(`import source could not be authored: ${JSON.stringify(authored)}`);
-  }
-
-  const exported = await page.evaluate(
-    (projectId) => window.__arqExportBytes(projectId),
-    IMPORT_SOURCE_PROJECT,
-  );
-  if (exported.ok !== true) throw new Error(`export failed: ${exported.error}`);
-
-  const responses = await page.evaluate(
-    (projectId) => window.__arqImportAndOpen(projectId),
-    IMPORT_TARGET_PROJECT,
-  );
-  const [imported, opened, listed] = responses;
-
-  const importedOk =
-    imported?.ok === true &&
-    imported.payload?.kind === 'importDatabase' &&
-    imported.payload.byteLength === exported.byteLength;
-  const openedOk =
-    opened?.ok === true &&
-    opened.payload?.result?.status === 'opened' &&
-    opened.payload.result.capabilities.canRead === true &&
-    opened.payload.result.capabilities.canWrite === true;
-  // The decisive assertion. An empty database this build created would open
-  // exactly as readable and writable as an imported one; only the source's own
-  // content tells the two apart.
-  const contentOk =
-    listed?.ok === true && listed.payload?.paths?.includes(IMPORT_ENTRY_PATH) === true;
-  const passed = importedOk && openedOk && contentOk;
-  if (!passed) {
-    fail(`import: selected bytes did not become the opened project ${JSON.stringify(responses)}`);
-  }
-  return {
-    case: 'import',
-    describe: 'bytes selected from outside the Worker become the project it opens',
-    sourceProjectId: IMPORT_SOURCE_PROJECT,
-    targetProjectId: IMPORT_TARGET_PROJECT,
-    sourceByteLength: exported.byteLength,
-    importedByteLength: imported?.payload?.byteLength ?? null,
-    openedCapabilities: opened?.payload?.result?.capabilities ?? null,
-    archiveEntryPaths: listed?.payload?.paths ?? null,
-    passed,
-  };
-}
-
 async function main() {
   const bundlePath = await bundleRealWorker();
   const unservedUrls = [];
@@ -324,7 +251,6 @@ async function main() {
   );
 
   const observed = [];
-  let importCase = null;
   try {
     await page.goto(`http://127.0.0.1:${port}/bench/e2e-arq-open.html`, {
       waitUntil: 'domcontentloaded',
@@ -375,8 +301,6 @@ async function main() {
       });
       if (!passed) fail(`${testCase.id}: unexpected open result ${JSON.stringify(result)}`);
     }
-
-    importCase = await runImportCase(page);
   } finally {
     await browser.close();
     server.close();
@@ -392,7 +316,6 @@ async function main() {
   const unserved = [...new Set([...missingResources, ...unservedUrls])];
   if (unserved.length > 0) fail(`unserved resources: ${unserved.join(' | ')}`);
   if (observed.length !== CASES.length) fail('not every case reported a result');
-  if (importCase === null) fail('the import case did not report a result');
 
   const version = await (async () => {
     const b = await chromium.launch({ executablePath: resolveChromiumExecutablePath() });
@@ -408,12 +331,11 @@ async function main() {
     workerBundle: path.relative(repoRoot, bundlePath),
     vfsUsed,
     cases: observed,
-    importCase,
     consoleErrors,
     unservedUrls: [...new Set([...missingResources, ...unservedUrls])],
     ok: process.exitCode !== 1,
     limitation:
-      'Proves the Worker and OPFS open path for these four outcomes, plus that bytes selected from outside the Worker become the project it opens. Does not itself drive apps/web: the product open sequence over this Worker is covered by apps/web/src/project/open-native-project.test.ts against the same request handler.',
+      'Proves the Worker and OPFS open path for these four outcomes, driving the Worker directly. That apps/web reaches this path from a chosen file, and that the decoded project arrives in the workspace, is the separate claim benchmark:file-open makes by driving the real UI.',
   };
   const outDir = path.join(repoRoot, 'benchmarks/results');
   mkdirSync(outDir, { recursive: true });
