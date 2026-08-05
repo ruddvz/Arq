@@ -12,3 +12,4 @@ export * from './explain-selection';
 export * from './operation-pipeline';
 export * from './grouped-undo-stack';
 export * from './wall-workflow-commit';
+export * from './ai-proposal';
