@@ -18,3 +18,4 @@ export * from './offset-segment';
 export * from './point-in-polygon';
 export * from './room-boundary-graph';
 export * from './room-boundary-gap';
+export * from './constraint-solver';
