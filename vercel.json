@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "pnpm install --frozen-lockfile --filter @arq/marketing...",
+  "buildCommand": "SITE_BASE_PATH= SITE_ORIGIN=\"https://${VERCEL_PROJECT_PRODUCTION_URL:-$VERCEL_URL}\" SITE_REVISION=\"$VERCEL_GIT_COMMIT_SHA\" pnpm --filter @arq/marketing build && node scripts/write-deployment-provenance.mjs --dist apps/marketing/dist --target vercel --allow-unpinned",
+  "outputDirectory": "apps/marketing/dist",
+  "github": { "silent": false }
+}
