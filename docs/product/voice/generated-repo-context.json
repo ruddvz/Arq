@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "60c21e0b25b9bacdcf03d270f394f616d92153db2aed6bcc052bdcf4d59aaf17",
+  "sourceSetDigest": "fb34b0dc9b462bf4526ec93dc55fff43495f2a86a8a926d9b29962128aad8c89",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -350,7 +350,7 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "d36ef55cc065b05adac729f3fe929f6e389324e8fe9d0c5b486f3614333818d0",
+      "sha256": "e65a60ab6665440bf6f87982625d2038df5073b8c88dc8adbbba478fb2de3f5f",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
@@ -364,8 +364,8 @@
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",
-          "sha256": "0e0d314e9ec86470045e810a919b39d44d70873cf591076eb0580cd0d6d00332",
-          "bytes": 15426
+          "sha256": "621b7c990b40669497a68b510d944b4658ce23b64ce7862511539697c79d7230",
+          "bytes": 15630
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
