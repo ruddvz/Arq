@@ -37,6 +37,26 @@ export type ArqfsWorkerRequest =
       readonly entries: ReadonlyArray<readonly [string, Uint8Array]>;
     }
   /**
+   * The other direction of `importDatabase`: switches the working copy out of
+   * WAL mode and returns its bytes as a clean, standalone file - no `-wal` or
+   * `-shm` dependency, because journal_mode=DELETE both merges anything pending
+   * back into the main file and rewrites the header bytes that declare which
+   * mode the file is in, before the bytes are read.
+   *
+   * Gated on the same write capability as `putArchiveEntries`, not merely on an
+   * accepted open: switching journal mode physically rewrites the file's pages
+   * and its header, and a file this build must not write must not have its
+   * bytes touched at all, even in the direction of tidying them up.
+   */
+  | { readonly id: number; readonly type: 'exportDatabase' }
+  /**
+   * ARQ-200/222's canonical semantic hash over the working copy, computed on
+   * request rather than folded into another response so it can be asked for
+   * independently - a fresh-reader reopen needs to compute the same thing over
+   * a different connection to compare against it.
+   */
+  | { readonly id: number; readonly type: 'computeSemanticHash' }
+  /**
    * SQLite's own health check over the working copy.
    *
    * `checkArqfsIntegrity`'s documented purpose is "before trusting an
@@ -63,6 +83,8 @@ export type ArqfsWorkerResponsePayload =
   | { readonly kind: 'importDatabase'; readonly byteLength: number }
   | { readonly kind: 'open'; readonly result: ArqfsOpenResult; readonly usedVfs: string }
   | { readonly kind: 'checkIntegrity'; readonly report: ArqfsIntegrityReport }
+  | { readonly kind: 'exportDatabase'; readonly bytes: Uint8Array }
+  | { readonly kind: 'computeSemanticHash'; readonly hash: string }
   | { readonly kind: 'putArchiveEntries' }
   | { readonly kind: 'getArchiveEntry'; readonly content: Uint8Array | null }
   | { readonly kind: 'listArchiveEntryPaths'; readonly paths: readonly string[] }
@@ -86,6 +108,8 @@ export const ARQFS_WORKER_ERROR_CODES = {
   notWritable: 'ARQFS_WORKER_FILE_NOT_WRITABLE',
   /** The open itself was rejected, or it succeeded only in a form this build must not read from; nothing may be handed back from this file. */
   openRejected: 'ARQFS_WORKER_OPEN_REJECTED',
+  /** This context has no way to hand back the working copy's raw bytes (e.g. the in-memory fallback used when OPFS is unavailable). */
+  exportUnsupported: 'ARQFS_WORKER_EXPORT_UNSUPPORTED',
   /** Anything unexpected. Deliberately last: a specific code is always preferred. */
   unexpected: 'ARQFS_WORKER_UNEXPECTED_ERROR',
 } as const;

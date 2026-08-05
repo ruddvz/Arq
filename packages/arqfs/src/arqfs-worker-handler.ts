@@ -4,6 +4,7 @@ import { createArqfsSchemaLatest } from './arqfs-schema-v2';
 import { openArqfs, type ArqfsOpenResult } from './arqfs-open';
 import { applyDefensiveOpenPolicy } from './arqfs-defensive-open';
 import { checkArqfsIntegrity } from './arqfs-integrity';
+import { computeProjectSemanticHash } from './arqfs-semantic-hash';
 import {
   putArchiveEntries,
   getArchiveEntry,
@@ -46,8 +47,24 @@ export interface ArqfsWorkerContext {
    * actually import into an `opfs-sahpool` database; absent in contexts backed
    * by a plain driver, where importing is meaningless and is refused rather
    * than silently ignored.
+   *
+   * Genuinely asynchronous, not `void`-returning fire-and-forget: the pool
+   * utility's own import is asynchronous, and the handler has to know when it
+   * has actually finished before it can safely tell a caller the import
+   * succeeded - see the `exportDatabase` case's history note below.
    */
-  readonly importDatabase?: (bytes: Uint8Array) => void;
+  readonly importDatabase?: (bytes: Uint8Array) => Promise<void>;
+  /**
+   * Hands back the working copy's current bytes as a standalone file, after
+   * `exportDatabase`'s handler has already checkpointed the connection. Supplied
+   * by workers/arqfs-worker for the same reason `importDatabase` is: only the
+   * sqlite-wasm pool utility can read a `opfs-sahpool` database's bytes back out
+   * of its pool of opaque files. Absent for a context that cannot produce
+   * portable bytes at all (the in-memory fallback used when OPFS is
+   * unavailable), where publishing is refused rather than silently handing back
+   * something that will not survive a reload.
+   */
+  readonly exportDatabase?: () => Promise<Uint8Array>;
 }
 
 function refuse(id: number, code: ArqfsWorkerErrorCode, error: string): ArqfsWorkerResponse {
@@ -144,11 +161,21 @@ function readRefusal(
  * arqfs-schema.test.ts) without needing a real browser Worker or sqlite-wasm at all.
  * Never throws - every branch is caught and reported as an `ok: false` response, so a
  * single bad request cannot crash the worker's message loop.
+ *
+ * Asynchronous because `importDatabase` and `exportDatabase` genuinely are: both
+ * cross into the sqlite-wasm pool utility, which returns Promises. This closes a
+ * real defect - the Worker's own `importDatabase` used to call
+ * `poolUtil.importDb(...)` without awaiting it and immediately opened a fresh
+ * connection on the next line, racing the still-in-flight import. Nothing had
+ * caught it because every existing capability check's payload happened to be
+ * small enough, and fast enough, for the race to lose more often than it won.
+ * Every other case still runs to completion synchronously inside this function;
+ * making the function itself `async` costs them nothing.
  */
-export function handleArqfsWorkerRequest(
+export async function handleArqfsWorkerRequest(
   context: ArqfsWorkerContext,
   request: ArqfsWorkerRequest,
-): ArqfsWorkerResponse {
+): Promise<ArqfsWorkerResponse> {
   try {
     switch (request.type) {
       case 'importDatabase': {
@@ -165,12 +192,54 @@ export function handleArqfsWorkerRequest(
         // read or write - otherwise the gates would be measuring the imported
         // database against the outgoing one's verdict.
         context.session.openResult = null;
-        context.importDatabase(request.bytes);
+        // Awaited: the import must have actually landed in storage before this
+        // response tells a caller it can now `open` the file it just sent.
+        await context.importDatabase(request.bytes);
         return {
           id: request.id,
           ok: true,
           payload: { kind: 'importDatabase', byteLength: request.bytes.byteLength },
         };
+      }
+      case 'exportDatabase': {
+        // A checkpoint physically rewrites the file's pages, so this is gated
+        // exactly like a write - not merely on an accepted open - even though
+        // nothing about the checkpoint changes the project's canonical meaning.
+        const refusal = writeRefusal(context.session);
+        if (refusal !== null) {
+          return refuse(request.id, refusal.code, refusal.error);
+        }
+        if (context.exportDatabase === undefined) {
+          return refuse(
+            request.id,
+            ARQFS_WORKER_ERROR_CODES.exportUnsupported,
+            'This Worker cannot hand back the working copy as portable bytes.',
+          );
+        }
+        // Switches the connection out of WAL mode, synchronously, before the
+        // pool utility reads the file's bytes back out.
+        //
+        // A checkpoint alone is not enough: `PRAGMA wal_checkpoint(TRUNCATE)`
+        // merges pending frames back into the main file and empties the `-wal`
+        // file, but leaves the database header's own write/read-version bytes
+        // still declaring WAL - the exact two bytes `preflightArqfsBytes` reads
+        // to decide `sidecarDependency`. Exported bytes checkpointed that way
+        // still preflighted as `write-ahead-log-sidecar`, caught by feeding this
+        // handler's own output back through the byte-level check it has to
+        // satisfy. `journal_mode=DELETE` performs the checkpoint AND rewrites
+        // the header, which is what "no WAL/SHM dependency" actually requires.
+        // A no-op, not an error, for a connection already outside WAL mode.
+        context.driver.exec('PRAGMA journal_mode=DELETE');
+        const bytes = await context.exportDatabase();
+        return { id: request.id, ok: true, payload: { kind: 'exportDatabase', bytes } };
+      }
+      case 'computeSemanticHash': {
+        const refusal = readRefusal(context.session);
+        if (refusal !== null) {
+          return refuse(request.id, refusal.code, refusal.error);
+        }
+        const hash = await computeProjectSemanticHash(context.driver);
+        return { id: request.id, ok: true, payload: { kind: 'computeSemanticHash', hash } };
       }
       case 'open': {
         // application_id reads as 0 only on a database SQLite itself has never

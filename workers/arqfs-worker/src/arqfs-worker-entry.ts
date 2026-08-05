@@ -75,13 +75,28 @@ async function openContext(): Promise<ArqfsWorkerContext> {
        * The open handle is closed before importing, because importing overwrites
        * the file this connection is reading and a connection left open across
        * that is reading a database that no longer exists.
+       *
+       * `poolUtil.importDb` is genuinely asynchronous - it returns a Promise -
+       * and this now awaits it before reopening. It did not before: the previous
+       * line opened a fresh connection over the target file immediately, with no
+       * guarantee the import had actually finished writing it, which is exactly
+       * the kind of race a fast synthetic test payload is unlikely to lose and a
+       * real project's bytes are not.
        */
-      importDatabase: (bytes: Uint8Array) => {
+      importDatabase: async (bytes: Uint8Array) => {
         db.close();
-        poolUtil.importDb(databaseFilename, bytes);
+        await poolUtil.importDb(databaseFilename, bytes);
         db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
         driver = createSqliteWasmArqfsDriver(db);
       },
+      /**
+       * The other direction: hands back the working copy's current bytes,
+       * called only after `exportDatabase`'s Worker-handler case has already
+       * checkpointed this same connection. `exportFile` reads the pool's stored
+       * bytes for this filename directly - it does not go through `db` - so the
+       * live connection does not need to be closed first, unlike import.
+       */
+      exportDatabase: () => poolUtil.exportFile(databaseFilename),
     };
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
@@ -96,10 +111,18 @@ async function openContext(): Promise<ArqfsWorkerContext> {
 
 const contextPromise = openContext();
 
+// Requests are not serialized here: two messages arriving close together each
+// invoke this handler, and `handleArqfsWorkerRequest` now genuinely awaits
+// (importDatabase, exportDatabase, computeSemanticHash), so a second message
+// could in principle be handled while the first is still mid-flight. Every
+// caller in this codebase awaits one request before sending the next
+// (`ArqfsWorkerRequestClient` callers, `NativeProjectSession`'s own write
+// queue), which keeps this from being reachable today - a caller that fired
+// requests without awaiting them would need this fixed first.
 self.onmessage = async (event: MessageEvent<ArqfsWorkerRequest>) => {
   try {
     const context = await contextPromise;
-    self.postMessage(handleArqfsWorkerRequest(context, event.data));
+    self.postMessage(await handleArqfsWorkerRequest(context, event.data));
   } catch (error) {
     // contextPromise rejects only for a Worker-construction mistake (missing/invalid
     // project id) that will never resolve on retry - every request gets a clear,
