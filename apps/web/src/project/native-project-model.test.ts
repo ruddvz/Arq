@@ -105,7 +105,9 @@ describe('native project model round trip', () => {
 
     expect(result.status).toBe('decoded');
     if (result.status === 'decoded') {
-      expect(result.model).toEqual(model);
+      // `document` comes back null: the flat shape carries no reference model,
+      // and inventing one would claim the file said more than it did.
+      expect(result.model).toEqual({ ...model, document: null });
     }
   });
 

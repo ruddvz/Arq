@@ -91,6 +91,9 @@ importers:
       '@arq/project-format':
         specifier: workspace:*
         version: link:../../packages/project-format
+      '@arq/project-loading':
+        specifier: workspace:*
+        version: link:../../packages/project-loading
       '@arq/validation':
         specifier: workspace:*
         version: link:../../packages/validation
@@ -316,7 +319,20 @@ importers:
 
   packages/project-format: {}
 
-  packages/project-loading: {}
+  packages/project-loading:
+    dependencies:
+      '@arq/arqfs':
+        specifier: workspace:*
+        version: link:../arqfs
+      '@arq/bim-core':
+        specifier: workspace:*
+        version: link:../bim-core
+      '@arq/geometry-2d':
+        specifier: workspace:*
+        version: link:../geometry-2d
+      '@arq/project-format':
+        specifier: workspace:*
+        version: link:../project-format
 
   packages/roomplan-adapter:
     dependencies:

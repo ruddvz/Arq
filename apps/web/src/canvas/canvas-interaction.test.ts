@@ -21,8 +21,13 @@ const ROOM: readonly [number, number][] = [
 
 function content(walls: readonly DrawnWall[] = []): PlanContent {
   return {
-    roomId: 'demo-room',
-    roomPolygon: ROOM.map(([x, y]) => worldPoint(x, y)),
+    rooms: [
+      {
+        id: 'demo-room',
+        label: 'demo fixture',
+        polygon: ROOM.map(([x, y]) => worldPoint(x, y)),
+      },
+    ],
     walls,
   };
 }

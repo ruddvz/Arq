@@ -15,6 +15,16 @@ export interface FileFlowStateDescription {
  * explicit rather than a default case, so a new `FileFlowState` variant fails
  * to compile here instead of silently falling through to a generic message.
  */
+/**
+ * Said the same way wherever it is said. A write-ahead-log project is compatible
+ * and possibly incomplete - two facts about one accepted file, which the governed
+ * file-flow policy requires be kept distinct - and opening it successfully does
+ * not make the second fact go away, so both the compatibility state and the
+ * opened state carry this.
+ */
+const WRITE_AHEAD_LOG_DETAIL =
+  'This project was last written with a write-ahead log, so anything saved since its last checkpoint lives in a companion file ending in "-wal" that was not included. Choose the "-wal" file alongside it, or reopen and close the project in the app that wrote it, to be sure you have the newest version.';
+
 export function describeFileFlowState(state: FileFlowState): FileFlowStateDescription {
   switch (state.kind) {
     case 'idle':
@@ -102,9 +112,10 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
     case 'worker-open':
       return {
         headline: `${state.name} is loading…`,
-        detail: state.writable
-          ? 'The project file is open. Reading its contents now.'
-          : 'The project file is open for reading only. Reading its contents now.',
+        detail:
+          state.readOnlyReason === null
+            ? 'The project file is open. Reading its contents now.'
+            : 'The project file is open for reading only. Reading its contents now.',
         tone: 'progress',
       };
     case 'hydrating':
@@ -113,16 +124,39 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
         detail: null,
         tone: 'progress',
       };
-    case 'workspace-active':
+    case 'workspace-active': {
+      // The only state that may say a project is open, so it is also the only
+      // one that has to say what can be done with it - a reader told a project
+      // is open will reasonably try to edit it. The read-only cause is named
+      // rather than generalised: "this build cannot save" and "this file is
+      // from a newer ARQ" are different facts about the reader's own work, and
+      // giving the wrong one is a false statement, not a vague one.
+      const { facts } = state;
+      const incomplete = facts.sidecarDependency === 'write-ahead-log-sidecar';
+      const parts: string[] = [];
+      if (state.readOnlyReason !== null) {
+        parts.push(describeReadOnlyReason(state.readOnlyReason));
+      }
+      if (incomplete) {
+        parts.push(WRITE_AHEAD_LOG_DETAIL);
+      }
+      if (facts.conditionNote !== null) {
+        parts.push(facts.conditionNote);
+      }
       return {
-        headline: state.writable
-          ? `${state.name} is open.`
-          : `${state.name} is open and read-only.`,
-        detail: state.writable
-          ? null
-          : 'This project was written by a newer version of ARQ, so it can be read but not changed.',
-        tone: state.writable ? 'neutral' : 'warning',
+        headline:
+          state.readOnlyReason === null
+            ? `${facts.projectName} is open · revision ${facts.revision}`
+            : `${facts.projectName} is open, read-only · revision ${facts.revision}`,
+        detail: parts.length > 0 ? parts.join(' ') : null,
+        // Tone follows the cause, not the mere fact of read-only. A file this
+        // build cannot write because the file is ahead of it is a caution: the
+        // limit is on the reader's own project. A build with no save path yet is
+        // the normal condition of this build, and dressing it as a warning would
+        // cry wolf on every single open.
+        tone: incomplete || state.readOnlyReason === 'newer-format-version' ? 'warning' : 'neutral',
       };
+    }
     case 'quarantined':
       return {
         headline: `${state.name} could not be upgraded.`,
@@ -188,6 +222,21 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
         detail: state.lastKnownGood ? `${state.lastKnownGood.name} was closed.` : null,
         tone: 'neutral',
       };
+  }
+}
+
+/**
+ * One sentence per cause. Both are true statements a reader can act on: the
+ * first says the limit is this build, the second says the limit is the file.
+ */
+function describeReadOnlyReason(
+  reason: Exclude<Extract<FileFlowState, { kind: 'workspace-active' }>['readOnlyReason'], null>,
+): string {
+  switch (reason) {
+    case 'build-cannot-write':
+      return 'It is open for inspection: this build does not edit or save a .arq project, and the file you chose is unchanged.';
+    case 'newer-format-version':
+      return 'This project was written by a newer version of ARQ, so it can be read but not changed.';
   }
 }
 

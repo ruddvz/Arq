@@ -96,6 +96,26 @@ import {
 } from './canvas/plan-document';
 import { createPlanJournal, type PlanJournal } from './canvas/plan-journal';
 import type { NativeProjectSession, NativeProjectSnapshot } from './project/native-project-session';
+import { NativeProjectPanel } from './NativeProjectPanel';
+import { buildNativeProjectTree, type OpenNativeProject } from './native-project-view';
+import {
+  wallsOnLevel,
+  type NativeProjectModel as NativeProjectDocument,
+} from '@arq/project-loading';
+
+/**
+ * The walls of one level, in the shape the plan and 3D surfaces draw. The
+ * project's own wall ids are carried through unchanged: they are what the model
+ * tree selects by and what 3D highlights by, so a translated id here would make
+ * the two surfaces silently stop sharing a selection.
+ */
+function wallsForLevel(document: NativeProjectDocument, levelId: string): readonly DrawnWall[] {
+  return wallsOnLevel(document, levelId).map((wall) => ({
+    id: wall.id,
+    start: wall.start,
+    end: wall.end,
+  }));
+}
 import {
   AlignIcon,
   CommentIcon,
@@ -431,9 +451,19 @@ export function App(): JSX.Element {
       // project's problem and must not block adopting this one.
       void previous?.close().catch(() => undefined);
 
-      setDrawnWalls(opened.snapshot.walls);
-      drawnWallsRef.current = opened.snapshot.walls;
-      wallIdCounterRef.current = highestWallIdSuffix(opened.snapshot.walls);
+      // A building is drawn one level at a time. The snapshot carries every wall
+      // in the project across every level, and drawing all of them at once puts
+      // the upper floor on top of the ground floor - which looks like a plan
+      // rather than like a fault, so it has to be got right here rather than
+      // noticed later.
+      const initialLevelId = opened.snapshot.document?.levels[0]?.id ?? null;
+      const shown =
+        opened.snapshot.document !== null && initialLevelId !== null
+          ? wallsForLevel(opened.snapshot.document, initialLevelId)
+          : opened.snapshot.walls;
+      setDrawnWalls(shown);
+      drawnWallsRef.current = shown;
+      wallIdCounterRef.current = highestWallIdSuffix(shown);
       setProjectName(opened.snapshot.displayName);
       // Read from the working copy, not written to it yet: "opened" is not
       // "saved", and this build does not checkpoint edits back to the `.arq`
@@ -445,10 +475,53 @@ export function App(): JSX.Element {
           ? 'Open for reading only · edits are not saved to this project'
           : 'Open from a local working copy · edits are not saved to this project yet',
       );
+      // Kept so the project browser can show what the file contains beyond the
+      // walls the plan draws - its levels, wall types and rooms. Null for a
+      // project this build wrote, which carries none of that, and the panel is
+      // simply not rendered rather than rendered empty.
+      setOpenNativeProject(
+        opened.snapshot.document === null
+          ? null
+          : {
+              workingCopyId: opened.snapshot.workingCopyId,
+              fileName: opened.snapshot.displayName,
+              project: {
+                model: opened.snapshot.document,
+                writeVerdict: opened.snapshot.readOnly ? 'read-only' : 'working-copy',
+                writeReason: opened.snapshot.readOnly
+                  ? 'This project was written by a newer version of ARQ, so it can be read but not changed.'
+                  : 'Changes are kept in a local working copy on this device. Nothing is written back to the .arq file you chose.',
+                conditions: opened.snapshot.warnings,
+              },
+            },
+      );
+      setActiveNativeLevelId(initialLevelId);
+      setActiveWorkingCopyId(opened.snapshot.workingCopyId);
       setFileOpenPanelOpen(false);
     },
     [],
   );
+
+  /**
+   * The reference-format model of the open project, when the file carried one.
+   * Separate from the walls the plan edits: those are the working document, this
+   * is what the file said about itself, and conflating them is how a surface
+   * ends up claiming the project contains only what happens to be drawn.
+   */
+  /**
+   * The working copy the workspace holds, tracked separately from the project
+   * browser's model because every open has one and only some carry a reference
+   * document. Keying "is this already open?" off the panel's state would have
+   * left the flat shape - the projects this build writes - still able to attempt
+   * a second Worker over a working copy the live one holds.
+   */
+  const [activeWorkingCopyId, setActiveWorkingCopyId] = useState<string | null>(null);
+  const [openNativeProject, setOpenNativeProject] = useState<{
+    readonly workingCopyId: string;
+    readonly fileName: string;
+    readonly project: OpenNativeProject;
+  } | null>(null);
+  const [activeNativeLevelId, setActiveNativeLevelId] = useState<string | null>(null);
   const [modeState, setModeState] = useState(() =>
     initialModeState({
       projectId: 'demo-project',
@@ -764,6 +837,13 @@ export function App(): JSX.Element {
    * the panel lists what exists, and labels the fixture data as fixture.
    */
   const modelTree = useMemo<readonly ModelPanelNode[]>(() => {
+    // A real project replaces the tree rather than adding to it. Grafting its
+    // walls onto the demo site would present the reader's building as a branch
+    // of a fixture, and the ids in the tree are the project's own - they have to
+    // resolve against the project, not against MODEL_TREE.
+    if (openNativeProject !== null && activeNativeLevelId !== null) {
+      return buildNativeProjectTree(openNativeProject.project.model);
+    }
     if (drawnWalls.length === 0) {
       return MODEL_TREE;
     }
@@ -787,7 +867,7 @@ export function App(): JSX.Element {
         ],
       },
     ];
-  }, [drawnWalls]);
+  }, [drawnWalls, openNativeProject, activeNativeLevelId]);
 
   const selectedDrawnWall = useMemo(
     () => drawnWalls.find((wall) => wall.id === modelSelection.primary) ?? null,
@@ -1116,15 +1196,58 @@ export function App(): JSX.Element {
                * list - doc 35's "never invent" rule is not specific to the
                * overview.
                */
-              project: (
-                <ModelPanel
-                  tree={modelTree}
-                  selection={modelSelection}
-                  onSelectNode={(nodeId) =>
-                    setModelSelection({ primary: nodeId, secondary: new Set() })
-                  }
-                />
-              ),
+              project:
+                openNativeProject !== null && activeNativeLevelId !== null ? (
+                  <NativeProjectPanel
+                    fileName={openNativeProject.fileName}
+                    staged={openNativeProject.project}
+                    activeLevelId={activeNativeLevelId}
+                    onShowLevel={(levelId) => {
+                      setActiveNativeLevelId(levelId);
+                      const shown = wallsForLevel(openNativeProject.project.model, levelId);
+                      setDrawnWalls(shown);
+                      drawnWallsRef.current = shown;
+                      // The selection is a wall id, and a wall on another level
+                      // is not on screen. Keeping it would leave the inspector
+                      // describing something the reader cannot see.
+                      setModelSelection({ primary: null, secondary: new Set() });
+                    }}
+                    onCloseProject={() => {
+                      // Closing has to put back everything adoption replaced, not
+                      // just hide the panel. Leaving the project's walls on the
+                      // canvas under the workspace's own name is the worst of both:
+                      // the reader is told no project is open while still looking
+                      // at one, and the next open would draw over it.
+                      void nativeSessionRef.current?.close().catch(() => undefined);
+                      nativeSessionRef.current = null;
+                      setOpenNativeProject(null);
+                      setActiveNativeLevelId(null);
+                      setActiveWorkingCopyId(null);
+                      setDrawnWalls([]);
+                      drawnWallsRef.current = [];
+                      setProjectName('Untitled project');
+                      setModelSelection({ primary: null, secondary: new Set() });
+                      setSaveState('saved');
+                      setJournalLabel('Journal current');
+                    }}
+                  >
+                    <ModelPanel
+                      tree={modelTree}
+                      selection={modelSelection}
+                      onSelectNode={(nodeId) =>
+                        setModelSelection({ primary: nodeId, secondary: new Set() })
+                      }
+                    />
+                  </NativeProjectPanel>
+                ) : (
+                  <ModelPanel
+                    tree={modelTree}
+                    selection={modelSelection}
+                    onSelectNode={(nodeId) =>
+                      setModelSelection({ primary: nodeId, secondary: new Set() })
+                    }
+                  />
+                ),
               views: (
                 <ViewSwitcherList
                   state={tabs}
@@ -1275,6 +1398,7 @@ export function App(): JSX.Element {
         isOpen={fileOpenPanelOpen}
         onOpenChange={setFileOpenPanelOpen}
         onProjectOpened={adoptNativeProject}
+        activeWorkingCopyId={activeWorkingCopyId}
       />
 
       {/* W135 ToastRegion replaces the previous ad-hoc validation notice,

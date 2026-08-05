@@ -177,7 +177,16 @@
       "packageScript": "benchmark:e2e-arq-open",
       "state": "available",
       "proves": "A bundle of the real workers/arqfs-worker/src/arqfs-worker-entry.ts opening projects over real sqlite-wasm and OPFS in headless Chromium, across valid, read-only, old-reader and foreign-file outcomes, each on a freshly constructed Worker so the file must survive Worker teardown.",
-      "doesNotProve": "A user-reachable open-project workflow. apps/web still does not construct this Worker; that product-integration gap is tracked in STATUS.md."
+      "doesNotProve": "A user-reachable open-project workflow. That is browser_native_open, which drives the built apps/web bundle instead of the Worker directly."
+    },
+    {
+      "id": "browser_native_open",
+      "kind": "command",
+      "command": "pnpm benchmark:native-open",
+      "packageScript": "benchmark:native-open",
+      "state": "available",
+      "proves": "A user opening the unmodified golden .arq fixture through the built apps/web bundle in headless Chromium: the project reaches the workspace at its own revision, the plan draws the level on show and changes when the level changes, a wall selected by the project’s own id highlights in 3D, authoring is refused with its reason, the shell reports the read-only save state, each open releases the Worker before it, closing releases the last one, no request leaves the origin, and the fixture’s SHA-256 is unchanged.",
+      "doesNotProve": "Editing, saving, publishing, migration or import of an opened project, and any behaviour in a browser engine other than Chromium."
     },
     {
       "id": "browser_model_canvas",

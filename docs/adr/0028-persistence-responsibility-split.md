@@ -57,6 +57,42 @@ Until this ADR is accepted, the browser project-open pipeline and every claim
 that equates the current IndexedDB journal with a portable `.arq` save remain
 Blocked.
 
+## Read-only inspection under the accepted split
+
+This section was written while this ADR was Proposed, as a carve-out arguing that
+a read-only open could proceed ahead of the decision. Acceptance makes the
+argument unnecessary, so what remains is the narrower thing worth keeping on the
+record: how the implemented read-only path stands against what was accepted.
+
+It creates no canonical local state, so it exercises none of the ownership the
+acceptance grants. That is a property of the implementation, not an intention, and
+each part is asserted by a test or a browser check:
+
+1. The selected file is never written. Its bytes are copied into the Worker and
+   the connection is opened read-only at the SQLite level
+   (`SQLITE_DESERIALIZE_READONLY`) as well as by policy (`PRAGMA query_only`).
+   The golden fixture's SHA-256 is compared before and after every open.
+2. Nothing durable is created. No OPFS file is opened, no IndexedDB record is
+   written, no journal entry is appended, no working copy exists. Closing the
+   project leaves nothing behind, which is what makes the path reversible by
+   deleting code.
+3. No schema is created over a selected file. An empty or foreign file is
+   refused, never initialised into an Arq project and then reported as openable.
+4. The connection is hardened before the file's own schema content is queried.
+5. Every write request on such a connection is refused by ownership, not by the
+   file's version floors - a healthy, writable-looking project is still refused.
+6. The IndexedDB journal keeps exactly the authority it had, over the workspace's
+   own plan document. An opened `.arq` project is not journalled, and while one is
+   open the shell reports the governed `read-only` save state rather than any
+   state that asserts a write.
+
+Where this path stops, and what the acceptance requires of what comes next: an
+editable working copy is not implemented. Because the memory-resident connection
+here holds no canonical state, it is not a working copy and must not become one by
+extension - the accepted split puts canonical local project state in the Worker
+over OPFS, so an editable copy is a new implementation against that contract, with
+its own evidence, not a flag flipped on this one.
+
 ## Problem
 
 Without one named owner for each persistence responsibility, implementation can

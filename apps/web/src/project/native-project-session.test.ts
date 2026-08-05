@@ -17,6 +17,7 @@ function snapshot(overrides: Partial<NativeProjectSnapshot> = {}): NativeProject
     projectId: PROJECT_ID,
     displayName: 'Existing project',
     walls: [],
+    document: null,
     journalSequence: 0,
     readOnly: false,
     usedVfs: 'opfs-sahpool',

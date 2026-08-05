@@ -22,7 +22,7 @@
       "cancelled"
     ],
     "panel": ["docked", "collapsed", "overlay-open", "overlay-peek", "resizing", "hidden"],
-    "save": ["saved-local", "saving-local", "local-save-failed"],
+    "save": ["saved-local", "saving-local", "local-save-failed", "read-only"],
     "sync": ["not-configured", "offline", "queued", "syncing", "synced", "conflict", "sync-failed"],
     "selection": ["none", "hover", "single", "multi", "locked-target", "remote-selected"],
     "issue": ["open", "in-progress", "resolved", "reopened", "stale-context"],
