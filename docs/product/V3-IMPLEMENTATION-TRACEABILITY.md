@@ -158,10 +158,18 @@ from. The module's own comment is candid that its entries have "no backing
 implementation in this codebase yet". The behaviour is delivered through
 `shouldHandleShortcut`; the registry helper is not on that path.
 
-These two are worth stating plainly because they are what the caller-reachability
-check looks like when it is _wrong_. Three of its hits were real defects. Three
-were modules that are superseded or bypassed, where wiring them in would have
-made the product worse. The check finds candidates, not verdicts.
+Re-running the reachability check over the remaining `pre-existing` rows leaves
+thirteen hits, and all thirteen are private helpers or input types inside
+modules that are themselves reachable — `lastKnownGoodProject`, `readRefusal`,
+`writeRefusal`, `workingCopyIdForBytes`, and the `Create*Input` shapes their own
+factories consume. Deliberately internal, not stranded. Anyone re-running the
+check should expect those thirteen and not re-investigate them.
+
+The V3-142/V3-143 and V3-148 rows are worth stating plainly because they are
+what the caller-reachability check looks like when it is _wrong_. Three of its
+hits were real defects. Three were modules that are superseded or bypassed,
+where wiring them in would have made the product worse. The check finds
+candidates, not verdicts.
 
 ### V3-032, and why it is not `pre-existing`
 
