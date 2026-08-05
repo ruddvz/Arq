@@ -39,6 +39,12 @@ export interface ArqfsWorkerContext {
   readonly driver: ArqfsDriver;
   /** Which VFS actually opened this driver ('opfs-sahpool', or an honest fallback description) - see workers/arqfs-worker. */
   readonly usedVfs: string;
+  /**
+   * The project this Worker was constructed for, echoed on every response.
+   * OPFS is shared at the origin, so a client holding two Workers during a
+   * project switch cannot otherwise tell whose answer it just received.
+   */
+  readonly projectId: string;
   /** Mutated by `open`, read by every write. Required, because a gate that can be skipped by omitting an argument is not a gate. */
   readonly session: ArqfsWorkerSession;
   /**
@@ -67,8 +73,13 @@ export interface ArqfsWorkerContext {
   readonly exportDatabase?: () => Promise<Uint8Array>;
 }
 
-function refuse(id: number, code: ArqfsWorkerErrorCode, error: string): ArqfsWorkerResponse {
-  return { id, ok: false, code, error };
+function refuse(
+  context: ArqfsWorkerContext,
+  id: number,
+  code: ArqfsWorkerErrorCode,
+  error: string,
+): ArqfsWorkerResponse {
+  return { id, projectId: context.projectId, ok: false, code, error };
 }
 
 /**
@@ -181,6 +192,7 @@ export async function handleArqfsWorkerRequest(
       case 'importDatabase': {
         if (context.importDatabase === undefined) {
           return refuse(
+            context,
             request.id,
             ARQFS_WORKER_ERROR_CODES.unexpected,
             'This Worker cannot import a database into its working copy.',
@@ -197,6 +209,7 @@ export async function handleArqfsWorkerRequest(
         await context.importDatabase(request.bytes);
         return {
           id: request.id,
+          projectId: context.projectId,
           ok: true,
           payload: { kind: 'importDatabase', byteLength: request.bytes.byteLength },
         };
@@ -207,10 +220,11 @@ export async function handleArqfsWorkerRequest(
         // nothing about the checkpoint changes the project's canonical meaning.
         const refusal = writeRefusal(context.session);
         if (refusal !== null) {
-          return refuse(request.id, refusal.code, refusal.error);
+          return refuse(context, request.id, refusal.code, refusal.error);
         }
         if (context.exportDatabase === undefined) {
           return refuse(
+            context,
             request.id,
             ARQFS_WORKER_ERROR_CODES.exportUnsupported,
             'This Worker cannot hand back the working copy as portable bytes.',
@@ -231,15 +245,25 @@ export async function handleArqfsWorkerRequest(
         // A no-op, not an error, for a connection already outside WAL mode.
         context.driver.exec('PRAGMA journal_mode=DELETE');
         const bytes = await context.exportDatabase();
-        return { id: request.id, ok: true, payload: { kind: 'exportDatabase', bytes } };
+        return {
+          id: request.id,
+          projectId: context.projectId,
+          ok: true,
+          payload: { kind: 'exportDatabase', bytes },
+        };
       }
       case 'computeSemanticHash': {
         const refusal = readRefusal(context.session);
         if (refusal !== null) {
-          return refuse(request.id, refusal.code, refusal.error);
+          return refuse(context, request.id, refusal.code, refusal.error);
         }
         const hash = await computeProjectSemanticHash(context.driver);
-        return { id: request.id, ok: true, payload: { kind: 'computeSemanticHash', hash } };
+        return {
+          id: request.id,
+          projectId: context.projectId,
+          ok: true,
+          payload: { kind: 'computeSemanticHash', hash },
+        };
       }
       case 'open': {
         // application_id reads as 0 only on a database SQLite itself has never
@@ -266,6 +290,7 @@ export async function handleArqfsWorkerRequest(
 
         return {
           id: request.id,
+          projectId: context.projectId,
           ok: true,
           payload: { kind: 'open', result, usedVfs: context.usedVfs },
         };
@@ -273,10 +298,15 @@ export async function handleArqfsWorkerRequest(
       case 'putArchiveEntries': {
         const refusal = writeRefusal(context.session);
         if (refusal !== null) {
-          return refuse(request.id, refusal.code, refusal.error);
+          return refuse(context, request.id, refusal.code, refusal.error);
         }
         putArchiveEntries(context.driver, new Map(request.entries));
-        return { id: request.id, ok: true, payload: { kind: 'putArchiveEntries' } };
+        return {
+          id: request.id,
+          projectId: context.projectId,
+          ok: true,
+          payload: { kind: 'putArchiveEntries' },
+        };
       }
       case 'checkIntegrity': {
         // Gated on the same accepted open as every other read: a health report
@@ -285,10 +315,11 @@ export async function handleArqfsWorkerRequest(
         // connection whose hardening has not been decided.
         const refusal = readRefusal(context.session);
         if (refusal !== null) {
-          return refuse(request.id, refusal.code, refusal.error);
+          return refuse(context, request.id, refusal.code, refusal.error);
         }
         return {
           id: request.id,
+          projectId: context.projectId,
           ok: true,
           payload: { kind: 'checkIntegrity', report: checkArqfsIntegrity(context.driver) },
         };
@@ -296,35 +327,56 @@ export async function handleArqfsWorkerRequest(
       case 'getArchiveEntry': {
         const refusal = readRefusal(context.session);
         if (refusal !== null) {
-          return refuse(request.id, refusal.code, refusal.error);
+          return refuse(context, request.id, refusal.code, refusal.error);
         }
         const content = getArchiveEntry(context.driver, request.path);
-        return { id: request.id, ok: true, payload: { kind: 'getArchiveEntry', content } };
+        return {
+          id: request.id,
+          projectId: context.projectId,
+          ok: true,
+          payload: { kind: 'getArchiveEntry', content },
+        };
       }
       case 'listArchiveEntryPaths': {
         const refusal = readRefusal(context.session);
         if (refusal !== null) {
-          return refuse(request.id, refusal.code, refusal.error);
+          return refuse(context, request.id, refusal.code, refusal.error);
         }
         const paths = listArchiveEntryPaths(context.driver);
-        return { id: request.id, ok: true, payload: { kind: 'listArchiveEntryPaths', paths } };
+        return {
+          id: request.id,
+          projectId: context.projectId,
+          ok: true,
+          payload: { kind: 'listArchiveEntryPaths', paths },
+        };
       }
       case 'readAllArchiveEntries': {
         const refusal = readRefusal(context.session);
         if (refusal !== null) {
-          return refuse(request.id, refusal.code, refusal.error);
+          return refuse(context, request.id, refusal.code, refusal.error);
         }
         const entries = [...readAllArchiveEntries(context.driver)];
-        return { id: request.id, ok: true, payload: { kind: 'readAllArchiveEntries', entries } };
+        return {
+          id: request.id,
+          projectId: context.projectId,
+          ok: true,
+          payload: { kind: 'readAllArchiveEntries', entries },
+        };
       }
       case 'close': {
         context.driver.close();
         context.session.openResult = null;
-        return { id: request.id, ok: true, payload: { kind: 'close' } };
+        return {
+          id: request.id,
+          projectId: context.projectId,
+          ok: true,
+          payload: { kind: 'close' },
+        };
       }
     }
   } catch (error) {
     return refuse(
+      context,
       request.id,
       ARQFS_WORKER_ERROR_CODES.unexpected,
       error instanceof Error ? error.message : String(error),

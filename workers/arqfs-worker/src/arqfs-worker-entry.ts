@@ -38,7 +38,11 @@ import {
   type ArqfsWorkerContext,
 } from '@arq/arqfs/src/arqfs-worker-handler';
 import { createSqliteWasmArqfsDriver, type Sqlite3Oo1DatabaseLike } from './arqfs-opfs-driver';
-import { opfsFilenameForProject, readProjectIdFromWorkerSearch } from './arqfs-project-filename';
+import {
+  opfsFilenameForProject,
+  readProjectIdFromWorkerSearch,
+  readProjectIdOrUnknown,
+} from './arqfs-project-filename';
 
 const OPFS_SAHPOOL_VFS_NAME = 'arqfs-opfs-sahpool';
 
@@ -64,6 +68,7 @@ async function openContext(): Promise<ArqfsWorkerContext> {
         return driver;
       },
       usedVfs: 'opfs-sahpool',
+      projectId,
       session,
       /**
        * The only route a user's selected `.arq` bytes have into this Worker's
@@ -104,6 +109,7 @@ async function openContext(): Promise<ArqfsWorkerContext> {
     return {
       driver: createSqliteWasmArqfsDriver(db),
       usedVfs: `memory-fallback (opfs-sahpool unavailable: ${reason})`,
+      projectId,
       session,
     };
   }
@@ -127,8 +133,13 @@ self.onmessage = async (event: MessageEvent<ArqfsWorkerRequest>) => {
     // contextPromise rejects only for a Worker-construction mistake (missing/invalid
     // project id) that will never resolve on retry - every request gets a clear,
     // immediate error instead of silently hanging until the client's own timeout.
+    // The project id is re-read from this Worker's own URL rather than taken
+    // from the context that failed to build, so the refusal still names who
+    // it is from - falling back to an explicit "unknown" only when even that
+    // fails, which is exactly the failure this branch exists for.
     self.postMessage({
       id: event.data.id,
+      projectId: readProjectIdOrUnknown(self.location.search),
       ok: false,
       code: ARQFS_WORKER_ERROR_CODES.unexpected,
       error: error instanceof Error ? error.message : String(error),

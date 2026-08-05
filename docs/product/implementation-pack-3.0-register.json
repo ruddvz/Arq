@@ -11,11 +11,11 @@
     "not-inspected"
   ],
   "counts": {
-    "verified": 51,
+    "verified": 52,
     "implemented": 19,
     "blocked": 17,
     "partially-verified": 61,
-    "proposed": 33,
+    "proposed": 32,
     "not-inspected": 24
   },
   "taskCount": 205,
@@ -273,8 +273,8 @@
       "phase": "P2",
       "phaseName": "Worker and source safety",
       "task": "Add protocol request ID, project ID and revision",
-      "state": "proposed",
-      "evidence": "Not implemented. Responses carry a request id but not a project id, so a client cannot tell a response from a Worker opened for another project. Implemented on this branch earlier and dropped in the reconciliation to avoid a parallel protocol; worth reproposing."
+      "state": "verified",
+      "evidence": "Every ArqfsWorkerResponse now carries projectId, echoed by the context that produced it; ArqfsWorkerClientOptions.projectId, when set, fails a request whose response names a different project instead of accepting it. Tested in packages/arqfs (handler and client) and proven end to end by benchmark:e2e-arq-open and benchmark:file-open in headless Chromium."
     },
     {
       "id": "V3-033",

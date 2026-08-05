@@ -57,6 +57,7 @@ function createRealWorkerFactory(
         return driver;
       },
       usedVfs: 'test-node-driver',
+      projectId: workingCopyId,
       session: createArqfsWorkerSession(),
       importDatabase: async (bytes) => {
         driver.close();
@@ -115,6 +116,10 @@ async function projectBytes(
   const context: ArqfsWorkerContext = {
     driver,
     usedVfs: 'test-node-driver',
+    // Not the manifest's project id (that is `options.projectId`, an Arq
+    // concept) - this is the Worker-context field of the same name, and this
+    // context is throwaway authoring setup with no working copy of its own.
+    projectId: 'source-authoring',
     session: createArqfsWorkerSession(),
   };
   await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });

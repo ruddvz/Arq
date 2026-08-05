@@ -117,10 +117,26 @@ export const ARQFS_WORKER_ERROR_CODES = {
 export type ArqfsWorkerErrorCode =
   (typeof ARQFS_WORKER_ERROR_CODES)[keyof typeof ARQFS_WORKER_ERROR_CODES];
 
+/**
+ * Every response names the project it came from, not only the request it
+ * answers. A request id is unique inside one client, so id correlation alone
+ * cannot tell a client that the message it just received came from a Worker
+ * opened for a different project - and OPFS is shared at the origin, so "a
+ * different project" means "different bytes at the same storage." Two
+ * Workers alive at once during a project switch is the ordinary case, not an
+ * exotic one, which is why the answer carries its own identity rather than
+ * relying on the caller having wired the transport correctly.
+ */
 export type ArqfsWorkerResponse =
-  | { readonly id: number; readonly ok: true; readonly payload: ArqfsWorkerResponsePayload }
   | {
       readonly id: number;
+      readonly projectId: string;
+      readonly ok: true;
+      readonly payload: ArqfsWorkerResponsePayload;
+    }
+  | {
+      readonly id: number;
+      readonly projectId: string;
       readonly ok: false;
       readonly code: ArqfsWorkerErrorCode;
       readonly error: string;

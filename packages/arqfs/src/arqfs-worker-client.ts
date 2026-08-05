@@ -58,6 +58,19 @@ export interface ArqfsWorkerCrashInfo {
 
 export interface ArqfsWorkerClientOptions {
   /**
+   * The project this client's Worker was constructed for. When set, a
+   * response naming a different project fails its request with a protocol
+   * error instead of being accepted as the answer.
+   *
+   * Request ids are unique within one client, not across the origin, and
+   * OPFS storage is shared at the origin - so during a project switch, with
+   * the outgoing Worker still alive, id correlation alone cannot tell whose
+   * answer arrived. Failing loudly rather than ignoring the message is
+   * deliberate: a silently dropped response leaves the request to time out
+   * thirty seconds later with no indication of what actually happened.
+   */
+  readonly projectId?: string;
+  /**
    * Called once, the first time the underlying Worker fires 'error' or
    * 'messageerror'. Every pending request has already been rejected by the time
    * this runs, and every request on this client rejects from here on - this
@@ -101,6 +114,16 @@ export class ArqfsWorkerClient {
     this.pending.delete(response.id);
     if (pending.timeout !== undefined) clearTimeout(pending.timeout);
     pending.abort?.();
+    const expectedProjectId = this.options.projectId;
+    if (expectedProjectId !== undefined && response.projectId !== expectedProjectId) {
+      pending.reject(
+        new ArqfsWorkerRequestError(
+          response.id,
+          `arqfs Worker response is for project "${response.projectId}", not "${expectedProjectId}"`,
+        ),
+      );
+      return;
+    }
     if (response.ok) {
       pending.resolve(response.payload);
     } else {

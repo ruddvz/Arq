@@ -3,6 +3,8 @@ import {
   opfsFilenameForProject,
   arqfsWorkerUrlSearch,
   readProjectIdFromWorkerSearch,
+  readProjectIdOrUnknown,
+  UNKNOWN_ARQFS_PROJECT_ID,
 } from './arqfs-project-filename';
 
 describe('arqfs project-scoped OPFS filename', () => {
@@ -38,5 +40,21 @@ describe('arqfs project-scoped OPFS filename', () => {
 
   it('rejects a project id smuggled through the URL that would otherwise escape the projects directory', () => {
     expect(() => readProjectIdFromWorkerSearch('?project=..%2F..%2Fescape')).toThrow();
+  });
+
+  /**
+   * Every response the Worker sends carries a project id, including the one
+   * it sends when it could not be constructed at all - which is exactly the
+   * case where the id is missing or invalid, and where
+   * `readProjectIdFromWorkerSearch` would throw a second time and lose the
+   * original construction error.
+   */
+  it('answers with an explicit unknown project id when the URL has no usable one', () => {
+    expect(readProjectIdOrUnknown('')).toBe(UNKNOWN_ARQFS_PROJECT_ID);
+    expect(readProjectIdOrUnknown('?project=..%2Fescape')).toBe(UNKNOWN_ARQFS_PROJECT_ID);
+  });
+
+  it('answers with the real project id when the URL has a usable one', () => {
+    expect(readProjectIdOrUnknown('?project=project-a')).toBe('project-a');
   });
 });

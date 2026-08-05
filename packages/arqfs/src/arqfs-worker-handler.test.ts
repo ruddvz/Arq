@@ -12,6 +12,8 @@ import { ARQFS_SCHEMA_VERSION_V2 } from './arqfs-schema-v2';
 import { preflightArqfsBytes } from './arqfs-preflight';
 import type { ArqfsDriver } from './arqfs-driver';
 
+const TEST_PROJECT_ID = 'test-project';
+
 describe('handleArqfsWorkerRequest', () => {
   let driver: ArqfsDriver;
   let context: ArqfsWorkerContext;
@@ -22,7 +24,12 @@ describe('handleArqfsWorkerRequest', () => {
 
   function freshContext(): ArqfsWorkerContext {
     driver = createNodeArqfsDriver();
-    context = { driver, usedVfs: 'test-node-driver', session: createArqfsWorkerSession() };
+    context = {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
+      session: createArqfsWorkerSession(),
+    };
     return context;
   }
 
@@ -108,7 +115,12 @@ describe('handleArqfsWorkerRequest', () => {
     await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
 
     const response = await handleArqfsWorkerRequest(ctx, { id: 2, type: 'close' });
-    expect(response).toEqual({ id: 2, ok: true, payload: { kind: 'close' } });
+    expect(response).toEqual({
+      id: 2,
+      projectId: TEST_PROJECT_ID,
+      ok: true,
+      payload: { kind: 'close' },
+    });
   });
 
   it('reports a failed request as ok: false rather than throwing past the handler', async () => {
@@ -148,7 +160,12 @@ describe('the read gate', () => {
 
   function context(): ArqfsWorkerContext {
     driver = createNodeArqfsDriver();
-    return { driver, usedVfs: 'test-node-driver', session: createArqfsWorkerSession() };
+    return {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
+      session: createArqfsWorkerSession(),
+    };
   }
 
   const readRequests = [
@@ -273,6 +290,7 @@ describe('the write gate', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
     await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
@@ -288,6 +306,7 @@ describe('the write gate', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
 
@@ -397,6 +416,7 @@ describe('the defensive open policy', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
     await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
@@ -424,6 +444,7 @@ describe('the defensive open policy', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
     await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
@@ -441,6 +462,7 @@ describe('the defensive open policy', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
     await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
@@ -479,6 +501,7 @@ describe('importing a database into the working copy', () => {
       context: {
         driver,
         usedVfs: 'test-node-driver',
+        projectId: TEST_PROJECT_ID,
         session: createArqfsWorkerSession(),
         importDatabase: async (bytes) => {
           imported.push(bytes);
@@ -536,6 +559,7 @@ describe('importing a database into the working copy', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
 
@@ -566,7 +590,12 @@ describe('the working-copy integrity check', () => {
 
   function context(): ArqfsWorkerContext {
     driver = createNodeArqfsDriver();
-    return { driver, usedVfs: 'test-node-driver', session: createArqfsWorkerSession() };
+    return {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
+      session: createArqfsWorkerSession(),
+    };
   }
 
   it('reports a healthy working copy as ok', async () => {
@@ -626,6 +655,7 @@ describe('exportDatabase', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
       ...(options.withExporter === false
         ? {}
@@ -700,6 +730,7 @@ describe('exportDatabase', () => {
       const reopenedContext: ArqfsWorkerContext = {
         driver: reopened,
         usedVfs: 'test-node-driver',
+        projectId: TEST_PROJECT_ID,
         session: createArqfsWorkerSession(),
       };
       const opened = await handleArqfsWorkerRequest(reopenedContext, { id: 4, type: 'open' });
@@ -778,7 +809,12 @@ describe('computeSemanticHash', () => {
 
   function context(): ArqfsWorkerContext {
     driver = createNodeArqfsDriver();
-    return { driver, usedVfs: 'test-node-driver', session: createArqfsWorkerSession() };
+    return {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
+      session: createArqfsWorkerSession(),
+    };
   }
 
   it('refuses before any open, like every other read', async () => {
@@ -836,5 +872,58 @@ describe('computeSemanticHash', () => {
     ) {
       expect(changed.payload.hash).not.toBe(first.payload.hash);
     }
+  });
+});
+
+/**
+ * Every response names the project it came from, success or refusal - not
+ * only the request it answers. Request ids are unique inside one client, not
+ * across the origin, and OPFS storage is shared at the origin, so during a
+ * project switch id correlation alone cannot tell a client that a message
+ * came from a Worker opened for a different project.
+ */
+describe('response project identity', () => {
+  it('names the project on both a successful and a refused response', async () => {
+    const driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: 'project-a',
+      session: createArqfsWorkerSession(),
+    };
+
+    const ok = await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    const refusal = await handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'putArchiveEntries',
+      entries: [],
+    });
+
+    expect(ok.projectId).toBe('project-a');
+    expect(refusal.projectId).toBe('project-a');
+    driver.close();
+  });
+
+  it("carries the constructing context's project id even after importDatabase replaces the working copy", async () => {
+    const driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: 'project-b',
+      session: createArqfsWorkerSession(),
+      importDatabase: async () => undefined,
+    };
+
+    const imported = await handleArqfsWorkerRequest(context, {
+      id: 1,
+      type: 'importDatabase',
+      bytes: new Uint8Array(0),
+    });
+
+    // The project id names which Worker answered, not which database it
+    // currently holds - importing replaces the latter and must not change
+    // the former.
+    expect(imported.projectId).toBe('project-b');
+    driver.close();
   });
 });

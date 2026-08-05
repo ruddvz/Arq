@@ -298,6 +298,15 @@ work (P4 in the register below), and publish is honest about operating on
 whatever the working copy actually holds rather than claiming to capture
 edits it cannot yet see.
 
+Every Worker response now names the project it came from, not only the
+request it answers. Request ids are unique inside one client, not across the
+origin, and OPFS is shared at the origin - so during a project switch, with
+the outgoing Worker still alive, id correlation alone could not tell a
+client whose answer had just arrived. A client that declares which project
+it expects now fails loudly on a mismatch instead of silently accepting it;
+proven end to end by `benchmark:e2e-arq-open` and `benchmark:file-open`
+against the real bundled Worker.
+
 ## What the Implementation Pack 3.0 asks for, and what is real
 
 `docs/product/IMPLEMENTATION-PACK-3.0-REGISTER.md` records all 205 tasks the
@@ -306,12 +315,14 @@ repository can support for it and the evidence that decided it. It is generated
 from `docs/product/implementation-pack-3.0-register.json` by
 `pnpm build:pack-register`, so the prose cannot drift from the data.
 
-51 verified, 19 implemented, 61 partially verified, 33 proposed, 17 blocked on
+52 verified, 19 implemented, 61 partially verified, 32 proposed, 17 blocked on
 owner action, 24 not inspected. Publication (P5) moved from proposed to
-verified in this pass. The largest remaining gaps it names are the numeric and
-tolerance foundation with everything that depends on it, canvas edits not yet
-reaching the native session so publish operates on whatever was opened rather
-than live edits, and the release authority that is settings rather than code.
+verified in this pass, and the Worker protocol's project-id correlation
+(V3-032) moved from proposed to verified. The largest remaining gaps it names
+are the numeric and tolerance foundation with everything that depends on it,
+canvas edits not yet reaching the native session so publish operates on
+whatever was opened rather than live edits, and the release authority that is
+settings rather than code.
 A pack is evidence and a proposed handoff, not repository authority; the
 register is reconciled against this repository rather than against the revision
 the pack observed.
