@@ -24,6 +24,9 @@ Always begin with `.zeus/FAST-KERNEL.md`. Load nothing else by default.
 
 ```bash
 node scripts/zeus.mjs compile  --task "..."      # the contract for a request
+node scripts/zeus.mjs prompt   --task "..."      # the full execution prompt it compiles into
+node scripts/zeus.mjs prompt-lint <file>         # lint a delegated handoff prompt (7 parts)
+node scripts/zeus.mjs roles    --task "..."      # owner, company face, waves and rules
 node scripts/zeus.mjs route    --task "..."      # modules and scores only
 node scripts/zeus.mjs method   --task "..."      # the method stack, with reasons
 node scripts/zeus.mjs impact   [--files a,b]     # blast radius and checks for a diff

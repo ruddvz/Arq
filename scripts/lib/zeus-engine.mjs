@@ -601,4 +601,82 @@ export function markdown(c) {
   ].join('\n');
 }
 
+/* ------------------------------------------------------------------ *
+ * Execution prompt
+ *
+ * The compact contract states what Zeus decided. The execution prompt is the
+ * instruction block those decisions compile into — the prompt the executor
+ * actually works from. Rendering it makes the routing transparent: the
+ * operator sees, for every request, exactly what Zeus told the executor to
+ * do, in which order, with which methods, and what evidence closes it.
+ * ------------------------------------------------------------------ */
+
+const methodLine = (label, tag) => {
+  const m = METHODS.find((x) => x.label === label);
+  return `- **${tag}** \`${label}\`${m?.effect ? ` — ${m.effect}` : ''}`;
+};
+
+export function executionPrompt(c) {
+  const moduleLines = c.modules.length
+    ? c.modules.map((id, i) => {
+        const m = MODULES.find((x) => x.id === id);
+        return `- ${m?.title ?? id} → \`${c.modulePaths[i] ?? ''}\``;
+      })
+    : ['- none — the fast kernel alone carries this task'];
+
+  const stack = [
+    methodLine(c.methods.primary, 'primary'),
+    ...c.methods.supporting.map((l) => methodLine(l, 'support')),
+    ...c.methods.formatting.map((l) => methodLine(l, 'format, last')),
+  ];
+
+  const reviewers = [
+    c.reviewers.length ? `role review: ${c.reviewers.join(', ')}` : null,
+    c.reviewAgents.length ? `independent agents: ${c.reviewAgents.join(', ')}` : null,
+  ].filter(Boolean);
+
+  return [
+    '# Zeus 5 Execution Prompt',
+    '',
+    '_The full prompt compiled for this request — what the executor is told to do._',
+    '',
+    `You are the Arq **${c.owner}**, accountable for this ${c.tier}-tier ${c.mode} task.`,
+    `Risk **${c.risk}** · blast radius **${c.blastRadius}** · reversibility **${c.reversibility}**.`,
+    `Deliver to **${c.deliveryStop}** and stop there; later stages are non-goals.`,
+    '',
+    '**Task**',
+    `> ${c.intent}`,
+    '',
+    '**1. Load** `.zeus/FAST-KERNEL.md` plus only the routed modules:',
+    ...moduleLines,
+    '',
+    `**2. Retrieve** ranked evidence within budget (${c.budget.sources} sources, ${c.budget.contextChars} chars):`,
+    `\`node scripts/zeus.mjs context --query "<task terms>"\` — never whole-repository reads.`,
+    '',
+    '**3. Apply** the method stack in order:',
+    ...stack,
+    '',
+    `**4. Execute** the smallest complete slice that reaches ${c.deliveryStop}.`,
+    ...c.nonGoals.map((g) => `- non-goal: ${g}`),
+    '',
+    `**5. Verify** with the ${c.tier} check ladder: \`node scripts/zeus.mjs check --tier ${c.tier}\` (${c.cachePolicy}).`,
+    ...c.checks.map((x) => `- ${x}`),
+    '',
+    '**6. Prove acceptance** — every box needs current evidence, and only `verified` is green:',
+    ...c.acceptance.map((x) => `- [ ] ${x}`),
+    '',
+    `**7. Review and report** — ${reviewers.length ? reviewers.join(' · ') : 'self-review; no independent reviewers routed at this tier'}.`,
+    `Report each claim with its evidence state (verified, partially-verified, inferred, assumed, blocked, not-inspected, failed). Repair within ${c.budget.repairRounds} rounds, then report what still fails.`,
+    '',
+    '**8. Handoff** with exactly one final state: green, partial, blocked, failed or rolled_back. Never "perfect", never a claim without its evidence.',
+    '',
+    '**Standing orders (always on, nobody has to ask)**',
+    '- Critique your own result and repair it before reporting; the operator never has to type "check your work".',
+    '- Any prompt you write for a subagent or another model is shown in full, in a fenced code block, before dispatch (`node scripts/zeus.mjs prompt-lint` checks its shape). Never dispatch a prompt the operator has not seen.',
+    '- Only verified evidence is green; unknown, blocked and failed are never green.',
+    '- Engineering OS 5.0 owns the merge gate and the Arq Language System 4.1 owns public wording; report defects to them, never re-decide for them.',
+    '',
+  ].join('\n');
+}
+
 export { config, manifest, methodRegistry, blastRadius };

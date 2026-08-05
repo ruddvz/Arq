@@ -4,8 +4,10 @@
 {"path":".claude/commands/zeus-handoff.md"}
 {"path":".claude/commands/zeus-incident.md"}
 {"path":".claude/commands/zeus-release.md"}
+{"path":".claude/commands/zeus-team.md"}
 {"path":".claude/commands/zeus.md"}
 {"path":".claude/settings.example.json"}
+{"path":".claude/settings.json"}
 {"path":".claude/skills/zeus/SKILL.md"}
 {"path":".cursor/rules/zeus-always-on.mdc"}
 {"path":".github/copilot-instructions.md"}
@@ -40,6 +42,9 @@
 {"path":".zeus/role-registry.json"}
 {"path":".zeus/run-state.example.json"}
 {"path":".zeus/run-state.schema.json"}
+{"path":"AGENTS.md"}
+{"path":"CLAUDE-ZEUS-SNIPPET.md"}
+{"path":"CLAUDE.md"}
 {"path":"docs/ARQ-SOURCE-OF-TRUTH-MAP.md"}
 {"path":"docs/EXECUTION-CHECKLIST.md"}
 {"path":"docs/GITHUB-CI-CD-ADAPTERS.md"}
@@ -100,6 +105,8 @@
 {"path":"scripts/zeus-module-route.mjs"}
 {"path":"scripts/zeus-preflight.mjs"}
 {"path":"scripts/zeus-production-smoke.mjs"}
+{"path":"scripts/zeus-prompt-lint.mjs"}
+{"path":"scripts/zeus-prompt.mjs"}
 {"path":"scripts/zeus-release-gate.mjs"}
 {"path":"scripts/zeus-release-watch.mjs"}
 {"path":"scripts/zeus-role-plan.mjs"}
@@ -108,7 +115,3 @@
 {"path":"scripts/zeus-verify.mjs"}
 {"path":"scripts/zeus-visual-contract-lint.mjs"}
 {"path":"scripts/zeus.mjs"}
-{"path":"AGENTS.md"}
-{"path":"CLAUDE-ZEUS-SNIPPET.md"}
-{"path":".claude/settings.json"}
-{"path":"CLAUDE.md"}

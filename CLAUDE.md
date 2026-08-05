@@ -24,11 +24,14 @@ domain and the reviewer agents in `.claude/agents/` verify against them. Do not 
 them elsewhere.
 
 A `UserPromptSubmit` hook (`.claude/settings.json` → `scripts/zeus-hook.sh`) compiles and
-echoes back the actual Zeus contract for every actionable prompt — mode, risk, tier,
-blast radius, reversibility, delivery stop, owner, reviewers, routed modules, method
-stack, acceptance criteria and checks — so what Zeus decided is always visible, not
-silent. It stays quiet only on acknowledgements, `/zeus-*` slash commands (which already
-carry their own contract), and automation/webhook payloads.
+echoes back, for every actionable prompt, both the compact Zeus contract — mode, risk,
+tier, blast radius, reversibility, delivery stop, owner, reviewers, routed modules,
+method stack, acceptance criteria and checks — and the full execution prompt those
+decisions compile into (`node scripts/zeus.mjs prompt --task "..."` renders it on
+demand), so both what Zeus decided and the exact prompt the executor works from are
+always visible, never silent. Set `ZEUS_HOOK_PROMPT=0` to reduce the echo to the compact
+contract alone. The hook stays quiet only on acknowledgements, `/zeus-*` slash commands
+(which already carry their own contract), and automation/webhook payloads.
 
 Two deterministic guards run alongside it: `.claude/hooks/pre-tool-guard.cjs` blocks
 destructive commands, secret access and edits to real project containers (ArqScript
@@ -36,9 +39,18 @@ destructive commands, secret access and edits to real project containers (ArqScr
 blocks a completion claim made with no tool evidence at all. Both are pinned by
 `node scripts/zeus-guard-test.mjs`.
 
+A company layer (`company/`) fronts the Zeus owner roles with named senior roles - CEO,
+CTO, VP Engineering, Backend/Frontend/Geometry/AI/Security/QA leads, Product Manager,
+Design Lead, Marketing & Comms, Incident Commander, Chief of Staff. Activate one with
+"Act as the Arq <Role>"; `node scripts/zeus.mjs roles --task "..."` prints the chain for
+a task, and `/zeus-team` runs a task through the whole chain autonomously. Roles add
+judgement and a named owner, never authority: tiers, evidence, the merge gate and the
+vocabulary stay where they are. Any prompt written for a subagent is shown in full
+before dispatch and checked with `node scripts/zeus.mjs prompt-lint`.
+
 Full specification: `.zeus/ZEUS.md`. What changed from Zeus 4: `.zeus/UPGRADE-4-TO-5.md`.
 Slash commands: `/zeus`, `/zeus-audit`, `/zeus-handoff`, `/zeus-design`,
-`/zeus-incident`, `/zeus-release`.
+`/zeus-incident`, `/zeus-release`, `/zeus-team`.
 
 **Zeus is advisory, not merge authority.** Deterministic change classification,
 evidence selection, and approval gating belong to Engineering OS 5.0

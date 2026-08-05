@@ -5,6 +5,9 @@ const dir = dirname(new URL(import.meta.url).pathname);
 const [cmd, ...args] = process.argv.slice(2);
 const map = {
   compile: 'zeus-fast-compile.mjs',
+  prompt: 'zeus-prompt.mjs',
+  'prompt-lint': 'zeus-prompt-lint.mjs',
+  roles: 'zeus-role-plan.mjs',
   route: 'zeus-module-route.mjs',
   method: 'zeus-method.mjs',
   evidence: 'zeus-evidence.mjs',
