@@ -98,15 +98,6 @@ describe('describeFileFlowState', () => {
       { kind: 'detecting', name: 'a.arq' },
       { kind: 'native-opening', name: 'a.arq', sidecarDependency: 'complete' },
       { kind: 'native-opening', name: 'a.arq', sidecarDependency: 'write-ahead-log-sidecar' },
-      { kind: 'opening-project', name: 'a.arq', stageName: 'Shell', sidecarDependency: 'complete' },
-      {
-        kind: 'project-open-read-only',
-        name: 'a.arq',
-        projectName: 'A',
-        revision: 3,
-        sidecarDependency: 'complete',
-        conditionNote: null,
-      },
       { kind: 'import-options', name: 'a.dxf', formatId: 'dxf' },
       { kind: 'importing', name: 'a.dxf', requestId: 'r1', fraction: 0.5 },
       { kind: 'staged-review', name: 'a.dxf', requestId: 'r1' },
@@ -128,12 +119,16 @@ describe('describeFileFlowState', () => {
    */
   it('says a project is open, and in the same breath what cannot be done with it', () => {
     const description = describeFileFlowState({
-      kind: 'project-open-read-only',
+      kind: 'workspace-active',
       name: 'house.arq',
-      projectName: 'Courtyard House Reference',
-      revision: 191,
-      sidecarDependency: 'complete',
-      conditionNote: null,
+      projectId: 'open-1',
+      readOnlyReason: 'build-cannot-write',
+      facts: {
+        projectName: 'Courtyard House Reference',
+        revision: 191,
+        sidecarDependency: 'complete',
+        conditionNote: null,
+      },
     });
 
     expect(description.headline).toBe(
@@ -144,14 +139,60 @@ describe('describeFileFlowState', () => {
     expect(description.tone).toBe('neutral');
   });
 
+  /**
+   * Two causes, two sentences. Telling a reader their file is from a newer ARQ
+   * when the real limit is this build is a false statement about their own work,
+   * so the copy must not collapse the two into one read-only apology.
+   */
+  it('names the cause of read-only rather than assuming one', () => {
+    const byFile = describeFileFlowState({
+      kind: 'workspace-active',
+      name: 'house.arq',
+      projectId: 'p1',
+      readOnlyReason: 'newer-format-version',
+      facts: {
+        projectName: 'House',
+        revision: 4,
+        sidecarDependency: 'complete',
+        conditionNote: null,
+      },
+    });
+
+    expect(byFile.detail).toMatch(/newer version of ARQ/i);
+    expect(byFile.detail).not.toMatch(/does not edit or save/i);
+  });
+
+  it('says nothing about read-only when the project is writable', () => {
+    const description = describeFileFlowState({
+      kind: 'workspace-active',
+      name: 'house.arq',
+      projectId: 'p1',
+      readOnlyReason: null,
+      facts: {
+        projectName: 'House',
+        revision: 4,
+        sidecarDependency: 'complete',
+        conditionNote: null,
+      },
+    });
+
+    expect(description.headline).toBe('House is open · revision 4');
+    expect(description.headline).not.toMatch(/read-only/i);
+    expect(description.detail).toBeNull();
+  });
+
   it('keeps the write-ahead-log caution after a successful open', () => {
     const description = describeFileFlowState({
-      kind: 'project-open-read-only',
+      kind: 'workspace-active',
       name: 'house.arq',
-      projectName: 'House',
-      revision: 4,
-      sidecarDependency: 'write-ahead-log-sidecar',
-      conditionNote: null,
+      projectId: 'open-1',
+      readOnlyReason: 'build-cannot-write',
+      facts: {
+        projectName: 'House',
+        revision: 4,
+        sidecarDependency: 'write-ahead-log-sidecar',
+        conditionNote: null,
+      },
     });
 
     // A successful open must not swallow the fact that the newest work may be in
@@ -162,29 +203,42 @@ describe('describeFileFlowState', () => {
 
   it('adds a file condition note when the open found one worth stating', () => {
     const description = describeFileFlowState({
-      kind: 'project-open-read-only',
+      kind: 'workspace-active',
       name: 'house.arq',
-      projectName: 'House',
-      revision: 4,
-      sidecarDependency: 'complete',
-      conditionNote: 'A previous write to this project did not finish.',
+      projectId: 'open-1',
+      readOnlyReason: 'build-cannot-write',
+      facts: {
+        projectName: 'House',
+        revision: 4,
+        sidecarDependency: 'complete',
+        conditionNote: 'A previous write to this project did not finish.',
+      },
     });
 
     expect(description.detail).toMatch(/did not finish/);
   });
 
-  it('names the open stage instead of inventing a percentage', () => {
-    const description = describeFileFlowState({
-      kind: 'opening-project',
-      name: 'house.arq',
-      stageName: 'Skeleton',
-      sidecarDependency: 'complete',
-    });
-
-    expect(description.tone).toBe('progress');
-    expect(description.headline).toBe('Opening house.arq…');
-    expect(description.detail).toBe('Step: Skeleton.');
-    // No fabricated fraction: the staged open has no measurable one.
-    expect(description.headline).not.toMatch(/%/);
+  /**
+   * The states between preflight and an active workspace are the ones a false
+   * open would hide in, so none of them may use the word.
+   */
+  it('never says a project is open before hydration finishes', () => {
+    const inFlight: readonly FileFlowState[] = [
+      { kind: 'worker-open', name: 'house.arq', projectId: 'p1', readOnlyReason: null },
+      {
+        kind: 'worker-open',
+        name: 'house.arq',
+        projectId: 'p1',
+        readOnlyReason: 'build-cannot-write',
+      },
+      { kind: 'hydrating', name: 'house.arq', projectId: 'p1', readOnlyReason: null },
+    ];
+    for (const state of inFlight) {
+      const description = describeFileFlowState(state);
+      expect(description.tone).toBe('progress');
+      expect(description.headline).not.toMatch(/\bis open\b/);
+      // No fabricated fraction: neither stage has a measurable one.
+      expect(description.headline).not.toMatch(/%/);
+    }
   });
 });

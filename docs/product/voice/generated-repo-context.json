@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "8109d88a6d82a6e2381b0dea3a49b92b075a2a4b73b50bad5f8e6da4cf0c1eff",
+  "sourceSetDigest": "96744a98c88b7c671521588c4ba3cd501eb378148b93186505247a9af2f134fe",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -345,12 +345,12 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "60a681bcfa5db2e0a7fb0b942d65332b2d459b4147c538f5f78b9ab443ae7c33",
+      "sha256": "f5543aa1cad82a169937a57a330e098d679e37e859bb22e7b9d9c906fbaf934d",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
-          "sha256": "e979fce6f58b5a4e705c5b69cc930a7fceebc535967e00c115b613bfc864babf",
-          "bytes": 13211
+          "sha256": "5d30c2436c187c1048d4500d59a8b74800d52aaae6369b76960fae2bc8259c8d",
+          "bytes": 13717
         },
         {
           "rel": "apps/web/src/file-handling/active-project.test.ts",
@@ -374,13 +374,13 @@
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",
-          "sha256": "a661b524870d95539004a77142d65a39e0343e3071aff5c0a6ee5e07067e7cdd",
-          "bytes": 7569
+          "sha256": "0805071c0ad824fe5b6bc1038699ae50a4d468489bd07c4e76fbda5c95323ccf",
+          "bytes": 9286
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-          "sha256": "a76ce31b082f8519ede4aa8f7dd8c38992d43d3f8aa48ac38cb62bb582df9b5d",
-          "bytes": 5658
+          "sha256": "e9dd7b59d48eca2a3827128125a9e9e4661434d72d3a5970160e1c751fdb390d",
+          "bytes": 11684
         },
         {
           "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
@@ -394,13 +394,13 @@
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.test.ts",
-          "sha256": "a27d14f35d1373af61bdf1e2c9f8e32bbcebf57258bc818c73cc71131aa8e000",
-          "bytes": 7425
+          "sha256": "2d5d75a8fdda09d2ef7dc227e02bdd955f2d10447a489d0b2c62a62f9dd47ee3",
+          "bytes": 13160
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.ts",
-          "sha256": "872b7a19c24ca3c77022149e7fe564dc1a6d61070adedfe461229e3dc2791124",
-          "bytes": 6932
+          "sha256": "dffe19cb0d503c3c67931d557a8b7fa7b631e34bba50478798d89ae8f272a4ac",
+          "bytes": 18676
         },
         {
           "rel": "apps/web/src/file-handling/index.ts",
@@ -2862,14 +2862,26 @@
       "acquiring",
       "detecting",
       "native-opening",
-      "opening-project",
-      "project-open-read-only",
       "import-options",
       "importing",
       "staged-review",
       "migrating",
       "read-only-safe-mode",
-      "failed"
+      "failed",
+      "staging",
+      "staged",
+      "migration-verified",
+      "worker-open",
+      "hydrating",
+      "workspace-active",
+      "quarantined",
+      "cancelled",
+      "project-failed",
+      "recovery-available",
+      "recovering",
+      "publishing",
+      "published",
+      "closed"
     ],
     "web-plan-journal-status": [
       "recovered",

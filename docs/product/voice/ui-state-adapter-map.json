@@ -59,16 +59,22 @@
           "meaning": "Use only if a readable project session was actually created. Otherwise describe the compatibility or recovery outcome instead."
         },
         {
-          "internal": "opening-project",
+          "internal": "worker-open",
           "canonicalMessageId": "file.compatible-not-open",
           "exposure": "product",
-          "meaning": "The open is in progress; no project context exists yet."
+          "meaning": "The Worker holds the project file; no semantic content has been read, so no project context exists yet."
         },
         {
-          "internal": "project-open-read-only",
+          "internal": "hydrating",
+          "canonicalMessageId": "file.compatible-not-open",
+          "exposure": "product",
+          "meaning": "Semantic content is being read. The workspace is not active yet."
+        },
+        {
+          "internal": "workspace-active",
           "canonicalMessageId": "file.project-ready",
           "exposure": "product",
-          "meaning": "A readable project session was created and the workspace is showing it. Read-only: no authoring and no save path exists for it."
+          "meaning": "A readable project session was created and the workspace is showing it. In this build it is always read-only, because no authoring or save path exists for it."
         }
       ]
     }

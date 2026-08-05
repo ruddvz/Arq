@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
 import { ArqModalDialog, useViewportProbe } from '@arq/design-system';
-import { OPEN_STAGES } from '@arq/project-loading';
-import { reduceFileFlow, type FileFlowState } from './file-state-machine';
+import { isProjectOpen, reduceFileFlow, type FileFlowState } from './file-state-machine';
 import { describeFileFlowState } from './describe-file-flow-state';
 import { openNativeProject, type NativeOpenAttempt } from './open-native-project';
 import type { ArqfsWorkerFactory } from './arqfs-worker-transport';
@@ -92,23 +91,30 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
       return;
     }
 
-    // Success. The flow's own states are walked in order rather than jumped,
-    // because the sequence is what the governed file-flow policy requires be
-    // kept distinct - and because the reader saw those states go by.
+    // Success. The lifecycle's own states are walked in order rather than
+    // jumped, because the sequence is what the governed file-flow policy
+    // requires be kept distinct - and because the reader saw those states go by.
+    //
+    // Staging and migration are skipped, and the skip is the honest report:
+    // this open never copies the selected bytes anywhere. `open-in-place` is
+    // the only transition that reaches the lifecycle without them, and it is
+    // read-only by construction.
     const { staged } = result;
+    const sidecarDependency =
+      result.preflight?.status === 'accepted' ? result.preflight.sidecarDependency : 'complete';
+    advance({ type: 'route-native', sidecarDependency });
+    // The projectId of an in-place open is the session, not a working copy:
+    // there is no copy on disk for an id to name.
+    advance({ type: 'open-in-place', projectId: `open-${attempt}` });
+    advance({ type: 'hydrate-start' });
     advance({
-      type: 'route-native',
-      sidecarDependency:
-        result.preflight?.status === 'accepted' ? result.preflight.sidecarDependency : 'complete',
-    });
-    advance({ type: 'open-start', stageName: OPEN_STAGES[0]!.name });
-    const highest = staged.progress.highestCompleted ?? 0;
-    advance({ type: 'open-stage', stageName: OPEN_STAGES[highest]!.name });
-    advance({
-      type: 'project-opened',
-      projectName: staged.model.summary.projectName,
-      revision: staged.model.summary.revision,
-      conditionNote: conditionNoteFor(staged),
+      type: 'hydrated',
+      facts: {
+        projectName: staged.model.summary.projectName,
+        revision: staged.model.summary.revision,
+        sidecarDependency,
+        conditionNote: conditionNoteFor(staged),
+      },
     });
     onProjectOpened(result);
   }
@@ -135,8 +141,13 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
 
   const description = describeFileFlowState(state);
   const busy =
-    state.kind === 'acquiring' || state.kind === 'detecting' || state.kind === 'opening-project';
-  const finished = state.kind === 'project-open-read-only';
+    state.kind === 'acquiring' ||
+    state.kind === 'detecting' ||
+    state.kind === 'worker-open' ||
+    state.kind === 'hydrating';
+  // The one predicate that decides whether a project is open, rather than this
+  // panel testing state kinds and drifting from every other surface.
+  const finished = isProjectOpen(state);
   // A pointer that cannot drag must not be told to drop. On a phone the drop
   // target is just a button, and calling it a drop zone describes a gesture the
   // reader does not have.
