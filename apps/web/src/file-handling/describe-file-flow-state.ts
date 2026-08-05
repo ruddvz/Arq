@@ -226,8 +226,10 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
 }
 
 /**
- * One sentence per cause. Both are true statements a reader can act on: the
- * first says the limit is this build, the second says the limit is the file.
+ * One sentence per cause. Each is a true statement a reader can act on, and each
+ * names a different limit: this build, the file, or another window of their own.
+ * The third is the only one with a remedy the reader holds, which is why it says
+ * what to do rather than only what is true.
  */
 function describeReadOnlyReason(
   reason: Exclude<Extract<FileFlowState, { kind: 'workspace-active' }>['readOnlyReason'], null>,
@@ -237,6 +239,8 @@ function describeReadOnlyReason(
       return 'It is open for inspection: this build does not edit or save a .arq project, and the file you chose is unchanged.';
     case 'newer-format-version':
       return 'This project was written by a newer version of ARQ, so it can be read but not changed.';
+    case 'another-window-is-editing':
+      return 'This project is being edited in another window, so it is open here for reading. Close it there to edit it here.';
   }
 }
 

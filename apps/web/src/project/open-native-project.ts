@@ -18,6 +18,11 @@ import {
   verifyEntryDigestsOfEntries,
 } from '@arq/arqfs/src/arqfs-entry-digests';
 import { semanticHashOfEntries } from '@arq/arqfs/src/arqfs-semantic-hash';
+import {
+  acquireSingleWriterLock,
+  describeReadOnlyReason,
+  type ArqfsWriterLease,
+} from '@arq/arqfs/src/arqfs-single-writer-lock';
 import type { ArqfsOpenResult } from '@arq/arqfs/src/arqfs-open';
 import { ArqfsWorkerClient } from '@arq/arqfs/src/arqfs-worker-client';
 import { resolveNativeOpenCapabilities } from './native-open-policy';
@@ -85,7 +90,11 @@ function manifestOf(value: unknown): ArqManifest | null {
  */
 export interface NativeOpenProgress {
   readonly onStaged: (projectId: string) => void;
-  readonly onWorkerOpened: (writable: boolean) => void;
+  readonly onWorkerOpened: (
+    writable: boolean,
+    /** Set when this context lost the writer lock, which is not the file's doing. */
+    lockReason: 'another-window-is-editing' | null,
+  ) => void;
   readonly onHydrateStart: () => void;
 }
 
@@ -100,6 +109,15 @@ export async function openNativeProject(
    * workspace, and this function must not reach into it.
    */
   activeWorkingCopyId?: string | null,
+  /**
+   * Asks to be this project's writer. Injected so the pipeline is testable
+   * without `navigator.locks`, which jsdom does not provide - the real
+   * implementation already degrades to a read-only lease when it is absent, so
+   * an un-injected test would silently exercise only that branch.
+   */
+  acquireWriterLease: (options: {
+    readonly projectId: string;
+  }) => Promise<ArqfsWriterLease> = acquireSingleWriterLock,
 ): Promise<NativeOpenResult> {
   // Byte checks first: no Worker, no OPFS, nothing to clean up if these refuse.
   const completeness = evaluateArqfsSourceCompleteness(bytes);
@@ -114,6 +132,23 @@ export async function openNativeProject(
   if (workingCopyId === activeWorkingCopyId) {
     return { status: 'already-open', workingCopyId };
   }
+  // V3-030. ADR-0024's one-active-writer rule, finally asked for.
+  // `acquireSingleWriterLock` was written, tested and exported, and had no
+  // caller outside its own tests - so `readOnly` was decided purely by the
+  // file's writer-version floor, and two tabs could open the same project
+  // writable, each believing it was the writer.
+  //
+  // Keyed on the working copy id because that is what actually contends: the
+  // Worker is constructed with it (`createWorker(workingCopyId)`), which is what
+  // `opfsFilenameForProject` scopes the OPFS file by. The lock module requires
+  // the lock name to match that scoping exactly, and here it does.
+  //
+  // Taken before the Worker exists, for the same reason the byte checks run
+  // before it: a project another context is already writing should not first be
+  // imported into a working copy that context holds.
+  const lease = await acquireWriterLease({ projectId: workingCopyId });
+  const writerLocked = lease.status !== 'writer';
+
   const handle = createWorker(workingCopyId);
   // Every failure past this point has a Worker to release. A leaked Worker keeps
   // the OPFS write lock on its working copy, which makes the project unopenable
@@ -133,13 +168,21 @@ export async function openNativeProject(
       return rejected('ARQ_OPEN_REJECTED', openResult.reason);
     }
     const capabilities = resolveNativeOpenCapabilities(openResult);
+    const readOnly = capabilities.readOnly || writerLocked;
+    const warnings = writerLocked
+      ? [...capabilities.warnings, describeReadOnlyReason(lease.reason)]
+      : capabilities.warnings;
     if (!openResult.capabilities.canRead) {
       return rejected('ARQ_OPEN_NOT_READABLE', capabilities.warnings[0] ?? 'Not readable.');
     }
     // The working copy exists and the database behind it opened. Reported here,
     // between the two facts, because that is where each becomes true.
     progress?.onStaged(workingCopyId);
-    progress?.onWorkerOpened(!capabilities.readOnly);
+    // Reports the whole truth about writability, which now has two independent
+    // causes: the file's own writer-version floor, and whether this context won
+    // the writer lock. Reporting only the first would announce a writable
+    // project and then hand back a read-only one.
+    progress?.onWorkerOpened(!readOnly, writerLocked ? 'another-window-is-editing' : null);
     progress?.onHydrateStart();
 
     // Reads are gated on the open above; a rejected or safe-mode open refuses
@@ -197,9 +240,9 @@ export async function openNativeProject(
       // comparing a stored hash against the current one - and had no source for
       // "current" on an opened project at all.
       semanticHash: await semanticHashOfEntries(entries),
-      readOnly: capabilities.readOnly,
+      readOnly,
       usedVfs: openPayload.usedVfs,
-      warnings: capabilities.warnings,
+      warnings,
     };
 
     const session = new NativeProjectSession(
@@ -207,6 +250,7 @@ export async function openNativeProject(
       snapshot,
       manifest,
       archive.operations,
+      lease.status === 'writer' ? () => lease.handle.release() : undefined,
     );
     adopted = true;
     return { status: 'opened', session, snapshot };
@@ -219,6 +263,10 @@ export async function openNativeProject(
     if (!adopted) {
       handle.client.dispose();
       handle.worker.terminate();
+      // The lease is taken before the Worker and so outlives every failure
+      // between. Not releasing it here would leave this tab holding the writer
+      // lock for a project it never opened, and every other tab read-only on it.
+      if (lease.status === 'writer') lease.handle.release();
     }
   }
 }

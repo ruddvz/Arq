@@ -150,13 +150,16 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
           emit({ type: 'stage-complete', projectId });
           emit({ type: 'migration-verified' });
         },
-        onWorkerOpened: (writable) =>
+        onWorkerOpened: (writable, lockReason) =>
           emit({
-            // A file this build may read but not write is read-only because of the
-            // file's own format version - the only cause a staged open can have,
-            // since the working copy it holds is writable by construction.
+            // Two independent causes, and they are not interchangeable. The
+            // file's own format version being ahead of this build is a property
+            // of the bytes; another window holding the writer lock (ADR-0024) is
+            // a property of this session, and resolves by closing that window.
+            // The lock reason wins when both apply, because it is the one the
+            // reader can actually act on.
             type: 'worker-opened',
-            readOnlyReason: writable ? null : 'newer-format-version',
+            readOnlyReason: writable ? null : (lockReason ?? 'newer-format-version'),
           }),
         onHydrateStart: () => emit({ type: 'hydrate-start' }),
       },

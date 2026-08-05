@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "56f5ba0dc8afc531e5dd0d9067cf42ff2f0a6a4bebb6d2453d8caed2088d0d5b",
+  "sourceSetDigest": "49f983ddfda3c49b06ebf653cf1fca5d113b1d60c65a5cd96c04958df5777a6b",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -350,12 +350,12 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "3b857986484aa48ee7870262205f6444ed68529621f506400383b0391ce44fbc",
+      "sha256": "3f4ed3a13e64a71a79e9b87b14f6876a37ec2da98f5ac42dba0ae5f8edad74a5",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
-          "sha256": "929007932dba943a58eea2b0262916b86329709456c486da48076f464bdc4a5a",
-          "bytes": 13245
+          "sha256": "ad36fbdc6dbba7f39ac72eeb99f1b9cd503d12f8c247412f9da7e4bdf88b1514",
+          "bytes": 13473
         },
         {
           "rel": "apps/web/src/file-handling/create-arqfs-worker.ts",
@@ -369,8 +369,8 @@
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-          "sha256": "ddb0b7e55d5200397b315b4c5ff34857eb3f7f7cb1af993d2acf9074f76d40ea",
-          "bytes": 12448
+          "sha256": "b75f4748e94715c6200354751838c0ab97083fd4305126de6baad0ae32358f79",
+          "bytes": 12750
         },
         {
           "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
@@ -389,8 +389,8 @@
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.ts",
-          "sha256": "bc863d47988649d29061ca181fb44da6956410325645ff3c102c22a171db7b2a",
-          "bytes": 26927
+          "sha256": "1583186831fd1b81a425e5d67a24e0e616e6141d4bb9c98c148d9442943fa6cd",
+          "bytes": 27444
         },
         {
           "rel": "apps/web/src/file-handling/index.ts",

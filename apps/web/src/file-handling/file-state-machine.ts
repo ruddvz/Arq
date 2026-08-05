@@ -47,7 +47,17 @@ export type ProjectReadOnlyReason =
    */
   | 'build-cannot-write'
   /** The file's format version is ahead of this build: readable, not writable. */
-  | 'newer-format-version';
+  | 'newer-format-version'
+  /**
+   * Another window or tab holds this project's writer lock (ADR-0024).
+   *
+   * Distinct from `newer-format-version` because the two differ in everything a
+   * reader would want to know: this one is about their own other window rather
+   * than the file, it is temporary rather than a property of the bytes, and it
+   * resolves by closing the other window rather than by upgrading anything.
+   * Collapsing them would tell someone their file is too new when it is not.
+   */
+  | 'another-window-is-editing';
 
 /**
  * What an open project can say about itself beyond its file name, learned by

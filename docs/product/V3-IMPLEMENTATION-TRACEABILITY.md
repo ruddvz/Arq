@@ -43,8 +43,8 @@ repository, and it cannot prove a row is answering the right question.
 
 | Disposition                  | Count | Meaning                                                                                                                                                                                                                |
 | ---------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `implemented-in-this-change` | 117   | Written on this branch. The evidence path is a module added or substantially changed here.                                                                                                                             |
-| `pre-existing`               | 54    | Already satisfied at the branch point, mostly by the ARQ-era work in P1–P3. Checked rather than assumed: each names a file and symbol that exists today.                                                               |
+| `implemented-in-this-change` | 119   | Written on this branch. The evidence path is a module added or substantially changed here.                                                                                                                             |
+| `pre-existing`               | 52    | Already satisfied at the branch point, mostly by the ARQ-era work in P1–P3. Checked rather than assumed: each names a file and symbol that exists today.                                                               |
 | `owner-authority`            | 28    | P0's verification steps and P14's release steps, plus workflow pinning and build provenance. These change GitHub settings, Vercel configuration, repository visibility or production state, and none of them are code. |
 | `blocked-no-evidence`        | 3     | V3-107 and V3-108 need benchmarks in a real browser against a real SQLite build; V3-117 needs SolveSpace or libslvs built to compare against. Guessing the numbers would be worse than leaving them open.              |
 | `implemented-differently`    | 3     | V3-032, V3-035, V3-039 — see below. The purpose is met somewhere other than where the task says to put it, deliberately.                                                                                               |
@@ -54,7 +54,7 @@ repository, and it cannot prove a row is answering the right question.
 It was the disposition flagged here as most worth reading sceptically, on the
 grounds that it meant "the repository already had the module the task names",
 not "the task is finished". Reading all 65 of them rather than trusting that
-caveat moved eight rows and found five real defects, each now fixed on this
+caveat moved thirteen rows and found eight real defects, each now fixed on this
 branch:
 
 - **V3-012, V3-015** — `acquire` discarded the outgoing project, so a failed
@@ -85,14 +85,29 @@ branch:
   generation half, and its first test asserts that every source in the canonical
   priority table can actually be reached through it.
 
+- **V3-030, V3-044** — the single-writer lock (ADR-0024) was never acquired.
+  `acquireSingleWriterLock` was written, tested and exported, and had no caller
+  outside its own tests, so `readOnly` came only from the file's writer-version
+  floor. Two windows could open the same project writable and each believe it
+  was the writer. The lease is now taken before the Worker is constructed — so a
+  contended project is not first imported into a working copy another context
+  holds — and released when the session closes or the open fails. It also
+  needed a read-only cause of its own: telling someone their file is too new,
+  when what actually happened is that they have it open in another tab, is a
+  wrong answer to the only question they are asking.
+
 The lesson is about the disposition, not the tasks: "the module exists" and "the
 task is done" are different claims, and only the first one was ever checked. The
-sharpest cases are V3-038 and V3-090, where the modules existed, were correct,
-were well tested, and were wired to nothing that needed them.
+sharpest cases are V3-038, V3-090 and V3-030, where the modules existed, were
+correct, were well tested, and were wired to nothing that needed them. V3-030 is
+the one to remember: the unwired module was the one enforcing a safety property
+an ADR specifies, and the suite stayed green throughout, because a lock nobody
+takes breaks no test.
 
-The check that found both was not the generator. It was asking, for each row's
-symbol, whether anything outside its own file and tests referred to it. A module
-with no caller can pass every test it has and still not be part of the product.
+The check that found all three was not the generator. It was asking, for each
+row's symbol, whether anything outside its own file and tests referred to it. A
+module with no caller can pass every test it has and still not be part of the
+product.
 
 Several P3 rows also named the wrong file — `stages.ts`, a 13-line table of
 open-stage descriptors, was cited as evidence for "validate hostile semantic

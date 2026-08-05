@@ -93,16 +93,28 @@ export class NativeProjectSession {
   #lastWriteError: unknown = null;
   #closed = false;
 
+  /**
+   * Released when this session closes.
+   *
+   * Held by the session rather than by the open pipeline because the lease has
+   * to outlive the open and end with the project: a lock released as soon as the
+   * project finished opening would guarantee nothing, and one never released
+   * would keep every other tab read-only until this one is closed.
+   */
+  readonly #releaseWriterLease: () => void;
+
   constructor(
     handle: NativeProjectWorkerHandle,
     snapshot: NativeProjectSnapshot,
     manifest: ArqManifest,
     operations: readonly unknown[] = [],
+    releaseWriterLease: () => void = () => {},
   ) {
     this.#handle = handle;
     this.#snapshot = snapshot;
     this.#manifest = manifest;
     this.#operations = operations;
+    this.#releaseWriterLease = releaseWriterLease;
   }
 
   snapshot(): NativeProjectSnapshot {
@@ -193,11 +205,15 @@ export class NativeProjectSession {
     } catch (error) {
       if (this.#lastWriteError === null) this.#lastWriteError = error;
     } finally {
-      // Rule 3. Both run even if `close` threw, because the Worker holds the
+      // Rule 3. All three run even if `close` threw, because the Worker holds the
       // OPFS write lock on this project's working copy and a leaked lock makes
-      // the project unopenable for the rest of the session.
+      // the project unopenable for the rest of the session. The writer lease is
+      // released for the same reason at origin scope: a lease this tab never
+      // gives back leaves every other tab read-only on this project until the
+      // tab is closed, which looks exactly like the lock being broken.
       this.#handle.client.dispose();
       this.#handle.terminate();
+      this.#releaseWriterLease();
     }
 
     if (this.#lastWriteError !== null) throw this.#lastWriteError;

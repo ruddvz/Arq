@@ -59,7 +59,7 @@ add(['V3-022'], PRE,'packages/arqfs/src/arqfs-worker-handler.ts','readRefusal')
 add(['V3-023'], PRE,'packages/arqfs/src/arqfs-worker-handler.ts','writeRefusal')
 add(['V3-028'], PRE,'packages/arqfs/src/arqfs-worker-protocol.ts','importDatabase')
 add(['V3-029'], NEW,'workers/import-export-worker/src/handler.ts','cancelledRequestIds')
-add(['V3-030'], PRE,'packages/arqfs/src/arqfs-single-writer-lock.ts','writerLockNameForProject')
+add(['V3-030'], NEW,'apps/web/src/project/open-native-project.ts','acquireWriterLease')
 add(['V3-031'], NEW,'packages/file-ingress/src/import-rejection.ts','IMPORT_REJECTION_CODES')
 add(['V3-032'], DIVERGENT,'workers/arqfs-worker/src/arqfs-project-filename.ts','readProjectIdFromWorkerSearch')
 add(['V3-024','V3-025'], PRE,'packages/arqfs/src/arqfs-safe-mode.ts','resolveArqfsSafeModePlan')
@@ -76,7 +76,7 @@ add(['V3-039'], DIVERGENT,'apps/web/src/project/open-native-project.ts','semanti
 add(['V3-040','V3-041'], PRE,'packages/project-loading/src/native-project-model.ts','parseNativeProjectModel')
 add(['V3-042'], PRE,'apps/web/src/project/open-native-project.ts','adopted')
 add(['V3-043'], PRE,'apps/web/src/project/open-native-project.ts','activeWorkingCopyId')
-add(['V3-044'], PRE,'apps/web/src/file-handling/file-state-machine.ts','readOnlyReason')
+add(['V3-044'], NEW,'apps/web/src/file-handling/file-state-machine.ts','another-window-is-editing')
 add(['V3-045'], NEW,'packages/model-renderer/src/gpu-resource-registry.ts','closeOwner')
 
 # P4 operations.
