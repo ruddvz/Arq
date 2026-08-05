@@ -1,3 +1,7 @@
 cache/*.json
 cache/*.lock
 runs/
+# Per-run evidence ledgers, which EVIDENCE-STATES.md already describes as run
+# artifacts belonging in a git-ignored .zeus/. `zeus evidence init` writes this
+# one at the directory root rather than under runs/, so it needs its own line.
+evidence-ledger.json
