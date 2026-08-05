@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "8d2dcba353d73279cb8c0bd5d770a36ff223d64e1547af4f991d27770b0d7381",
+  "source_hash": "a02a07d9ac37df6046743f0677b9d34aacbfbbf9bb0e97df81f513006751d623",
   "source_records": [
     {
       "scope": "package",
@@ -548,6 +548,16 @@
     },
     {
       "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-publication.test.ts",
+      "sha256": "d481c067ebc86e3c97d396627db75f05f3aa64c659b1777464b1a5045dd61c13"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-publication.ts",
+      "sha256": "fa14ab81885fa953c19044cdf997461f736950127b1ba231512ee9e2eaa48d4c"
+    },
+    {
+      "scope": "repository",
       "path": "packages/arqfs/src/arqfs-recovery-report.test.ts",
       "sha256": "0e8c320e23135a162712f71253b2a006d76bd39875fbe7d68dbd1c3579586964"
     },
@@ -684,7 +694,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/index.ts",
-      "sha256": "8ce3e05d2ac0e607484b3fb7058dcd5c950726b79f11351ea36d81fac4dbff48"
+      "sha256": "c009c30722f2698b17372d7b9fcbaf3c2383013d8835b6812e98010125ef2768"
     },
     {
       "scope": "repository",

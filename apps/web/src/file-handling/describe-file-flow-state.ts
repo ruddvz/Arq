@@ -164,10 +164,22 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
         detail: 'Writing a single project file you can move or share.',
         tone: 'progress',
       };
-    case 'published':
+    case 'publication-verifying':
+      // Not "published". The bytes exist; whether they are a usable project is
+      // the open question this state represents.
       return {
-        headline: `${state.name} was published.`,
-        detail: 'The published file was reopened and checked before it was handed over.',
+        headline: `Checking the project file for ${state.name}…`,
+        detail: 'Reopening the new file to confirm it holds this exact revision.',
+        tone: 'progress',
+      };
+    case 'published':
+      // Reachable only through `publication-verifying`, so this claim is backed
+      // by a fresh reader having reopened the file and matched its revision and
+      // semantic hash. Naming the revision keeps the claim specific enough to be
+      // falsifiable rather than a reassuring generality.
+      return {
+        headline: `${state.name} was published at revision ${state.revision}.`,
+        detail: 'The new file was reopened and checked. Your project is still open here.',
         tone: 'neutral',
       };
     case 'closed':

@@ -163,8 +163,39 @@ export type FileFlowState =
       readonly name: string;
       readonly projectId: string;
       readonly fraction: number;
+      /** Carried so publishing a read-only project cannot return as a writable one. */
+      readonly writable: boolean;
     }
-  | { readonly kind: 'published'; readonly name: string; readonly projectId: string }
+  /**
+   * Portable bytes exist, and nothing may call them a published project yet.
+   *
+   * A successful write is not a successful publication: the file still has to be
+   * reopened by a reader that shares nothing with the writer and found to hold
+   * the same project, the same revision and the same semantic hash
+   * (`publishProjectFile` in @arq/arqfs). Until that returns, the only honest
+   * thing to say about the file on disk is that it is being checked. Collapsing
+   * this into `published` is the publication equivalent of the false open this
+   * flow already refuses.
+   */
+  | {
+      readonly kind: 'publication-verifying';
+      readonly name: string;
+      readonly projectId: string;
+      readonly writable: boolean;
+    }
+  /**
+   * Verified. The revision and semantic hash are the fresh reader's own findings,
+   * carried on the state so the copy can name the exact revision it proved rather
+   * than the one the writer intended.
+   */
+  | {
+      readonly kind: 'published';
+      readonly name: string;
+      readonly projectId: string;
+      readonly writable: boolean;
+      readonly revision: number;
+      readonly semanticHash: string;
+    }
   | { readonly kind: 'closed'; readonly lastKnownGood: LastKnownGoodProject | null };
 
 export type FileFlowEvent =
@@ -198,7 +229,16 @@ export type FileFlowEvent =
   | { readonly type: 'recovered' }
   | { readonly type: 'publish-start' }
   | { readonly type: 'publish-progress'; readonly fraction: number }
-  | { readonly type: 'published' }
+  /** The bytes are written and an independent reader is now checking them. */
+  | { readonly type: 'publish-verify-start' }
+  /**
+   * Verification passed. The evidence is required on the event, not optional: a
+   * caller that has not actually reopened and compared the file has nothing to
+   * put here, and so cannot reach `published` by mistake.
+   */
+  | { readonly type: 'published'; readonly revision: number; readonly semanticHash: string }
+  /** Back to editing after a publication, the project itself unchanged by it. */
+  | { readonly type: 'resume-editing' }
   | { readonly type: 'close' };
 
 /**
@@ -229,7 +269,17 @@ export function isProjectWritable(state: FileFlowState): boolean {
  * only when this session never had one.
  */
 export function lastKnownGoodProject(state: FileFlowState): LastKnownGoodProject | null {
-  if (state.kind === 'workspace-active') {
+  // Publishing reads the working project; it never replaces or invalidates it. So
+  // the project stays the last known good one throughout, and a publication that
+  // fails still knows which project the user's changes are safe in. Leaving these
+  // out made `project-failed` after a failed publish carry `lastKnownGood: null`,
+  // which contradicted the very reassurance its copy gives.
+  if (
+    state.kind === 'workspace-active' ||
+    state.kind === 'publishing' ||
+    state.kind === 'publication-verifying' ||
+    state.kind === 'published'
+  ) {
     return { projectId: state.projectId, name: state.name };
   }
   if (
@@ -310,6 +360,12 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
                 : null;
     // Only cancellable stages are cancellable. A cancel arriving in a state
     // with nothing in flight must not invent an undo that did not happen.
+    //
+    // `publication-verifying` is deliberately absent. By then a file exists on
+    // disk whose soundness is precisely what is unknown, and cancelling would
+    // leave the user holding it with no verdict attached. That resolves to
+    // published or to a publication failure, never to "cancelled, nothing
+    // changed" - which would be false about the file that is now there.
     if (cancelledAt !== null) {
       return { kind: 'cancelled', name: state.name, cancelledAt, lastKnownGood: carried };
     }
@@ -394,13 +450,50 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
     };
   }
   if (state.kind === 'workspace-active' && event.type === 'publish-start') {
-    return { kind: 'publishing', name: state.name, projectId: state.projectId, fraction: 0 };
+    return {
+      kind: 'publishing',
+      name: state.name,
+      projectId: state.projectId,
+      fraction: 0,
+      writable: state.writable,
+    };
   }
   if (state.kind === 'publishing' && event.type === 'publish-progress') {
     return { ...state, fraction: Math.max(0, Math.min(1, event.fraction)) };
   }
-  if (state.kind === 'publishing' && event.type === 'published') {
-    return { kind: 'published', name: state.name, projectId: state.projectId };
+  if (state.kind === 'publishing' && event.type === 'publish-verify-start') {
+    return {
+      kind: 'publication-verifying',
+      name: state.name,
+      projectId: state.projectId,
+      writable: state.writable,
+    };
+  }
+  // Only from `publication-verifying`. `publishing` deliberately has no route to
+  // `published`: writing the bytes is the step that can succeed while producing an
+  // unusable file, so it is exactly the step that must not be allowed to declare
+  // success on its own.
+  if (state.kind === 'publication-verifying' && event.type === 'published') {
+    return {
+      kind: 'published',
+      name: state.name,
+      projectId: state.projectId,
+      writable: state.writable,
+      revision: event.revision,
+      semanticHash: event.semanticHash,
+    };
+  }
+  // Publication is a read of the working project, so the project the user was
+  // editing is still open and still exactly as it was. Without this the flow
+  // dead-ended at `published` and the only way back to editing was reopening the
+  // project the user already had.
+  if (state.kind === 'published' && event.type === 'resume-editing') {
+    return {
+      kind: 'workspace-active',
+      name: state.name,
+      projectId: state.projectId,
+      writable: state.writable,
+    };
   }
 
   return state;

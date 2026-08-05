@@ -581,9 +581,15 @@
         "exposure": "product"
       },
       {
+        "internal": "publication-verifying",
+        "labelTemplate": "Checking the project file for {name}…",
+        "explain": "Portable bytes exist and have not been verified. A fresh reader that shares nothing with the writer is reopening the file to confirm the project, the revision and the semantic hash. Never say published here.",
+        "exposure": "product"
+      },
+      {
         "internal": "published",
-        "labelTemplate": "{name} was published",
-        "explain": "Only after the published file was reopened and verified.",
+        "labelTemplate": "{name} was published at revision {revision}",
+        "explain": "Only after the published file was reopened and verified. Reachable only from publication-verifying, and the revision named is the one the fresh reader itself found.",
         "exposure": "product"
       },
       {

@@ -249,7 +249,98 @@ describe('project lifecycle after preflight', () => {
   it('does not treat publishing as a save that already happened', () => {
     const publishing = reduceFileFlow(openFully(), { type: 'publish-start' });
     expect(publishing.kind).toBe('publishing');
-    const published = reduceFileFlow(publishing, { type: 'published' });
-    expect(published.kind).toBe('published');
+  });
+
+  it('refuses to reach published straight from publishing, without verification', () => {
+    const publishing = reduceFileFlow(openFully(), { type: 'publish-start' });
+    // Writing the bytes is the step that can succeed and still leave an unusable
+    // file, so it is the step that must not be able to declare success.
+    const shortcut = reduceFileFlow(publishing, {
+      type: 'published',
+      revision: 4,
+      semanticHash: 'abc',
+    });
+    expect(shortcut.kind).toBe('publishing');
+  });
+
+  it('reaches published only through verification, carrying the reader’s own findings', () => {
+    const verifying = [
+      { type: 'publish-start' } as const,
+      { type: 'publish-verify-start' } as const,
+    ].reduce<FileFlowState>(reduceFileFlow, openFully());
+    expect(verifying.kind).toBe('publication-verifying');
+
+    const published = reduceFileFlow(verifying, {
+      type: 'published',
+      revision: 214,
+      semanticHash: 'deadbeef',
+    });
+    expect(published).toMatchObject({
+      kind: 'published',
+      revision: 214,
+      semanticHash: 'deadbeef',
+    });
+  });
+
+  it('does not call a project open while its publication is being verified', () => {
+    const verifying = [
+      { type: 'publish-start' } as const,
+      { type: 'publish-verify-start' } as const,
+    ].reduce<FileFlowState>(reduceFileFlow, openFully());
+    expect(isProjectOpen(verifying)).toBe(false);
+    expect(isProjectWritable(verifying)).toBe(false);
+  });
+
+  it('ignores a cancel during verification rather than claiming nothing changed', () => {
+    const verifying = [
+      { type: 'publish-start' } as const,
+      { type: 'publish-verify-start' } as const,
+    ].reduce<FileFlowState>(reduceFileFlow, openFully());
+    // A file exists on disk whose soundness is exactly what is unknown, so
+    // "cancelled, nothing changed" would be false about it.
+    expect(reduceFileFlow(verifying, { type: 'cancel' })).toEqual(verifying);
+  });
+
+  it('keeps the project as last known good when a publication fails', () => {
+    const verifying = [
+      { type: 'publish-start' } as const,
+      { type: 'publish-verify-start' } as const,
+    ].reduce<FileFlowState>(reduceFileFlow, openFully());
+
+    const failed = reduceFileFlow(verifying, {
+      type: 'project-fail',
+      reason: 'publication-failed',
+      detail: 'the published file did not match this revision',
+    });
+
+    expect(failed).toMatchObject({ kind: 'project-failed', reason: 'publication-failed' });
+    // The failure copy promises the user their changes are still in the working
+    // project. That has to be true of the state, not only of the wording.
+    expect(lastKnownGoodProject(failed)).toEqual({ projectId: 'p1', name: 'house.arq' });
+  });
+
+  it('returns to the open project after publishing, without reopening it', () => {
+    const published = [
+      { type: 'publish-start' } as const,
+      { type: 'publish-verify-start' } as const,
+      { type: 'published', revision: 3, semanticHash: 'abc' } as const,
+    ].reduce<FileFlowState>(reduceFileFlow, openFully());
+
+    const resumed = reduceFileFlow(published, { type: 'resume-editing' });
+
+    expect(resumed.kind).toBe('workspace-active');
+    expect(isProjectWritable(resumed)).toBe(true);
+  });
+
+  it('does not make a read-only project writable by publishing it', () => {
+    const readOnly = [
+      { type: 'publish-start' } as const,
+      { type: 'publish-verify-start' } as const,
+      { type: 'published', revision: 1, semanticHash: 'abc' } as const,
+      { type: 'resume-editing' } as const,
+    ].reduce<FileFlowState>(reduceFileFlow, openFully(false));
+
+    expect(readOnly.kind).toBe('workspace-active');
+    expect(isProjectWritable(readOnly)).toBe(false);
   });
 });

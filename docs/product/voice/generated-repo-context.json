@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "48a4d0022d953b157b4bd42c421ee907f811ead310c8c385880d5b2e8dd4bd69",
+  "sourceSetDigest": "591b726cfe7bab8fa950af34426088796c5949903a2203be4fab93faf3026979",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -350,7 +350,7 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "e5dfba769cd4b550a1602c27138030a1ad1f6c07555d1e3206d340493ae87ffa",
+      "sha256": "599c1fdd2ef5e0a84ad113fda1acad61cb9957743673c70702f803772b4b1105",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
@@ -359,13 +359,13 @@
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",
-          "sha256": "e9f13d48880f3cb81c0c19157587e008c43a6446cc68db5090802a9513af152d",
-          "bytes": 6455
+          "sha256": "4ac558be9065b919a70041e97dde788eec004fa70b535e6810035a82e67deced",
+          "bytes": 9392
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-          "sha256": "53a109c1eb80dd1e79039338f4be52f9c35759642877a9d7efd906416c4a5a3f",
-          "bytes": 9079
+          "sha256": "ee534504822e34b89e3f1cd89cb5acad4ce4510207b8775c445abd113a25f598",
+          "bytes": 9777
         },
         {
           "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
@@ -379,13 +379,13 @@
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.test.ts",
-          "sha256": "67d22f26917181b0c7d4d654f08651fd6c4a56545c7334307871d775bc9579d6",
-          "bytes": 9539
+          "sha256": "c3873f6206dda6b836d47a9fcb017335e4715999b95d99b8e6f239a630d2a141",
+          "bytes": 13153
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.ts",
-          "sha256": "c05c2227d3260a33269871b4f7318f44a53b803ad6fd07450708dc4127c91838",
-          "bytes": 15975
+          "sha256": "cc01080fe1a537ceb25b90a6425358c3c755238ae6dfba7ddec3dd3779a96bbd",
+          "bytes": 19822
         },
         {
           "rel": "apps/web/src/file-handling/index.ts",
@@ -2855,6 +2855,7 @@
       "recovery-available",
       "recovering",
       "publishing",
+      "publication-verifying",
       "published",
       "closed"
     ],

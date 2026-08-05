@@ -128,9 +128,96 @@ describe('describeFileFlowState', () => {
     expect(description.detail).toBe('a previous local write did not reach commit');
   });
 
+  /**
+   * The rule the state-language map already states for this machine: "published"
+   * is licensed only after the file was reopened and verified. Before this the
+   * copy asserted that check had happened while no such check existed anywhere in
+   * the flow, which is the strongest form of the claim being wrong - the
+   * reassurance was the fabrication.
+   */
+  it('does not say a project file was published while the file is still being checked', () => {
+    const description = describeFileFlowState({
+      kind: 'publication-verifying',
+      name: 'house.arq',
+      projectId: 'p1',
+      writable: true,
+    });
+
+    expect(description.headline).not.toMatch(/published/i);
+    expect(description.tone).toBe('progress');
+  });
+
+  it('names the exact revision it published, so the claim can be checked', () => {
+    const description = describeFileFlowState({
+      kind: 'published',
+      name: 'house.arq',
+      projectId: 'p1',
+      writable: true,
+      revision: 214,
+      semanticHash: 'deadbeef',
+    });
+
+    expect(description.headline).toContain('214');
+    expect(description.detail).toMatch(/reopened and checked/i);
+  });
+
+  it('never calls publishing a sync or a save', () => {
+    const publishStates: readonly FileFlowState[] = [
+      { kind: 'publishing', name: 'a.arq', projectId: 'p1', fraction: 0.5, writable: true },
+      { kind: 'publication-verifying', name: 'a.arq', projectId: 'p1', writable: true },
+      {
+        kind: 'published',
+        name: 'a.arq',
+        projectId: 'p1',
+        writable: true,
+        revision: 2,
+        semanticHash: 'h',
+      },
+    ];
+
+    for (const state of publishStates) {
+      const { headline, detail } = describeFileFlowState(state);
+      const copy = `${headline} ${detail ?? ''}`;
+      expect(copy).not.toMatch(/synced|saved|auto-saved/i);
+    }
+  });
+
   it('describes every state kind without throwing (exhaustiveness)', () => {
     const states: readonly FileFlowState[] = [
       { kind: 'idle' },
+      { kind: 'staging', name: 'a.arq', fraction: 0.25 },
+      { kind: 'staged', name: 'a.arq', projectId: 'p1' },
+      { kind: 'migration-verified', name: 'a.arq', projectId: 'p1' },
+      { kind: 'worker-open', name: 'a.arq', projectId: 'p1', writable: true },
+      { kind: 'hydrating', name: 'a.arq', projectId: 'p1', writable: true },
+      { kind: 'quarantined', name: 'a.arq', quarantinePath: '/q/a.arq', lastKnownGood: null },
+      { kind: 'cancelled', name: 'a.arq', cancelledAt: 'staging', lastKnownGood: null },
+      {
+        kind: 'project-failed',
+        name: 'a.arq',
+        reason: 'publication-failed',
+        detail: 'd',
+        lastKnownGood: null,
+      },
+      {
+        kind: 'recovery-available',
+        name: 'a.arq',
+        projectId: 'p1',
+        journalledOperations: 2,
+        writable: true,
+      },
+      { kind: 'recovering', name: 'a.arq', projectId: 'p1', writable: true },
+      { kind: 'publishing', name: 'a.arq', projectId: 'p1', fraction: 0.5, writable: true },
+      { kind: 'publication-verifying', name: 'a.arq', projectId: 'p1', writable: true },
+      {
+        kind: 'published',
+        name: 'a.arq',
+        projectId: 'p1',
+        writable: true,
+        revision: 2,
+        semanticHash: 'h',
+      },
+      { kind: 'closed', lastKnownGood: null },
       { kind: 'acquiring', name: 'a.arq' },
       { kind: 'detecting', name: 'a.arq' },
       { kind: 'native-opening', name: 'a.arq', sidecarDependency: 'complete' },
