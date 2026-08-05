@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "b3a310dc7900f5ab32022bcef4692237d3d468486f82d45fd5c8d9a736b6e500",
+  "source_hash": "c30ad6c01569169b48aef2ddc8f2381e9660ab2d6abda66a986185d22208cf52",
   "source_records": [
     {
       "scope": "package",
@@ -204,7 +204,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/App.tsx",
-      "sha256": "3287e53654ce75cd64ccbf4d2bab43c10ac25bdb4c5f04a9fd667d10104a799f"
+      "sha256": "af28f2dbd80b2f4bf805bc8e5c2df63e12f6bdcab122007ba8023711d1086405"
     },
     {
       "scope": "repository",
@@ -214,7 +214,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
-      "sha256": "8151fe0dd49168eb8d4fc1b88fb40ff83a2a75ecdaef7cda08e16c4cd9b0f2ef"
+      "sha256": "492e881fadb72b54484c1256ebc402491111effb579a574f683ea7d94359375d"
     },
     {
       "scope": "repository",
@@ -375,6 +375,11 @@
       "scope": "repository",
       "path": "docs/adr/0029-main-as-stable-integration-branch.md",
       "sha256": "383c75b46c521554b261a87c1ed930fe6ef095fefb373fc0c47bc2b9f1009a85"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0030-browser-working-copy-and-recovery-tiers.md",
+      "sha256": "7db91ccb55d6bb5b6c2452f12e7db59f0c6227fabbb3b0113843e46076ef7046"
     },
     {
       "scope": "repository",
@@ -633,28 +638,38 @@
     },
     {
       "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-source-completeness.test.ts",
+      "sha256": "6ed42c07c0a75d7148ca139688c18149c15a7b69e7aa927358037f02f410785f"
+    },
+    {
+      "scope": "repository",
+      "path": "packages/arqfs/src/arqfs-source-completeness.ts",
+      "sha256": "e0964eb13a71fe9875ed27d6c9534261c8fcb437e54ef279009bf1e49fa9f9e2"
+    },
+    {
+      "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-client.test.ts",
       "sha256": "ea321d8bf77e1bc5feb60b5e5e1dccbe2a79a3553e083fccf73612d9777c7f4c"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-client.ts",
-      "sha256": "0e74f6a492f28efbc92bd0c1c0a67296a298a2fef7bd5cbb216d3966d8a5d084"
+      "sha256": "2cbc0f2e966a001be11841b65b6885e93b12efec00f858dbe3fc695380e9f2b9"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.test.ts",
-      "sha256": "c91608532f2afc76f6f60102267e83e036301d50b8f3ec7216e06a1ea70b34fe"
+      "sha256": "ca54ef2ea43f64f45caae39834767d169d87ef40042ac391e2ad51cde410cdd7"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.ts",
-      "sha256": "f5f93506d171154e7935eb1ca5f15fbe9fb4d58291770c6e53b463787bed239a"
+      "sha256": "42e4e212f08c736431b7ae74513f65736a5ad9ccffe1536d6afe7edfd0f510c3"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-protocol.ts",
-      "sha256": "7aa9b3aee6f6922f7e9335ab2cd0f8aa36d8f61b7e631f5777cbea4709aac019"
+      "sha256": "4d910ee476b4b5ebe51793c1903d0aeefb5cd22f8756784696e3e0674469f054"
     },
     {
       "scope": "repository",
@@ -669,7 +684,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/index.ts",
-      "sha256": "ad8cff8ff767c17c62bb1ae72e5d4bf32b2e4b573c5b056e5ec76b91d27ea495"
+      "sha256": "8ce3e05d2ac0e607484b3fb7058dcd5c950726b79f11351ea36d81fac4dbff48"
     },
     {
       "scope": "repository",
@@ -779,7 +794,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "a949d27b9bc3299a31cc20cef2dcad8c869db576f4b1aa7072dbc260676c2ed0"
+      "sha256": "71f68d0417f2a5f71112dcb5868282adf2f0565276eb2236be95d605b04e9f62"
     },
     {
       "scope": "repository",
@@ -799,7 +814,7 @@
     {
       "scope": "repository",
       "path": "workers/arqfs-worker/src/arqfs-worker-entry.ts",
-      "sha256": "347d643ac656c849928e5878b99a11d2e72999f2d34f86282097ecc8073ba4b2"
+      "sha256": "bdb6f52518451789d794c8d741ce10d2a52cf59aeeceb0c946b1803c208db378"
     },
     {
       "scope": "repository",

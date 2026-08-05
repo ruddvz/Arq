@@ -53,8 +53,36 @@ async function openContext(): Promise<ArqfsWorkerContext> {
 
   try {
     const poolUtil = await sqlite3.installOpfsSAHPoolVfs({ name: OPFS_SAHPOOL_VFS_NAME });
-    const db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
-    return { driver: createSqliteWasmArqfsDriver(db), usedVfs: 'opfs-sahpool', session };
+    let db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
+    let driver = createSqliteWasmArqfsDriver(db);
+    return {
+      // A getter, not a captured value: `importDatabase` replaces the underlying
+      // database, and every later request must reach the new one. Capturing the
+      // driver once would leave the handler talking to a connection whose file
+      // has been overwritten.
+      get driver() {
+        return driver;
+      },
+      usedVfs: 'opfs-sahpool',
+      session,
+      /**
+       * The only route a user's selected `.arq` bytes have into this Worker's
+       * working copy. `opfs-sahpool` keeps databases inside a pool of opaque
+       * files rather than at the filename it was handed, so nothing on the main
+       * thread can place bytes where SQLite will find them - only the pool
+       * utility can, and it lives here.
+       *
+       * The open handle is closed before importing, because importing overwrites
+       * the file this connection is reading and a connection left open across
+       * that is reading a database that no longer exists.
+       */
+      importDatabase: (bytes: Uint8Array) => {
+        db.close();
+        poolUtil.importDb(databaseFilename, bytes);
+        db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
+        driver = createSqliteWasmArqfsDriver(db);
+      },
+    };
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     const db = new sqlite3.oo1.DB(':memory:', 'ct') as unknown as Sqlite3Oo1DatabaseLike;

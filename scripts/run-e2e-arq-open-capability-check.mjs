@@ -28,9 +28,11 @@
  * not, the fresh Worker would have initialised a new schema and reported the
  * 'valid' outcome, so those cases fail rather than silently passing.
  *
- * What this check does NOT establish: a user-reachable open-project workflow in
- * `apps/web`. The product still does not construct this Worker. That gap is a
- * product-integration gap and remains recorded in STATUS.md.
+ * What this check does NOT establish: that `apps/web` reaches this path from a
+ * file someone chose, or that the decoded project arrives in the workspace. It
+ * drives the Worker directly, so it would keep passing if the UI were wired to
+ * nothing at all. `benchmark:file-open` is the check that makes that claim, by
+ * driving the real interface.
  *
  * Usage: node scripts/run-e2e-arq-open-capability-check.mjs
  */
@@ -333,7 +335,7 @@ async function main() {
     unservedUrls: [...new Set([...missingResources, ...unservedUrls])],
     ok: process.exitCode !== 1,
     limitation:
-      'Proves the Worker and OPFS open path for these four outcomes. Does not prove a user-reachable open-project workflow: apps/web does not construct this Worker.',
+      'Proves the Worker and OPFS open path for these four outcomes, driving the Worker directly. That apps/web reaches this path from a chosen file, and that the decoded project arrives in the workspace, is the separate claim benchmark:file-open makes by driving the real UI.',
   };
   const outDir = path.join(repoRoot, 'benchmarks/results');
   mkdirSync(outDir, { recursive: true });
