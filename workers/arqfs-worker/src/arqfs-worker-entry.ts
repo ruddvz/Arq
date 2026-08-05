@@ -38,7 +38,11 @@ import {
   type ArqfsWorkerContext,
 } from '@arq/arqfs/src/arqfs-worker-handler';
 import { createSqliteWasmArqfsDriver, type Sqlite3Oo1DatabaseLike } from './arqfs-opfs-driver';
-import { opfsFilenameForProject, readProjectIdFromWorkerSearch } from './arqfs-project-filename';
+import {
+  opfsFilenameForProject,
+  readProjectIdFromWorkerSearch,
+  readProjectIdOrUnknown,
+} from './arqfs-project-filename';
 
 const OPFS_SAHPOOL_VFS_NAME = 'arqfs-opfs-sahpool';
 
@@ -53,15 +57,37 @@ async function openContext(): Promise<ArqfsWorkerContext> {
 
   try {
     const poolUtil = await sqlite3.installOpfsSAHPoolVfs({ name: OPFS_SAHPOOL_VFS_NAME });
-    const db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
-    return { driver: createSqliteWasmArqfsDriver(db), usedVfs: 'opfs-sahpool', session };
+    let db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
+    return {
+      driver: createSqliteWasmArqfsDriver(db),
+      usedVfs: 'opfs-sahpool',
+      projectId,
+      session,
+      // The selected source bytes become this project's working database. The
+      // live connection has to be closed first: `importDb` writes the pool's
+      // backing file underneath it, and a connection left open across that write
+      // is reading pages that no longer describe the file. Reopening afterwards
+      // is what makes the imported project the one every later request sees.
+      importDatabase: (bytes) => {
+        db.close();
+        poolUtil.importDb(databaseFilename, bytes);
+        db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
+        return createSqliteWasmArqfsDriver(db);
+      },
+    };
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     const db = new sqlite3.oo1.DB(':memory:', 'ct') as unknown as Sqlite3Oo1DatabaseLike;
     return {
       driver: createSqliteWasmArqfsDriver(db),
       usedVfs: `memory-fallback (opfs-sahpool unavailable: ${reason})`,
+      projectId,
       session,
+      // Deliberately absent. An in-memory database is not a working project: it
+      // is gone at the next reload, so importing a user's file into it would
+      // stage their project into storage that cannot keep it. The handler
+      // refuses the import instead, and the flow reports that rather than
+      // opening something that will silently disappear.
     };
   }
 }
@@ -76,8 +102,11 @@ self.onmessage = async (event: MessageEvent<ArqfsWorkerRequest>) => {
     // contextPromise rejects only for a Worker-construction mistake (missing/invalid
     // project id) that will never resolve on retry - every request gets a clear,
     // immediate error instead of silently hanging until the client's own timeout.
+    // The project id is re-read from this Worker's own URL rather than taken from
+    // the context that failed to build, so the refusal still names who it is from.
     self.postMessage({
       id: event.data.id,
+      projectId: readProjectIdOrUnknown(self.location.search),
       ok: false,
       code: ARQFS_WORKER_ERROR_CODES.unexpected,
       error: error instanceof Error ? error.message : String(error),

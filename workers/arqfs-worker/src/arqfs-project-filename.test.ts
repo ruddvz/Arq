@@ -3,6 +3,8 @@ import {
   opfsFilenameForProject,
   arqfsWorkerUrlSearch,
   readProjectIdFromWorkerSearch,
+  readProjectIdOrUnknown,
+  UNKNOWN_ARQFS_PROJECT_ID,
 } from './arqfs-project-filename';
 
 describe('arqfs project-scoped OPFS filename', () => {
@@ -38,5 +40,17 @@ describe('arqfs project-scoped OPFS filename', () => {
 
   it('rejects a project id smuggled through the URL that would otherwise escape the projects directory', () => {
     expect(() => readProjectIdFromWorkerSearch('?project=..%2F..%2Fescape')).toThrow();
+  });
+
+  /**
+   * Every response names its project, including the one the Worker sends when it
+   * could not be constructed at all - which is exactly the case where the id is
+   * missing or unusable. Throwing a second time there would replace the real
+   * construction error with a worse one.
+   */
+  it('answers with an explicit unknown project id when the URL has no usable one', () => {
+    expect(readProjectIdOrUnknown('')).toBe(UNKNOWN_ARQFS_PROJECT_ID);
+    expect(readProjectIdOrUnknown('?project=..%2Fescape')).toBe(UNKNOWN_ARQFS_PROJECT_ID);
+    expect(readProjectIdOrUnknown('?project=project-a')).toBe('project-a');
   });
 });

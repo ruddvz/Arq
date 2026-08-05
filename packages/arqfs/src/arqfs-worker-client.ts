@@ -4,7 +4,19 @@ import type {
   ArqfsWorkerResponsePayload,
 } from './arqfs-worker-protocol';
 
-export type ArqfsWorkerRequestInput = Omit<ArqfsWorkerRequest, 'id'>;
+/**
+ * `Omit` over a union is not the union of the omissions.
+ *
+ * `Omit<A | B, 'id'>` resolves through `keyof (A | B)`, which is only the keys
+ * the members share - so the whole request union collapsed to `{ type: 'open' |
+ * 'getArchiveEntry' | ... }` and every discriminated field vanished. The result
+ * type-checked `request({ type: 'getArchiveEntry' })` with no `path` at all, and
+ * the Worker received `path: undefined`. Distributing over the union first keeps
+ * each member's own fields attached to its own `type`.
+ */
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
+export type ArqfsWorkerRequestInput = DistributiveOmit<ArqfsWorkerRequest, 'id'>;
 
 export interface ArqfsWorkerLike {
   postMessage(message: ArqfsWorkerRequest, transfer?: Transferable[]): void;
@@ -45,6 +57,19 @@ export interface ArqfsWorkerCrashInfo {
 }
 
 export interface ArqfsWorkerClientOptions {
+  /**
+   * The project this client's Worker was constructed for. When set, a response
+   * naming a different project fails its request with a protocol error instead
+   * of being accepted as the answer.
+   *
+   * Request ids are unique within one client, not across the origin, and OPFS
+   * storage is shared at the origin - so during a project switch, with the
+   * outgoing Worker still alive, id correlation alone cannot tell whose answer
+   * arrived. Failing loudly rather than ignoring the message is deliberate: a
+   * silently dropped response leaves the request to time out thirty seconds
+   * later with no indication of what actually happened.
+   */
+  readonly projectId?: string;
   /**
    * Called once, the first time the underlying Worker fires 'error' or
    * 'messageerror'. Every pending request has already been rejected by the time
@@ -89,6 +114,16 @@ export class ArqfsWorkerClient {
     this.pending.delete(response.id);
     if (pending.timeout !== undefined) clearTimeout(pending.timeout);
     pending.abort?.();
+    const expectedProjectId = this.options.projectId;
+    if (expectedProjectId !== undefined && response.projectId !== expectedProjectId) {
+      pending.reject(
+        new ArqfsWorkerRequestError(
+          response.id,
+          `arqfs Worker response is for project ${String(response.projectId)}, not ${expectedProjectId}`,
+        ),
+      );
+      return;
+    }
     if (response.ok) {
       pending.resolve(response.payload);
     } else {
