@@ -12,6 +12,7 @@ import {
   recordPublicationOutcome,
   type ArqfsPublicationEnvironment,
 } from './arqfs-publication';
+import { computeChecksums, serializeChecksums } from '@arq/project-format/src/checksum';
 import type { ArqfsDriver } from './arqfs-driver';
 
 describe('publishProjectFile', () => {
@@ -154,6 +155,76 @@ describe('publishProjectFile', () => {
     if (result.status !== 'refused') return;
     expect(result.reason).toBe('semantic-mismatch');
     expect(result.targetWritten).toBe(true);
+  });
+
+  /**
+   * V3-069 wired into the publication sequence: a canonical entry whose bytes
+   * no longer match `checksums.json` must stop the publication, even though
+   * SQLite considers the file sound and the semantic hash is recomputed from
+   * those same corrupted bytes and therefore agrees with itself.
+   */
+  it('refuses when a canonical entry no longer matches its recorded digest', async () => {
+    const target = path.join(dir, 'published.arq');
+    driver = createNodeArqfsDriver(path.join(dir, 'working.sqlite3'));
+    createArqfsSchemaV1(driver);
+    initializeWorkingCopyState(driver, 'project-alpha');
+    const entries = new Map([
+      ['manifest.json', new TextEncoder().encode('{"schemaVersion":1}')],
+      ['model.json', new TextEncoder().encode('{"walls":[{"id":"w1"}]}')],
+    ]);
+    for (const [entryPath, content] of entries) {
+      putArchiveEntry(driver, entryPath, content);
+    }
+    const checksums = await computeChecksums(entries);
+    putArchiveEntry(
+      driver,
+      'checksums.json',
+      new TextEncoder().encode(serializeChecksums(checksums)),
+    );
+
+    const result = await publishProjectFile(
+      driver,
+      target,
+      nodeEnvironment({
+        openFreshReader: (targetPath) => {
+          const reader = createNodeArqfsDriver(targetPath);
+          reader.run('UPDATE archive_entry SET content = ? WHERE path = ?', [
+            new TextEncoder().encode('{"walls":[]}'),
+            'model.json',
+          ]);
+          return reader;
+        },
+      }),
+    );
+
+    expect(result.status).toBe('refused');
+    if (result.status !== 'refused') return;
+    expect(result.reason).toBe('entry-digest-failed');
+    expect(result.detail).toContain('model.json');
+  });
+
+  it('publishes a project whose canonical entries all match their digests', async () => {
+    const target = path.join(dir, 'published.arq');
+    driver = createNodeArqfsDriver(path.join(dir, 'working.sqlite3'));
+    createArqfsSchemaV1(driver);
+    initializeWorkingCopyState(driver, 'project-alpha');
+    const entries = new Map([
+      ['manifest.json', new TextEncoder().encode('{"schemaVersion":1}')],
+      ['model.json', new TextEncoder().encode('{"walls":[{"id":"w1"}]}')],
+    ]);
+    for (const [entryPath, content] of entries) {
+      putArchiveEntry(driver, entryPath, content);
+    }
+    const checksums = await computeChecksums(entries);
+    putArchiveEntry(
+      driver,
+      'checksums.json',
+      new TextEncoder().encode(serializeChecksums(checksums)),
+    );
+
+    const result = await publishProjectFile(driver, target, nodeEnvironment());
+
+    expect(result.status).toBe('published');
   });
 
   it('refuses when the published file holds a different revision than the one published', async () => {

@@ -5,6 +5,7 @@ import { openArqfs } from './arqfs-open';
 import { checkArqfsIntegrity } from './arqfs-integrity';
 import { computeProjectSemanticHash, SEMANTIC_HASH_SCHEME } from './arqfs-semantic-hash';
 import { listArchiveEntryPaths } from './arqfs-archive-store';
+import { verifyArqfsEntryDigests, describeEntryDigestFailure } from './arqfs-entry-digests';
 import { readWorkingCopyState } from './arqfs-working-copy';
 
 /**
@@ -77,6 +78,8 @@ export type ArqfsPublicationRefusal =
   | 'reader-rejected'
   /** SQLite's own consistency checks failed on the published file. */
   | 'integrity-failed'
+  /** A canonical archive entry no longer hashes to its recorded digest. */
+  | 'entry-digest-failed'
   /** The fresh reader found a different project than the one published. */
   | 'identity-mismatch'
   /** The fresh reader found a different revision than the one published. */
@@ -222,6 +225,15 @@ export async function publishProjectFile(
         integrity.quickCheck.join('; ') || 'integrity check failed',
         true,
       );
+    }
+
+    // Per-entry digests, checked on the fresh reader for the same reason as
+    // everything else here: the writer's view of its own entries is not
+    // evidence about the bytes that landed. `PRAGMA quick_check` passing says
+    // the database is structurally sound, not that an entry's content survived.
+    const digests = await verifyArqfsEntryDigests(reader);
+    if (!digests.ok) {
+      return refuse('entry-digest-failed', describeEntryDigestFailure(digests), true);
     }
 
     const publishedState = readWorkingCopyState(reader);
