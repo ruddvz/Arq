@@ -124,9 +124,19 @@ level's doors and windows as real openings.
   keeps working unchanged. Both colours come from the appearance, so poché is a
   light solid on a dark page rather than a black shape on near-black.
 
+**Room labels no longer collide.** `roomLabelText` had built a two-line label
+since it was written and nothing used it - the app assembled its own single line,
+twice as wide as it needed to be, and `fillText` renders a newline as a space
+anyway, so even a two-line label would have come out as one. Both are fixed, and
+a label is now drawn only when it fits inside its own room at the scale being
+drawn. On a phone the fixture's galleries are a few millimetres wide and their
+labels were wider than the rooms; three overlapped into a smear that also hid
+the walls. The room is still drawn, still selectable and still names itself in
+the Inspector, so nothing is lost but a claim that could not be read.
+
 **Remaining:** wall joins (four join modules exist unwired, so wall ends meet
-rather than mitre), room-label collision at small scales, and the fixture's five
-linear dimensions - still reported as unsupported, truthfully.
+rather than mitre), and the fixture's five linear dimensions - still reported as
+unsupported, truthfully.
 
 **Evidence:** 25 new tests across `plan-openings.test.ts` and
 `canvas2d-paint.test.ts`; `golden-fixture-model.test.ts` reads the repository's
@@ -260,8 +270,8 @@ project name on screen. A harness assumption about one band's chrome, nearly
 published as a product failure on another - the same shape as the earlier
 "Open" label mistake.
 
-**Visible in the phone capture and still open:** room labels collide at small
-scales. Recorded under slice 6's remaining work.
+**Found by the phone capture and since fixed:** room labels collided at small
+scales. Recorded under slice 6.
 
 **Blocked, unchanged and external:** no CI run exists for this PR, and no
 preview exists for `apps/web`.

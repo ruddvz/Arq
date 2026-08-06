@@ -69,3 +69,39 @@ export function buildRoomLabelPrimitive<TId>(
     styleToken,
   };
 }
+
+/**
+ * Whether a room's label fits inside the room, at the scale it is being drawn.
+ *
+ * Room labels are placed and never checked, which is fine at a scale where the
+ * rooms are large and wrong at every other one: on a phone the golden fixture's
+ * galleries are a few millimetres wide on screen and their labels are wider
+ * than the rooms, so three of them overlap into an unreadable smear that also
+ * obscures the walls underneath. Suppressing a label that cannot fit is the
+ * honest answer - the room is still drawn, still selectable, and still names
+ * itself in the Inspector, and nothing is claimed that cannot be read.
+ *
+ * Measured in screen pixels rather than world units because that is what
+ * legibility depends on: the same room is legible zoomed in and not zoomed out,
+ * and the label does not shrink with the drawing.
+ */
+export function roomLabelFits(measurements: {
+  readonly labelWidthPx: number;
+  readonly labelHeightPx: number;
+  readonly roomWidthPx: number;
+  readonly roomHeightPx: number;
+}): boolean {
+  const { labelWidthPx, labelHeightPx, roomWidthPx, roomHeightPx } = measurements;
+  if (!Number.isFinite(labelWidthPx) || !Number.isFinite(labelHeightPx)) return false;
+  if (labelWidthPx <= 0 || labelHeightPx <= 0) return false;
+  // A label pressed against the walls it sits between reads as touching them.
+  // The margin is a fraction rather than a fixed number of pixels so it holds
+  // at any zoom.
+  return (
+    roomWidthPx >= labelWidthPx * (1 + ROOM_LABEL_MARGIN) &&
+    roomHeightPx >= labelHeightPx * (1 + ROOM_LABEL_MARGIN)
+  );
+}
+
+/** Clear space required around a label, as a fraction of its own size. */
+const ROOM_LABEL_MARGIN = 0.25;

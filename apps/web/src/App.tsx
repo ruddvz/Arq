@@ -118,7 +118,7 @@ import {
 } from '@arq/project-loading';
 import type { WallSolidDimensions } from './ModelCanvas';
 import type { PlanRoom } from './canvas/canvas-interaction';
-import type { PlanOpeningInput } from '@arq/plan-renderer';
+import { roomLabelText, type PlanOpeningInput } from '@arq/plan-renderer';
 import type { ModelOpeningSpan } from './ModelCanvas';
 
 /**
@@ -248,7 +248,18 @@ function roomsForLevel(document: NativeProjectDocument, levelId: string): readon
     // `calculatedArea` is already square metres - `recalculateRoomArea` stores
     // the result of `roomAreaSquareMetres`. Converting again here read every
     // room in the golden fixture as "0.0 m2".
-    label: `${room.name} ${room.calculatedArea.toFixed(1)} m2`,
+    /*
+     * Two lines, which is what `roomLabelText` in @arq/plan-renderer has built
+     * since it was written and what nothing was using: name on one, area on the
+     * next. As one line it was twice as wide as it needed to be, and that width
+     * is most of why labels collided at small scales.
+     */
+    label: roomLabelText({
+      elementId: room.id as string,
+      seedPoint: room.seedPoint,
+      name: room.name ?? 'Room',
+      areaSquareMetres: room.calculatedArea,
+    }),
     polygon: room.calculatedBoundary,
   }));
 }

@@ -40,6 +40,14 @@ const BRAND_PHTHALO_GREEN = '#0B6B50';
 const HANDLE_RADIUS_CSS_PX = 4;
 
 /**
+ * Leading between the lines of a multi-line primitive, in CSS pixels. A
+ * constant rather than a read of the canvas font because the target is an
+ * interface, not necessarily a real 2D context - the same reason line weights
+ * are passed in rather than measured.
+ */
+const TEXT_LINE_HEIGHT_PX = 12;
+
+/**
  * The two colours the plan is drawn in, and the one it is drawn on.
  *
  * The renderer used to hard-code black ink and a white handle fill, which is
@@ -209,7 +217,25 @@ function paintPrimitive<TId>(
       target.setLineDash([]);
       target.fillStyle = strokeColorForToken(primitive.styleToken, palette);
       const screen = worldToScreen(viewport, primitive.anchor);
-      target.fillText(primitive.text, screen.x, screen.y);
+      /*
+       * Drawn line by line. `fillText` renders a newline as a space, so a room
+       * label built as "name\narea" - which `buildRoomLabelPrimitive` has
+       * produced since it was written - came out as one long line twice as wide
+       * as it should be, which is most of why labels collided at small scales.
+       *
+       * Centred vertically on the anchor so a two-line label sits on the point
+       * it was anchored to rather than hanging below it.
+       */
+      const lines = primitive.text.split('\n');
+      if (lines.length === 1) {
+        target.fillText(primitive.text, screen.x, screen.y);
+        break;
+      }
+      const lineHeight = TEXT_LINE_HEIGHT_PX * devicePixelRatio;
+      const firstOffset = -((lines.length - 1) * lineHeight) / 2;
+      lines.forEach((line, index) => {
+        target.fillText(line, screen.x, screen.y + firstOffset + index * lineHeight);
+      });
       break;
     }
     case 'handle': {

@@ -45,6 +45,7 @@ import {
   swingPolyline,
   wallPiers,
   type PlanOpeningInput,
+  roomLabelFits,
 } from '@arq/plan-renderer';
 import {
   GRID_SPACING_MM,
@@ -104,6 +105,28 @@ function emptyContentBounds(
   if (content.rooms.length > 0 || content.walls.length > 0) return null;
   const half = EMPTY_VIEW_EXTENT_MM / 2;
   return { min: worldPoint(-half, -half), max: worldPoint(half, half) };
+}
+
+/** Matches `TEXT_LINE_HEIGHT_PX` in the paint, which is what actually spaces the lines. */
+const ROOM_LABEL_LINE_HEIGHT_PX = 12;
+
+/** A polygon's screen-space bounding box, which is what a label has to fit inside. */
+function polygonExtentPx(
+  polygon: readonly WorldPoint[],
+  viewport: Viewport,
+): { readonly width: number; readonly height: number } {
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  for (const point of polygon) {
+    const screen = worldToScreen(viewport, point);
+    minX = Math.min(minX, screen.x);
+    minY = Math.min(minY, screen.y);
+    maxX = Math.max(maxX, screen.x);
+    maxY = Math.max(maxY, screen.y);
+  }
+  return { width: maxX - minX, height: maxY - minY };
 }
 
 const EMPTY_SET: ReadonlySet<string> = new Set<string>();
@@ -369,14 +392,41 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         elementId: room.id,
         points: room.polygon,
       })),
-      ...rooms.map((room): PlanPrimitiveInput<string> => ({
-        kind: 'text',
-        // Labelled at the polygon's centroid rather than a fixed offset, so a
-        // room of any shape carries its label inside itself.
-        elementId: `${room.id}-label`,
-        anchor: polygonCentroid(room.polygon),
-        text: room.label,
-      })),
+      ...rooms.flatMap((room): PlanPrimitiveInput<string>[] => {
+        /*
+         * A label is drawn only when it fits inside its own room at the scale
+         * being drawn. Unchecked, the golden fixture's galleries on a phone are
+         * a few millimetres wide on screen and their labels are wider than the
+         * rooms - three of them overlapped into an unreadable smear that also
+         * hid the walls underneath. The room is still drawn, still selectable
+         * and still names itself in the Inspector, so nothing is lost except a
+         * claim that could not be read.
+         */
+        const anchor = polygonCentroid(room.polygon);
+        const lines = room.label.split('\n');
+        const widestLinePx = Math.max(...lines.map((line) => ctx.measureText(line).width));
+        const extent = polygonExtentPx(room.polygon, currentViewport);
+        if (
+          !roomLabelFits({
+            labelWidthPx: widestLinePx,
+            labelHeightPx: lines.length * ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio,
+            roomWidthPx: extent.width,
+            roomHeightPx: extent.height,
+          })
+        ) {
+          return [];
+        }
+        return [
+          {
+            kind: 'text',
+            // Labelled at the polygon's centroid rather than a fixed offset, so
+            // a room of any shape carries its label inside itself.
+            elementId: `${room.id}-label`,
+            anchor,
+            text: room.label,
+          },
+        ];
+      }),
       ...walls.flatMap((wall): PlanPrimitiveInput<string>[] => {
         /*
          * A wall with a known thickness is drawn as its footprint rather than
