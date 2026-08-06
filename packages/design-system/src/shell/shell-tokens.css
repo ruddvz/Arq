@@ -1,4 +1,25 @@
 /*
+ * The website's own font files, served from `apps/web/public/fonts`. Declared
+ * beside the tokens that name the family: a token naming a font nothing loaded
+ * is a silent fallback to the system stack, which is the state this replaced.
+ */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/PlusJakartaSans-Variable.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
  * Blueprint section 17 ("Colour tokens") and section 19 ("Spacing and shape") -
  * the UI-chrome tokens the desktop/iPad shell (section 12/13) needs, distinct
  * from brand.v4.css's three brand-identity colours (black/white/phthalo green,
@@ -59,8 +80,20 @@
    * font file is bundled or redistributed: Apple's faces are named so a Mac
    * uses them and every other platform falls through to its own.
    */
+  /*
+   * The family the ARQ website is set in, from the same self-hosted files.
+   * Not a new typeface: `apps/marketing` has shipped Plus Jakarta Sans as a
+   * variable woff2 since it was built, while the editor was set in the system
+   * stack - so the product and the site that sells it did not look related.
+   * The fallbacks stay, because a variable font that fails to load should
+   * degrade to a humanist sans rather than to a serif.
+   */
   --arq-font-ui:
-    -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial,
+    sans-serif;
+
+  /* Figures read as measurements: coordinates, view scale, areas. */
+  --arq-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /*
    * The desktop scale. Deliberately small: the canvas is dense, so the chrome

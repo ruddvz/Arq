@@ -196,6 +196,7 @@
  */
 .arq-status-bar,
 .arq-context-hud__surface {
+  font-family: var(--arq-font-mono);
   font-variant-numeric: tabular-nums;
 }
 
