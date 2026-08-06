@@ -9,7 +9,7 @@ win.
 **Branch:** `claude/arq-liquid-glass-12-5gstys`
 **Base:** `claude/arq-cad-platform-research-ba8rav` (this repository's default)
 **Pull request:** ruddvz/Arq#303
-**Evidence revision:** `b5b2d97`
+**Evidence revision:** `10862c5`
 **Delivery stop:** pull request plus verified preview. Not merge, not production.
 
 ## States
@@ -30,6 +30,31 @@ run locally because **GitHub Actions has produced no run for this pull request**
 across fourteen pushes (all eight workflows report `state: active`; nothing has
 run repository-wide since ~10 minutes before the PR opened). Every claim below
 is therefore local evidence, not a green pipeline.
+
+## Responsive evidence at `10862c5`
+
+Captured directly from the running application, with the golden fixture opened
+through the real file dialog, at the four required viewport classes. Each was
+asserted in-page rather than eyeballed: no "demo fixture" string, no "Fixture
+wall" string, and zero horizontal overflow at every size.
+
+| Viewport  | Band resolved      | Canvas   | Fixture opens                   |
+| --------- | ------------------ | -------- | ------------------------------- |
+| 1600x1000 | `desktop`          | 1380x776 | yes                             |
+| 1366x1024 | `desktop`          | 1180x847 | yes                             |
+| 1024x768  | `tablet-landscape` | 1008x572 | yes                             |
+| 430x932   | `phone`            | 414x740  | **no - no Open control exists** |
+
+Two findings from this run, both recorded against their rows:
+
+- **A 1366px iPad resolves to the `desktop` band**, not a tablet one, because
+  `resolveWorkspacePlatform` only treats a coarse pointer as a tablet below
+  1280px. It gets touch sizing from the `pointer: coarse` rules but the desktop
+  composition. Row 9.
+- **The phone cannot open a project at all.** The phone project bar carries
+  Back, name and More; there is no Open affordance and no recent-projects
+  surface, so a phone reaches only an empty workspace. Section 11 requires
+  project opening and recent projects on phone. Row 10 and row 11.
 
 ## Known defect carried across every row
 
@@ -192,9 +217,11 @@ palette read and the dimensions map.
 observes it, so the band converges on the truth however the viewport settles -
 it previously measured once at mount and a stale read left a phone rendering the
 tablet composition permanently; touch type scale keyed on `pointer: coarse`.
-**Remaining:** no iPad-specific composition work beyond inheriting the desktop
-rules below 1180px; Pencil hover intent, one-supplementary-panel-at-a-time and
-keyboard-avoidance unverified.
+**Remaining:** a 1366px iPad lands on the `desktop` band (see the table above) -
+the threshold, not the composition, is what needs deciding; Pencil hover intent,
+one-supplementary-panel-at-a-time and keyboard-avoidance unverified. The 1024px
+compact band is correct today: drawers-only, no docked panels, fixture
+edge-to-edge.
 **Evidence:** `benchmark:workspace-layout` covers 1194x834 and 834x1194;
 `benchmark:pencil-input` and `benchmark:hover-sequence` pass.
 **Blockers:** none. **Rollback:** self-contained.
@@ -211,9 +238,10 @@ focusable and hit-testable behind a peeking sheet; the status strip gained a
 readouts that describe a pointer a phone does not have; the plan no longer opens
 at 1% zoom (the surface lays out at 0x740 before its first real pass and the fit
 clamped, then never ran again).
-**Remaining:** measurement workflow (endpoints, snapping, live value,
-cancellation, completion) not implemented or verified; markup, issues and
-revision review unverified.
+**Remaining:** **the phone has no Open control**, so it cannot reach a project at
+all - this blocks every other phone workflow from being evidenced; measurement
+(endpoints, snapping, live value, cancellation, completion) not implemented;
+markup, issues and revision review unverified.
 **Evidence:** `phone-bottom-owner.test.ts` (5 cases); runtime capture at
 430x932 with mobile emulation.
 **Blockers:** none. **Rollback:** self-contained.
