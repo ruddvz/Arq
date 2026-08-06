@@ -53,6 +53,8 @@ export function workspaceRailsWidthPx(platform: WorkspacePlatform, toolRailIsDoc
 }
 
 export interface WorkspaceRootProps {
+  /** Glyphs for the mode rail, resolved by the host - this package imports no icon library. */
+  readonly modeIcons?: Readonly<Partial<Record<WorkspaceMode, ReactNode>>>;
   readonly project: WorkspaceProjectContext;
   readonly activeMode: WorkspaceMode;
   readonly onSelectMode: (mode: WorkspaceMode) => void;
@@ -236,6 +238,7 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
     project,
     activeMode,
     onSelectMode,
+    modeIcons,
     probe,
     panels,
     projectBar,
@@ -396,7 +399,12 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
           }}
         >
           {!canvasFirst && (
-            <ModeRail project={project} activeMode={activeMode} onSelectMode={onSelectMode} />
+            <ModeRail
+              project={project}
+              activeMode={activeMode}
+              onSelectMode={onSelectMode}
+              {...(modeIcons === undefined ? {} : { modeIcons })}
+            />
           )}
           {!canvasFirst && toolRail}
 

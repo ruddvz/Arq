@@ -71,6 +71,7 @@ import {
   reconcileInspectorTab,
   selectInspectorTab,
   reconcileDockedPanels,
+  setPanelOpen,
   resizePanel,
   selectBrowserSection,
   resolveLayoutSlots,
@@ -264,7 +265,7 @@ function roomsForLevel(document: NativeProjectDocument, levelId: string): readon
     polygon: room.calculatedBoundary,
   }));
 }
-import { TOOL_GROUP_ICONS, TOOL_ICONS } from './tool-icons';
+import { MODE_ICONS, TOOL_GROUP_ICONS, TOOL_ICONS } from './tool-icons';
 import { PlanCanvas } from './PlanCanvas';
 /**
  * The 3D surface carries three.js and the model renderer, which together are the
@@ -717,6 +718,25 @@ export function App(): JSX.Element {
       }),
     );
   }, [probe.widthPx, slots, railsWidthPx, platform, workspaceComposition]);
+
+  /*
+   * The Inspector follows the selection.
+   *
+   * It was docked open permanently, so roughly 300px of a 1600px window was
+   * given over to the words "No selection" whenever nothing was selected -
+   * which is most of the time, and is the single largest thing the drawing was
+   * losing width to. The reference composition shows it only when there is
+   * something to inspect, and the canvas runs to the window edge otherwise.
+   *
+   * Driven from selection rather than from a user preference because that is
+   * what it is: a panel about the selected element has nothing to say when
+   * there is no selected element. Toggling it by hand still works, until the
+   * selection changes again and answers the question for itself.
+   */
+  const hasSelection = modelSelection.primary !== null || modelSelection.secondary.size > 0;
+  useEffect(() => {
+    setPanels((current) => setPanelOpen(current, 'inspector', hasSelection));
+  }, [hasSelection]);
 
   /*
    * Doc 34: each mode leads with the browser section it is about, unless the
@@ -1397,6 +1417,7 @@ export function App(): JSX.Element {
   return (
     <>
       <WorkspaceRoot
+        modeIcons={MODE_ICONS}
         project={project}
         activeMode={modeState.mode}
         onSelectMode={(mode) => setModeState((state) => switchModeIfAvailable(state, mode))}

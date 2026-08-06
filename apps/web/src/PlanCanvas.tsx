@@ -111,6 +111,12 @@ function emptyContentBounds(
 /** Matches `TEXT_LINE_HEIGHT_PX` in the paint, which is what actually spaces the lines. */
 const ROOM_LABEL_LINE_HEIGHT_PX = 12;
 
+/** Clear page around the drawing, as a fraction of the drawing's own size. */
+const SHEET_MARGIN_FRACTION = 0.06;
+
+/** The page's corner radius, in CSS pixels - a sheet, not a card. */
+const SHEET_RADIUS_CSS_PX = 6;
+
 /** A polygon's screen-space bounding box, which is what a label has to fit inside. */
 function polygonExtentPx(
   polygon: readonly WorldPoint[],
@@ -397,6 +403,54 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       // Everything painted after the grid is at full strength; leaving the
       // alpha set would silently wash out the entire drawing.
       ctx.globalAlpha = 1;
+    }
+
+    /*
+     * The sheet the drawing sits on.
+     *
+     * A plan is drawn on a page, and the reference composition shows exactly
+     * that: a white sheet with a soft edge, floating on the gridded surface.
+     * Before this the grid ran under the drawing and out to the window edges,
+     * so the model read as marks on graph paper with no boundary of its own -
+     * and the eye had nothing to tell it where the drawing stopped.
+     *
+     * Sized from the content and drawn in world space, so it pans and zooms
+     * with the model rather than being a fixed rectangle the drawing slides
+     * around inside. Skipped when there is nothing on it: an empty page is a
+     * claim that something is there.
+     */
+    if (rooms.length > 0 || walls.length > 0) {
+      const bounds = contentBounds(content);
+      const marginMm = Math.max(
+        (bounds.max.x - bounds.min.x) * SHEET_MARGIN_FRACTION,
+        (bounds.max.y - bounds.min.y) * SHEET_MARGIN_FRACTION,
+      );
+      const topLeft = worldToScreen(
+        currentViewport,
+        worldPoint(bounds.min.x - marginMm, bounds.max.y + marginMm),
+      );
+      const bottomRight = worldToScreen(
+        currentViewport,
+        worldPoint(bounds.max.x + marginMm, bounds.min.y - marginMm),
+      );
+      const radius = SHEET_RADIUS_CSS_PX * devicePixelRatio;
+      ctx.save();
+      // The shadow is what separates the page from the surface. Kept soft and
+      // low-contrast: a drawing sheet sits on a desk, it does not hover.
+      ctx.shadowColor = 'rgba(15, 23, 28, 0.16)';
+      ctx.shadowBlur = 24 * devicePixelRatio;
+      ctx.shadowOffsetY = 4 * devicePixelRatio;
+      ctx.fillStyle = palette.paper;
+      ctx.beginPath();
+      ctx.roundRect(
+        topLeft.x,
+        topLeft.y,
+        bottomRight.x - topLeft.x,
+        bottomRight.y - topLeft.y,
+        radius,
+      );
+      ctx.fill();
+      ctx.restore();
     }
 
     const inputs: PlanPrimitiveInput<string>[] = [

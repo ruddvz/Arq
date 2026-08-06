@@ -62,6 +62,9 @@ import {
   UnhideIcon,
   ViewStyleIcon,
   ZoomIcon,
+  InspectIcon,
+  PlanIcon,
+  SheetIcon,
 } from '@arq/icons';
 
 /**
@@ -171,4 +174,20 @@ export const TOOL_GROUP_ICONS: Readonly<Record<string, ReactNode>> = {
   measure: <GroupMeasureIcon />,
   view: <GroupViewIcon />,
   review: <GroupReviewIcon />,
+};
+
+/**
+ * A glyph per workspace mode.
+ *
+ * The mode rail showed five words in a 112px column beside a 48px column of
+ * icons, which is most of what made the left edge a wall rather than a dock.
+ * The label survives as the button's accessible name and tooltip, so nothing is
+ * lost to a screen reader or to a pointer user who asks.
+ */
+export const MODE_ICONS: Readonly<Record<string, ReactNode>> = {
+  design: <GroupDrawIcon width={20} height={20} />,
+  document: <SheetIcon width={20} height={20} />,
+  inspect: <InspectIcon width={20} height={20} />,
+  review: <GroupReviewIcon width={20} height={20} />,
+  present: <PlanIcon width={20} height={20} />,
 };
