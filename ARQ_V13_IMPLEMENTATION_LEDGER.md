@@ -96,16 +96,51 @@ joined to the real undo stack and real operation inversion.
 
 ### 6. Golden-fixture semantic plan
 
-**State:** partial (V12 row 7) - **the active slice**
-**Done:** rooms, wall footprints from `wallOutline`, wall dimensions and live
-palette all read from canonical data.
-**Remaining:** hosted openings. The repository's reader currently *counts*
-`openings`, `doors` and `windows` as unsupported content and says so truthfully
-("Openings are recorded but not drawn in plan or 3D yet"). The fixture holds 30
-openings, 14 doors and 16 windows with a clean canonical shape - host wall,
-offset from wall start, width, sill height, height, side, hand, swing angle.
-Also remaining: poché fill, wall joins (four join modules exist unwired), room
-label collision.
+**State:** implemented
+**Owner:** `packages/project-loading/src/native-project-model.ts`,
+`packages/plan-renderer/src/plan-openings.ts`,
+`packages/plan-renderer/src/canvas2d-paint.ts`, `apps/web/src/PlanCanvas.tsx`
+
+**Done.** The golden fixture's ground floor now draws as a plan rather than as a
+wireframe: 37 walls filled with poché, 18 tinted and labelled rooms, and the
+level's doors and windows as real openings.
+
+- The reader parses `openings`, `doors` and `windows` instead of counting them
+  as unsupported. It refuses an opening with no host wall, one running past its
+  wall's end, a swing that would sweep back through the wall, and two instances
+  in one void - each checked where the question can actually be answered.
+- `plan-openings.ts` projects an opening onto its host wall: reveal, jambs, door
+  leaf, swing arc, window glazing. Its own projection rather than a reuse of the
+  3D one, because a leaf and a swing exist only in plan and the sill and head
+  heights the 3D module needs mean nothing here. The two share the canonical
+  record, which is the right thing to share.
+- An opening is a hole, not a lid. A wall with openings is drawn as the
+  stretches that remain solid - the same decomposition `generateWallOpeningMeshes`
+  performs in three dimensions - so a filled wall cannot print solid over its own
+  doors in a vector sheet.
+- Poché and room tint are a `fill` on the existing polygon primitive rather than
+  a new primitive kind: a filled wall is the same shape in the same place, and
+  every consumer that already hit-tests, selects, exports or measures a polygon
+  keeps working unchanged. Both colours come from the appearance, so poché is a
+  light solid on a dark page rather than a black shape on near-black.
+
+**Remaining:** wall joins (four join modules exist unwired, so wall ends meet
+rather than mitre), room-label collision at small scales, and the fixture's five
+linear dimensions - still reported as unsupported, truthfully.
+
+**Evidence:** 25 new tests across `plan-openings.test.ts` and
+`canvas2d-paint.test.ts`; `golden-fixture-model.test.ts` reads the repository's
+own `.arq` and asserts 79 walls, 30 openings, 14 doors, 16 windows, 34 rooms
+from the file itself. `run-native-open-capability-check.mjs` opens the fixture
+through the real interface in headless Chromium and now saves the plan surface
+(`benchmarks/results/native-open-plan.png`) - it ended every run on the 3D tab
+before, so the surface most of this work changes had no capture at all.
+
+**Not `verified`:** the plan is captured at one viewport by that check, not at
+all four required classes, and no visual-regression baseline compares it against
+the Version 13 reference.
+**Rollback:** the fill is optional and absent means outline-only; the openings
+map is optional and an absent entry draws a wall solid, exactly as before.
 
 ### 7. Opening-aware 3D and section
 

@@ -2,6 +2,12 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "generatedAt": "2026-08-06T16:36:35.073Z",
+      "sourceSetDigest": "1ba00d8817af4446a296f3f9e157ab392576049e2cf99d874cf94eded1d790f2",
+      "previousSourceSetDigest": "b9c989a1ecbc88a28aaa9f69f0cd87ab76745b35ece422ff41d267893061592f",
+      "changedSourceSets": ["plan-canvas"]
+    },
+    {
       "generatedAt": "2026-08-06T16:31:59.080Z",
       "sourceSetDigest": "b9c989a1ecbc88a28aaa9f69f0cd87ab76745b35ece422ff41d267893061592f",
       "previousSourceSetDigest": "a737c4206829ebe4caf82e24552751c8f85d7b93644f4138a19b03804d38abec",

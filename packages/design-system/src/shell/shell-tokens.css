@@ -27,6 +27,17 @@
    * table the panels rest on.
    */
   --arq-ui-canvas: #eef1f3;
+
+  /*
+   * Plan drawing solids. Poché is the cut-through fill where the section plane
+   * passes through a wall, and it is deliberately not `--arq-ui-ink`: a wall
+   * filled with the same value as its own outline loses the outline, and loses
+   * the join between two walls with it. The room tint is barely there on
+   * purpose - it has to make an enclosed area read as a room without competing
+   * with the linework that defines it.
+   */
+  --arq-plan-poche: #1c2124;
+  --arq-plan-room-fill: #f4f6f7;
   --arq-ui-surface-1: #fafafa;
   --arq-ui-surface-2: #f4f4f4;
   --arq-ui-surface-3: #ececec;
@@ -190,6 +201,10 @@
     --arq-ui-text-secondary: #b6bfc5;
     --arq-ui-text-primary: #e8edf0;
     --arq-ui-ink: #ffffff;
+    /* Dark: poché is a light solid on a dark page, which is the same figure and
+       ground relationship inverted rather than a black shape on near-black. */
+    --arq-plan-poche: #c9d1d6;
+    --arq-plan-room-fill: #1b1f22;
 
     /* A black scrim over already-dark content barely reads, so the dark
        backdrop is heavier than the light one to do the same job: say "what is

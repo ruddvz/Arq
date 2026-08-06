@@ -55,6 +55,14 @@ export interface PlanPalette {
   readonly paper: string;
   /** Selection, active tool and proposal states. */
   readonly accent: string;
+  /**
+   * The solid a wall is filled with where the section plane cuts it. Optional
+   * so a caller that has not chosen one still gets the outline-only drawing it
+   * had before, rather than a wall filled with a colour nobody picked.
+   */
+  readonly poche?: string;
+  /** The tint that makes an enclosed area read as a room. */
+  readonly roomFill?: string;
 }
 
 /** Light appearance, and the exact colours this renderer drew before it took a palette. */
@@ -145,6 +153,27 @@ function strokeWorldPolyline(
   target.stroke();
 }
 
+function fillWorldPolygon(
+  target: Canvas2dPaintTarget,
+  viewport: Viewport,
+  points: readonly WorldPoint[],
+): void {
+  if (points.length < 3) {
+    return;
+  }
+  target.beginPath();
+  points.forEach((point, index) => {
+    const screen = worldToScreen(viewport, point);
+    if (index === 0) {
+      target.moveTo(screen.x, screen.y);
+    } else {
+      target.lineTo(screen.x, screen.y);
+    }
+  });
+  target.closePath();
+  target.fill();
+}
+
 function paintPrimitive<TId>(
   target: Canvas2dPaintTarget,
   viewport: Viewport,
@@ -156,6 +185,20 @@ function paintPrimitive<TId>(
     case 'line':
     case 'polygon': {
       const treatment = lineTreatmentForToken(primitive.styleToken);
+      /*
+       * Filled first, then stroked, so the outline sits on top of its own fill
+       * rather than being half-covered by it. A fill the palette has no colour
+       * for is skipped rather than defaulted: an unasked-for colour on a wall
+       * is worse than no colour at all.
+       */
+      if (primitive.kind === 'polygon' && primitive.fill !== undefined) {
+        const colour = primitive.fill === 'poche' ? palette.poche : palette.roomFill;
+        if (colour !== undefined) {
+          target.setLineDash([]);
+          target.fillStyle = colour;
+          fillWorldPolygon(target, viewport, primitive.points);
+        }
+      }
       target.strokeStyle = strokeColorForToken(primitive.styleToken, palette);
       target.lineWidth = lineWeightToDevicePixels(treatment.weight, devicePixelRatio);
       target.setLineDash(treatment.dashCssPx.map((dash) => dash * devicePixelRatio));

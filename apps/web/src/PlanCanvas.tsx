@@ -301,6 +301,11 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         ink: value('--arq-ui-ink', DEFAULT_PLAN_PALETTE.ink),
         paper: value('--arq-ui-paper', DEFAULT_PLAN_PALETTE.paper),
         accent: value('--arq-selection-outline', DEFAULT_PLAN_PALETTE.accent),
+        // Read from the appearance like everything else here, so poché stays a
+        // solid against the paper in dark as well as light rather than a black
+        // shape on a near-black page.
+        poche: value('--arq-plan-poche', DEFAULT_PLAN_PALETTE.ink),
+        roomFill: value('--arq-plan-room-fill', 'transparent'),
       });
     };
     read();
@@ -358,6 +363,9 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     const inputs: PlanPrimitiveInput<string>[] = [
       ...rooms.map((room): PlanPrimitiveInput<string> => ({
         kind: 'polygon',
+        // Tinted so an enclosed area reads as a room rather than as four walls
+        // that happen to meet. Drawn first, so the walls sit on top of it.
+        fill: 'room',
         elementId: room.id,
         points: room.polygon,
       })),
@@ -392,7 +400,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
           );
           return outline === null
             ? [{ kind: 'line', elementId: wall.id, points: [wall.start, wall.end] }]
-            : [{ kind: 'polygon', elementId: wall.id, points: outline }];
+            : [{ kind: 'polygon', elementId: wall.id, points: outline, fill: 'poche' }];
         }
 
         /*
@@ -409,7 +417,12 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         for (const pier of wallPiers(host, openings)) {
           const outline = wallOutline(pier, thicknessMm, 'centre', 1e-6);
           if (outline !== null) {
-            primitives.push({ kind: 'polygon', elementId: wall.id, points: outline });
+            primitives.push({
+              kind: 'polygon',
+              elementId: wall.id,
+              points: outline,
+              fill: 'poche',
+            });
           }
         }
         for (const opening of planOpeningsForWall(host, openings)) {
