@@ -597,7 +597,20 @@ button.arq-project-directory__row[aria-pressed='true'] .arq-project-directory__c
   color: var(--arq-ui-text-secondary);
 }
 
-.arq-project-directory__notices {
+/*
+ * The two disclosures read as one kind of thing, because they are one.
+ *
+ * "All elements" was styled as a section heading - uppercase, letter-spaced,
+ * semibold - and sat directly under "Not shown (2)", which was not. So the
+ * panel ended in two rows with the same triangle and the same job, one of them
+ * shouting. Worse, the shout matched "FLOOR PLANS" and "MODEL", which are
+ * headings and are not controls: a reader scanning for structure found a thing
+ * that opened when clicked.
+ *
+ * Sentence case for both, and the heading treatment stays with the headings.
+ */
+.arq-project-directory__notices,
+.arq-project-directory__tree > summary {
   padding-inline: var(--arq-space-compact);
   color: var(--arq-ui-text-muted);
   font: var(--arq-text-label);
@@ -614,12 +627,25 @@ button.arq-project-directory__row[aria-pressed='true'] .arq-project-directory__c
   overflow: auto;
 }
 
-.arq-project-directory__tree > summary {
-  padding: var(--arq-space-micro) var(--arq-space-compact);
-  color: var(--arq-ui-text-muted);
-  font: var(--arq-text-label);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+/*
+ * The panel's one command, drawn as one.
+ *
+ * `.arq-shell-button`'s border is transparent by default, which is right for a
+ * rail of glyphs sitting on a panel and wrong for a lone action at the foot of
+ * a list. It read as a centred caption below the counts - the only thing on the
+ * panel that does something, and the only thing with no edge to say so.
+ *
+ * Closing releases the Worker and the project's resident pages and touches
+ * nothing on disk, so it stays quiet: an outline, not a filled or destructive
+ * button.
+ */
+.arq-project-directory > .arq-shell-button {
+  align-self: stretch;
+  border-color: var(--arq-ui-line-subtle);
+}
+
+.arq-project-directory__tree > summary,
+.arq-project-directory__notices > summary {
+  padding-block: var(--arq-space-micro);
   cursor: pointer;
 }
