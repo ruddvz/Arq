@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import {
   CLOSED_SHEET_STATE,
   occupiesLayoutWidth,
@@ -343,6 +343,20 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
         height: '100dvh',
         minHeight: 0,
         position: 'relative',
+        /*
+         * How much of the viewport each floating panel covers. Published here
+         * because a panel is resizable, so its width is state and cannot be a
+         * token - and the stylesheet that positions the panels owns the rest of
+         * the arithmetic. A document surface reads these to keep clear of a
+         * panel it cannot be panned out from under; a drawing ignores them and
+         * runs behind, which is the point of a panel that floats.
+         */
+        ...({
+          '--arq-overlay-left-width': browserFloating
+            ? `${panels['project-browser'].widthPx}px`
+            : '0px',
+          '--arq-overlay-right-width': inspectorFloating ? `${panels.inspector.widthPx}px` : '0px',
+        } as CSSProperties),
       }}
     >
       {/*

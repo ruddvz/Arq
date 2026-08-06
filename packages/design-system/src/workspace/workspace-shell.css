@@ -347,6 +347,26 @@ body {
  * panels deliberately do not - they share an edge with the canvas and are
  * already separated by it.
  */
+/*
+ * A floating panel's footprint, published so content underneath can account
+ * for it.
+ *
+ * A drawing is meant to run behind these panels - that is the whole point of a
+ * panel that floats rather than docks, and a plan can be panned out from under
+ * one. A document cannot. The Project overview is a document: its heading is
+ * the project's own name, it does not scroll sideways, and it was rendering
+ * under the project browser with the name cut in half by the panel's edge.
+ *
+ * The offset is a variable rather than a repeated calc so the panel's position
+ * and the space content leaves for it are the same declaration. The width is
+ * set by the shell, which is the only place that knows it - a panel is
+ * resizable, so it is state rather than a token.
+ */
+.arq-workspace__row {
+  --arq-overlay-left-offset: 0px;
+  --arq-overlay-right-offset: 0px;
+}
+
 .arq-workspace__overlay {
   position: absolute;
   top: 0;
@@ -357,11 +377,11 @@ body {
 }
 
 .arq-workspace__overlay--left {
-  left: 0;
+  left: var(--arq-overlay-left-offset);
 }
 
 .arq-workspace__overlay--right {
-  right: 0;
+  right: var(--arq-overlay-right-offset);
 }
 
 /*
@@ -387,14 +407,10 @@ body {
    * gutter after it - two rails, hence twice `2px + gutter` - and one more
    * gutter separates the panel from the last rail.
    */
-  .arq-workspace__overlay--left {
-    left: calc(
+  .arq-workspace__row {
+    --arq-overlay-left-offset: calc(
       var(--arq-rails-width, 0px) + 2 * (2px + var(--arq-space-compact)) + var(--arq-space-compact)
     );
-  }
-
-  .arq-workspace__overlay--right {
-    right: 0;
   }
 }
 
@@ -648,4 +664,20 @@ button.arq-project-directory__row[aria-pressed='true'] .arq-project-directory__c
 .arq-project-directory__notices > summary {
   padding-block: var(--arq-space-micro);
   cursor: pointer;
+}
+
+/*
+ * A document surface, unlike a drawing, cannot be moved out from under a
+ * floating panel - so it keeps clear of one instead. Both sides are asked,
+ * because the inspector floats on the right on the same bands. Each term is
+ * zero when nothing is floating there, which leaves a full-width page.
+ */
+.arq-project-overview {
+  padding-inline-start: calc(
+    var(--arq-space-page) + var(--arq-overlay-left-offset, 0px) + var(--arq-overlay-left-width, 0px)
+  );
+  padding-inline-end: calc(
+    var(--arq-space-page) + var(--arq-overlay-right-offset, 0px) +
+      var(--arq-overlay-right-width, 0px)
+  );
 }
