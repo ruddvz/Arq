@@ -313,19 +313,64 @@ only because no recovery path ran.
 - The outcome gets a non-dismissable dialog, not only a four-second toast: on a
   refusal the diagnostic and the reassurance are the whole message.
 
-**Remaining:** the recovery comparison surface (source, last-known-good,
-recoverable working copy) is still unwired - `buildArqfsRecoveryReport` and
-`resolveArqfsSafeModePlan` remain uncalled by the app, so recovery
-preservation-by-default is proved by unit tests only and by nothing a user can
-reach. Interruption paths across a real publish are untested in a browser.
+**Done, second slice: the open path now asks about the file's condition.**
+`buildArqfsRecoveryReport` and `resolveArqfsSafeModePlan` had no caller outside
+their own tests, so every open decided writability from the format version
+alone. A working copy whose last local write never reached commit, or whose
+SQLite integrity checks fail, opened fully editable - and the first save
+committed on top of a revision the project never committed to, destroying at
+that moment the only state a recovery could have been built from.
 
-**Evidence:** 19 new tests in `apps/web/src/project/` (`partially-verified`:
-they cover the copy contract, the file-name derivation and the delivery seam
-against a fake browser environment; they do not drive a real OPFS publish).
-`arqfs-publication.test.ts` covers the verification itself with a real SQLite
-driver. `pnpm vitest run`: 3,563 tests, 331 files, uncached. `pnpm --filter
-@arq/web build` succeeds. No headless-browser check drives `Save a copy` yet, so
-this row is not `verified`.
+The Worker's `open` now builds the recovery report (one open, not two) and
+carries the resulting plan on the same payload as the format verdict, so a
+caller cannot act on one before the other arrives. The condition can only
+remove write access, never grant it.
+
+Deliberately narrowed: only `corrupt` and `interrupted-write` take write access
+away, defined once in `conditionForcesReadOnly` and shared by the Worker that
+enforces it and the copy the user reads, so the refusal and the explanation
+cannot disagree. Applying the whole plan broke 18 existing Worker contracts and
+was wrong to begin with - `missing-required-entries` describes a chosen file,
+and a working copy this build just initialised has no required entries either,
+so it would have opened every new project read-only. Those kinds stay with
+`native-open-policy.ts`, which already decides them.
+
+The user-facing result: an interrupted-write project opens read-only, says so,
+and says the original is untouched and can be copied before anything changes.
+A project that fails its own consistency checks is refused rather than opened.
+
+**Remaining:** the recovery *comparison* surface (source, last-known-good,
+recoverable working copy side by side) does not exist - the app now refuses or
+degrades correctly, but offers no choice between versions. Interruption paths
+across a real publish are untested in a browser.
+
+**Evidence:** 22 new tests in `apps/web/src/project/`.
+- Publication copy and delivery: `partially-verified`. They cover the copy
+  contract over the full refusal union, the file-name derivation and the
+  delivery seam against a fake browser environment; they do not drive a real
+  OPFS publish. `arqfs-publication.test.ts` covers the verification itself
+  against a real SQLite driver.
+- The open condition gate: `verified` for the paths a browser exercised.
+  `run-native-open-capability-check.mjs` opens the golden fixture through the
+  real interface in headless Chromium and passes with the gate in place, as do
+  `run-e2e-arq-open-capability-check.mjs` (four open outcomes against real
+  OPFS), `run-file-open-capability-check.mjs`,
+  `run-arqfs-project-isolation-capability-check.mjs` and
+  `run-arqfs-writer-lock-capability-check.mjs`. The interrupted-write and
+  corrupt branches themselves are covered by unit tests only - no check seeds a
+  half-written `.arq` in a browser yet.
+
+`pnpm vitest run`: 3,566 tests, 331 files, uncached. Typecheck, lint and
+`pnpm --filter @arq/web build` clean; language ladder refreshed, audit PASS.
+
+**Regression this slice caught in itself:** taking a *value* from the
+`@arq/arqfs` barrel dragged the Node-only atomic swap into the browser bundle
+and failed the build. Caught by `run-native-open-capability-check.mjs`, not by
+tests or typecheck - the deep import is the fix, and the reason is recorded at
+the import.
+
+The row stays `partial`: no headless check drives `Save a copy`, and the
+recovery comparison surface does not exist.
 
 **Blockers:** none. **Rollback:** the command entry and its handler are additive;
 removing the palette entry removes the surface without touching `@arq/arqfs`.

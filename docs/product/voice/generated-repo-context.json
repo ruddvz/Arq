@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "aa2fb8aa75689683cee279920bed7f3b095f47a07950b3325aed0d2589d06e3c",
+  "sourceSetDigest": "13782de1d4be9959c52bfb4197e93ddc1ca79429814a3be4ff1cfb3c1ee5bf8c",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -353,8 +353,8 @@
       "id": "arqfs-safe-mode",
       "kind": "file",
       "path": "packages/arqfs/src/arqfs-safe-mode.ts",
-      "sha256": "0b3e1b3b8d5e7ac1580096372422e8fd54ac1719a3e3c30728af0fa50651bff9",
-      "bytes": 3673
+      "sha256": "6b96e6466e15fff1251beff9a71ed0fbac31c28e86edb94eabf43654cc8c3f0a",
+      "bytes": 5002
     },
     "file-open-ui": {
       "id": "file-open-ui",

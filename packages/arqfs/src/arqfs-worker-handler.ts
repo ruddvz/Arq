@@ -2,6 +2,8 @@ import type { ArqfsDriver } from './arqfs-driver';
 import { createArqfsSchemaV1 } from './arqfs-schema';
 import { createArqfsSchemaLatest } from './arqfs-schema-v2';
 import { openArqfs, type ArqfsOpenResult } from './arqfs-open';
+import { buildArqfsRecoveryReport } from './arqfs-recovery-report';
+import { conditionForcesReadOnly, resolveArqfsSafeModePlan } from './arqfs-safe-mode';
 import { applyDefensiveOpenPolicy } from './arqfs-defensive-open';
 import {
   putArchiveEntries,
@@ -209,7 +211,22 @@ export async function handleArqfsWorkerRequest(
         if (context.driver.pragma('application_id') === 0) {
           createArqfsSchemaLatest(context.driver, createArqfsSchemaV1);
         }
-        const result = openArqfs(context.driver);
+        /*
+         * The recovery report, not a bare `openArqfs`. Both were built; only
+         * the format half was ever asked for, so a working copy whose last
+         * write did not reach commit, or whose SQLite integrity checks fail,
+         * opened fully editable - and the first save committed on top of a
+         * revision the project never committed to.
+         *
+         * The report performs the open, so this is still one open. It also runs
+         * `PRAGMA quick_check` and `foreign_key_check`, which is real work
+         * proportional to the file: accepted deliberately, because the
+         * alternative is deciding writability without knowing whether the file
+         * is sound.
+         */
+        const report = buildArqfsRecoveryReport(context.driver);
+        const result = report.openResult;
+        const safeMode = resolveArqfsSafeModePlan(report);
         context.session.openResult = result;
 
         // The connection-level hardening arqfs-defensive-open.ts was written for.
@@ -219,13 +236,20 @@ export async function handleArqfsWorkerRequest(
         // inert - while `trusted_schema` stayed on for a file Arq did not write.
         // It is applied here, at open, because this is the only moment the build
         // knows whether the file may be written.
-        const writable = result.status === 'opened' && result.capabilities.canWrite;
+        // The condition verdict can only remove write access, never grant it,
+        // and only for the two conditions that mean this working copy's own
+        // last write did not land - see `conditionForcesReadOnly`. The rest of
+        // the plan describes the file and is left to the caller's open policy.
+        const writable =
+          result.status === 'opened' &&
+          result.capabilities.canWrite &&
+          !conditionForcesReadOnly(safeMode);
         applyDefensiveOpenPolicy(context.driver, { readOnly: !writable });
 
         return {
           id: request.id,
           ok: true,
-          payload: { kind: 'open', result, usedVfs: context.usedVfs },
+          payload: { kind: 'open', result, safeMode, usedVfs: context.usedVfs },
         };
       }
       case 'putArchiveEntries': {

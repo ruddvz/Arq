@@ -11,6 +11,7 @@
  */
 import type { ArqfsOpenResult } from './arqfs-open';
 import type { ArqfsPublicationResult } from './arqfs-publication';
+import type { ArqfsSafeModePlan } from './arqfs-safe-mode';
 
 export type ArqfsWorkerRequest =
   /**
@@ -70,7 +71,23 @@ export type ArqfsWorkerRequest =
 
 export type ArqfsWorkerResponsePayload =
   | { readonly kind: 'importDatabase'; readonly byteLength: number }
-  | { readonly kind: 'open'; readonly result: ArqfsOpenResult; readonly usedVfs: string }
+  | {
+      readonly kind: 'open';
+      readonly result: ArqfsOpenResult;
+      /**
+       * What the file's own condition says about how it should be opened -
+       * interrupted write, failed integrity, missing required entries - as
+       * distinct from what its format version permits, which is `result`.
+       *
+       * Carried on the open payload rather than fetched by a second request so
+       * a caller cannot act on the format verdict before the condition verdict
+       * arrives. Those are the two halves of one decision, and a window between
+       * them is a window in which a project with a half-written revision is
+       * editable.
+       */
+      readonly safeMode: ArqfsSafeModePlan;
+      readonly usedVfs: string;
+    }
   | { readonly kind: 'putArchiveEntries' }
   | { readonly kind: 'getArchiveEntry'; readonly content: Uint8Array | null }
   | { readonly kind: 'listArchiveEntryPaths'; readonly paths: readonly string[] }
