@@ -130,6 +130,50 @@
 }
 
 /*
+ * The destination strip as a segmented control.
+ *
+ * The reference screens put Plan, 3D and Sheets in one centred capsule rather
+ * than a second full-width bar under the project bar. Two stacked full-bleed
+ * bars is most of what makes the top of the window read as a dashboard, and the
+ * strip was carrying no more information than a capsule would.
+ *
+ * Presentation only: these are still the repository's real project tabs, with
+ * their close affordances, overflow menu and `aria-selected` state intact. A
+ * three-way switcher would have been a smaller product, not a tidier one.
+ */
+@media (pointer: fine) and (min-width: 1180px) {
+  .arq-workspace__bar--views {
+    display: flex;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    overflow: visible;
+  }
+
+  .arq-workspace__bar--views > .arq-tab-strip {
+    width: auto;
+    padding: var(--arq-space-micro);
+    border: 1px solid var(--arq-ui-line-subtle);
+    border-radius: 999px;
+    background: var(--arq-ui-paper);
+  }
+
+  /*
+   * Half the height, per the Version 12 shape rule that a capsule's radius is
+   * half its height. The active segment is filled rather than underlined,
+   * because an underline inside a pill reads as a stray rule.
+   */
+  .arq-workspace__bar--views .arq-tab-strip__label {
+    border-radius: 999px;
+  }
+
+  .arq-workspace__bar--views .arq-tab-strip__label[aria-selected='true'] {
+    border-bottom: 0;
+    background: var(--arq-ui-surface-3);
+  }
+}
+
+/*
  * Figures that are read as measurements rather than prose: coordinates, view
  * scale, level and selection counts. Proportional digits make a coordinate
  * readout jitter horizontally as the pointer moves, which is exactly the
