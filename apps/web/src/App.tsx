@@ -235,18 +235,18 @@ const MODEL_TREE: readonly ModelPanelNode[] = [
               },
               { id: 'demo-room', displayName: 'Room 4.20 x 3.60', nodeType: 'Room', hidden: false },
               /*
-               * Doc 39's stated performance case: "expanding a 5,000-element
-               * model must not render every row". A synthetic level of that
-               * size is the only way this build can exercise the virtualiser -
-               * it is fixture data for the tree, clearly named as such, not a
-               * claim that the project contains these elements.
+               * Five thousand synthetic `Fixture wall N` rows used to sit here,
+               * on the grounds that they were "the only way this build can
+               * exercise the virtualiser". They were not: `visibleModelTreeRows`
+               * has its own unit test, which windows a tree without rendering
+               * anything and without shipping the rows to a reader.
+               *
+               * What they did do was dominate the first screen of every session
+               * - fifteen rows of invented walls above the fold, under a real
+               * project's heading - which reads as the product's content rather
+               * than as a test aid. An opened project replaces this tree with
+               * canonical data; until then the tree should be small and true.
                */
-              ...Array.from({ length: 5000 }, (_, index) => ({
-                id: `fixture-wall-${index}`,
-                displayName: `Fixture wall ${index + 1}`,
-                nodeType: 'Wall',
-                hidden: false,
-              })),
             ],
           },
         ],
