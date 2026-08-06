@@ -35,6 +35,13 @@ export interface TopBarProps {
   readonly onShare: () => void;
   readonly onOpenCommandPalette: () => void;
   readonly onOpenAccountMenu: () => void;
+  /**
+   * Already-resolved glyphs for the actions that have one, keyed by slot. The
+   * same seam `ToolRail` keeps with `categoryIcons`: this package names no icon
+   * library. A slot with no glyph keeps its text label, which is what every one
+   * of them showed before.
+   */
+  readonly actionIcons?: Readonly<Partial<Record<TopBarSlot, ReactNode>>>;
 }
 
 /**
@@ -102,6 +109,7 @@ export function TopBar(props: TopBarProps): JSX.Element {
     onShare,
     onOpenCommandPalette,
     onOpenAccountMenu,
+    actionIcons,
   } = props;
 
   const [isEditingName, setIsEditingName] = useState(false);
@@ -263,7 +271,7 @@ export function TopBar(props: TopBarProps): JSX.Element {
           aria-label="Undo"
           onClick={onUndo}
         >
-          Undo
+          {actionIcons?.['undo'] ?? 'Undo'}
         </button>
       ),
     },
@@ -278,7 +286,7 @@ export function TopBar(props: TopBarProps): JSX.Element {
           aria-label="Redo"
           onClick={onRedo}
         >
-          Redo
+          {actionIcons?.['redo'] ?? 'Redo'}
         </button>
       ),
     },
@@ -292,19 +300,32 @@ export function TopBar(props: TopBarProps): JSX.Element {
       label: describeSyncState(syncState),
       node: <span aria-live="polite">{describeSyncState(syncState)}</span>,
     },
+    /*
+     * Every one of these carries an explicit accessible name, and that is not
+     * belt-and-braces: a button whose only child is a glyph has *no* accessible
+     * name at all. Replacing the word "Open" with a mark took the name away
+     * with it, so the control announced nothing and could not be found by name
+     * - the blueprint's "no mystery icons" rule failing in the most literal
+     * way, and how it was caught.
+     */
     open: {
       label: 'Open project',
       node: (
-        <button type="button" className="arq-shell-button" onClick={onOpenProject}>
-          Open
+        <button
+          type="button"
+          className="arq-shell-button"
+          aria-label="Open"
+          onClick={onOpenProject}
+        >
+          {actionIcons?.['open'] ?? 'Open'}
         </button>
       ),
     },
     share: {
       label: 'Share',
       node: (
-        <button type="button" className="arq-shell-button" onClick={onShare}>
-          Share
+        <button type="button" className="arq-shell-button" aria-label="Share" onClick={onShare}>
+          {actionIcons?.['share'] ?? 'Share'}
         </button>
       ),
     },
@@ -317,7 +338,7 @@ export function TopBar(props: TopBarProps): JSX.Element {
           aria-label="Search commands"
           onClick={onOpenCommandPalette}
         >
-          Search
+          {actionIcons?.['command-search'] ?? 'Search'}
         </button>
       ),
     },

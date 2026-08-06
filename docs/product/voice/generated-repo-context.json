@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "f2c8d463397c9b6a18f379ca97024e798c5d698fec7c381417c1e143e43a6b19",
+  "sourceSetDigest": "ed435055e2ca1229450f45c3723ecda80a2ef69ae040ae8ddcd4905210f539ca",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -430,8 +430,8 @@
       "id": "web-app",
       "kind": "file",
       "path": "apps/web/src/App.tsx",
-      "sha256": "41f3f99eb7ae4024875181aa505f5453340d3621f3b286ff8ce3cd932baad565",
-      "bytes": 74372
+      "sha256": "9139e17fed851000838a877deee00211f8f2e24ac74915df80966639bfd51fa1",
+      "bytes": 74441
     },
     "plan-canvas": {
       "id": "plan-canvas",

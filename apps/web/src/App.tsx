@@ -265,7 +265,7 @@ function roomsForLevel(document: NativeProjectDocument, levelId: string): readon
     polygon: room.calculatedBoundary,
   }));
 }
-import { MODE_ICONS, TOOL_GROUP_ICONS, TOOL_ICONS } from './tool-icons';
+import { MODE_ICONS, TOOL_GROUP_ICONS, TOOL_ICONS, TOP_BAR_ACTION_ICONS } from './tool-icons';
 import { PlanCanvas } from './PlanCanvas';
 /**
  * The 3D surface carries three.js and the model renderer, which together are the
@@ -1509,6 +1509,7 @@ export function App(): JSX.Element {
             onShare={() => recordDemoAction('share')}
             onOpenCommandPalette={() => setCommandPaletteOpen(true)}
             onOpenAccountMenu={() => recordDemoAction('open account menu')}
+            actionIcons={TOP_BAR_ACTION_ICONS}
           />
         }
         tabStrip={

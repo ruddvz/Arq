@@ -65,6 +65,9 @@ import {
   InspectIcon,
   PlanIcon,
   SheetIcon,
+  ArqArchiveIcon,
+  ExportIcon,
+  HistoryIcon,
 } from '@arq/icons';
 
 /**
@@ -190,4 +193,20 @@ export const MODE_ICONS: Readonly<Record<string, ReactNode>> = {
   inspect: <InspectIcon width={20} height={20} />,
   review: <GroupReviewIcon width={20} height={20} />,
   present: <PlanIcon width={20} height={20} />,
+};
+
+/**
+ * Glyphs for the project bar's actions.
+ *
+ * The bar read as a row of words - Undo Redo Open Share Search Account - where
+ * the reference gives the same actions as marks and keeps the words for the
+ * accessible name and the tooltip. A bar of prose competes with the project's
+ * own name, which is the one thing on it that should carry weight.
+ */
+export const TOP_BAR_ACTION_ICONS: Readonly<Record<string, ReactNode>> = {
+  undo: <HistoryIcon width={18} height={18} />,
+  redo: <RotateIcon width={18} height={18} />,
+  'command-search': <InspectIcon width={18} height={18} />,
+  open: <ArqArchiveIcon width={18} height={18} />,
+  share: <ExportIcon width={18} height={18} />,
 };
