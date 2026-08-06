@@ -238,13 +238,16 @@ const MODEL_TREE: readonly ModelPanelNode[] = [
             nodeType: 'Level',
             hidden: false,
             children: [
-              {
-                id: 'demo-wall-1',
-                displayName: 'Interior Wall 100mm',
-                nodeType: 'Wall',
-                hidden: false,
-              },
-              { id: 'demo-room', displayName: 'Room 4.20 x 3.60', nodeType: 'Room', hidden: false },
+              /*
+               * No invented children. An "Interior Wall 100mm" and a "Room
+               * 4.20 x 3.60" used to sit here so the tree had something in it.
+               * Neither existed anywhere else in the application - selecting
+               * the wall showed an Inspector describing a wall that was not on
+               * the canvas, and the room named a rectangle the plan drew from
+               * its own separate constant. A tree that lists nothing when there
+               * is nothing is the honest empty state, and the walls a user
+               * draws appear below by their real measured length.
+               */
               /*
                * Five thousand synthetic `Fixture wall N` rows used to sit here,
                * on the grounds that they were "the only way this build can
@@ -1027,7 +1030,12 @@ export function App(): JSX.Element {
     });
   }, [drawnWalls]);
 
-  const isWallSelected = modelSelection.primary === 'demo-wall-1';
+  /*
+   * There is no longer a demo wall to select. What used to be here -
+   * `modelSelection.primary === 'demo-wall-1'` - gated an Inspector describing
+   * a wall that existed in no document, and a Delete action that journalled a
+   * note instead of deleting anything. Both went with the node.
+   */
   const selectionCount = modelSelection.primary === null ? 0 : 1 + modelSelection.secondary.size;
   /*
    * Doc 40. warningCount comes from the real model-health evaluation below;
@@ -1420,13 +1428,7 @@ export function App(): JSX.Element {
           <InspectorPanel
             state={inspectorTabs}
             context={inspectorContext}
-            commonTypeName={
-              selectedDrawnWalls.length > 0
-                ? 'Wall (drawn)'
-                : isWallSelected
-                  ? 'Interior Wall 100mm'
-                  : null
-            }
+            commonTypeName={selectedDrawnWalls.length > 0 ? 'Wall (drawn)' : null}
             onSelectTab={(tab) => setInspectorTabs((current) => selectInspectorTab(current, tab))}
             tabs={{
               /*
@@ -1441,16 +1443,12 @@ export function App(): JSX.Element {
                   groups={
                     selectedDrawnWalls.length > 0
                       ? buildDrawnWallSelectionInspectorGroups(selectedDrawnWalls)
-                      : isWallSelected
-                        ? buildDemoWallInspectorGroups()
-                        : buildEmptyInspectorGroups()
+                      : buildEmptyInspectorGroups()
                   }
                   selectedElementDescription={
                     selectedDrawnWalls.length > 0
                       ? buildDrawnWallSelectionAccessibleDescription(selectedDrawnWalls)
-                      : isWallSelected
-                        ? buildDemoWallAccessibleDescription()
-                        : null
+                      : null
                   }
                 />
               ),
@@ -1487,15 +1485,7 @@ export function App(): JSX.Element {
                         },
                       },
                     ]
-                  : isWallSelected
-                    ? [
-                        {
-                          id: 'delete',
-                          label: 'Delete',
-                          onActivate: () => recordDemoAction('delete wall'),
-                        },
-                      ]
-                    : []
+                  : []
               }
             />
           )

@@ -63,33 +63,44 @@ import type { PlanRoom } from './canvas/canvas-interaction';
  * hit-test, and fit - all against the in-memory plan document
  * (see canvas/plan-document.ts for why that document is honest scope).
  *
- * The demo room fixture remains, labelled as such: it gives a new canvas
- * something measurable to snap to, exactly like a template would.
  */
 
 /**
- * The workspace's own starting room, used when no project is open. It gives a new
- * canvas something measurable to snap to, exactly like a template would, and it
- * is labelled as a fixture so it is never mistaken for project content. When a
- * real project is open the caller passes that project's rooms instead and this is
- * not rendered at all - a demo room drawn over someone's house would be a lie
- * about their model.
+ * No content is drawn when no project is open.
+ *
+ * A hard-coded 4.20 x 3.60 room used to sit here, on the grounds that it gave a
+ * new canvas something measurable to snap to. It was labelled "(demo fixture)",
+ * which made it honest but did not make it right: it was the first thing every
+ * reader saw, rendered by the real plan renderer at real world coordinates, and
+ * a rectangle drawn by the product is read as the product's model whatever the
+ * label says. An empty drawing surface is the truthful answer to "no project is
+ * open", and the snapping it was there to demonstrate works against the walls a
+ * user draws.
  */
-const DEMO_ROOM_WIDTH_MM = 4200;
-const DEMO_ROOM_HEIGHT_MM = 3600;
+const NO_ROOMS: readonly PlanRoom[] = [];
 
-const DEMO_ROOMS: readonly PlanRoom[] = [
-  {
-    id: 'demo-room',
-    label: '4.20 m x 3.60 m (demo fixture)',
-    polygon: [
-      worldPoint(0, 0),
-      worldPoint(DEMO_ROOM_WIDTH_MM, 0),
-      worldPoint(DEMO_ROOM_WIDTH_MM, DEMO_ROOM_HEIGHT_MM),
-      worldPoint(0, DEMO_ROOM_HEIGHT_MM),
-    ],
-  },
-];
+/**
+ * The view an empty surface opens at, since there is nothing to fit to.
+ * `contentBounds` over nothing returns an inverted infinite box, which
+ * `fitToBounds` turns into NaN - so an empty canvas needs a starting extent
+ * rather than a fit. Twelve metres across is a room-to-small-house span: near
+ * enough that a drawn wall is immediately legible, wide enough that the first
+ * one does not run off the edge.
+ */
+const EMPTY_VIEW_EXTENT_MM = 12_000;
+
+/**
+ * The starting extent for a surface with nothing on it, or null when there is
+ * something to fit to. Returned rather than branched at each call site so the
+ * first paint and the fit tool cannot disagree about what an empty plan shows.
+ */
+function emptyContentBounds(
+  content: PlanContent,
+): { readonly min: WorldPoint; readonly max: WorldPoint } | null {
+  if (content.rooms.length > 0 || content.walls.length > 0) return null;
+  const half = EMPTY_VIEW_EXTENT_MM / 2;
+  return { min: worldPoint(-half, -half), max: worldPoint(half, half) };
+}
 
 const EMPTY_SET: ReadonlySet<string> = new Set<string>();
 
@@ -246,7 +257,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     readonly moved: boolean;
   } | null>(null);
 
-  const rooms = props.rooms ?? DEMO_ROOMS;
+  const rooms = props.rooms ?? NO_ROOMS;
   const content: PlanContent = useMemo(() => ({ rooms, walls }), [rooms, walls]);
 
   /* ------------------------------------------------------------------ */
@@ -501,8 +512,13 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
             return current;
           }
           // Fit to what is actually there on first paint: for an opened project
-          // that is the project, not a fixture room it does not contain.
-          const fitted = fitToBounds(contentBounds({ rooms, walls }), rect.width, rect.height);
+          // that is the project, and for an empty surface that is nothing, which
+          // is a starting extent rather than a fit.
+          const fitted = fitToBounds(
+            emptyContentBounds({ rooms, walls }) ?? contentBounds({ rooms, walls }),
+            rect.width,
+            rect.height,
+          );
           onViewportPixelsPerUnitChange?.(fitted.pixelsPerUnit);
           return {
             ...fitted,
@@ -681,7 +697,13 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     if (canvas !== null) {
       const rect = canvas.getBoundingClientRect();
       const devicePixelRatio = devicePixelRatioRef.current;
-      const fitted = fitToBounds(contentBounds(content), rect.width, rect.height);
+      // Fit on an empty surface returns to the starting extent rather than to
+      // NaN - the same guard as the first paint, for the same reason.
+      const fitted = fitToBounds(
+        emptyContentBounds(content) ?? contentBounds(content),
+        rect.width,
+        rect.height,
+      );
       updateViewport({
         ...fitted,
         screenWidth: canvas.width,
