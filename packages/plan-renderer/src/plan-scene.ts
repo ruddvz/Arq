@@ -92,6 +92,13 @@ export interface PlanPolygonPrimitive<TId> {
   readonly styleToken: StyleToken;
   /** Absent means outline only, which is what every polygon was before this existed. */
   readonly fill?: PlanFill;
+  /**
+   * Which of the palette's room tints to use, for a `room` fill. A key rather
+   * than a colour, so the plan scene stays free of appearance: the same drawing
+   * has to paint correctly in light, dark and increased contrast, and only the
+   * palette knows what any of those look like.
+   */
+  readonly fillTint?: string;
 }
 
 /** The annotation-primitive half of section 60 (dimension/note/room-label text). */

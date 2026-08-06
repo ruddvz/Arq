@@ -71,6 +71,12 @@ export interface PlanPalette {
   readonly poche?: string;
   /** The tint that makes an enclosed area read as a room. */
   readonly roomFill?: string;
+  /**
+   * A tint per room category, keyed by `RoomTint`. Absent keys fall back to
+   * `roomFill`, so a palette that names none of them still draws every room -
+   * one wash instead of several, which is what this looked like before.
+   */
+  readonly roomFills?: Readonly<Record<string, string>>;
 }
 
 /** Light appearance, and the exact colours this renderer drew before it took a palette. */
@@ -200,7 +206,12 @@ function paintPrimitive<TId>(
        * is worse than no colour at all.
        */
       if (primitive.kind === 'polygon' && primitive.fill !== undefined) {
-        const colour = primitive.fill === 'poche' ? palette.poche : palette.roomFill;
+        const colour =
+          primitive.fill === 'poche'
+            ? palette.poche
+            : primitive.fillTint === undefined
+              ? palette.roomFill
+              : (palette.roomFills?.[primitive.fillTint] ?? palette.roomFill);
         if (colour !== undefined) {
           target.setLineDash([]);
           target.fillStyle = colour;

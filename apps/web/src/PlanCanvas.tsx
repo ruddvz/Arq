@@ -46,6 +46,7 @@ import {
   wallPiers,
   type PlanOpeningInput,
   roomLabelFits,
+  roomTint,
   type PlanScene,
 } from '@arq/plan-renderer';
 import {
@@ -112,6 +113,19 @@ function emptyContentBounds(
 const ROOM_LABEL_LINE_HEIGHT_PX = 12;
 
 /** Clear page around the drawing, as a fraction of the drawing's own size. */
+/** Every tint key the palette can carry, so the reader asks for all of them once. */
+const ROOM_TINTS = [
+  'room-living',
+  'room-cooking',
+  'room-dining',
+  'room-sleeping',
+  'room-wet',
+  'room-service',
+  'room-circulation',
+  'room-outdoor',
+  'room-neutral',
+] as const;
+
 const SHEET_MARGIN_FRACTION = 0.06;
 
 /** The page's corner radius, in CSS pixels - a sheet, not a card. */
@@ -351,6 +365,9 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         // shape on a near-black page.
         poche: value('--arq-plan-poche', DEFAULT_PLAN_PALETTE.ink),
         roomFill: value('--arq-plan-room-fill', 'transparent'),
+        roomFills: Object.fromEntries(
+          ROOM_TINTS.map((tint) => [tint, value(`--arq-plan-${tint}`, 'transparent')]),
+        ),
       });
     };
     read();
@@ -459,6 +476,9 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         // Tinted so an enclosed area reads as a room rather than as four walls
         // that happen to meet. Drawn first, so the walls sit on top of it.
         fill: 'room',
+        // Derived from the room's name, because `Room` carries no type field.
+        // An unrecognised name takes the neutral tint rather than a guess.
+        fillTint: roomTint(room.label),
         elementId: room.id,
         points: room.polygon,
       })),

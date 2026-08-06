@@ -59,6 +59,22 @@
    */
   --arq-plan-poche: #1c2124;
   --arq-plan-room-fill: #f4f6f7;
+
+  /*
+   * A wash per room category, so a plan can be read before a label is. Kept
+   * barely-there on purpose: these sit under the linework that actually defines
+   * the building, and a plan whose colours compete with its walls is a diagram,
+   * not a drawing.
+   */
+  --arq-plan-room-living: #eaeef4;
+  --arq-plan-room-cooking: #f4efe6;
+  --arq-plan-room-dining: #efeaf2;
+  --arq-plan-room-sleeping: #f4ece9;
+  --arq-plan-room-wet: #e9f0f1;
+  --arq-plan-room-service: #f1f0ec;
+  --arq-plan-room-circulation: #f4f6f7;
+  --arq-plan-room-outdoor: #e9f0e7;
+  --arq-plan-room-neutral: #f4f6f7;
   --arq-ui-surface-1: #fafafa;
   --arq-ui-surface-2: #f4f4f4;
   --arq-ui-surface-3: #ececec;
@@ -238,6 +254,17 @@
        ground relationship inverted rather than a black shape on near-black. */
     --arq-plan-poche: #c9d1d6;
     --arq-plan-room-fill: #1b1f22;
+    /* Dark: the same relationships, an order of magnitude quieter, because a
+       wash that reads gently on paper shouts on a near-black page. */
+    --arq-plan-room-living: #1a2027;
+    --arq-plan-room-cooking: #232019;
+    --arq-plan-room-dining: #201c24;
+    --arq-plan-room-sleeping: #241d1a;
+    --arq-plan-room-wet: #182123;
+    --arq-plan-room-service: #201f1b;
+    --arq-plan-room-circulation: #1b1f22;
+    --arq-plan-room-outdoor: #182119;
+    --arq-plan-room-neutral: #1b1f22;
 
     /* A black scrim over already-dark content barely reads, so the dark
        backdrop is heavier than the light one to do the same job: say "what is
