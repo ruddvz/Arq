@@ -17,6 +17,7 @@ import {
   boundsFromCorners,
   createWallDrawTool,
   fitToBounds,
+  preserveWorldUnderViewportRect,
   panByScreenDelta,
   parseNumericOverlay,
   zoomAtScreenPoint,
@@ -189,6 +190,13 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [viewport, setViewport] = useState<Viewport | null>(null);
   const devicePixelRatioRef = useRef(1);
+  /** The surface's last measured CSS rect, for the stability rule in `resize`. */
+  const previousCssRectRef = useRef<{
+    readonly left: number;
+    readonly top: number;
+    readonly width: number;
+    readonly height: number;
+  } | null>(null);
   const wallToolRef = useRef<ReturnType<typeof createWallDrawTool> | null>(null);
   const [draftPoints, setDraftPoints] = useState<readonly WorldPoint[]>([]);
   const [previewPoint, setPreviewPoint] = useState<WorldPoint | null>(null);
@@ -383,6 +391,18 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       const rect = canvas.getBoundingClientRect();
       canvas.width = Math.max(1, Math.round(rect.width * devicePixelRatio));
       canvas.height = Math.max(1, Math.round(rect.height * devicePixelRatio));
+
+      // Kept in CSS pixels and scaled by the *current* ratio on both sides
+      // below, so a window dragged to a display with a different pixel ratio
+      // compares like with like rather than mixing two pixel spaces.
+      const previousCssRect = previousCssRectRef.current;
+      previousCssRectRef.current = {
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height,
+      };
+
       setViewport((current) => {
         if (current === null) {
           // Fit to what is actually there on first paint: for an opened project
@@ -396,8 +416,35 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
             pixelsPerUnit: fitted.pixelsPerUnit * devicePixelRatio,
           };
         }
-        // Keep the current view on resize - only the screen extent changes.
-        return { ...current, screenWidth: canvas.width, screenHeight: canvas.height };
+        if (previousCssRect === null) {
+          return { ...current, screenWidth: canvas.width, screenHeight: canvas.height };
+        }
+        /*
+         * Doc 09's stability rule: opening the Navigator or Inspector must not
+         * move the model. Carrying `center` across unchanged - what this did
+         * before - keeps the world point at the canvas *centre* fixed, but a
+         * panel opening on the left moves that centre rightwards on screen, so
+         * every wall slid out from under a stationary cursor. Nothing refitted,
+         * yet the drawing moved.
+         *
+         * Scale is untouched either way: a resize is not a view command.
+         */
+        const scale = (value: number): number => value * devicePixelRatio;
+        return preserveWorldUnderViewportRect(
+          current,
+          {
+            left: scale(previousCssRect.left),
+            top: scale(previousCssRect.top),
+            width: scale(previousCssRect.width),
+            height: scale(previousCssRect.height),
+          },
+          {
+            left: scale(rect.left),
+            top: scale(rect.top),
+            width: canvas.width,
+            height: canvas.height,
+          },
+        );
       });
     }
 

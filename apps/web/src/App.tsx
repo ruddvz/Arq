@@ -116,38 +116,7 @@ function wallsForLevel(document: NativeProjectDocument, levelId: string): readon
     end: wall.end,
   }));
 }
-import {
-  AlignIcon,
-  CommentIcon,
-  CopyIcon,
-  CrossingSelectIcon,
-  DimensionIcon,
-  DoorIcon,
-  ElevationIcon,
-  ExtendIcon,
-  FitIcon,
-  GridIcon,
-  JoinIcon,
-  MirrorIcon,
-  ModelHealthIcon,
-  MoveIcon,
-  OffsetIcon,
-  OrbitIcon,
-  OrthographicIcon,
-  PanIcon,
-  PerspectiveIcon,
-  RevisionIcon,
-  RoomIcon,
-  RotateIcon,
-  SectionIcon,
-  SelectIcon,
-  SplitIcon,
-  TextNoteIcon,
-  TrimIcon,
-  WallIcon,
-  WindowIcon,
-  WindowSelectIcon,
-} from '@arq/icons';
+import { TOOL_ICONS } from './tool-icons';
 import { PlanCanvas } from './PlanCanvas';
 /**
  * The 3D surface carries three.js and the model renderer, which together are the
@@ -180,49 +149,6 @@ import { FileOpenPanel } from './file-handling/FileOpenPanel';
  * which today is the recent-view list and nothing else. No model-health card,
  * no issue counts, no activity feed, because no engine produces them yet.
  */
-
-/**
- * Registry tool id -> the icon @arq/icons actually ships for it.
- *
- * Partial by design. `workspace-icon-registry.json` inventories 215 glyphs and
- * says of the ones this repository does not have that they "must be produced
- * through the same icon workflow as the existing ARQ family" - so the tools
- * with no entry here render as a text label rather than a borrowed or
- * approximated glyph. Doc 48's own note applies: an automatically generated
- * placeholder vector is not ARQ artwork.
- */
-const TOOL_ICONS: Readonly<Record<string, ReactNode>> = {
-  select: <SelectIcon width={16} height={16} />,
-  'window-select': <WindowSelectIcon width={16} height={16} />,
-  'crossing-select': <CrossingSelectIcon width={16} height={16} />,
-  wall: <WallIcon width={16} height={16} />,
-  grid: <GridIcon width={16} height={16} />,
-  door: <DoorIcon width={16} height={16} />,
-  window: <WindowIcon width={16} height={16} />,
-  'room-boundary': <RoomIcon width={16} height={16} />,
-  move: <MoveIcon width={16} height={16} />,
-  copy: <CopyIcon width={16} height={16} />,
-  rotate: <RotateIcon width={16} height={16} />,
-  mirror: <MirrorIcon width={16} height={16} />,
-  offset: <OffsetIcon width={16} height={16} />,
-  align: <AlignIcon width={16} height={16} />,
-  trim: <TrimIcon width={16} height={16} />,
-  extend: <ExtendIcon width={16} height={16} />,
-  join: <JoinIcon width={16} height={16} />,
-  split: <SplitIcon width={16} height={16} />,
-  dimension: <DimensionIcon width={16} height={16} />,
-  'text-note': <TextNoteIcon width={16} height={16} />,
-  'section-marker': <SectionIcon width={16} height={16} />,
-  'elevation-marker': <ElevationIcon width={16} height={16} />,
-  pan: <PanIcon width={16} height={16} />,
-  orbit: <OrbitIcon width={16} height={16} />,
-  fit: <FitIcon width={16} height={16} />,
-  perspective: <PerspectiveIcon width={16} height={16} />,
-  orthographic: <OrthographicIcon width={16} height={16} />,
-  comment: <CommentIcon width={16} height={16} />,
-  'model-health': <ModelHealthIcon width={16} height={16} />,
-  'compare-revisions': <RevisionIcon width={16} height={16} />,
-};
 
 const MODEL_TREE: readonly ModelPanelNode[] = [
   {

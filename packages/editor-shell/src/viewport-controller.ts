@@ -65,6 +65,65 @@ export function zoomAtScreenPoint(
   );
 }
 
+/** Where the drawing surface sits, in the same pixel space as `Viewport.screenWidth`. */
+export interface ViewportRect {
+  readonly left: number;
+  readonly top: number;
+  readonly width: number;
+  readonly height: number;
+}
+
+/**
+ * Keep the drawing visually still when the surface itself is resized or moved.
+ *
+ * The case this exists for: a docked panel opens and takes 300px off the left
+ * of the canvas. Carrying `center` across unchanged - the obvious thing, and
+ * what the plan surface did before this - keeps the world point at the canvas
+ * *centre* fixed. But the canvas centre just moved 150px right on screen, so
+ * every wall slides 150px right under a stationary cursor. Nothing refitted and
+ * no camera command ran, yet the drawing moved, which is what a user
+ * experiences as the model jumping when they open a panel.
+ *
+ * What must actually be held constant is the mapping from a *page* pixel to a
+ * world point. Since screen coordinates here are surface-local, that mapping
+ * depends on where the surface sits as well as how big it is, so the centre has
+ * to move by exactly as much as the surface's own centre did.
+ *
+ * Deliberately not a fit or a zoom: `pixelsPerUnit` is untouched, so scale is
+ * preserved as well as position. A resize is not a view command.
+ */
+export function preserveWorldUnderViewportRect(
+  viewport: Viewport,
+  previous: ViewportRect,
+  next: ViewportRect,
+): Viewport {
+  const resized: Viewport = {
+    ...viewport,
+    screenWidth: next.width,
+    screenHeight: next.height,
+  };
+
+  // Before the first real layout there is no anchor to preserve: any centre
+  // shift computed against a zero-sized surface is arbitrary, and applying one
+  // would throw the initial fit away.
+  if (previous.width <= 0 || previous.height <= 0 || !Number.isFinite(viewport.pixelsPerUnit)) {
+    return resized;
+  }
+
+  const dxScreen = next.left + next.width / 2 - (previous.left + previous.width / 2);
+  const dyScreen = next.top + next.height / 2 - (previous.top + previous.height / 2);
+
+  return {
+    ...resized,
+    center: {
+      x: (viewport.center.x + dxScreen / viewport.pixelsPerUnit) as WorldPoint['x'],
+      // Screen y is down and world y is up, so the surface moving down the page
+      // means the world centre moves the other way.
+      y: (viewport.center.y - dyScreen / viewport.pixelsPerUnit) as WorldPoint['y'],
+    },
+  };
+}
+
 /**
  * Frame a world-space bounding box entirely within the screen, centred,
  * with the given margin (in screen pixels) on every side - the "fit to

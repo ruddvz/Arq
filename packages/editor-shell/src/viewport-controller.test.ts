@@ -12,6 +12,7 @@ import {
   MIN_PIXELS_PER_UNIT,
   fitToBounds,
   panByScreenDelta,
+  preserveWorldUnderViewportRect,
   zoomAtScreenPoint,
 } from './viewport-controller';
 
@@ -106,5 +107,132 @@ describe('fitToBounds', () => {
     const result = fitToBounds({ min: worldPoint(5, 5), max: worldPoint(5, 5) }, 800, 600);
     expect(result.pixelsPerUnit).toBeLessThanOrEqual(MAX_PIXELS_PER_UNIT);
     expect(result.pixelsPerUnit).toBeGreaterThanOrEqual(MIN_PIXELS_PER_UNIT);
+  });
+});
+
+describe('preserveWorldUnderViewportRect', () => {
+  /** Where a world point lands on the page, given the surface's own position. */
+  function pageOf(
+    viewport: Viewport,
+    rect: { readonly left: number; readonly top: number },
+    world: ReturnType<typeof worldPoint>,
+  ): { readonly x: number; readonly y: number } {
+    const local = worldToScreen(viewport, world);
+    return { x: local.x + rect.left, y: local.y + rect.top };
+  }
+
+  it('holds the drawing still when a panel opens and takes width off the left', () => {
+    // The regression this exists for. Carrying `center` across unchanged used
+    // to slide every wall right by half the panel width under a stationary
+    // cursor - no refit, no camera command, but the model moved.
+    const before: Viewport = {
+      center: worldPoint(0, 0),
+      pixelsPerUnit: 2,
+      screenWidth: 1000,
+      screenHeight: 800,
+    };
+    const previous = { left: 0, top: 0, width: 1000, height: 800 };
+    const next = { left: 300, top: 0, width: 700, height: 800 };
+    const wall = worldPoint(120, -45);
+
+    const after = preserveWorldUnderViewportRect(before, previous, next);
+
+    expect(pageOf(after, next, wall).x).toBeCloseTo(pageOf(before, previous, wall).x, 9);
+    expect(pageOf(after, next, wall).y).toBeCloseTo(pageOf(before, previous, wall).y, 9);
+  });
+
+  it('is not a zoom: scale survives the resize untouched', () => {
+    // A resize is not a view command, so it may not refit or rescale.
+    const before: Viewport = {
+      center: worldPoint(7, -3),
+      pixelsPerUnit: 13.5,
+      screenWidth: 1200,
+      screenHeight: 900,
+    };
+
+    const after = preserveWorldUnderViewportRect(
+      before,
+      { left: 0, top: 0, width: 1200, height: 900 },
+      { left: 14, top: 54, width: 880, height: 700 },
+    );
+
+    expect(after.pixelsPerUnit).toBe(13.5);
+    expect(after.screenWidth).toBe(880);
+    expect(after.screenHeight).toBe(700);
+  });
+
+  it('keeps the initial fit when there is no previous layout to anchor against', () => {
+    // A centre shift computed against a zero-sized surface is arbitrary, and
+    // applying one would throw the first fit away before it was ever painted.
+    const fitted = fitToBounds({ min: worldPoint(0, 0), max: worldPoint(10, 10) }, 800, 600);
+
+    const after = preserveWorldUnderViewportRect(
+      fitted,
+      { left: 0, top: 0, width: 0, height: 0 },
+      { left: 0, top: 0, width: 800, height: 600 },
+    );
+
+    expect(after.center).toEqual(fitted.center);
+  });
+
+  it('holds every page point over any surface move or resize', () => {
+    fc.assert(
+      fc.property(
+        fc.double({ min: -500, max: 500, noNaN: true }),
+        fc.double({ min: -500, max: 500, noNaN: true }),
+        fc.double({ min: 0.5, max: 50, noNaN: true }),
+        fc.integer({ min: 1, max: 400 }),
+        fc.integer({ min: 1, max: 400 }),
+        fc.integer({ min: 200, max: 1600 }),
+        fc.integer({ min: 200, max: 1200 }),
+        (worldX, worldY, pixelsPerUnit, insetLeft, insetTop, width, height) => {
+          const previous = { left: 0, top: 0, width, height };
+          // Any surface that moved and shrank: a navigator on the left, an
+          // inspector on the right and a project bar above all reduce to this.
+          const next = {
+            left: insetLeft,
+            top: insetTop,
+            width: Math.max(1, width - insetLeft),
+            height: Math.max(1, height - insetTop),
+          };
+          const before: Viewport = {
+            center: worldPoint(0, 0),
+            pixelsPerUnit,
+            screenWidth: previous.width,
+            screenHeight: previous.height,
+          };
+          const point = worldPoint(worldX, worldY);
+
+          const after = preserveWorldUnderViewportRect(before, previous, next);
+
+          const expected = pageOf(before, previous, point);
+          const actual = pageOf(after, next, point);
+          expect(actual.x).toBeCloseTo(expected.x, 6);
+          expect(actual.y).toBeCloseTo(expected.y, 6);
+        },
+      ),
+    );
+  });
+
+  it('round-trips through screenToWorld, so picking agrees with painting', () => {
+    // The half that matters for hit testing: if only painting were corrected,
+    // clicks would land on the element that used to be under the cursor.
+    const before: Viewport = {
+      center: worldPoint(0, 0),
+      pixelsPerUnit: 4,
+      screenWidth: 1000,
+      screenHeight: 800,
+    };
+    const previous = { left: 0, top: 0, width: 1000, height: 800 };
+    const next = { left: 252, top: 68, width: 748, height: 732 };
+
+    const after = preserveWorldUnderViewportRect(before, previous, next);
+
+    // A cursor resting at page (600, 400) throughout.
+    const worldBefore = screenToWorld(before, screenPoint(600 - previous.left, 400 - previous.top));
+    const worldAfter = screenToWorld(after, screenPoint(600 - next.left, 400 - next.top));
+
+    expect(worldAfter.x).toBeCloseTo(worldBefore.x, 9);
+    expect(worldAfter.y).toBeCloseTo(worldBefore.y, 9);
   });
 });

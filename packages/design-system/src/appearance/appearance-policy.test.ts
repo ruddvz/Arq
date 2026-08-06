@@ -95,6 +95,30 @@ describe('ADR-0031: the material layer has exactly one implementation', () => {
     expect(materialCss()).toMatch(/\.arq-material\s+\.arq-material\s*\{/);
   });
 
+  it('supplies a regular and a strong variant, and no clear variant', () => {
+    const css = materialCss();
+
+    expect(css).toMatch(/\.arq-material--strong\s*\{/);
+    // The design package defines a `clear` variant and then disallows it by
+    // default. A variant that exists in CSS is one somebody will reach for, so
+    // it must not exist at all.
+    expect(css).not.toMatch(/\.arq-material--clear/);
+  });
+
+  it('reserves the strong variant for the large presentations', () => {
+    // Roles from the package's glass-materials contract: inspector, open
+    // project and recovery. Applying it everywhere would make it meaningless
+    // and double the blurred area for nothing.
+    const strongUsers = sourceFiles()
+      .filter(({ path, text }) => path.endsWith('.tsx') && text.includes('arq-material--strong'))
+      .map(({ path }) => path);
+
+    expect(strongUsers.sort()).toEqual([
+      'packages/design-system/src/shell/modal-dialog.tsx',
+      'packages/design-system/src/workspace/workspace-root.tsx',
+    ]);
+  });
+
   it('supplies all four opaque fallbacks', () => {
     const css = materialCss();
 

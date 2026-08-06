@@ -3,6 +3,7 @@ import {
   CLOSED_SHEET_STATE,
   occupiesLayoutWidth,
   panelDockingPolicy,
+  phoneBottomOwner,
   resolveLayoutSlots,
   resolveWorkspacePlatform,
   viewSwitcherHeightPx,
@@ -120,7 +121,14 @@ function OverlayPanel(props: {
   const { side, widthPx, label, onDismiss, children } = props;
   return (
     <div
-      className={`arq-workspace__overlay arq-workspace__overlay--${side} arq-material`}
+      /*
+       * The inspector is a large presentation over varied content, which is
+       * the case the strong variant exists for. The project browser on the
+       * left is a list and reads cleanly at regular strength.
+       */
+      className={`arq-workspace__overlay arq-workspace__overlay--${side} arq-material${
+        side === 'right' ? ' arq-material--strong' : ''
+      }`}
       role={label === undefined ? undefined : 'dialog'}
       aria-label={label}
       /*
@@ -282,6 +290,15 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
    */
   const shellInert = openSheetId !== null && usesBottomSheets && sheet.detent === 'full';
 
+  /**
+   * Which control owns the bottom of the screen. The rule lives in
+   * @arq/workspace beside the rest of the sheet state, so it is testable
+   * without rendering and cannot drift from what the sheet reducer believes.
+   */
+  const bottomOwner = touchControlsAvailable
+    ? phoneBottomOwner(sheet, platform, usesBottomSheets)
+    : 'none';
+
   return (
     <div
       className={`arq-workspace arq-workspace--${platform}`}
@@ -423,7 +440,13 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
         <div style={{ minHeight: slots.statusBar ?? slots.statusMinimal ?? 0, flex: '0 0 auto' }}>
           {statusBar}
         </div>
-        {touchControlsAvailable && phone && (
+        {/*
+          Doc 47 and the Version 12 layout contract: exactly one bottom
+          interaction owner. A raised sheet replaces this bar rather than
+          stacking above it - rendering both left the dock focusable and
+          hit-testable underneath a peeking sheet.
+        */}
+        {touchControlsAvailable && bottomOwner === 'review-bar' && (
           <PhoneDock
             openSheet={sheet.openSheet}
             activeToolLabel={activeToolLabel}

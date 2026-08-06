@@ -203,3 +203,36 @@ export function panelForSheet(sheet: SheetId): PanelId | null {
       return null;
   }
 }
+
+/**
+ * Which control owns the bottom of a phone screen.
+ *
+ * Doc 47 and the Version 12 layout contract agree and are equally blunt about
+ * it: "Only one bottom interaction owner may exist at a time", and a task or
+ * selection sheet "replaces, rather than stacks above, the default review
+ * toolbar".
+ *
+ * The shell used to render both. A raised sheet at `peek` or `half` left the
+ * dock sitting underneath it, so a 393px screen ended with two rows of
+ * controls competing for the same thumb, one of them unreachable behind the
+ * other. That is not a styling problem - the dock stayed focusable and its
+ * targets stayed hit-testable while the user could not see what they were.
+ *
+ * `'none'` is a real answer, not a gap: on a band that uses side drawers the
+ * bottom belongs to nothing, and the caller renders neither.
+ */
+export type PhoneBottomOwner = 'review-bar' | 'sheet' | 'none';
+
+export function phoneBottomOwner(
+  state: SheetState,
+  platform: WorkspacePlatform,
+  usesBottomSheets: boolean,
+): PhoneBottomOwner {
+  if (platform !== 'phone') {
+    return 'none';
+  }
+  if (state.openSheet !== null && usesBottomSheets) {
+    return 'sheet';
+  }
+  return 'review-bar';
+}

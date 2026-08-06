@@ -17,10 +17,19 @@
 :root {
   /* Tuned so the surface reads as chrome without the content behind it
      becoming legible through it - a control you can read the model through is
-     worse than either a solid panel or no panel. */
+     worse than either a solid panel or no panel. Blur and saturation follow
+     the design package's `glass-materials.json` regular variant. */
   --arq-material-tint: rgb(252 252 253 / 72%);
-  --arq-material-filter: saturate(180%) blur(20px);
+  --arq-material-filter: saturate(165%) blur(28px);
   --arq-material-border: rgb(0 0 0 / 10%);
+
+  /* The `strong` variant, for the large presentations that have to stay
+     legible over busy content: the inspector, the open-project surface and
+     recovery. More tint rather than only more blur - blur alone raises cost
+     without raising legibility, and legibility is the whole reason this
+     variant exists. */
+  --arq-material-tint-strong: rgb(252 252 253 / 88%);
+  --arq-material-filter-strong: saturate(165%) blur(34px);
 
   /* The fallback is the real design, not a degradation: it is what every
      reduced-transparency, increased-contrast and forced-colours configuration
@@ -36,6 +45,7 @@
        the border carries more of the separation because shadows barely register
        on a dark background. */
     --arq-material-tint: rgb(32 36 40 / 76%);
+    --arq-material-tint-strong: rgb(32 36 40 / 90%);
     --arq-material-border: rgb(255 255 255 / 12%);
   }
 }
@@ -50,6 +60,21 @@
      be asked to sample a far larger backdrop than the element occupies, which
      is the cost ADR-0031 requires to stay proportional to visible area. */
   contain: paint;
+}
+
+/*
+ * The `strong` variant. Same layer, more tint: a large surface covers more
+ * varied content, so the regular tint that reads cleanly behind a toolbar
+ * stops being enough behind a full inspector.
+ *
+ * There is deliberately no `clear` variant. The design package defines one and
+ * then disallows it by default, and a variant that exists in CSS is a variant
+ * somebody will reach for, so it is simply not written.
+ */
+.arq-material--strong {
+  background: var(--arq-material-tint-strong);
+  backdrop-filter: var(--arq-material-filter-strong);
+  -webkit-backdrop-filter: var(--arq-material-filter-strong);
 }
 
 /*
