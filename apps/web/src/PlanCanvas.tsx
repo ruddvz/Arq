@@ -528,8 +528,23 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
          * claim that could not be read.
          */
         const anchor = polygonCentroid(room.polygon);
-        const lines = room.label.split('\n');
-        const widestLinePx = Math.max(...lines.map((line) => ctx.measureText(line).width));
+        /*
+         * The label degrades before it disappears.
+         *
+         * A room label is two lines - the name, then the area - and the rule was
+         * all-or-nothing: if both did not fit, the room went unnamed. At 1:76
+         * that lost "Powder room", and on a phone at 1:136 it lost most of the
+         * floor. A drawn plan does not behave that way; it drops the area first
+         * and keeps the name, because the name is what identifies the room and
+         * the area is what qualifies it.
+         *
+         * So the candidates are tried longest-first and the first that fits is
+         * drawn. Nothing is ever squeezed: each candidate faces the same
+         * clearance test, and a room too small even for its name is still
+         * unlabelled rather than crowded.
+         */
+        const fullLines = room.label.split('\n');
+        const candidates = fullLines.length > 1 ? [fullLines, [fullLines[0] ?? '']] : [fullLines];
         /*
          * Measured against the room's *clear* area, not its boundary.
          *
@@ -547,14 +562,15 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
           width: extent.width - insetPx,
           height: extent.height - insetPx,
         };
-        if (
-          !roomLabelFits({
-            labelWidthPx: widestLinePx,
+        const chosen = candidates.find((lines) =>
+          roomLabelFits({
+            labelWidthPx: Math.max(...lines.map((line) => ctx.measureText(line).width)),
             labelHeightPx: lines.length * ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio,
             roomWidthPx: clear.width,
             roomHeightPx: clear.height,
-          })
-        ) {
+          }),
+        );
+        if (chosen === undefined) {
           return [];
         }
         return [
@@ -564,7 +580,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
             // a room of any shape carries its label inside itself.
             elementId: `${room.id}-label`,
             anchor,
-            text: room.label,
+            text: chosen.join('\n'),
           },
         ];
       }),

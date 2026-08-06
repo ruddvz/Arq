@@ -108,12 +108,23 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
         rowGap: 'var(--arq-space-micro)',
       }}
     >
-      {full && <span>{unitLabel}</span>}
+      {/*
+       * The strip carried nine fields and now carries five, and the four that
+       * went were duplicates rather than sacrifices.
+       *
+       * The units label stood alone beside a coordinate readout that already
+       * carries its units, so it said "mm" twice. The level name and the view
+       * scale are both on the view's own title card over the drawing, which is
+       * where a reader looks for them - reporting them again at the far edge of
+       * the window is not redundancy that helps.
+       *
+       * Nothing about save, sync or the working copy was touched. Those are the
+       * fields that stop the product implying a save it has not made, and they
+       * are the reason this strip exists at all.
+       */}
       {full && <span>{formatCoordinates(cursorWorldPosition, unitLabel)}</span>}
       {full && <span>{formatActiveSnap(activeSnapLabel)}</span>}
       <span>{formatSelectionCount(selectionCount)}</span>
-      <span>{currentLevelName}</span>
-      {full && <span>{formatViewScale(pixelsPerUnit)}</span>}
       {/* The one field announced: validation results change without the user
           having just typed them, and nothing else reports them aloud. */}
       <span role="status" aria-live="polite">
