@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react';
 import * as THREE from 'three';
 import { wallOutline, type WorldPoint } from '@arq/geometry-2d';
-import { extrudePolygonMesh } from '@arq/geometry-3d';
+import { extrudePolygonMesh, generateWallOpeningMeshes, type Mesh3D } from '@arq/geometry-3d';
 import {
   applyOrbitCameraState,
   applySharedSelection,
@@ -38,12 +38,12 @@ const WALL_THICKNESS_MM = 100;
 const WALL_HEIGHT_MM = 2400;
 const FLOOR_SIZE_MM = 30000;
 
-const DEMO_ROOM_POLYGON: readonly { readonly x: number; readonly y: number }[] = [
-  { x: 0, y: 0 },
-  { x: 4200, y: 0 },
-  { x: 4200, y: 3600 },
-  { x: 0, y: 3600 },
-];
+/**
+ * What an empty 3D view is framed to, since there is nothing to fit to. Six
+ * metres of radius shows a room-sized volume, so the first wall a user draws
+ * arrives at a legible size rather than as a speck or off the edge.
+ */
+const EMPTY_VIEW_RADIUS_MM = 6000;
 
 /**
  * Material treatment per style token, brand-compliant: the only hue is
@@ -60,6 +60,20 @@ const TOKEN_TREATMENT: Readonly<
   hover: { color: 0x4a4a4a, opacity: 1 },
 };
 const DEFAULT_WALL_COLOR = 0x8a8a8a;
+
+/**
+ * One opening's span through a wall, in the plain-number shape
+ * `generateWallOpeningMeshes` takes. Elevation matters here and does not in
+ * plan, which is why this is not the plan's opening record: a window that stops
+ * short of the ceiling leaves a header panel above it, and that panel is the
+ * whole difference between an opening-aware model and a hole punched through.
+ */
+export interface ModelOpeningSpan {
+  readonly offsetFromWallStart: number;
+  readonly width: number;
+  readonly sillHeight: number;
+  readonly height: number;
+}
 
 /** Per-wall solid dimensions, so an opened project extrudes at its own wall types. */
 export interface WallSolidDimensions {
@@ -79,11 +93,12 @@ export interface ModelCanvasProps {
    */
   readonly wallDimensions?: ReadonlyMap<string, WallSolidDimensions>;
   /**
-   * Whether to draw the workspace's own starting room outline. Off for an opened
-   * project: a fixture outline laid over someone's building is a claim about their
-   * model that is not true.
+   * The hosted openings each wall carries, keyed by wall id. A wall with
+   * openings is extruded as the panels around them - piers, sill and header -
+   * rather than as one solid, so a door is a hole through the model and not a
+   * rectangle drawn on its face.
    */
-  readonly showDemoRoom?: boolean;
+  readonly wallOpenings?: ReadonlyMap<string, readonly ModelOpeningSpan[]>;
 }
 
 interface ModelRefs {
@@ -95,20 +110,7 @@ interface ModelRefs {
   aspect: number;
 }
 
-function toMesh(wall: DrawnWall, dimensions: WallSolidDimensions): THREE.BufferGeometry | null {
-  const outline = wallOutline(
-    { start: wall.start, end: wall.end },
-    dimensions.thicknessMm,
-    'centre',
-    1e-6,
-  );
-  if (outline === null) {
-    return null;
-  }
-  const mesh = extrudePolygonMesh(outline, 0, dimensions.heightMm);
-  if (mesh === null) {
-    return null;
-  }
+function toGeometry(mesh: Mesh3D): THREE.BufferGeometry {
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(mesh.positions), 3));
   geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(mesh.normals), 3));
@@ -116,17 +118,75 @@ function toMesh(wall: DrawnWall, dimensions: WallSolidDimensions): THREE.BufferG
   return geometry;
 }
 
-function contentSphere(
-  walls: readonly DrawnWall[],
-  includeDemoRoom: boolean,
-): {
+/**
+ * The solids one wall contributes.
+ *
+ * A wall with no openings is one box, exactly as before. A wall with openings
+ * becomes the panels that survive them - a pier either side, a sill below and a
+ * header above - which is `generateWallOpeningMeshes`, written for this and
+ * never called by anything but its own tests. Several meshes rather than one
+ * because a door is an absence, and an absence cannot be added to a solid.
+ */
+function toMeshes(
+  wall: DrawnWall,
+  dimensions: WallSolidDimensions,
+  openings: readonly ModelOpeningSpan[],
+): readonly THREE.BufferGeometry[] {
+  if (openings.length > 0) {
+    const panels = generateWallOpeningMeshes(
+      { start: wall.start, end: wall.end },
+      dimensions.thicknessMm,
+      'centre',
+      dimensions.heightMm,
+      0,
+      openings,
+      1e-6,
+    );
+    // A null result means the decomposition could not be trusted for this wall.
+    // Falling through to the solid below draws the wall without its openings,
+    // which is wrong but visible; dropping the wall would silently delete part
+    // of someone's building.
+    if (panels !== null) {
+      return panels.map(toGeometry);
+    }
+  }
+
+  const outline = wallOutline(
+    { start: wall.start, end: wall.end },
+    dimensions.thicknessMm,
+    'centre',
+    1e-6,
+  );
+  if (outline === null) {
+    return [];
+  }
+  const mesh = extrudePolygonMesh(outline, 0, dimensions.heightMm);
+  return mesh === null ? [] : [toGeometry(mesh)];
+}
+
+/**
+ * The extent the camera frames, or a starting one when there is nothing to
+ * frame.
+ *
+ * The empty case is not hypothetical and was not reachable before: a demo room
+ * outline used to be drawn whenever no project was open, so the point set was
+ * never empty. Removing it left the bounds at positive and negative infinity,
+ * which produced a NaN radius, and `fitBoundingSphere` threw "radius must be a
+ * positive finite number" during render - so the 3D canvas never mounted at
+ * all. The plan surface needed the same guard for the same reason on the same
+ * removal; this is its other half.
+ */
+function contentSphere(walls: readonly DrawnWall[]): {
   readonly center: THREE.Vector3;
   readonly radius: number;
 } {
-  const points = [
-    ...(includeDemoRoom ? DEMO_ROOM_POLYGON : []),
-    ...walls.flatMap((wall) => [wall.start, wall.end]),
-  ];
+  const points = walls.flatMap((wall) => [wall.start, wall.end]);
+  if (points.length === 0) {
+    return {
+      center: new THREE.Vector3(0, WALL_HEIGHT_MM / 2, 0),
+      radius: EMPTY_VIEW_RADIUS_MM,
+    };
+  }
   let minX = Number.POSITIVE_INFINITY;
   let minZ = Number.POSITIVE_INFINITY;
   let maxX = Number.NEGATIVE_INFINITY;
@@ -173,7 +233,7 @@ function readAppearanceColours(element: HTMLElement): {
 }
 
 export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
-  const { walls, selection, onSelectElement, wallDimensions, showDemoRoom = true } = props;
+  const { walls, selection, onSelectElement, wallDimensions, wallOpenings } = props;
   const dimensionsFor = useCallback(
     (wallId: string): WallSolidDimensions =>
       wallDimensions?.get(wallId) ?? {
@@ -225,22 +285,16 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
     wallGroup.name = 'arq-drawn-walls';
     scene.add(wallGroup);
 
-    // The workspace's own starting room appears as a floor outline, labelled by
-    // its absence of mass - fixture context, not claimed geometry. Omitted
-    // entirely for an opened project.
-    if (showDemoRoom) {
-      const roomOutline = new THREE.LineLoop(
-        new THREE.BufferGeometry().setFromPoints(
-          DEMO_ROOM_POLYGON.map((point) => new THREE.Vector3(point.x, 1, point.y)),
-        ),
-        new THREE.LineBasicMaterial({ color: appearance.ink }),
-      );
-      roomOutline.name = 'demo-room-outline';
-      scene.add(roomOutline);
-    }
+    /*
+     * No starting-room outline. It was drawn here whenever no project was open,
+     * on the same reasoning as the plan's demo rectangle and with the same
+     * problem: a loop drawn at real world coordinates by the real renderer
+     * reads as the model, and a caption cannot undo that. The plan stopped
+     * drawing its version; this is the other half of the same removal.
+     */
 
     const camera = createOrthographicCamera({ aspect, viewSize: 12000, far: 200000 });
-    const sphere = contentSphere(walls, showDemoRoom);
+    const sphere = contentSphere(walls);
     const orbit = fitBoundingSphere(
       { ...DEFAULT_ORBIT_CAMERA_STATE, distance: 40000 },
       sphere.center,
@@ -293,32 +347,50 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
       if (wallLength(wall) === 0) {
         continue;
       }
-      const geometry = toMesh(wall, dimensionsFor(wall.id));
-      if (geometry === null) {
+      const geometries = toMeshes(wall, dimensionsFor(wall.id), wallOpenings?.get(wall.id) ?? []);
+      if (geometries.length === 0) {
         continue;
       }
-      const mesh = new THREE.Mesh(
-        geometry,
-        new THREE.MeshLambertMaterial({ color: DEFAULT_WALL_COLOR }),
-      );
-      mesh.name = wall.id;
-      mesh.userData['elementId'] = wall.id;
-      refs.wallGroup.add(mesh);
-      byId.set(wall.id, mesh);
-    }
-    applySharedSelection(byId, new Set<string>(), selection, new Set<string>());
-    for (const object of byId.values()) {
-      if (object instanceof THREE.Mesh) {
-        const token = object.userData['styleToken'] as StyleToken | undefined;
-        const treatment = token !== undefined ? TOKEN_TREATMENT[token] : undefined;
-        const material = object.material as THREE.MeshLambertMaterial;
-        material.color.setHex(treatment?.color ?? DEFAULT_WALL_COLOR);
-        material.opacity = treatment?.opacity ?? 1;
-        material.transparent = (treatment?.opacity ?? 1) < 1;
+      /*
+       * Every panel carries the wall's element id, so a raycast that lands on a
+       * pier between two windows still selects the wall. Selection is a
+       * statement about the model, and the model has one wall there however
+       * many solids it takes to draw it.
+       */
+      for (const geometry of geometries) {
+        const mesh = new THREE.Mesh(
+          geometry,
+          new THREE.MeshLambertMaterial({ color: DEFAULT_WALL_COLOR }),
+        );
+        mesh.name = wall.id;
+        mesh.userData['elementId'] = wall.id;
+        refs.wallGroup.add(mesh);
+        // The first panel is the one selection styling reads and writes; the
+        // rest follow it below. Keyed by wall id either way, so nothing
+        // downstream learns that a wall can be more than one mesh.
+        if (!byId.has(wall.id)) byId.set(wall.id, mesh);
       }
     }
+    applySharedSelection(byId, new Set<string>(), selection, new Set<string>());
+    // Resolved once per wall, then applied to every panel of it. Styling only
+    // the representative panel would leave a selected wall highlighted between
+    // its openings and plain beside them.
+    const treatmentByWall = new Map<string, (typeof TOKEN_TREATMENT)[StyleToken] | undefined>();
+    for (const [wallId, object] of byId) {
+      const token = object.userData['styleToken'] as StyleToken | undefined;
+      treatmentByWall.set(wallId, token === undefined ? undefined : TOKEN_TREATMENT[token]);
+    }
+    for (const object of refs.wallGroup.children) {
+      if (!(object instanceof THREE.Mesh)) continue;
+      const wallId = object.userData['elementId'] as string | undefined;
+      const treatment = wallId === undefined ? undefined : treatmentByWall.get(wallId);
+      const material = object.material as THREE.MeshLambertMaterial;
+      material.color.setHex(treatment?.color ?? DEFAULT_WALL_COLOR);
+      material.opacity = treatment?.opacity ?? 1;
+      material.transparent = (treatment?.opacity ?? 1) < 1;
+    }
     renderNow();
-  }, [walls, selection, dimensionsFor, renderNow]);
+  }, [walls, selection, dimensionsFor, wallOpenings, renderNow]);
 
   /* Orbit / pan / zoom / pick. */
   function handlePointerDown(event: ReactPointerEvent<HTMLCanvasElement>): void {
@@ -395,7 +467,7 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
     if (refs === null) {
       return;
     }
-    const sphere = contentSphere(walls, showDemoRoom);
+    const sphere = contentSphere(walls);
     refs.orbit = fitBoundingSphere(refs.orbit, sphere.center, sphere.radius, refs.aspect);
     renderNow();
   }

@@ -119,6 +119,7 @@ import {
 import type { WallSolidDimensions } from './ModelCanvas';
 import type { PlanRoom } from './canvas/canvas-interaction';
 import type { PlanOpeningInput } from '@arq/plan-renderer';
+import type { ModelOpeningSpan } from './ModelCanvas';
 
 /**
  * The walls of one level, in the shape the plan and 3D surfaces draw. The
@@ -174,10 +175,21 @@ function wallDimensionsForLevel(
  * which is the same split the canonical model keeps, and the reason a door and
  * a window hosted in identical openings still draw differently.
  */
+/**
+ * One opening, carrying what both surfaces need.
+ *
+ * Kept as one record rather than derived twice because plan and 3D read the
+ * same opening and differ only in which fields they use: plan needs the swing
+ * and ignores the sill, 3D needs the sill and has no swing. Two derivations
+ * would let the two views disagree about where an opening is, which is the one
+ * disagreement neither view can show.
+ */
+type LevelOpening = PlanOpeningInput & ModelOpeningSpan;
+
 function wallOpeningsForLevel(
   document: NativeProjectDocument,
   levelId: string,
-): ReadonlyMap<string, readonly PlanOpeningInput[]> {
+): ReadonlyMap<string, readonly LevelOpening[]> {
   const wallIds = new Set(wallsOnLevel(document, levelId).map((wall) => wall.id as string));
   const doorsByOpening = new Map(
     document.doors.map((door) => [door.openingId as string, door] as const),
@@ -186,7 +198,7 @@ function wallOpeningsForLevel(
     document.windows.map((window) => [window.openingId as string, window] as const),
   );
 
-  const byWall = new Map<string, PlanOpeningInput[]>();
+  const byWall = new Map<string, LevelOpening[]>();
   for (const opening of document.openings) {
     const hostId = opening.hostWallId as string;
     // Openings are model-wide; only the ones hosted by a wall on the level
@@ -195,11 +207,13 @@ function wallOpeningsForLevel(
 
     const door = doorsByOpening.get(opening.id as string);
     const window = windowsByOpening.get(opening.id as string);
-    const placed: PlanOpeningInput = {
+    const placed: LevelOpening = {
       id: opening.id as string,
       kind: opening.kind,
       offsetFromWallStart: opening.offsetFromWallStart.value,
       width: opening.width.value,
+      sillHeight: opening.sillHeight.value,
+      height: opening.height.value,
       ...(door === undefined
         ? window === undefined
           ? {}
@@ -407,9 +421,9 @@ export function App(): JSX.Element {
    */
   const [projectRooms, setProjectRooms] = useState<readonly PlanRoom[] | null>(null);
   /** Thickness and height per wall id for the level on show; empty with no project open. */
-  const [wallOpenings, setWallOpenings] = useState<
-    ReadonlyMap<string, readonly PlanOpeningInput[]>
-  >(() => new Map());
+  const [wallOpenings, setWallOpenings] = useState<ReadonlyMap<string, readonly LevelOpening[]>>(
+    () => new Map(),
+  );
   const [wallDimensions, setWallDimensions] = useState<ReadonlyMap<string, WallSolidDimensions>>(
     new Map(),
   );
@@ -1228,6 +1242,11 @@ export function App(): JSX.Element {
       >
         <ModelCanvas
           walls={drawnWalls}
+          // The same dimensions and the same openings the plan is drawn from.
+          // 3D extruded at a single borrowed default before this, so an opened
+          // project's own wall types reached the plan and not the model.
+          wallDimensions={wallDimensions}
+          wallOpenings={wallOpenings}
           selection={modelSelection}
           onSelectElement={(elementId) =>
             setModelSelection({ primary: elementId, secondary: new Set() })

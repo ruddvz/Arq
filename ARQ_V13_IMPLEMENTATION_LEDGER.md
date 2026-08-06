@@ -144,8 +144,45 @@ map is optional and an absent entry draws a wall solid, exactly as before.
 
 ### 7. Opening-aware 3D and section
 
-**State:** not-started (V12 row 8 partial)
-**Blocked on slice 6:** 3D openings need the same parsed canonical openings.
+**State:** implemented (openings), not-started (section and cutaway)
+**Owner:** `apps/web/src/ModelCanvas.tsx`, `packages/geometry-3d/src/wall-opening-meshes.ts`
+
+**Done.** The 3D view cuts its openings. `generateWallOpeningMeshes` decomposes
+a wall into the panels that survive its openings - pier, sill, header - and had
+never been called by anything but its own tests. A wall with openings now
+extrudes as those panels, so a door is a hole through the model rather than a
+rectangle drawn on its face.
+
+Two things were passed to 3D for the first time in the same change: the
+project's own wall dimensions, and its openings. 3D was extruding every wall at
+a single borrowed default, so an opened project's wall types reached the plan
+and not the model.
+
+Selection survives the split. Every panel carries its wall's element id, so a
+raycast landing on a pier between two windows selects the wall, and the
+selection treatment is resolved once per wall and applied to all its panels -
+otherwise a selected wall highlights between its openings and stays plain
+beside them.
+
+**Also removed here:** the 3D starting-room outline, the other half of the demo
+content taken out of the plan. A loop drawn at real world coordinates by the
+real renderer reads as the model whatever it is captioned.
+
+**Regression caught and repaired in the same run:** removing that outline left
+an empty scene with no bounding sphere, so `fitBoundingSphere` threw "radius
+must be a positive finite number" during render and the 3D canvas never mounted.
+`run-model-canvas-capability-check.mjs` caught it; unit tests and typecheck did
+not. `contentSphere` now returns a starting extent for an empty scene, which is
+exactly the guard the plan surface needed on the same removal.
+
+**Remaining:** section and cutaway. `packages/geometry-3d/src/section-box.ts`
+exists and is unwired.
+
+**Evidence:** `run-model-canvas-capability-check.mjs` and
+`run-native-open-capability-check.mjs` both green; the saved capture shows the
+fixture's openings cut through the walls, including on the selected wall.
+**Rollback:** the openings map is optional; an absent entry extrudes the wall
+solid exactly as before.
 
 ### 8. Regular and compact iPad
 
