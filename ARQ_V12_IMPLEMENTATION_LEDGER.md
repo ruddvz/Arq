@@ -9,7 +9,7 @@ win.
 **Branch:** `claude/arq-liquid-glass-12-5gstys`
 **Base:** `claude/arq-cad-platform-research-ba8rav` (this repository's default)
 **Pull request:** ruddvz/Arq#303
-**Evidence revision:** `10862c5`
+**Evidence revision:** `0f14f8e`
 **Delivery stop:** pull request plus verified preview. Not merge, not production.
 
 ## States
@@ -22,14 +22,25 @@ Only `verified` is green.
 
 ## Standing evidence
 
-At `b5b2d97`, uncached: 3,538 tests across 328 files; `pnpm typecheck` (37
+At `0f14f8e`, uncached: 3,566 tests across 331 files; `pnpm typecheck` (37
 packages); `lint`; `format:check`; `check:editor-dependency-boundaries`;
 `check:dependency-licences`; `zeus-guard-test`; the language ladder through
 `arq:language:audit:ci`. All fifteen headless-Chromium capability checks pass -
 run locally because **GitHub Actions has produced no run for this pull request**
-across fourteen pushes (all eight workflows report `state: active`; nothing has
-run repository-wide since ~10 minutes before the PR opened). Every claim below
-is therefore local evidence, not a green pipeline.
+across every push so far (all eight workflows report `state: active`; nothing
+has run repository-wide since ~10 minutes before the PR opened). Every claim
+below is therefore local evidence, not a green pipeline.
+
+Two standing external blockers, neither of which any amount of implementation
+clears:
+
+1. **No CI run exists.** The pattern points at repository-level run approval or
+   billing, which is an owner action.
+2. **No preview exists for `apps/web`.** Vercel builds `arq-website`, the
+   marketing site, and nothing else. The delivery stop asks for a verified
+   preview against the exact pull-request head, and for the code this change
+   touches there is no preview to verify. The nearest available substitute is
+   the local headless-Chromium evidence recorded per row.
 
 ## Responsive evidence at `10862c5`
 
