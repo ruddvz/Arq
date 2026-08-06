@@ -38,7 +38,11 @@ describe('tool icon coverage', () => {
   it('draws every tool the repository has artwork for', () => {
     // The coverage figure, pinned. If it moves in either direction someone has
     // either added artwork (update the list) or dropped it (a regression).
-    expect(Object.keys(TOOL_ICONS)).toHaveLength(30);
+    //
+    // 54, and `TOOLS_AWAITING_ICON` is now empty: every tool the registry
+    // declares has an ARQ glyph. It was 30, with 24 tools showing their label
+    // and nothing else.
+    expect(Object.keys(TOOL_ICONS)).toHaveLength(54);
     expect(REGISTRY_TOOL_IDS).toHaveLength(54);
   });
 });
