@@ -498,6 +498,15 @@ export function App(): JSX.Element {
    * `workspaceRailsWidthPx`. Passing the registry allowance here would make the
    * floor fire ~150px later than it should.
    */
+  /*
+   * Canvas-first once there is room for it: the drawing runs the full width of
+   * the workspace and the panels rest on top, rather than each taking a column
+   * and boxing the model in. Below that width the panels would cover more of
+   * the canvas than they freed, so the docked composition is the better answer
+   * and stays the default.
+   */
+  const workspaceComposition = platform === 'desktop' ? 'floating' : 'docked';
+
   const railsWidthPx = workspaceRailsWidthPx(platform);
   useEffect(() => {
     setPanels((current) =>
@@ -506,9 +515,10 @@ export function App(): JSX.Element {
         slots,
         railsWidthPx,
         platform,
+        composition: workspaceComposition,
       }),
     );
-  }, [probe.widthPx, slots, railsWidthPx, platform]);
+  }, [probe.widthPx, slots, railsWidthPx, platform, workspaceComposition]);
 
   /*
    * Doc 34: each mode leads with the browser section it is about, unless the

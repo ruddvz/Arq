@@ -212,6 +212,21 @@ export interface DockedLayoutInput {
    * much room those columns may take), and the touch bands declare no floor.
    */
   readonly platform: WorkspacePlatform;
+  /**
+   * How the band presents its side panels.
+   *
+   * `'docked'` is the historical behaviour and the default: a panel takes width
+   * from the canvas and shares an edge with it. `'floating'` is the canvas-first
+   * composition, where the drawing runs the full width of the workspace and the
+   * panels rest on top of it.
+   *
+   * This is a presentation choice rather than an overflow response, which is
+   * why it is an input and not something `resolvePanelOverflowRelief` could
+   * decide: the relief logic floats panels because they no longer *fit*, and a
+   * floating composition floats them because that is the design even when there
+   * is room to spare.
+   */
+  readonly composition?: 'docked' | 'floating';
 }
 
 /**
@@ -254,6 +269,19 @@ export function reconcileDockedPanels(
     (next, panel) => setPanelOpenForBand(next, panel, next[panel].dockedPreferenceOpen),
     state,
   );
+
+  /*
+   * A canvas-first band floats both panels regardless of how much room is
+   * left. The overflow relief below answers "do these still fit", which is a
+   * different question and would dock them again the moment they did.
+   */
+  if (input.composition === 'floating') {
+    return setPanelPresentation(
+      setPanelPresentation(state, 'inspector', 'overlay'),
+      'project-browser',
+      'overlay',
+    );
+  }
 
   const probe: CanvasWidthInput = {
     viewportWidthPx: input.viewportWidthPx,

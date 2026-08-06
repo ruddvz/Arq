@@ -148,20 +148,18 @@ function OverlayPanel(props: {
             }
       }
       style={{
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        [side]: 0,
+        /*
+         * Width only. Placement lives in workspace-shell.css, because an inline
+         * `left: 0` beats any rule a stylesheet can write - which is exactly
+         * what happened when the floating composition tried to inset this panel
+         * past the rails and silently lost to the inline value.
+         *
+         * Surface and border belong to `arq-material` (ADR-0031) for the same
+         * reason: an inline background would turn the material off one surface
+         * at a time without removing anything.
+         */
         width: widthPx,
         maxWidth: '100%',
-        zIndex: 2,
-        /*
-         * Surface and border belong to `arq-material` (ADR-0031), not to this
-         * inline style. An inline background would win over the class and
-         * silently turn the material off, which is the specific way a material
-         * layer dies: not removed, just overridden one surface at a time.
-         */
-        overflow: 'auto',
       }}
     >
       {children}
@@ -353,7 +351,19 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
 
         <div
           className="arq-workspace__row"
-          style={{ position: 'relative', flex: 1, display: 'flex', minHeight: 0 }}
+          style={{
+            position: 'relative',
+            flex: 1,
+            display: 'flex',
+            minHeight: 0,
+            /*
+             * How far in from the row's leading edge the canvas actually
+             * starts. A floating panel is absolutely positioned within this
+             * row, so without it the left panel begins at the row edge and
+             * covers the two rails it is supposed to sit beside.
+             */
+            ['--arq-rails-width' as string]: `${canvasFirst ? 0 : WORKSPACE_RAILS_WIDTH_PX}px`,
+          }}
         >
           {!canvasFirst && (
             <ModeRail project={project} activeMode={activeMode} onSelectMode={onSelectMode} />

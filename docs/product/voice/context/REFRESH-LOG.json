@@ -2,6 +2,12 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "generatedAt": "2026-08-06T03:40:41.622Z",
+      "sourceSetDigest": "38508a1ade9fb8bbdb8aab7ed5dfbf56923d9168d00f2c118e9e1a36076d4a3d",
+      "previousSourceSetDigest": "64f006127fe9d03448a2840466bf82a89765ddbae2e9ded1796d7f2c4fa39f6f",
+      "changedSourceSets": ["web-app"]
+    },
+    {
       "generatedAt": "2026-08-06T02:34:07.678Z",
       "sourceSetDigest": "64f006127fe9d03448a2840466bf82a89765ddbae2e9ded1796d7f2c4fa39f6f",
       "previousSourceSetDigest": "a4a4e82ad8be00a6cdf284b42387b308be02f6e83cdd2763d3628770ff217ac4",

@@ -189,7 +189,54 @@
  * already separated by it.
  */
 .arq-workspace__overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: var(--arq-z-shell-raised);
+  overflow: auto;
   box-shadow: 0 0 12px rgb(0 0 0 / 18%);
+}
+
+.arq-workspace__overlay--left {
+  left: 0;
+}
+
+.arq-workspace__overlay--right {
+  right: 0;
+}
+
+/*
+ * In the floating composition an overlay panel is a card resting on the
+ * drawing, not a full-height slab pinned to the window edge. It is inset on
+ * three sides so the canvas is visibly continuous behind and around it, which
+ * is the whole point of the panel floating rather than docking.
+ */
+@media (pointer: fine) and (min-width: 1180px) {
+  .arq-workspace__overlay {
+    top: 0;
+    bottom: 0;
+    border-radius: var(--arq-radius-panel);
+  }
+
+  /*
+   * Begins where the canvas begins, not where the row does, so the panel rests
+   * on the drawing and leaves the rails beside it visible rather than covering
+   * them.
+   *
+   * `--arq-rails-width` is the rails' own content width. Each rail is a card in
+   * this composition, so it also carries a 1px border on each side and a
+   * gutter after it - two rails, hence twice `2px + gutter` - and one more
+   * gutter separates the panel from the last rail.
+   */
+  .arq-workspace__overlay--left {
+    left: calc(
+      var(--arq-rails-width, 0px) + 2 * (2px + var(--arq-space-compact)) + var(--arq-space-compact)
+    );
+  }
+
+  .arq-workspace__overlay--right {
+    right: 0;
+  }
 }
 
 /*
