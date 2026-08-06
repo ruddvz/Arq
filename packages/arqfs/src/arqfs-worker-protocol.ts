@@ -10,6 +10,7 @@
  * operations").
  */
 import type { ArqfsOpenResult } from './arqfs-open';
+import type { ArqfsIntegrityReport } from './arqfs-integrity';
 import type { ArqfsPublicationResult } from './arqfs-publication';
 
 export type ArqfsWorkerRequest =
@@ -36,6 +37,37 @@ export type ArqfsWorkerRequest =
       readonly type: 'putArchiveEntries';
       readonly entries: ReadonlyArray<readonly [string, Uint8Array]>;
     }
+  /**
+   * The other direction of `importDatabase`: switches the working copy out of
+   * WAL mode and returns its bytes as a clean, standalone file - no `-wal` or
+   * `-shm` dependency, because journal_mode=DELETE both merges anything pending
+   * back into the main file and rewrites the header bytes that declare which
+   * mode the file is in, before the bytes are read.
+   *
+   * Gated on the same write capability as `putArchiveEntries`, not merely on an
+   * accepted open: switching journal mode physically rewrites the file's pages
+   * and its header, and a file this build must not write must not have its
+   * bytes touched at all, even in the direction of tidying them up.
+   */
+  | { readonly id: number; readonly type: 'exportDatabase' }
+  /**
+   * ARQ-200/222's canonical semantic hash over the working copy, computed on
+   * request rather than folded into another response so it can be asked for
+   * independently - a fresh-reader reopen needs to compute the same thing over
+   * a different connection to compare against it.
+   */
+  | { readonly id: number; readonly type: 'computeSemanticHash' }
+  /**
+   * SQLite's own health check over the working copy.
+   *
+   * `checkArqfsIntegrity`'s documented purpose is "before trusting an
+   * imported/copied file", and nothing outside the Worker could ask for it - so
+   * a working copy seeded by `importDatabase` was opened and decoded with
+   * nothing having established that the copy is sound. `open` does not cover
+   * this: it reads the header and the metadata table, which a database with
+   * damaged pages elsewhere answers perfectly well.
+   */
+  | { readonly id: number; readonly type: 'checkIntegrity' }
   | { readonly id: number; readonly type: 'getArchiveEntry'; readonly path: string }
   | { readonly id: number; readonly type: 'listArchiveEntryPaths' }
   /**
@@ -71,6 +103,9 @@ export type ArqfsWorkerRequest =
 export type ArqfsWorkerResponsePayload =
   | { readonly kind: 'importDatabase'; readonly byteLength: number }
   | { readonly kind: 'open'; readonly result: ArqfsOpenResult; readonly usedVfs: string }
+  | { readonly kind: 'checkIntegrity'; readonly report: ArqfsIntegrityReport }
+  | { readonly kind: 'exportDatabase'; readonly bytes: Uint8Array }
+  | { readonly kind: 'computeSemanticHash'; readonly hash: string }
   | { readonly kind: 'putArchiveEntries' }
   | { readonly kind: 'getArchiveEntry'; readonly content: Uint8Array | null }
   | { readonly kind: 'listArchiveEntryPaths'; readonly paths: readonly string[] }
@@ -107,6 +142,8 @@ export const ARQFS_WORKER_ERROR_CODES = {
   notWritable: 'ARQFS_WORKER_FILE_NOT_WRITABLE',
   /** The open itself was rejected, or it succeeded only in a form this build must not read from; nothing may be handed back from this file. */
   openRejected: 'ARQFS_WORKER_OPEN_REJECTED',
+  /** This context has no way to hand back the working copy's raw bytes (e.g. the in-memory fallback used when OPFS is unavailable). */
+  exportUnsupported: 'ARQFS_WORKER_EXPORT_UNSUPPORTED',
   /** The request was not a shape this protocol defines, so nothing was attempted. */
   malformedRequest: 'ARQFS_WORKER_MALFORMED_REQUEST',
   /** This Worker has no way to publish - it is not backed by a VFS that can export and reopen a file. */
@@ -118,10 +155,26 @@ export const ARQFS_WORKER_ERROR_CODES = {
 export type ArqfsWorkerErrorCode =
   (typeof ARQFS_WORKER_ERROR_CODES)[keyof typeof ARQFS_WORKER_ERROR_CODES];
 
+/**
+ * Every response names the project it came from, not only the request it
+ * answers. A request id is unique inside one client, so id correlation alone
+ * cannot tell a client that the message it just received came from a Worker
+ * opened for a different project - and OPFS is shared at the origin, so "a
+ * different project" means "different bytes at the same storage." Two
+ * Workers alive at once during a project switch is the ordinary case, not an
+ * exotic one, which is why the answer carries its own identity rather than
+ * relying on the caller having wired the transport correctly.
+ */
 export type ArqfsWorkerResponse =
-  | { readonly id: number; readonly ok: true; readonly payload: ArqfsWorkerResponsePayload }
   | {
       readonly id: number;
+      readonly projectId: string;
+      readonly ok: true;
+      readonly payload: ArqfsWorkerResponsePayload;
+    }
+  | {
+      readonly id: number;
+      readonly projectId: string;
       readonly ok: false;
       readonly code: ArqfsWorkerErrorCode;
       readonly error: string;
@@ -171,6 +224,12 @@ export function parseArqfsWorkerRequest(value: unknown): ArqfsWorkerRequest | nu
         : null;
     case 'open':
       return { id, type: 'open' };
+    case 'exportDatabase':
+      return { id, type: 'exportDatabase' };
+    case 'computeSemanticHash':
+      return { id, type: 'computeSemanticHash' };
+    case 'checkIntegrity':
+      return { id, type: 'checkIntegrity' };
     case 'putArchiveEntries': {
       const entries = candidate['entries'];
       if (!Array.isArray(entries)) return null;

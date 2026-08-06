@@ -87,6 +87,11 @@ function fakeWorker(overrides: Record<string, () => Promise<unknown>> = {}) {
         if (request.type === 'importDatabase') return { kind: 'importDatabase', byteLength: 0 };
         if (request.type === 'open')
           return { kind: 'open', result: WRITABLE, usedVfs: 'opfs-sahpool' };
+        if (request.type === 'checkIntegrity')
+          return {
+            kind: 'checkIntegrity',
+            report: { ok: true, quickCheck: ['ok'], foreignKeyViolations: [] },
+          };
         if (request.type === 'readAllArchiveEntries')
           return { kind: 'readAllArchiveEntries', entries };
         return { kind: 'close' };
@@ -591,5 +596,52 @@ describe('openNativeProject', () => {
         expect(releaseWriterLease).toHaveBeenCalled();
       }
     });
+  });
+});
+
+describe('the working-copy integrity check', () => {
+  it('refuses a working copy SQLite reports as damaged, before anything decodes it', async () => {
+    const fake = fakeWorker({
+      checkIntegrity: () =>
+        Promise.resolve({
+          kind: 'checkIntegrity',
+          report: {
+            ok: false,
+            quickCheck: ['*** in database main ***', 'Page 42 is never used'],
+            foreignKeyViolations: [],
+          },
+        }),
+    });
+    fake.setEntries(
+      await archiveEntries([{ id: 'w1', start: { x: 0, y: 0 }, end: { x: 3000, y: 0 } }]),
+    );
+
+    const result = await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+
+    expect(result.status).toBe('rejected');
+    if (result.status === 'rejected') {
+      expect(result.code).toBe('ARQ_INTEGRITY_FAILED');
+      // The real finding, not a generic "damaged file" line.
+      expect(result.reason).toContain('Page 42 is never used');
+    }
+    // Damaged is found before the contents are read, so nothing decodes a page
+    // the database itself has just reported as broken.
+    expect(fake.seen).not.toContain('readAllArchiveEntries');
+    // And the Worker is still released - a leaked one holds the working copy's
+    // write lock for the rest of the session.
+    expect(fake.terminate).toHaveBeenCalled();
+  });
+
+  it('runs the check after the open decision, not before it', async () => {
+    const fake = fakeWorker();
+    fake.setEntries(await archiveEntries([]));
+
+    await openNativeProject(sqliteBytes(), fake.factory, 'house.arq');
+
+    // Reads are gated on an accepted open, and the integrity check is a read.
+    expect(fake.seen.indexOf('checkIntegrity')).toBeGreaterThan(fake.seen.indexOf('open'));
+    expect(fake.seen.indexOf('checkIntegrity')).toBeLessThan(
+      fake.seen.indexOf('readAllArchiveEntries'),
+    );
   });
 });

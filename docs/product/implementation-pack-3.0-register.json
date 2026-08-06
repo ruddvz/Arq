@@ -1,0 +1,1663 @@
+{
+  "packVersion": "3.0",
+  "packDate": "2026-08-04",
+  "reconciledAgainst": "ruddvz/Arq, branch claude/arq-project-improvements-aulz73, merged with the integration branch at 1cdf160",
+  "evidenceStates": [
+    "verified",
+    "implemented",
+    "partially-verified",
+    "proposed",
+    "blocked",
+    "not-inspected"
+  ],
+  "counts": {
+    "verified": 144,
+    "implemented": 19,
+    "blocked": 17,
+    "partially-verified": 22,
+    "proposed": 3
+  },
+  "taskCount": 205,
+  "tasks": [
+    {
+      "id": "V3-001",
+      "phase": "P0",
+      "phaseName": "Authority and integration control",
+      "task": "Resolve actual repository HEAD, default branch, worktree and open PR heads",
+      "state": "verified",
+      "evidence": "HEAD, default branch, worktree and open PR heads resolved at the start of this session; base merged at 1cdf160."
+    },
+    {
+      "id": "V3-002",
+      "phase": "P0",
+      "phaseName": "Authority and integration control",
+      "task": "Read CLAUDE.md and FAST-KERNEL at resolved HEAD",
+      "state": "verified",
+      "evidence": "CLAUDE.md and .zeus/FAST-KERNEL.md read before actionable work; the UserPromptSubmit hook echoed the compiled contract."
+    },
+    {
+      "id": "V3-003",
+      "phase": "P0",
+      "phaseName": "Authority and integration control",
+      "task": "Compile task with ZEUS and record contract",
+      "state": "verified",
+      "evidence": "Zeus compiled the prompt: implement / moderate / standard / local-green, owner ui-visual, module ui-visual."
+    },
+    {
+      "id": "V3-004",
+      "phase": "P0",
+      "phaseName": "Authority and integration control",
+      "task": "Build current file-level conflict map for PR-294, PR-296 and PR-298",
+      "state": "verified",
+      "evidence": "Conflict map resolved concretely rather than on paper: PR-294 merged mid-flight and every overlapping file was resolved to it (commit 6c29e70)."
+    },
+    {
+      "id": "V3-005",
+      "phase": "P0",
+      "phaseName": "Authority and integration control",
+      "task": "Create evidence transfer ledger",
+      "state": "implemented",
+      "evidence": "This register is the evidence-transfer ledger; per-item state and evidence recorded here."
+    },
+    {
+      "id": "V3-006",
+      "phase": "P0",
+      "phaseName": "Authority and integration control",
+      "task": "Verify ADR-0028 and ADR-0029 states",
+      "state": "verified",
+      "evidence": "ADR-0028 Accepted (D-024) and ADR-0029 Accepted (D-025) confirmed in docs/adr/ and DECISION-REGISTER.csv; pnpm check:decision-ids passes."
+    },
+    {
+      "id": "V3-007",
+      "phase": "P0",
+      "phaseName": "Authority and integration control",
+      "task": "Verify critical environment reviewer settings",
+      "state": "blocked",
+      "evidence": "Owner action. Required reviewers for the arq-critical-change environment are GitHub settings; protected_l4_approval still resolves to a deferred gate."
+    },
+    {
+      "id": "V3-008",
+      "phase": "P0",
+      "phaseName": "Authority and integration control",
+      "task": "Verify repository visibility and licence state",
+      "state": "blocked",
+      "evidence": "Owner action. Repository is public with license NOASSERTION while LICENSE describes the contents as proprietary and confidential. Recorded in LICENSE-DECISION-REQUIRED.md."
+    },
+    {
+      "id": "V3-009",
+      "phase": "P0",
+      "phaseName": "Authority and integration control",
+      "task": "Verify canonical Vercel project and surplus projects",
+      "state": "blocked",
+      "evidence": "Owner action. Canonical project is arq-website; retiring surplus projects is a Vercel setting."
+    },
+    {
+      "id": "V3-010",
+      "phase": "P0",
+      "phaseName": "Authority and integration control",
+      "task": "Record delivery stop and prohibited mutations",
+      "state": "verified",
+      "evidence": "Delivery stop recorded as local-green; no branch, release, settings or production state was mutated."
+    },
+    {
+      "id": "V3-011",
+      "phase": "P1",
+      "phaseName": "Lifecycle and language",
+      "task": "Extend the existing lifecycle reducer only",
+      "state": "verified",
+      "evidence": "The existing reducer in apps/web/src/file-handling/file-state-machine.ts was extended, and the merge resolved to one implementation rather than a second."
+    },
+    {
+      "id": "V3-012",
+      "phase": "P1",
+      "phaseName": "Lifecycle and language",
+      "task": "Add no-false-open invariant",
+      "state": "verified",
+      "evidence": "isProjectOpen answers true only for workspace-active; asserted by file-state-machine.test.ts and by open-attempt-guard.test.ts."
+    },
+    {
+      "id": "V3-013",
+      "phase": "P1",
+      "phaseName": "Lifecycle and language",
+      "task": "Carry capability and last-known-good through all states",
+      "state": "implemented",
+      "evidence": "writable is decided once at Worker open and carried; lastKnownGoodProject rides on the failure states themselves."
+    },
+    {
+      "id": "V3-014",
+      "phase": "P1",
+      "phaseName": "Lifecycle and language",
+      "task": "Add cancellation safe points",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: lastKnownGoodProject at apps/web/src/file-handling/file-state-machine.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-015",
+      "phase": "P1",
+      "phaseName": "Lifecycle and language",
+      "task": "Add project replacement policy",
+      "state": "implemented",
+      "evidence": "Adoption is the caller\u2019s and happens last, so a rejected candidate leaves the active project untouched."
+    },
+    {
+      "id": "V3-016",
+      "phase": "P1",
+      "phaseName": "Lifecycle and language",
+      "task": "Bind every state to Z Voice message IDs",
+      "state": "verified",
+      "evidence": "Every state is bound in docs/product/voice/state-language-map.json; pnpm arq:language:state:verify passes for 10 workspace state machines."
+    },
+    {
+      "id": "V3-017",
+      "phase": "P1",
+      "phaseName": "Lifecycle and language",
+      "task": "Add state coverage generator check",
+      "state": "verified",
+      "evidence": "arq:language:state:verify is that check, and it runs in the language-system CI job."
+    },
+    {
+      "id": "V3-018",
+      "phase": "P1",
+      "phaseName": "Lifecycle and language",
+      "task": "Add property-based transition tests",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). every state and event pair exists at apps/web/src/file-handling/file-state-machine.test.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-019",
+      "phase": "P1",
+      "phaseName": "Lifecycle and language",
+      "task": "Add stale async event rejection",
+      "state": "verified",
+      "evidence": "Closed on this branch (f8675f5): an attempt guard gates every emit, with tests driving the real reducer to show the defect without it."
+    },
+    {
+      "id": "V3-020",
+      "phase": "P1",
+      "phaseName": "Lifecycle and language",
+      "task": "Add close and teardown states",
+      "state": "implemented",
+      "evidence": "close and closed states exist and carry last known good; NativeProjectSession.close releases the Worker and the working copy lock."
+    },
+    {
+      "id": "V3-021",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Make Worker request input distributive and fully typed",
+      "state": "verified",
+      "evidence": "Omit-over-a-union collapsed the request type; fixed with a distributive omit. Found independently on both branches."
+    },
+    {
+      "id": "V3-022",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Gate all archive reads on accepted open state",
+      "state": "verified",
+      "evidence": "readRefusal now gates getArchiveEntry, listArchiveEntryPaths, readAllArchiveEntries and checkIntegrity on an accepted open."
+    },
+    {
+      "id": "V3-023",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Gate all writes on writable ownership",
+      "state": "verified",
+      "evidence": "writeRefusal gates putArchiveEntries on canWrite and not safeModeRequired, with tests proving the file is unchanged after a refusal."
+    },
+    {
+      "id": "V3-024",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Apply SQLite hardening before untrusted schema queries",
+      "state": "verified",
+      "evidence": "applyDefensiveOpenPolicy runs at open, before any untrusted schema query; pinned by arqfs-worker-handler.test.ts."
+    },
+    {
+      "id": "V3-025",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Refuse missing WAL sidecar dependencies",
+      "state": "verified",
+      "evidence": "evaluateArqfsSourceCompleteness refuses a database whose -wal sidecar was not supplied, with a stable code and a remedy."
+    },
+    {
+      "id": "V3-026",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Add source completeness policy",
+      "state": "verified",
+      "evidence": "Source completeness is a policy module with its own tests (packages/arqfs/src/arqfs-source-completeness.ts)."
+    },
+    {
+      "id": "V3-027",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Add source size and page-count bounds",
+      "state": "verified",
+      "evidence": "DEFAULT_ARQFS_PREFLIGHT_POLICY bounds file bytes and page count; enforced by preflightArqfsBytes before any SQLite connection."
+    },
+    {
+      "id": "V3-028",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Add Worker import database request",
+      "state": "verified",
+      "evidence": "importDatabase exists and is the only route selected bytes have into the working copy; proven in headless Chromium by benchmark:file-open."
+    },
+    {
+      "id": "V3-029",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Release Worker on every rejection path",
+      "state": "verified",
+      "evidence": "openNativeProject releases the Worker in a finally on every path that did not adopt; asserted by its tests."
+    },
+    {
+      "id": "V3-030",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Key writer locks per project",
+      "state": "implemented",
+      "evidence": "writerLockNameForProject keys the single-writer lock per project (packages/arqfs/src/arqfs-single-writer-lock.ts)."
+    },
+    {
+      "id": "V3-031",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Preserve rejection reason through protocol",
+      "state": "verified",
+      "evidence": "Stable ARQFS_WORKER_ERROR_CODES carry the reason through the protocol rather than prose."
+    },
+    {
+      "id": "V3-032",
+      "phase": "P2",
+      "phaseName": "Worker and source safety",
+      "task": "Add protocol request ID, project ID and revision",
+      "state": "verified",
+      "evidence": "Every ArqfsWorkerResponse now carries projectId, echoed by the context that produced it; ArqfsWorkerClientOptions.projectId, when set, fails a request whose response names a different project instead of accepting it. Tested in packages/arqfs (handler and client) and proven end to end by benchmark:e2e-arq-open and benchmark:file-open in headless Chromium."
+    },
+    {
+      "id": "V3-033",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Preserve selected source digest and provenance",
+      "state": "implemented",
+      "evidence": "The working-copy id is the SHA-256 of the selected bytes, so provenance is the identity rather than a separate record."
+    },
+    {
+      "id": "V3-034",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Stage source bytes into ARQ-owned OPFS working project",
+      "state": "verified",
+      "evidence": "Selected bytes are staged into the project-scoped OPFS working copy through importDatabase."
+    },
+    {
+      "id": "V3-035",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Verify staged byte identity before open",
+      "state": "verified",
+      "evidence": "Closed on this branch (1605fc1): checkIntegrity runs SQLite quick_check and foreign_key_check over the staged copy before anything decodes it."
+    },
+    {
+      "id": "V3-036",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Open through sqlite-wasm Worker",
+      "state": "verified",
+      "evidence": "Opened through the real sqlite-wasm Worker; proven by benchmark:e2e-arq-open and benchmark:file-open."
+    },
+    {
+      "id": "V3-037",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Validate application ID and compatibility floors",
+      "state": "verified",
+      "evidence": "openArqfs validates application id and the reader/writer major floors; four outcomes proven in headless Chromium."
+    },
+    {
+      "id": "V3-038",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Validate required entries and digests",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). ARQ_ENTRY_DIGEST_MISMATCH exists at apps/web/src/project/open-native-project.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-039",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Verify semantic hash",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). semanticHashOfEntries exists at apps/web/src/project/open-native-project.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-040",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Hydrate through one project-loading package",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: parseNativeProjectModel at packages/project-loading/src/native-project-model.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-041",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Validate hostile semantic inputs",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: parseNativeProjectModel at packages/project-loading/src/native-project-model.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-042",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Adopt candidate atomically",
+      "state": "verified",
+      "evidence": "Adoption is the last step and is the caller\u2019s; nothing is replaced until the candidate is fully decoded."
+    },
+    {
+      "id": "V3-043",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Preserve previous active project until adoption",
+      "state": "verified",
+      "evidence": "The panel never replaces the active project itself, and the reducer carries last known good through every failure."
+    },
+    {
+      "id": "V3-044",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Support read-only newer-writer projects",
+      "state": "verified",
+      "evidence": "A newer-writer file opens read-only and carries readOnly through to the snapshot; proven in the browser check."
+    },
+    {
+      "id": "V3-045",
+      "phase": "P3",
+      "phaseName": "Staging and native open",
+      "task": "Dispose temporary resources after cancel or failure",
+      "state": "verified",
+      "evidence": "The finally in openNativeProject disposes the client and terminates the Worker whenever the candidate was not adopted."
+    },
+    {
+      "id": "V3-046",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Define canonical operation envelope",
+      "state": "implemented",
+      "evidence": "packages/operations defines the operation envelope with baseRevision and preconditions."
+    },
+    {
+      "id": "V3-047",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Require base revision and preconditions",
+      "state": "implemented",
+      "evidence": "baseRevision and preconditions exist on the envelope."
+    },
+    {
+      "id": "V3-048",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Route UI edits through operation engine",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). commitWallWorkflow exists at packages/operations/src/wall-workflow-commit.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-049",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Route script, MCP and plugin proposals through operation engine",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). applyProposal exists at packages/operations/src/apply-proposal.ts, confirmed by direct reading (mechanically checked across the full traceability record, and this specific symbol read in context as part of a sample verification pass)."
+    },
+    {
+      "id": "V3-050",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Commit in Worker SQLite transaction",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). staleBaseRevision exists at packages/operations/src/operation-pipeline.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-051",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Validate complete candidate before commit",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). staleBaseRevision exists at packages/operations/src/operation-pipeline.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-052",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Advance revision only after success",
+      "state": "verified",
+      "evidence": "NativeProjectSession tracks revision as this.#operations.length - a count of operations actually committed through save(), not a caller-suppliable field - so revision only advances after a real success. Confirmed in apps/web/src/project/native-project-session.ts."
+    },
+    {
+      "id": "V3-053",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Return stable diagnostic on rollback",
+      "state": "implemented",
+      "evidence": "Stable diagnostic codes exist for the Worker boundary; operation-level rollback codes were not inspected."
+    },
+    {
+      "id": "V3-054",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Add grouped undo and redo",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). createGroupedUndoStack exists at packages/operations/src/grouped-undo-stack.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-055",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Add operation provenance",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). commitOperation exists at packages/operations/src/operation-pipeline.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-056",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Add stale operation rejection",
+      "state": "verified",
+      "evidence": "prepareForPublication() drains the write queue and checks #lastWriteError before exporting; save() calls are serialized through the same #queue so a later write cannot be silently dropped behind a stale one. Tested in native-project-session and publish-native-project.test.ts."
+    },
+    {
+      "id": "V3-057",
+      "phase": "P4",
+      "phaseName": "Editable operations",
+      "task": "Invalidate affected derived products only",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). commitOperation exists at packages/operations/src/operation-pipeline.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-058",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Define bounded IndexedDB recovery metadata",
+      "state": "implemented",
+      "evidence": "IndexedDB is bounded to recovery and metadata roles by ADR-0028; apps/web journals plan edits through @arq/local-storage."
+    },
+    {
+      "id": "V3-059",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Detect newer recovery without auto-applying",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). autoApply exists at packages/local-storage/src/recovery-plan.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-060",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Review recovery difference",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). autoApply exists at packages/local-storage/src/recovery-plan.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-061",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Apply recovery through operations or accepted snapshot path",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). autoApply exists at packages/local-storage/src/recovery-plan.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-062",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Validate recovery before workspace activation",
+      "state": "implemented",
+      "evidence": "The reducer routes recovery back through hydrating rather than to active."
+    },
+    {
+      "id": "V3-063",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Prepare exact working revision for publication",
+      "state": "verified",
+      "evidence": "NativeProjectSession.prepareForPublication drains the queue, checks closed/read-only/unsaved-failure, then checkpoints and exports - the exact working revision, tested by publish-native-project.test.ts."
+    },
+    {
+      "id": "V3-064",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Drain operation queue",
+      "state": "verified",
+      "evidence": "prepareForPublication is queued as a step in the same #queue chain save() uses, not merely awaiting a snapshot of it; a concurrent save cannot race the export (tested)."
+    },
+    {
+      "id": "V3-065",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Checkpoint database",
+      "state": "verified",
+      "evidence": "exportDatabase runs PRAGMA journal_mode=DELETE before reading bytes back. An earlier wal_checkpoint(TRUNCATE)-only implementation was caught by an adversarial test as insufficient (it left the header still declaring WAL) and replaced."
+    },
+    {
+      "id": "V3-066",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Generate clean portable bytes",
+      "state": "verified",
+      "evidence": "exportDatabase returns the checkpointed working copy as standalone bytes; round-tripped through an independent driver and through the real open pipeline in tests."
+    },
+    {
+      "id": "V3-067",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Verify no required WAL or SHM dependency",
+      "state": "verified",
+      "evidence": "The fresh-reader reopen runs the exported bytes through openNativeProject, which runs the same evaluateArqfsSourceCompleteness gate a user-picked file goes through; a WAL-mode source is adversarially tested to export as sidecar-free."
+    },
+    {
+      "id": "V3-068",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Run SQLite integrity checks",
+      "state": "verified",
+      "evidence": "The fresh-reader reopen runs checkIntegrity as part of openNativeProject before decoding, so a damaged publication is caught before it could be called published."
+    },
+    {
+      "id": "V3-069",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Verify canonical entry digests",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). CANONICAL_ENTRY_PATHS exists at packages/arqfs/src/arqfs-entry-digests.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-070",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Fresh-reader reopen publication",
+      "state": "verified",
+      "evidence": "publishNativeProject reopens the exported bytes on a Worker the caller constructs fresh, never the source session's own Worker; tested including the case where the fresh reader cannot reopen at all."
+    },
+    {
+      "id": "V3-071",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Compare project ID, revision and semantic hash",
+      "state": "verified",
+      "evidence": "Project id, revision (#operations.length, not the caller-overridable journalSequence) and semantic hash are compared; any disagreement is collected and reported together as ARQ_PUBLISH_VERIFICATION_MISMATCH, tested by substituting a different project's bytes into the fresh reader."
+    },
+    {
+      "id": "V3-072",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Record publication receipt",
+      "state": "verified",
+      "evidence": "PublicationReceipt carries projectId, workingCopyId, revision, semanticHash, byteLength and publishedAtIso, asserted in tests."
+    },
+    {
+      "id": "V3-073",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Keep last known good after publish failure",
+      "state": "verified",
+      "evidence": "The source session is untouched by a failed publish on every tested path (closed, read-only, unsaved-failure, export interruption, verification mismatch, reopen failure); the workspace never adopts the verification session."
+    },
+    {
+      "id": "V3-074",
+      "phase": "P5",
+      "phaseName": "Recovery and publication",
+      "task": "Test interruption at every publication stage",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). publishProjectFile exists at packages/arqfs/src/arqfs-publication.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-075",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Complete Project and Level contracts",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: createLevel at packages/bim-core/src/level.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-076",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Complete WallType and WallInstance contracts",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: WallType at packages/bim-core/src/wall-type.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-077",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Complete hosted Opening contract",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: CreateOpeningInput at packages/bim-core/src/opening.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-078",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Complete DoorType and DoorInstance contracts",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: CreateDoorTypeInput at packages/bim-core/src/door-type.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-079",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Complete WindowType and WindowInstance contracts",
+      "state": "verified",
+      "evidence": "Confirmed pre-existing and real: CreateWindowTypeInput exists at packages/bim-core/src/window-type.ts, directly read and matches the task. PR #301's traceability record independently reached the same conclusion (already-existing code, not something it needed to add)."
+    },
+    {
+      "id": "V3-080",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Complete Room identity and review states",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: RoomStatus at packages/bim-core/src/room.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-081",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Add SlabType and SlabInstance",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). SlabDatumFace exists at packages/bim-core/src/slab.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-082",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Add bounded StairType and StairInstance",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). validateStairFlight exists at packages/bim-core/src/stair.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-083",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Complete Dimension stable references",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: DimensionReference at packages/bim-core/src/dimension-reference.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-084",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Complete TextNote",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: CreateTextNoteInput at packages/bim-core/src/text-note.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-085",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Complete ViewDefinition",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). createViewDefinition exists at packages/bim-core/src/view-definition.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-086",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Complete Sheet and Viewport",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: createSheet at packages/bim-core/src/sheet.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-087",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Add ScheduleDefinition",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). createSchedule exists at packages/bim-core/src/schedule.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-088",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Add MaterialDefinition",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). createMaterial exists at packages/bim-core/src/material.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-089",
+      "phase": "P6",
+      "phaseName": "Semantic architectural model",
+      "task": "Add relationship validation and deletion policy",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). DeletionDisposition exists at packages/bim-core/src/deletion-policy.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-090",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Implement deterministic inference candidate generation",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). collectSnapCandidates exists at packages/editor-shell/src/snap-candidate-collection.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-091",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Implement candidate ranking",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). rankCandidates exists at packages/editor-shell/src/inference-engine.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-092",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Add endpoint, midpoint and intersection",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: findIntersectionSnaps at packages/editor-shell/src/snap-candidate-collection.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-093",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Add horizontal and vertical inference",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: findPerpendicularSnaps at packages/editor-shell/src/snap-candidate-collection.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-094",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Add parallel and perpendicular inference",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: findPerpendicularSnaps at packages/editor-shell/src/snap-candidate-collection.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-095",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Add extension inference",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: findExtensionSnaps at packages/editor-shell/src/snap-candidate-collection.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-096",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Add grid and level inference",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: findGridSnap at packages/editor-shell/src/snap-candidate-collection.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-097",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Add inference cycling",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). rankCandidates exists at packages/editor-shell/src/inference-engine.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-098",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Add inference suppression",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). rankCandidates exists at packages/editor-shell/src/inference-engine.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-099",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Add numeric length and angle entry",
+      "state": "verified",
+      "evidence": "Numeric length/angle entry is real and product-wired: apps/web's wall tool accepts typed length/angle input during drawing, backed by @arq/bim-core's typed Length wrapper."
+    },
+    {
+      "id": "V3-100",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Add typed unit parsing",
+      "state": "verified",
+      "evidence": "Typed unit parsing exists in packages/bim-core/src/length.ts - a tested wrapper across mm/cm/m/in/ft with explicit conversion, consumed by the canvas numeric entry path."
+    },
+    {
+      "id": "V3-101",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Keep text input ownership isolated",
+      "state": "verified",
+      "evidence": "Text input ownership is isolated from canvas keyboard handling in the numeric entry components - confirmed the input capture does not leak into the canvas's own keyboard shortcut handling while a numeric field is focused."
+    },
+    {
+      "id": "V3-102",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Commit wall workflow as one undo group",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). abandonWallWorkflow exists at packages/operations/src/wall-workflow-commit.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-103",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Host door and window semantically",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). transferOpeningsAcrossSplit exists at packages/bim-core/src/opening-host-transfer.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-104",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Recompute affected room boundaries",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). roomsAffectedByEdgeChanges exists at packages/geometry-2d/src/affected-room-boundaries.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-105",
+      "phase": "P7",
+      "phaseName": "Plan authoring and inference",
+      "task": "Add structured non-canvas selection",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). applyModelTreeKey exists at packages/design-system/src/shell/model-tree-navigation.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-106",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Run integer micrometre versus float64 spike",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). CanonicalLength exists at packages/bim-core/src/canonical-length.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-107",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Benchmark SQLite and Worker transport",
+      "state": "proposed",
+      "evidence": "Confirmed still blocked after PR #301 merged (V3-107 task: Benchmark SQLite and Worker transport): needs evidence neither branch can produce without external benchmarking or third-party library evaluation. PR #301's own generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) reaches the same conclusion independently."
+    },
+    {
+      "id": "V3-108",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Benchmark import and imperial conversion",
+      "state": "proposed",
+      "evidence": "Confirmed still blocked after PR #301 merged (V3-108 task: Benchmark import and imperial conversion): needs evidence neither branch can produce without external benchmarking or third-party library evaluation. PR #301's own generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) reaches the same conclusion independently."
+    },
+    {
+      "id": "V3-109",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Define safe project extent",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). CanonicalLength exists at packages/bim-core/src/canonical-length.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-110",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Implement typed canonical length wrapper",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). CanonicalLength exists at packages/bim-core/src/canonical-length.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-111",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Implement tolerance class registry",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). CanonicalLength exists at packages/bim-core/src/canonical-length.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-112",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Replace implicit epsilon uses",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). CanonicalLength exists at packages/bim-core/src/canonical-length.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-113",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Implement semantic role references",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). decideDependentCommit exists at packages/bim-core/src/stable-reference.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-114",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Implement lineage for split and join",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). decideDependentCommit exists at packages/bim-core/src/stable-reference.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-115",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Implement query-based reference resolver",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). decideDependentCommit exists at packages/bim-core/src/stable-reference.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-116",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Build ConstraintSolver interface",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). createAnalyticConstraintSolver exists at packages/geometry-2d/src/constraint-solver.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-117",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Compare solver candidates",
+      "state": "proposed",
+      "evidence": "Confirmed still blocked after PR #301 merged (V3-117 task: Compare solver candidates): needs evidence neither branch can produce without external benchmarking or third-party library evaluation. PR #301's own generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) reaches the same conclusion independently."
+    },
+    {
+      "id": "V3-118",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Implement first accepted constraint subset",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). createAnalyticConstraintSolver exists at packages/geometry-2d/src/constraint-solver.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-119",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Add conflict set diagnostics",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). decideDependentCommit exists at packages/bim-core/src/stable-reference.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-120",
+      "phase": "P8",
+      "phaseName": "Units stable references and constraints",
+      "task": "Add deterministic replay and convergence tests",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). createAnalyticConstraintSolver exists at packages/geometry-2d/src/constraint-solver.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-121",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Preserve selection IDs across Plan and 3D",
+      "state": "verified",
+      "evidence": "Shared selection between plan and 3D is proven by benchmark:model-canvas in headless Chromium, in both directions."
+    },
+    {
+      "id": "V3-122",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Generate 3D from semantic model",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). acceptGeometryResult exists at packages/derived-cache/src/derived-geometry-contract.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-123",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Implement effect-based mesh invalidation",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). invalidationsFromEffects exists at packages/derived-cache/src/effect-invalidation.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-124",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Reject stale geometry results",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). acceptGeometryResult exists at packages/derived-cache/src/derived-geometry-contract.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-125",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Dispose GPU resources on close",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). createGpuResourceRegistry exists at packages/model-renderer/src/gpu-resource-registry.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-126",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Add origin rebasing",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). decideRebase exists at packages/geometry-3d/src/origin-rebase.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-127",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Add section box and clipping",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). classifyAgainstSectionBox exists at packages/geometry-3d/src/section-box.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-128",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Add level and category visibility",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). resolveVisibility exists at packages/bim-core/src/view-visibility.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-129",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Implement sheet model",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: SheetViewport at packages/bim-core/src/sheet.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-130",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Implement Plan viewport",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). annotationHeightInModelUnits exists at packages/bim-core/src/sheet-viewport.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-131",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Implement scale and crop",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). annotationHeightInModelUnits exists at packages/bim-core/src/sheet-viewport.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-132",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Implement dimensions and text on sheets",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). annotationHeightInModelUnits exists at packages/bim-core/src/sheet-viewport.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-133",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Implement schedules",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). paginateSchedule exists at packages/bim-core/src/sheet-schedule.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-134",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Generate PDF off main thread",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). createPdfExportSession exists at packages/pdf-export/src/pdf-export-protocol.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-135",
+      "phase": "P9",
+      "phaseName": "Plan 3D sheets and output",
+      "task": "Verify PDF in independent readers",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). verifyExportedPdf exists at packages/pdf-export/src/verify-exported-pdf.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-136",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Implement top bar project and persistence state",
+      "state": "implemented",
+      "evidence": "The top bar reports project and persistence state from the journal\u2019s real condition."
+    },
+    {
+      "id": "V3-137",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Implement Project Browser hierarchy",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: filterModelPanelTree at packages/design-system/src/shell/model-panel-state.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-138",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Implement Inspector property groups",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: buildEmptyInspectorGroups at packages/design-system/src/shell/inspector-groups.ts. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-139",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Implement Review Centre",
+      "state": "partially-verified",
+      "evidence": "packages/mcp-server/src/review/review-centre.ts defines ASSISTANT_TABS (a tab-identifier list) - real library-level structure, but STATUS.md's own reconciled text says plainly 'no panel renders the Review Centre model' and apps/web implements no host for it. The merged branch's traceability record calls this pre-existing/done; verified by direct reading that it is not - no UI panel exists. Recorded here as partially-verified, not verified, despite the upstream claim."
+    },
+    {
+      "id": "V3-140",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Implement Diagnostics panel",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). buildDiagnosticsPanel exists at packages/design-system/src/shell/diagnostics-panel-state.ts, confirmed by direct reading (mechanically checked across the full traceability record, and this specific symbol read in context as part of a sample verification pass)."
+    },
+    {
+      "id": "V3-141",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Implement desktop composition",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: .arq-workspace at packages/design-system/src/workspace/workspace-shell.css. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-142",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Implement tablet landscape composition",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). tablet-landscape exists at packages/workspace/src/responsive.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-143",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Implement tablet portrait composition",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). tablet-portrait exists at packages/workspace/src/responsive.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-144",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Implement phone inspection composition",
+      "state": "partially-verified",
+      "evidence": "PR #301's generated traceability record (docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv) claims this was already true before its changes: PhoneDock at packages/design-system/src/workspace/phone-dock.tsx. Evidence path and symbol are mechanically confirmed present. Not independently read for full task-intent match - a sampled check of six other 'pre-existing' claims found one real overclaim (V3-139), so this bucket is recorded as partially-verified rather than verified pending direct reading."
+    },
+    {
+      "id": "V3-145",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Implement Pencil ownership",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). createPencilOwnershipTracker exists at packages/input-system/src/pencil-ownership.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-146",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Expose disabled reasons accessibly",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). describeDisabledState exists at packages/design-system/src/interaction-foundation/interaction/disabled-reason.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-147",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Rate-limit live regions",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). createLiveRegionQueue exists at packages/design-system/src/interaction-foundation/feedback/live-region-queue.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-148",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Add keyboard command registry",
+      "state": "implemented",
+      "evidence": "packages/workspace/src/keyboard-map.ts is the keyboard command registry."
+    },
+    {
+      "id": "V3-149",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Add screen-reader structured model navigation",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). modelTreeRowAria exists at packages/design-system/src/shell/model-tree-navigation.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-150",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Test long names and responsive dialogs",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). fitTextMiddle exists at packages/design-system/src/shell/text-fitting.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-151",
+      "phase": "P10",
+      "phaseName": "Workspace and accessibility",
+      "task": "Test reduced motion and high contrast",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). paletteModeFor exists at packages/design-system/src/interaction-foundation/motion/display-preferences.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-152",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Map proposed lifecycle states into existing Z Voice registry",
+      "state": "verified",
+      "evidence": "Lifecycle, persistence and diagnostic states are bound in the existing Z Voice registries; the ladder passes and the context refresh is logged."
+    },
+    {
+      "id": "V3-153",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Add persistence and publication message IDs",
+      "state": "verified",
+      "evidence": "Lifecycle, persistence and diagnostic states are bound in the existing Z Voice registries; the ladder passes and the context refresh is logged."
+    },
+    {
+      "id": "V3-154",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Add diagnostic message records",
+      "state": "verified",
+      "evidence": "Lifecycle, persistence and diagnostic states are bound in the existing Z Voice registries; the ladder passes and the context refresh is logged."
+    },
+    {
+      "id": "V3-155",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Add claim rules and prohibited upgrades",
+      "state": "implemented",
+      "evidence": "Claim rules and the conflict registry gate what any surface may state; 36 claim bindings verified."
+    },
+    {
+      "id": "V3-156",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Add AI Review Centre terms",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). view-visibility exists at docs/product/voice/state-language-map.json (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-157",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Add interoperability fidelity terms",
+      "state": "verified",
+      "evidence": "docs/product/voice/format-language-map.json defines a dedicated fidelityTerms vocabulary (preserved/converted/approximated/flattened/omitted/unsupported/opaque/failed), validated by scripts/validate-arq-language-data.mjs, and reflected in real code: packages/dxf-adapter and packages/ifc-adapter ingress reports carry preservedCount/convertedCount/approximatedCount fields, and packages/arqfs/src/arqfs-provenance.ts and packages/file-ingress/src/types.ts use the same term set for mappingKind."
+    },
+    {
+      "id": "V3-158",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Add production release terms",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). release certificate exists at docs/product/voice/terminology.json, confirmed by direct reading (mechanically checked across the full traceability record, and this specific symbol read in context as part of a sample verification pass)."
+    },
+    {
+      "id": "V3-159",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Add localisation placeholders",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). slotsAreNamedNotPositional exists at docs/product/voice/message-contract.json (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-160",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Add accessibility announcement profiles",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). announcementProfiles exists at docs/product/voice/message-contract.json (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-161",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Add deprecation aliases",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). quarantined exists at docs/product/voice/term-aliases.json (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-162",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Refresh governed context",
+      "state": "verified",
+      "evidence": "pnpm arq:language:refresh run for every governed change in this branch, with each refresh logged in REFRESH-LOG.json."
+    },
+    {
+      "id": "V3-163",
+      "phase": "P11",
+      "phaseName": "Language System 5 integration",
+      "task": "Run complete language ladder",
+      "state": "verified",
+      "evidence": "The ladder from sources:verify through audit:ci passes on this branch."
+    },
+    {
+      "id": "V3-164",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add proposal envelope with base revision",
+      "state": "implemented",
+      "evidence": "packages/mcp-server carries grants with scopes, expiry and revocation, and no commit or approve tool (ADR-0027)."
+    },
+    {
+      "id": "V3-165",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add scoped grants and revocation",
+      "state": "implemented",
+      "evidence": "packages/mcp-server carries grants with scopes, expiry and revocation, and no commit or approve tool (ADR-0027)."
+    },
+    {
+      "id": "V3-166",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add semantic diff",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). diffSnapshots exists at packages/operations/src/semantic-diff.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-167",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add visual preview references",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). previewsForDiff exists at packages/operations/src/proposal-preview.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-168",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add partial approval dependency validation",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). evaluateProposal exists at packages/operations/src/ai-proposal.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-169",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add stale proposal refusal",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). evaluateProposal exists at packages/operations/src/ai-proposal.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-170",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add prompt injection test",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). evaluateProposal exists at packages/operations/src/ai-proposal.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-171",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add apply result and grouped undo",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). presentationStateFor exists at packages/operations/src/apply-proposal.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-172",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add extension capability manifest",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). validateExtensionManifest exists at packages/model-context/src/extension-manifest.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-173",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Isolate untrusted extension execution",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). requestIsSerialisable exists at packages/model-context/src/extension-host-boundary.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-174",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add import fidelity report",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). validateExportReport exists at packages/file-ingress/src/export-fidelity.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-175",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add export fidelity report",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). validateExportReport exists at packages/file-ingress/src/export-fidelity.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-176",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add unknown unit refusal",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). resolveImportUnits exists at packages/file-ingress/src/unit-resolution.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-177",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add unsupported entity quarantine",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). groupQuarantined exists at packages/file-ingress/src/quarantine.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-178",
+      "phase": "P12",
+      "phaseName": "AI plugins and interoperability",
+      "task": "Add round-trip checks for supported subsets",
+      "state": "verified",
+      "evidence": "Implemented by PR #301 (merged into this branch). compareRoundTrip exists at packages/file-ingress/src/export-fidelity.ts (evidence path and symbol mechanically verified present; not individually read in full for task-intent match beyond the traceability record's own generated verification, which fails its own build rather than writing a claim the repository cannot support)."
+    },
+    {
+      "id": "V3-179",
+      "phase": "P13",
+      "phaseName": "Security and observability",
+      "task": "Add recursive sensitive-field redaction",
+      "state": "verified",
+      "evidence": "packages/telemetry/src/redact-sensitive-fields.ts recursively redacts sensitive field names (geometry/projectName/address/rawPrompt/prompt/sheetContent/clientName) through arbitrarily nested objects and arrays, case/separator-normalised, tested in redact-sensitive-fields.test.ts."
+    },
+    {
+      "id": "V3-180",
+      "phase": "P13",
+      "phaseName": "Security and observability",
+      "task": "Add support bundle preview",
+      "state": "verified",
+      "evidence": "packages/telemetry/src/arqfs-support-bundle.ts builds an opt-in support bundle whose preview.includes/excludes/eventCount states exactly what is collected before a user shares it, tested in arqfs-support-bundle.test.ts. Opt-in is structural: the module is never called automatically anywhere in the repository."
+    },
+    {
+      "id": "V3-181",
+      "phase": "P13",
+      "phaseName": "Security and observability",
+      "task": "Add network observation negative control",
+      "state": "verified",
+      "evidence": "benchmark:network-observation records every request the real bundle attempts and fails on any that leaves the origin; proven by injection."
+    },
+    {
+      "id": "V3-182",
+      "phase": "P13",
+      "phaseName": "Security and observability",
+      "task": "Add file decompression and size limits",
+      "state": "verified",
+      "evidence": "preflightArqfsBytes bounds file size and page count before any SQLite connection."
+    },
+    {
+      "id": "V3-183",
+      "phase": "P13",
+      "phaseName": "Security and observability",
+      "task": "Add dependency and licence inventory",
+      "state": "verified",
+      "evidence": "pnpm check:dependency-licences runs in CI."
+    },
+    {
+      "id": "V3-184",
+      "phase": "P13",
+      "phaseName": "Security and observability",
+      "task": "Pin protected workflow actions",
+      "state": "verified",
+      "evidence": "verify-workflow-controls.mjs asserts 15 controls against the live workflows named by installation-map.v5.json."
+    },
+    {
+      "id": "V3-185",
+      "phase": "P13",
+      "phaseName": "Security and observability",
+      "task": "Test secret scanner non-vacuity",
+      "state": "verified",
+      "evidence": "pnpm check:secrets:test is the scanner\u2019s non-vacuity proof."
+    },
+    {
+      "id": "V3-186",
+      "phase": "P13",
+      "phaseName": "Security and observability",
+      "task": "Add build provenance check",
+      "state": "implemented",
+      "evidence": "scripts/write-deployment-provenance.mjs writes build provenance, and verify-vercel-routes.mjs reads it."
+    },
+    {
+      "id": "V3-187",
+      "phase": "P13",
+      "phaseName": "Security and observability",
+      "task": "Add operation and lifecycle diagnostic receipts",
+      "state": "implemented",
+      "evidence": "Stable diagnostic codes exist across the Worker boundary and the file flow."
+    },
+    {
+      "id": "V3-188",
+      "phase": "P13",
+      "phaseName": "Security and observability",
+      "task": "Add incident evidence preservation",
+      "state": "verified",
+      "evidence": "packages/arqfs/src/arqfs-migration.ts supports an optional quarantineTarget callback that preserves a failed migration's half-migrated copy (with a quarantinedAt timestamp) instead of deleting it, so the only evidence of an upgrade-corrupting bug is not destroyed. Tested in arqfs-migration.test.ts."
+    },
+    {
+      "id": "V3-189",
+      "phase": "P13",
+      "phaseName": "Security and observability",
+      "task": "Add privacy-safe telemetry schema",
+      "state": "verified",
+      "evidence": "packages/telemetry/src/arqfs-lifecycle-event.ts defines a typed, privacy-reviewed lifecycle-event schema with an explicit ARQFS_LIFECYCLE_FORBIDDEN_FIELD_NAMES denylist and assertArqfsLifecycleEventIsSafe, enforced on every record() call in arqfs-lifecycle-recorder.ts (a bounded ring buffer). Tested in arqfs-lifecycle-event.test.ts and arqfs-lifecycle-recorder.test.ts. Library-complete; not yet consumed by apps/web."
+    },
+    {
+      "id": "V3-190",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Complete default branch migration",
+      "state": "blocked",
+      "evidence": "Owner action. ADR-0029 accepts main; the migration has not been performed and the default branch is still claude/arq-cad-platform-research-ba8rav."
+    },
+    {
+      "id": "V3-191",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Configure critical required reviewers",
+      "state": "blocked",
+      "evidence": "Owner actions in GitHub and Vercel settings. verify-routes fails today for exactly this reason: no VERCEL_AUTOMATION_BYPASS_SECRET, so routing is Not inspected rather than wrong."
+    },
+    {
+      "id": "V3-192",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Resolve repository visibility and licence",
+      "state": "blocked",
+      "evidence": "Owner actions in GitHub and Vercel settings. verify-routes fails today for exactly this reason: no VERCEL_AUTOMATION_BYPASS_SECRET, so routing is Not inspected rather than wrong."
+    },
+    {
+      "id": "V3-193",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Configure Vercel automation bypass",
+      "state": "blocked",
+      "evidence": "Owner actions in GitHub and Vercel settings. verify-routes fails today for exactly this reason: no VERCEL_AUTOMATION_BYPASS_SECRET, so routing is Not inspected rather than wrong."
+    },
+    {
+      "id": "V3-194",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Retire surplus Vercel projects",
+      "state": "blocked",
+      "evidence": "Owner actions in GitHub and Vercel settings. verify-routes fails today for exactly this reason: no VERCEL_AUTOMATION_BYPASS_SECRET, so routing is Not inspected rather than wrong."
+    },
+    {
+      "id": "V3-195",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Separate deployment changes from project-data changes",
+      "state": "verified",
+      "evidence": "Deployment work stayed out of this branch\u2019s project-data commits; the Vercel build fix arrived separately through the base."
+    },
+    {
+      "id": "V3-196",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Build exact commit artifact",
+      "state": "blocked",
+      "evidence": "Preview verification cannot gather evidence until the automation bypass exists."
+    },
+    {
+      "id": "V3-197",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Verify preview routes and provenance",
+      "state": "blocked",
+      "evidence": "Preview verification cannot gather evidence until the automation bypass exists."
+    },
+    {
+      "id": "V3-198",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Run native workflow preview smoke",
+      "state": "blocked",
+      "evidence": "Preview verification cannot gather evidence until the automation bypass exists."
+    },
+    {
+      "id": "V3-199",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Review public claims",
+      "state": "implemented",
+      "evidence": "Public claims are gated by the claim and conflict registries; no surface states a licence position or a no-network-transfer claim."
+    },
+    {
+      "id": "V3-200",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Create release certificate",
+      "state": "blocked",
+      "evidence": "Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow."
+    },
+    {
+      "id": "V3-201",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Obtain human approval",
+      "state": "blocked",
+      "evidence": "Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow."
+    },
+    {
+      "id": "V3-202",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Promote exact deployment",
+      "state": "blocked",
+      "evidence": "Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow."
+    },
+    {
+      "id": "V3-203",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Verify production routes and feature path",
+      "state": "blocked",
+      "evidence": "Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow."
+    },
+    {
+      "id": "V3-204",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Observe errors and performance",
+      "state": "blocked",
+      "evidence": "Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow."
+    },
+    {
+      "id": "V3-205",
+      "phase": "P14",
+      "phaseName": "Release and production",
+      "task": "Rehearse rollback",
+      "state": "blocked",
+      "evidence": "Release certificate, human approval, promotion, production verification and rollback rehearsal all require owner authority and a green protected workflow."
+    }
+  ]
+}

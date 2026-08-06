@@ -139,15 +139,27 @@ never saw. That is Not inspected, not passing, and it stays that way until a
 
 ## Biggest known gaps (in rough priority order)
 
-1. Opening works; saving does not. Choosing a `.arq` file constructs the OPFS
-   Worker, imports the bytes into a working copy, decodes the archive and puts
-   the project in the workspace - proven in a browser by `benchmark:file-open`
-   and, for the reference project format, by `benchmark:native-open`.
-   Nothing writes back: edits stay in memory, no checkpoint reaches the working
-   copy and no export reaches the chosen file, so the workspace reports the
-   project as open and not saved. Copy-on-write migration stays unreachable
-   until a write path exists, and a project opened read-only says why.
-
+1. Opening works, and publishing the working copy now works - canvas edits
+   reaching the working copy in the first place still does not. Choosing a
+   `.arq` file constructs the OPFS Worker, imports the bytes into a working
+   copy, decodes the archive and puts the project in the workspace - proven in
+   a browser by `benchmark:file-open` and, for the reference project format,
+   by `benchmark:native-open`. `publishNativeProject` checkpoints that working
+   copy, exports it and verifies it with a fresh reader before calling it
+   published, reachable from the command palette - proven against the real
+   Worker request handler, not yet proven in a real browser the way opening is
+   (no `benchmark:publish` exists yet). A second, unwired publication path
+   (`publishProjectFile`) also exists in `packages/arqfs`, built to the same
+   fresh-reader-verification standard but not reachable from any command;
+   reconciling the two into one canonical publish path is itself open work.
+   What still does not exist, regardless of which publish path is used:
+   nothing in `apps/web` calls `NativeProjectSession.save` from a canvas edit
+   - the typed-operations commit pipeline in `packages/operations` is real and
+     tested as a library but is not wired to the plan canvas - so a publish
+     today republishes exactly what was opened, not the user's subsequent
+     edits, and the workspace still reports the project as open and not saved.
+     Copy-on-write migration stays unreachable until edits reach the working
+     copy, and a project opened read-only says why.
 2. No import/export reachable from the UI: the import worker is never
    constructed by `apps/web` (adapters themselves are real - dxf, underlay,
    attachment and now ifc all resolve in the worker's default registry).
@@ -308,6 +320,122 @@ a non-Arq database and one missing its `-wal` sidecar.
 the workspace says the project is open and not saved rather than claiming
 durability the product has not earned. Copy-on-write migration stays
 unreachable for the same reason.
+
+The working copy is now checked before anything trusts it. `open` reads the
+header and the metadata table, which a database with damaged pages anywhere
+else answers perfectly well, so a copy that arrived corrupt read as an ordinary
+healthy project until a decoder hit the bad page. A `checkIntegrity` request
+runs SQLite's own `quick_check` and `foreign_key_check` over the staged copy
+between the open decision and reading the contents, and refuses with the
+database's own finding. It is gated on an accepted open like every other read.
+
+A second file chosen while the first is still opening no longer drives the
+flow. The picker stays live during an open, so two attempts could reach one
+reducer: the older attempt's stage callbacks are each legal for the state they
+arrive in, so it walked the flow backwards and then adopted its project into
+the workspace - the wrong file, opened on purpose. An attempt guard gates every
+state change, and a superseded attempt closes its own session so the working
+copy's write lock is released rather than leaked.
+
+**Publishing now exists.** `publishNativeProject` checkpoints the open
+project's working copy, exports it, and reopens the exported bytes through a
+completely independent Worker before calling anything published - matching
+the pack's own rule that a publication that was not freshly reopened and
+compared was not published. It compares project id, revision and semantic
+hash between the source and the fresh reader; any disagreement is reported
+together and nothing is called published. Reachable from the command palette
+and the phone project menu as "Publish project…", with a real disabled reason
+when there is no project open or it is read-only, and its outcome reported
+through the same command-feedback region every other real command uses.
+
+This is real and tested against the actual Worker request handler - not yet
+proven end to end in a real browser over real OPFS the way opening is
+(`benchmark:file-open`, `benchmark:e2e-arq-open`); that capability check does
+not exist yet and is recorded as open work below. It also inherits a limit
+worth stating plainly: canvas edits do not currently reach the native
+session at all - nothing in `apps/web` calls `NativeProjectSession.save`, so
+publishing today republishes exactly what was opened, not a user's
+subsequent edits. Wiring canvas edits through `save` is separate, tracked
+work (P4 in the register below), and publish is honest about operating on
+whatever the working copy actually holds rather than claiming to capture
+edits it cannot yet see.
+
+Every Worker response now names the project it came from, not only the
+request it answers. Request ids are unique inside one client, not across the
+origin, and OPFS is shared at the origin - so during a project switch, with
+the outgoing Worker still alive, id correlation alone could not tell a
+client whose answer had just arrived. A client that declares which project
+it expects now fails loudly on a mismatch instead of silently accepting it;
+proven end to end by `benchmark:e2e-arq-open` and `benchmark:file-open`
+against the real bundled Worker.
+
+## What the Implementation Pack 3.0 asks for, and what is real
+
+`docs/product/IMPLEMENTATION-PACK-3.0-REGISTER.md` records all 205 tasks the
+ARQ CAD System Implementation Pack 3.0 proposes, each with the state this
+repository can support for it and the evidence that decided it. It is generated
+from `docs/product/implementation-pack-3.0-register.json` by
+`pnpm build:pack-register`, so the prose cannot drift from the data.
+
+144 verified, 19 implemented, 22 partially verified, 3 proposed, 17 blocked on
+owner action, 0 not inspected. Two independent branches worked this pack in
+parallel and both merged: this branch's own publication pipeline
+(`publishNativeProject`) and Worker project-id correlation (V3-032), and
+PR #301's much larger sweep across P4-P13 (typed operations, recovery,
+a second publication path, semantic-model completeness, inference, plan/3D/
+sheet output, accessibility, AI-proposal safety and security hardening).
+Reconciling the merge found one real integration gap the two branches'
+independent Worker-protocol extensions left behind - `parseArqfsWorkerRequest`
+validated `publish` but not `exportDatabase`/`computeSemanticHash`/
+`checkIntegrity`, and the `publish` case still built responses without the
+`projectId` V3-032 requires - both fixed in the merge commit, not carried as
+open work.
+PR #301 shipped its own generated, evidence-verified traceability record
+(`docs/product/V3-IMPLEMENTATION-TRACEABILITY.csv`); every one of its 174
+non-owner-authority claims was mechanically checked here and the claimed
+symbol exists at the claimed path in every case, with a sample separately read
+in full for task-intent match. That sample caught one real overclaim -
+V3-139 "Implement Review Centre" was recorded as pre-existing on the strength
+of `ASSISTANT_TABS`, a tab-identifier list in `packages/mcp-server`, when this
+file's own reconciled text says plainly that no panel renders the Review
+Centre model; recorded here as partially-verified, not verified, against the
+upstream claim. The remaining "pre-existing" claims this register had not
+already resolved on its own are recorded partially-verified rather than
+verified for the same reason: real code confirmed present at the claimed
+location, not each one individually read for full task-intent match.
+Only three tasks (V3-107, V3-108, V3-117 - wasm transport/import benchmarks
+and a solver comparison against SolveSpace/libslvs) remain proposed as
+genuinely blocked on evidence neither branch can produce by writing more code.
+The largest remaining gaps: the numeric and tolerance foundation still gated
+on ADR-0004/D-014 and the tolerance-ladder ADR candidate; canvas edits still
+do not reach the native session, so either publish path operates on whatever
+was opened rather than live edits, and a second, unwired publication
+implementation (`publishProjectFile`, from PR #301) now needs reconciling
+into one canonical publish path; and the release authority that is settings
+rather than code.
+A pack is evidence and a proposed handoff, not repository authority; the
+register is reconciled against this repository rather than against the revision
+the pack observed.
+
+**The numeric and tolerance foundation has more real groundwork than the
+pack's own P8 items credit, short of the two decisions that actually gate
+it.** `packages/bim-core/src/length.ts` is a tested, typed length wrapper
+(five units, explicit conversion) - real, but it wraps any unit rather than
+committing to one, because which unit is canonical is ADR-0004/D-014, still
+open. `packages/geometry-2d/src/tolerance.ts` already implements the _policy_
+the tolerance-ladder ADR candidate asks for - named tolerance fields,
+required (never defaulted) tolerance parameters on every comparison function
+
+- consumed by four real modules; its own doc comment says plainly that the
+  actual magnitudes are provisional placeholders pending domain research, not
+  the calibrated ladder the ADR candidate proposes. A survey of six packages for
+  stray magic-number epsilons outside that module found exactly one
+  (`apps/web/src/canvas/canvas-interaction.ts`, a bare `1e-9`), now replaced
+  with `DEFAULT_TOLERANCES.coordinateEpsilon`. What remains genuinely blocked on
+  the ADRs: the canonical integer-micrometre-versus-float64 spike, benchmarks,
+  a committed canonical unit, calibrated tolerance magnitudes, stable semantic
+  references and the constraint solver - none of that exists, and none of it
+  should be built by guessing the decision the pack itself says is still open.
 
 ## Open decisions
 

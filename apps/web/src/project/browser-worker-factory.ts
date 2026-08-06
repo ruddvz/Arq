@@ -26,5 +26,12 @@ export function createBrowserArqfsWorker(workingCopyId: string): NativeWorkerHan
   const worker = new Worker(`${workerUrl}?project=${encodeURIComponent(workingCopyId)}`, {
     type: 'module',
   });
-  return { worker, client: new ArqfsWorkerClient(worker) };
+  return {
+    worker,
+    // Declaring the expected project here is what lets the client fail loudly
+    // if a response ever arrives from a different project's Worker, rather
+    // than silently accepting whichever answer showed up first during a
+    // project switch.
+    client: new ArqfsWorkerClient(worker, { projectId: workingCopyId }),
+  };
 }

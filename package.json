@@ -52,6 +52,7 @@
     "benchmark:network-observation": "node scripts/run-network-observation-capability-check.mjs",
     "check:secrets": "node scripts/check-secrets.mjs",
     "check:secrets:test": "node scripts/check-secrets-test.mjs",
+    "build:pack-register": "node scripts/build-implementation-pack-register.mjs",
     "check:decision-ids": "node scripts/verify-decision-ids.mjs",
     "check:decision-ids:test": "node scripts/verify-decision-ids-test.mjs",
     "check:toolchain-policy": "node scripts/verify-toolchain-policy.mjs",

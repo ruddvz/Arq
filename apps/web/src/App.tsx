@@ -96,6 +96,8 @@ import {
 } from './canvas/plan-document';
 import { createPlanJournal, type PlanJournal } from './canvas/plan-journal';
 import type { NativeProjectSession, NativeProjectSnapshot } from './project/native-project-session';
+import { publishNativeProject } from './project/publish-native-project';
+import { createBrowserArqfsWorker } from './project/browser-worker-factory';
 import { NativeProjectPanel } from './NativeProjectPanel';
 import { buildNativeProjectTree, type OpenNativeProject } from './native-project-view';
 import {
@@ -289,6 +291,16 @@ const COMMAND_ENTRIES: readonly Omit<CommandPaletteEntry, 'shortcutLabel'>[] = [
     category: 'File',
     disabledReason: 'No project open yet',
   },
+  {
+    id: 'publish',
+    label: 'Publish project…',
+    category: 'File',
+    synonyms: ['export arq', 'save as', 'download'],
+    // Overridden per render below with the real reason, once one is known -
+    // this default only covers the instant before the first render computes
+    // it.
+    disabledReason: 'No project open yet',
+  },
 ];
 
 /*
@@ -432,6 +444,20 @@ export function App(): JSX.Element {
    * session.
    */
   const nativeSessionRef = useRef<NativeProjectSession | null>(null);
+  /**
+   * The one piece of the native session's state that has to be reactive:
+   * `nativeSessionRef` itself is a ref precisely so ordinary renders do not
+   * depend on it, but the Publish command's enabled state and its
+   * `disabledReason` are exactly the kind of render output that must update
+   * the instant a project opens, closes or turns out to be read-only - a ref
+   * read inside `useMemo` would not trigger that.
+   */
+  const [nativeProjectAvailability, setNativeProjectAvailability] = useState<{
+    readonly open: boolean;
+    readonly writable: boolean;
+  }>({ open: false, writable: false });
+  /** Set while a publish is actually in flight, so the command cannot be invoked twice concurrently against the same session. */
+  const [publishing, setPublishing] = useState(false);
 
   /**
    * Replaces the workspace's project with one that has already been fully
@@ -475,6 +501,7 @@ export function App(): JSX.Element {
           ? 'Open for reading only · edits are not saved to this project'
           : 'Open from a local working copy · edits are not saved to this project yet',
       );
+      setNativeProjectAvailability({ open: true, writable: !opened.snapshot.readOnly });
       // Kept so the project browser can show what the file contains beyond the
       // walls the plan draws - its levels, wall types and rooms. Null for a
       // project this build wrote, which carries none of that, and the panel is
@@ -666,6 +693,47 @@ export function App(): JSX.Element {
     },
     [performOperation],
   );
+
+  /**
+   * Publishes the open native project's current working revision as a
+   * portable, standalone `.arq` file - checkpointed, exported, and verified by
+   * a completely independent Worker that reopens the bytes and agrees they
+   * mean the same thing as the source before this reports anything as
+   * published (`publishNativeProject`'s own contract).
+   *
+   * Reports through the same command-feedback region every other real command
+   * outcome uses, not a separate mechanism invented for this one action: a
+   * publish is a command like undo or redo, and its success or failure
+   * deserves the same accessible, auto-expiring surface those already have.
+   */
+  const handlePublishProject = useCallback(async () => {
+    const session = nativeSessionRef.current;
+    if (session === null || publishing) return;
+    setPublishing(true);
+    try {
+      const result = await publishNativeProject(session, createBrowserArqfsWorker);
+      if (result.status === 'published') {
+        feedbackStoreRef.current.publish(
+          'success',
+          `Published revision ${result.receipt.revision}`,
+          Date.now(),
+        );
+      } else {
+        // The real code and reason, not a paraphrase - the same principle
+        // `describeFileFlowState` follows for every other refusal this app
+        // reports.
+        feedbackStoreRef.current.publish('error', `Publish failed: ${result.reason}`, Date.now());
+      }
+    } catch (error) {
+      feedbackStoreRef.current.publish(
+        'error',
+        `Publish failed: ${error instanceof Error ? error.message : String(error)}`,
+        Date.now(),
+      );
+    } finally {
+      setPublishing(false);
+    }
+  }, [publishing]);
 
   /*
    * §4.3 gate on the one committing edit this build has: a finished wall
@@ -962,13 +1030,36 @@ export function App(): JSX.Element {
     [platform, probe.coarsePointer],
   );
 
+  /**
+   * The real reason `publish` is or is not currently invokable, computed once
+   * here rather than re-derived at each of the several places a disabled
+   * reason has to be shown (palette, phone menu). `null` means enabled.
+   */
+  const publishDisabledReason = useMemo(() => {
+    if (!nativeProjectAvailability.open) return 'No project open yet';
+    if (!nativeProjectAvailability.writable) {
+      return 'This project is open for reading only, so it cannot be published';
+    }
+    if (publishing) return 'Publishing…';
+    return undefined;
+  }, [nativeProjectAvailability, publishing]);
+
   const commandEntries = useMemo<readonly CommandPaletteEntry[]>(
     () =>
       COMMAND_ENTRIES.map((entry) => {
         const label = shortcutLabel(entry.id, shortcutDialect);
-        return label === null ? entry : { ...entry, shortcutLabel: label };
+        const withShortcut = label === null ? entry : { ...entry, shortcutLabel: label };
+        if (entry.id !== 'publish') return withShortcut;
+        // The static entry's own `disabledReason` is only ever the instant
+        // before this computes the real one - dropped here rather than
+        // merged, so a since-resolved reason cannot linger.
+        const { disabledReason: _staticReason, ...withoutStaticReason } = withShortcut;
+        return {
+          ...withoutStaticReason,
+          ...(publishDisabledReason === undefined ? {} : { disabledReason: publishDisabledReason }),
+        };
       }),
-    [shortcutDialect],
+    [shortcutDialect, publishDisabledReason],
   );
 
   const activeToolLabel = useMemo(() => {
@@ -1084,6 +1175,14 @@ export function App(): JSX.Element {
                 ...(undoStackRef.current.canRedo() ? {} : { disabledReason: 'Nothing to redo' }),
               },
               { id: 'open', label: 'Open project…', onActivate: () => setFileOpenPanelOpen(true) },
+              {
+                id: 'publish',
+                label: 'Publish project…',
+                onActivate: () => void handlePublishProject(),
+                ...(publishDisabledReason === undefined
+                  ? {}
+                  : { disabledReason: publishDisabledReason }),
+              },
               {
                 id: 'commands',
                 label: 'Search commands',
@@ -1381,10 +1480,16 @@ export function App(): JSX.Element {
                 if (active?.closeable === true) {
                   setTabs((state) => closeTab(state, active.id));
                 }
+                recordDemoAction(entry.label);
+              } else if (entry.id === 'publish') {
+                // Reports its own real outcome through the feedback region -
+                // a `recordDemoAction` note here would be a second, redundant
+                // (and fake) report of a command that already has a true one.
+                void handlePublishProject();
               } else {
                 handleActivateTool(entry.id);
+                recordDemoAction(entry.label);
               }
-              recordDemoAction(entry.label);
               setCommandPaletteOpen(false);
             }}
             onClose={() => setCommandPaletteOpen(false)}
