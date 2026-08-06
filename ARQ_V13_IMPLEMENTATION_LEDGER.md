@@ -263,12 +263,21 @@ a coarse pointer as a tablet below 1280px. It gets touch sizing from the
 `pointer: coarse` rules and the desktop composition. That is a threshold
 decision for the owner, not a defect this change should silently move.
 
-| Viewport | Band resolved | Canvas | Fixture opens | Overflow |
-| --- | --- | --- | --- | --- |
-| 1600x1000 | `desktop` | 1380x776 | yes | none |
-| 1366x1024 | `desktop` | 1180x847 | yes | none |
-| 1024x768 | `tablet-landscape` | 1008x572 | yes | none |
-| 430x932 | `phone` | 414x740 | yes | none |
+| Viewport  | Band resolved      | Canvas   | Fixture opens | Overflow |
+| --------- | ------------------ | -------- | ------------- | -------- |
+| 1600x1000 | `desktop`          | 1461x819 | yes           | none     |
+| 1366x1024 | `desktop`          | 1253x876 | yes           | none     |
+| 1024x768  | `tablet-landscape` | 1024x577 | yes           | none     |
+| 430x932   | `phone`            | 430x767  | yes           | none     |
+
+Every canvas above is wider than it was a session ago, and none of it came from
+a layout change. The browser's default `body { margin: 8px }` had never been
+reset, so the shell was inset 8px on every side of every band: sixteen pixels of
+every viewport's width, and - because the shell asks for a full viewport of
+height starting 8px down the page - its last 8px always below the fold. On the
+wide bands that overhang landed in padding and cost nothing visible. At 1024px
+the status strip wraps to two lines, and the second line, which carried sync
+state, was cut off by the bottom of the window.
 
 ### 9. Phone review, selection and measure
 
@@ -371,6 +380,7 @@ scales. Recorded under slice 6.
 **Blocked, unchanged and external:** no CI run exists for this PR, and no
 preview exists for `apps/web`.
 **Blockers:** both external and unchanged from Version 12.
+
 1. **GitHub Actions has produced no run** for this PR across every push.
 2. **No preview exists for `apps/web`.** Vercel builds `arq-website` only, so
    the delivery stop's verified preview has nothing to verify for the code being
@@ -395,8 +405,8 @@ projection at all.
 
 Three things decide whether this is right:
 
-1. **Resolution.** `measuredLinearDimensionLength` takes two *points*, and a
-   `wall-reference-line` is a *line*. Picking arbitrary points on two parallel
+1. **Resolution.** `measuredLinearDimensionLength` takes two _points_, and a
+   `wall-reference-line` is a _line_. Picking arbitrary points on two parallel
    walls measures a diagonal, not the separation - `dim-overall-x` would read
    something other than 12,000 while looking entirely plausible. The honest
    resolution is the perpendicular distance between the two reference lines,
@@ -404,7 +414,7 @@ Three things decide whether this is right:
    between non-parallel walls should be reported as one this build cannot draw
    rather than measured anyway.
 2. **`fixtureExpectedValueMm` must not be displayed.** Each record carries it,
-   and it is a fixture assertion - what the value *should* be - not the value.
+   and it is a fixture assertion - what the value _should_ be - not the value.
    Rendering it would put fixture metadata on a drawing as a measurement, which
    is precisely the class of thing this work has been removing. It is useful as
    a test oracle and nothing else.
@@ -444,6 +454,56 @@ carries two fields; ours carries nine. The pill shape is in, but which of the
 nine earn permanent space at the bottom of the screen is a product call - and
 two of them, the working-copy statement and the sync state, exist specifically
 so the product never implies a save it has not made.
+
+## Correction pass: what the captures showed and what was done about it
+
+Everything below was found by looking at the four captures rather than at the
+code, verified against the running product, and fixed in the same pass. Each is
+`verified` as a rendering claim - the capture harness re-ran and the result was
+re-read - and none of it changes the standing blockers, which are unchanged.
+
+| Defect                                                     | Where it showed | Evidence state |
+| ---------------------------------------------------------- | --------------- | -------------- |
+| Room labels drawn through walls and door swings            | phone, desktop  | verified       |
+| Five rooms losing their names to fix three                 | phone           | verified       |
+| Page inset 8px on every side, sync state clipped           | all four        | verified       |
+| Status strip stating a cursor a touch device has not got   | 1024, phone     | verified       |
+| Tool chip taking a third strip above the phone dock        | phone           | verified       |
+| An empty 38px context bar across the bottom of the drawing | desktop         | verified       |
+| The view identity pill printed over a room                 | 1024            | verified       |
+| The 3D ground plane swamping the building it stands under  | 3D view         | verified       |
+| The Project overview rendering behind the project browser  | overview        | verified       |
+| `view.kind` printed as copy: "3D 3d", "Level 1 Plan plan"  | overview        | verified       |
+| Two panel disclosures, one shouting in caps                | desktop         | verified       |
+| The panel's one command drawn without an edge              | desktop         | verified       |
+
+Three of these were the same mistake in different places: a surface that knew
+its own geometry and not what was about to be drawn on top of it. The room label
+measured its room and not the wall crossing it; the plan fit measured the canvas
+and not the pill floating over it; the overview filled the viewport and not the
+part of it a panel was not covering. Each is now told, by the thing that owns
+the number, how much space is really there.
+
+Two were values that had been widened past what they meant. `RecentViewSummary`
+declared `kind: string`, so a registry token could be - and was - printed as
+product copy. The status strip accepted `currentLevelName` and `pixelsPerUnit`
+and rendered neither, so the app computed a level name for nothing. Narrowing
+the first and deleting the second are the same fix.
+
+### What this pass did not fix
+
+- The sheet reads as a page in light appearance and only faintly in dark, where
+  `--arq-ui-paper` (#171a1d) sits seven levels off `--arq-ui-canvas` (#101315).
+  The page is still legible because the grid stops at its edge. Changing either
+  token is an appearance decision with a wider blast radius than the defect.
+- The status strip on a touch band still says "Tool: Select" in the position the
+  reference gives to nothing at all. Which fields earn permanent space remains
+  the owner decision recorded below.
+- A plan wider than the canvas still runs behind the floating panel. That is
+  deliberate for a drawing - it can be panned - and was only ever a defect for a
+  document, which is what was fixed.
+- Wall joins and linear dimensions remain audited and not started, for the
+  reasons written above. Nothing in this pass changed that analysis.
 
 ## Standing blockers
 
