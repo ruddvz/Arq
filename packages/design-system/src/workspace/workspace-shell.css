@@ -119,6 +119,32 @@
   }
 
   /*
+   * One dock, not two.
+   *
+   * The rails are separate components on purpose - they answer different
+   * questions ("what am I doing?" and "what am I doing it with?") and stay
+   * semantically apart, each with its own landmark and label. But they were
+   * also two *cards*, floating side by side with a gutter between them, so the
+   * left edge read as two toolbars competing for the same job. The reference
+   * gives the whole edge to one dock.
+   *
+   * Joined by geometry rather than by merging the markup: the seam closes, the
+   * outer corners keep their radius, and a single divider line says where one
+   * ends. Nothing about the accessibility tree changes.
+   */
+  .arq-workspace .arq-mode-rail {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+    border-inline-end: 0;
+  }
+
+  .arq-workspace .arq-mode-rail + .arq-tool-rail {
+    margin-inline-start: calc(-1 * var(--arq-space-compact));
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+
+  /*
    * The status strip is the quietest thing in the workspace and does not earn
    * a full-width card. It shrinks to its content and sits at the leading edge,
    * which is also what stops it competing with the drawing above it.

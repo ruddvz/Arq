@@ -121,34 +121,49 @@ export function PhoneProjectBar(props: PhoneProjectBarProps): JSX.Element {
 
       {logo}
 
+      {/*
+       * Stacked, and that is a correction rather than a style preference.
+       *
+       * The name took `flex: 1` and truncated while the status beside it was
+       * `flex: 0 0 auto` and `nowrap` - so on a 430px bar the status always won
+       * and the project came out as "Courtyard Hou…". Identity was losing to
+       * state in the one place doc 36 says identity never disappears.
+       *
+       * Two lines gives the name the full width and puts state underneath in a
+       * quieter voice, which is the order they are read in and the order they
+       * matter in. Neither is dropped.
+       */}
       <span
-        className="arq-phone-project-bar__name"
-        // Doc 36: project identity never disappears. It truncates rather than
-        // wrapping or being dropped, and the full name stays in the title.
-        title={projectName}
-        style={{
-          flex: 1,
-          minWidth: 0,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-          fontWeight: 600,
-        }}
+        className="arq-phone-project-bar__identity"
+        style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', lineHeight: 1.15 }}
       >
-        {projectName}
-      </span>
-
-      <span
-        className="arq-phone-project-bar__status"
-        aria-live="polite"
-        style={{
-          flex: '0 0 auto',
-          fontSize: '0.75em',
-          color: 'var(--arq-ui-text-secondary)',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {describeSaveState(saveState)} · {describeSyncState(syncState)}
+        <span
+          className="arq-phone-project-bar__name"
+          // Doc 36: project identity never disappears. It truncates rather than
+          // wrapping or being dropped, and the full name stays in the title.
+          title={projectName}
+          style={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            fontWeight: 600,
+          }}
+        >
+          {projectName}
+        </span>
+        <span
+          className="arq-phone-project-bar__status"
+          aria-live="polite"
+          style={{
+            fontSize: '0.75em',
+            color: 'var(--arq-ui-text-secondary)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {describeSaveState(saveState)} · {describeSyncState(syncState)}
+        </span>
       </span>
 
       <button
