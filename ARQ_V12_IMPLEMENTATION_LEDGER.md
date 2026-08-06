@@ -51,10 +51,13 @@ Two findings from this run, both recorded against their rows:
   `resolveWorkspacePlatform` only treats a coarse pointer as a tablet below
   1280px. It gets touch sizing from the `pointer: coarse` rules but the desktop
   composition. Row 9.
-- **The phone cannot open a project at all.** The phone project bar carries
-  Back, name and More; there is no Open affordance and no recent-projects
-  surface, so a phone reaches only an empty workspace. Section 11 requires
-  project opening and recent projects on phone. Row 10 and row 11.
+- **A first pass recorded "the phone cannot open a project at all". That was
+  wrong**, and the error was in the harness rather than the product: it looked
+  for a control named "Open", which is the desktop label, and concluded the
+  affordance did not exist. The phone opens a project through "Back to
+  projects", and driving that path opens the golden fixture and renders it -
+  captured. What is genuinely missing is a recent-projects surface, which
+  section 11 also requires. Row 10 and row 11.
 
 ## Known defect carried across every row
 
@@ -238,10 +241,10 @@ focusable and hit-testable behind a peeking sheet; the status strip gained a
 readouts that describe a pointer a phone does not have; the plan no longer opens
 at 1% zoom (the surface lays out at 0x740 before its first real pass and the fit
 clamped, then never ran again).
-**Remaining:** **the phone has no Open control**, so it cannot reach a project at
-all - this blocks every other phone workflow from being evidenced; measurement
-(endpoints, snapping, live value, cancellation, completion) not implemented;
-markup, issues and revision review unverified.
+**Remaining:** no recent-projects surface (section 11 requires one alongside
+project opening); measurement (endpoints, snapping, live value, cancellation,
+completion) not implemented; markup, issues and revision review unverified.
+Opening itself works and is evidenced.
 **Evidence:** `phone-bottom-owner.test.ts` (5 cases); runtime capture at
 430x932 with mobile emulation.
 **Blockers:** none. **Rollback:** self-contained.
