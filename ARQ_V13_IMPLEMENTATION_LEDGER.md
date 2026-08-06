@@ -134,9 +134,48 @@ labels were wider than the rooms; three overlapped into a smear that also hid
 the walls. The room is still drawn, still selectable and still names itself in
 the Inspector, so nothing is lost but a claim that could not be read.
 
-**Remaining:** wall joins (four join modules exist unwired, so wall ends meet
-rather than mitre), and the fixture's five linear dimensions - still reported as
-unsupported, truthfully.
+**Remaining:** wall joins, and the fixture's five linear dimensions - still
+reported as unsupported, truthfully.
+
+#### Wall joins: audited, deliberately not started
+
+`mitre-join.ts`, `butt-join.ts`, `t-join.ts` and `cross-join.ts` all exist with
+their own tests and no production caller. Wiring them is not the mechanical
+substitution it looks like, and the analysis is recorded here so the next
+session starts from it rather than re-deriving it.
+
+`faceLineCorners` returns `[leftStart, leftEnd, rightEnd, rightStart]`. Mitring
+wall A's **end** against B means replacing indices 1 and 2 with
+`mitreJoinCorners(...).left` and `.right`; mitring its **start** means replacing
+indices 0 and 3. That part is straightforward.
+
+Three things make it not straightforward, and each is a way to produce an
+inverted or exploded corner on the golden fixture's non-orthogonal walls:
+
+1. **Orientation.** `mitreJoinCorners` intersects A's left face line with B's
+   left face line, and "left" is defined by each wall's own direction. Only the
+   `A.end === B.start` case has both lefts on the same side. `A.end === B.end`
+   and `A.start === B.start` need one wall reversed first, and the resulting
+   corners then have to be mapped back to the unreversed wall's left and right -
+   getting that backwards swaps the two corners and turns the wall inside out at
+   that end.
+2. **Arity.** A corner shared by three or more walls is a T or a cross, not a
+   mitre, and `t-join.ts` and `cross-join.ts` exist precisely because the mitre
+   answer is wrong there. The join kind has to be chosen from how many walls
+   meet at the point, not assumed.
+3. **Near-parallel walls.** `lineIntersection` returns null for parallel faces,
+   but two walls meeting at a very shallow angle intersect a long way from the
+   corner - a mitre spike that is geometrically correct and visually a defect.
+   A spike limit is needed, and the fixture has shallow-angle walls.
+
+The model also carries `joinStart` and `joinEnd` intents per wall (`auto`, and
+whatever else the schema allows), which the parser already reads and nothing
+consults. The join kind should come from those plus the arity, not from geometry
+alone.
+
+Not attempted in this session rather than attempted badly: a wrong join is
+poché drawn in the wrong place, which is the most load-bearing thing on a plan
+and the least likely to be noticed in a diff.
 
 **Evidence:** 25 new tests across `plan-openings.test.ts` and
 `canvas2d-paint.test.ts`; `golden-fixture-model.test.ts` reads the repository's
