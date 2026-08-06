@@ -307,7 +307,24 @@ async function run(screenshotPath) {
     // And the reverse direction: a click on empty 3D space clears the shared
     // selection (ModelCanvas raycasts, finds nothing, selects null), which
     // the plan-side status bar and the 3D highlight must both reflect.
-    await modelCanvas.click({ position: { x: 8, y: 8 } });
+    //
+    // The point is measured rather than fixed at the canvas corner. Since the
+    // desktop composition floats the browser and inspector *over* an
+    // edge-to-edge canvas, the corner sits underneath the navigator and a click
+    // there lands on the panel - which is correct behaviour, and exactly what
+    // this check caught when the composition changed. Clearing the selection
+    // needs any empty point the user can actually reach, so this takes one just
+    // clear of the panel's trailing edge.
+    const emptyPoint = await page.evaluate(() => {
+      const canvas = document.querySelector('canvas[aria-label="3D model view"]');
+      const panel = document.querySelector('.arq-workspace__overlay--left');
+      const canvasBox = canvas.getBoundingClientRect();
+      const panelBox = panel?.getBoundingClientRect() ?? null;
+      const clearOfPanel =
+        panelBox === null ? 8 : Math.max(8, panelBox.right - canvasBox.left + 24);
+      return { x: clearOfPanel, y: 24 };
+    });
+    await modelCanvas.click({ position: emptyPoint });
     await page.waitForFunction(
       (sel) => document.querySelector(sel)?.textContent?.includes('No selection'),
       STATUS_BAR,

@@ -1,4 +1,5 @@
 import {
+  Fragment,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -52,6 +53,18 @@ export interface TopBarProps {
  * (section 121) regardless of pointer type.
  */
 /** Doc 36's bar order, left to right. `planTopBarLayout` never reorders it. */
+/**
+ * The first slot that is an action rather than an identity.
+ *
+ * Everything before it says *what you are looking at* - project, view, whether
+ * it is saved and synced. Everything from here on is something you can *do*.
+ * The bar used to render both groups as one undifferentiated run of buttons
+ * pinned left, so the project's name had the same weight as Redo and the
+ * critique's "navigation and commands were not sufficiently separated" was
+ * literally true of the top of the window.
+ */
+const FIRST_ACTION_SLOT: TopBarSlot = 'undo';
+
 const ALL_SLOTS: readonly TopBarSlot[] = [
   'project-identity',
   'active-view',
@@ -377,25 +390,30 @@ export function TopBar(props: TopBarProps): JSX.Element {
           return null;
         }
         return (
-          <span
-            key={slot}
-            ref={registerSlot(slot)}
-            data-top-bar-slot={slot}
-            style={{
-              flex: '0 0 auto',
-              minWidth: 0,
-              // Collapsed slots keep their box for measurement but take no
-              // space and are unreachable, so the plan can restore them when
-              // the window widens again.
-              display: visible.has(slot) ? 'inline-flex' : 'none',
-            }}
-          >
-            {content.node}
-          </span>
+          <Fragment key={slot}>
+            {/*
+              The gutter that separates identity from actions. Not a measured
+              slot - `planTopBarLayout` only ever sees the slots themselves, so
+              the collapse priority is unaffected by where this sits.
+            */}
+            {slot === FIRST_ACTION_SLOT && <div style={{ flex: 1, minWidth: 0 }} />}
+            <span
+              ref={registerSlot(slot)}
+              data-top-bar-slot={slot}
+              style={{
+                flex: '0 0 auto',
+                minWidth: 0,
+                // Collapsed slots keep their box for measurement but take no
+                // space and are unreachable, so the plan can restore them when
+                // the window widens again.
+                display: visible.has(slot) ? 'inline-flex' : 'none',
+              }}
+            >
+              {content.node}
+            </span>
+          </Fragment>
         );
       })}
-
-      <div style={{ flex: 1 }} />
 
       {plan.collapsed.length > 0 && (
         <>

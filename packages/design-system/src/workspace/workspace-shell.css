@@ -174,6 +174,21 @@
 }
 
 /*
+ * Project identity carries the weight in the bar, and the state readouts sit
+ * below it in the reading order rather than beside it in the same voice. The
+ * bar previously gave a project's name exactly the emphasis it gave Redo.
+ */
+.arq-top-bar [data-top-bar-slot='project-identity'] .arq-shell-button {
+  font: var(--arq-text-project-title);
+}
+
+.arq-top-bar [data-top-bar-slot='save-state'],
+.arq-top-bar [data-top-bar-slot='sync-state'] {
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+}
+
+/*
  * Figures that are read as measurements rather than prose: coordinates, view
  * scale, level and selection counts. Proportional digits make a coordinate
  * readout jitter horizontally as the pointer moves, which is exactly the

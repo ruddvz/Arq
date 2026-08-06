@@ -195,6 +195,12 @@ async function measure(page) {
       canvasWidth: canvas ? Math.round(canvas.getBoundingClientRect().width) : 0,
       canvasHeight: canvas ? Math.round(canvas.getBoundingClientRect().height) : 0,
       dockedPanels: document.querySelectorAll('.arq-workspace__docked').length,
+      // Either presentation of a side panel. A docking band has to *show* the
+      // browser and inspector; whether they take a column or rest on the canvas
+      // is a composition choice, and since ADR-0031's canvas-first desktop they
+      // float.
+      sidePanels: document.querySelectorAll('.arq-workspace__docked, .arq-workspace__overlay')
+        .length,
       rails: document.querySelectorAll('.arq-mode-rail, .arq-tool-rail').length,
       tabStrips: document.querySelectorAll('.arq-tab-strip').length,
       compactViewControls: document.querySelectorAll('.arq-compact-view-control').length,
@@ -278,8 +284,16 @@ function checkViewport(viewport, m, consoleErrors) {
       failures.push('no control to summon the browser or inspector');
     }
   } else {
-    if (m.dockedPanels === 0) {
-      failures.push('no docked panel on a docking band');
+    /*
+     * The mirror of the touch band's "a panel that cannot be summoned back does
+     * not exist": a docking band must show its side panels. It deliberately
+     * does not require them to be *docked* - the desktop composition floats
+     * them over an edge-to-edge canvas, which is a presentation change and not
+     * a missing panel. Asserting `docked > 0` here would have been asserting
+     * the old layout rather than the requirement it was standing in for.
+     */
+    if (m.sidePanels === 0) {
+      failures.push('no browser or inspector on a docking band');
     }
     if (m.tabStrips === 0) {
       failures.push('no view tab strip on a docking band');
