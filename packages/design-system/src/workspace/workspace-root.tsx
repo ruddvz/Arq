@@ -331,10 +331,16 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
         {...(shellInert ? { inert: '' } : {})}
         style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}
       >
-        <div style={{ minHeight: slots.topBar, flex: '0 0 auto' }}>
+        <div
+          className="arq-workspace__bar arq-workspace__bar--project"
+          style={{ minHeight: slots.topBar, flex: '0 0 auto' }}
+        >
           {phone ? (phoneProjectBar ?? projectBar) : projectBar}
         </div>
-        <div style={{ minHeight: viewSwitcherHeightPx(slots), flex: '0 0 auto' }}>
+        <div
+          className="arq-workspace__bar arq-workspace__bar--views"
+          style={{ minHeight: viewSwitcherHeightPx(slots), flex: '0 0 auto' }}
+        >
           {phone ? (compactViewControl ?? tabStrip) : tabStrip}
         </div>
         {touchControlsAvailable && !phone && (
@@ -345,7 +351,10 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
           />
         )}
 
-        <div style={{ position: 'relative', flex: 1, display: 'flex', minHeight: 0 }}>
+        <div
+          className="arq-workspace__row"
+          style={{ position: 'relative', flex: 1, display: 'flex', minHeight: 0 }}
+        >
           {!canvasFirst && (
             <ModeRail project={project} activeMode={activeMode} onSelectMode={onSelectMode} />
           )}
@@ -445,7 +454,10 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
             {contextBar}
           </div>
         )}
-        <div style={{ minHeight: slots.statusBar ?? slots.statusMinimal ?? 0, flex: '0 0 auto' }}>
+        <div
+          className="arq-workspace__bar arq-workspace__bar--status"
+          style={{ minHeight: slots.statusBar ?? slots.statusMinimal ?? 0, flex: '0 0 auto' }}
+        >
           {statusBar}
         </div>
         {/*

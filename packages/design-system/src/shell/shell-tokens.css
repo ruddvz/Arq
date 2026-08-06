@@ -16,6 +16,17 @@
 
   /* Section 17 */
   --arq-ui-paper: #ffffff;
+  /*
+   * The surface the workspace itself sits on, behind every floating card.
+   *
+   * Distinct from `paper`, which is what a panel is made of. The two were the
+   * same colour while the shell was a set of docked columns, so nothing needed
+   * to tell them apart - but once chrome floats, a white card on a white
+   * background has no edge, and the composition collapses back into the boxed
+   * look it was meant to replace. A faintly cool grey reads as the drawing
+   * table the panels rest on.
+   */
+  --arq-ui-canvas: #eef1f3;
   --arq-ui-surface-1: #fafafa;
   --arq-ui-surface-2: #f4f4f4;
   --arq-ui-surface-3: #ececec;
@@ -67,6 +78,13 @@
   --arq-radius-menu: 6px;
   --arq-radius-dialog: 8px;
   --arq-radius-ipad-palette: 10px;
+  /*
+   * The floating-card radius. Larger than a control's, so a panel reads as the
+   * container and the controls inside it as its contents - the concentric
+   * relationship the Version 12 rules ask for, rather than one radius reused at
+   * every scale.
+   */
+  --arq-radius-panel: 14px;
 
   /* Section 121/section 30: iPad touch targets must be at least 44x44 CSS px. */
   --arq-touch-target-min: 44px;
@@ -159,10 +177,12 @@
  */
 @media (prefers-color-scheme: dark) {
   :root {
-    --arq-ui-paper: #131517;
-    --arq-ui-surface-1: #191c1f;
-    --arq-ui-surface-2: #202428;
-    --arq-ui-surface-3: #282d31;
+    /* The table the cards rest on, darker than any of them. */
+    --arq-ui-canvas: #101315;
+    --arq-ui-paper: #171a1d;
+    --arq-ui-surface-1: #1e2225;
+    --arq-ui-surface-2: #252a2e;
+    --arq-ui-surface-3: #2d3338;
     --arq-ui-line-subtle: #2e3439;
     --arq-ui-line-default: #3f474d;
     --arq-ui-line-strong: #79848a;

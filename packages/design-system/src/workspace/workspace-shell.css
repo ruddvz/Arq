@@ -49,9 +49,84 @@
  * could have fixed, because no rule was reading them.
  */
 .arq-workspace {
-  background: var(--arq-ui-paper);
+  background: var(--arq-ui-canvas);
   color: var(--arq-ui-text-primary);
   font: var(--arq-text-body);
+}
+
+/*
+ * The floating composition, on the bands wide enough to hold it.
+ *
+ * The shell was a set of full-bleed docked columns sharing hard edges, which is
+ * the boxed, dashboard-like look the Version 12 critique names. The structure
+ * does not change - the same regions in the same order, so keyboard order,
+ * panel reducers and the canvas floor all behave exactly as before - but each
+ * region becomes a card resting on the canvas, separated by a gutter rather
+ * than a 1px rule.
+ *
+ * Kept to `pointer: fine` and a minimum width because the gutters cost real
+ * estate a phone does not have, and doc 46's rule is that a touch band gets its
+ * own composition rather than a scaled-down desktop one.
+ */
+@media (pointer: fine) and (min-width: 1180px) {
+  .arq-workspace__shell {
+    gap: var(--arq-space-compact);
+    padding: var(--arq-space-compact);
+  }
+
+  .arq-workspace__row {
+    gap: var(--arq-space-compact);
+  }
+
+  .arq-workspace__bar,
+  .arq-workspace__docked,
+  .arq-workspace .arq-mode-rail,
+  .arq-workspace .arq-tool-rail {
+    border-radius: var(--arq-radius-panel);
+    background: var(--arq-ui-paper);
+    border: 1px solid var(--arq-ui-line-subtle);
+    overflow: hidden;
+  }
+
+  /*
+   * The drawing gets no card of its own: it is the content the cards float
+   * over, so it keeps the canvas colour and simply occupies the gap between
+   * them. Giving it a surface would put the model back inside a box.
+   */
+  .arq-workspace__viewport {
+    border-radius: var(--arq-radius-panel);
+  }
+
+  /* The bars are chrome, not content, so they sit on the raised surface. */
+  .arq-workspace__bar > * {
+    border: 0;
+    background: transparent;
+  }
+
+  /*
+   * The two rails size to what they contain instead of stretching the full
+   * height of the workspace. Stretched, they were 780px slabs holding eleven
+   * words between them and nothing else - the single largest area of empty
+   * chrome on the screen, and exactly the "boxy" reading the critique gives.
+   * A dock that ends where its controls end lets the canvas colour run behind
+   * it, which is what makes the rest of the composition read as floating.
+   */
+  .arq-workspace .arq-mode-rail,
+  .arq-workspace .arq-tool-rail {
+    align-self: flex-start;
+    max-height: 100%;
+    overflow: auto;
+  }
+
+  /*
+   * The status strip is the quietest thing in the workspace and does not earn
+   * a full-width card. It shrinks to its content and sits at the leading edge,
+   * which is also what stops it competing with the drawing above it.
+   */
+  .arq-workspace__bar--status {
+    align-self: flex-start;
+    min-width: 0;
+  }
 }
 
 /*
