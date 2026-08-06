@@ -109,6 +109,20 @@ function emptyContentBounds(
   return { min: worldPoint(-half, -half), max: worldPoint(half, half) };
 }
 
+/**
+ * Clear space around the drawing when it is fitted, in CSS pixels.
+ *
+ * `fitToBounds` defaults to a flat 40px a side. That is five per cent of a
+ * desktop canvas and nineteen per cent of a 414px phone, so the same constant
+ * that reads as a comfortable margin on a laptop throws away a fifth of a
+ * phone's width - and the sheet adds its own margin on top, doubling it. A
+ * proportional margin keeps the same visual breathing room at every size,
+ * with a floor so a very small canvas still has an edge.
+ */
+function fitMarginPx(width: number, height: number): number {
+  return Math.max(8, Math.min(40, Math.min(width, height) * 0.04));
+}
+
 /** Matches `TEXT_LINE_HEIGHT_PX` in the paint, which is what actually spaces the lines. */
 const ROOM_LABEL_LINE_HEIGHT_PX = 12;
 
@@ -812,6 +826,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
             emptyContentBounds({ rooms, walls }) ?? contentBounds({ rooms, walls }),
             rect.width,
             rect.height,
+            fitMarginPx(rect.width, rect.height),
           );
           onViewportPixelsPerUnitChange?.(fitted.pixelsPerUnit);
           return {
@@ -997,6 +1012,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         emptyContentBounds(content) ?? contentBounds(content),
         rect.width,
         rect.height,
+        fitMarginPx(rect.width, rect.height),
       );
       updateViewport({
         ...fitted,
