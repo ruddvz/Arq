@@ -27,6 +27,32 @@
   --arq-ui-text-primary: #151515;
   --arq-ui-ink: #000000;
 
+  /*
+   * Typography. The product had no `font-family` declaration anywhere, so every
+   * surface rendered in the browser's default serif - a drawing instrument that
+   * looked like a document, and the single largest reason the interface read as
+   * unfinished. Nothing failed, because nothing was asserting it.
+   *
+   * The operating system's own UI face, per the Version 12 typography rules. No
+   * font file is bundled or redistributed: Apple's faces are named so a Mac
+   * uses them and every other platform falls through to its own.
+   */
+  --arq-font-ui:
+    -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+
+  /*
+   * The desktop scale. Deliberately small: the canvas is dense, so the chrome
+   * has to be quiet, and a CAD tree at browser-default 16px wastes a third of
+   * the panel on leading. Touch overrides these below rather than inheriting
+   * them - "do not reduce iPad or phone type below readability thresholds to
+   * preserve desktop structure".
+   */
+  --arq-text-project-title: 700 14px / 18px var(--arq-font-ui);
+  --arq-text-panel-title: 700 13px / 17px var(--arq-font-ui);
+  --arq-text-body: 500 11px / 16px var(--arq-font-ui);
+  --arq-text-label: 600 10px / 14px var(--arq-font-ui);
+  --arq-text-micro: 600 9px / 12px var(--arq-font-ui);
+
   /* Section 19: 4-point base grid */
   --arq-space-micro: 4px;
   --arq-space-compact: 8px;
@@ -90,6 +116,22 @@
   --arq-ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --arq-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
   --arq-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/*
+ * Touch bands read at arm's length on a held device, so the desktop scale is
+ * raised rather than inherited: the Version 12 rules put iPad body at 13pt
+ * minimum and phone property rows at 12-13pt. Keyed on pointer rather than
+ * width, because the constraint is how far away the screen is, not how wide.
+ */
+@media (pointer: coarse) {
+  :root {
+    --arq-text-project-title: 700 17px / 22px var(--arq-font-ui);
+    --arq-text-panel-title: 700 15px / 20px var(--arq-font-ui);
+    --arq-text-body: 500 13px / 18px var(--arq-font-ui);
+    --arq-text-label: 600 12px / 16px var(--arq-font-ui);
+    --arq-text-micro: 600 11px / 14px var(--arq-font-ui);
+  }
 }
 
 /*
