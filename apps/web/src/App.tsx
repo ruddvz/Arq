@@ -36,6 +36,7 @@ import {
   type CommandPaletteEntry,
   type ToolRailCategory,
   CommandFeedbackRegion,
+  isContextBarVisible,
   createCommandFeedbackStore,
   isEditableEventTarget,
 } from '@arq/design-system';
@@ -1242,39 +1243,47 @@ export function App(): JSX.Element {
           />
         }
         contextBar={
-          <ContextBar
-            activeToolId={toolState.activeToolId}
-            selectionCount={selectionCount}
-            actions={
-              selectedDrawnWalls.length > 0
-                ? [
-                    {
-                      id: 'delete',
-                      label: selectionCount > 1 ? `Delete ${selectionCount} walls` : 'Delete',
-                      // A real, undoable deletion of every selected drawn
-                      // wall - one operation, one undo step.
-                      onActivate: () => {
-                        const drawnIds = new Set(drawnWalls.map((wall) => wall.id));
-                        const selectedIds = [
-                          modelSelection.primary,
-                          ...modelSelection.secondary,
-                        ].filter((id): id is string => id !== null && drawnIds.has(id));
-                        performOperation({ kind: 'remove-walls', wallIds: selectedIds });
-                        setModelSelection({ primary: null, secondary: new Set() });
-                      },
-                    },
-                  ]
-                : isWallSelected
+          /*
+           * Doc 09: the shell reserves the bottom slot only when something
+           * occupies it, so the decision is made here rather than left to the
+           * bar rendering null inside a slot that still holds its height. The
+           * rule itself is ContextBar's own, reused rather than restated.
+           */
+          !isContextBarVisible(toolState.activeToolId, selectionCount) ? null : (
+            <ContextBar
+              activeToolId={toolState.activeToolId}
+              selectionCount={selectionCount}
+              actions={
+                selectedDrawnWalls.length > 0
                   ? [
                       {
                         id: 'delete',
-                        label: 'Delete',
-                        onActivate: () => recordDemoAction('delete wall'),
+                        label: selectionCount > 1 ? `Delete ${selectionCount} walls` : 'Delete',
+                        // A real, undoable deletion of every selected drawn
+                        // wall - one operation, one undo step.
+                        onActivate: () => {
+                          const drawnIds = new Set(drawnWalls.map((wall) => wall.id));
+                          const selectedIds = [
+                            modelSelection.primary,
+                            ...modelSelection.secondary,
+                          ].filter((id): id is string => id !== null && drawnIds.has(id));
+                          performOperation({ kind: 'remove-walls', wallIds: selectedIds });
+                          setModelSelection({ primary: null, secondary: new Set() });
+                        },
                       },
                     ]
-                  : []
-            }
-          />
+                  : isWallSelected
+                    ? [
+                        {
+                          id: 'delete',
+                          label: 'Delete',
+                          onActivate: () => recordDemoAction('delete wall'),
+                        },
+                      ]
+                    : []
+              }
+            />
+          )
         }
         statusBar={
           <StatusBar

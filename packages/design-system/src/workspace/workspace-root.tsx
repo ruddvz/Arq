@@ -429,7 +429,15 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
           )}
         </div>
 
-        {!phone && (
+        {/*
+          Doc 09: "no permanent bottom command surface while idle". ContextBar
+          returns null when there is no active tool and nothing selected, but a
+          null child inside a slot with a `minHeight` still reserves the slot -
+          so an idle desktop kept a 38px empty strip pinned under the canvas,
+          taking height from the drawing to show nothing. A host that has
+          nothing for the bar passes null and the slot goes with it.
+        */}
+        {!phone && contextBar !== null && (
           <div
             className="arq-workspace__context-bar"
             style={{ minHeight: slots.contextBar ?? 0, flex: '0 0 auto' }}
