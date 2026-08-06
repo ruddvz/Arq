@@ -39,6 +39,7 @@ import {
   isContextBarVisible,
   createCommandFeedbackStore,
   isEditableEventTarget,
+  ArqModalDialog,
 } from '@arq/design-system';
 import {
   CLOSED_SHEET_STATE,
@@ -97,6 +98,16 @@ import {
 } from './canvas/plan-document';
 import { createPlanJournal, type PlanJournal } from './canvas/plan-journal';
 import type { NativeProjectSession, NativeProjectSnapshot } from './project/native-project-session';
+import {
+  browserCopyDelivery,
+  deliverPublishedCopy,
+  publishedCopyFileName,
+} from './project/deliver-published-copy';
+import {
+  describeDeliveryFailure,
+  describePublicationOutcome,
+  type PublicationOutcomeDescription,
+} from './project/describe-publication-outcome';
 import { NativeProjectPanel } from './NativeProjectPanel';
 import { buildNativeProjectTree, type OpenNativeProject } from './native-project-view';
 import {
@@ -273,6 +284,14 @@ const COMMAND_ENTRIES: readonly Omit<CommandPaletteEntry, 'shortcutLabel'>[] = [
     category: 'File',
     disabledReason: 'No project open yet',
   },
+  /*
+   * Portable publication, and the first command in this list that reaches the
+   * `.arq` tier rather than the in-memory document. Its `disabledReason` is
+   * filled in per render rather than fixed here: it depends on whether a native
+   * project is open, which is the difference between a command a user can run
+   * and one that would refuse the moment it started.
+   */
+  { id: 'save-a-copy', label: 'Save a copy', category: 'File', synonyms: ['export', 'download'] },
 ];
 
 /*
@@ -684,6 +703,69 @@ export function App(): JSX.Element {
   );
 
   /*
+   * The outcome of the last "Save a copy", held until the user dismisses it.
+   *
+   * Deliberately not routed through the command-feedback toasts alone. Those
+   * expire after four seconds and carry a title only, and a publication refusal
+   * is the one message in this app where the diagnostic and the "your work is
+   * still here" sentence are the whole point - a user who misses them is left
+   * believing their project is damaged. So the toast stays as the transient
+   * acknowledgement and the full description gets a dialog the user closes.
+   */
+  const [publicationNotice, setPublicationNotice] = useState<PublicationOutcomeDescription | null>(
+    null,
+  );
+  const [savingCopy, setSavingCopy] = useState(false);
+
+  /**
+   * Publishes the open project to a verified portable file and hands it over.
+   *
+   * The order is the contract: `publish` returns bytes only after an
+   * independent reader has opened them and matched project, revision and
+   * semantic hash, so nothing reaches the browser until the copy has been
+   * proved. A refusal at any step hands over nothing at all, which is what lets
+   * the failure copy tell the user their work is untouched.
+   */
+  const handleSaveCopy = useCallback(async (): Promise<void> => {
+    const session = nativeSessionRef.current;
+    if (session === null || savingCopy) return;
+
+    const fileName = publishedCopyFileName(session.snapshot().displayName);
+    setSavingCopy(true);
+    try {
+      const result = await session.publish();
+      const described = describePublicationOutcome(result, fileName);
+      if (result.status !== 'published') {
+        setPublicationNotice(described);
+        feedbackStoreRef.current.publish('error', described.headline, Date.now());
+        return;
+      }
+
+      const delivered = deliverPublishedCopy(result.bytes, fileName, browserCopyDelivery(document));
+      if (delivered.status === 'failed') {
+        const failure = describeDeliveryFailure(delivered.detail);
+        setPublicationNotice(failure);
+        feedbackStoreRef.current.publish('error', failure.headline, Date.now());
+        return;
+      }
+
+      setPublicationNotice(described);
+      feedbackStoreRef.current.publish('success', described.headline, Date.now());
+    } catch (error) {
+      // A thrown publish is the read-only refusal or a closed session, neither
+      // of which produced a file. Reported as a delivery-side failure rather
+      // than as a verification one, because no verification ran.
+      const failure = describeDeliveryFailure(
+        error instanceof Error ? error.message : String(error),
+      );
+      setPublicationNotice(failure);
+      feedbackStoreRef.current.publish('error', failure.headline, Date.now());
+    } finally {
+      setSavingCopy(false);
+    }
+  }, [savingCopy]);
+
+  /*
    * §4.3 gate on the one committing edit this build has: a finished wall
    * chain is validated against @arq/validation's rules before it becomes
    * an operation. Errors block the commit and surface through the command
@@ -1010,13 +1092,30 @@ export function App(): JSX.Element {
     [platform, probe.coarsePointer],
   );
 
+  /*
+   * "Save a copy" is the only entry whose availability is state, not a
+   * constant: it publishes the `.arq` working copy, which exists only while a
+   * native project is open. Shown with its reason rather than hidden, which is
+   * the rule the tool rail already follows - a command that vanishes teaches a
+   * user it was never there.
+   */
+  const saveCopyDisabledReason =
+    openNativeProject === null
+      ? 'Open a project file to save a copy of it'
+      : savingCopy
+        ? 'Saving a copy'
+        : undefined;
+
   const commandEntries = useMemo<readonly CommandPaletteEntry[]>(
     () =>
       COMMAND_ENTRIES.map((entry) => {
         const label = shortcutLabel(entry.id, shortcutDialect);
-        return label === null ? entry : { ...entry, shortcutLabel: label };
+        const withShortcut = label === null ? entry : { ...entry, shortcutLabel: label };
+        return entry.id === 'save-a-copy' && saveCopyDisabledReason !== undefined
+          ? { ...withShortcut, disabledReason: saveCopyDisabledReason }
+          : withShortcut;
       }),
-    [shortcutDialect],
+    [shortcutDialect, saveCopyDisabledReason],
   );
 
   const activeToolLabel = useMemo(() => {
@@ -1444,6 +1543,14 @@ export function App(): JSX.Element {
                 if (active?.closeable === true) {
                   setTabs((state) => closeTab(state, active.id));
                 }
+              } else if (entry.id === 'save-a-copy') {
+                // Returns before `recordDemoAction`: saving a copy reads the
+                // project and does not change it, and journalling a note here
+                // would move the project to "unsaved changes" for an action
+                // that changed nothing.
+                void handleSaveCopy();
+                setCommandPaletteOpen(false);
+                return;
               } else {
                 handleActivateTool(entry.id);
               }
@@ -1454,6 +1561,39 @@ export function App(): JSX.Element {
           />
         </div>
       )}
+
+      {/*
+        The outcome of a "Save a copy", shown until the user closes it.
+
+        Not dismissable by clicking away: on a refusal this is the only place
+        that carries the diagnostic and the sentence saying the project on this
+        device still holds every change, and a stray click on the canvas behind
+        it would take both away.
+      */}
+      <ArqModalDialog
+        isOpen={publicationNotice !== null}
+        onOpenChange={(open) => {
+          if (!open) setPublicationNotice(null);
+        }}
+        isDismissable={false}
+        aria-labelledby="arq-publication-notice-heading"
+      >
+        {({ close }) => (
+          <div style={{ display: 'grid', gap: 'var(--arq-space-panel)', maxWidth: '46ch' }}>
+            <h2 id="arq-publication-notice-heading" style={{ font: 'var(--arq-text-panel-title)' }}>
+              {publicationNotice?.headline ?? ''}
+            </h2>
+            <p style={{ color: 'var(--arq-ui-text-secondary)' }}>
+              {publicationNotice?.detail ?? ''}
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="button" className="arq-shell-button" onClick={close}>
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </ArqModalDialog>
 
       {/* Renders its own full-viewport ArqModalDialog (backdrop, focus trap),
           so it sits beside WorkspaceRoot rather than inside a layout slot. */}

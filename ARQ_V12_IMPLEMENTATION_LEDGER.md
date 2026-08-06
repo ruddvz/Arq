@@ -278,16 +278,57 @@ the interface.
 
 ## 12. Recovery and portable publication
 
-**State:** not-started
-**Owner:** `packages/arqfs/src/arqfs-recovery-report.ts`,
+**State:** partial
+**Owner:** `packages/arqfs/src/arqfs-publication.ts`,
+`apps/web/src/project/deliver-published-copy.ts`,
+`apps/web/src/project/describe-publication-outcome.ts`,
+`packages/arqfs/src/arqfs-recovery-report.ts`,
 `apps/web/src/canvas/plan-journal.ts`
-**Done:** nothing in this change set.
-**Remaining:** recovery comparison surface (source, last-known-good, recoverable
-working copy) with no destructive default; portable publication as an atomic,
-truthfully worded operation; interruption paths.
-**Evidence required:** `.arq` preservation-by-hash, interruption and migration
-tests. `benchmark:journal-recovery` passes but covers the journal only.
-**Blockers:** none. **Rollback:** n/a.
+
+**Audit finding that changed this row.** Portable publication was not missing.
+`publishProjectFile` has been complete for some time: it exports sidecar-free
+bytes, reopens them through a reader that shares no cache or transaction with
+the writer, and returns bytes only after project identity, revision, per-entry
+digests, SQLite integrity and the length-framed semantic hash all match. It
+refuses on eleven named failures. `NativeProjectSession.publish` wraps it and is
+tested. **Nothing in the application ever called it.** The same is true of
+`buildArqfsRecoveryReport` and `resolveArqfsSafeModePlan`, which no code outside
+their own tests calls at all - so the "no destructive default" property held
+only because no recovery path ran.
+
+**Done.** Publication is now reachable and truthfully reported.
+- `Save a copy` is a real command-palette entry, disabled with its reason when
+  no native project is open rather than hidden.
+- `describe-publication-outcome.ts` is the single place a verdict becomes copy,
+  exhaustive over `ArqfsPublicationRefusal` so a new refusal fails to compile
+  rather than reaching a user as a generic failure. Every refusal carries the
+  sentence saying the project on this device still holds every change - appended
+  by the module, not per branch, and asserted over the whole union.
+- Delivery is separated from verification: a download the browser refused is
+  reported as a download failure, never as a corrupted copy.
+- Atomicity at the hand-over seam: bytes are copied into a fresh buffer and
+  handed over as one `Blob`, so a caller reusing a transferred buffer cannot
+  change what the user receives, and no truncated file can arrive named as
+  though it were whole.
+- The outcome gets a non-dismissable dialog, not only a four-second toast: on a
+  refusal the diagnostic and the reassurance are the whole message.
+
+**Remaining:** the recovery comparison surface (source, last-known-good,
+recoverable working copy) is still unwired - `buildArqfsRecoveryReport` and
+`resolveArqfsSafeModePlan` remain uncalled by the app, so recovery
+preservation-by-default is proved by unit tests only and by nothing a user can
+reach. Interruption paths across a real publish are untested in a browser.
+
+**Evidence:** 19 new tests in `apps/web/src/project/` (`partially-verified`:
+they cover the copy contract, the file-name derivation and the delivery seam
+against a fake browser environment; they do not drive a real OPFS publish).
+`arqfs-publication.test.ts` covers the verification itself with a real SQLite
+driver. `pnpm vitest run`: 3,563 tests, 331 files, uncached. `pnpm --filter
+@arq/web build` succeeds. No headless-browser check drives `Save a copy` yet, so
+this row is not `verified`.
+
+**Blockers:** none. **Rollback:** the command entry and its handler are additive;
+removing the palette entry removes the surface without touching `@arq/arqfs`.
 
 ## 13. Sheets and vector PDF
 
