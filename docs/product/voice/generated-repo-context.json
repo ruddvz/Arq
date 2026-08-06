@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "06067590eebaca21b8b564fb269c18b6b41f80ccae28dfe730574947ff3d91db",
+  "sourceSetDigest": "9cd0ec28e8e6c53a565220ef1f91959936d2e6c2ba7e5eed71ebbc19857e2a48",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -430,8 +430,8 @@
       "id": "web-app",
       "kind": "file",
       "path": "apps/web/src/App.tsx",
-      "sha256": "1d744d7befc06c82ead00106048e4e2b077261e8cbd349156abd5ba12246d33c",
-      "bytes": 54552
+      "sha256": "fe54c9b4cf1aac387bc7f7c48ad51bc48245defcd320ba9cbaaf92f307711ceb",
+      "bytes": 57257
     },
     "plan-canvas": {
       "id": "plan-canvas",
@@ -2904,6 +2904,7 @@
       "closed"
     ],
     "web-plan-journal-status": [
+      "s rooms for the level on show, or null when no project is\n   * open. Null and empty mean different things to the plan surface: null asks\n   * for the workspace",
       "recovered",
       "saving",
       "unsaved-changes",

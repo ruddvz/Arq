@@ -100,9 +100,11 @@ import type { NativeProjectSession, NativeProjectSnapshot } from './project/nati
 import { NativeProjectPanel } from './NativeProjectPanel';
 import { buildNativeProjectTree, type OpenNativeProject } from './native-project-view';
 import {
+  roomsOnLevel,
   wallsOnLevel,
   type NativeProjectModel as NativeProjectDocument,
 } from '@arq/project-loading';
+import type { PlanRoom } from './canvas/canvas-interaction';
 
 /**
  * The walls of one level, in the shape the plan and 3D surfaces draw. The
@@ -115,6 +117,32 @@ function wallsForLevel(document: NativeProjectDocument, levelId: string): readon
     id: wall.id,
     start: wall.start,
     end: wall.end,
+  }));
+}
+
+/**
+ * The rooms of one level, in the shape the plan surface draws.
+ *
+ * Without this the plan drew a project's walls and none of its rooms - the
+ * golden fixture's ground floor is 37 walls and 18 rooms, and only the walls
+ * appeared - while the workspace's own demo room went on being drawn on top,
+ * label and all. PlanCanvas's own contract says an opened project passes its
+ * rooms and the fixture "is not rendered at all", because "a demo room drawn
+ * over someone's house would be a lie about their model". Nothing was passing
+ * them.
+ *
+ * Area comes from the model rather than being recomputed here: the room label
+ * has to agree with what the inspector and schedules say, and two independent
+ * area calculations is how they stop agreeing.
+ */
+function roomsForLevel(document: NativeProjectDocument, levelId: string): readonly PlanRoom[] {
+  return roomsOnLevel(document, levelId).map((room) => ({
+    id: room.id,
+    // `calculatedArea` is already square metres - `recalculateRoomArea` stores
+    // the result of `roomAreaSquareMetres`. Converting again here read every
+    // room in the golden fixture as "0.0 m2".
+    label: `${room.name} ${room.calculatedArea.toFixed(1)} m2`,
+    polygon: room.calculatedBoundary,
   }));
 }
 import { TOOL_GROUP_ICONS, TOOL_ICONS } from './tool-icons';
@@ -268,6 +296,12 @@ export function App(): JSX.Element {
   const [drawnWalls, setDrawnWalls] = useState<readonly DrawnWall[]>([]);
   const drawnWallsRef = useRef<readonly DrawnWall[]>([]);
   drawnWallsRef.current = drawnWalls;
+  /**
+   * The open project's rooms for the level on show, or null when no project is
+   * open. Null and empty mean different things to the plan surface: null asks
+   * for the workspace's own demo fixture, an empty list draws no rooms at all.
+   */
+  const [projectRooms, setProjectRooms] = useState<readonly PlanRoom[] | null>(null);
 
   /*
    * Real local persistence: the journal is opened once, recovery replays it
@@ -390,6 +424,11 @@ export function App(): JSX.Element {
           : opened.snapshot.walls;
       setDrawnWalls(shown);
       drawnWallsRef.current = shown;
+      setProjectRooms(
+        opened.snapshot.document !== null && initialLevelId !== null
+          ? roomsForLevel(opened.snapshot.document, initialLevelId)
+          : [],
+      );
       wallIdCounterRef.current = highestWallIdSuffix(shown);
       setProjectName(opened.snapshot.displayName);
       // Read from the working copy, not written to it yet: "opened" is not
@@ -682,6 +721,23 @@ export function App(): JSX.Element {
     },
     [handleActivateTool],
   );
+
+  /*
+   * Frame the project when one is adopted.
+   *
+   * Doc 09 requires that camera changes come from an explicit view command, and
+   * this is one: the fit tool, dispatched by id, the same command the rail and
+   * the palette send. Without it the drawing kept whatever view the empty
+   * workspace had - the golden fixture opened at 16% with most of the house
+   * outside the viewport, which reads as a broken renderer rather than as a
+   * camera that was never asked to move.
+   */
+  useEffect(() => {
+    if (openNativeProject === null) {
+      return;
+    }
+    handleActivateTool('fit');
+  }, [openNativeProject, handleActivateTool]);
 
   /*
    * `workspace-keyboard-map.json`'s rules, applied at the one place the app
@@ -983,6 +1039,7 @@ export function App(): JSX.Element {
       <PlanCanvas
         activeToolId={toolState.activeToolId}
         walls={drawnWalls}
+        {...(projectRooms === null ? {} : { rooms: projectRooms })}
         selection={modelSelection}
         onSelectElement={(elementId) =>
           setModelSelection({ primary: elementId, secondary: new Set() })
@@ -1163,6 +1220,7 @@ export function App(): JSX.Element {
                       const shown = wallsForLevel(openNativeProject.project.model, levelId);
                       setDrawnWalls(shown);
                       drawnWallsRef.current = shown;
+                      setProjectRooms(roomsForLevel(openNativeProject.project.model, levelId));
                       // The selection is a wall id, and a wall on another level
                       // is not on screen. Keeping it would leave the inspector
                       // describing something the reader cannot see.
@@ -1178,6 +1236,7 @@ export function App(): JSX.Element {
                       nativeSessionRef.current = null;
                       setOpenNativeProject(null);
                       setActiveNativeLevelId(null);
+                      setProjectRooms(null);
                       setActiveWorkingCopyId(null);
                       setDrawnWalls([]);
                       drawnWallsRef.current = [];
