@@ -10,7 +10,7 @@
       "touch": false,
       "band": "desktop",
       "canvas": {
-        "width": 1445,
+        "width": 1461,
         "height": 773
       },
       "horizontalOverflow": false,
@@ -29,7 +29,7 @@
       "touch": true,
       "band": "desktop",
       "canvas": {
-        "width": 1237,
+        "width": 1253,
         "height": 838
       },
       "horizontalOverflow": false,
@@ -48,8 +48,8 @@
       "touch": true,
       "band": "tablet-landscape",
       "canvas": {
-        "width": 1008,
-        "height": 539
+        "width": 1024,
+        "height": 560
       },
       "horizontalOverflow": false,
       "hasDemoFixtureString": false,
@@ -67,8 +67,8 @@
       "touch": true,
       "band": "phone",
       "canvas": {
-        "width": 414,
-        "height": 740
+        "width": 430,
+        "height": 767
       },
       "horizontalOverflow": false,
       "hasDemoFixtureString": false,

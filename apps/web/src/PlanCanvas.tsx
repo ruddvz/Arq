@@ -45,8 +45,10 @@ import {
   swingPolyline,
   wallPiers,
   type PlanOpeningInput,
+  roomLabelAnchors,
   roomLabelFits,
   roomTint,
+  type RoomLabelObstacle,
   type PlanScene,
 } from '@arq/plan-renderer';
 import {
@@ -126,7 +128,6 @@ function fitMarginPx(width: number, height: number): number {
 /** Matches `TEXT_LINE_HEIGHT_PX` in the paint, which is what actually spaces the lines. */
 const ROOM_LABEL_LINE_HEIGHT_PX = 12;
 
-/** Clear page around the drawing, as a fraction of the drawing's own size. */
 /** Every tint key the palette can carry, so the reader asks for all of them once. */
 const ROOM_TINTS = [
   'room-living',
@@ -140,58 +141,75 @@ const ROOM_TINTS = [
   'room-neutral',
 ] as const;
 
+/** Clear page around the drawing, as a fraction of the drawing's own size. */
 const SHEET_MARGIN_FRACTION = 0.06;
 
 /** The page's corner radius, in CSS pixels - a sheet, not a card. */
 const SHEET_RADIUS_CSS_PX = 6;
 
-/** A polygon's screen-space bounding box, which is what a label has to fit inside. */
-function polygonExtentPx(
-  polygon: readonly WorldPoint[],
-  viewport: Viewport,
-): { readonly width: number; readonly height: number } {
+/** A polygon's world-space bounding box, used to narrow an obstacle search. */
+function polygonBounds(polygon: readonly WorldPoint[]): {
+  readonly minX: number;
+  readonly minY: number;
+  readonly maxX: number;
+  readonly maxY: number;
+} {
   let minX = Number.POSITIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
   let maxX = Number.NEGATIVE_INFINITY;
   let maxY = Number.NEGATIVE_INFINITY;
   for (const point of polygon) {
-    const screen = worldToScreen(viewport, point);
-    minX = Math.min(minX, screen.x);
-    minY = Math.min(minY, screen.y);
-    maxX = Math.max(maxX, screen.x);
-    maxY = Math.max(maxY, screen.y);
+    minX = Math.min(minX, point.x);
+    minY = Math.min(minY, point.y);
+    maxX = Math.max(maxX, point.x);
+    maxY = Math.max(maxY, point.y);
   }
-  return { width: maxX - minX, height: maxY - minY };
+  return { minX, minY, maxX, maxY };
+}
+
+/**
+ * Whether a segment could possibly reach a room, allowing for its own width.
+ *
+ * Deliberately generous - it compares bounding boxes, so a diagonal keeps
+ * things it cannot touch. Being generous costs a few extra exact tests; being
+ * tight would drop a wall that really does cross the label.
+ */
+function segmentNearBounds(
+  segment: RoomLabelObstacle,
+  bounds: ReturnType<typeof polygonBounds>,
+  slackMm: number,
+): boolean {
+  const pad = segment.clearance + slackMm;
+  return (
+    Math.min(segment.start.x, segment.end.x) <= bounds.maxX + pad &&
+    Math.max(segment.start.x, segment.end.x) >= bounds.minX - pad &&
+    Math.min(segment.start.y, segment.end.y) <= bounds.maxY + pad &&
+    Math.max(segment.start.y, segment.end.y) >= bounds.minY - pad
+  );
+}
+
+/** The four edges of a placed label's box, so the next label has to clear it. */
+function labelKeepOut(
+  anchor: WorldPoint,
+  width: number,
+  height: number,
+): readonly RoomLabelObstacle[] {
+  const halfWidth = width / 2;
+  const halfHeight = height / 2;
+  const corners = [
+    worldPoint(anchor.x - halfWidth, anchor.y - halfHeight),
+    worldPoint(anchor.x + halfWidth, anchor.y - halfHeight),
+    worldPoint(anchor.x + halfWidth, anchor.y + halfHeight),
+    worldPoint(anchor.x - halfWidth, anchor.y + halfHeight),
+  ];
+  return corners.map((corner, index) => ({
+    start: corner,
+    end: corners[(index + 1) % corners.length]!,
+    clearance: 0,
+  }));
 }
 
 const EMPTY_SET: ReadonlySet<string> = new Set<string>();
-
-/**
- * Area centroid of a simple polygon, so a room label sits inside a room of any
- * shape. Falls back to the vertex average for a degenerate (zero-area) ring,
- * which cannot be a real room but can be a malformed one.
- */
-function polygonCentroid(polygon: readonly WorldPoint[]): WorldPoint {
-  let twiceArea = 0;
-  let x = 0;
-  let y = 0;
-  for (let index = 0; index < polygon.length; index += 1) {
-    const current = polygon[index]!;
-    const next = polygon[(index + 1) % polygon.length]!;
-    const cross = current.x * next.y - next.x * current.y;
-    twiceArea += cross;
-    x += (current.x + next.x) * cross;
-    y += (current.y + next.y) * cross;
-  }
-  if (twiceArea === 0) {
-    const count = Math.max(1, polygon.length);
-    return worldPoint(
-      polygon.reduce((sum, point) => sum + point.x, 0) / count,
-      polygon.reduce((sum, point) => sum + point.y, 0) / count,
-    );
-  }
-  return worldPoint(x / (3 * twiceArea), y / (3 * twiceArea));
-}
 
 export interface PlanCanvasProps {
   /** The workspace's active tool id - the canvas responds to select/wall/pan/fit. */
@@ -519,6 +537,134 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
+    /*
+     * The walls and their openings are built before the room labels, not after,
+     * because a label has to clear the linework that will be painted over it.
+     * The room's own ring cannot answer that: a wall can cross a room whose
+     * boundary was calculated before that wall existed, and a door's swing arc
+     * sweeps into a room by design and belongs to no room's boundary at all.
+     * On the golden fixture "Linen" had an interior wall through the middle of
+     * the word and "Inner hall" and "Entry foyer" each had a swing arc struck
+     * through them, all three while passing a containment test that had no way
+     * to know any of it was there.
+     */
+    const labelObstacles: RoomLabelObstacle[] = [];
+    const wallPrimitives: PlanPrimitiveInput<string>[] = [];
+    for (const wall of walls) {
+      /*
+       * A wall with a known thickness is drawn as its footprint rather than
+       * its centreline. The outline comes from the same `wallOutline` the 3D
+       * surface extrudes, so the two views cannot disagree about where a
+       * wall's faces are - and a null result (a zero-length segment) falls
+       * back to the centreline rather than dropping the wall from the plan.
+       */
+      const thicknessMm = wallDimensions?.get(wall.id)?.thicknessMm;
+      if (thicknessMm === undefined || thicknessMm <= 0) {
+        wallPrimitives.push({ kind: 'line', elementId: wall.id, points: [wall.start, wall.end] });
+        labelObstacles.push({ start: wall.start, end: wall.end, clearance: 0 });
+        continue;
+      }
+      const host = { start: wall.start, end: wall.end, thickness: thicknessMm };
+      const openings = wallOpenings?.get(wall.id) ?? [];
+      // Each pier keeps the wall out of a label by its own half-thickness, so a
+      // 125mm partition is not held at a 250mm exterior wall's distance.
+      const halfThicknessMm = thicknessMm / 2;
+      if (openings.length === 0) {
+        const outline = wallOutline(
+          { start: wall.start, end: wall.end },
+          thicknessMm,
+          'centre',
+          1e-6,
+        );
+        wallPrimitives.push(
+          outline === null
+            ? { kind: 'line', elementId: wall.id, points: [wall.start, wall.end] }
+            : { kind: 'polygon', elementId: wall.id, points: outline, fill: 'poche' },
+        );
+        labelObstacles.push({
+          start: wall.start,
+          end: wall.end,
+          clearance: halfThicknessMm,
+        });
+        continue;
+      }
+
+      /*
+       * A wall with openings is drawn as the stretches that remain solid.
+       * Painting the whole wall and then covering each opening in the paper
+       * colour would look identical here and stop being a hole the moment
+       * anything is layered under it - a lid, not a gap - and it would print
+       * as a filled wall in a vector sheet.
+       *
+       * Every pier keeps the wall's own element id, so selecting any part of
+       * a wall still selects the wall rather than a fragment of it.
+       */
+      for (const pier of wallPiers(host, openings)) {
+        const outline = wallOutline(pier, thicknessMm, 'centre', 1e-6);
+        if (outline !== null) {
+          wallPrimitives.push({
+            kind: 'polygon',
+            elementId: wall.id,
+            points: outline,
+            fill: 'poche',
+          });
+        }
+        // The pier, not the whole wall: an opening is a gap a label may sit
+        // beside, and holding it clear of the run the wall no longer occupies
+        // would suppress labels for a wall that is not there.
+        labelObstacles.push({
+          start: pier.start,
+          end: pier.end,
+          clearance: halfThicknessMm,
+        });
+      }
+      for (const opening of planOpeningsForWall(host, openings)) {
+        // The jambs close the poché where the wall stops. Without them the
+        // drawing shows two wall stubs and no evidence they are one wall.
+        for (const jamb of opening.jambs) {
+          wallPrimitives.push({
+            kind: 'line',
+            elementId: opening.id,
+            points: [jamb.start, jamb.end],
+          });
+        }
+        for (const glazing of opening.glazing) {
+          wallPrimitives.push({
+            kind: 'line',
+            elementId: opening.id,
+            points: [glazing.start, glazing.end],
+          });
+        }
+        // Jambs and glazing sit within the wall's own footprint, which the
+        // piers either side already keep a label clear of. The leaf and the
+        // swing do not - they are the part of a door that reaches into the
+        // room - so those two are the ones a label has to be told about.
+        if (opening.leaf !== null) {
+          wallPrimitives.push({
+            kind: 'line',
+            elementId: opening.id,
+            points: [opening.leaf.start, opening.leaf.end],
+          });
+          labelObstacles.push({
+            start: opening.leaf.start,
+            end: opening.leaf.end,
+            clearance: 0,
+          });
+        }
+        if (opening.swing !== null) {
+          const arc = swingPolyline(opening.swing);
+          wallPrimitives.push({ kind: 'line', elementId: opening.id, points: arc });
+          for (let index = 1; index < arc.length; index += 1) {
+            labelObstacles.push({
+              start: arc[index - 1]!,
+              end: arc[index]!,
+              clearance: 0,
+            });
+          }
+        }
+      }
+    }
+
     const inputs: PlanPrimitiveInput<string>[] = [
       ...rooms.map((room): PlanPrimitiveInput<string> => ({
         kind: 'polygon',
@@ -533,153 +679,90 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       })),
       ...rooms.flatMap((room): PlanPrimitiveInput<string>[] => {
         /*
-         * A label is drawn only when it fits inside its own room at the scale
-         * being drawn. Unchecked, the golden fixture's galleries on a phone are
-         * a few millimetres wide on screen and their labels are wider than the
-         * rooms - three of them overlapped into an unreadable smear that also
-         * hid the walls underneath. The room is still drawn, still selectable
-         * and still names itself in the Inspector, so nothing is lost except a
-         * claim that could not be read.
-         */
-        const anchor = polygonCentroid(room.polygon);
-        /*
-         * The label degrades before it disappears.
+         * A label is drawn only where it fits: inside its own room, clear of
+         * the walls that bound it, clear of the linework about to be painted
+         * over it, and clear of the labels already placed. When none of the
+         * positions the room offers can hold it, the room goes unnamed - it is
+         * still drawn, still selectable and still names itself in the
+         * Inspector, so nothing is lost except a claim that could not be read.
          *
-         * A room label is two lines - the name, then the area - and the rule was
-         * all-or-nothing: if both did not fit, the room went unnamed. At 1:76
-         * that lost "Powder room", and on a phone at 1:136 it lost most of the
-         * floor. A drawn plan does not behave that way; it drops the area first
-         * and keeps the name, because the name is what identifies the room and
-         * the area is what qualifies it.
+         * Two things are tried, in this order: the fuller text first, then a
+         * shorter one; and for each, the room's centre first, then positions
+         * further out. Text before position, because the area is information
+         * and a slightly off-centre label still reads as belonging to its room.
          *
-         * So the candidates are tried longest-first and the first that fits is
-         * drawn. Nothing is ever squeezed: each candidate faces the same
-         * clearance test, and a room too small even for its name is still
-         * unlabelled rather than crowded.
+         * The shorter text is the name without the area. A room label is two
+         * lines and the rule used to be all-or-nothing: if both did not fit,
+         * the room went unnamed. A drawn plan does not behave that way; it
+         * drops the area first and keeps the name, because the name identifies
+         * the room and the area qualifies it.
          */
         const fullLines = room.label.split('\n');
-        const candidates = fullLines.length > 1 ? [fullLines, [fullLines[0] ?? '']] : [fullLines];
-        /*
-         * Measured against the room's *clear* area, not its boundary.
-         *
-         * A room's calculated boundary runs to the wall centrelines, so half a
-         * wall's thickness at each edge is inside the polygon and underneath
-         * poché. A label sized to the polygon therefore fits arithmetically and
-         * still crosses the wall - which is exactly what "Linen 2.3 m2" and
-         * "Guest ensuite 3.4 m2" were doing, each straddling the wall between
-         * them. Insetting by the thickest wall on the level is conservative and
-         * needs no per-room lookup.
-         */
-        const extent = polygonExtentPx(room.polygon, currentViewport);
-        const insetPx = maxWallThicknessMm * currentViewport.pixelsPerUnit;
-        const clear = {
-          width: extent.width - insetPx,
-          height: extent.height - insetPx,
-        };
-        const chosen = candidates.find((lines) =>
-          roomLabelFits({
-            labelWidthPx: Math.max(...lines.map((line) => ctx.measureText(line).width)),
-            labelHeightPx: lines.length * ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio,
-            roomWidthPx: clear.width,
-            roomHeightPx: clear.height,
-          }),
-        );
-        if (chosen === undefined) {
-          return [];
-        }
-        return [
-          {
-            kind: 'text',
-            // Labelled at the polygon's centroid rather than a fixed offset, so
-            // a room of any shape carries its label inside itself.
-            elementId: `${room.id}-label`,
-            anchor,
-            text: chosen.join('\n'),
-          },
-        ];
-      }),
-      ...walls.flatMap((wall): PlanPrimitiveInput<string>[] => {
-        /*
-         * A wall with a known thickness is drawn as its footprint rather than
-         * its centreline. The outline comes from the same `wallOutline` the 3D
-         * surface extrudes, so the two views cannot disagree about where a
-         * wall's faces are - and a null result (a zero-length segment) falls
-         * back to the centreline rather than dropping the wall from the plan.
-         */
-        const thicknessMm = wallDimensions?.get(wall.id)?.thicknessMm;
-        if (thicknessMm === undefined || thicknessMm <= 0) {
-          return [{ kind: 'line', elementId: wall.id, points: [wall.start, wall.end] }];
-        }
-        const host = { start: wall.start, end: wall.end, thickness: thicknessMm };
-        const openings = wallOpenings?.get(wall.id) ?? [];
-        if (openings.length === 0) {
-          const outline = wallOutline(
-            { start: wall.start, end: wall.end },
-            thicknessMm,
-            'centre',
-            1e-6,
-          );
-          return outline === null
-            ? [{ kind: 'line', elementId: wall.id, points: [wall.start, wall.end] }]
-            : [{ kind: 'polygon', elementId: wall.id, points: outline, fill: 'poche' }];
-        }
+        const textCandidates =
+          fullLines.length > 1 ? [fullLines, [fullLines[0] ?? '']] : [fullLines];
 
         /*
-         * A wall with openings is drawn as the stretches that remain solid.
-         * Painting the whole wall and then covering each opening in the paper
-         * colour would look identical here and stop being a hole the moment
-         * anything is layered under it - a lid, not a gap - and it would print
-         * as a filled wall in a vector sheet.
-         *
-         * Every pier keeps the wall's own element id, so selecting any part of
-         * a wall still selects the wall rather than a fragment of it.
+         * Only the linework near this room, so the search below stays cheap.
+         * A level carries a few hundred segments and a room is asked about
+         * dozens of positions; testing every segment against every position
+         * would be a repaint's worth of work for no different answer, because
+         * a wall on the far side of the building cannot cross a label here.
          */
-        const primitives: PlanPrimitiveInput<string>[] = [];
-        for (const pier of wallPiers(host, openings)) {
-          const outline = wallOutline(pier, thicknessMm, 'centre', 1e-6);
-          if (outline !== null) {
-            primitives.push({
-              kind: 'polygon',
-              elementId: wall.id,
-              points: outline,
-              fill: 'poche',
-            });
+        const bounds = polygonBounds(room.polygon);
+        const nearby = labelObstacles.filter((obstacle) =>
+          segmentNearBounds(obstacle, bounds, maxWallThicknessMm),
+        );
+
+        const halfWallMm = maxWallThicknessMm / 2;
+        for (const lines of textCandidates) {
+          /*
+           * Measured in world units against the room's own shape.
+           *
+           * The text is measured on the canvas, at the size it will be painted,
+           * because legibility is a screen-pixel question; it is then divided
+           * by the scale, because containment is a question about the room.
+           */
+          const labelWidth =
+            Math.max(...lines.map((line) => ctx.measureText(line).width)) /
+            currentViewport.pixelsPerUnit;
+          const labelHeight =
+            (lines.length * ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio) /
+            currentViewport.pixelsPerUnit;
+          for (const anchor of roomLabelAnchors(room.polygon)) {
+            if (
+              !roomLabelFits({
+                polygon: room.polygon,
+                anchor,
+                labelWidth,
+                labelHeight,
+                // Half the thickest wall on the level: a room's boundary runs
+                // to the wall centrelines, so that much of the ring is poché
+                // rather than floor. The thickest is conservative and needs no
+                // per-room lookup; the piers below hold each wall at its own
+                // real thickness anyway.
+                wallInset: halfWallMm,
+                obstacles: nearby,
+              })
+            ) {
+              continue;
+            }
+            /*
+             * A placed label becomes something the next one has to clear.
+             * Without this two rooms whose rings overlap - which the golden
+             * fixture has, its "Linen" ring reaching into "South gallery" -
+             * can each be told they fit and print on top of each other.
+             */
+            for (const edge of labelKeepOut(anchor, labelWidth, labelHeight)) {
+              labelObstacles.push(edge);
+            }
+            return [
+              { kind: 'text', elementId: `${room.id}-label`, anchor, text: lines.join('\n') },
+            ];
           }
         }
-        for (const opening of planOpeningsForWall(host, openings)) {
-          // The jambs close the poché where the wall stops. Without them the
-          // drawing shows two wall stubs and no evidence they are one wall.
-          for (const jamb of opening.jambs) {
-            primitives.push({
-              kind: 'line',
-              elementId: opening.id,
-              points: [jamb.start, jamb.end],
-            });
-          }
-          for (const glazing of opening.glazing) {
-            primitives.push({
-              kind: 'line',
-              elementId: opening.id,
-              points: [glazing.start, glazing.end],
-            });
-          }
-          if (opening.leaf !== null) {
-            primitives.push({
-              kind: 'line',
-              elementId: opening.id,
-              points: [opening.leaf.start, opening.leaf.end],
-            });
-          }
-          if (opening.swing !== null) {
-            primitives.push({
-              kind: 'line',
-              elementId: opening.id,
-              points: swingPolyline(opening.swing),
-            });
-          }
-        }
-        return primitives;
+        return [];
       }),
+      ...wallPrimitives,
     ];
 
     const scene = buildPlanScene(inputs, EMPTY_SET, selection, EMPTY_SET);

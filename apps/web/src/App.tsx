@@ -1496,7 +1496,6 @@ export function App(): JSX.Element {
         onSheetDragToDetent={(detent) => setSheet((state) => setDetent(state, detent))}
         onResizePanel={(panel, width) => setPanels((current) => resizePanel(current, panel, width))}
         onSelectPointerTool={() => handleActivateTool('select')}
-        activeToolLabel={activeToolLabel}
         phoneProjectBar={
           <PhoneProjectBar
             projectName={projectName}
@@ -1777,15 +1776,24 @@ export function App(): JSX.Element {
             cursorWorldPosition={cursorWorldPosition}
             activeSnapLabel={activeSnapLabel}
             selectionCount={selectionCount}
-            currentLevelName={activeLevelName ?? 'Level 1'}
-            pixelsPerUnit={pixelsPerUnit}
             modelHealth={modelHealth}
             localJournalStateLabel={journalLabel}
             syncState={DEMO_SYNC_STATE}
             supportModeEnabled={false}
-            /* Doc 47: the phone strip carries only what a review-first phone
-               can act on; save and sync live on the phone project bar. */
-            variant={platform === 'phone' ? 'minimal' : 'full'}
+            /* Doc 47: the strip carries only what its input can act on, and
+               the tool joins it rather than taking a row of its own above the
+               dock.
+
+               Keyed on the pointer rather than on a list of device bands,
+               because that is what the fields depend on. Cursor coordinates
+               and active snap describe a pointer a touch device does not have,
+               and save and sync are already stated above - on the project bar
+               on a phone, on the top bar everywhere else - so a touch band was
+               spending its whole strip restating two facts and reporting two
+               that cannot happen. At 1024px that ran to two rows and pushed
+               sync state off the bottom of the window. */
+            activeToolLabel={activeToolLabel}
+            variant={probe.coarsePointer ? 'minimal' : 'full'}
           />
         }
       />

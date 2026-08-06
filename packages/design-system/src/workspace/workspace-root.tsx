@@ -113,7 +113,6 @@ export interface WorkspaceRootProps {
   readonly onSheetDragToDetent?: (detent: SheetDetent) => void;
   /** Doc 47: the dock's Select entry activates the tool rather than opening a sheet. */
   readonly onSelectPointerTool?: () => void;
-  readonly activeToolLabel?: string | null;
   readonly toolsSheet?: ReactNode;
   readonly viewSwitcherSheet?: ReactNode;
   readonly reviewSheet?: ReactNode;
@@ -258,7 +257,6 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
     onCollapseSheet,
     onSheetDragToDetent,
     onSelectPointerTool,
-    activeToolLabel = null,
     toolsSheet,
     viewSwitcherSheet,
     reviewSheet,
@@ -336,7 +334,13 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
+        /*
+         * Dynamic viewport height, not `100vh`. On a phone `vh` is the height
+         * with the browser's chrome retracted, so a shell sized in `vh` puts
+         * its own bottom bar underneath the address bar until the user
+         * scrolls - and this shell does not scroll.
+         */
+        height: '100dvh',
         minHeight: 0,
         position: 'relative',
       }}
@@ -517,7 +521,6 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
         {touchControlsAvailable && bottomOwner === 'review-bar' && (
           <PhoneDock
             openSheet={sheet.openSheet}
-            activeToolLabel={activeToolLabel}
             onSelectTool={onSelectPointerTool ?? (() => undefined)}
             onToggleSheet={onToggleSheet}
             {...(reviewDisabledReason === undefined ? {} : { reviewDisabledReason })}

@@ -48,6 +48,35 @@
  * single most visible defect in the whole appearance, and one no token value
  * could have fixed, because no rule was reading them.
  */
+/*
+ * The page itself, which nothing had ever claimed.
+ *
+ * A browser gives `body` an 8px margin by default and no rule here removed it,
+ * so the shell was inset 8px on every side of every band. Two things followed
+ * from that, and both were visible in every capture:
+ *
+ * - The shell asks for `100dvh` of height starting 8px down the page, so its
+ *   last 8px were always below the fold. On a band wide enough to keep the
+ *   status strip on one line the overhang landed in padding and nothing was
+ *   lost. At 1024px the strip wraps to two lines, and the second line - which
+ *   is where sync state was - was cut off by the bottom of the window.
+ * - Sixteen pixels of every viewport's width went to a margin, which on a
+ *   430px phone is four per cent of the drawing.
+ *
+ * The surface moves to the page with it. `.arq-workspace` carried the canvas
+ * colour, so in dark appearance the margin showed as a pale frame around the
+ * whole application - the root element was still the browser's default.
+ */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--arq-ui-canvas);
+  /* Tells the browser which form controls and scrollbars to draw, which is the
+     part of dark appearance no token can reach. */
+  color-scheme: light dark;
+}
+
 .arq-workspace {
   background: var(--arq-ui-canvas);
   color: var(--arq-ui-text-primary);

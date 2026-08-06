@@ -4,7 +4,6 @@ import {
   formatModelHealth,
   formatPerformanceWarning,
   formatSelectionCount,
-  formatViewScale,
   type ModelHealthSummary,
   type StatusBarCoordinates,
 } from './status-bar-state';
@@ -16,21 +15,32 @@ export interface StatusBarProps {
   readonly cursorWorldPosition: StatusBarCoordinates | null;
   readonly activeSnapLabel: string | null;
   readonly selectionCount: number;
-  readonly currentLevelName: string;
-  readonly pixelsPerUnit: number;
   readonly modelHealth: ModelHealthSummary;
+  /**
+   * The tool a tap on the canvas will use, or null when there is none.
+   *
+   * Only the phone strip shows it, because only the phone has nowhere else to:
+   * the desktop and tablet keep the tool rail on screen with the active tool
+   * pressed, and the context bar names it again. The phone had it as a separate
+   * chip above the dock, which put three stacked strips - status, chip, dock -
+   * under a 932px-tall canvas to state two facts.
+   */
+  readonly activeToolLabel?: string | null;
   readonly localJournalStateLabel: string;
   readonly syncState: SyncState;
   readonly supportModeEnabled: boolean;
   /**
-   * `'minimal'` is the phone strip the layout registry already sizes
-   * (`statusMinimal: 28`), carrying only what a review-first phone can act on.
+   * `'minimal'` is the touch strip the layout registry already sizes
+   * (`statusMinimal: 28`), carrying only what a device without a cursor can act
+   * on.
    *
-   * The full strip is nine authoring readouts. On a 430px phone they wrapped to
-   * two rows and the second was clipped by the dock, and three of them were
-   * meaningless there anyway: cursor coordinates and active snap describe a
-   * pointer a phone does not have, and save and sync are already stated on the
-   * phone project bar, which doc 09 says should not be repeated across bars.
+   * The full strip is a row of authoring readouts, and on a touch band most of
+   * them cannot be true. Cursor coordinates and active snap describe a pointer
+   * that is not there, and save and sync are already stated above - on the
+   * project bar on a phone, on the top bar on a tablet - which doc 09 says
+   * should not be repeated across bars. On a 430px phone the full set wrapped
+   * to two rows and the second was clipped by the dock; at 1024px it wrapped
+   * and pushed sync state off the bottom of the window.
    */
   readonly variant?: 'full' | 'minimal';
 }
@@ -69,9 +79,8 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
     cursorWorldPosition,
     activeSnapLabel,
     selectionCount,
-    currentLevelName,
-    pixelsPerUnit,
     modelHealth,
+    activeToolLabel = null,
     localJournalStateLabel,
     syncState,
     supportModeEnabled,
@@ -122,6 +131,17 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
        * fields that stop the product implying a save it has not made, and they
        * are the reason this strip exists at all.
        */}
+      {/*
+       * The tool leads the strip on a phone, because it is the field that
+       * changes what the next tap does. aria-live because the change is usually
+       * made from a sheet that has closed by the time it takes effect, so there
+       * is nothing left on screen for a screen reader to have announced.
+       */}
+      {!full && activeToolLabel !== null && (
+        <span role="status" aria-live="polite">
+          Tool: {activeToolLabel}
+        </span>
+      )}
       {full && <span>{formatCoordinates(cursorWorldPosition, unitLabel)}</span>}
       {full && <span>{formatActiveSnap(activeSnapLabel)}</span>}
       <span>{formatSelectionCount(selectionCount)}</span>
