@@ -161,18 +161,30 @@ and selection-filter routes unverified.
 
 ## 6. Exact Wall command and grouped undo
 
-**State:** not-started (pre-existing implementation unaudited)
+**State:** partial
 **Owner:** `packages/command-system/src/command-lifecycle.ts`,
 `packages/editor-shell/src/wall-draw-tool.ts`, `apps/web/src/canvas/`
-**Done:** nothing in this change set.
-**Remaining:** audit the 8-state lifecycle against the package's 9-phase
-`command-contract.json`; prove one command id across all six invocation routes;
-prove Escape and Cancel restore the last committed canonical state; prove an
-invalid exact value changes nothing; prove one completed command is one grouped
-undo unit.
-**Evidence required:** command cancellation and invalid-operation tests;
-`benchmark:wall-hud` passes today but does not cover the contract.
-**Blockers:** none. **Rollback:** n/a.
+**Done:** `wall-command-contract.test.ts` asserts the contract's four invariants
+against the lifecycle this app actually runs, joined to the real grouped undo
+stack and the real plan-document reducer: a rejected commit leaves both the
+walls and the history untouched; one completed command is exactly one undo unit
+however many segments it placed; cancel from previewing reaches `cancelled`
+without canonical state moving; a preview and a pending numeric entry are both
+non-canonical; the same tool id results from every invocation route.
+
+**Architectural finding:** the repository has **two command state machines** -
+`@arq/workspace`'s `ToolState` (nine phases, what apps/web dispatches) and
+`@arq/command-system`'s `createCommandLifecycle` (eight states, reachable only
+through @arq/editor-shell and not used by the app). Both are unit-tested; only
+one runs. The package forbids parallel command buses, so this needs an owner
+decision on which survives. Recorded, not resolved.
+**Remaining:** the second lifecycle; exact numeric entry validation end to end
+(the phase exists, the rejection path is asserted, but no numeric parser is
+wired to it in the app); the six invocation routes are asserted at the reducer,
+not driven through the real UI.
+**Evidence:** `wall-command-contract.test.ts` (6 cases); `benchmark:wall-hud`.
+**Blockers:** the two-lifecycle question needs an owner. **Rollback:**
+self-contained test file.
 
 ## 7. Semantic plan projection using the golden fixture
 
