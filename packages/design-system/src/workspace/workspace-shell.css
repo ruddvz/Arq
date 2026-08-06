@@ -463,6 +463,23 @@ body {
  * view and not to the window - and it is `pointer-events: none` so it never
  * takes a click meant for the drawing beneath it.
  */
+/*
+ * How much of the canvas's top edge the view identity occupies.
+ *
+ * The pill floats over the drawing, which is what the reference composition
+ * asks for and reads well when the drawing is fitted below it. It stopped
+ * reading well the moment the drawing was fitted to fill: on a 1024px tablet
+ * the sheet reaches the top of the canvas and the pill printed over a room.
+ *
+ * The canvas reads this value and fits the drawing beneath it, the same way it
+ * reads `--arq-font-ui` to set its labels in the shell's own typeface. One
+ * declaration, so the pill's box and the space kept clear for it cannot drift
+ * apart - which they would the moment either was a number written twice.
+ */
+:root {
+  --arq-view-identity-reserve: 48px;
+}
+
 .arq-view-identity {
   position: absolute;
   top: var(--arq-space-compact);

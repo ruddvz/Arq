@@ -11,7 +11,7 @@
       "band": "desktop",
       "canvas": {
         "width": 1461,
-        "height": 773
+        "height": 819
       },
       "horizontalOverflow": false,
       "hasDemoFixtureString": false,
@@ -30,7 +30,7 @@
       "band": "desktop",
       "canvas": {
         "width": 1253,
-        "height": 838
+        "height": 876
       },
       "horizontalOverflow": false,
       "hasDemoFixtureString": false,
@@ -49,7 +49,7 @@
       "band": "tablet-landscape",
       "canvas": {
         "width": 1024,
-        "height": 560
+        "height": 577
       },
       "horizontalOverflow": false,
       "hasDemoFixtureString": false,

@@ -125,6 +125,56 @@ function fitMarginPx(width: number, height: number): number {
   return Math.max(8, Math.min(40, Math.min(width, height) * 0.04));
 }
 
+/**
+ * Fits the drawing into the part of the canvas that is actually clear.
+ *
+ * The view identity - "Ground floor · Plan · 1:103" - floats over the top of
+ * the canvas, which is the reference composition and reads well when the
+ * drawing sits below it. It stopped reading well the moment the drawing was
+ * fitted to fill the canvas: on a 1024px tablet the sheet reaches the top edge
+ * and the pill printed over a room. Fitting into the space under it, and then
+ * pushing the drawing down into that space, is the difference between a label
+ * floating above a plan and a label lying on one.
+ *
+ * The reserve comes from the stylesheet that positions the pill, so the two
+ * cannot drift apart. It is capped at a third of the canvas so a very short
+ * viewport is not given over to chrome.
+ */
+function fitContent(
+  bounds: { readonly min: WorldPoint; readonly max: WorldPoint },
+  canvas: HTMLCanvasElement,
+  rect: { readonly width: number; readonly height: number },
+): Viewport {
+  const reserve = Math.min(readReservePx(canvas), rect.height / 3);
+  const usableHeight = Math.max(1, rect.height - reserve);
+  const fitted = fitToBounds(
+    bounds,
+    rect.width,
+    usableHeight,
+    fitMarginPx(rect.width, usableHeight),
+  );
+  /*
+   * Screen y runs down and world y runs up, so raising the viewport's centre
+   * moves the drawing down the screen. Half the reserve re-centres the drawing
+   * in the band below the pill rather than in the whole canvas.
+   */
+  return {
+    ...fitted,
+    center: worldPoint(fitted.center.x, fitted.center.y + reserve / 2 / fitted.pixelsPerUnit),
+  };
+}
+
+/** The pill's own height, as its stylesheet declares it. Zero if unset. */
+function readReservePx(canvas: HTMLCanvasElement): number {
+  if (typeof window === 'undefined') return 0;
+  const raw = window
+    .getComputedStyle(canvas)
+    .getPropertyValue('--arq-view-identity-reserve')
+    .trim();
+  const parsed = Number.parseFloat(raw);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+}
+
 /** Matches `TEXT_LINE_HEIGHT_PX` in the paint, which is what actually spaces the lines. */
 const ROOM_LABEL_LINE_HEIGHT_PX = 12;
 
@@ -905,11 +955,10 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
           // Fit to what is actually there on first paint: for an opened project
           // that is the project, and for an empty surface that is nothing, which
           // is a starting extent rather than a fit.
-          const fitted = fitToBounds(
+          const fitted = fitContent(
             emptyContentBounds({ rooms, walls }) ?? contentBounds({ rooms, walls }),
-            rect.width,
-            rect.height,
-            fitMarginPx(rect.width, rect.height),
+            canvas,
+            rect,
           );
           onViewportPixelsPerUnitChange?.(fitted.pixelsPerUnit);
           return {
@@ -1091,11 +1140,10 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       const devicePixelRatio = devicePixelRatioRef.current;
       // Fit on an empty surface returns to the starting extent rather than to
       // NaN - the same guard as the first paint, for the same reason.
-      const fitted = fitToBounds(
+      const fitted = fitContent(
         emptyContentBounds(content) ?? contentBounds(content),
-        rect.width,
-        rect.height,
-        fitMarginPx(rect.width, rect.height),
+        canvas,
+        rect,
       );
       updateViewport({
         ...fitted,

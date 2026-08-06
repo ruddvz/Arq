@@ -37,6 +37,7 @@ import {
   type ToolRailCategory,
   CommandFeedbackRegion,
   isContextBarVisible,
+  type ContextBarAction,
   createCommandFeedbackStore,
   isEditableEventTarget,
   ArqModalDialog,
@@ -1327,6 +1328,36 @@ export function App(): JSX.Element {
     [shortcutDialect, saveCopyDisabledReason, exportSheetDisabledReason],
   );
 
+  /**
+   * The bar's "most likely immediate controls" for what is selected right now.
+   *
+   * Built here rather than inline in the slot because the shell has to know how
+   * many there are before it decides whether to reserve the slot at all - a bar
+   * with no actions is an empty strip taken from the drawing.
+   */
+  const contextBarActions: readonly ContextBarAction[] = useMemo(
+    () =>
+      selectedDrawnWalls.length === 0
+        ? []
+        : [
+            {
+              id: 'delete',
+              label: selectionCount > 1 ? `Delete ${selectionCount} walls` : 'Delete',
+              // A real, undoable deletion of every selected drawn wall - one
+              // operation, one undo step.
+              onActivate: () => {
+                const drawnIds = new Set(drawnWalls.map((wall) => wall.id));
+                const selectedIds = [modelSelection.primary, ...modelSelection.secondary].filter(
+                  (id): id is string => id !== null && drawnIds.has(id),
+                );
+                performOperation({ kind: 'remove-walls', wallIds: selectedIds });
+                setModelSelection({ primary: null, secondary: new Set() });
+              },
+            },
+          ],
+    [selectedDrawnWalls, selectionCount, drawnWalls, modelSelection, performOperation],
+  );
+
   const activeToolLabel = useMemo(() => {
     const contract = toolContract(toolState.activeToolId);
     return contract === null ? null : contract.name;
@@ -1740,33 +1771,19 @@ export function App(): JSX.Element {
            * Doc 09: the shell reserves the bottom slot only when something
            * occupies it, so the decision is made here rather than left to the
            * bar rendering null inside a slot that still holds its height. The
-           * rule itself is ContextBar's own, reused rather than restated.
+           * rule itself is ContextBar's own, reused rather than restated - and
+           * it needs the actions, because "there is an active tool" was true on
+           * arrival with nothing to put in the bar.
            */
-          !isContextBarVisible(toolState.activeToolId, selectionCount) ? null : (
+          !isContextBarVisible(
+            toolState.activeToolId,
+            selectionCount,
+            contextBarActions.length,
+          ) ? null : (
             <ContextBar
               activeToolId={toolState.activeToolId}
               selectionCount={selectionCount}
-              actions={
-                selectedDrawnWalls.length > 0
-                  ? [
-                      {
-                        id: 'delete',
-                        label: selectionCount > 1 ? `Delete ${selectionCount} walls` : 'Delete',
-                        // A real, undoable deletion of every selected drawn
-                        // wall - one operation, one undo step.
-                        onActivate: () => {
-                          const drawnIds = new Set(drawnWalls.map((wall) => wall.id));
-                          const selectedIds = [
-                            modelSelection.primary,
-                            ...modelSelection.secondary,
-                          ].filter((id): id is string => id !== null && drawnIds.has(id));
-                          performOperation({ kind: 'remove-walls', wallIds: selectedIds });
-                          setModelSelection({ primary: null, secondary: new Set() });
-                        },
-                      },
-                    ]
-                  : []
-              }
+              actions={contextBarActions}
             />
           )
         }
