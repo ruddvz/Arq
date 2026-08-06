@@ -10,13 +10,14 @@ import {
   IconArrowMerge,
   IconArrowsMove,
   IconArrowsSplit2,
+  IconBorderBottom,
   IconBorderOuter,
   IconBox,
   IconBoxMultiple,
   IconBuildingArch,
+  IconBuildingCottage,
   IconBuildingSkyscraper,
   IconChecklist,
-  IconContrast,
   IconCopy,
   IconCube,
   IconDoor,
@@ -34,36 +35,35 @@ import {
   IconHandFinger,
   IconHistory,
   IconHome,
-  IconHomeRibbon,
-  IconLayersSubtract,
   IconLayoutAlignLeft,
-  IconLayoutDistributeHorizontal,
   IconLayoutGrid,
   IconLine,
   IconLineDashed,
   IconMaximize,
   IconMessageCircle,
+  IconNote,
+  IconPalette,
   IconPencil,
   IconPerspective,
   IconPointer,
+  IconPolygon,
   IconRotate3d,
   IconRotateClockwise,
   IconRuler,
   IconRuler2,
   IconRulerMeasure,
   IconScissors,
+  IconSection,
   IconSelect,
   IconSelectAll,
   IconSelector,
+  IconSitemap,
   IconSquare,
   IconStack2,
   IconStairs,
   IconTag,
-  IconTopologyStar3,
   IconTrash,
   IconTriangleInverted,
-  IconTypography,
-  IconVectorBezier2,
   IconWall,
   IconWindow,
   IconWindowMaximize,
@@ -92,6 +92,13 @@ import {
  * every consumer imports `WallIcon`, so the family can be re-pinned or replaced
  * in this one file without touching a single call site - and no product code
  * grows a dependency on a vendor's naming.
+ *
+ * Where Tabler has no glyph for a domain concept, the closest honest match is
+ * used rather than a hand-drawn one - one family is the rule, and a second
+ * family beside the first is what the guidance forbids. Two are compromises
+ * worth knowing about: `RoofIcon` is a pitched-roof cottage rather than a roof
+ * plane, and `SlabIcon` is a bottom border rather than a floor plate. Both read
+ * correctly in context and neither is what an architect would draw.
  *
  * Defaults match the shell's control sizing: 24x24 on a 24 grid, 1.75 stroke to
  * sit with the type rather than shout over it, and `currentColor` so a glyph
@@ -151,7 +158,7 @@ export function AngleIcon(props: ArqIconProps): JSX.Element {
 
 /** Area */
 export function AreaIcon(props: ArqIconProps): JSX.Element {
-  return <IconVectorBezier2 {...resolve(props)} />;
+  return <IconPolygon {...resolve(props)} />;
 }
 
 /** ArqArchive */
@@ -376,7 +383,7 @@ export function ReferenceLineIcon(props: ArqIconProps): JSX.Element {
 
 /** Relationships */
 export function RelationshipsIcon(props: ArqIconProps): JSX.Element {
-  return <IconTopologyStar3 {...resolve(props)} />;
+  return <IconSitemap {...resolve(props)} />;
 }
 
 /** Revision */
@@ -386,7 +393,7 @@ export function RevisionIcon(props: ArqIconProps): JSX.Element {
 
 /** Roof */
 export function RoofIcon(props: ArqIconProps): JSX.Element {
-  return <IconHomeRibbon {...resolve(props)} />;
+  return <IconBuildingCottage {...resolve(props)} />;
 }
 
 /** Room */
@@ -406,7 +413,7 @@ export function SectionBoxIcon(props: ArqIconProps): JSX.Element {
 
 /** Section */
 export function SectionIcon(props: ArqIconProps): JSX.Element {
-  return <IconLayoutDistributeHorizontal {...resolve(props)} />;
+  return <IconSection {...resolve(props)} />;
 }
 
 /** Select */
@@ -431,7 +438,7 @@ export function SheetIcon(props: ArqIconProps): JSX.Element {
 
 /** Slab */
 export function SlabIcon(props: ArqIconProps): JSX.Element {
-  return <IconLayersSubtract {...resolve(props)} />;
+  return <IconBorderBottom {...resolve(props)} />;
 }
 
 /** Split */
@@ -456,7 +463,7 @@ export function TagIcon(props: ArqIconProps): JSX.Element {
 
 /** TextNote */
 export function TextNoteIcon(props: ArqIconProps): JSX.Element {
-  return <IconTypography {...resolve(props)} />;
+  return <IconNote {...resolve(props)} />;
 }
 
 /** Trim */
@@ -471,7 +478,7 @@ export function UnhideIcon(props: ArqIconProps): JSX.Element {
 
 /** ViewStyle */
 export function ViewStyleIcon(props: ArqIconProps): JSX.Element {
-  return <IconContrast {...resolve(props)} />;
+  return <IconPalette {...resolve(props)} />;
 }
 
 /** Wall */
