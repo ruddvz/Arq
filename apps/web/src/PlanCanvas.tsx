@@ -41,6 +41,10 @@ import {
   SNAP_GLYPH_LABEL,
   type PlanPrimitiveInput,
   type PlanSelectionState,
+  planOpeningsForWall,
+  swingPolyline,
+  wallPiers,
+  type PlanOpeningInput,
 } from '@arq/plan-renderer';
 import {
   GRID_SPACING_MM,
@@ -173,6 +177,12 @@ export interface PlanCanvasProps {
    * about where a wall's faces are.
    */
   readonly wallDimensions?: ReadonlyMap<string, { readonly thicknessMm: number }>;
+  /**
+   * The hosted openings each wall carries, keyed by wall id. Supplied by an
+   * opened project; the workspace's own drawn walls have none, and a wall with
+   * no entry is drawn solid exactly as before.
+   */
+  readonly wallOpenings?: ReadonlyMap<string, readonly PlanOpeningInput[]>;
 }
 
 interface PanState {
@@ -202,6 +212,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     onPointerWorldPositionChange,
     onViewportPixelsPerUnitChange,
     wallDimensions,
+    wallOpenings,
   } = props;
 
   /**
@@ -358,7 +369,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         anchor: polygonCentroid(room.polygon),
         text: room.label,
       })),
-      ...walls.map((wall): PlanPrimitiveInput<string> => {
+      ...walls.flatMap((wall): PlanPrimitiveInput<string>[] => {
         /*
          * A wall with a known thickness is drawn as its footprint rather than
          * its centreline. The outline comes from the same `wallOutline` the 3D
@@ -367,13 +378,73 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
          * back to the centreline rather than dropping the wall from the plan.
          */
         const thicknessMm = wallDimensions?.get(wall.id)?.thicknessMm;
-        const outline =
-          thicknessMm === undefined || thicknessMm <= 0
-            ? null
-            : wallOutline({ start: wall.start, end: wall.end }, thicknessMm, 'centre', 1e-6);
-        return outline === null
-          ? { kind: 'line', elementId: wall.id, points: [wall.start, wall.end] }
-          : { kind: 'polygon', elementId: wall.id, points: outline };
+        if (thicknessMm === undefined || thicknessMm <= 0) {
+          return [{ kind: 'line', elementId: wall.id, points: [wall.start, wall.end] }];
+        }
+        const host = { start: wall.start, end: wall.end, thickness: thicknessMm };
+        const openings = wallOpenings?.get(wall.id) ?? [];
+        if (openings.length === 0) {
+          const outline = wallOutline(
+            { start: wall.start, end: wall.end },
+            thicknessMm,
+            'centre',
+            1e-6,
+          );
+          return outline === null
+            ? [{ kind: 'line', elementId: wall.id, points: [wall.start, wall.end] }]
+            : [{ kind: 'polygon', elementId: wall.id, points: outline }];
+        }
+
+        /*
+         * A wall with openings is drawn as the stretches that remain solid.
+         * Painting the whole wall and then covering each opening in the paper
+         * colour would look identical here and stop being a hole the moment
+         * anything is layered under it - a lid, not a gap - and it would print
+         * as a filled wall in a vector sheet.
+         *
+         * Every pier keeps the wall's own element id, so selecting any part of
+         * a wall still selects the wall rather than a fragment of it.
+         */
+        const primitives: PlanPrimitiveInput<string>[] = [];
+        for (const pier of wallPiers(host, openings)) {
+          const outline = wallOutline(pier, thicknessMm, 'centre', 1e-6);
+          if (outline !== null) {
+            primitives.push({ kind: 'polygon', elementId: wall.id, points: outline });
+          }
+        }
+        for (const opening of planOpeningsForWall(host, openings)) {
+          // The jambs close the poché where the wall stops. Without them the
+          // drawing shows two wall stubs and no evidence they are one wall.
+          for (const jamb of opening.jambs) {
+            primitives.push({
+              kind: 'line',
+              elementId: opening.id,
+              points: [jamb.start, jamb.end],
+            });
+          }
+          for (const glazing of opening.glazing) {
+            primitives.push({
+              kind: 'line',
+              elementId: opening.id,
+              points: [glazing.start, glazing.end],
+            });
+          }
+          if (opening.leaf !== null) {
+            primitives.push({
+              kind: 'line',
+              elementId: opening.id,
+              points: [opening.leaf.start, opening.leaf.end],
+            });
+          }
+          if (opening.swing !== null) {
+            primitives.push({
+              kind: 'line',
+              elementId: opening.id,
+              points: swingPolyline(opening.swing),
+            });
+          }
+        }
+        return primitives;
       }),
     ];
 
@@ -460,6 +531,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     marquee,
     palette,
     wallDimensions,
+    wallOpenings,
   ]);
 
   useEffect(() => {

@@ -313,6 +313,17 @@ async function run() {
     const planCanvas = page.locator('canvas').first();
     const groundFloorImage = await analyzeScreenshot(page, await planCanvas.screenshot());
     observed.groundFloorPlan = groundFloorImage;
+    /*
+     * The plan itself, saved as evidence rather than only measured. The
+     * workspace shot below is whatever tab the run ends on, which is 3D - so
+     * until this existed there was no capture of the surface most of the
+     * fixture work changes, and the ink counts were the only thing anyone could
+     * check the plan against.
+     */
+    writeFileSync(
+      path.join(repoRoot, 'benchmarks/results', 'native-open-plan.png'),
+      await planCanvas.screenshot(),
+    );
     // An empty plan is not near this number, it is at zero: the grid is drawn at
     // rgba(128,128,128,0.16) over white, which composites to about (223,223,223)
     // and so is never counted as ink. Anything in the thousands is drawn geometry.

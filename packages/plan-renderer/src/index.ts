@@ -5,6 +5,7 @@ export * from './selection-rendering';
 export * from './snap-glyph-rendering';
 export * from './visibility-state';
 export * from './room-label';
+export * from './plan-openings';
 export * from './sheet-viewport';
 export * from './benchmark-regression';
 export * from './canvas2d-paint';

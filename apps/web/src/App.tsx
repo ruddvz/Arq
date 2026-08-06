@@ -118,6 +118,7 @@ import {
 } from '@arq/project-loading';
 import type { WallSolidDimensions } from './ModelCanvas';
 import type { PlanRoom } from './canvas/canvas-interaction';
+import type { PlanOpeningInput } from '@arq/plan-renderer';
 
 /**
  * The walls of one level, in the shape the plan and 3D surfaces draw. The
@@ -158,6 +159,58 @@ function wallDimensionsForLevel(
     });
   }
   return dimensions;
+}
+
+/**
+ * The hosted openings each wall on a level carries, in the shape the plan
+ * surface draws.
+ *
+ * Keyed by wall rather than returned as a flat list because that is how an
+ * opening is positioned: its offset is measured along its host wall's
+ * centreline, so the wall has to be in hand before the opening means anything.
+ *
+ * The door's side, hand and swing come from the Door record and the window's
+ * side from the Window record, because the Opening itself is only the void -
+ * which is the same split the canonical model keeps, and the reason a door and
+ * a window hosted in identical openings still draw differently.
+ */
+function wallOpeningsForLevel(
+  document: NativeProjectDocument,
+  levelId: string,
+): ReadonlyMap<string, readonly PlanOpeningInput[]> {
+  const wallIds = new Set(wallsOnLevel(document, levelId).map((wall) => wall.id as string));
+  const doorsByOpening = new Map(
+    document.doors.map((door) => [door.openingId as string, door] as const),
+  );
+  const windowsByOpening = new Map(
+    document.windows.map((window) => [window.openingId as string, window] as const),
+  );
+
+  const byWall = new Map<string, PlanOpeningInput[]>();
+  for (const opening of document.openings) {
+    const hostId = opening.hostWallId as string;
+    // Openings are model-wide; only the ones hosted by a wall on the level
+    // being drawn belong on this drawing.
+    if (!wallIds.has(hostId)) continue;
+
+    const door = doorsByOpening.get(opening.id as string);
+    const window = windowsByOpening.get(opening.id as string);
+    const placed: PlanOpeningInput = {
+      id: opening.id as string,
+      kind: opening.kind,
+      offsetFromWallStart: opening.offsetFromWallStart.value,
+      width: opening.width.value,
+      ...(door === undefined
+        ? window === undefined
+          ? {}
+          : { side: window.side }
+        : { side: door.side, hand: door.hand, swingAngle: door.swingAngle }),
+    };
+    const existing = byWall.get(hostId);
+    if (existing === undefined) byWall.set(hostId, [placed]);
+    else existing.push(placed);
+  }
+  return byWall;
 }
 
 /**
@@ -354,6 +407,9 @@ export function App(): JSX.Element {
    */
   const [projectRooms, setProjectRooms] = useState<readonly PlanRoom[] | null>(null);
   /** Thickness and height per wall id for the level on show; empty with no project open. */
+  const [wallOpenings, setWallOpenings] = useState<
+    ReadonlyMap<string, readonly PlanOpeningInput[]>
+  >(() => new Map());
   const [wallDimensions, setWallDimensions] = useState<ReadonlyMap<string, WallSolidDimensions>>(
     new Map(),
   );
@@ -487,6 +543,11 @@ export function App(): JSX.Element {
       setWallDimensions(
         opened.snapshot.document !== null && initialLevelId !== null
           ? wallDimensionsForLevel(opened.snapshot.document, initialLevelId)
+          : new Map(),
+      );
+      setWallOpenings(
+        opened.snapshot.document !== null && initialLevelId !== null
+          ? wallOpeningsForLevel(opened.snapshot.document, initialLevelId)
           : new Map(),
       );
       wallIdCounterRef.current = highestWallIdSuffix(shown);
@@ -1186,6 +1247,7 @@ export function App(): JSX.Element {
         walls={drawnWalls}
         {...(projectRooms === null ? {} : { rooms: projectRooms })}
         wallDimensions={wallDimensions}
+        wallOpenings={wallOpenings}
         selection={modelSelection}
         onSelectElement={(elementId) =>
           setModelSelection({ primary: elementId, secondary: new Set() })
@@ -1370,6 +1432,9 @@ export function App(): JSX.Element {
                       setWallDimensions(
                         wallDimensionsForLevel(openNativeProject.project.model, levelId),
                       );
+                      setWallOpenings(
+                        wallOpeningsForLevel(openNativeProject.project.model, levelId),
+                      );
                       // The selection is a wall id, and a wall on another level
                       // is not on screen. Keeping it would leave the inspector
                       // describing something the reader cannot see.
@@ -1387,6 +1452,7 @@ export function App(): JSX.Element {
                       setActiveNativeLevelId(null);
                       setProjectRooms(null);
                       setWallDimensions(new Map());
+                      setWallOpenings(new Map());
                       setActiveWorkingCopyId(null);
                       setDrawnWalls([]);
                       drawnWallsRef.current = [];
