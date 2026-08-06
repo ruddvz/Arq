@@ -131,8 +131,8 @@ const ModelCanvas = lazy(async () => ({
 import {
   buildDemoWallAccessibleDescription,
   buildDemoWallInspectorGroups,
-  buildDrawnWallAccessibleDescription,
-  buildDrawnWallInspectorGroups,
+  buildDrawnWallSelectionAccessibleDescription,
+  buildDrawnWallSelectionInspectorGroups,
 } from './inspector-data';
 import { FileOpenPanel } from './file-handling/FileOpenPanel';
 
@@ -795,10 +795,25 @@ export function App(): JSX.Element {
     ];
   }, [drawnWalls, openNativeProject, activeNativeLevelId]);
 
-  const selectedDrawnWall = useMemo(
-    () => drawnWalls.find((wall) => wall.id === modelSelection.primary) ?? null,
-    [drawnWalls, modelSelection.primary],
-  );
+  /**
+   * Every selected drawn wall, not just the primary one.
+   *
+   * The inspector used to receive only the primary and describe it under a
+   * heading saying how many were selected, so a reader checking a length got an
+   * answer about a wall they had not asked about. The merge in
+   * buildDrawnWallSelectionInspectorGroups is what makes a disagreeing property
+   * read as "Multiple values" instead.
+   */
+  const selectedDrawnWalls = useMemo(() => {
+    const ids = [modelSelection.primary, ...modelSelection.secondary].filter(
+      (id): id is string => id !== null,
+    );
+    const byId = new Map(drawnWalls.map((wall) => [wall.id, wall]));
+    return ids
+      .map((id) => byId.get(id))
+      .filter((wall): wall is DrawnWall => wall !== undefined)
+      .map((wall) => ({ id: wall.id, lengthMm: wallLength(wall) }));
+  }, [drawnWalls, modelSelection]);
 
   /*
    * Undo/redo can remove the selected wall out from under the selection;
@@ -1190,7 +1205,7 @@ export function App(): JSX.Element {
             state={inspectorTabs}
             context={inspectorContext}
             commonTypeName={
-              selectedDrawnWall !== null
+              selectedDrawnWalls.length > 0
                 ? 'Wall (drawn)'
                 : isWallSelected
                   ? 'Interior Wall 100mm'
@@ -1208,21 +1223,15 @@ export function App(): JSX.Element {
               properties: (
                 <InspectorShell
                   groups={
-                    selectedDrawnWall !== null
-                      ? buildDrawnWallInspectorGroups(
-                          selectedDrawnWall.id,
-                          wallLength(selectedDrawnWall),
-                        )
+                    selectedDrawnWalls.length > 0
+                      ? buildDrawnWallSelectionInspectorGroups(selectedDrawnWalls)
                       : isWallSelected
                         ? buildDemoWallInspectorGroups()
                         : buildEmptyInspectorGroups()
                   }
                   selectedElementDescription={
-                    selectedDrawnWall !== null
-                      ? buildDrawnWallAccessibleDescription(
-                          selectedDrawnWall.id,
-                          wallLength(selectedDrawnWall),
-                        )
+                    selectedDrawnWalls.length > 0
+                      ? buildDrawnWallSelectionAccessibleDescription(selectedDrawnWalls)
                       : isWallSelected
                         ? buildDemoWallAccessibleDescription()
                         : null
@@ -1237,7 +1246,7 @@ export function App(): JSX.Element {
             activeToolId={toolState.activeToolId}
             selectionCount={selectionCount}
             actions={
-              selectedDrawnWall !== null
+              selectedDrawnWalls.length > 0
                 ? [
                     {
                       id: 'delete',

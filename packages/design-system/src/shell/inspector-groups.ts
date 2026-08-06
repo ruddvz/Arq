@@ -30,18 +30,39 @@
  */
 
 export type InspectorFieldStateKind =
-  'inherited' | 'overridden' | 'calculated' | 'imported' | 'missing' | 'invalid';
+  | 'inherited'
+  | 'overridden'
+  | 'calculated'
+  | 'imported'
+  | 'missing'
+  | 'invalid'
+  /**
+   * Several elements are selected and they do not agree on this property.
+   *
+   * Distinct from 'missing': the value exists on each element, they simply
+   * differ, and reporting one of them would describe the selection wrongly.
+   */
+  | 'mixed';
 
 export interface InspectorField {
   readonly key: string;
   readonly label: string;
   readonly kind: InspectorFieldStateKind;
-  /** null for 'missing' - there is no value to show. */
+  /** null for 'missing' and 'mixed' - there is no single value to show. */
   readonly displayValue: string | null;
   /** Set for 'inherited'/'overridden' (the source type) or 'imported' (the import origin). */
   readonly sourceLabel?: string;
   /** Set only for 'invalid' - "explain the valid range" (section 12). */
   readonly invalidReason?: string;
+  /**
+   * Overrides the editability that `kind` would otherwise imply.
+   *
+   * Set by `mergeInspectorFields`, which is the one place that knows something
+   * `kind` cannot express: a mixed field is editable only when every element
+   * behind it was. Without this a mixed row built from calculated values would
+   * offer an edit that has nowhere to go.
+   */
+  readonly editable?: boolean;
 }
 
 export const INSPECTOR_GROUP_IDS = [
@@ -103,7 +124,82 @@ export function hasOverrideMarker(field: InspectorField): boolean {
 
 /** Section 12: "calculated values are read-only"; "invalid fields remain editable." */
 export function isFieldEditable(field: InspectorField): boolean {
+  if (field.editable !== undefined) {
+    return field.editable;
+  }
   return field.kind !== 'calculated' && field.kind !== 'missing';
+}
+
+/**
+ * Collapse one element's worth of fields per selected element into the rows an
+ * inspector shows for the whole selection.
+ *
+ * The failure this fixes: with three walls selected the inspector showed the
+ * first one's id and length, under a heading that said three were selected. Not
+ * a display quirk - it named one element's measurements as the selection's, so
+ * a reader checking a length got an answer about a wall they had not asked
+ * about, with nothing on screen saying so.
+ *
+ * A property survives only if every element agrees on it, value and state
+ * alike. Anything else becomes 'mixed', which is deliberately not 'missing':
+ * the value exists on each element, they simply differ.
+ *
+ * A key that only some elements carry is also mixed. The elements that lack it
+ * disagree about it as surely as ones holding a different value do, and the
+ * alternative - showing the value from whichever elements happen to have it -
+ * is the original bug in miniature.
+ */
+export function mergeInspectorFields(
+  perElement: readonly (readonly InspectorField[])[],
+): readonly InspectorField[] {
+  const present = perElement.filter((fields) => fields.length > 0);
+  if (present.length === 0) {
+    return [];
+  }
+  if (present.length === 1) {
+    return present[0]!;
+  }
+
+  // Key order follows the first element, so a selection does not reorder rows
+  // relative to inspecting one of its members.
+  const orderedKeys: string[] = [];
+  const seen = new Set<string>();
+  for (const fields of present) {
+    for (const field of fields) {
+      if (!seen.has(field.key)) {
+        seen.add(field.key);
+        orderedKeys.push(field.key);
+      }
+    }
+  }
+
+  return orderedKeys.map((key) => {
+    const matches = present.map((fields) => fields.find((field) => field.key === key));
+    const found = matches.filter((field): field is InspectorField => field !== undefined);
+    const label = found[0]?.label ?? key;
+    const first = found[0]!;
+
+    const everyElementHasIt = found.length === present.length;
+    const agrees =
+      everyElementHasIt &&
+      found.every(
+        (field) => field.kind === first.kind && field.displayValue === first.displayValue,
+      );
+
+    if (agrees) {
+      return first;
+    }
+    return {
+      key,
+      label,
+      kind: 'mixed' as const,
+      displayValue: null,
+      // Editable only if every contributing element's own field was, so a mixed
+      // row built from calculated values does not offer an edit with nowhere to
+      // go.
+      editable: everyElementHasIt && found.every(isFieldEditable),
+    };
+  });
 }
 
 /**
@@ -125,5 +221,10 @@ export function describeFieldState(field: InspectorField): string {
       return 'Not set';
     case 'invalid':
       return field.invalidReason ?? 'Invalid value';
+    case 'mixed':
+      // Says what is true of the selection rather than of any one element, and
+      // avoids "varies" - a reader has to know whether the field is empty or
+      // simply not shared.
+      return 'Multiple values';
   }
 }
