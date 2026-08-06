@@ -339,3 +339,18 @@
     transition: transform var(--arq-motion-fast) var(--arq-ease-standard);
   }
 }
+
+/*
+ * A glyph keeps its own width.
+ *
+ * Icons sit in flex rows beside their labels, and a flex item's default
+ * `min-width: auto` lets it be crushed when the row is narrower than its
+ * content. In the 48px tool dock every tool icon measured 0 x 16 - present in
+ * the DOM, sized correctly in one axis, and invisible - which read as "the
+ * icons were never wired" and was in fact the layout squeezing them flat.
+ */
+.arq-tool-rail svg,
+.arq-mode-rail svg,
+.arq-shell-button svg {
+  flex-shrink: 0;
+}
