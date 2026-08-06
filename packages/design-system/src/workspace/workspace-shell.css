@@ -379,3 +379,47 @@
 .arq-shell-button svg {
   flex-shrink: 0;
 }
+
+/*
+ * The view's own title, in the corner of the drawing.
+ *
+ * A drawing without one is untitled: a reader who opens a project on the wrong
+ * level, or reads a 1:200 plan as 1:100, has nothing on screen telling them so.
+ * Positioned over the canvas rather than in a bar, because it belongs to the
+ * view and not to the window - and it is `pointer-events: none` so it never
+ * takes a click meant for the drawing beneath it.
+ */
+.arq-view-identity {
+  position: absolute;
+  top: var(--arq-space-compact);
+  /*
+   * Centred rather than pinned to the leading edge. The reference puts it at
+   * the sheet's top-left, which on that composition is clear of the panel
+   * beside it - here it landed underneath the floating Project panel and could
+   * not be read at all. The panel's width is state, not a token, so offsetting
+   * by it would be a number that goes stale the first time the panel resizes.
+   * The centre is clear of both panels at every width.
+   */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--arq-z-shell-raised);
+  display: flex;
+  align-items: baseline;
+  gap: var(--arq-space-compact);
+  padding: var(--arq-space-micro) var(--arq-space-panel);
+  border: 1px solid var(--arq-ui-line-subtle);
+  border-radius: 999px;
+  background: var(--arq-ui-paper);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+  pointer-events: none;
+}
+
+.arq-view-identity strong {
+  font: var(--arq-text-panel-title);
+}
+
+.arq-view-identity span {
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+  font-variant-numeric: tabular-nums;
+}

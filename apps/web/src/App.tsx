@@ -1357,6 +1357,61 @@ export function App(): JSX.Element {
     [projectName, tabs.tabs],
   );
 
+  /*
+   * The level actually on show, and the scale actually being drawn at.
+   *
+   * The status bar said "Level 1" whatever level was open - a constant written
+   * into a readout whose whole job is to say where the reader is. With the
+   * golden fixture open on its upper floor it was simply wrong.
+   *
+   * The scale is derived from the viewport rather than declared, and the
+   * derivation is worth writing out because it is easy to invert - the first
+   * version read "1:5" for a fourteen-metre house drawn across six hundred
+   * pixels, which is off by a factor of sixteen and looks plausible enough to
+   * ship.
+   *
+   * One CSS pixel is 25.4/96 mm of paper and covers 1/pixelsPerUnit mm of
+   * world. A drawing scale is paper to world, so the denominator is world over
+   * paper: (1 / pixelsPerUnit) / (25.4 / 96), which is 96 / (25.4 *
+   * pixelsPerUnit). The label moves when the reader zooms, which is the only
+   * way it can stay true.
+   */
+  const activeLevelName =
+    openNativeProject === null || activeNativeLevelId === null
+      ? null
+      : (openNativeProject.project.model.levels.find(
+          (level) => (level.id as string) === activeNativeLevelId,
+        )?.name ?? null);
+
+  const planScaleLabel =
+    pixelsPerUnit > 0 && Number.isFinite(pixelsPerUnit)
+      ? `1:${Math.round(96 / (25.4 * pixelsPerUnit))}`
+      : null;
+
+  /**
+   * The view's own identity, pinned to the corner of the drawing.
+   *
+   * The reference plans carry it and ours did not: which view this is, what
+   * kind of drawing it is, and at what scale. Without it the canvas is a
+   * drawing with no title - a reader who opens a project on the wrong level, or
+   * reads a 1:200 plan as 1:100, has nothing on screen telling them so.
+   *
+   * Every part of it is read from state rather than written down: the level
+   * comes from the open project, the scale from the viewport's own zoom. A
+   * hard-coded "1:100" would be exactly the kind of decoration this work has
+   * been removing.
+   */
+  const viewIdentity =
+    activeTab === null ? null : (
+      <div className="arq-view-identity">
+        <strong>{activeLevelName ?? activeTab.title}</strong>
+        <span>
+          {activeTab.kind === '3d' ? 'Model' : 'Plan'}
+          {planScaleLabel === null ? '' : ` \u00b7 ${planScaleLabel}`}
+        </span>
+      </div>
+    );
+
   const viewport =
     activeTab?.kind === '3d' ? (
       <Suspense
@@ -1387,31 +1442,34 @@ export function App(): JSX.Element {
         onOpenView={(viewId) => setTabs((state) => activateTab(state, viewId))}
       />
     ) : (
-      <PlanCanvas
-        activeToolId={toolState.activeToolId}
-        walls={drawnWalls}
-        {...(projectRooms === null ? {} : { rooms: projectRooms })}
-        wallDimensions={wallDimensions}
-        wallOpenings={wallOpenings}
-        onSceneBuilt={(scene) => {
-          planSceneRef.current = scene;
-        }}
-        selection={modelSelection}
-        onSelectElement={(elementId) =>
-          setModelSelection({ primary: elementId, secondary: new Set() })
-        }
-        onSelectMany={(elementIds) =>
-          setModelSelection({
-            primary: elementIds[0] ?? null,
-            secondary: new Set(elementIds.slice(1)),
-          })
-        }
-        onCommitWalls={handleCommitWallSegments}
-        onFitCompleted={() => handleActivateTool('select')}
-        onActiveSnapChange={setActiveSnapLabel}
-        onPointerWorldPositionChange={setCursorWorldPosition}
-        onViewportPixelsPerUnitChange={setPixelsPerUnit}
-      />
+      <div style={{ position: 'relative', height: '100%', minHeight: 0 }}>
+        {viewIdentity}
+        <PlanCanvas
+          activeToolId={toolState.activeToolId}
+          walls={drawnWalls}
+          {...(projectRooms === null ? {} : { rooms: projectRooms })}
+          wallDimensions={wallDimensions}
+          wallOpenings={wallOpenings}
+          onSceneBuilt={(scene) => {
+            planSceneRef.current = scene;
+          }}
+          selection={modelSelection}
+          onSelectElement={(elementId) =>
+            setModelSelection({ primary: elementId, secondary: new Set() })
+          }
+          onSelectMany={(elementIds) =>
+            setModelSelection({
+              primary: elementIds[0] ?? null,
+              secondary: new Set(elementIds.slice(1)),
+            })
+          }
+          onCommitWalls={handleCommitWallSegments}
+          onFitCompleted={() => handleActivateTool('select')}
+          onActiveSnapChange={setActiveSnapLabel}
+          onPointerWorldPositionChange={setCursorWorldPosition}
+          onViewportPixelsPerUnitChange={setPixelsPerUnit}
+        />
+      </div>
     );
 
   return (
@@ -1712,7 +1770,7 @@ export function App(): JSX.Element {
             cursorWorldPosition={cursorWorldPosition}
             activeSnapLabel={activeSnapLabel}
             selectionCount={selectionCount}
-            currentLevelName="Level 1"
+            currentLevelName={activeLevelName ?? 'Level 1'}
             pixelsPerUnit={pixelsPerUnit}
             modelHealth={modelHealth}
             localJournalStateLabel={journalLabel}
