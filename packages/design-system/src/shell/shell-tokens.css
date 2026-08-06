@@ -84,11 +84,53 @@
   --arq-ease-exit: cubic-bezier(0.4, 0, 1, 1);
 }
 
+/*
+ * ADR-0032: the dark appearance. Section 15's lock is superseded; its actual
+ * objection - "dark mode should not be shipped as an untested token inversion"
+ * - is honoured by designing these values for dark and measuring every pair
+ * the interface renders (appearance/dark-appearance.test.ts).
+ *
+ * Three things make this a design rather than an inversion:
+ *
+ * - The surface ramp reverses direction. In light, a raised surface is darker
+ *   than paper (#fff -> #ececec). In dark, a raised surface is lighter than
+ *   paper. An inversion would have produced the opposite and made raised
+ *   panels recede.
+ * - Paper is not black. Pure black behind 1px CAD linework produces halation,
+ *   and the strokes shimmer against it during pan and zoom.
+ * - Primary text is not pure white. `--arq-ui-ink` still is, because it is the
+ *   deliberate maximum used for the active tab rule and error text, but body
+ *   text sits below it: white-on-near-black over a long session is fatiguing,
+ *   which is the readability section 14 asks for.
+ *
+ * Scope is UI chrome only. The drawing surfaces keep their own colour model -
+ * a dark canvas is a separate decision with its own legibility and printing
+ * consequences, and ADR-0032 says so explicitly.
+ */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Section 15: "Locked for Release 1: light appearance only." No dark-mode
-       token set is approved yet - intentionally left unset rather than
-       guessing values, a documented gap like canvas2d-paint.ts's colour
-       fallback. */
+    --arq-ui-paper: #131517;
+    --arq-ui-surface-1: #191c1f;
+    --arq-ui-surface-2: #202428;
+    --arq-ui-surface-3: #282d31;
+    --arq-ui-line-subtle: #2e3439;
+    --arq-ui-line-default: #3f474d;
+    --arq-ui-line-strong: #79848a;
+    --arq-ui-text-muted: #939da3;
+    --arq-ui-text-secondary: #b6bfc5;
+    --arq-ui-text-primary: #e8edf0;
+    --arq-ui-ink: #ffffff;
+
+    /* A black scrim over already-dark content barely reads, so the dark
+       backdrop is heavier than the light one to do the same job: say "what is
+       behind this is inert". */
+    --arq-overlay-backdrop: rgb(0 0 0 / 60%);
+
+    /* Shadows carry almost no signal on a dark background - there is little
+       luminance left below the surface to darken. They are strengthened so a
+       floating layer still separates, and the material layer's border is what
+       actually does the work (see material.css). */
+    --arq-shadow-overlay: 0 8px 24px rgb(0 0 0 / 48%);
+    --arq-shadow-menu: 0 4px 16px rgb(0 0 0 / 56%);
   }
 }

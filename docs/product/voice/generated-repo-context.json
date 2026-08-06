@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "49f983ddfda3c49b06ebf653cf1fca5d113b1d60c65a5cd96c04958df5777a6b",
+  "sourceSetDigest": "c86444cba8568617fe71f9d24edd21788bb740edd75a6aa7d4ef0d5e661d2b11",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -23,7 +23,7 @@
       "id": "accepted-adrs",
       "kind": "directory",
       "path": "docs/adr",
-      "sha256": "e2bff6ad9d6a5741b9e9902877c718ddaea3db008d057f0a0101bbf57b46b8de",
+      "sha256": "ce3bf8585d52066d65a5bfad69392db2835c60ce8870a5c00302a55705b317cf",
       "files": [
         {
           "rel": "docs/adr/0000-adr-template.md",
@@ -179,6 +179,16 @@
           "rel": "docs/adr/0030-browser-working-copy-and-recovery-tiers.md",
           "sha256": "7db91ccb55d6bb5b6c2452f12e7db59f0c6227fabbb3b0113843e46076ef7046",
           "bytes": 5888
+        },
+        {
+          "rel": "docs/adr/0031-functional-material-layer.md",
+          "sha256": "ca8f9bc3f3b5cc28cd7cc89fb3e70604b44447342cb4e9bfd47e8662f962c59f",
+          "bytes": 4960
+        },
+        {
+          "rel": "docs/adr/0032-dark-appearance.md",
+          "sha256": "1ad8997bcf99a3eec4250315a04c8e731d8427e1fb80c089bcdea789ca796387",
+          "bytes": 4263
         }
       ]
     },

@@ -19,6 +19,7 @@
  * composition anyway.
  */
 @import '../shell/shell-controls.css';
+@import '../appearance/material.css';
 
 @media (pointer: fine) {
   .arq-tab-strip .arq-shell-button,
@@ -78,6 +79,11 @@
  * A floating panel is the one place a shadow is correct - it is above the
  * canvas rather than beside it, and without one its edge reads as a docked
  * separator. Reduced-motion users get the same shadow; it is depth, not motion.
+ *
+ * It also carries `arq-material` (ADR-0031): it is floating chrome over model
+ * content, which is exactly the case the material layer exists for. The docked
+ * panels deliberately do not - they share an edge with the canvas and are
+ * already separated by it.
  */
 .arq-workspace__overlay {
   box-shadow: 0 0 12px rgb(0 0 0 / 18%);

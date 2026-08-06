@@ -6,6 +6,7 @@
  */
 @import '../../tokens.css';
 @import '../../shell/shell-tokens.css';
+@import '../../appearance/material.css';
 
 .arq-context-hud {
   z-index: var(--arq-z-context-hud);
@@ -24,9 +25,9 @@
 
 .arq-context-hud__surface {
   padding: var(--arq-space-compact);
-  border: 1px solid var(--arq-ui-line-default);
+  /* Surface and border come from `arq-material` (ADR-0031), which also
+     supplies `contain: paint` to bound the blurred region. */
   border-radius: var(--arq-radius-menu);
-  background: var(--arq-ui-paper);
   color: var(--arq-ui-text-primary);
   box-shadow: var(--arq-shadow-menu);
   contain: layout paint;

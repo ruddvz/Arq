@@ -120,7 +120,7 @@ function OverlayPanel(props: {
   const { side, widthPx, label, onDismiss, children } = props;
   return (
     <div
-      className={`arq-workspace__overlay arq-workspace__overlay--${side}`}
+      className={`arq-workspace__overlay arq-workspace__overlay--${side} arq-material`}
       role={label === undefined ? undefined : 'dialog'}
       aria-label={label}
       /*
@@ -147,9 +147,12 @@ function OverlayPanel(props: {
         width: widthPx,
         maxWidth: '100%',
         zIndex: 2,
-        borderLeft: side === 'right' ? '1px solid var(--arq-ui-line-default)' : undefined,
-        borderRight: side === 'left' ? '1px solid var(--arq-ui-line-default)' : undefined,
-        background: 'var(--arq-ui-paper)',
+        /*
+         * Surface and border belong to `arq-material` (ADR-0031), not to this
+         * inline style. An inline background would win over the class and
+         * silently turn the material off, which is the specific way a material
+         * layer dies: not removed, just overridden one surface at a time.
+         */
         overflow: 'auto',
       }}
     >

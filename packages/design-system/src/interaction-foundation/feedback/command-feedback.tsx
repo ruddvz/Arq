@@ -39,7 +39,7 @@ export function CommandFeedbackRegion({
         {state.entries.map((entry) => (
           <motion.p
             key={entry.id}
-            className="arq-command-feedback__entry"
+            className="arq-command-feedback__entry arq-material"
             data-tone={entry.tone}
             initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}

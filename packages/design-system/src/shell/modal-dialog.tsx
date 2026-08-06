@@ -47,7 +47,7 @@ export function ArqModalDialog(props: ArqModalDialogProps): JSX.Element {
       className="arq-modal-overlay"
     >
       <Modal className="arq-modal">
-        <Dialog className="arq-dialog" {...dialogAria}>
+        <Dialog className="arq-dialog arq-material" {...dialogAria}>
           {children}
         </Dialog>
       </Modal>

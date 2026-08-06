@@ -6,6 +6,7 @@
  */
 @import '../tokens.css';
 @import './shell-tokens.css';
+@import '../appearance/material.css';
 
 .arq-modal-overlay {
   position: fixed;
@@ -29,9 +30,8 @@
   max-height: 90vh;
   overflow: auto;
   padding: var(--arq-space-panel);
-  border: 1px solid var(--arq-ui-line-default);
+  /* Surface and border come from `arq-material` (ADR-0031). */
   border-radius: var(--arq-radius-dialog);
-  background: var(--arq-ui-paper);
   color: var(--arq-ui-text-primary);
   box-shadow: var(--arq-shadow-overlay);
   outline: none; /* React Aria moves focus onto the dialog surface itself when it has no other focusable descendant; the surface is not itself an interactive control, so no visible focus ring is needed on it specifically - focus-visible on its actual interactive children still applies normally. */

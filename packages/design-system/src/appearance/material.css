@@ -1,0 +1,120 @@
+/*
+ * ADR-0031: the functional material layer.
+ *
+ * The only place `backdrop-filter` may appear in this repository. Blueprint
+ * section 14 still forbids decorative glass; what ADR-0031 permits is one
+ * bounded material that marks the boundary between floating chrome and the
+ * drawing underneath it, which is a question a flat surface answers less well
+ * in an edge-to-edge CAD workspace.
+ *
+ * Apply `.arq-material` to a floating control surface. Do not apply it to
+ * model content, to a docked panel (which already has an edge against the
+ * canvas), or to a full-viewport element.
+ */
+@import '../tokens.css';
+@import '../shell/shell-tokens.css';
+
+:root {
+  /* Tuned so the surface reads as chrome without the content behind it
+     becoming legible through it - a control you can read the model through is
+     worse than either a solid panel or no panel. */
+  --arq-material-tint: rgb(252 252 253 / 72%);
+  --arq-material-filter: saturate(180%) blur(20px);
+  --arq-material-border: rgb(0 0 0 / 10%);
+
+  /* The fallback is the real design, not a degradation: it is what every
+     reduced-transparency, increased-contrast and forced-colours configuration
+     renders, and it must lose no control and no information. */
+  --arq-material-opaque: var(--arq-ui-surface-1);
+  --arq-material-opaque-border: var(--arq-ui-line-default);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Not the light tint inverted. A dark material lightens what is behind it
+       rather than darkening it, so chrome still reads as being in front, and
+       the border carries more of the separation because shadows barely register
+       on a dark background. */
+    --arq-material-tint: rgb(32 36 40 / 76%);
+    --arq-material-border: rgb(255 255 255 / 12%);
+  }
+}
+
+.arq-material {
+  background: var(--arq-material-tint);
+  backdrop-filter: var(--arq-material-filter);
+  -webkit-backdrop-filter: var(--arq-material-filter);
+  border: 1px solid var(--arq-material-border);
+
+  /* Bounds the blurred region to this surface. Without it the compositor can
+     be asked to sample a far larger backdrop than the element occupies, which
+     is the cost ADR-0031 requires to stay proportional to visible area. */
+  contain: paint;
+}
+
+/*
+ * ADR-0031: never nested. Depth stops carrying meaning the moment it repeats,
+ * and a second backdrop-filter inside the first pays full GPU cost to produce
+ * an effect nobody can see - it samples a backdrop that is already blurred.
+ *
+ * Expressed as a descendant selector rather than a prop the child reads,
+ * because this way a nested surface cannot forget to ask.
+ */
+.arq-material .arq-material {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: var(--arq-ui-line-subtle);
+  contain: none;
+}
+
+/*
+ * The four fallbacks ADR-0031 makes mandatory. Each is a complete opaque
+ * surface, not a reduced one.
+ */
+
+/* The direct request. */
+@media (prefers-reduced-transparency: reduce) {
+  .arq-material,
+  .arq-material .arq-material {
+    background: var(--arq-material-opaque);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--arq-material-opaque-border);
+  }
+}
+
+/* A translucent surface lowers the contrast of everything drawn on it by
+   definition, which is the opposite of what was asked for. */
+@media (prefers-contrast: more) {
+  .arq-material,
+  .arq-material .arq-material {
+    background: var(--arq-material-opaque);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--arq-ui-line-strong);
+  }
+}
+
+/* The substitution replaces the tint anyway, so the blur would cost GPU to
+   produce nothing. A named system colour keeps the surface separated once the
+   product's own palette stops applying. */
+@media (forced-colors: active) {
+  .arq-material,
+  .arq-material .arq-material {
+    background: Canvas;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: CanvasText;
+  }
+}
+
+/* Browsers without the property would otherwise render the tint alone, which
+   is a translucent surface with nothing behind it resolved - the one genuinely
+   unreadable outcome. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .arq-material {
+    background: var(--arq-material-opaque);
+    border-color: var(--arq-material-opaque-border);
+  }
+}

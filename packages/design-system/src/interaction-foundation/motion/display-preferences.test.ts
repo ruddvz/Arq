@@ -3,6 +3,7 @@ import {
   DEFAULT_DISPLAY_PREFERENCES,
   NON_COLOUR_STATE_CUES,
   colourMayCarryMeaning,
+  materialMayUseTransparency,
   motionMayCarryMeaning,
   nonColourCuesFor,
   paletteModeFor,
@@ -127,11 +128,48 @@ describe('readDisplayPreferences', () => {
     expect(readDisplayPreferences(throwing)).toEqual(DEFAULT_DISPLAY_PREFERENCES);
   });
 
+  it('reads reduced transparency', () => {
+    expect(
+      readDisplayPreferences(matchMediaFor(['(prefers-reduced-transparency: reduce)']))
+        .transparency,
+    ).toBe('reduce');
+  });
+
   it('reads several preferences at once', () => {
     const read = readDisplayPreferences(
       matchMediaFor(['(forced-colors: active)', '(prefers-reduced-motion: reduce)']),
     );
 
-    expect(read).toEqual({ forcedColors: 'active', contrast: 'no-preference', motion: 'reduce' });
+    expect(read).toEqual({
+      forcedColors: 'active',
+      contrast: 'no-preference',
+      motion: 'reduce',
+      transparency: 'no-preference',
+    });
+  });
+});
+
+describe('materialMayUseTransparency', () => {
+  it('is false when the user asked for reduced transparency', () => {
+    expect(materialMayUseTransparency(preferences({ transparency: 'reduce' }))).toBe(false);
+  });
+
+  it('is false under forced colours', () => {
+    // The substitution replaces the tint anyway, so a blur there costs GPU and
+    // buys nothing.
+    expect(materialMayUseTransparency(preferences({ forcedColors: 'active' }))).toBe(false);
+  });
+
+  it('is false when more contrast was asked for', () => {
+    // A translucent surface lowers the contrast of everything drawn on it by
+    // definition - the opposite of the request.
+    expect(materialMayUseTransparency(preferences({ contrast: 'more' }))).toBe(false);
+  });
+
+  it('is true by default', () => {
+    // Permission from the accessibility axis only. Whether ARQ uses translucent
+    // material at all is decided by appearance-policy.ts, which currently says
+    // no - so a true here is not on its own permission to render glass.
+    expect(materialMayUseTransparency(DEFAULT_DISPLAY_PREFERENCES)).toBe(true);
   });
 });

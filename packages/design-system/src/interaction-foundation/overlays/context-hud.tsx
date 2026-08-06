@@ -84,7 +84,7 @@ export const ContextHud = forwardRef<ContextHudHandle, ContextHudProps>(function
           }}
         >
           <motion.div
-            className="arq-context-hud__surface"
+            className="arq-context-hud__surface arq-material"
             role="group"
             aria-label={label}
             data-testid={testId}

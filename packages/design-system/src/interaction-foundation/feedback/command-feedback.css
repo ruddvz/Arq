@@ -1,6 +1,7 @@
 /* W135 ToastRegion surface - tokens only. Top presentation tier. */
 @import '../../tokens.css';
 @import '../../shell/shell-tokens.css';
+@import '../../appearance/material.css';
 
 .arq-command-feedback {
   position: fixed;
@@ -20,9 +21,8 @@
   align-items: baseline;
   margin: 0;
   padding: var(--arq-space-compact) var(--arq-space-control-group);
-  border: 1px solid var(--arq-ui-line-default);
+  /* Surface and border come from `arq-material` (ADR-0031). */
   border-radius: var(--arq-radius-menu);
-  background: var(--arq-ui-paper);
   color: var(--arq-ui-text-primary);
   box-shadow: var(--arq-shadow-menu);
   pointer-events: auto;
