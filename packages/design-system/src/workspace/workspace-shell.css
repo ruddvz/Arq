@@ -123,9 +123,34 @@
    * a full-width card. It shrinks to its content and sits at the leading edge,
    * which is also what stops it competing with the drawing above it.
    */
+  /*
+   * The status strip is the quietest thing in the workspace and reads as a
+   * floating pill rather than a bar welded to the window edge. It shrinks to
+   * its content, which is also what stops it competing with the drawing above
+   * it - a full-bleed band at the bottom of the screen reads as a second piece
+   * of structure, and the reference composition has none there.
+   */
   .arq-workspace__bar--status {
     align-self: flex-start;
     min-width: 0;
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+  }
+
+  /*
+   * The pill is the inner panel, not the slot around it. The slot is a layout
+   * row that stretches to the shell's width by definition, so rounding it did
+   * nothing visible - the element a reader actually sees is `.arq-status-bar`
+   * inside it, and that is what has to shrink.
+   */
+  .arq-workspace__bar--status > .arq-status-bar {
+    width: fit-content;
+    max-width: 100%;
+    padding-inline: var(--arq-space-panel);
+    border-radius: 999px;
+    border: 1px solid var(--arq-ui-line-subtle);
+    background: var(--arq-ui-paper);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
   }
 }
 
