@@ -83,12 +83,19 @@ export function deliverPublishedCopy(
   bytes: Uint8Array,
   fileName: string,
   environment: CopyDeliveryEnvironment,
+  /**
+   * Defaults to the `.arq` type this was written for. Passed explicitly by the
+   * sheet exporter, which hands over a PDF - one delivery seam rather than two,
+   * because the hard part here is the atomic hand-over and that is identical
+   * whatever the bytes mean.
+   */
+  mimeType = 'application/vnd.arq.project',
 ): CopyDeliveryResult {
   // Copied into a fresh buffer: the incoming view may be backed by a shared or
   // transferable ArrayBuffer, and a Blob built over a buffer that is later
   // reused or detached is the one way this step could hand over bytes that are
   // not the ones that were verified.
-  const blob = new Blob([new Uint8Array(bytes)], { type: 'application/vnd.arq.project' });
+  const blob = new Blob([new Uint8Array(bytes)], { type: mimeType });
   let url: string;
   try {
     url = environment.createObjectUrl(blob);

@@ -118,7 +118,8 @@ import {
 } from '@arq/project-loading';
 import type { WallSolidDimensions } from './ModelCanvas';
 import type { PlanRoom } from './canvas/canvas-interaction';
-import { roomLabelText, type PlanOpeningInput } from '@arq/plan-renderer';
+import { roomLabelText, type PlanOpeningInput, type PlanScene } from '@arq/plan-renderer';
+import { exportPlanSheet, PAPER_SIZES } from './sheets/sheet-export';
 import type { ModelOpeningSpan } from './ModelCanvas';
 
 /**
@@ -373,6 +374,16 @@ const COMMAND_ENTRIES: readonly Omit<CommandPaletteEntry, 'shortcutLabel'>[] = [
    * and one that would refuse the moment it started.
    */
   { id: 'save-a-copy', label: 'Save a copy', category: 'File', synonyms: ['export', 'download'] },
+  /*
+   * Vector sheet export. Like `save-a-copy`, its availability is state rather
+   * than a constant: there has to be something on the plan to put on a sheet.
+   */
+  {
+    id: 'export-sheet-pdf',
+    label: 'Export sheet as PDF',
+    category: 'File',
+    synonyms: ['sheet', 'print', 'plot'],
+  },
 ];
 
 /*
@@ -805,6 +816,19 @@ export function App(): JSX.Element {
     null,
   );
   const [savingCopy, setSavingCopy] = useState(false);
+  const [exportingSheet, setExportingSheet] = useState(false);
+  /**
+   * The plan scene the canvas last built, so a sheet exports the drawing on
+   * screen rather than a second projection of the same model that could
+   * disagree with it. A ref because nothing renders from it.
+   */
+  const planSceneRef = useRef<{
+    readonly primitives: PlanScene<string>['primitives'];
+    readonly bounds: {
+      readonly min: { readonly x: number; readonly y: number };
+      readonly max: { readonly x: number; readonly y: number };
+    };
+  } | null>(null);
 
   /**
    * Publishes the open project to a verified portable file and hands it over.
@@ -853,6 +877,66 @@ export function App(): JSX.Element {
       setSavingCopy(false);
     }
   }, [savingCopy]);
+
+  /**
+   * Exports what is on the plan as a vector PDF sheet.
+   *
+   * The scene comes from the canvas rather than being rebuilt here, so the
+   * sheet carries exactly the drawing on screen - the same walls, poché,
+   * openings and labels - instead of a second projection that could disagree
+   * with it. The export's real limits travel with the result and are shown, not
+   * logged: a PDF that quietly substitutes a font and flattens line weights
+   * looks finished, and a user discovers otherwise at the printer.
+   */
+  const handleExportSheet = useCallback(async (): Promise<void> => {
+    const scene = planSceneRef.current;
+    if (scene === null || scene.primitives.length === 0 || exportingSheet) return;
+
+    setExportingSheet(true);
+    try {
+      const active = tabs.tabs.find((tab) => tab.id === tabs.activeId);
+      const result = await exportPlanSheet({
+        scene: { primitives: scene.primitives },
+        projectName,
+        sheetNumber: 'A101',
+        sheetTitle: active?.title ?? 'Plan',
+        paper: PAPER_SIZES.A1,
+        scaleDenominator: 100,
+        contentBounds: scene.bounds,
+      });
+      const delivered = deliverPublishedCopy(
+        result.bytes,
+        result.fileName,
+        browserCopyDelivery(document),
+        'application/pdf',
+      );
+      if (delivered.status === 'failed') {
+        feedbackStoreRef.current.publish('error', 'No sheet was exported.', Date.now());
+        setPublicationNotice({
+          headline: 'No sheet was exported.',
+          detail: `The sheet was written but this browser did not accept the download. (${delivered.detail})`,
+          tone: 'error',
+        });
+        return;
+      }
+      feedbackStoreRef.current.publish('success', `Exported ${result.fileName}.`, Date.now());
+      setPublicationNotice({
+        headline: `Exported ${result.fileName}.`,
+        detail: `This sheet is vector linework, not a screenshot. What it does not do yet: ${result.limitations.join(' ')}`,
+        tone: 'success',
+      });
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      feedbackStoreRef.current.publish('error', 'No sheet was exported.', Date.now());
+      setPublicationNotice({
+        headline: 'No sheet was exported.',
+        detail: `The sheet could not be written. (${detail})`,
+        tone: 'error',
+      });
+    } finally {
+      setExportingSheet(false);
+    }
+  }, [exportingSheet, projectName, tabs]);
 
   /*
    * §4.3 gate on the one committing edit this build has: a finished wall
@@ -1193,6 +1277,13 @@ export function App(): JSX.Element {
    * the rule the tool rail already follows - a command that vanishes teaches a
    * user it was never there.
    */
+  const exportSheetDisabledReason =
+    projectRooms === null && drawnWalls.length === 0
+      ? 'Draw something or open a project to export a sheet'
+      : exportingSheet
+        ? 'Exporting a sheet'
+        : undefined;
+
   const saveCopyDisabledReason =
     openNativeProject === null
       ? 'Open a project file to save a copy of it'
@@ -1205,11 +1296,15 @@ export function App(): JSX.Element {
       COMMAND_ENTRIES.map((entry) => {
         const label = shortcutLabel(entry.id, shortcutDialect);
         const withShortcut = label === null ? entry : { ...entry, shortcutLabel: label };
-        return entry.id === 'save-a-copy' && saveCopyDisabledReason !== undefined
-          ? { ...withShortcut, disabledReason: saveCopyDisabledReason }
-          : withShortcut;
+        if (entry.id === 'save-a-copy' && saveCopyDisabledReason !== undefined) {
+          return { ...withShortcut, disabledReason: saveCopyDisabledReason };
+        }
+        if (entry.id === 'export-sheet-pdf' && exportSheetDisabledReason !== undefined) {
+          return { ...withShortcut, disabledReason: exportSheetDisabledReason };
+        }
+        return withShortcut;
       }),
-    [shortcutDialect, saveCopyDisabledReason],
+    [shortcutDialect, saveCopyDisabledReason, exportSheetDisabledReason],
   );
 
   const activeToolLabel = useMemo(() => {
@@ -1278,6 +1373,9 @@ export function App(): JSX.Element {
         {...(projectRooms === null ? {} : { rooms: projectRooms })}
         wallDimensions={wallDimensions}
         wallOpenings={wallOpenings}
+        onSceneBuilt={(scene) => {
+          planSceneRef.current = scene;
+        }}
         selection={modelSelection}
         onSelectElement={(elementId) =>
           setModelSelection({ primary: elementId, secondary: new Set() })
@@ -1629,6 +1727,10 @@ export function App(): JSX.Element {
                 if (active?.closeable === true) {
                   setTabs((state) => closeTab(state, active.id));
                 }
+              } else if (entry.id === 'export-sheet-pdf') {
+                void handleExportSheet();
+                setCommandPaletteOpen(false);
+                return;
               } else if (entry.id === 'save-a-copy') {
                 // Returns before `recordDemoAction`: saving a copy reads the
                 // project and does not change it, and journalling a note here

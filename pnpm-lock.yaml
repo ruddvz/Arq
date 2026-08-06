@@ -85,6 +85,9 @@ importers:
       '@arq/operations':
         specifier: workspace:*
         version: link:../../packages/operations
+      '@arq/pdf-export':
+        specifier: workspace:*
+        version: link:../../packages/pdf-export
       '@arq/plan-renderer':
         specifier: workspace:*
         version: link:../../packages/plan-renderer

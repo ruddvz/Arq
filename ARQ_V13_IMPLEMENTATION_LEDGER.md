@@ -231,10 +231,46 @@ is editable. **Remaining:** recovery comparison surface.
 
 ### 12. Sheets and vector PDF
 
-**State:** not-started (V12 row 13)
-**Note:** `packages/pdf-export` and `sheet-viewport.ts` exist and are unwired -
-the same built-and-never-wired pattern that has accounted for most of this
-work's findings.
+**State:** implemented (single-sheet plan export), not-started (sheet set,
+title blocks, page settings)
+**Owner:** `apps/web/src/sheets/sheet-export.ts`,
+`packages/pdf-export/src/pdf-sheet-export.ts`,
+`packages/plan-renderer/src/sheet-viewport.ts`
+
+**Done.** `Export sheet as PDF` produces a real vector sheet from the drawing on
+screen. Every piece already existed and none was reachable: `buildPlanViewport`
+projects a plan scene into paper space, `exportSheetToPdf` writes PDF vector
+operators, `applySheetExportMetadata` stamps the document. This slice is the
+orchestration between them, plus the place the export's limits are written down.
+
+- The scene comes from the canvas rather than being rebuilt, so the sheet
+  carries exactly what is on screen. Two projections would eventually disagree,
+  and the sheet is the one nobody can check against the screen once printed.
+- Scale is honoured, not fitted to page. A drawing issued at 1:100 must measure
+  1:100 under a rule, so a model too large for the paper overflows rather than
+  being quietly shrunk - silently rescaling turns a sheet into a lie about its
+  own dimensions.
+- The model is centred on the paper, so a project authored a kilometre from the
+  origin does not export a blank page.
+- Delivery reuses the publication hand-over seam with a different media type
+  rather than adding a second download path.
+
+**Truthfully reported, not implied.** The exporter is a documented prototype:
+Helvetica rather than the Arq typeface, one flat line weight, no title block.
+Those four limits travel with the file and are shown when it downloads, because
+a PDF that quietly substitutes a font and flattens line weights looks finished
+and is discovered otherwise at the printer.
+
+**Evidence:** 7 focused tests. Driven end to end in headless Chromium against
+the golden fixture: the command produced `A101 Level 1 Plan.pdf`, 9,775 bytes,
+`%PDF-` header, **2,200 vector path operators and no image XObject, DCTDecode or
+JPXDecode** - so the vector claim is measured, not asserted. Document metadata
+verified present (`/Title`, `/Subject`) as UTF-16 in a compressed object stream.
+
+**Remaining:** sheet sets, title blocks, north point, scale bar, page settings,
+crop, and per-element line weights on the sheet.
+**Rollback:** the command entry and handler are additive; the shared delivery
+seam keeps its previous default media type.
 
 ### 13. Dark and accessibility fallbacks
 

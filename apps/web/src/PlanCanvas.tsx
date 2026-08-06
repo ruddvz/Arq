@@ -46,6 +46,7 @@ import {
   wallPiers,
   type PlanOpeningInput,
   roomLabelFits,
+  type PlanScene,
 } from '@arq/plan-renderer';
 import {
   GRID_SPACING_MM,
@@ -206,6 +207,20 @@ export interface PlanCanvasProps {
    * no entry is drawn solid exactly as before.
    */
   readonly wallOpenings?: ReadonlyMap<string, readonly PlanOpeningInput[]>;
+  /**
+   * Reports the scene the canvas just built, with the model-space box it
+   * occupies. Exists so a sheet exports the drawing that is actually on screen
+   * rather than a second projection of the same model - two projections would
+   * eventually disagree, and the sheet is the one nobody can check against the
+   * screen once it is printed.
+   */
+  readonly onSceneBuilt?: (scene: {
+    readonly primitives: PlanScene<string>['primitives'];
+    readonly bounds: {
+      readonly min: { readonly x: number; readonly y: number };
+      readonly max: { readonly x: number; readonly y: number };
+    };
+  }) => void;
 }
 
 interface PanState {
@@ -236,6 +251,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     onViewportPixelsPerUnitChange,
     wallDimensions,
     wallOpenings,
+    onSceneBuilt,
   } = props;
 
   /**
@@ -564,6 +580,9 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     paintPlanScene(ctx, currentViewport, devicePixelRatio, painted, palette);
+    // Reported after painting, so what a caller receives is what was drawn -
+    // not a scene that was built and then discarded by a later guard.
+    onSceneBuilt?.({ primitives: scene.primitives, bounds: contentBounds(content) });
 
     // The marquee is view furniture like the grid: CAD convention, solid
     // edge for a window (left-to-right) drag, dashed for crossing.
@@ -595,6 +614,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     palette,
     wallDimensions,
     wallOpenings,
+    onSceneBuilt,
   ]);
 
   useEffect(() => {
