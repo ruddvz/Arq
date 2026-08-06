@@ -187,6 +187,19 @@ solid exactly as before.
 ### 8. Regular and compact iPad
 
 **State:** partial (V12 row 9)
+**Measured, not asserted:** `run-responsive-capture.mjs` records the band the
+product itself resolves at each viewport. A 1366x1024 iPad resolves to
+`desktop`, not to a tablet band, because `resolveWorkspacePlatform` only treats
+a coarse pointer as a tablet below 1280px. It gets touch sizing from the
+`pointer: coarse` rules and the desktop composition. That is a threshold
+decision for the owner, not a defect this change should silently move.
+
+| Viewport | Band resolved | Canvas | Fixture opens | Overflow |
+| --- | --- | --- | --- | --- |
+| 1600x1000 | `desktop` | 1380x776 | yes | none |
+| 1366x1024 | `desktop` | 1180x847 | yes | none |
+| 1024x768 | `tablet-landscape` | 1008x572 | yes | none |
+| 430x932 | `phone` | 414x740 | yes | none |
 
 ### 9. Phone review, selection and measure
 
@@ -221,7 +234,37 @@ dark appearance with measured contrast.
 
 ### 14. Performance, hostile input, visual regression and preview verification
 
-**State:** blocked
+**State:** partial for capture, blocked for preview
+
+**Done:** `scripts/run-responsive-capture.mjs` captures the running product at
+all four required viewport classes with the golden fixture opened through the
+real dialog. Each capture is a real browser laid out at that size with the
+pointer type that band really has - a tablet and a phone report a coarse
+pointer, and capturing them with a mouse would resolve a band no such device
+resolves, which is the scaled-desktop failure in a subtler form. Nothing is
+scaled, reused between sizes, or shown in a device frame.
+
+Each viewport also asserts in-page the three things Version 13 rejects: no
+"demo fixture" string, no "Fixture wall" string, no horizontal overflow. All
+four pass, and all four open the fixture.
+
+`data-workspace-platform` was added to the workspace root so the band is
+observable rather than parsed out of a class name or - worse - assumed from the
+viewport that was asked for, which is exactly how a desktop composition gets
+recorded as phone evidence.
+
+**Harness defect caught and repaired in this run:** the first version waited for
+"revision 191", which only the desktop project panel renders, and reported "the
+fixture did not open" on iPad-compact and phone while the same run recorded the
+project name on screen. A harness assumption about one band's chrome, nearly
+published as a product failure on another - the same shape as the earlier
+"Open" label mistake.
+
+**Visible in the phone capture and still open:** room labels collide at small
+scales. Recorded under slice 6's remaining work.
+
+**Blocked, unchanged and external:** no CI run exists for this PR, and no
+preview exists for `apps/web`.
 **Blockers:** both external and unchanged from Version 12.
 1. **GitHub Actions has produced no run** for this PR across every push.
 2. **No preview exists for `apps/web`.** Vercel builds `arq-website` only, so

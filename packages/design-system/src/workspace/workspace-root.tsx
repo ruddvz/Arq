@@ -321,6 +321,14 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
     <div
       className={`arq-workspace arq-workspace--${platform}`}
       data-workspace-mode={activeMode}
+      /*
+       * The band the workspace actually resolved, stated rather than inferred.
+       * It was only ever in the class name, so a responsive check had to parse
+       * `arq-workspace--phone` out of a string, or - worse - assume the band
+       * from the viewport it asked for, which is how a desktop composition
+       * captured at phone width gets recorded as phone evidence.
+       */
+      data-workspace-platform={platform}
       data-workspace-open-state={project.openState}
       style={{
         display: 'flex',
