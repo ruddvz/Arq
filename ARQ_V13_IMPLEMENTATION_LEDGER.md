@@ -376,6 +376,37 @@ preview exists for `apps/web`.
    the delivery stop's verified preview has nothing to verify for the code being
    changed.
 
+## Mockup reconciliation
+
+The mockup package (`ARQ_MOCKUPS_V12_V13_ONLY`) was read in full - 24 images.
+The consistent editorial set is the **Version 12 individual screens** plus the
+Version 13 desktop-core board: light appearance, the real product, the real
+Courtyard House fixture at revision 191. The Version 13 iPad board is a
+different product entirely ("Nebula Research Initiative", a document app) and
+the Version 13 phone and workflow boards are dark marketing renders of other
+projects. Those were not implemented against.
+
+Taken from the reference and shipped: the Inspector following selection, the
+mode rail as a 56px dock, the drawing on a sheet, room tints by category, the
+project bar as glyphs, the status strip as a pill, and the view's own title.
+
+**One conflict was refused, and this is the record of it.** The reference
+composition merges save state and sync state into a single "Local current" chip
+with a green dot. `top-bar.tsx` carries the opposite as an invariant - "save and
+sync must be separate concepts, two independent indicators, never merged, even
+when both collapse together" - and this build depends on it being true: sync is
+`not-configured` because no sync backend exists, while save is real and
+journalled to IndexedDB. A single green chip reading "Local current" tells a
+user their work is somewhere other than this device. It is not. The mockup is
+right about the visual weight and wrong about the merge, so the two indicators
+stay two.
+
+**One is an owner decision, not a design one.** The reference status strip
+carries two fields; ours carries nine. The pill shape is in, but which of the
+nine earn permanent space at the bottom of the screen is a product call - and
+two of them, the working-copy statement and the sync state, exist specifically
+so the product never implies a save it has not made.
+
 ## Standing blockers
 
 Neither clears by implementing more; both are owner actions. Recorded here so no
