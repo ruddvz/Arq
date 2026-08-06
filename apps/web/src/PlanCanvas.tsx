@@ -344,6 +344,12 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
    * near-black surface. Re-read whenever the appearance changes.
    */
   const [palette, setPalette] = useState<PlanPalette>(DEFAULT_PLAN_PALETTE);
+  /**
+   * The family the shell is set in, read from the same token the chrome uses.
+   * A plan whose labels are `sans-serif` while the panel beside it is Plus
+   * Jakarta Sans reads as two applications sharing a window.
+   */
+  const [planTextFamily, setPlanTextFamily] = useState('sans-serif');
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -369,6 +375,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
           ROOM_TINTS.map((tint) => [tint, value(`--arq-plan-${tint}`, 'transparent')]),
         ),
       });
+      setPlanTextFamily(value('--arq-font-ui', 'sans-serif'));
     };
     read();
     const scheme = window.matchMedia('(prefers-color-scheme: dark)');
@@ -470,6 +477,34 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       ctx.restore();
     }
 
+    // The thickest wall on the level, so a room label is measured against the
+    // space it can actually occupy. Zero when nothing declares a thickness,
+    // which leaves the test exactly as it was.
+    const maxWallThicknessMm =
+      wallDimensions === undefined
+        ? 0
+        : [...wallDimensions.values()].reduce((max, entry) => Math.max(max, entry.thicknessMm), 0);
+
+    /*
+     * The text state is set before anything is measured, not after everything
+     * is drawn.
+     *
+     * It used to be assigned immediately before `paintPlanScene`, three hundred
+     * lines after `measureText` was called to decide whether a room label fits.
+     * So the fit test measured in whatever font the context happened to be
+     * carrying - the browser default 10px on the first frame - and the labels
+     * were then drawn at 12px. Every label was measured about twenty per cent
+     * narrower than it renders, which is why "Linen" and "Guest ensuite" passed
+     * the fit and then crossed the wall between them.
+     *
+     * The family is the shell's own, resolved from the token rather than left
+     * as `sans-serif`: a plan whose labels are set in a different typeface from
+     * the panel beside it looks like two applications.
+     */
+    ctx.font = `${ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio}px ${planTextFamily}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
     const inputs: PlanPrimitiveInput<string>[] = [
       ...rooms.map((room): PlanPrimitiveInput<string> => ({
         kind: 'polygon',
@@ -495,13 +530,29 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         const anchor = polygonCentroid(room.polygon);
         const lines = room.label.split('\n');
         const widestLinePx = Math.max(...lines.map((line) => ctx.measureText(line).width));
+        /*
+         * Measured against the room's *clear* area, not its boundary.
+         *
+         * A room's calculated boundary runs to the wall centrelines, so half a
+         * wall's thickness at each edge is inside the polygon and underneath
+         * poché. A label sized to the polygon therefore fits arithmetically and
+         * still crosses the wall - which is exactly what "Linen 2.3 m2" and
+         * "Guest ensuite 3.4 m2" were doing, each straddling the wall between
+         * them. Insetting by the thickest wall on the level is conservative and
+         * needs no per-room lookup.
+         */
         const extent = polygonExtentPx(room.polygon, currentViewport);
+        const insetPx = maxWallThicknessMm * currentViewport.pixelsPerUnit;
+        const clear = {
+          width: extent.width - insetPx,
+          height: extent.height - insetPx,
+        };
         if (
           !roomLabelFits({
             labelWidthPx: widestLinePx,
             labelHeightPx: lines.length * ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio,
-            roomWidthPx: extent.width,
-            roomHeightPx: extent.height,
+            roomWidthPx: clear.width,
+            roomHeightPx: clear.height,
           })
         ) {
           return [];
@@ -650,9 +701,6 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       painted = { primitives: [...painted.primitives, glyph.marker, glyph.label] };
     }
 
-    ctx.font = `${12 * devicePixelRatio}px sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
     paintPlanScene(ctx, currentViewport, devicePixelRatio, painted, palette);
     // Reported after painting, so what a caller receives is what was drawn -
     // not a scene that was built and then discarded by a later guard.
@@ -686,6 +734,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     hoveredId,
     marquee,
     palette,
+    planTextFamily,
     wallDimensions,
     wallOpenings,
     onSceneBuilt,

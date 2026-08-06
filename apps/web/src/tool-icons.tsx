@@ -208,5 +208,6 @@ export const TOP_BAR_ACTION_ICONS: Readonly<Record<string, ReactNode>> = {
   redo: <RotateIcon width={18} height={18} />,
   'command-search': <InspectIcon width={18} height={18} />,
   open: <ArqArchiveIcon width={18} height={18} />,
+  account: <GroupReviewIcon width={18} height={18} />,
   share: <ExportIcon width={18} height={18} />,
 };

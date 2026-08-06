@@ -76,6 +76,18 @@ describe('roomLabelFits', () => {
     ).toBe(true);
   });
 
+  it('suppresses a label that only just fits, because only just reads as crossing the wall', () => {
+    // 100 wide in a 120-wide room clears by ten pixels a side and looks wedged.
+    expect(
+      roomLabelFits({ labelWidthPx: 100, labelHeightPx: 20, roomWidthPx: 120, roomHeightPx: 200 }),
+    ).toBe(false);
+    // Half the label's own width of clear space is the point where it reads as
+    // being in the room rather than filling it.
+    expect(
+      roomLabelFits({ labelWidthPx: 100, labelHeightPx: 20, roomWidthPx: 150, roomHeightPx: 200 }),
+    ).toBe(true);
+  });
+
   it('suppresses a label wider than the room it names', () => {
     // The golden fixture's galleries on a phone: a few millimetres of room and
     // a label wider than all of it. Three overlapped into an unreadable smear

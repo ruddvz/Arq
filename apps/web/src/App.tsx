@@ -1376,6 +1376,12 @@ export function App(): JSX.Element {
    * pixelsPerUnit). The label moves when the reader zooms, which is the only
    * way it can stay true.
    */
+  /** What this project is, for under its name in the bar: revision and units. */
+  const projectSubtitle =
+    openNativeProject === null
+      ? null
+      : `Revision ${openNativeProject.project.model.summary.revision} \u00b7 ${openNativeProject.project.model.summary.units}`;
+
   const activeLevelName =
     openNativeProject === null || activeNativeLevelId === null
       ? null
@@ -1568,6 +1574,7 @@ export function App(): JSX.Element {
             onOpenCommandPalette={() => setCommandPaletteOpen(true)}
             onOpenAccountMenu={() => recordDemoAction('open account menu')}
             actionIcons={TOP_BAR_ACTION_ICONS}
+            {...(projectSubtitle === null ? {} : { projectSubtitle })}
           />
         }
         tabStrip={

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { DoorIcon, PlanIcon, Model3dIcon, RoomIcon, WallIcon, WindowIcon } from '@arq/icons';
 import { nativeProjectNotices, type OpenNativeProject } from './native-project-view';
 
 export interface NativeProjectPanelProps {
@@ -8,120 +9,139 @@ export interface NativeProjectPanelProps {
   readonly activeLevelId: string;
   readonly onShowLevel: (levelId: string) => void;
   readonly onCloseProject: () => void;
-  /** The model tree, rendered below the project header. */
+  /** The model tree, rendered below the project summary. */
   readonly children: ReactNode;
 }
 
 /**
- * The header of the project browser's Project section when a native `.arq`
- * project is open: what is open, which revision, where a change to it would go, which
- * level is on show, what the file contains that is not being drawn, and how to
- * close it.
+ * What is in the open project, as a list you can scan.
  *
- * It exists because every one of those is a question a reader will otherwise
- * answer wrongly. A workspace that shows 37 walls of a 79-wall project with no
- * level control looks like a project with 37 walls; one that silently omits 14
- * doors looks like a project with no doors; and a read-only project with no
- * visible close has no way back to the workspace's own plan.
+ * This was four paragraphs of prose: the project name, the file name with its
+ * revision and units, a sentence about where changes go, a set of level buttons
+ * each carrying two counts in a second line, a disclosure, and a button - and
+ * then, beneath all of that, a flat list repeating "Exterior 250 mm · 12000 mm
+ * Wall" once per wall. A reader looking for the upper floor had to read an essay
+ * to find it.
+ *
+ * The reference composition is a directory: three headed groups, one row each,
+ * counts right-aligned, and nothing else. That is what this is now.
+ *
+ * Nothing true was dropped to get there, and that distinction matters:
+ *
+ * - The project's name, revision and units moved to the project bar, which is
+ *   where the reference puts them and where they are read once rather than
+ *   scanned past repeatedly.
+ * - "Changes are kept in a local working copy on this device" was *already* in
+ *   the status bar, word for word in substance. Removing the second copy is a
+ *   de-duplication, not a deletion, and the guarantee that the product never
+ *   implies a save it has not made is untouched.
+ * - The unsupported-content disclosure stays, because it is the one thing here
+ *   a reader cannot learn anywhere else.
  */
 export function NativeProjectPanel(props: NativeProjectPanelProps): JSX.Element {
-  const { fileName, staged, activeLevelId, onShowLevel, onCloseProject, children } = props;
+  const { staged, activeLevelId, onShowLevel, onCloseProject, children } = props;
   const { model } = staged;
   const notices = nativeProjectNotices(staged);
 
+  const modelCounts: readonly (readonly [ReactNode, string, number])[] = [
+    [<WallIcon width={16} height={16} key="w" />, 'Walls', model.walls.length],
+    [<DoorIcon width={16} height={16} key="d" />, 'Doors', model.doors.length],
+    [<WindowIcon width={16} height={16} key="n" />, 'Windows', model.windows.length],
+    [<RoomIcon width={16} height={16} key="r" />, 'Rooms', model.rooms.length],
+  ];
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, flex: 1 }}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--arq-space-micro)',
-          padding: 'var(--arq-space-panel)',
-          borderBottom: '1px solid var(--arq-ui-line-subtle)',
-        }}
-      >
-        <p style={{ margin: 0, fontWeight: 600, overflowWrap: 'anywhere' }}>
-          {model.summary.projectName}
-        </p>
-        <p style={{ margin: 0, color: 'var(--arq-ui-text-secondary)', overflowWrap: 'anywhere' }}>
-          {/* The file name is here rather than in the title bar because a reader
-              needs to know which file this is, and a long name must wrap rather
-              than be clipped to the panel width. */}
-          {fileName} · revision {model.summary.revision} · {model.summary.units}
-        </p>
-        {/* Section 126: status is never colour alone - this is a word, and the
-            reason is spelled out rather than left to a badge. */}
-        <p style={{ margin: 0 }}>
-          <strong>{staged.writeVerdict === 'read-only' ? 'Read-only.' : 'Working copy.'}</strong>{' '}
-          {staged.writeReason}
-        </p>
+    <div className="arq-project-directory">
+      <section aria-labelledby="arq-directory-plans">
+        <h3 id="arq-directory-plans" className="arq-project-directory__heading">
+          Floor plans
+        </h3>
+        {model.levels.map((level) => {
+          const levelId = level.id as string;
+          // Counted from the project. A plan that draws one level of three looks
+          // like a smaller building than it is, so each level says how much of
+          // the project is on it.
+          const wallCount = model.walls.filter(
+            (wall) => (wall.levelId as string) === levelId,
+          ).length;
+          return (
+            <button
+              key={levelId}
+              type="button"
+              className="arq-project-directory__row"
+              // aria-pressed rather than a styled-only active state, so the
+              // level on show is announced and not merely shaded.
+              aria-pressed={levelId === activeLevelId}
+              onClick={() => onShowLevel(levelId)}
+            >
+              <PlanIcon width={16} height={16} />
+              <span className="arq-project-directory__label">{level.name}</span>
+              <span className="arq-project-directory__count">{wallCount}</span>
+            </button>
+          );
+        })}
+      </section>
 
-        <fieldset
-          style={{
-            border: 0,
-            margin: 0,
-            padding: 0,
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 'var(--arq-space-micro)',
-          }}
-        >
-          <legend style={{ padding: 0, color: 'var(--arq-ui-text-muted)' }}>Level</legend>
-          {model.levels.map((level) => {
-            const levelId = level.id as string;
-            const active = levelId === activeLevelId;
-            // Counted from the project. A plan that draws one level of three
-            // looks like a smaller building than it is, so each level says how
-            // much of the project is on it.
-            const wallCount = model.walls.filter(
-              (wall) => (wall.levelId as string) === levelId,
-            ).length;
-            const roomCount = model.rooms.filter(
-              (room) => (room.levelId as string) === levelId,
-            ).length;
-            return (
-              <button
-                key={levelId}
-                type="button"
-                className="arq-shell-button"
-                // aria-pressed rather than a styled-only active state, so the
-                // current level is announced and not merely shaded.
-                aria-pressed={active}
-                onClick={() => onShowLevel(levelId)}
-                style={{ flexDirection: 'column', alignItems: 'flex-start' }}
-              >
-                <span>{level.name}</span>
-                <span style={{ color: 'var(--arq-ui-text-muted)' }}>
-                  {wallCount} walls · {roomCount} rooms
-                </span>
-              </button>
-            );
-          })}
-        </fieldset>
+      {model.views.length > 0 && (
+        <section aria-labelledby="arq-directory-views">
+          <h3 id="arq-directory-views" className="arq-project-directory__heading">
+            Views
+          </h3>
+          {model.views.map((view) => (
+            <div key={view.id} className="arq-project-directory__row" aria-disabled="true">
+              <Model3dIcon width={16} height={16} />
+              <span className="arq-project-directory__label">{view.name}</span>
+            </div>
+          ))}
+        </section>
+      )}
 
-        {notices.length > 0 && (
-          <details>
-            <summary style={{ color: 'var(--arq-ui-text-muted)', cursor: 'pointer' }}>
-              What this build does not show ({notices.length})
-            </summary>
-            <ul style={{ margin: 'var(--arq-space-micro) 0 0', paddingInlineStart: '1.2em' }}>
-              {notices.map((notice) => (
-                <li key={notice} style={{ color: 'var(--arq-ui-text-secondary)' }}>
-                  {notice}
-                </li>
-              ))}
-            </ul>
-          </details>
-        )}
+      <section aria-labelledby="arq-directory-model">
+        <h3 id="arq-directory-model" className="arq-project-directory__heading">
+          Model
+        </h3>
+        {modelCounts.map(([icon, label, count]) => (
+          <div key={label} className="arq-project-directory__row">
+            {icon}
+            <span className="arq-project-directory__label">{label}</span>
+            <span className="arq-project-directory__count">{count}</span>
+          </div>
+        ))}
+      </section>
 
-        <button type="button" className="arq-shell-button" onClick={onCloseProject}>
-          {/* Closing releases the Worker and the project's resident pages, and
-              returns the workspace to its own plan document. Nothing on disk is
-              touched, which is why this needs no confirmation. */}
-          Close project
-        </button>
-      </div>
-      <div style={{ minHeight: 0, flex: 1, overflow: 'auto' }}>{children}</div>
+      {notices.length > 0 && (
+        <details className="arq-project-directory__notices">
+          <summary>Not shown ({notices.length})</summary>
+          <ul>
+            {notices.map((notice) => (
+              <li key={notice}>{notice}</li>
+            ))}
+          </ul>
+        </details>
+      )}
+
+      {/*
+       * The element tree, closed.
+       *
+       * It was always open, so the panel ended in a flat list repeating
+       * "Exterior 250 mm · 12000 mm Wall" once per wall - seventy-nine rows of
+       * near-identical text under a directory that already says "Walls 79".
+       * Collapsed it is available and not in the way, which is the right
+       * relationship: the counts answer "what is in here", the tree answers
+       * "show me each one", and only the first is a question a reader has on
+       * arrival.
+       */}
+      <details className="arq-project-directory__tree">
+        <summary>All elements</summary>
+        {children}
+      </details>
+
+      {/* Closing releases the Worker and the project's resident pages, and
+          returns the workspace to its own plan document. Nothing on disk is
+          touched, which is why this needs no confirmation. */}
+      <button type="button" className="arq-shell-button" onClick={onCloseProject}>
+        Close project
+      </button>
     </div>
   );
 }

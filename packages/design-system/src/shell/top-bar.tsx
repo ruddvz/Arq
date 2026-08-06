@@ -42,6 +42,12 @@ export interface TopBarProps {
    * of them showed before.
    */
   readonly actionIcons?: Readonly<Partial<Record<TopBarSlot, ReactNode>>>;
+  /**
+   * What the project is, under its name: revision, units, whatever identifies
+   * this file rather than this session. Absent renders nothing, which is what
+   * the bar showed before.
+   */
+  readonly projectSubtitle?: string;
 }
 
 /**
@@ -70,8 +76,18 @@ export interface TopBarProps {
  * critique's "navigation and commands were not sufficiently separated" was
  * literally true of the top of the window.
  */
-const FIRST_ACTION_SLOT: TopBarSlot = 'undo';
+const FIRST_ACTION_SLOT: TopBarSlot = 'active-view';
 
+/*
+ * Order is the reading order, and the identity group is now one thing: the
+ * project's name with what the project is beneath it. The view name and the two
+ * state readouts moved after the spacer, to the right-hand group.
+ *
+ * They were left of it, so the bar opened with four unrelated phrases in a row
+ * - "Courtyard House Reference", "Level 1 Plan", "Unsaved changes", "Sync not
+ * configured" - and the one a reader actually looks for was the hardest to pick
+ * out. None of them is dropped; state is reported where state belongs.
+ */
 const ALL_SLOTS: readonly TopBarSlot[] = [
   'project-identity',
   'active-view',
@@ -110,6 +126,7 @@ export function TopBar(props: TopBarProps): JSX.Element {
     onOpenCommandPalette,
     onOpenAccountMenu,
     actionIcons,
+    projectSubtitle,
   } = props;
 
   const [isEditingName, setIsEditingName] = useState(false);
@@ -232,14 +249,24 @@ export function TopBar(props: TopBarProps): JSX.Element {
           onKeyDown={handleNameKeyDown}
         />
       ) : (
+        /*
+         * Two lines, and the second is what the project *is* - its revision and
+         * units. The bar used to set the name beside a run of session state
+         * ("Level 1 Plan", "Unsaved changes", "Sync not configured"), four
+         * unrelated phrases in one horizontal line, so the one thing a reader
+         * looks for was the hardest to find. The state is still reported; it is
+         * reported where state belongs.
+         */
         <button
           type="button"
-          className="arq-shell-button"
+          className="arq-shell-button arq-top-bar__identity"
           aria-label={`Project name: ${projectName}. Activate to rename.`}
           onClick={beginEdit}
-          style={{ maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}
         >
-          {projectName}
+          <span className="arq-top-bar__identity-name">{projectName}</span>
+          {projectSubtitle !== undefined && projectSubtitle !== '' && (
+            <span className="arq-top-bar__identity-detail">{projectSubtitle}</span>
+          )}
         </button>
       ),
     },
@@ -351,7 +378,7 @@ export function TopBar(props: TopBarProps): JSX.Element {
           aria-label="Account menu"
           onClick={onOpenAccountMenu}
         >
-          Account
+          {actionIcons?.['account'] ?? 'Account'}
         </button>
       ),
     },

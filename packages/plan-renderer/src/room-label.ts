@@ -103,5 +103,18 @@ export function roomLabelFits(measurements: {
   );
 }
 
-/** Clear space required around a label, as a fraction of its own size. */
-const ROOM_LABEL_MARGIN = 0.25;
+/**
+ * Clear space required around a label, as a fraction of its own size.
+ *
+ * Raised from a quarter to a half after looking at the golden fixture's small
+ * rooms at 1:76. A label that merely *fits* its room sits hard against the
+ * poché on both sides, and at that size the eye reads it as crossing the wall
+ * even when the arithmetic says otherwise - "Linen 2.3 m2" and "Guest ensuite
+ * 3.4 m2" both cleared their walls by a couple of pixels and both looked wrong.
+ *
+ * Half the label's own size is the point where a name reads as being *in* a
+ * room rather than wedged into it. The cost is that the smallest rooms lose
+ * their labels earlier, which is the correct trade: the room is still drawn,
+ * still selectable, and still names itself in the Inspector.
+ */
+const ROOM_LABEL_MARGIN = 0.5;

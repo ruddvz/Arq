@@ -203,8 +203,27 @@
  * below it in the reading order rather than beside it in the same voice. The
  * bar previously gave a project's name exactly the emphasis it gave Redo.
  */
-.arq-top-bar [data-top-bar-slot='project-identity'] .arq-shell-button {
+.arq-top-bar__identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  max-width: 280px;
+  line-height: 1.15;
+}
+
+.arq-top-bar__identity-name {
   font: var(--arq-text-project-title);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arq-top-bar__identity-detail {
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+  font-variant-numeric: tabular-nums;
 }
 
 .arq-top-bar [data-top-bar-slot='save-state'],
@@ -422,4 +441,113 @@
   color: var(--arq-ui-text-muted);
   font: var(--arq-text-label);
   font-variant-numeric: tabular-nums;
+}
+
+/*
+ * The project directory: three headed groups of one-line rows.
+ *
+ * Every measurement here is doing one job - making a row scannable at a glance.
+ * A fixed row height and a single baseline mean the eye runs down the labels
+ * without re-finding them, and the counts sit on their own right-hand column so
+ * "79" and "16" line up rather than trailing their labels at different offsets.
+ * That column is what the panel had none of, and what made it read as prose.
+ */
+.arq-project-directory {
+  display: flex;
+  flex-direction: column;
+  gap: var(--arq-space-panel);
+  padding: var(--arq-space-compact);
+  min-height: 0;
+  flex: 1;
+}
+
+.arq-project-directory__heading {
+  margin: 0 0 var(--arq-space-micro);
+  padding-inline: var(--arq-space-compact);
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.arq-project-directory__row {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  align-items: center;
+  gap: var(--arq-space-compact);
+  width: 100%;
+  min-height: 30px;
+  padding: 0 var(--arq-space-compact);
+  border: 0;
+  border-radius: var(--arq-radius-control);
+  background: transparent;
+  color: var(--arq-ui-text-primary);
+  font: var(--arq-text-body);
+  text-align: start;
+}
+
+/* A row that is a button behaves like one; a row that is a readout does not. */
+button.arq-project-directory__row {
+  cursor: pointer;
+}
+
+button.arq-project-directory__row:hover {
+  background: var(--arq-ui-surface-2);
+}
+
+button.arq-project-directory__row[aria-pressed='true'] {
+  background: var(--arq-ui-ink);
+  color: var(--arq-ui-paper);
+  font-weight: 600;
+}
+
+.arq-project-directory__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * Tabular so a column of counts is a column: proportional digits put "79" and
+ * "16" at different widths and the right edge stops being a line.
+ */
+.arq-project-directory__count {
+  color: var(--arq-ui-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+button.arq-project-directory__row[aria-pressed='true'] .arq-project-directory__count {
+  color: var(--arq-ui-paper);
+}
+
+.arq-project-directory__row[aria-disabled='true'] {
+  color: var(--arq-ui-text-secondary);
+}
+
+.arq-project-directory__notices {
+  padding-inline: var(--arq-space-compact);
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+}
+
+.arq-project-directory__notices ul {
+  margin: var(--arq-space-micro) 0 0;
+  padding-inline-start: 1.2em;
+  color: var(--arq-ui-text-secondary);
+}
+
+.arq-project-directory__tree {
+  min-height: 0;
+  overflow: auto;
+}
+
+.arq-project-directory__tree > summary {
+  padding: var(--arq-space-micro) var(--arq-space-compact);
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
 }
