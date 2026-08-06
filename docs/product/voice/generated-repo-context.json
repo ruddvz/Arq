@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "31285ca63d22ad87209ba90b44c42da06d3937a97dd46ed766ce7b9c027ba74b",
+  "sourceSetDigest": "ddad5b71c7f1d05600526d310f0d7dec2cd83045dfd7fdf74682513a67f1f127",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -444,8 +444,8 @@
       "id": "model-canvas",
       "kind": "file",
       "path": "apps/web/src/ModelCanvas.tsx",
-      "sha256": "41494333b30cb1ff10975aa4b0d6b1dee59b382b6ed1492ce4ab6ffe8a9276ee",
-      "bytes": 19109
+      "sha256": "af4676bd00a581fe741bdf3b9d5ee7e5efbf378365bfc2e0fc94460040164a6f",
+      "bytes": 21137
     },
     "local-storage": {
       "id": "local-storage",

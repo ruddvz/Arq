@@ -1,0 +1,46 @@
+{
+  "timestamp": "2026-08-06T22:32:22.963Z",
+  "environment": "headless Chromium 141.0.7390.37, real production apps/web build served over HTTP, real WebGL2 rendering",
+  "ok": true,
+  "evidenceId": "browser_model_canvas",
+  "conflictId": "CONFLICT-3D-CURRENT-STATUS",
+  "reachability": {
+    "tabAccessibleName": "3D, 3D. Press Delete to close.",
+    "tabSelected": true,
+    "surface": {
+      "clientWidth": 1397,
+      "clientHeight": 722,
+      "is2dContext": false,
+      "isWebgl2Context": true
+    },
+    "somethingDrawn": true,
+    "initialPixels": {
+      "width": 1397,
+      "height": 722,
+      "totalPixels": 1008634,
+      "uniqueColors": 231,
+      "greenDominantPixels": 0
+    }
+  },
+  "selectionShared": true,
+  "selectionEvidence": {
+    "greenBaselineIsZero": true,
+    "selectedPixels": {
+      "width": 1397,
+      "height": 661,
+      "totalPixels": 923417,
+      "uniqueColors": 317,
+      "greenDominantPixels": 51260
+    },
+    "clearedPixels": {
+      "width": 1397,
+      "height": 722,
+      "totalPixels": 1008634,
+      "uniqueColors": 256,
+      "greenDominantPixels": 0
+    }
+  },
+  "selectionNote": "Selection made on the plan canvas appeared as the phthalo-green highlight in 3D, and an empty-space click in 3D cleared it back to \"No selection\" - both directions observed through the real UI.",
+  "screenshot": "benchmarks/results/model-canvas-visual-2026-08-06T22-32-22-963Z.png",
+  "consoleErrors": []
+}

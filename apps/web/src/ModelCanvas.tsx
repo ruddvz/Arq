@@ -6,6 +6,7 @@ import {
   applyOrbitCameraState,
   applySharedSelection,
   createModelScene,
+  placeModelFloor,
   createOrthographicCamera,
   fitBoundingSphere,
   orbitBy,
@@ -36,7 +37,19 @@ import { wallLength, type DrawnWall } from './canvas/plan-document';
 
 const WALL_THICKNESS_MM = 100;
 const WALL_HEIGHT_MM = 2400;
-const FLOOR_SIZE_MM = 30000;
+/**
+ * How far the ground extends past the model, as a multiple of its footprint.
+ *
+ * It was a fixed 30m square centred on the world origin. The golden fixture is
+ * a 12m house whose corner sits at the origin, so the ground was two and a half
+ * times its width in each direction and the house stood in one quadrant of it -
+ * and because the camera frames the model rather than the floor, the view was a
+ * grey plane filling the frame with a small building off-centre in it.
+ */
+const FLOOR_MARGIN = 1.5;
+
+/** The smallest ground worth drawing, so an empty scene still stands on something. */
+const MIN_FLOOR_SIZE_MM = 8000;
 
 /**
  * What an empty 3D view is framed to, since there is nothing to fit to. Six
@@ -180,12 +193,28 @@ function contentSphere(walls: readonly DrawnWall[]): {
   readonly center: THREE.Vector3;
   readonly radius: number;
 } {
-  const points = walls.flatMap((wall) => [wall.start, wall.end]);
-  if (points.length === 0) {
+  const footprint = contentFootprint(walls);
+  if (footprint === null) {
     return {
       center: new THREE.Vector3(0, WALL_HEIGHT_MM / 2, 0),
       radius: EMPTY_VIEW_RADIUS_MM,
     };
+  }
+  const center = new THREE.Vector3(footprint.centerX, WALL_HEIGHT_MM / 2, footprint.centerZ);
+  const radius = Math.max(Math.hypot(footprint.width, WALL_HEIGHT_MM, footprint.depth) / 2, 1000);
+  return { center, radius };
+}
+
+/** The model's plan-view extent, or null when there is no model. */
+function contentFootprint(walls: readonly DrawnWall[]): {
+  readonly centerX: number;
+  readonly centerZ: number;
+  readonly width: number;
+  readonly depth: number;
+} | null {
+  const points = walls.flatMap((wall) => [wall.start, wall.end]);
+  if (points.length === 0) {
+    return null;
   }
   let minX = Number.POSITIVE_INFINITY;
   let minZ = Number.POSITIVE_INFINITY;
@@ -197,9 +226,29 @@ function contentSphere(walls: readonly DrawnWall[]): {
     maxX = Math.max(maxX, point.x);
     maxZ = Math.max(maxZ, point.y);
   }
-  const center = new THREE.Vector3((minX + maxX) / 2, WALL_HEIGHT_MM / 2, (minZ + maxZ) / 2);
-  const radius = Math.max(Math.hypot(maxX - minX, WALL_HEIGHT_MM, maxZ - minZ) / 2, 1000);
-  return { center, radius };
+  return {
+    centerX: (minX + maxX) / 2,
+    centerZ: (minZ + maxZ) / 2,
+    width: maxX - minX,
+    depth: maxZ - minZ,
+  };
+}
+
+/** Ground sized and placed for what is actually being drawn. */
+function floorPlacement(walls: readonly DrawnWall[]): {
+  readonly size: number;
+  readonly x: number;
+  readonly z: number;
+} {
+  const footprint = contentFootprint(walls);
+  if (footprint === null) {
+    return { size: MIN_FLOOR_SIZE_MM, x: 0, z: 0 };
+  }
+  return {
+    size: Math.max(MIN_FLOOR_SIZE_MM, Math.max(footprint.width, footprint.depth) * FLOOR_MARGIN),
+    x: footprint.centerX,
+    z: footprint.centerZ,
+  };
 }
 
 /**
@@ -280,7 +329,12 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
     const appearance = readAppearanceColours(canvas);
     renderer.setClearColor(appearance.paper, 1);
 
-    const scene = createModelScene({ floorSize: FLOOR_SIZE_MM, floorColor: appearance.floor });
+    const placement = floorPlacement(walls);
+    const scene = createModelScene({
+      floorSize: placement.size,
+      floorCenter: { x: placement.x, z: placement.z },
+      floorColor: appearance.floor,
+    });
     const wallGroup = new THREE.Group();
     wallGroup.name = 'arq-drawn-walls';
     scene.add(wallGroup);
@@ -335,6 +389,11 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
     if (refs === null) {
       return;
     }
+    // The ground follows the model. It is built at mount from whatever was
+    // there then, and a project opened afterwards replaces every wall - so
+    // without this the floor stays at the size and place of the previous model,
+    // or of no model at all.
+    placeModelFloor(refs.scene, floorPlacement(walls));
     for (const child of [...refs.wallGroup.children]) {
       refs.wallGroup.remove(child);
       if (child instanceof THREE.Mesh) {
