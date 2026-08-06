@@ -8,6 +8,7 @@ import {
 } from 'react';
 import {
   screenPoint,
+  wallOutline,
   worldPoint,
   worldToScreen,
   type Viewport,
@@ -151,6 +152,16 @@ export interface PlanCanvasProps {
   ) => void;
   /** Reports the viewport's current zoom in CSS-pixel terms (device-pixel-ratio removed) - drives the status bar's view-scale readout. */
   readonly onViewportPixelsPerUnitChange?: (cssPixelsPerUnit: number) => void;
+  /**
+   * Thickness per wall id, in the same world units as the geometry.
+   *
+   * A wall with no entry is drawn as its centreline, which is what the drawing
+   * tools produce while a chain is still being placed and what the workspace's
+   * own walls are. A wall with one is drawn as its footprint - the same
+   * `wallOutline` the 3D surface extrudes, so plan and model cannot disagree
+   * about where a wall's faces are.
+   */
+  readonly wallDimensions?: ReadonlyMap<string, { readonly thicknessMm: number }>;
 }
 
 interface PanState {
@@ -179,6 +190,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     onActiveSnapChange,
     onPointerWorldPositionChange,
     onViewportPixelsPerUnitChange,
+    wallDimensions,
   } = props;
 
   /**
@@ -335,11 +347,23 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         anchor: polygonCentroid(room.polygon),
         text: room.label,
       })),
-      ...walls.map((wall): PlanPrimitiveInput<string> => ({
-        kind: 'line',
-        elementId: wall.id,
-        points: [wall.start, wall.end],
-      })),
+      ...walls.map((wall): PlanPrimitiveInput<string> => {
+        /*
+         * A wall with a known thickness is drawn as its footprint rather than
+         * its centreline. The outline comes from the same `wallOutline` the 3D
+         * surface extrudes, so the two views cannot disagree about where a
+         * wall's faces are - and a null result (a zero-length segment) falls
+         * back to the centreline rather than dropping the wall from the plan.
+         */
+        const thicknessMm = wallDimensions?.get(wall.id)?.thicknessMm;
+        const outline =
+          thicknessMm === undefined || thicknessMm <= 0
+            ? null
+            : wallOutline({ start: wall.start, end: wall.end }, thicknessMm, 'centre', 1e-6);
+        return outline === null
+          ? { kind: 'line', elementId: wall.id, points: [wall.start, wall.end] }
+          : { kind: 'polygon', elementId: wall.id, points: outline };
+      }),
     ];
 
     const scene = buildPlanScene(inputs, EMPTY_SET, selection, EMPTY_SET);
@@ -424,6 +448,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     hoveredId,
     marquee,
     palette,
+    wallDimensions,
   ]);
 
   useEffect(() => {

@@ -101,9 +101,11 @@ import { NativeProjectPanel } from './NativeProjectPanel';
 import { buildNativeProjectTree, type OpenNativeProject } from './native-project-view';
 import {
   roomsOnLevel,
+  wallTypeFor,
   wallsOnLevel,
   type NativeProjectModel as NativeProjectDocument,
 } from '@arq/project-loading';
+import type { WallSolidDimensions } from './ModelCanvas';
 import type { PlanRoom } from './canvas/canvas-interaction';
 
 /**
@@ -118,6 +120,33 @@ function wallsForLevel(document: NativeProjectDocument, levelId: string): readon
     start: wall.start,
     end: wall.end,
   }));
+}
+
+/**
+ * Thickness and height per wall id, read from each wall's own type.
+ *
+ * Both surfaces already accept this and neither was being given it, so a
+ * project's "Exterior 250 mm" walls drew as hairlines in plan and extruded at a
+ * borrowed demo default in 3D. The wall type is the only place those numbers
+ * exist, and reading them per wall rather than per level is what lets one
+ * storey mix exterior and partition types - which the golden fixture does.
+ */
+function wallDimensionsForLevel(
+  document: NativeProjectDocument,
+  levelId: string,
+): ReadonlyMap<string, WallSolidDimensions> {
+  const dimensions = new Map<string, WallSolidDimensions>();
+  for (const wall of wallsOnLevel(document, levelId)) {
+    const type = wallTypeFor(document, wall);
+    if (type === null) {
+      continue;
+    }
+    dimensions.set(wall.id, {
+      thicknessMm: type.thickness.value,
+      heightMm: type.defaultHeight.value,
+    });
+  }
+  return dimensions;
 }
 
 /**
@@ -302,6 +331,10 @@ export function App(): JSX.Element {
    * for the workspace's own demo fixture, an empty list draws no rooms at all.
    */
   const [projectRooms, setProjectRooms] = useState<readonly PlanRoom[] | null>(null);
+  /** Thickness and height per wall id for the level on show; empty with no project open. */
+  const [wallDimensions, setWallDimensions] = useState<ReadonlyMap<string, WallSolidDimensions>>(
+    new Map(),
+  );
 
   /*
    * Real local persistence: the journal is opened once, recovery replays it
@@ -428,6 +461,11 @@ export function App(): JSX.Element {
         opened.snapshot.document !== null && initialLevelId !== null
           ? roomsForLevel(opened.snapshot.document, initialLevelId)
           : [],
+      );
+      setWallDimensions(
+        opened.snapshot.document !== null && initialLevelId !== null
+          ? wallDimensionsForLevel(opened.snapshot.document, initialLevelId)
+          : new Map(),
       );
       wallIdCounterRef.current = highestWallIdSuffix(shown);
       setProjectName(opened.snapshot.displayName);
@@ -1040,6 +1078,7 @@ export function App(): JSX.Element {
         activeToolId={toolState.activeToolId}
         walls={drawnWalls}
         {...(projectRooms === null ? {} : { rooms: projectRooms })}
+        wallDimensions={wallDimensions}
         selection={modelSelection}
         onSelectElement={(elementId) =>
           setModelSelection({ primary: elementId, secondary: new Set() })
@@ -1221,6 +1260,9 @@ export function App(): JSX.Element {
                       setDrawnWalls(shown);
                       drawnWallsRef.current = shown;
                       setProjectRooms(roomsForLevel(openNativeProject.project.model, levelId));
+                      setWallDimensions(
+                        wallDimensionsForLevel(openNativeProject.project.model, levelId),
+                      );
                       // The selection is a wall id, and a wall on another level
                       // is not on screen. Keeping it would leave the inspector
                       // describing something the reader cannot see.
@@ -1237,6 +1279,7 @@ export function App(): JSX.Element {
                       setOpenNativeProject(null);
                       setActiveNativeLevelId(null);
                       setProjectRooms(null);
+                      setWallDimensions(new Map());
                       setActiveWorkingCopyId(null);
                       setDrawnWalls([]);
                       drawnWallsRef.current = [];
