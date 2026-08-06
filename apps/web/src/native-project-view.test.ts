@@ -90,8 +90,38 @@ function model(): NativeProjectModel {
         status: 'not-enclosed',
       },
     ],
-    openings: [{ id: 'opening-1' }, { id: 'opening-2' }],
-    doors: [{ id: 'd-1' }],
+    openings: [
+      {
+        id: 'opening-1',
+        hostWallId: 'w-gf-south',
+        kind: 'door',
+        offsetFromWallStart: { value: 5550, unit: 'mm' },
+        width: { value: 1100, unit: 'mm' },
+        sillHeight: { value: 0, unit: 'mm' },
+        height: { value: 2400, unit: 'mm' },
+      },
+      {
+        id: 'opening-2',
+        hostWallId: 'w-gf-south',
+        kind: 'window',
+        offsetFromWallStart: { value: 1200, unit: 'mm' },
+        width: { value: 1800, unit: 'mm' },
+        sillHeight: { value: 750, unit: 'mm' },
+        height: { value: 1500, unit: 'mm' },
+      },
+    ],
+    doors: [
+      {
+        id: 'd-1',
+        typeId: 'door-type-1',
+        openingId: 'opening-1',
+        levelId: 'lvl-gf',
+        side: 'right',
+        hand: 'right',
+        swingAngle: 90,
+      },
+    ],
+    linearDimensions: [{ id: 'dim-1' }, { id: 'dim-2' }],
   });
   if (parsed.status !== 'parsed') {
     throw new Error(`fixture model did not parse: ${parsed.reason}`);
@@ -242,9 +272,13 @@ describe('native project projection', () => {
     const notices = nativeProjectNotices(stagedFrom(model()));
 
     expect(notices[0]).toContain('inspection only');
-    // The counts are the file's, so a project with one door never reads as a
-    // project with no doors.
-    expect(notices.some((notice) => notice.startsWith('2 openings'))).toBe(true);
-    expect(notices.some((notice) => notice.startsWith('1 doors'))).toBe(true);
+    // The counts are the file's, so a project with two dimensions never reads
+    // as a project with none.
+    expect(notices.some((notice) => notice.startsWith('2 linearDimensions'))).toBe(true);
+    // Openings and doors are read now, so a notice about them would be a
+    // warning about content the product does draw - which is how a user learns
+    // to stop reading the notices that are real.
+    expect(notices.some((notice) => notice.includes('openings'))).toBe(false);
+    expect(notices.some((notice) => notice.includes('doors'))).toBe(false);
   });
 });
