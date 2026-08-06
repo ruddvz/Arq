@@ -376,6 +376,44 @@ preview exists for `apps/web`.
    the delivery stop's verified preview has nothing to verify for the code being
    changed.
 
+## Linear dimensions: audited, not started
+
+The last entry in the unsupported-content list, and the mockups' "14 000"
+string. Audited rather than started, for the same reason as wall joins: the
+resolution step is real geometry and rushing it produces a drawing that states a
+measurement confidently and wrongly.
+
+Everything below the reader already exists and has no caller: `LinearDimension`,
+`DimensionReference`, `measuredLinearDimensionLength`,
+`linearDimensionIsDetached` and the text formatter.
+
+What the fixture actually holds: five dimensions, each referencing two walls by
+`{ kind: 'wall-reference-line', wallId }`, with an offset, a precision and a
+suffix. Four are plan dimensions between parallel wall pairs (overall x and y,
+courtyard x and y); the fifth, `dim-storey`, is vertical and has no plan
+projection at all.
+
+Three things decide whether this is right:
+
+1. **Resolution.** `measuredLinearDimensionLength` takes two *points*, and a
+   `wall-reference-line` is a *line*. Picking arbitrary points on two parallel
+   walls measures a diagonal, not the separation - `dim-overall-x` would read
+   something other than 12,000 while looking entirely plausible. The honest
+   resolution is the perpendicular distance between the two reference lines,
+   which is exact for parallel walls and ill-defined otherwise. A dimension
+   between non-parallel walls should be reported as one this build cannot draw
+   rather than measured anyway.
+2. **`fixtureExpectedValueMm` must not be displayed.** Each record carries it,
+   and it is a fixture assertion - what the value *should* be - not the value.
+   Rendering it would put fixture metadata on a drawing as a measurement, which
+   is precisely the class of thing this work has been removing. It is useful as
+   a test oracle and nothing else.
+3. **The vertical one.** `dim-storey` cannot appear on a plan. It belongs in the
+   unsupported list with a reason, not dropped silently.
+
+Until those land, the reader continues to report `linearDimensions` as content
+it does not draw, which is true.
+
 ## Mockup reconciliation
 
 The mockup package (`ARQ_MOCKUPS_V12_V13_ONLY`) was read in full - 24 images.
