@@ -66,12 +66,32 @@ recorded above. **Rollback:** documentation only.
 **State:** partial
 **Done:** the repository's token system is the single one; `--arq-site-font`
 binds to the existing `--arq-font-ui` rather than introducing a family.
-**Remaining:** reconcile `contracts/design-tokens-v13.json` value by value; 24
-of 54 tools still lack glyphs.
-**Decision recorded:** Tabler is **not** adopted. The repository already has a
-house-style icon adapter and eight hand-drawn group glyphs; adding a second
-family would be the mixing the package itself forbids. **Rollback:** tokens are
-additive.
+**Done:** all 54 tools have a glyph, from one pinned family. `--arq-font-ui` is
+bound to Plus Jakarta Sans - the family `apps/marketing` already self-hosts - so
+the editor and the site that sells it are set in the same type, and no typeface
+was added. JetBrains Mono carries the readouts that are measurements.
+
+**Decision reversed, and why.** An earlier pass declined Tabler and kept the
+repository's hand-drawn set. That was wrong, and looking at the glyphs at 16px
+is what showed it: the set was uneven in weight, optical size and idiom, and
+nine of them were a bare 14x14 rect - one identical, meaningless square standing
+in for nine different tools, which had passed every test because a placeholder
+is a real component rendering real SVG.
+
+Tabler 3.45.0 is now pinned, single family, and it is Version 13's own reviewed
+candidate. It was checked against Lucide rather than assumed: Tabler draws
+stairs, a wall, a door, a fence, an angle, a cube and a perspective frustum, and
+Lucide draws none of them - so with Lucide half the list would have fallen back
+to hand-drawing, which is the problem being fixed. Coverage of the domain is
+what decides an icon set for a BIM product.
+
+The names stay ARQ's, so the family can be re-pinned in one file without
+touching a call site. Two mappings remain compromises, recorded at the adapter:
+Tabler has no roof and no slab.
+
+**Remaining:** reconcile `contracts/design-tokens-v13.json` value by value.
+**Rollback:** the adapter is one file; the font is a token plus two `@font-face`
+rules.
 
 ### 3. Shell composition and stable viewport
 
