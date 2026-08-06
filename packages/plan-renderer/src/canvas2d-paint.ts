@@ -39,20 +39,45 @@ const BRAND_BLACK = '#000000';
 const BRAND_PHTHALO_GREEN = '#0B6B50';
 const HANDLE_RADIUS_CSS_PX = 4;
 
-function strokeColorForToken(token: StyleToken): string {
+/**
+ * The two colours the plan is drawn in, and the one it is drawn on.
+ *
+ * The renderer used to hard-code black ink and a white handle fill, which is
+ * correct on paper and wrong on a dark drawing surface: under ADR-0032's dark
+ * appearance the linework stayed black on a near-black background and the plan
+ * simply disappeared. Passing the palette in keeps this module pure - it still
+ * decides nothing about appearance, it is just no longer asserting one.
+ */
+export interface PlanPalette {
+  /** Linework and text. `--arq-ui-ink` resolved for the current appearance. */
+  readonly ink: string;
+  /** The surface the plan sits on, used for handle fills so they read as holes. */
+  readonly paper: string;
+  /** Selection, active tool and proposal states. */
+  readonly accent: string;
+}
+
+/** Light appearance, and the exact colours this renderer drew before it took a palette. */
+export const DEFAULT_PLAN_PALETTE: PlanPalette = {
+  ink: BRAND_BLACK,
+  paper: '#ffffff',
+  accent: BRAND_PHTHALO_GREEN,
+};
+
+function strokeColorForToken(token: StyleToken, palette: PlanPalette): string {
   switch (token) {
     case 'selected-primary':
     case 'selected-secondary':
     case 'active-tool':
     case 'proposed':
-      return BRAND_PHTHALO_GREEN;
+      return palette.accent;
     case 'default':
     case 'hover':
     case 'locked':
     case 'warning':
     case 'error':
     case 'imported':
-      return BRAND_BLACK;
+      return palette.ink;
   }
 }
 
@@ -125,12 +150,13 @@ function paintPrimitive<TId>(
   viewport: Viewport,
   devicePixelRatio: number,
   primitive: PlanPrimitive<TId>,
+  palette: PlanPalette,
 ): void {
   switch (primitive.kind) {
     case 'line':
     case 'polygon': {
       const treatment = lineTreatmentForToken(primitive.styleToken);
-      target.strokeStyle = strokeColorForToken(primitive.styleToken);
+      target.strokeStyle = strokeColorForToken(primitive.styleToken, palette);
       target.lineWidth = lineWeightToDevicePixels(treatment.weight, devicePixelRatio);
       target.setLineDash(treatment.dashCssPx.map((dash) => dash * devicePixelRatio));
       strokeWorldPolyline(target, viewport, primitive.points, primitive.kind === 'polygon');
@@ -138,23 +164,25 @@ function paintPrimitive<TId>(
     }
     case 'text': {
       target.setLineDash([]);
-      target.fillStyle = strokeColorForToken(primitive.styleToken);
+      target.fillStyle = strokeColorForToken(primitive.styleToken, palette);
       const screen = worldToScreen(viewport, primitive.anchor);
       target.fillText(primitive.text, screen.x, screen.y);
       break;
     }
     case 'handle': {
-      // Section 18: handles are always drawn white-fill/black-border, a fixed
-      // visual independent of styleToken - unlike lines/polygons/text above.
+      // Section 18: handles are a paper-fill/ink-border disc, a fixed visual
+      // independent of styleToken - unlike lines/polygons/text above. Filled
+      // with the surface colour rather than literal white so the disc still
+      // reads as a hole punched in the drawing under a dark appearance.
       target.setLineDash([]);
       const screen = worldToScreen(viewport, primitive.point);
       const radius = HANDLE_RADIUS_CSS_PX * devicePixelRatio;
       target.beginPath();
       target.arc(screen.x, screen.y, radius, 0, Math.PI * 2);
       target.closePath();
-      target.fillStyle = '#ffffff';
+      target.fillStyle = palette.paper;
       target.fill();
-      target.strokeStyle = BRAND_BLACK;
+      target.strokeStyle = palette.ink;
       target.lineWidth = lineWeightToDevicePixels('hairline', devicePixelRatio);
       target.stroke();
       break;
@@ -175,11 +203,12 @@ export function paintPlanScene<TId>(
   viewport: Viewport,
   devicePixelRatio: number,
   scene: PlanScene<TId>,
+  palette: PlanPalette = DEFAULT_PLAN_PALETTE,
 ): void {
   if (!Number.isFinite(devicePixelRatio) || devicePixelRatio <= 0) {
     throw new RangeError('devicePixelRatio must be a positive finite number');
   }
   for (const primitive of scene.primitives) {
-    paintPrimitive(target, viewport, devicePixelRatio, primitive);
+    paintPrimitive(target, viewport, devicePixelRatio, primitive, palette);
   }
 }

@@ -142,6 +142,36 @@ function contentSphere(
   return { center, radius };
 }
 
+/**
+ * The appearance's surface, floor and ink as three.js colour numbers.
+ *
+ * Reads the same `--arq-ui-*` custom properties the rest of the shell uses, so
+ * the 3D view cannot drift from the appearance the way a second hard-coded
+ * palette would. Falls back to the light values when a property is missing or
+ * unparseable, which is what a non-browser or a stripped stylesheet gets.
+ */
+function readAppearanceColours(element: HTMLElement): {
+  readonly paper: number;
+  readonly floor: number;
+  readonly ink: number;
+} {
+  const fallback = { paper: 0xffffff, floor: 0xf4f4f4, ink: 0x111111 };
+  if (typeof window === 'undefined') {
+    return fallback;
+  }
+  const style = window.getComputedStyle(element);
+  const read = (name: string, missing: number): number => {
+    const raw = style.getPropertyValue(name).trim();
+    const match = /^#([0-9a-fA-F]{6})$/.exec(raw);
+    return match === null ? missing : Number.parseInt(match[1]!, 16);
+  };
+  return {
+    paper: read('--arq-ui-paper', fallback.paper),
+    floor: read('--arq-ui-surface-2', fallback.floor),
+    ink: read('--arq-ui-ink', fallback.ink),
+  };
+}
+
 export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
   const { walls, selection, onSelectElement, wallDimensions, showDemoRoom = true } = props;
   const dimensionsFor = useCallback(
@@ -181,9 +211,16 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio || 1);
     renderer.setSize(Math.max(rect.width, 1), Math.max(rect.height, 1), false);
-    renderer.setClearColor(0xffffff, 1);
+    /*
+     * The 3D surface follows the appearance for the same reason the plan does:
+     * a WebGL clear colour cannot inherit CSS, so a hard-coded white left a lit
+     * white box sitting in dark chrome. Read from the resolved tokens so there
+     * is one source for the surface colour rather than a second palette here.
+     */
+    const appearance = readAppearanceColours(canvas);
+    renderer.setClearColor(appearance.paper, 1);
 
-    const scene = createModelScene({ floorSize: FLOOR_SIZE_MM, floorColor: 0xf4f4f4 });
+    const scene = createModelScene({ floorSize: FLOOR_SIZE_MM, floorColor: appearance.floor });
     const wallGroup = new THREE.Group();
     wallGroup.name = 'arq-drawn-walls';
     scene.add(wallGroup);
@@ -196,7 +233,7 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
         new THREE.BufferGeometry().setFromPoints(
           DEMO_ROOM_POLYGON.map((point) => new THREE.Vector3(point.x, 1, point.y)),
         ),
-        new THREE.LineBasicMaterial({ color: 0x111111 }),
+        new THREE.LineBasicMaterial({ color: appearance.ink }),
       );
       roomOutline.name = 'demo-room-outline';
       scene.add(roomOutline);

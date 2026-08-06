@@ -6,6 +6,14 @@
  * copied verbatim from the blueprint's tables, not invented.
  */
 :root {
+  /*
+   * Tells the browser both appearances are supported, so form controls,
+   * scrollbars and the canvas backdrop follow the appearance instead of staying
+   * light. Without it a bare <input> renders as white-on-white in dark: the
+   * project browser's search field was exactly that.
+   */
+  color-scheme: light dark;
+
   /* Section 17 */
   --arq-ui-paper: #ffffff;
   --arq-ui-surface-1: #fafafa;

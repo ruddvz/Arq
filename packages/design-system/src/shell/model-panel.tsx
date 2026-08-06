@@ -62,10 +62,33 @@ function ModelPanelNodeRow(props: {
             reduced opacity together, plus the word in the accessible name. */}
         {node.hidden && <span aria-hidden="true">⊘ </span>}
         {node.displayName}
-        <span style={{ color: 'var(--arq-ui-text-muted)' }}> {node.nodeType}</span>
+        {typeSuffixFor(node) !== null && (
+          <span style={{ color: 'var(--arq-ui-text-muted)' }}> {typeSuffixFor(node)}</span>
+        )}
       </button>
     </li>
   );
+}
+
+/**
+ * The muted type suffix beside a row's name, or null when it would only stutter.
+ *
+ * The tree used to append the type unconditionally, so the top of every project
+ * read "Site Site", "Building Building", "Level 1 Level" - three of the first
+ * four rows a user sees, and a screen reader announced the stutter too. The
+ * suffix exists to say what a row is when its name does not; when the name
+ * already contains the word, it says nothing and costs a line of noise.
+ *
+ * Matched on a word boundary so "Wall" is suppressed for "Interior Wall 100mm"
+ * but kept for a coded name like "W-101", which is exactly the case the suffix
+ * is worth showing for.
+ */
+export function typeSuffixFor(node: {
+  readonly displayName: string;
+  readonly nodeType: string;
+}): string | null {
+  const pattern = new RegExp(`\\b${node.nodeType.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+  return pattern.test(node.displayName) ? null : node.nodeType;
 }
 
 /** Row height in CSS px; the virtualiser needs a fixed one to index by. */

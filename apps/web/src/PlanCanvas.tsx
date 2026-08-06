@@ -33,6 +33,8 @@ import { WallHudEntry } from './canvas/wall-hud-entry';
 import {
   buildPlanScene,
   paintPlanScene,
+  DEFAULT_PLAN_PALETTE,
+  type PlanPalette,
   snapGlyphPrimitives,
   withSelectionHandles,
   SNAP_GLYPH_LABEL,
@@ -239,6 +241,45 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   /* Painting                                                            */
   /* ------------------------------------------------------------------ */
 
+  /**
+   * The appearance's own ink, paper and accent, read from the resolved custom
+   * properties rather than duplicated here.
+   *
+   * A canvas cannot inherit CSS colours the way the rest of the shell does, so
+   * without this the plan kept drawing black-on-white while everything around
+   * it followed the appearance - under dark that left black linework on a
+   * near-black surface. Re-read whenever the appearance changes.
+   */
+  const [palette, setPalette] = useState<PlanPalette>(DEFAULT_PLAN_PALETTE);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas === null || typeof window === 'undefined') {
+      return;
+    }
+    const read = (): void => {
+      const style = window.getComputedStyle(canvas);
+      const value = (name: string, fallback: string): string => {
+        const resolved = style.getPropertyValue(name).trim();
+        return resolved === '' ? fallback : resolved;
+      };
+      setPalette({
+        ink: value('--arq-ui-ink', DEFAULT_PLAN_PALETTE.ink),
+        paper: value('--arq-ui-paper', DEFAULT_PLAN_PALETTE.paper),
+        accent: value('--arq-selection-outline', DEFAULT_PLAN_PALETTE.accent),
+      });
+    };
+    read();
+    const scheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const contrast = window.matchMedia('(prefers-contrast: more)');
+    scheme.addEventListener('change', read);
+    contrast.addEventListener('change', read);
+    return () => {
+      scheme.removeEventListener('change', read);
+      contrast.removeEventListener('change', read);
+    };
+  }, []);
+
   const paint = useCallback(() => {
     const canvas = canvasRef.current;
     const currentViewport = viewport;
@@ -260,7 +301,10 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     if (gridPx >= 6) {
       const origin = worldToScreen(currentViewport, worldPoint(0, 0));
       const step = GRID_SPACING_MM * currentViewport.pixelsPerUnit;
-      ctx.strokeStyle = 'rgba(128, 128, 128, 0.16)';
+      // Derived from the appearance's ink rather than a fixed grey, so the
+      // grid stays a faint version of the linework in both appearances.
+      ctx.strokeStyle = palette.ink;
+      ctx.globalAlpha = 0.16;
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let x = origin.x % step; x < canvas.width; x += step) {
@@ -272,6 +316,9 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         ctx.lineTo(canvas.width, y);
       }
       ctx.stroke();
+      // Everything painted after the grid is at full strength; leaving the
+      // alpha set would silently wash out the entire drawing.
+      ctx.globalAlpha = 1;
     }
 
     const inputs: PlanPrimitiveInput<string>[] = [
@@ -347,7 +394,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     ctx.font = `${12 * devicePixelRatio}px sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    paintPlanScene(ctx, currentViewport, devicePixelRatio, painted);
+    paintPlanScene(ctx, currentViewport, devicePixelRatio, painted, palette);
 
     // The marquee is view furniture like the grid: CAD convention, solid
     // edge for a window (left-to-right) drag, dashed for crossing.
@@ -355,7 +402,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       const a = worldToScreen(currentViewport, marquee.anchor);
       const b = worldToScreen(currentViewport, marquee.corner);
       const crossing = marquee.corner.x < marquee.anchor.x;
-      ctx.strokeStyle = 'rgba(11, 107, 80, 0.9)';
+      ctx.strokeStyle = palette.accent;
       ctx.lineWidth = 1;
       ctx.setLineDash(crossing ? [4 * devicePixelRatio, 4 * devicePixelRatio] : []);
       ctx.strokeRect(
@@ -366,7 +413,18 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       );
       ctx.setLineDash([]);
     }
-  }, [viewport, rooms, walls, selection, draftPoints, previewPoint, snapPoint, hoveredId, marquee]);
+  }, [
+    viewport,
+    rooms,
+    walls,
+    selection,
+    draftPoints,
+    previewPoint,
+    snapPoint,
+    hoveredId,
+    marquee,
+    palette,
+  ]);
 
   useEffect(() => {
     paint();
@@ -405,6 +463,18 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
 
       setViewport((current) => {
         if (current === null) {
+          /*
+           * A surface with no width has no fit. The flex shell lays this canvas
+           * out at 0x740 before its first real pass, and fitting into that box
+           * asks fitToBounds for a scale of 1/4200, which it clamps to the
+           * minimum zoom - so the plan opened at 1%, a few pixels across, and
+           * stayed there, because the fit only runs while the viewport is still
+           * null. Waiting for a real box costs one frame and is the difference
+           * between opening on the drawing and opening on a dot.
+           */
+          if (rect.width <= 0 || rect.height <= 0) {
+            return current;
+          }
           // Fit to what is actually there on first paint: for an opened project
           // that is the project, not a fixture room it does not contain.
           const fitted = fitToBounds(contentBounds({ rooms, walls }), rect.width, rect.height);

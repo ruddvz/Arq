@@ -22,6 +22,17 @@ export interface StatusBarProps {
   readonly localJournalStateLabel: string;
   readonly syncState: SyncState;
   readonly supportModeEnabled: boolean;
+  /**
+   * `'minimal'` is the phone strip the layout registry already sizes
+   * (`statusMinimal: 28`), carrying only what a review-first phone can act on.
+   *
+   * The full strip is nine authoring readouts. On a 430px phone they wrapped to
+   * two rows and the second was clipped by the dock, and three of them were
+   * meaningless there anyway: cursor coordinates and active snap describe a
+   * pointer a phone does not have, and save and sync are already stated on the
+   * phone project bar, which doc 09 says should not be repeated across bars.
+   */
+  readonly variant?: 'full' | 'minimal';
 }
 
 /**
@@ -64,7 +75,10 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
     localJournalStateLabel,
     syncState,
     supportModeEnabled,
+    variant = 'full',
   } = props;
+
+  const full = variant === 'full';
 
   const performanceWarning = formatPerformanceWarning(supportModeEnabled);
 
@@ -82,31 +96,35 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
         /*
          * Wraps rather than overflows at narrow widths, for the same reason as
          * top-bar.tsx: at 393px these fields ran to 494px and pushed a
-         * horizontal scrollbar onto the document. Package 3.0 doc 36 allows
-         * "low-priority status text" to collapse first, but dropping it here
-         * would take the local-save and sync state with it, and doc 46's phone
-         * layout has no bottom dock built yet to move them into. Two short
-         * lines of status beats hiding whether the user's work is saved.
+         * horizontal scrollbar onto the document.
+         *
+         * Wrapping used to be the whole answer, on the grounds that the phone
+         * had nowhere else to put save and sync. It does now - the phone
+         * project bar states both - so the phone uses `variant="minimal"` and
+         * the wrap is left as the safety net it should always have been,
+         * rather than the design.
          */
         flexWrap: 'wrap',
         rowGap: 'var(--arq-space-micro)',
       }}
     >
-      <span>{unitLabel}</span>
-      <span>{formatCoordinates(cursorWorldPosition, unitLabel)}</span>
-      <span>{formatActiveSnap(activeSnapLabel)}</span>
+      {full && <span>{unitLabel}</span>}
+      {full && <span>{formatCoordinates(cursorWorldPosition, unitLabel)}</span>}
+      {full && <span>{formatActiveSnap(activeSnapLabel)}</span>}
       <span>{formatSelectionCount(selectionCount)}</span>
       <span>{currentLevelName}</span>
-      <span>{formatViewScale(pixelsPerUnit)}</span>
+      {full && <span>{formatViewScale(pixelsPerUnit)}</span>}
       {/* The one field announced: validation results change without the user
           having just typed them, and nothing else reports them aloud. */}
       <span role="status" aria-live="polite">
         {formatModelHealth(modelHealth)}
       </span>
       {/* Save and sync are announced by top-bar.tsx. Repeating the
-          announcement here made a screen reader say each change twice. */}
-      <span>{localJournalStateLabel}</span>
-      <span>{describeSyncState(syncState)}</span>
+          announcement here made a screen reader say each change twice. On a
+          phone they are on the project bar instead, so the strip omits them
+          rather than showing the same fact in two places. */}
+      {full && <span>{localJournalStateLabel}</span>}
+      {full && <span>{describeSyncState(syncState)}</span>}
       {performanceWarning !== null && <span role="alert">{performanceWarning}</span>}
     </footer>
   );

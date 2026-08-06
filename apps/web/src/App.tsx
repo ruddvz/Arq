@@ -1297,6 +1297,9 @@ export function App(): JSX.Element {
             localJournalStateLabel={journalLabel}
             syncState={DEMO_SYNC_STATE}
             supportModeEnabled={false}
+            /* Doc 47: the phone strip carries only what a review-first phone
+               can act on; save and sync live on the phone project bar. */
+            variant={platform === 'phone' ? 'minimal' : 'full'}
           />
         }
       />

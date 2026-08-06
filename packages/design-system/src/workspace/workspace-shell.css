@@ -38,6 +38,22 @@
 }
 
 /*
+ * The base surface, and the reason dark appearance did not work before it.
+ *
+ * Every panel referenced `--arq-ui-*` tokens, so the chrome went dark
+ * correctly - but nothing applied a background or a text colour at the root, so
+ * the page itself stayed the browser default. In light that is invisible,
+ * because the default happens to be white. In dark it left a full-height white
+ * rectangle where the drawing surface is, with black default text on it: the
+ * single most visible defect in the whole appearance, and one no token value
+ * could have fixed, because no rule was reading them.
+ */
+.arq-workspace {
+  background: var(--arq-ui-paper);
+  color: var(--arq-ui-text-primary);
+}
+
+/*
  * Doc 36: "Mode icons remain visually distinct from tool categories through
  * grouping/spacing, not a second colour system." The rail introduces no colour
  * of its own - only a wider gutter and a divider.
