@@ -117,7 +117,7 @@ function wallsForLevel(document: NativeProjectDocument, levelId: string): readon
     end: wall.end,
   }));
 }
-import { TOOL_ICONS } from './tool-icons';
+import { TOOL_GROUP_ICONS, TOOL_ICONS } from './tool-icons';
 import { PlanCanvas } from './PlanCanvas';
 /**
  * The 3D surface carries three.js and the model renderer, which together are the
@@ -507,7 +507,9 @@ export function App(): JSX.Element {
    */
   const workspaceComposition = platform === 'desktop' ? 'floating' : 'docked';
 
-  const railsWidthPx = workspaceRailsWidthPx(platform);
+  // Every category has a glyph, so the rail renders as a dock and the floor
+  // has to be told the narrower width.
+  const railsWidthPx = workspaceRailsWidthPx(platform, true);
   useEffect(() => {
     setPanels((current) =>
       reconcileDockedPanels(current, {
@@ -1006,6 +1008,7 @@ export function App(): JSX.Element {
         activeMode={modeState.mode}
         onSelectMode={(mode) => setModeState((state) => switchModeIfAvailable(state, mode))}
         probe={probe}
+        toolRailIsDock
         panels={panels}
         sheet={sheet}
         onToggleSheet={(id) => setSheet((state) => toggleSheet(state, id))}
@@ -1125,6 +1128,7 @@ export function App(): JSX.Element {
           <ToolRail
             toolsByCategory={railModel.toolsByCategory}
             visibleCategories={railModel.visibleCategories}
+            categoryIcons={TOOL_GROUP_ICONS}
             state={toolRailState}
             onToggleCategory={(category) =>
               setToolRailState((state) => toggleCategory(state, category))

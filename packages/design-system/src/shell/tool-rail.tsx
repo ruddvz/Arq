@@ -37,6 +37,17 @@ export interface ToolRailProps {
    * behaviour.
    */
   readonly visibleCategories?: readonly ToolRailCategory[];
+  /**
+   * A glyph per category, already resolved by the caller - this package stays
+   * icon-agnostic for the same reason `ToolRailToolDefinition` takes a
+   * `ReactNode` rather than an icon name.
+   *
+   * Supplying it turns the rail into an icon dock: the label becomes the
+   * button's accessible name and a tooltip instead of visible text, which is
+   * what lets a 200px column of words become a 48px column of glyphs. Omitted,
+   * the rail renders exactly as it did before - labelled text buttons.
+   */
+  readonly categoryIcons?: Readonly<Partial<Record<ToolRailCategory, ReactNode>>>;
 }
 
 const CATEGORY_LABEL: Readonly<Record<ToolRailCategory, string>> = {
@@ -81,12 +92,36 @@ const CATEGORY_LABEL: Readonly<Record<ToolRailCategory, string>> = {
  */
 export const TOOL_RAIL_WIDTH_PX = 200;
 
+/**
+ * The rail's width once every category has a glyph.
+ *
+ * 48px is the Version 12 tool-dock width, and it still clears the 44px touch
+ * minimum because the button fills the column. The labelled rail keeps its
+ * 200px: the number is a property of what the rail is showing, not of the
+ * window.
+ */
+export const TOOL_RAIL_DOCK_WIDTH_PX = 48;
+
 export function ToolRail(props: ToolRailProps): JSX.Element {
-  const { toolsByCategory, state, onToggleCategory, onSelectTool, visibleCategories } = props;
+  const {
+    toolsByCategory,
+    state,
+    onToggleCategory,
+    onSelectTool,
+    visibleCategories,
+    categoryIcons,
+  } = props;
   const shown =
     visibleCategories === undefined
       ? TOOL_RAIL_CATEGORIES
       : TOOL_RAIL_CATEGORIES.filter((category) => visibleCategories.includes(category));
+  /*
+   * Every shown category must have a glyph before the rail may hide its
+   * labels. A dock where two of eight entries fall back to text is worse than
+   * either shape, so partial coverage keeps the labelled rail.
+   */
+  const iconDock =
+    categoryIcons !== undefined && shown.every((category) => categoryIcons[category] !== undefined);
 
   return (
     <nav
@@ -96,7 +131,7 @@ export function ToolRail(props: ToolRailProps): JSX.Element {
         display: 'flex',
         flexDirection: 'column',
         borderRight: '1px solid var(--arq-ui-line-subtle)',
-        width: TOOL_RAIL_WIDTH_PX,
+        width: iconDock ? TOOL_RAIL_DOCK_WIDTH_PX : TOOL_RAIL_WIDTH_PX,
         flex: '0 0 auto',
       }}
     >
@@ -110,10 +145,21 @@ export function ToolRail(props: ToolRailProps): JSX.Element {
               className="arq-shell-button"
               aria-expanded={expanded}
               aria-controls={panelId}
-              style={{ width: '100%', justifyContent: 'flex-start' }}
+              style={{
+                width: '100%',
+                justifyContent: iconDock ? 'center' : 'flex-start',
+              }}
+              /*
+               * In the dock the glyph is the only visible content, so the label
+               * has to reach a screen reader some other way, and a `title`
+               * alone is unreachable by keyboard and by touch.
+               */
+              {...(iconDock
+                ? { 'aria-label': CATEGORY_LABEL[category], title: CATEGORY_LABEL[category] }
+                : {})}
               onClick={() => onToggleCategory(category)}
             >
-              {CATEGORY_LABEL[category]}
+              {iconDock ? categoryIcons?.[category] : CATEGORY_LABEL[category]}
             </button>
             {expanded && (
               <div id={panelId} role="group" aria-label={`${CATEGORY_LABEL[category]} tools`}>

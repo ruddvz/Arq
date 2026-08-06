@@ -17,7 +17,7 @@ import {
   type WorkspaceProjectContext,
 } from '@arq/workspace';
 import { ModeRail, MODE_RAIL_WIDTH_PX } from './mode-rail';
-import { TOOL_RAIL_WIDTH_PX } from '../shell/tool-rail';
+import { TOOL_RAIL_DOCK_WIDTH_PX, TOOL_RAIL_WIDTH_PX } from '../shell/tool-rail';
 import { WorkspaceSheet } from './workspace-sheet';
 import { PhoneDock } from './phone-dock';
 import { TabletDrawerBar } from './tablet-drawer-bar';
@@ -34,8 +34,22 @@ import { PanelResizeHandle } from './panel-resize-handle';
  */
 export const WORKSPACE_RAILS_WIDTH_PX = MODE_RAIL_WIDTH_PX + TOOL_RAIL_WIDTH_PX;
 
-export function workspaceRailsWidthPx(platform: WorkspacePlatform): number {
-  return panelDockingPolicy(platform) === 'drawers-only' ? 0 : WORKSPACE_RAILS_WIDTH_PX;
+/** The same pair once the tool rail is an icon dock rather than a labelled column. */
+export const WORKSPACE_RAILS_DOCK_WIDTH_PX = MODE_RAIL_WIDTH_PX + TOOL_RAIL_DOCK_WIDTH_PX;
+
+/**
+ * `toolRailIsDock` has to be told, not guessed: the rail decides its own width
+ * from whether the host gave it a glyph for every category, and the canvas
+ * floor and the floating panels' inset both depend on the answer. Getting it
+ * wrong does not throw - it leaves the navigator hanging in the middle of the
+ * drawing, which is exactly what happened when the dock landed and this still
+ * reported 312px.
+ */
+export function workspaceRailsWidthPx(platform: WorkspacePlatform, toolRailIsDock = false): number {
+  if (panelDockingPolicy(platform) === 'drawers-only') {
+    return 0;
+  }
+  return toolRailIsDock ? WORKSPACE_RAILS_DOCK_WIDTH_PX : WORKSPACE_RAILS_WIDTH_PX;
 }
 
 export interface WorkspaceRootProps {
@@ -108,6 +122,11 @@ export interface WorkspaceRootProps {
    * stores is worse than none.
    */
   readonly onResizePanel?: (panel: 'project-browser' | 'inspector', widthPx: number) => void;
+  /**
+   * True when the host supplied a glyph for every tool category, so the rail
+   * rendered as a 48px dock. Only affects where floating panels start.
+   */
+  readonly toolRailIsDock?: boolean;
 }
 
 function OverlayPanel(props: {
@@ -242,6 +261,7 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
     reviewSheet,
     reviewDisabledReason,
     onResizePanel,
+    toolRailIsDock = false,
   } = props;
 
   const platform: WorkspacePlatform = resolveWorkspacePlatform(probe);
@@ -362,7 +382,9 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
              * row, so without it the left panel begins at the row edge and
              * covers the two rails it is supposed to sit beside.
              */
-            ['--arq-rails-width' as string]: `${canvasFirst ? 0 : WORKSPACE_RAILS_WIDTH_PX}px`,
+            ['--arq-rails-width' as string]: `${
+              canvasFirst ? 0 : workspaceRailsWidthPx(platform, toolRailIsDock)
+            }px`,
           }}
         >
           {!canvasFirst && (

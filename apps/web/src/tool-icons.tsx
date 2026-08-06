@@ -30,6 +30,14 @@ import {
   WallIcon,
   WindowIcon,
   WindowSelectIcon,
+  GroupSelectIcon,
+  GroupDrawIcon,
+  GroupBuildIcon,
+  GroupModifyIcon,
+  GroupAnnotateIcon,
+  GroupMeasureIcon,
+  GroupViewIcon,
+  GroupReviewIcon,
 } from '@arq/icons';
 
 /**
@@ -119,3 +127,25 @@ export const TOOLS_AWAITING_ICON: readonly string[] = [
   'view-style',
   'zoom',
 ];
+
+/**
+ * A glyph per tool group, so the rail can be a dock rather than a column of
+ * words.
+ *
+ * These are eight purpose-drawn ARQ glyphs (`design/icons/svg/group-*.svg`),
+ * not a member tool's icon borrowed to stand for its group and not a second
+ * icon family imported alongside the first. The Version 12 icon rules allow a
+ * custom ARQ symbol exactly where no adequate library icon exists for a domain
+ * concept, and "the Build group" is such a concept - the Font Awesome subset
+ * the package ships is scoped by its own manifest to "reference mockups only".
+ */
+export const TOOL_GROUP_ICONS: Readonly<Record<string, ReactNode>> = {
+  select: <GroupSelectIcon />,
+  draw: <GroupDrawIcon />,
+  build: <GroupBuildIcon />,
+  modify: <GroupModifyIcon />,
+  annotate: <GroupAnnotateIcon />,
+  measure: <GroupMeasureIcon />,
+  view: <GroupViewIcon />,
+  review: <GroupReviewIcon />,
+};
