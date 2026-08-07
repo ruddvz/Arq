@@ -152,6 +152,40 @@ is being refused, not missing:
 | The 17.0 model's geometry is architecturally correct               | not inspected — outside this gate                              |
 | Structural, electrical, plumbing, HVAC and construction approval   | not inspected — separate professional gates, unchanged         |
 
+## Second artifact: the slimmed container
+
+A second `house.arq` was submitted separately —
+SHA-256 `c4fce9bf51a1e030bb018dbaf387ea4d9ba2f103c5e6b7b4291e6b3cff3e85a9`,
+21.4 MB against the packaged file's 34.7 MB. Evidence:
+[`HYDRATION_CHECK_SLIMMED_CONTAINER.json`](./HYDRATION_CHECK_SLIMMED_CONTAINER.json).
+
+It is the same project with a cleaner container, and the container work is
+genuinely good:
+
+|                           | Packaged 17.0 | Slimmed |
+| ------------------------- | ------------: | ------: |
+| size                      |       34.7 MB | 21.4 MB |
+| archive entries           |            68 |      65 |
+| resources                 |            72 |      64 |
+| resource references       |            67 |      65 |
+| **orphaned resources**    |         **7** |   **0** |
+| checksum records verified |       67 / 67 | 64 / 64 |
+
+Three redundant entries were dropped — `model/canonical-model-17.0.json` (a byte
+duplicate of `model.json`), its pretty-printed twin, and the QA contact sheet —
+`checksums.json` was regenerated to match, and the seven orphaned resource rows
+the packaged file carried are gone. Every remaining checksum and every resource
+chunk hash verifies, with no dangling references.
+
+**It changes nothing about hydration.** `model.json`, `views.json`,
+`manifest.json` and `sheets.json` are byte-identical to the packaged file, so the
+same 15 divergences apply at the same counts, and the reader still refuses at
+`model.json does not declare a modelSchema`. The schema-v2 named indexes are
+still absent from both.
+
+So this is container housekeeping, not a fix for the gate above. The blocking
+work remains the model vocabulary.
+
 ## What this does not change
 
 `house.arq` was opened read-only and is byte-identical after this check; its
