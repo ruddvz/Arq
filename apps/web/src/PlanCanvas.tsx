@@ -224,6 +224,82 @@ function labelKeepOut(
   }));
 }
 
+/**
+ * The exponent that makes a superellipse read as an Apple corner.
+ *
+ * `border-radius` and `roundRect` both draw a quarter-circle, which is the
+ * n = 2 case. A quarter-circle meets the straight edge beside it with a break
+ * in curvature, and the corner visibly "pops". Raising the exponent ramps the
+ * curvature in continuously, so the shape reads as one outline rather than as
+ * four arcs joined to four lines. Four is the value the platform convention
+ * settled on and the one CSS `corner-shape: squircle` uses, which is what keeps
+ * the painted page and the chrome around it the same shape.
+ */
+const SQUIRCLE_EXPONENT = 4;
+
+/** Enough segments that a corner is smooth at any size this draws at. */
+const SQUIRCLE_SEGMENTS = 12;
+
+/**
+ * Paths a rounded rectangle with continuous corners.
+ *
+ * Written out rather than taken from the canvas API because there is no
+ * superellipse in it: `roundRect` is circular, and the page would have been the
+ * one shape on screen still drawn the old way once the chrome around it was
+ * not. Each corner is sampled from |x|^n + |y|^n = 1 over a quarter turn.
+ */
+function squirclePath(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+): void {
+  // Never more than half the shorter side, or opposite corners would overlap
+  // and the outline would fold through itself.
+  const r = Math.max(0, Math.min(radius, Math.min(width, height) / 2));
+  if (r === 0) {
+    ctx.rect(x, y, width, height);
+    return;
+  }
+  const right = x + width;
+  const bottom = y + height;
+  /** A quarter of the superellipse, from the edge midpoint towards the corner. */
+  const corner = (
+    cx: number,
+    cy: number,
+    signX: number,
+    signY: number,
+    startAtVertical: boolean,
+  ): void => {
+    for (let step = 0; step <= SQUIRCLE_SEGMENTS; step += 1) {
+      const t = (step / SQUIRCLE_SEGMENTS) * (Math.PI / 2);
+      const angle = startAtVertical ? Math.PI / 2 - t : t;
+      const ux = Math.cos(angle);
+      const uy = Math.sin(angle);
+      const scale =
+        1 /
+        Math.pow(
+          Math.pow(Math.abs(ux), SQUIRCLE_EXPONENT) + Math.pow(Math.abs(uy), SQUIRCLE_EXPONENT),
+          1 / SQUIRCLE_EXPONENT,
+        );
+      ctx.lineTo(cx + signX * ux * scale * r, cy + signY * uy * scale * r);
+    }
+  };
+
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(right - r, y);
+  corner(right - r, y + r, 1, -1, true);
+  ctx.lineTo(right, bottom - r);
+  corner(right - r, bottom - r, 1, 1, false);
+  ctx.lineTo(x + r, bottom);
+  corner(x + r, bottom - r, -1, 1, true);
+  ctx.lineTo(x, y + r);
+  corner(x + r, y + r, -1, -1, false);
+  ctx.closePath();
+}
+
 /** The drawing's page on screen, in CSS pixels relative to the canvas element. */
 export interface SheetRect {
   readonly x: number;
@@ -538,7 +614,8 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       ctx.shadowOffsetY = 4 * devicePixelRatio;
       ctx.fillStyle = palette.paper;
       ctx.beginPath();
-      ctx.roundRect(
+      squirclePath(
+        ctx,
         topLeft.x,
         topLeft.y,
         bottomRight.x - topLeft.x,

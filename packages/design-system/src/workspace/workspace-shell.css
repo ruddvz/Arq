@@ -288,10 +288,24 @@ body {
   opacity: 1;
 }
 
-/* A glyph beside a word does not need the 44px square a glyph alone does. */
-.arq-view-kinds__segment,
-.arq-top-bar__home {
-  min-width: 0;
+/*
+ * A glyph beside a word does not need the 44px square a glyph alone does - on a
+ * mouse. A finger does, and `.arq-shell-button`'s minimum is there for exactly
+ * that reason, so the relaxation is scoped to a fine pointer the way every
+ * other density relaxation in this file already is. Dropping it globally would
+ * have put three 28px-tall targets in the middle of an iPad's project bar.
+ */
+@media (pointer: fine) {
+  .arq-view-kinds__segment,
+  .arq-top-bar__home,
+  .arq-view-tools .arq-shell-button {
+    min-width: 0;
+  }
+
+  .arq-view-tools .arq-shell-button {
+    min-width: 32px;
+    min-height: 32px;
+  }
 }
 
 .arq-view-kinds__segment svg,
@@ -586,8 +600,6 @@ body {
 }
 
 .arq-view-tools .arq-shell-button {
-  min-width: 32px;
-  min-height: 32px;
   padding: var(--arq-space-micro);
   border-radius: 999px;
 }
@@ -881,4 +893,38 @@ button.arq-project-directory__row[aria-pressed='true'] .arq-project-directory__c
 
 .arq-project-directory__result-count:empty {
   display: none;
+}
+
+/*
+ * Continuous corners, not circular ones.
+ *
+ * `border-radius` draws a quarter-circle, and a quarter-circle meets the
+ * straight edge beside it with a visible break in curvature - the corner
+ * "pops". Apple's platforms have not used circular corners for a decade; they
+ * use a superellipse, where curvature ramps in continuously, which is why their
+ * rounded rectangles read as one shape rather than as four arcs joined to four
+ * lines. Every corner in this shell was the circular kind.
+ *
+ * `corner-shape` is the CSS property for it, and it applies to whatever
+ * `border-radius` is already set - so this is additive, and a browser that does
+ * not know the property ignores it and keeps the circular corner it drew
+ * before. No fallback machinery is needed and none is written.
+ *
+ * Deliberately not applied to the pills. A capsule's ends are true
+ * semicircles on Apple's platforms as well, and squircling them would round
+ * off the very shape that makes a capsule read as one.
+ */
+.arq-shell-panel,
+.arq-shell-button,
+.arq-workspace__bar,
+.arq-workspace__docked,
+.arq-workspace__dock,
+.arq-workspace__overlay,
+.arq-workspace__viewport,
+.arq-workspace .arq-mode-rail,
+.arq-workspace .arq-tool-rail,
+.arq-field,
+.arq-project-directory__row,
+.arq-project-overview__card {
+  corner-shape: squircle;
 }

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import type { ViewTabsState, WorkspaceViewKind } from '@arq/workspace';
 
 export interface ViewKindSegment {
@@ -49,6 +49,7 @@ export interface ViewKindSwitcherProps {
  */
 export function ViewKindSwitcher(props: ViewKindSwitcherProps): JSX.Element {
   const { segments, state, onSelectKind } = props;
+  const segmentRefs = useRef(new Map<WorkspaceViewKind, HTMLButtonElement>());
   const activeKind = state.tabs.find((tab) => tab.id === state.activeId)?.kind ?? null;
   const enabled = segments.filter((segment) => segment.disabledReason === undefined);
   /*
@@ -63,13 +64,32 @@ export function ViewKindSwitcher(props: ViewKindSwitcherProps): JSX.Element {
   const focusableKind =
     enabled.find((segment) => segment.kind === activeKind)?.kind ?? enabled[0]?.kind ?? null;
 
+  /*
+   * Moving *and* activating, in that order, which is the whole point.
+   *
+   * The first version only activated: it called `onSelectKind` and left the
+   * browser's focus on the segment the user had arrowed away from. The roving
+   * tab stop moved with the selection, so focus and the tab stop ended up on
+   * different buttons - the visible focus ring sat on "Plan" while "3D" was
+   * selected, and a second Tab press left the capsule from the wrong place.
+   * Selection is not focus, and a roving tabindex only works if something
+   * actually rove.
+   *
+   * Activation follows focus deliberately (the ARIA "automatic activation"
+   * tablist pattern, and what the tab strip this replaced already did): showing
+   * a view the user has arrowed to is the thing they were asking for, and
+   * requiring Enter afterwards would make switching a two-key gesture that no
+   * other switcher in this shell requires.
+   */
   function moveFocus(from: WorkspaceViewKind, delta: -1 | 1): void {
     if (enabled.length === 0) return;
     const index = enabled.findIndex((segment) => segment.kind === from);
     // Wraps, as a tablist should. A disabled segment is skipped rather than
     // focused-and-inert, which is why this walks `enabled` and not `segments`.
     const next = enabled[(index + delta + enabled.length) % enabled.length];
-    if (next !== undefined) onSelectKind(next.kind);
+    if (next === undefined) return;
+    segmentRefs.current.get(next.kind)?.focus();
+    onSelectKind(next.kind);
   }
 
   return (
@@ -91,6 +111,10 @@ export function ViewKindSwitcher(props: ViewKindSwitcherProps): JSX.Element {
         return (
           <button
             key={segment.kind}
+            ref={(node) => {
+              if (node === null) segmentRefs.current.delete(segment.kind);
+              else segmentRefs.current.set(segment.kind, node);
+            }}
             type="button"
             role="tab"
             className="arq-shell-button arq-view-kinds__segment"
