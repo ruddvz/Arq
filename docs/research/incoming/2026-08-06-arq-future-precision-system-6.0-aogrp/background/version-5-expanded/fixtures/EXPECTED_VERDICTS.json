@@ -1,0 +1,57 @@
+{
+  "foreign_key_violation.arq": {
+    "code": "ARQ5-MODEL-0002",
+    "state": "rejected",
+    "verdict": null
+  },
+  "healthy_demo.arq": {
+    "code": null,
+    "state": "accepted",
+    "verdict": "editable-demo"
+  },
+  "missing_project_table.arq": {
+    "code": "ARQ5-SQLITE-0003",
+    "state": "rejected",
+    "verdict": null
+  },
+  "missing_required_asset.arq": {
+    "code": "ARQ5-ASSET-0002",
+    "state": "rejected",
+    "verdict": null
+  },
+  "non_sqlite.arq": {
+    "code": "ARQ5-FILE-0004",
+    "state": "rejected",
+    "verdict": null
+  },
+  "published_demo.arq": {
+    "code": null,
+    "state": "accepted",
+    "verdict": "editable-demo"
+  },
+  "truncated.arq": {
+    "code": "ARQ5-SQLITE-0003",
+    "state": "rejected",
+    "verdict": null
+  },
+  "unknown_optional_capability.arq": {
+    "code": null,
+    "state": "accepted",
+    "verdict": "editable-demo"
+  },
+  "unsupported_required_capability.arq": {
+    "code": null,
+    "state": "accepted",
+    "verdict": "read-only-preserving"
+  },
+  "wrong_application_id.arq": {
+    "code": "ARQ5-FILE-0003",
+    "state": "rejected",
+    "verdict": null
+  },
+  "wrong_semantic_root.arq": {
+    "code": "ARQ5-PUB-0001",
+    "state": "rejected",
+    "verdict": null
+  }
+}

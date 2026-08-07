@@ -1,0 +1,32 @@
+{
+  "$id": "https://arq.invalid/v6/capability.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-z0-9._-]+$",
+      "type": "string"
+    },
+    "preservation": {
+      "enum": [
+        "understood",
+        "opaque",
+        "reference-only",
+        "unsupported"
+      ]
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "version": {
+      "minimum": 1,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "required"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.invalid/spec/5.0/schema/diagnostic.json",
+  "title": "diagnostic",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "severity",
+    "state",
+    "message",
+    "scope"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "pattern": "^ARQ5-[A-Z]+-[0-9]{4}$"
+    },
+    "severity": {
+      "enum": [
+        "info",
+        "warning",
+        "error",
+        "fatal"
+      ]
+    },
+    "state": {
+      "enum": [
+        "verified",
+        "partially-verified",
+        "proposed",
+        "inferred",
+        "assumed",
+        "blocked",
+        "failed",
+        "unsupported",
+        "corrupt",
+        "quarantined",
+        "stale",
+        "ambiguous",
+        "invalid",
+        "permission-denied",
+        "resource-limit",
+        "cancelled",
+        "internal-error"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "scope": {
+      "type": "object"
+    },
+    "recovery_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "detail_ref": {
+      "type": "string"
+    }
+  }
+}

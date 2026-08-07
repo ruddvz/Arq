@@ -1,0 +1,35 @@
+{
+  "$id": "https://arq.invalid/v6/operation-group.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "base_revision": {
+      "maxLength": 64,
+      "minLength": 64,
+      "type": "string"
+    },
+    "operations": {
+      "items": {
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "type": "array"
+    },
+    "preconditions": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "provenance": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "base_revision",
+    "operations",
+    "preconditions"
+  ],
+  "type": "object"
+}

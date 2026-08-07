@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.invalid/spec/5.0/schema/mcp-proposal.json",
+  "title": "mcp-proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "proposal_id",
+    "grant_id",
+    "project_id",
+    "base_revision",
+    "operations",
+    "state",
+    "digest"
+  ],
+  "properties": {
+    "proposal_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "grant_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "project_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "base_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "$ref": "operation.schema.json"
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "state": {
+      "enum": [
+        "draft",
+        "validated",
+        "submitted",
+        "approved",
+        "committed",
+        "rejected",
+        "stale",
+        "expired"
+      ]
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "validation": {
+      "type": "object"
+    }
+  }
+}

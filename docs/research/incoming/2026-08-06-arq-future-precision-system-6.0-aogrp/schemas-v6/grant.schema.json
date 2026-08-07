@@ -1,0 +1,46 @@
+{
+  "$id": "https://arq.invalid/v6/grant.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "audience": {
+      "type": "string"
+    },
+    "base_revision": {
+      "type": "string"
+    },
+    "expires_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "limits": {
+      "type": "object"
+    },
+    "nonce": {
+      "type": "string"
+    },
+    "operation_types": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "project": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "subject",
+    "audience",
+    "project",
+    "base_revision",
+    "operation_types",
+    "expires_at",
+    "nonce"
+  ],
+  "type": "object"
+}

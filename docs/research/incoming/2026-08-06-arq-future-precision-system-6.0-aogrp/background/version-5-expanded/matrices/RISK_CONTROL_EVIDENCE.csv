@@ -1,0 +1,13 @@
+Risk ID,Risk,Severity,Control,Required evidence
+R-001,Source overwritten during failed publication,critical,copy-on-write candidate and atomic promotion,crash injection and hash preservation
+R-002,Unknown required capability discarded,critical,read-only preserving or refuse write,unknown-capability roundtrip
+R-003,Wrong topology rebound,critical,ambiguity state and user rebinding,topology mutation corpus
+R-004,Canonical root differs by implementation,high,deterministic encoding vectors,independent language implementation
+R-005,AI approval replay,critical,one-time exact digest token,negative MCP test
+R-006,Hostile file exhaustion,high,bounded preflight and isolation,fuzz and resource tests
+R-007,Kernel upgrade changes shape,high,versioned adapter and differential audit,kernel upgrade fixtures
+R-008,Interchange overstates fidelity,high,object-level classifications,target-tool and roundtrip corpus
+R-009,Migration strands old files,high,copy-on-write chain and backward reader,migration matrix
+R-010,Federated child drifts,high,immutable pin and release closure,missing and changed child tests
+R-011,Cloud sync rewrites history,critical,immutable revision replication,disaster recovery drill
+R-012,Package claims nonexistent artifacts,critical,generated inventory and manifest,package validator

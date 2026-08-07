@@ -1,0 +1,49 @@
+{
+  "$id": "https://arq.invalid/v6/proposal.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "base_revision": {
+      "type": "string"
+    },
+    "digest": {
+      "maxLength": 64,
+      "minLength": 64,
+      "type": "string"
+    },
+    "operations": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "project": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "validated",
+        "review",
+        "approved",
+        "committed",
+        "rejected",
+        "stale"
+      ]
+    }
+  },
+  "required": [
+    "project",
+    "base_revision",
+    "operations",
+    "assumptions",
+    "digest"
+  ],
+  "type": "object"
+}

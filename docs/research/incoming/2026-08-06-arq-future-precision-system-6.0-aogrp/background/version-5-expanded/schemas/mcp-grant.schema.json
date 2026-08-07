@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.invalid/spec/5.0/schema/mcp-grant.json",
+  "title": "mcp-grant",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "grant_id",
+    "project_id",
+    "base_revision",
+    "audience",
+    "allowed_resources",
+    "allowed_operations",
+    "expires_at",
+    "nonce"
+  ],
+  "properties": {
+    "grant_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "project_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "base_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "audience": {
+      "type": "string",
+      "minLength": 1
+    },
+    "allowed_resources": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "allowed_operations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "object_scope": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "max_operations": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000
+    },
+    "max_payload_bytes": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "remote_compute": {
+      "type": "boolean"
+    },
+    "export_allowed": {
+      "type": "boolean"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 16
+    }
+  }
+}

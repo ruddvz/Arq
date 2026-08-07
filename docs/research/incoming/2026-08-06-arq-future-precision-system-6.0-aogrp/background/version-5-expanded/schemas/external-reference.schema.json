@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.invalid/spec/5.0/schema/external-reference.json",
+  "title": "external-reference",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "reference_id",
+    "kind",
+    "target_project_id",
+    "target_revision",
+    "transform",
+    "load_policy"
+  ],
+  "properties": {
+    "reference_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "kind": {
+      "enum": [
+        "arq-project",
+        "asset",
+        "uri",
+        "interchange-source"
+      ]
+    },
+    "target_project_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "target_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "expected_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "transform": {
+      "type": "array",
+      "minItems": 16,
+      "maxItems": 16,
+      "items": {
+        "type": "number"
+      }
+    },
+    "coordinate_frame": {
+      "type": "string"
+    },
+    "load_policy": {
+      "enum": [
+        "required-eager",
+        "required-lazy",
+        "optional-lazy",
+        "proxy-only"
+      ]
+    },
+    "floating": {
+      "type": "boolean",
+      "const": false
+    }
+  }
+}

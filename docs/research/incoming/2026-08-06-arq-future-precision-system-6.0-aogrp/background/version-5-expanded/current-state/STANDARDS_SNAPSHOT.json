@@ -1,0 +1,93 @@
+{
+  "as_of": "2026-08-06T15:58:00-04:00",
+  "records": [
+    {
+      "area": "MCP",
+      "current": "2026-07-28",
+      "important": "stateless core, server/discover, request _meta, Mcp-Method and Mcp-Name headers, MRTR, Tasks extension, auth hardening",
+      "observed": "2026-08-06",
+      "state": "official stable",
+      "url": "https://modelcontextprotocol.io/specification/2026-07-28"
+    },
+    {
+      "area": "MCP TypeScript SDK",
+      "current": "v2 with explicit 2026-07-28 opt-in",
+      "important": "v2 construction does not automatically emit 2026-07-28 wire format",
+      "observed": "2026-08-06",
+      "state": "official guidance",
+      "url": "https://ts.sdk.modelcontextprotocol.io/v2/migration/support-2026-07-28"
+    },
+    {
+      "area": "SQLite",
+      "current": "3.53.4",
+      "important": "includes WAL reset corruption fix inherited from 3.53 line and OPFS Web Locks VFS in 3.53 series",
+      "observed": "2026-08-06",
+      "state": "official release 2026-07-24",
+      "url": "https://www.sqlite.org/releaselog/3_53_4.html"
+    },
+    {
+      "area": "IFC",
+      "current": "4.3.2.0",
+      "important": "living docs dated 20260630 add clarifications but do not change official schema",
+      "observed": "2026-08-06",
+      "state": "latest official, ISO 16739-1:2024",
+      "url": "https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3/index.html"
+    },
+    {
+      "area": "STEP AP242",
+      "current": "ISO 10303-242:2025",
+      "important": "edition 5 is committee draft and must not be treated as released",
+      "observed": "2026-08-06",
+      "state": "current published edition indicated by ISO",
+      "url": "https://www.iso.org/standard/72059.html"
+    },
+    {
+      "area": "OCCT",
+      "current": "8.0.0",
+      "important": "major source-incompatible changes require a measured adapter bakeoff",
+      "observed": "2026-08-06",
+      "state": "official final 2026-05-07",
+      "url": "https://dev.opencascade.org/content/open-cascade-technology-800-release"
+    },
+    {
+      "area": "OpenUSD",
+      "current": "26.05",
+      "important": "composition system, not canonical precision authoring model",
+      "observed": "2026-08-06",
+      "state": "current official release",
+      "url": "https://openusd.org/release/"
+    },
+    {
+      "area": "glTF",
+      "current": "2.0 with specification patch 2.0.1",
+      "important": "derived runtime delivery, not exact geometry authority",
+      "observed": "2026-08-06",
+      "state": "official registry",
+      "url": "https://registry.khronos.org/glTF/"
+    },
+    {
+      "area": "CityGML",
+      "current": "3.0",
+      "important": "semantic city exchange and GML encoding",
+      "observed": "2026-08-06",
+      "state": "official OGC standard",
+      "url": "https://www.ogc.org/standards/citygml/"
+    },
+    {
+      "area": "3D Tiles",
+      "current": "1.1",
+      "important": "massive spatial streaming, not authoring truth",
+      "observed": "2026-08-06",
+      "state": "official OGC community standard",
+      "url": "https://www.ogc.org/standards/3dtiles/"
+    },
+    {
+      "area": "Revit",
+      "current": "2027 product documentation",
+      "important": "central/local worksharing lessons, proprietary RVT internals not fully public",
+      "observed": "2026-08-06",
+      "state": "current product generation",
+      "url": "https://help.autodesk.com/view/RVT/2027/ENU/"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+System,Model,Strengths,Limits,ARQ role
+SQLite,Relational embedded DB,"Transactions, queries, tooling",Not content-addressed; whole-file sync awkward,Working copy and index
+Git pack,Content-addressed objects,"Immutable IDs, pack and transfer",Not semantic CAD model,Object and revision principles
+HDF5,Self-describing binary graph,"Superblock, chunks, extensibility",Complex general-purpose format,Recovery and self-description lessons
+Zarr v3,Chunked arrays,Codec/store separation,Not project semantics,Simulation and raster chunks
+Cap'n Proto,Schema-driven zero-copy,"Fast access, evolution",Not self-describing semantic registry,Derived hot packets candidate
+FlatBuffers,Schema-driven direct access,"Fast, evolution rules",Canonical identity requires care,Derived indexes candidate
+LMDB,Copy-on-write B+ tree,"Predictable reads, zero-copy",Single engine and mmap constraints,Optional local index candidate
+FoundationDB,Transactional KV layers,Scalable cloud substrate,"Cloud service, not portable file",Collaboration backend candidate
+AOGRP,ARQ object and revision pack,"Semantic roots, append, partial load",New parser and governance cost,Candidate portable canonical format

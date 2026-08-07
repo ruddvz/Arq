@@ -1,0 +1,19 @@
+Code,Meaning,Severity,Safe action
+ARQ5-FILE-0001,File missing,fatal,Choose another file
+ARQ5-FILE-0002,Truncated or not SQLite,fatal,Preserve source; inspect or repair copy
+ARQ5-FILE-0003,Application ID mismatch,error,Open with matching application
+ARQ5-SQLITE-0001,SQLite open failed,fatal,Quarantine or repair copy
+ARQ5-SQLITE-0002,SQLite integrity failed,fatal,Preserve source; repair copy
+ARQ5-MODEL-0001,Project identity cardinality invalid,fatal,Repair copy
+ARQ5-MODEL-0002,Foreign-key violation,fatal,Repair copy
+ARQ5-REV-0001,Current revision missing,fatal,Recovery or repair
+ARQ5-REV-0002,Semantic root mismatch,fatal,Do not edit; inspect evidence
+ARQ5-PUB-0001,Publication root mismatch,fatal,Do not promote candidate
+ARQ5-PUB-0002,Candidate differs from source revision,fatal,Discard candidate
+ARQ5-ASSET-0001,Asset hash mismatch,fatal,Restore matching asset
+ARQ5-ASSET-0002,Required asset missing,fatal,Resolve source or open reference-only
+ARQ5-CAP-0001,Required capability unsupported,error,Read-only preserving or newer reader
+ARQ5-MCP-0001,Grant scope denied,error,Request narrower authorised scope
+ARQ5-MCP-0002,Proposal stale,error,Rebase and revalidate
+ARQ5-MCP-0003,Approval replay,fatal,Issue a new review and approval
+ARQ5-SEL-0001,Persistent selection ambiguous,error,Review candidates and rebind

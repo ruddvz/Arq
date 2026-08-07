@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.invalid/spec/5.0/schema/asset.json",
+  "title": "asset",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "asset_id",
+    "sha256",
+    "media_type",
+    "byte_length",
+    "role"
+  ],
+  "properties": {
+    "asset_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "media_type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "byte_length": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "role": {
+      "enum": [
+        "canonical-source",
+        "preserved-source",
+        "derived",
+        "preview",
+        "evidence"
+      ]
+    },
+    "required": {
+      "type": "boolean"
+    }
+  }
+}

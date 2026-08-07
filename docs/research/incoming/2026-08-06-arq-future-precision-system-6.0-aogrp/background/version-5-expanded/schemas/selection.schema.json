@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.invalid/spec/5.0/schema/selection.json",
+  "title": "selection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "selection_id",
+    "owner_object_id",
+    "role",
+    "descriptor",
+    "resolution"
+  ],
+  "properties": {
+    "selection_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "owner_object_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "role": {
+      "type": "string",
+      "minLength": 1
+    },
+    "descriptor": {
+      "type": "object"
+    },
+    "resolution": {
+      "enum": [
+        "exact",
+        "rebound",
+        "ambiguous",
+        "missing",
+        "invalidated",
+        "unsupported"
+      ]
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidence": {
+      "type": "object"
+    }
+  }
+}

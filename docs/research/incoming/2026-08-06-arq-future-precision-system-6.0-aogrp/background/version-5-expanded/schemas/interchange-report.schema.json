@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arq.invalid/spec/5.0/schema/interchange-report.json",
+  "title": "interchange-report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_id",
+    "direction",
+    "source",
+    "target",
+    "adapter",
+    "summary",
+    "objects"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "direction": {
+      "enum": [
+        "import",
+        "export",
+        "roundtrip"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "format",
+        "edition",
+        "sha256"
+      ],
+      "properties": {
+        "format": {
+          "type": "string"
+        },
+        "edition": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "target": {
+      "type": "object",
+      "required": [
+        "format",
+        "edition"
+      ],
+      "properties": {
+        "format": {
+          "type": "string"
+        },
+        "edition": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "adapter": {
+      "type": "object",
+      "required": [
+        "id",
+        "version"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object"
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_id",
+          "classification"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string"
+          },
+          "target_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "classification": {
+            "enum": [
+              "native-editable",
+              "mapped-editable",
+              "exact-reference",
+              "approximate-reference",
+              "flattened",
+              "omitted",
+              "unsupported",
+              "preserved-source-only"
+            ]
+          },
+          "diagnostics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

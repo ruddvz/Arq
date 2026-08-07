@@ -1,0 +1,11 @@
+id,claim,state,evidence,limitation
+C001,MCP current protocol is 2026-07-28,Verified external,Official MCP release and spec,Recheck before implementation
+C002,Public repo is pre-release,Verified public page,GitHub README,Code may be newer
+C003,Native .arq direction is SQLite,Verified public page plus Operator OS snapshot,README and Project source,Exact schema blocked
+C004,Product open pipeline incomplete,Verified public STATUS narrative,STATUS.md,Needs current code confirmation
+C005,3D product state,Conflict,STATUS.md lines conflict,Resolve at HEAD
+C006,Working copy storage authority,Blocked,Public status records overlap,ADR required
+C007,Version 5 reference tests pass,Pending until final validation,VALIDATION_REPORT.md,Package-local only
+C008,Production format conforms to Version 5,Not claimed,No repository implementation,Do not publish
+C009,Future car or aircraft design support,Proposed future,Architecture and domain-pack plan,Not implemented
+C010,City-scale federation,Proposed future,Federation contracts,Not implemented

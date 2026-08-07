@@ -1,0 +1,38 @@
+{
+  "blocked_reads": [
+    "CLAUDE.md",
+    ".zeus/FAST-KERNEL.md",
+    ".zeus/INVARIANTS.md",
+    "current file-format schemas",
+    "current migrations",
+    "current CI at immutable HEAD"
+  ],
+  "displayed_branch": "claude/arq-cad-platform-research-ba8rav",
+  "displayed_commit_count": 183,
+  "displayed_open_issues": 13,
+  "displayed_open_pull_requests": 16,
+  "immutable_head": "unknown",
+  "observed_at": "2026-08-06T15:58:00-04:00",
+  "open_pr_identity": "unknown",
+  "public_status_conflicts": [
+    "STATUS.md says a real 3D view exists, then says the 3D stack has zero consumers and no 3D surface",
+    "STATUS.md reports SQLite-WASM/OPFS ADR direction and a tested Dexie/IndexedDB journal without an accepted resolution",
+    "STATUS.md is older than the package date and cannot establish current HEAD truth"
+  ],
+  "repository": "ruddvz/Arq",
+  "source": "public GitHub HTML, not an authenticated immutable checkout",
+  "status_document_last_updated": "2026-07-27",
+  "urls": {
+    "repo": "https://github.com/ruddvz/Arq",
+    "status": "https://github.com/ruddvz/Arq/blob/claude/arq-cad-platform-research-ba8rav/STATUS.md"
+  },
+  "verified_public_readme_claims": [
+    "ARQ is pre-release and protected workflow is incomplete",
+    "native .arq direction is SQLite, not ZIP",
+    "semantic model is authoritative",
+    "current protected workflow is residential plan to coordinated 3D to scaled vector PDF",
+    "AI changes are typed proposals with deterministic validation and approval"
+  ],
+  "visibility": "public",
+  "working_tree": "unknown"
+}

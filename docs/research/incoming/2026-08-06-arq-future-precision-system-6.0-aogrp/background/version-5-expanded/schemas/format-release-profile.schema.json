@@ -1,0 +1,44 @@
+{
+  "$id": "https://arq.example/schemas/demo/format-release-profile-5.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "applicationId": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "conformanceProfiles": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "formatVersion": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "migrationGraphDigest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "repositoryCommit": {
+      "pattern": "^[0-9a-f]{40,64}$",
+      "type": "string"
+    },
+    "schemaRegistryDigest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "repositoryCommit",
+    "applicationId",
+    "formatVersion",
+    "schemaRegistryDigest",
+    "migrationGraphDigest",
+    "conformanceProfiles"
+  ],
+  "type": "object"
+}

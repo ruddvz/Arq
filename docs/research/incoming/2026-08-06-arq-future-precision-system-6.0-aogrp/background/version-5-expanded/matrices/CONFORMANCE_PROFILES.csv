@@ -1,0 +1,9 @@
+Profile,Scope,State,Evidence gate
+CORE-READ-1,"Preflight, capability report, read-only inspection",Proposed,Healthy and hostile fixtures
+CORE-PUBLISH-1,Copy-on-write portable publication and fresh reopen,Proposed,Crash and preservation suite
+CORE-EDIT-1,Typed atomic operation groups and revisions,Proposed,Operation and replay suite
+ARCH-1,Protected residential architecture workflow,Repository-governed,End-to-end workflow evidence
+MCP-PROPOSAL-1,"Scoped reads, proposals, validation, Review Centre",Proposed,Live protocol and negative tests
+FEDERATION-1,Pinned child projects and selective loading,Future proposed,Federation graph corpus
+IFC-IMPORT-4.3-RV,Named IFC import profile,Future proposed,Edition and MVD corpus
+STEP-AP242-REF,Exact reference geometry import,Future proposed,Target translator and validation corpus

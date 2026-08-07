@@ -1,0 +1,42 @@
+{
+  "$id": "https://arq.invalid/v6/revision.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "operation_groups": {
+      "items": {
+        "maxLength": 64,
+        "minLength": 64,
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "parents": {
+      "items": {
+        "maxLength": 64,
+        "minLength": 64,
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "semantic_root": {
+      "maxLength": 64,
+      "minLength": 64,
+      "type": "string"
+    }
+  },
+  "required": [
+    "parents",
+    "operation_groups",
+    "semantic_root"
+  ],
+  "type": "object"
+}

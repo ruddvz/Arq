@@ -1,0 +1,48 @@
+{
+  "$id": "https://arq.example/schemas/demo/review-decision-5.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baseRevision": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "decidedAt": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "approved",
+        "rejected",
+        "changes-requested"
+      ]
+    },
+    "projectId": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "proposalDigest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "proposalId": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "reviewer": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "proposalId",
+    "proposalDigest",
+    "projectId",
+    "baseRevision",
+    "decision",
+    "reviewer",
+    "decidedAt"
+  ],
+  "type": "object"
+}

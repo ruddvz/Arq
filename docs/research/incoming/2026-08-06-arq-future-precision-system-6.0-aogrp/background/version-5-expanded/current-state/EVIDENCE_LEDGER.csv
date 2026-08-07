@@ -1,0 +1,9 @@
+id,subject,state,source,value
+E001,Version 4 archive count,Verified,zip inventory,134
+E002,Current MCP edition,Verified external,official MCP,2026-07-28
+E003,Current SQLite release,Verified external,official SQLite,3.53.4
+E004,Current public repository branch display,Observed,public GitHub HTML,claude/arq-cad-platform-research-ba8rav
+E005,Immutable repo HEAD,Blocked,not available,unknown
+E006,Version 5 package tests,Pending generation,final validation,pending
+E007,Production .arq implementation,Not claimed,repository required,unknown
+E008,MCP stateless reference tests,Pending generation,package tests,pending
