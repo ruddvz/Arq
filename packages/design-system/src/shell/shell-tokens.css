@@ -74,6 +74,14 @@
   --arq-plan-room-service: #f1f0ec;
   --arq-plan-room-circulation: #f4f6f7;
   --arq-plan-room-outdoor: #e9f0e7;
+  /*
+   * The hatch drawn over the outdoor tint. A drawn plan hatches what is not
+   * floor, and the tint alone asks a reader to tell two pale greens apart -
+   * which is the kind of distinction blueprint section 126 says must not be
+   * left to colour. Muted rather than ink: hatching is a material note, not
+   * linework, and at full strength it competes with the walls.
+   */
+  --arq-plan-hatch-outdoor: #9db39a;
   --arq-plan-room-neutral: #f4f6f7;
   --arq-ui-surface-1: #fafafa;
   --arq-ui-surface-2: #f4f4f4;
@@ -264,6 +272,7 @@
     --arq-plan-room-service: #201f1b;
     --arq-plan-room-circulation: #1b1f22;
     --arq-plan-room-outdoor: #182119;
+    --arq-plan-hatch-outdoor: #4a5c48;
     --arq-plan-room-neutral: #1b1f22;
 
     /* A black scrim over already-dark content barely reads, so the dark

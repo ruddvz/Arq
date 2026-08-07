@@ -16,6 +16,7 @@
 import { worldToScreen, type Viewport, type WorldPoint } from '@arq/geometry-2d';
 import type { PlanPrimitive, PlanScene, StyleToken } from './plan-scene';
 import { lineWeightToDevicePixels, type LineWeight } from './line-weight';
+import { hatchSegments } from './room-hatch';
 
 /** The subset of CanvasRenderingContext2D this backend actually uses - lets tests pass a plain recording fake instead of a real DOM canvas. */
 export type Canvas2dPaintTarget = Pick<
@@ -56,6 +57,19 @@ const TEXT_LINE_HEIGHT_PX = 12;
  * simply disappeared. Passing the palette in keeps this module pure - it still
  * decides nothing about appearance, it is just no longer asserting one.
  */
+/**
+ * Hatch pitch in world millimetres.
+ *
+ * Close enough to read as a material, open enough not to grey the room out.
+ * In world units rather than screen pixels, so a courtyard hatched at 400mm
+ * stays hatched at 400mm when the drawing is zoomed - hatching is part of the
+ * drawing, not a texture laid over it.
+ */
+const HATCH_SPACING_MM = 400;
+
+/** Forty-five degrees, the convention for an unspecified hatch on a plan. */
+const HATCH_ANGLE = Math.PI / 4;
+
 export interface PlanPalette {
   /** Linework and text. `--arq-ui-ink` resolved for the current appearance. */
   readonly ink: string;
@@ -77,6 +91,19 @@ export interface PlanPalette {
    * one wash instead of several, which is what this looked like before.
    */
   readonly roomFills?: Readonly<Record<string, string>>;
+  /**
+   * Tints whose rooms are hatched as well as filled, keyed by `RoomTint`, with
+   * the colour to draw the hatching in.
+   *
+   * A drawn plan hatches what is not floor. The golden fixture's open courtyard
+   * is outdoors, and a flat tint says "another room in a slightly different
+   * colour" where a hatch says "you are outside" - a distinction a reader makes
+   * without a legend and without having to tell two pale greens apart, which is
+   * also why it is not left to the tint alone.
+   *
+   * Absent means no room is hatched, which is what this drew before.
+   */
+  readonly roomHatches?: Readonly<Record<string, string>>;
 }
 
 /** Light appearance, and the exact colours this renderer drew before it took a palette. */
@@ -216,6 +243,28 @@ function paintPrimitive<TId>(
           target.setLineDash([]);
           target.fillStyle = colour;
           fillWorldPolygon(target, viewport, primitive.points);
+        }
+        /*
+         * Hatching goes on after the fill and before the outline, which is the
+         * order a drawing is built: the wash, then the material, then the edges
+         * that contain both.
+         *
+         * Computed as segments rather than painted as a pattern because
+         * `Canvas2dPaintTarget` carries no `clip` or `createPattern` - see
+         * `room-hatch.ts` for why that is the cheaper answer rather than a
+         * limitation worked around. The spacing is in world units, so the hatch
+         * is a property of the building and scales with the drawing instead of
+         * behaving like a screen texture.
+         */
+        const hatch =
+          primitive.fillTint === undefined ? undefined : palette.roomHatches?.[primitive.fillTint];
+        if (hatch !== undefined) {
+          target.setLineDash([]);
+          target.strokeStyle = hatch;
+          target.lineWidth = lineWeightToDevicePixels('hairline', devicePixelRatio);
+          for (const segment of hatchSegments(primitive.points, HATCH_SPACING_MM, HATCH_ANGLE)) {
+            strokeWorldPolyline(target, viewport, [segment.start, segment.end], false);
+          }
         }
       }
       target.strokeStyle = strokeColorForToken(primitive.styleToken, palette);

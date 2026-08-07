@@ -456,6 +456,13 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         roomFills: Object.fromEntries(
           ROOM_TINTS.map((tint) => [tint, value(`--arq-plan-${tint}`, 'transparent')]),
         ),
+        /*
+         * Only outdoor rooms are hatched, and only when the appearance names a
+         * colour for it. A tint with no hatch colour is drawn exactly as it was
+         * before, which is what keeps this additive rather than a change to how
+         * every room reads.
+         */
+        roomHatches: { 'room-outdoor': value('--arq-plan-hatch-outdoor', 'transparent') },
       });
       setPlanTextFamily(value('--arq-font-ui', 'sans-serif'));
     };

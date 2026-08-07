@@ -10,3 +10,4 @@ export * from './room-tint';
 export * from './sheet-viewport';
 export * from './benchmark-regression';
 export * from './canvas2d-paint';
+export * from './room-hatch';
