@@ -1,0 +1,38 @@
+{
+  "$id": "https://arq.invalid/v6/diagnostic.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "pattern": "^ARQ6-[A-Z0-9-]+$",
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "recovery_actions": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "safe_state": {
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "info",
+        "warning",
+        "error",
+        "fatal"
+      ]
+    }
+  },
+  "required": [
+    "code",
+    "severity",
+    "message",
+    "safe_state"
+  ],
+  "type": "object"
+}

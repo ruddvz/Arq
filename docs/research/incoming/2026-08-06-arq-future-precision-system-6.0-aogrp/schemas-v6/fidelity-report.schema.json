@@ -1,0 +1,47 @@
+{
+  "$id": "https://arq.invalid/v6/fidelity-report.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "items": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "result": {
+            "enum": [
+              "native-editable",
+              "mapped-editable",
+              "exact-reference",
+              "approximate-reference",
+              "flattened",
+              "omitted",
+              "unsupported",
+              "preserved-source-only"
+            ]
+          },
+          "source_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "result"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "source_format": {
+      "type": "string"
+    },
+    "target_profile": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_format",
+    "target_profile",
+    "items"
+  ],
+  "type": "object"
+}

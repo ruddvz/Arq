@@ -1,0 +1,54 @@
+handoff_version: 1
+project: ARQ
+mode: audit
+outcome: Decide and prove whether an ARQ-native content-addressed pack should complement or eventually replace SQLite as the portable canonical project format.
+user_or_surface: ARQ project files, project open, save, recovery, sync, and future MCP authoring
+scope:
+  - reconcile immutable repository HEAD and repository authority
+  - audit current project-format and storage packages
+  - compile experimental arq-object-model and arq-pack vertical slice
+  - convert one existing repository fixture without mutating the source
+  - build two independent readers and crash-recovery tests
+non_goals:
+  - no production format replacement
+  - no in-place migration
+  - no branch, pull request, deployment, or settings mutation unless separately authorised
+  - no vehicle, aerospace, or city product implementation
+delivery_stop: reviewed-plan
+base_revision: unknown
+observed_head: unknown
+risk: high
+blast_radius: persistent
+reversibility: reversible
+protected_contracts:
+  - CLAUDE.md
+  - .zeus/FAST-KERNEL.md
+  - .zeus/INVARIANTS.md
+  - accepted repository ADRs
+  - current project-format schemas and migrations
+acceptance:
+  - current format truth documented at immutable SHA
+  - ADR options compare keep-SQLite, hybrid, and AOGRP paths
+  - experimental pack reads without SQLite
+  - semantic identity agrees in two implementations
+  - interrupted append reopens previous revision
+  - current source fixture remains byte-identical
+verification:
+  - repository tests and gates compiled by ZEUS
+  - independent reader vectors
+  - corruption and crash injection
+  - browser feasibility test
+rollback:
+  - remove experimental feature and generated candidates
+  - retain current production format unchanged
+external_write_authorisation: none
+sources_used:
+  - ARQ Operator OS 3.1 sources
+  - Version 5.0 package
+  - Version 6.0 research and package-local demonstration
+conflicts:
+  - current storage authority unresolved
+  - production identifiers unresolved
+  - current immutable HEAD unresolved
+assumptions:
+  - architecture protected workflow remains first release priority

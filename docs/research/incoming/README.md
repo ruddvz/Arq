@@ -116,3 +116,20 @@ float64 render-origin localisation, a rule-pack engine) describe real gaps
 not yet built anywhere in this repo - see the subfolder's README for the
 file-by-file check and recommended follow-ups. Nothing from it has been
 applied to `packages/` or `docs/adr/`.
+
+## 2026-08-06 upload: "ARQ Future Precision System 6.0" (AOGRP)
+
+A separate upload proposing a candidate content-addressed binary file format
+("AOGRP") as a possible future alternative or complement to `.arq`-as-SQLite,
+filed in `2026-08-06-arq-future-precision-system-6.0-aogrp/` with its own
+triage README. Its own reference tests, schemas, fixtures, and manifest
+hashes were independently re-verified (not just taken on the package's word)
+and check out; its Python reference implementation is a competent narrow
+demo, not production code. The package's own handoff docs explicitly scope
+themselves to "reviewed-plan," not implementation, and this repository's
+response matches that scope: nothing has been applied to `packages/arqfs`,
+`docs/adr/`, or `.zeus/modules/arqfs.md`. ADR-0019 (SQLite `.arq`, Status:
+Proposed) remains the only in-repo direction with real shipped code behind
+it; see the subfolder's README for the full independent verification and the
+one architectural check (dual-root recovery) that was compared against the
+real `packages/arqfs` code and found not transferable.

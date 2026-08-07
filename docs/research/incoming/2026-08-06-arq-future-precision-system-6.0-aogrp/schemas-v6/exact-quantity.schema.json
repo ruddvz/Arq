@@ -1,0 +1,25 @@
+{
+  "$id": "https://arq.invalid/v6/exact-quantity.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "coefficient": {
+      "type": "integer"
+    },
+    "scale": {
+      "maximum": 18,
+      "minimum": -18,
+      "type": "integer"
+    },
+    "unit": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "coefficient",
+    "scale",
+    "unit"
+  ],
+  "type": "object"
+}

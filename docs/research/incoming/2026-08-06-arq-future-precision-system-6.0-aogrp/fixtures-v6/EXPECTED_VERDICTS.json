@@ -1,0 +1,44 @@
+{
+  "append-failure-tail.aogrp.arq": {
+    "generation": 1,
+    "mode": "editable",
+    "verdict": "valid"
+  },
+  "bad-magic.aogrp.arq": {
+    "verdict": "reject"
+  },
+  "both-roots-corrupt.aogrp.arq": {
+    "verdict": "reject"
+  },
+  "corrupt-segment.aogrp.arq": {
+    "verdict": "reject-deep"
+  },
+  "healthy.aogrp.arq": {
+    "generation": 2,
+    "mode": "editable",
+    "verdict": "valid"
+  },
+  "one-root-corrupt.aogrp.arq": {
+    "generation": 2,
+    "mode": "editable",
+    "verdict": "valid"
+  },
+  "published-compact.aogrp.arq": {
+    "generation": 1,
+    "mode": "editable",
+    "verdict": "valid"
+  },
+  "truncated.aogrp.arq": {
+    "verdict": "reject"
+  },
+  "unknown-optional.aogrp.arq": {
+    "generation": 1,
+    "mode": "editable",
+    "verdict": "valid"
+  },
+  "unknown-required.aogrp.arq": {
+    "generation": 1,
+    "mode": "preserving-read-only",
+    "verdict": "valid"
+  }
+}

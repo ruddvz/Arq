@@ -1,0 +1,36 @@
+{
+  "$id": "https://arq.invalid/v6/content-object.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "entity_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "payload": {
+      "type": "object"
+    },
+    "required_capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "type_id": {
+      "pattern": "^[a-z0-9._-]+$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "type_id",
+    "schema_version",
+    "entity_id",
+    "payload"
+  ],
+  "type": "object"
+}

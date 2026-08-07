@@ -1,0 +1,88 @@
+{
+  "$id": "https://arq.invalid/v6/manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "generation": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "head_revision": {
+      "maxLength": 64,
+      "minLength": 64,
+      "type": "string"
+    },
+    "object_ids": {
+      "items": {
+        "maxLength": 64,
+        "minLength": 64,
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "optional_capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "profile": {
+      "type": "string"
+    },
+    "required_capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": true
+    },
+    "segments": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "offset": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "payload_hash": {
+            "maxLength": 64,
+            "minLength": 64,
+            "type": "string"
+          },
+          "stored_length": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "type": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "type",
+          "offset",
+          "stored_length",
+          "payload_hash"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "semantic_root": {
+      "maxLength": 64,
+      "minLength": 64,
+      "type": "string"
+    }
+  },
+  "required": [
+    "profile",
+    "generation",
+    "semantic_root",
+    "head_revision",
+    "segments",
+    "object_ids",
+    "required_capabilities"
+  ],
+  "type": "object"
+}
