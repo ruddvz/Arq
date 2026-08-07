@@ -636,15 +636,37 @@ The drawing renders slightly smaller as a result - the measured scale moves from
 1:66 to 1:74 at desktop. That is the cost of showing the whole page, and the
 readout is measured rather than declared, so it states it.
 
-## The blocker that was not a blocker
+## The blocker was two blockers, and this section got it wrong twice
 
 "GitHub Actions has produced no run for this pull request" was recorded here
 twice as an owner action, with the pattern said to point at repository run
-approval or billing. It pointed at neither. The pull request had been
-un-mergeable against its base, and a `pull_request` workflow runs against
-`refs/pull/303/merge` - a ref GitHub cannot create while the merge conflicts.
-No approval was withheld and no billing was exhausted; the branch had simply
-drifted and nobody had merged the base into it.
+approval or billing.
+
+**First correction.** A merge conflict was preventing every run. A
+`pull_request` workflow runs against `refs/pull/303/merge`, and GitHub cannot
+create that ref while the merge conflicts, so no run could start at all.
+Resolving five conflicts produced thirteen check runs where there had been one,
+executing on real runners and returning real results - three genuine failures
+inside this branch, all since fixed.
+
+**Second correction, of the first.** This section then said the cause "pointed
+at neither" approval nor billing, and that "no billing was exhausted". That was
+an overclaim of exactly the kind the rest of this ledger exists to catch, made
+in the same breath as correcting one. At 04:53:49 UTC, mid-flight, every job in
+every workflow began completing in one to two seconds with `runner_id: 0`, no
+runner name, and no downloadable log - on the new commit and on the previous one
+alike. That is runner allocation failing repository-wide, and the most likely
+cause is the account's Actions capacity for a private repository being spent.
+
+Both were true, in sequence. The conflict blocked the runs; once runs were
+possible, the capacity ran out. The evidence for the first is direct - the runs
+appeared and produced results. The evidence for the second is a signature, not a
+statement from the billing page, which this session cannot see: `inferred`,
+recorded as such rather than as a cause.
+
+The standing lesson holds and now applies to this section itself: an absent
+signal is not evidence about why it is absent, and neither is a plausible story
+about it.
 
 Resolving five conflicts produced thirteen check runs where there had been one.
 Two conclusions worth keeping:
@@ -657,6 +679,14 @@ Two conclusions worth keeping:
   removed - the panel line saying nothing is written back to the reader's own
   `.arq` file. All six are fixed and the guarantee is restored; the point is
   that local green said nothing about any of it.
+
+What the runs did establish before capacity ran out, on real runners: `build`,
+`classify`, `critical-approval`, `secret-scan`, `rust-test`,
+`dependency-licence-scan`, `preflight` and `language-system` all green on
+`c8469ac`. `test`, `lint-and-typecheck` and `browser-capability-checks` were
+still executing and have not returned a verdict from CI at any commit. Their
+local results stand as local results, which is what this ledger has said about
+every claim on this branch all along.
 
 Two checks fail for reasons that are genuinely not mine, and both fail correctly
 rather than passing on absent evidence:
