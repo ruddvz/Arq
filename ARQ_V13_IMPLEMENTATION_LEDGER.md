@@ -811,3 +811,46 @@ has its own commit.
 Owner: add `VERCEL_AUTOMATION_BYPASS_SECRET` so `verify-routes` can gather
 evidence, and decide whether a preview for `apps/web` is in scope. Neither is
 implementable here, and the delivery stop asks for a verified preview.
+
+## The plan tab named itself, not the drawing
+
+Found by reading the phone capture during the correction pass, after CI's
+runner allocation ran out and left nothing else to drive. `INITIAL_TABS` in
+`apps/web/src/App.tsx` seeds the plan tab's title with the literal string
+`'Level 1 Plan'`, set before any project exists - and nothing ever renamed it.
+On the phone the bar (`CompactViewControl`, which reads the tab's own title)
+and the sheet's identity chip (which reads the opened level's real name) sit a
+few hundred pixels apart and named the same drawing two different ways:
+"Level 1 Plan" above, "Ground floor" below. Neither string is wrong on its
+own read in isolation, which is exactly why it was never caught by a check
+that reads one field at a time - `Fixture wall N`, `Untitled project` in a
+different form.
+
+The desktop and tablet capsule was never affected: `ViewKindSwitcher` shows the
+view _kind_ ("Plan"), not the tab's title, so the mismatch was phone-only,
+where `CompactViewControl` is the only surface that prints the raw title.
+
+**Fix.** `renameTab(state, id, title)` added to `view-tabs-state.ts`, a pure
+reducer beside `activateTab` with the same no-op-on-unknown-id contract for the
+same reason - the id comes from project state that can change under a render.
+`App.tsx` drives it from `activeLevelName`, which already existed and already
+resolves the shown level's name from the opened project: an effect renames the
+plan tab to that name when it changes, and back to the placeholder when the
+project closes, so a previous project's level name cannot linger on a tab no
+longer drawing it.
+
+**Evidence.** `verified`: 2 new `renameTab` unit tests (rename-only, no-op on
+an unknown id) plus the existing 3728-test suite, both green; `tsc` clean in
+`apps/web` and `packages/workspace`; lint clean; the phone capture re-read and
+confirmed reading "Ground floor" in both places at once;
+`benchmark:native-open` and `benchmark:model-canvas` - the two checks that
+click this tab - both pass unchanged, because both already matched
+`/^Plan$|Ground floor|Level 1 Plan/` rather than the literal string.
+`arq:language:refresh` run (`App.tsx` is the governed `web-app` source set) and
+the full thirteen-step ladder run in CI order through `arq:language:audit:ci`,
+all green; `engineering:context:build` rebuilt and `engineering:context:verify`
+fresh; decision ids checked against the pull request base.
+
+All of this is local. GitHub Actions cannot allocate runners for this
+repository at the time of this slice - see "The blocker was two blockers"
+above - so nothing here has a CI verdict yet, and none of it is claimed as one.

@@ -75,6 +75,7 @@ import {
   reconcileInspectorTab,
   selectInspectorTab,
   reconcileDockedPanels,
+  renameTab,
   setPanelOpen,
   resizePanel,
   selectBrowserSection,
@@ -447,6 +448,15 @@ const SHEET_CHROME_INSET_PX = 12;
  */
 const SHEET_CHROME_LIFT_PX = 14;
 
+const PLAN_TAB_ID = 'plan-level-1';
+
+/**
+ * The plan tab's title before any project has opened, and again once one
+ * closes. Named rather than inlined because the rename effect below has to
+ * restore exactly this string - see the `activeLevelName` effect.
+ */
+const PLAN_TAB_PLACEHOLDER_TITLE = 'Level 1 Plan';
+
 const INITIAL_TABS = openTab(
   openTab(
     openTab(EMPTY_VIEW_TABS_STATE, {
@@ -456,7 +466,12 @@ const INITIAL_TABS = openTab(
     }),
     { id: 'model-3d', kind: '3d', title: '3D', semanticViewId: 'view-3d' },
   ),
-  { id: 'plan-level-1', kind: 'plan', title: 'Level 1 Plan', semanticViewId: 'view-plan-level-1' },
+  {
+    id: PLAN_TAB_ID,
+    kind: 'plan',
+    title: PLAN_TAB_PLACEHOLDER_TITLE,
+    semanticViewId: 'view-plan-level-1',
+  },
 );
 
 export function App(): JSX.Element {
@@ -1678,6 +1693,23 @@ export function App(): JSX.Element {
       : (openNativeProject.project.model.levels.find(
           (level) => (level.id as string) === activeNativeLevelId,
         )?.name ?? null);
+
+  /*
+   * The plan tab's title, kept in step with the level actually on screen.
+   *
+   * `INITIAL_TABS` seeds the tab with a placeholder before any project exists,
+   * because nothing else is true to say yet. Without this it stayed that way
+   * forever - opening the Courtyard fixture and showing "Ground floor" left the
+   * bar still reading "Level 1 Plan" a few hundred pixels above the sheet
+   * chip's "Ground floor", the same drawing named twice, differently. The
+   * placeholder is restored on close so a title from the last project does not
+   * linger on a tab that is no longer drawing it.
+   */
+  useEffect(() => {
+    setTabs((state) =>
+      renameTab(state, PLAN_TAB_ID, activeLevelName ?? PLAN_TAB_PLACEHOLDER_TITLE),
+    );
+  }, [activeLevelName]);
 
   const planScaleLabel =
     pixelsPerUnit > 0 && Number.isFinite(pixelsPerUnit)

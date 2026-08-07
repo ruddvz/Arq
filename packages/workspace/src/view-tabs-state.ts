@@ -67,6 +67,21 @@ export function activateTab(state: ViewTabsState, id: string): ViewTabsState {
 }
 
 /**
+ * Sets a tab's title. Used for the one tab whose name is not fixed at open
+ * time: the initial plan tab is seeded with a placeholder before any project
+ * exists, and is renamed to the shown level's real name once one opens (and
+ * back to the placeholder when it closes) - see `App.tsx`'s `activeLevelName`
+ * effect. A rename of an unknown id is a no-op, matching `activateTab` above:
+ * the id comes from project state that can change under a render, and
+ * silently ignoring a stale id is safer than throwing on one.
+ */
+export function renameTab(state: ViewTabsState, id: string, title: string): ViewTabsState {
+  return state.tabs.some((tab) => tab.id === id)
+    ? { ...state, tabs: state.tabs.map((tab) => (tab.id === id ? { ...tab, title } : tab)) }
+    : state;
+}
+
+/**
  * Closes a view instance. A non-closeable tab (Project Overview, Issues,
  * Compare, Model health, AI proposal per the registry) is refused outright.
  *
