@@ -126,18 +126,35 @@ function fitMarginPx(width: number, height: number): number {
 }
 
 /**
- * Fits the drawing into the canvas.
+ * Fits the whole page into the canvas - the drawing and the sheet around it.
  *
- * This used to reserve a band at the top for the view's title, which floated
- * centred over the canvas and would otherwise land on a room. The title sits on
- * the sheet's own corner now - `onSheetRectChange` reports where that is - so
- * the page's own margin holds it and the drawing gets the band back.
+ * This used to fit the drawing alone. The sheet is painted a further six per
+ * cent outside the content, so fitting the content meant the page itself never
+ * fitted: it ran off the top and bottom of the canvas at every viewport, which
+ * is why the surface was only ever visible to the left and right of it. A page
+ * cut off by the window does not read as a page on a desk, which is the entire
+ * reason the sheet is drawn.
+ *
+ * It also broke the view's title. The title straddles the sheet's top-left
+ * corner, and with the sheet's top edge above the canvas there was nowhere to
+ * straddle - it clamped to the canvas edge instead, and at 1024x768 that put it
+ * seven pixels over the drawing's top wall. Measured, not guessed: the check in
+ * `run-sheet-chrome-capability-check.mjs` reads both from the rendered canvas.
+ *
+ * Inflating the bounds here rather than reserving a band keeps one source of
+ * truth for the margin - `SHEET_MARGIN_FRACTION` - instead of a constant here
+ * that has to be kept in step with the paint by hand.
  */
 function fitContent(
   bounds: { readonly min: WorldPoint; readonly max: WorldPoint },
   rect: { readonly width: number; readonly height: number },
 ): Viewport {
-  return fitToBounds(bounds, rect.width, rect.height, fitMarginPx(rect.width, rect.height));
+  return fitToBounds(
+    inflateToSheet(bounds),
+    rect.width,
+    rect.height,
+    fitMarginPx(rect.width, rect.height),
+  );
 }
 
 /** Matches `TEXT_LINE_HEIGHT_PX` in the paint, which is what actually spaces the lines. */
@@ -161,6 +178,31 @@ const SHEET_MARGIN_FRACTION = 0.06;
 
 /** The page's corner radius, in CSS pixels - a sheet, not a card. */
 const SHEET_RADIUS_CSS_PX = 6;
+
+/**
+ * The page's margin in world millimetres, from the drawing's own size.
+ *
+ * One margin for both axes, taken from the longer one, so the page keeps an
+ * even border rather than a wide one across the short dimension.
+ */
+function sheetMarginMm(bounds: { readonly min: WorldPoint; readonly max: WorldPoint }): number {
+  return Math.max(
+    (bounds.max.x - bounds.min.x) * SHEET_MARGIN_FRACTION,
+    (bounds.max.y - bounds.min.y) * SHEET_MARGIN_FRACTION,
+  );
+}
+
+/** The drawing's bounds grown to the page's, which is what has to fit on screen. */
+function inflateToSheet(bounds: { readonly min: WorldPoint; readonly max: WorldPoint }): {
+  readonly min: WorldPoint;
+  readonly max: WorldPoint;
+} {
+  const margin = sheetMarginMm(bounds);
+  return {
+    min: worldPoint(bounds.min.x - margin, bounds.min.y - margin),
+    max: worldPoint(bounds.max.x + margin, bounds.max.y + margin),
+  };
+}
 
 /** A polygon's world-space bounding box, used to narrow an obstacle search. */
 function polygonBounds(polygon: readonly WorldPoint[]): {
@@ -592,19 +634,11 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
      */
     let sheetRect: SheetRect | null = null;
     if (rooms.length > 0 || walls.length > 0) {
-      const bounds = contentBounds(content);
-      const marginMm = Math.max(
-        (bounds.max.x - bounds.min.x) * SHEET_MARGIN_FRACTION,
-        (bounds.max.y - bounds.min.y) * SHEET_MARGIN_FRACTION,
-      );
-      const topLeft = worldToScreen(
-        currentViewport,
-        worldPoint(bounds.min.x - marginMm, bounds.max.y + marginMm),
-      );
-      const bottomRight = worldToScreen(
-        currentViewport,
-        worldPoint(bounds.max.x + marginMm, bounds.min.y - marginMm),
-      );
+      // The same inflation the fit uses, from the same helper, so the page that
+      // is drawn is exactly the page that was made to fit.
+      const page = inflateToSheet(contentBounds(content));
+      const topLeft = worldToScreen(currentViewport, worldPoint(page.min.x, page.max.y));
+      const bottomRight = worldToScreen(currentViewport, worldPoint(page.max.x, page.min.y));
       const radius = SHEET_RADIUS_CSS_PX * devicePixelRatio;
       ctx.save();
       // The shadow is what separates the page from the surface. Kept soft and
