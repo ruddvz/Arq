@@ -668,6 +668,20 @@ The standing lesson holds and now applies to this section itself: an absent
 signal is not evidence about why it is absent, and neither is a plausible story
 about it.
 
+**Update, ~8.5 hours later.** Pushing `fa90e90` reproduced the identical
+signature - every job across every workflow completing in the same handful of
+seconds with `runner_id: 0`, no runner name - unchanged from the first
+observation at 04:53:49 UTC. A capacity burst exhausted by a run of pushes
+recovers; this has not, across a gap wide enough that it should have if that
+were the mechanism. The account's Actions access for this private repository
+being suspended, rather than merely spent, is now the better-supported
+`inferred` reading. Still not read off the billing page, and still not stated
+as fact for that reason - but the confidence in it is higher than it was.
+Not pushing again until this changes: a push into a repository-wide outage
+produces a wall of red with no diagnostic value and nothing this session can
+fix, which is itself something to stop doing once demonstrated rather than
+repeated for its own sake.
+
 Resolving five conflicts produced thirteen check runs where there had been one.
 Two conclusions worth keeping:
 
