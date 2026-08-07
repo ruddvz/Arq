@@ -119,6 +119,17 @@ jobs:
       # with a way to summon panels back, and save/sync separately legible, at
       # all eight workspace-qa-fixtures.json viewports.
       - run: pnpm benchmark:workspace-layout
+      # Optical Glass 2.0's downgrade ladder and the platform corner shape, in
+      # light and dark and under forced colours and increased contrast. It
+      # asserts the default state as strictly as the fallbacks, because the
+      # first version only watched the effect turn off and so passed while the
+      # material was being overridden out from under every surface carrying it.
+      - run: pnpm benchmark:optical-glass
+      # The page and its chrome, read out of the rendered canvas rather than
+      # the DOM - the sheet is painted, so nothing in the document knows where
+      # it is. Asserts the whole page is on screen and that the view title
+      # clears the drawing's ink instead of sitting on it.
+      - run: pnpm benchmark:sheet-chrome
       # The two input checks were the only capability checks this repository
       # owned that no workflow ran, so the Pencil pressure/tilt path and the
       # pointer hover sequence were verified once by hand and never again.
