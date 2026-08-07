@@ -308,6 +308,7 @@ their own tests calls at all - so the "no destructive default" property held
 only because no recovery path ran.
 
 **Done.** Publication is now reachable and truthfully reported.
+
 - `Save a copy` is a real command-palette entry, disabled with its reason when
   no native project is open rather than hidden.
 - `describe-publication-outcome.ts` is the single place a verdict becomes copy,
@@ -350,12 +351,13 @@ The user-facing result: an interrupted-write project opens read-only, says so,
 and says the original is untouched and can be copied before anything changes.
 A project that fails its own consistency checks is refused rather than opened.
 
-**Remaining:** the recovery *comparison* surface (source, last-known-good,
+**Remaining:** the recovery _comparison_ surface (source, last-known-good,
 recoverable working copy side by side) does not exist - the app now refuses or
 degrades correctly, but offers no choice between versions. Interruption paths
 across a real publish are untested in a browser.
 
 **Evidence:** 22 new tests in `apps/web/src/project/`.
+
 - Publication copy and delivery: `partially-verified`. They cover the copy
   contract over the full refusal union, the file-name derivation and the
   delivery seam against a fake browser environment; they do not drive a real
@@ -374,7 +376,7 @@ across a real publish are untested in a browser.
 `pnpm vitest run`: 3,566 tests, 331 files, uncached. Typecheck, lint and
 `pnpm --filter @arq/web build` clean; language ladder refreshed, audit PASS.
 
-**Regression this slice caught in itself:** taking a *value* from the
+**Regression this slice caught in itself:** taking a _value_ from the
 `@arq/arqfs` barrel dragged the Node-only atomic swap into the browser bundle
 and failed the build. Caught by `run-native-open-capability-check.mjs`, not by
 tests or typecheck - the deep import is the fix, and the reason is recorded at

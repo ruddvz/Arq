@@ -772,6 +772,25 @@ button.arq-project-directory__row[aria-pressed='true'] .arq-project-directory__c
 }
 
 /*
+ * The write guarantee, above the panel's one command.
+ *
+ * Secondary rather than muted: it is quiet, but it is a promise about the
+ * reader's own file, and muted is the weight this file gives to counts and
+ * disclosure labels. `margin-top: auto` pins it to the foot of the panel so it
+ * sits with "Close project" whatever the directory above it contains.
+ */
+.arq-project-directory__write-state {
+  margin: auto 0 0;
+  padding-inline: var(--arq-space-compact);
+  color: var(--arq-ui-text-secondary);
+  font: var(--arq-text-label);
+}
+
+.arq-project-directory__write-state strong {
+  color: var(--arq-ui-text-primary);
+}
+
+/*
  * The panel's one command, drawn as one.
  *
  * `.arq-shell-button`'s border is transparent by default, which is right for a

@@ -507,20 +507,20 @@ code, verified against the running product, and fixed in the same pass. Each is
 `verified` as a rendering claim - the capture harness re-ran and the result was
 re-read - and none of it changes the standing blockers, which are unchanged.
 
-| Defect                                                     | Where it showed | Evidence state |
-| ---------------------------------------------------------- | --------------- | -------------- |
-| Room labels drawn through walls and door swings            | phone, desktop  | verified       |
-| Five rooms losing their names to fix three                 | phone           | verified       |
-| Page inset 8px on every side, sync state clipped           | all four        | verified       |
-| Status strip stating a cursor a touch device has not got   | 1024, phone     | verified       |
-| Tool chip taking a third strip above the phone dock        | phone           | verified       |
-| An empty 38px context bar across the bottom of the drawing | desktop         | verified       |
+| Defect                                                     | Where it showed | Evidence state     |
+| ---------------------------------------------------------- | --------------- | ------------------ |
+| Room labels drawn through walls and door swings            | phone, desktop  | verified           |
+| Five rooms losing their names to fix three                 | phone           | verified           |
+| Page inset 8px on every side, sync state clipped           | all four        | verified           |
+| Status strip stating a cursor a touch device has not got   | 1024, phone     | verified           |
+| Tool chip taking a third strip above the phone dock        | phone           | verified           |
+| An empty 38px context bar across the bottom of the drawing | desktop         | verified           |
 | The view identity pill printed over a room                 | 1024            | partially-verified |
-| The 3D ground plane swamping the building it stands under  | 3D view         | verified       |
-| The Project overview rendering behind the project browser  | overview        | verified       |
-| `view.kind` printed as copy: "3D 3d", "Level 1 Plan plan"  | overview        | verified       |
-| Two panel disclosures, one shouting in caps                | desktop         | verified       |
-| The panel's one command drawn without an edge              | desktop         | verified       |
+| The 3D ground plane swamping the building it stands under  | 3D view         | verified           |
+| The Project overview rendering behind the project browser  | overview        | verified           |
+| `view.kind` printed as copy: "3D 3d", "Level 1 Plan plan"  | overview        | verified           |
+| Two panel disclosures, one shouting in caps                | desktop         | verified           |
+| The panel's one command drawn without an edge              | desktop         | verified           |
 
 One row above has been downgraded from `verified` to `partially-verified`, and
 the correction belongs here rather than only in the section that found it. "The
@@ -566,18 +566,18 @@ following the platform's squircle and glass language. What follows separates wha
 was verified from what was inferred, because the stage that mattered most is the
 one that was nearly recorded as verified while being false.
 
-| Slice                                                        | Evidence state | How                                                                     |
-| ------------------------------------------------------------ | -------------- | ----------------------------------------------------------------------- |
-| Quality policy resolving in order of authority                | verified       | 10 unit tests, and the resolved value read off the DOM in a browser      |
-| Lens map: quantisation, LRU, ref counting, URL release        | verified       | 13 unit tests                                                           |
-| Refraction lens rendering on the view capsule                 | verified       | filter, map URL and transform read from a live page                     |
-| Downgrade to material and to opaque                           | verified       | `run-optical-glass-capability-check.mjs`, four browser configurations    |
-| The material rendering in dark appearance                     | verified       | same check; the dark tokens are a separate block and were never run      |
-| `prefers-reduced-transparency` fallback                       | partially-verified | stylesheet inspection only; Playwright cannot emulate the setting   |
-| Squircle corners via `corner-shape`, pills included           | verified       | computed `corner-shape` read per control; the assertion fails when removed |
-| That the squircle *reads* as the platform's shape             | not-inspected  | the property is applied; whether the silhouette is right is a judgement  |
-| How the material reads to a person                            | not-inspected  | no human has looked at it; captures are not judgement                    |
-| Cost of the effect on a real GPU                              | not-inspected  | no frame timing was taken                                               |
+| Slice                                                  | Evidence state     | How                                                                        |
+| ------------------------------------------------------ | ------------------ | -------------------------------------------------------------------------- |
+| Quality policy resolving in order of authority         | verified           | 10 unit tests, and the resolved value read off the DOM in a browser        |
+| Lens map: quantisation, LRU, ref counting, URL release | verified           | 13 unit tests                                                              |
+| Refraction lens rendering on the view capsule          | verified           | filter, map URL and transform read from a live page                        |
+| Downgrade to material and to opaque                    | verified           | `run-optical-glass-capability-check.mjs`, four browser configurations      |
+| The material rendering in dark appearance              | verified           | same check; the dark tokens are a separate block and were never run        |
+| `prefers-reduced-transparency` fallback                | partially-verified | stylesheet inspection only; Playwright cannot emulate the setting          |
+| Squircle corners via `corner-shape`, pills included    | verified           | computed `corner-shape` read per control; the assertion fails when removed |
+| That the squircle _reads_ as the platform's shape      | not-inspected      | the property is applied; whether the silhouette is right is a judgement    |
+| How the material reads to a person                     | not-inspected      | no human has looked at it; captures are not judgement                      |
+| Cost of the effect on a real GPU                       | not-inspected      | no frame timing was taken                                                  |
 
 ### The stage that passed while being false
 

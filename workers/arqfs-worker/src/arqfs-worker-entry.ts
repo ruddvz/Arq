@@ -40,7 +40,11 @@ import {
   type ArqfsWorkerContext,
 } from '@arq/arqfs/src/arqfs-worker-handler';
 import { createSqliteWasmArqfsDriver, type Sqlite3Oo1DatabaseLike } from './arqfs-opfs-driver';
-import { opfsFilenameForProject, readProjectIdFromWorkerSearch } from './arqfs-project-filename';
+import {
+  opfsFilenameForProject,
+  readProjectIdFromWorkerSearch,
+  readProjectIdOrUnknown,
+} from './arqfs-project-filename';
 
 const OPFS_SAHPOOL_VFS_NAME = 'arqfs-opfs-sahpool';
 
@@ -66,6 +70,7 @@ async function openContext(): Promise<ArqfsWorkerContext> {
         return driver;
       },
       usedVfs: 'opfs-sahpool',
+      projectId,
       session,
       /**
        * The only route a user's selected `.arq` bytes have into this Worker's
@@ -77,13 +82,28 @@ async function openContext(): Promise<ArqfsWorkerContext> {
        * The open handle is closed before importing, because importing overwrites
        * the file this connection is reading and a connection left open across
        * that is reading a database that no longer exists.
+       *
+       * `poolUtil.importDb` is genuinely asynchronous - it returns a Promise -
+       * and this now awaits it before reopening. It did not before: the previous
+       * line opened a fresh connection over the target file immediately, with no
+       * guarantee the import had actually finished writing it, which is exactly
+       * the kind of race a fast synthetic test payload is unlikely to lose and a
+       * real project's bytes are not.
        */
-      importDatabase: (bytes: Uint8Array) => {
+      importDatabase: async (bytes: Uint8Array) => {
         db.close();
-        poolUtil.importDb(databaseFilename, bytes);
+        await poolUtil.importDb(databaseFilename, bytes);
         db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
         driver = createSqliteWasmArqfsDriver(db);
       },
+      /**
+       * The other direction: hands back the working copy's current bytes,
+       * called only after `exportDatabase`'s Worker-handler case has already
+       * checkpointed this same connection. `exportFile` reads the pool's stored
+       * bytes for this filename directly - it does not go through `db` - so the
+       * live connection does not need to be closed first, unlike import.
+       */
+      exportDatabase: () => poolUtil.exportFile(databaseFilename),
       /**
        * What `publishProjectFile` needs from this VFS.
        *
@@ -133,6 +153,7 @@ async function openContext(): Promise<ArqfsWorkerContext> {
     return {
       driver: createSqliteWasmArqfsDriver(db),
       usedVfs: `memory-fallback (opfs-sahpool unavailable: ${reason})`,
+      projectId,
       session,
     };
   }
@@ -157,6 +178,14 @@ function post(response: ArqfsWorkerResponse): void {
   self.postMessage(response);
 }
 
+// Requests are not serialized here: two messages arriving close together each
+// invoke this handler, and `handleArqfsWorkerRequest` now genuinely awaits
+// (importDatabase, exportDatabase, computeSemanticHash), so a second message
+// could in principle be handled while the first is still mid-flight. Every
+// caller in this codebase awaits one request before sending the next
+// (`ArqfsWorkerRequestClient` callers, `NativeProjectSession`'s own write
+// queue), which keeps this from being reachable today - a caller that fired
+// requests without awaiting them would need this fixed first.
 self.onmessage = async (event: MessageEvent<unknown>) => {
   // V3-021. `event.data` is whatever the other context posted, so it is parsed
   // rather than annotated. The old signature said `MessageEvent<ArqfsWorkerRequest>`,
@@ -170,6 +199,7 @@ self.onmessage = async (event: MessageEvent<unknown>) => {
     if (id !== null) {
       post({
         id,
+        projectId: readProjectIdOrUnknown(self.location.search),
         ok: false,
         code: ARQFS_WORKER_ERROR_CODES.malformedRequest,
         error:
@@ -185,8 +215,13 @@ self.onmessage = async (event: MessageEvent<unknown>) => {
     // contextPromise rejects only for a Worker-construction mistake (missing/invalid
     // project id) that will never resolve on retry - every request gets a clear,
     // immediate error instead of silently hanging until the client's own timeout.
+    // The project id is re-read from this Worker's own URL rather than taken
+    // from the context that failed to build, so the refusal still names who
+    // it is from - falling back to an explicit "unknown" only when even that
+    // fails, which is exactly the failure this branch exists for.
     post({
       id: request.id,
+      projectId: readProjectIdOrUnknown(self.location.search),
       ok: false,
       code: ARQFS_WORKER_ERROR_CODES.unexpected,
       error: error instanceof Error ? error.message : String(error),

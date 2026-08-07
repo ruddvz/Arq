@@ -2,6 +2,18 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "generatedAt": "2026-08-07T04:06:36.875Z",
+      "sourceSetDigest": "a8485a12f01269d710be013e81c2ca7cfac6acd4a2bd6e262927963ae05c48ed",
+      "previousSourceSetDigest": "a0a02de3ad305e53df3adcae6ac6562aed519f24d7ec71827b8ee1682e512079",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-07T04:01:39.759Z",
+      "sourceSetDigest": "a0a02de3ad305e53df3adcae6ac6562aed519f24d7ec71827b8ee1682e512079",
+      "previousSourceSetDigest": "89f010ff204d124bf932b7b40afb8751c9d46562be25301013b0ebd3cac6c877",
+      "changedSourceSets": ["file-open-ui", "status", "web-app"]
+    },
+    {
       "generatedAt": "2026-08-07T03:50:51.175Z",
       "sourceSetDigest": "89f010ff204d124bf932b7b40afb8751c9d46562be25301013b0ebd3cac6c877",
       "previousSourceSetDigest": "a07a157d57b4a862867f1006fc0fe89d3c359764a4df85d26584e3a66e6feb2d",
@@ -210,6 +222,18 @@
       "sourceSetDigest": "c86444cba8568617fe71f9d24edd21788bb740edd75a6aa7d4ef0d5e661d2b11",
       "previousSourceSetDigest": "49f983ddfda3c49b06ebf653cf1fca5d113b1d60c65a5cd96c04958df5777a6b",
       "changedSourceSets": ["accepted-adrs"]
+    },
+    {
+      "generatedAt": "2026-08-05T23:36:14.565Z",
+      "sourceSetDigest": "b87dc453e6e830c3fb627ff15c6dc39af80abc22935f405493815a4254f26cec",
+      "previousSourceSetDigest": "7b178064daf9691f161e2de30df21807077d8aff87b5974723425176a23b5968",
+      "changedSourceSets": ["status"]
+    },
+    {
+      "generatedAt": "2026-08-05T23:33:01.830Z",
+      "sourceSetDigest": "7b178064daf9691f161e2de30df21807077d8aff87b5974723425176a23b5968",
+      "previousSourceSetDigest": "49f983ddfda3c49b06ebf653cf1fca5d113b1d60c65a5cd96c04958df5777a6b",
+      "changedSourceSets": ["file-open-ui", "status", "web-app"]
     },
     {
       "generatedAt": "2026-08-05T21:33:06.362Z",

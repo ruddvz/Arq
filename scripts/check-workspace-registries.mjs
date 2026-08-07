@@ -30,8 +30,18 @@ import path from 'node:path';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const registryDir = path.join(repoRoot, 'packages/workspace/src/registry');
-const iconSvgDir = path.join(repoRoot, 'design/icons/svg');
-const iconComponentDir = path.join(repoRoot, 'packages/icons/src/generated');
+/*
+ * One file, because there is now one source of truth for a glyph.
+ *
+ * This used to count SVG sources in `design/icons/svg` and generated components
+ * in `packages/icons/src/generated`. Both were removed with the hand-drawn set
+ * they described - the icons come from one pinned vendor family through an
+ * adapter that keeps ARQ's own names - and the two `readdirSync` calls that
+ * read them were left behind pointing at directories that no longer exist. The
+ * check did not report a stale count; it threw ENOENT and took the whole CI job
+ * with it.
+ */
+const iconAdapterFile = path.join(repoRoot, 'packages/icons/src/arq-icons.tsx');
 const toolStateFile = path.join(repoRoot, 'packages/workspace/src/tool-state.ts');
 const designSystemWorkspaceDir = path.join(repoRoot, 'packages/design-system/src/workspace');
 
@@ -259,10 +269,12 @@ if (tools) {
   }
 }
 
-const shippedIconComponents = readdirSync(iconComponentDir).filter((file) =>
-  file.endsWith('Icon.tsx'),
-);
-const shippedIconSvgs = readdirSync(iconSvgDir).filter((file) => file.endsWith('.svg'));
+// Every glyph the product can actually import, counted where it is declared.
+const shippedIcons = (
+  readFileSync(iconAdapterFile, 'utf8').match(
+    /^export (?:const|function) [A-Z][A-Za-z0-9]*Icon\b/gm,
+  ) ?? []
+).length;
 const shippedWorkspaceComponents = readdirSync(designSystemWorkspaceDir).filter(
   (file) => file.endsWith('.tsx') && !file.endsWith('.test.tsx'),
 );
@@ -293,12 +305,9 @@ if (tools) {
   line('Tool commands', backedTools.size, tools.tools.length);
 }
 if (icons) {
-  line('Icon glyphs', shippedIconSvgs.length, icons.icons.length);
+  line('Icon glyphs', shippedIcons, icons.icons.length);
   console.log(
     `  ${'  of which registry says existing'.padEnd(34)} ${String(iconsFromRepo).padStart(4)}`,
-  );
-  console.log(
-    `  ${'  generated React components'.padEnd(34)} ${String(shippedIconComponents.length).padStart(4)}`,
   );
 }
 if (components) {

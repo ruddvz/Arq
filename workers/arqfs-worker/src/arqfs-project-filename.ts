@@ -47,6 +47,24 @@ export function readProjectIdFromWorkerSearch(search: string): string {
 }
 
 /**
+ * The project id a refusal should name when the Worker could not be
+ * constructed at all - exactly the case where the id was missing or invalid,
+ * so `readProjectIdFromWorkerSearch` would throw a second time and lose the
+ * original construction error. Every response carries a project id,
+ * including this one: an unknown sender is still a fact worth stating rather
+ * than a field silently left off.
+ */
+export const UNKNOWN_ARQFS_PROJECT_ID = 'unknown';
+
+export function readProjectIdOrUnknown(search: string): string {
+  try {
+    return readProjectIdFromWorkerSearch(search);
+  } catch {
+    return UNKNOWN_ARQFS_PROJECT_ID;
+  }
+}
+
+/**
  * The query string for a Worker that will be handed bytes a user selected
  * instead of owning a project file of its own.
  *

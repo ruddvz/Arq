@@ -6,6 +6,8 @@ import {
 } from './arqfs-worker-client';
 import type { ArqfsWorkerRequest, ArqfsWorkerResponse } from './arqfs-worker-protocol';
 
+const TEST_PROJECT_ID = 'test-project';
+
 class FakeWorker implements ArqfsWorkerLike {
   private readonly messageListeners = new Set<(event: MessageEvent<ArqfsWorkerResponse>) => void>();
   private readonly errorListeners = new Set<(event: ErrorEvent) => void>();
@@ -71,6 +73,7 @@ describe('ArqfsWorkerClient', () => {
     await expect(request).rejects.toMatchObject({ name: 'AbortError' });
     worker.respond({
       id: requestId as number,
+      projectId: TEST_PROJECT_ID,
       ok: true,
       payload: { kind: 'listArchiveEntryPaths', paths: ['late'] },
     });
@@ -151,6 +154,7 @@ describe('ArqfsWorkerClient', () => {
     // Must not throw and must not resolve the already-settled promise.
     worker.respond({
       id: requestId,
+      projectId: TEST_PROJECT_ID,
       ok: true,
       payload: { kind: 'listArchiveEntryPaths', paths: ['late'] },
     });
@@ -175,5 +179,83 @@ describe('ArqfsWorkerClient', () => {
     worker.crashWithError('boom');
     expect(() => client.dispose()).not.toThrow();
     expect(crashes).toHaveLength(1);
+  });
+});
+
+describe('project correlation', () => {
+  it('fails a request whose response names a different project', async () => {
+    const worker = new FakeWorker();
+    const client = new ArqfsWorkerClient(worker, { projectId: 'project-a' });
+
+    const request = client.request({ type: 'listArchiveEntryPaths' });
+    const requestId = worker.lastRequest?.id as number;
+    // The outgoing Worker of a project switch, still alive, answering with an
+    // id that happens to match this client's own counter. OPFS is shared at
+    // the origin, so this response describes different bytes entirely.
+    worker.respond({
+      id: requestId,
+      projectId: 'project-b',
+      ok: true,
+      payload: { kind: 'listArchiveEntryPaths', paths: ['someone-elses-project'] },
+    });
+
+    await expect(request).rejects.toMatchObject({
+      name: 'ArqfsWorkerRequestError',
+      message: expect.stringContaining('project-b'),
+    });
+    client.dispose();
+  });
+
+  it('accepts a response from its own declared project', async () => {
+    const worker = new FakeWorker();
+    const client = new ArqfsWorkerClient(worker, { projectId: 'project-a' });
+
+    const request = client.request({ type: 'listArchiveEntryPaths' });
+    worker.respond({
+      id: worker.lastRequest?.id as number,
+      projectId: 'project-a',
+      ok: true,
+      payload: { kind: 'listArchiveEntryPaths', paths: ['model.json'] },
+    });
+
+    await expect(request).resolves.toEqual({
+      kind: 'listArchiveEntryPaths',
+      paths: ['model.json'],
+    });
+    client.dispose();
+  });
+
+  it('leaves correlation to the request id alone when no project is declared', async () => {
+    const worker = new FakeWorker();
+    const client = new ArqfsWorkerClient(worker);
+
+    const request = client.request({ type: 'listArchiveEntryPaths' });
+    worker.respond({
+      id: worker.lastRequest?.id as number,
+      projectId: 'whatever',
+      ok: true,
+      payload: { kind: 'listArchiveEntryPaths', paths: [] },
+    });
+
+    await expect(request).resolves.toMatchObject({ kind: 'listArchiveEntryPaths' });
+    client.dispose();
+  });
+
+  it('also rejects a mismatched project on a refusal response, not only on success', async () => {
+    const worker = new FakeWorker();
+    const client = new ArqfsWorkerClient(worker, { projectId: 'project-a' });
+
+    const request = client.request({ type: 'open' });
+    worker.respond({
+      id: worker.lastRequest?.id as number,
+      projectId: 'project-b',
+      ok: false,
+      code: 'ARQFS_WORKER_NOT_OPENED',
+      error: 'not opened',
+    });
+
+    // The mismatch is reported, not the refusal's own (real but misattributed) reason.
+    await expect(request).rejects.toMatchObject({ message: expect.stringContaining('project-b') });
+    client.dispose();
   });
 });

@@ -33,10 +33,14 @@ export interface NativeProjectPanelProps {
  * - The project's name, revision and units moved to the project bar, which is
  *   where the reference puts them and where they are read once rather than
  *   scanned past repeatedly.
- * - "Changes are kept in a local working copy on this device" was *already* in
- *   the status bar, word for word in substance. Removing the second copy is a
- *   de-duplication, not a deletion, and the guarantee that the product never
- *   implies a save it has not made is untouched.
+ * - The write state stays, at the foot beside "Close project". An earlier pass
+ *   dropped it, reasoning that "changes are kept in a local working copy on
+ *   this device" was already in the status bar word for word in substance and
+ *   that removing the second copy was a de-duplication. That reasoning was
+ *   wrong on the half that matters: the strip says where the work is kept, and
+ *   only this said that nothing is written back to the `.arq` file the reader
+ *   chose. Naming the reader's own file is the whole promise, and no other
+ *   surface makes it.
  * - The unsupported-content disclosure stays, because it is the one thing here
  *   a reader cannot learn anywhere else.
  */
@@ -219,6 +223,26 @@ export function NativeProjectPanel(props: NativeProjectPanelProps): JSX.Element 
           </details>
         </>
       )}
+
+      {/*
+       * Where a change lands, and what happens to the file the reader chose.
+       *
+       * Restored rather than added. Turning this panel into a directory swept
+       * away four paragraphs of prose, and one of them was carrying a guarantee
+       * about the reader's own file: that editing here does not write back to
+       * the `.arq` they picked. That is not prose, it is the promise the whole
+       * working-copy design exists to keep, and a directory is no reason to
+       * stop making it.
+       *
+       * Kept to one line beside the action that ends the session, and worded by
+       * the project itself - a file open for reading only says something
+       * different from one open as a working copy, and the difference is the
+       * point.
+       */}
+      <p className="arq-project-directory__write-state">
+        <strong>{staged.writeVerdict === 'read-only' ? 'Read-only.' : 'Working copy.'}</strong>{' '}
+        {staged.writeReason}
+      </p>
 
       {/* Closing releases the Worker and the project's resident pages, and
           returns the workspace to its own plan document. Nothing on disk is

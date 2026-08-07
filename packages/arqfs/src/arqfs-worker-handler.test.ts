@@ -1,7 +1,7 @@
 import { describe, expect, it, afterEach, beforeEach } from 'vitest';
-import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import path, { join } from 'node:path';
 import { createNodeArqfsDriver } from './arqfs-node-driver';
 import { createArqfsSchemaV1 } from './arqfs-schema';
 import { initializeWorkingCopyState } from './arqfs-working-copy';
@@ -12,7 +12,10 @@ import {
   type ArqfsWorkerContext,
 } from './arqfs-worker-handler';
 import { ARQFS_SCHEMA_VERSION_V2 } from './arqfs-schema-v2';
+import { preflightArqfsBytes } from './arqfs-preflight';
 import type { ArqfsDriver } from './arqfs-driver';
+
+const TEST_PROJECT_ID = 'test-project';
 
 describe('handleArqfsWorkerRequest', () => {
   let driver: ArqfsDriver;
@@ -24,7 +27,12 @@ describe('handleArqfsWorkerRequest', () => {
 
   function freshContext(): ArqfsWorkerContext {
     driver = createNodeArqfsDriver();
-    context = { driver, usedVfs: 'test-node-driver', session: createArqfsWorkerSession() };
+    context = {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
+      session: createArqfsWorkerSession(),
+    };
     return context;
   }
 
@@ -110,7 +118,12 @@ describe('handleArqfsWorkerRequest', () => {
     await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
 
     const response = await handleArqfsWorkerRequest(ctx, { id: 2, type: 'close' });
-    expect(response).toEqual({ id: 2, ok: true, payload: { kind: 'close' } });
+    expect(response).toEqual({
+      id: 2,
+      projectId: TEST_PROJECT_ID,
+      ok: true,
+      payload: { kind: 'close' },
+    });
   });
 
   it('reports a failed request as ok: false rather than throwing past the handler', async () => {
@@ -150,7 +163,12 @@ describe('the read gate', () => {
 
   function context(): ArqfsWorkerContext {
     driver = createNodeArqfsDriver();
-    return { driver, usedVfs: 'test-node-driver', session: createArqfsWorkerSession() };
+    return {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
+      session: createArqfsWorkerSession(),
+    };
   }
 
   const readRequests = [
@@ -275,6 +293,7 @@ describe('the write gate', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
     await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
@@ -290,6 +309,7 @@ describe('the write gate', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
 
@@ -399,6 +419,7 @@ describe('the defensive open policy', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
     await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
@@ -426,6 +447,7 @@ describe('the defensive open policy', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
     await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
@@ -443,6 +465,7 @@ describe('the defensive open policy', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
     await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
@@ -481,8 +504,9 @@ describe('importing a database into the working copy', () => {
       context: {
         driver,
         usedVfs: 'test-node-driver',
+        projectId: TEST_PROJECT_ID,
         session: createArqfsWorkerSession(),
-        importDatabase: (bytes) => {
+        importDatabase: async (bytes) => {
           imported.push(bytes);
         },
       },
@@ -538,6 +562,7 @@ describe('importing a database into the working copy', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
 
@@ -557,6 +582,7 @@ describe('importing a database into the working copy', () => {
     const context: ArqfsWorkerContext = {
       driver,
       usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
       session: createArqfsWorkerSession(),
     };
 
@@ -611,6 +637,7 @@ describe('publish', () => {
       context: {
         driver,
         usedVfs: 'test-node-driver',
+        projectId: TEST_PROJECT_ID,
         session: createArqfsWorkerSession(),
         publication: {
           environment: {
@@ -768,5 +795,357 @@ describe('publish', () => {
     if (!response.ok) {
       expect(response.code).toBe('ARQFS_WORKER_PUBLISH_UNAVAILABLE');
     }
+  });
+});
+
+/**
+ * `checkArqfsIntegrity` had no caller outside its own test. Its documented
+ * purpose is "before trusting an imported/copied file", which is exactly what
+ * the native open path does with a working copy it has just seeded.
+ */
+describe('the working-copy integrity check', () => {
+  let driver: ArqfsDriver;
+
+  afterEach(() => {
+    driver?.close();
+  });
+
+  function context(): ArqfsWorkerContext {
+    driver = createNodeArqfsDriver();
+    return {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
+      session: createArqfsWorkerSession(),
+    };
+  }
+
+  it('reports a healthy working copy as ok', async () => {
+    const ctx = context();
+    await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+
+    const response = await handleArqfsWorkerRequest(ctx, { id: 2, type: 'checkIntegrity' });
+
+    expect(response.ok).toBe(true);
+    if (response.ok && response.payload.kind === 'checkIntegrity') {
+      expect(response.payload.report.ok).toBe(true);
+      expect(response.payload.report.quickCheck).toEqual(['ok']);
+    } else {
+      throw new Error('expected a checkIntegrity payload');
+    }
+  });
+
+  it('is gated on an accepted open, like every other read', async () => {
+    // A health report about a file this build has refused to open is not a value
+    // worth producing, and producing it would run pragmas against a connection
+    // whose hardening has not been decided.
+    const response = await handleArqfsWorkerRequest(context(), { id: 1, type: 'checkIntegrity' });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_NOT_OPENED');
+    }
+  });
+});
+
+/**
+ * The other direction of `importDatabase`: hands back the working copy's bytes
+ * as a standalone file, after checkpointing the connection. This is what makes
+ * portable publication possible - `.arq` file, "checkpoint", "clean bytes" - and
+ * without a checkpoint a working copy left in WAL mode would export bytes that
+ * silently depend on a `-wal` sidecar nobody exported alongside them.
+ */
+describe('exportDatabase', () => {
+  let dir: string;
+  let driver: ArqfsDriver;
+
+  beforeEach(() => {
+    dir = mkdtempSync(path.join(tmpdir(), 'arqfs-export-'));
+  });
+
+  afterEach(() => {
+    driver?.close();
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  function fileBackedContext(options: { readonly withExporter?: boolean } = {}): {
+    readonly context: ArqfsWorkerContext;
+    readonly file: string;
+  } {
+    const file = path.join(dir, 'working.arq');
+    driver = createNodeArqfsDriver(file);
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
+      session: createArqfsWorkerSession(),
+      ...(options.withExporter === false
+        ? {}
+        : { exportDatabase: () => Promise.resolve(new Uint8Array(readFileSync(file))) }),
+    };
+    return { context, file };
+  }
+
+  it('refuses to export before any open', async () => {
+    const { context } = fileBackedContext();
+
+    const response = await handleArqfsWorkerRequest(context, { id: 1, type: 'exportDatabase' });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_NOT_OPENED');
+    }
+  });
+
+  it('refuses to export a file this build must not write, gated exactly like a write', async () => {
+    const { context } = fileBackedContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    // Author a file this build may read but must not write.
+    context.driver.exec(`UPDATE arqfs_meta SET value = '99' WHERE key = 'min_writer_major'`);
+    await handleArqfsWorkerRequest(context, { id: 2, type: 'open' });
+
+    const response = await handleArqfsWorkerRequest(context, { id: 3, type: 'exportDatabase' });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_FILE_NOT_WRITABLE');
+    }
+  });
+
+  it('refuses rather than silently ignoring an export it cannot perform', async () => {
+    const { context } = fileBackedContext({ withExporter: false });
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+
+    const response = await handleArqfsWorkerRequest(context, { id: 2, type: 'exportDatabase' });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_EXPORT_UNSUPPORTED');
+    }
+  });
+
+  it('hands back bytes that are a real, openable Arq project', async () => {
+    const { context } = fileBackedContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'putArchiveEntries',
+      entries: [['model.json', new TextEncoder().encode('{"walls":[]}')]],
+    });
+
+    const response = await handleArqfsWorkerRequest(context, { id: 3, type: 'exportDatabase' });
+
+    expect(response.ok).toBe(true);
+    if (!response.ok || response.payload.kind !== 'exportDatabase') {
+      throw new Error('expected an exportDatabase payload');
+    }
+    expect(response.payload.bytes.byteLength).toBeGreaterThan(0);
+
+    // The exported bytes are a real, standalone Arq project - not merely "some
+    // bytes were returned." Verified by opening a second, fully independent
+    // driver over exactly the bytes the handler produced, the same shape of
+    // check a fresh-reader reopen performs.
+    const reopenFile = path.join(dir, 'reopened.arq');
+    writeFileSync(reopenFile, response.payload.bytes);
+    const reopened = createNodeArqfsDriver(reopenFile);
+    try {
+      const reopenedContext: ArqfsWorkerContext = {
+        driver: reopened,
+        usedVfs: 'test-node-driver',
+        projectId: TEST_PROJECT_ID,
+        session: createArqfsWorkerSession(),
+      };
+      const opened = await handleArqfsWorkerRequest(reopenedContext, { id: 4, type: 'open' });
+      expect(opened.ok).toBe(true);
+      if (
+        opened.ok &&
+        opened.payload.kind === 'open' &&
+        opened.payload.result.status === 'opened'
+      ) {
+        expect(opened.payload.result.capabilities.canRead).toBe(true);
+      }
+      // The source's own content survived the round trip, not an empty
+      // database the reopened driver happened to create for itself.
+      const listed = await handleArqfsWorkerRequest(reopenedContext, {
+        id: 5,
+        type: 'listArchiveEntryPaths',
+      });
+      expect(listed.ok).toBe(true);
+      if (listed.ok && listed.payload.kind === 'listArchiveEntryPaths') {
+        expect(listed.payload.paths).toEqual(['model.json']);
+      }
+    } finally {
+      reopened.close();
+    }
+  });
+
+  /**
+   * The adversarial case the checkpoint step exists for. A working copy left in
+   * WAL mode keeps its newest commits in a `-wal` sidecar - exactly the
+   * silent-staleness hazard `preflightArqfsBytes` was built to catch on the way
+   * *in*. Exporting has to close that hole on the way *out*: the same preflight,
+   * run against the exported bytes, must report them complete on their own.
+   */
+  it('checkpoints a database left in WAL mode, so the exported bytes need no sidecar', async () => {
+    const { context, file } = fileBackedContext();
+    await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    context.driver.exec('PRAGMA journal_mode=WAL');
+    await handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'putArchiveEntries',
+      entries: [['model.json', new TextEncoder().encode('{"walls":[]}')]],
+    });
+    // The write above is now committed to a `-wal` file next to the main
+    // database, not merged into it - confirmed directly rather than assumed,
+    // and the reason this test is adversarial rather than trivially passing.
+    expect(existsSync(`${file}-wal`)).toBe(true);
+
+    const response = await handleArqfsWorkerRequest(context, { id: 3, type: 'exportDatabase' });
+
+    expect(response.ok).toBe(true);
+    if (!response.ok || response.payload.kind !== 'exportDatabase') {
+      throw new Error('expected an exportDatabase payload');
+    }
+    const preflight = preflightArqfsBytes(response.payload.bytes);
+    expect(preflight.status).toBe('accepted');
+    if (preflight.status === 'accepted') {
+      // Complete, not merely "readable": the whole point of checkpointing before
+      // export is that nothing later has to be told about a sidecar at all.
+      expect(preflight.sidecarDependency).toBe('complete');
+      expect(preflight.journalMode).toBe('rollback-journal');
+    }
+  });
+});
+
+/**
+ * ARQ-200/222's canonical semantic hash, reachable over the protocol so a
+ * fresh-reader reopen can compute the same thing over an independent connection
+ * and compare it against the source - the comparison publication is defined by.
+ */
+describe('computeSemanticHash', () => {
+  let driver: ArqfsDriver;
+
+  afterEach(() => {
+    driver?.close();
+  });
+
+  function context(): ArqfsWorkerContext {
+    driver = createNodeArqfsDriver();
+    return {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: TEST_PROJECT_ID,
+      session: createArqfsWorkerSession(),
+    };
+  }
+
+  it('refuses before any open, like every other read', async () => {
+    const response = await handleArqfsWorkerRequest(context(), {
+      id: 1,
+      type: 'computeSemanticHash',
+    });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) {
+      expect(response.code).toBe('ARQFS_WORKER_NOT_OPENED');
+    }
+  });
+
+  it('is deterministic for the same content and changes when the content changes', async () => {
+    const ctxA = context();
+    await handleArqfsWorkerRequest(ctxA, { id: 1, type: 'open' });
+    await handleArqfsWorkerRequest(ctxA, {
+      id: 2,
+      type: 'putArchiveEntries',
+      entries: [['model.json', new TextEncoder().encode('{"walls":[]}')]],
+    });
+    const first = await handleArqfsWorkerRequest(ctxA, { id: 3, type: 'computeSemanticHash' });
+    const again = await handleArqfsWorkerRequest(ctxA, { id: 4, type: 'computeSemanticHash' });
+
+    expect(first.ok).toBe(true);
+    expect(again.ok).toBe(true);
+    if (
+      first.ok &&
+      first.payload.kind === 'computeSemanticHash' &&
+      again.ok &&
+      again.payload.kind === 'computeSemanticHash'
+    ) {
+      expect(first.payload.hash).toBe(again.payload.hash);
+      expect(first.payload.hash).toMatch(/^[0-9a-f]{64}$/);
+    } else {
+      throw new Error('expected computeSemanticHash payloads');
+    }
+
+    await handleArqfsWorkerRequest(ctxA, {
+      id: 5,
+      type: 'putArchiveEntries',
+      entries: [['model.json', new TextEncoder().encode('{"walls":[{"id":"w1"}]}')]],
+    });
+    const changed = await handleArqfsWorkerRequest(ctxA, {
+      id: 6,
+      type: 'computeSemanticHash',
+    });
+    expect(changed.ok).toBe(true);
+    if (
+      changed.ok &&
+      changed.payload.kind === 'computeSemanticHash' &&
+      first.ok &&
+      first.payload.kind === 'computeSemanticHash'
+    ) {
+      expect(changed.payload.hash).not.toBe(first.payload.hash);
+    }
+  });
+});
+
+/**
+ * Every response names the project it came from, success or refusal - not
+ * only the request it answers. Request ids are unique inside one client, not
+ * across the origin, and OPFS storage is shared at the origin, so during a
+ * project switch id correlation alone cannot tell a client that a message
+ * came from a Worker opened for a different project.
+ */
+describe('response project identity', () => {
+  it('names the project on both a successful and a refused response', async () => {
+    const driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: 'project-a',
+      session: createArqfsWorkerSession(),
+    };
+
+    const ok = await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+    const refusal = await handleArqfsWorkerRequest(context, {
+      id: 2,
+      type: 'putArchiveEntries',
+      entries: [],
+    });
+
+    expect(ok.projectId).toBe('project-a');
+    expect(refusal.projectId).toBe('project-a');
+    driver.close();
+  });
+
+  it("carries the constructing context's project id even after importDatabase replaces the working copy", async () => {
+    const driver = createNodeArqfsDriver();
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: 'project-b',
+      session: createArqfsWorkerSession(),
+      importDatabase: async () => undefined,
+    };
+
+    const imported = await handleArqfsWorkerRequest(context, {
+      id: 1,
+      type: 'importDatabase',
+      bytes: new Uint8Array(0),
+    });
+
+    // The project id names which Worker answered, not which database it
+    // currently holds - importing replaces the latter and must not change
+    // the former.
+    expect(imported.projectId).toBe('project-b');
+    driver.close();
   });
 });
