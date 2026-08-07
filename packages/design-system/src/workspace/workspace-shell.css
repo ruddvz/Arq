@@ -538,44 +538,21 @@ body {
 }
 
 /*
- * The view's own title, in the corner of the drawing.
+ * The view's own title, on the corner of the drawing.
  *
  * A drawing without one is untitled: a reader who opens a project on the wrong
  * level, or reads a 1:200 plan as 1:100, has nothing on screen telling them so.
- * Positioned over the canvas rather than in a bar, because it belongs to the
- * view and not to the window - and it is `pointer-events: none` so it never
- * takes a click meant for the drawing beneath it.
- */
-/*
- * How much of the canvas's top edge the view identity occupies.
  *
- * The pill floats over the drawing, which is what the reference composition
- * asks for and reads well when the drawing is fitted below it. It stopped
- * reading well the moment the drawing was fitted to fill: on a 1024px tablet
- * the sheet reaches the top of the canvas and the pill printed over a room.
- *
- * The canvas reads this value and fits the drawing beneath it, the same way it
- * reads `--arq-font-ui` to set its labels in the shell's own typeface. One
- * declaration, so the pill's box and the space kept clear for it cannot drift
- * apart - which they would the moment either was a number written twice.
+ * It used to float centred over the canvas, because the sheet is *painted* into
+ * the canvas rather than laid out as an element and nothing in the DOM knew
+ * where the page was. Centred, it had to be kept clear of the drawing by
+ * reserving a band at the top of the fit - chrome taking space from the model
+ * to avoid landing on it. `PlanCanvas` reports the sheet's rectangle now, so
+ * the chip sits on the page's own top-left corner, straddling its edge the way
+ * the reference draws it, and the reserved band is gone.
  */
-:root {
-  --arq-view-identity-reserve: 48px;
-}
-
 .arq-view-identity {
   position: absolute;
-  top: var(--arq-space-compact);
-  /*
-   * Centred rather than pinned to the leading edge. The reference puts it at
-   * the sheet's top-left, which on that composition is clear of the panel
-   * beside it - here it landed underneath the floating Project panel and could
-   * not be read at all. The panel's width is state, not a token, so offsetting
-   * by it would be a number that goes stale the first time the panel resizes.
-   * The centre is clear of both panels at every width.
-   */
-  left: 50%;
-  transform: translateX(-50%);
   z-index: var(--arq-z-shell-raised);
   display: flex;
   align-items: baseline;
@@ -585,7 +562,34 @@ body {
   border-radius: 999px;
   background: var(--arq-ui-paper);
   box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+  white-space: nowrap;
   pointer-events: none;
+}
+
+/*
+ * The drawing's own controls, on the opposite corner.
+ *
+ * Paired with the title rather than put in a toolbar: both belong to the sheet,
+ * both move with it, and a reader looking at a drawing should not have to look
+ * away from it to act on it.
+ */
+.arq-view-tools {
+  position: absolute;
+  z-index: var(--arq-z-shell-raised);
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--arq-ui-line-subtle);
+  border-radius: 999px;
+  background: var(--arq-ui-paper);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+.arq-view-tools .arq-shell-button {
+  min-width: 32px;
+  min-height: 32px;
+  padding: var(--arq-space-micro);
+  border-radius: 999px;
 }
 
 .arq-view-identity strong {

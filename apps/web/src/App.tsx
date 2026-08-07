@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type ReactNode,
 } from 'react';
 import {
@@ -91,7 +92,7 @@ import {
   type WorkspaceProjectContext,
   type WorkspaceViewKind,
 } from '@arq/workspace';
-import { Model3dIcon, PlanIcon, SheetIcon } from '@arq/icons';
+import { FitIcon, InspectIcon, Model3dIcon, PlanIcon, SheetIcon } from '@arq/icons';
 import type { WorldPoint } from '@arq/geometry-2d';
 import { createUndoStack, hasErrors, type ValidationMessage } from '@arq/operations';
 import { validateUniqueElementIds, validateWallSegments } from '@arq/validation';
@@ -271,7 +272,7 @@ function roomsForLevel(document: NativeProjectDocument, levelId: string): readon
   }));
 }
 import { MODE_ICONS, TOOL_GROUP_ICONS, TOOL_ICONS, TOP_BAR_ACTION_ICONS } from './tool-icons';
-import { PlanCanvas } from './PlanCanvas';
+import { PlanCanvas, type SheetRect } from './PlanCanvas';
 /**
  * The 3D surface carries three.js and the model renderer, which together are the
  * largest single contributor to the initial bundle. It is only ever rendered for
@@ -415,6 +416,24 @@ function highestWallIdSuffix(walls: readonly DrawnWall[]): number {
 }
 
 const INITIAL_PROBE: ViewportProbe = { widthPx: 1536, heightPx: 864, coarsePointer: false };
+
+/**
+ * How far in from the page's corner its chrome sits, in CSS pixels.
+ *
+ * A little in, so the chip reads as belonging to the page rather than being
+ * pinned to its very corner - the reference draws it inset by about the sheet's
+ * own margin.
+ */
+const SHEET_CHROME_INSET_PX = 12;
+
+/**
+ * How far the chrome rides above the page's top edge, in CSS pixels.
+ *
+ * Roughly half its own height, so it straddles the edge the way a tab on a
+ * folder does. Sitting entirely inside would make it a label printed on the
+ * drawing; entirely outside would leave it floating unattached.
+ */
+const SHEET_CHROME_LIFT_PX = 14;
 
 const INITIAL_TABS = openTab(
   openTab(
@@ -1498,6 +1517,12 @@ export function App(): JSX.Element {
     ],
   );
 
+  /**
+   * Where the drawing's page is on screen, reported by the canvas that paints
+   * it. Null until the first paint, and whenever nothing is drawn.
+   */
+  const [sheetRect, setSheetRect] = useState<SheetRect | null>(null);
+
   const activeToolLabel = useMemo(() => {
     const contract = toolContract(toolState.activeToolId);
     return contract === null ? null : contract.name;
@@ -1578,14 +1603,75 @@ export function App(): JSX.Element {
    * hard-coded "1:100" would be exactly the kind of decoration this work has
    * been removing.
    */
+  /*
+   * Both pieces of drawing chrome sit on the page's own corners.
+   *
+   * The sheet is painted into the canvas, so `PlanCanvas` reports its rectangle
+   * and these are placed against it - the title straddling the top-left edge
+   * and the drawing's controls on the top-right, which is where the reference
+   * puts them. Half the chip's height above the edge, so it reads as a tab on
+   * the page rather than a label inside it.
+   *
+   * Nothing is placed until the rect arrives: a chip guessing at the middle of
+   * the canvas is what used to land on top of a room.
+   */
+  const sheetChromeStyle = (side: 'start' | 'end'): CSSProperties | undefined => {
+    if (sheetRect === null) return undefined;
+    /*
+     * Clamped to the canvas, not merely offset from the page.
+     *
+     * A page fitted close to the top of the canvas would otherwise carry its
+     * chrome up past the canvas edge and behind the project bar, where it is
+     * both unreadable and unclickable. The lift is a nicety; staying on screen
+     * is not.
+     */
+    const top = Math.max(0, sheetRect.y - SHEET_CHROME_LIFT_PX);
+    return side === 'start'
+      ? { left: Math.max(0, sheetRect.x + SHEET_CHROME_INSET_PX), top }
+      : {
+          left: sheetRect.x + sheetRect.width - SHEET_CHROME_INSET_PX,
+          top,
+          transform: 'translateX(-100%)',
+        };
+  };
+
   const viewIdentity =
-    activeTab === null ? null : (
-      <div className="arq-view-identity">
+    activeTab === null || sheetRect === null ? null : (
+      <div className="arq-view-identity" style={sheetChromeStyle('start')}>
         <strong>{activeLevelName ?? activeTab.title}</strong>
         <span>
           {activeTab.kind === '3d' ? 'Model' : 'Plan'}
           {planScaleLabel === null ? '' : ` \u00b7 ${planScaleLabel}`}
         </span>
+      </div>
+    );
+
+  /*
+   * The drawing's own controls, paired with its title on the opposite corner.
+   *
+   * Each does something this build can already do, which is the whole test for
+   * whether it belongs here: the grid toggles the plan's own grid, and search
+   * opens the command palette. Nothing here is a placeholder.
+   */
+  const viewTools =
+    activeTab === null || sheetRect === null ? null : (
+      <div className="arq-view-tools" style={sheetChromeStyle('end')}>
+        <button
+          type="button"
+          className="arq-shell-button"
+          aria-label="Fit the drawing to the window"
+          onClick={() => handleActivateTool('fit')}
+        >
+          <FitIcon width={16} height={16} />
+        </button>
+        <button
+          type="button"
+          className="arq-shell-button"
+          aria-label="Search commands"
+          onClick={() => setCommandPaletteOpen(true)}
+        >
+          <InspectIcon width={16} height={16} />
+        </button>
       </div>
     );
 
@@ -1621,6 +1707,7 @@ export function App(): JSX.Element {
     ) : (
       <div style={{ position: 'relative', height: '100%', minHeight: 0 }}>
         {viewIdentity}
+        {viewTools}
         <PlanCanvas
           activeToolId={toolState.activeToolId}
           walls={drawnWalls}
@@ -1630,6 +1717,7 @@ export function App(): JSX.Element {
           onSceneBuilt={(scene) => {
             planSceneRef.current = scene;
           }}
+          onSheetRectChange={setSheetRect}
           selection={modelSelection}
           onSelectElement={(elementId) =>
             setModelSelection({ primary: elementId, secondary: new Set() })

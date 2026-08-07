@@ -126,53 +126,18 @@ function fitMarginPx(width: number, height: number): number {
 }
 
 /**
- * Fits the drawing into the part of the canvas that is actually clear.
+ * Fits the drawing into the canvas.
  *
- * The view identity - "Ground floor · Plan · 1:103" - floats over the top of
- * the canvas, which is the reference composition and reads well when the
- * drawing sits below it. It stopped reading well the moment the drawing was
- * fitted to fill the canvas: on a 1024px tablet the sheet reaches the top edge
- * and the pill printed over a room. Fitting into the space under it, and then
- * pushing the drawing down into that space, is the difference between a label
- * floating above a plan and a label lying on one.
- *
- * The reserve comes from the stylesheet that positions the pill, so the two
- * cannot drift apart. It is capped at a third of the canvas so a very short
- * viewport is not given over to chrome.
+ * This used to reserve a band at the top for the view's title, which floated
+ * centred over the canvas and would otherwise land on a room. The title sits on
+ * the sheet's own corner now - `onSheetRectChange` reports where that is - so
+ * the page's own margin holds it and the drawing gets the band back.
  */
 function fitContent(
   bounds: { readonly min: WorldPoint; readonly max: WorldPoint },
-  canvas: HTMLCanvasElement,
   rect: { readonly width: number; readonly height: number },
 ): Viewport {
-  const reserve = Math.min(readReservePx(canvas), rect.height / 3);
-  const usableHeight = Math.max(1, rect.height - reserve);
-  const fitted = fitToBounds(
-    bounds,
-    rect.width,
-    usableHeight,
-    fitMarginPx(rect.width, usableHeight),
-  );
-  /*
-   * Screen y runs down and world y runs up, so raising the viewport's centre
-   * moves the drawing down the screen. Half the reserve re-centres the drawing
-   * in the band below the pill rather than in the whole canvas.
-   */
-  return {
-    ...fitted,
-    center: worldPoint(fitted.center.x, fitted.center.y + reserve / 2 / fitted.pixelsPerUnit),
-  };
-}
-
-/** The pill's own height, as its stylesheet declares it. Zero if unset. */
-function readReservePx(canvas: HTMLCanvasElement): number {
-  if (typeof window === 'undefined') return 0;
-  const raw = window
-    .getComputedStyle(canvas)
-    .getPropertyValue('--arq-view-identity-reserve')
-    .trim();
-  const parsed = Number.parseFloat(raw);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+  return fitToBounds(bounds, rect.width, rect.height, fitMarginPx(rect.width, rect.height));
 }
 
 /** Matches `TEXT_LINE_HEIGHT_PX` in the paint, which is what actually spaces the lines. */
@@ -259,6 +224,14 @@ function labelKeepOut(
   }));
 }
 
+/** The drawing's page on screen, in CSS pixels relative to the canvas element. */
+export interface SheetRect {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+}
+
 const EMPTY_SET: ReadonlySet<string> = new Set<string>();
 
 export interface PlanCanvasProps {
@@ -316,6 +289,14 @@ export interface PlanCanvasProps {
    * eventually disagree, and the sheet is the one nobody can check against the
    * screen once it is printed.
    */
+  /**
+   * Where the drawing's page is on screen, in CSS pixels relative to the
+   * canvas, or null when nothing is drawn and there is no page.
+   *
+   * The sheet is painted into the canvas rather than laid out as an element, so
+   * this is the only way anything in the DOM can sit on its corner.
+   */
+  readonly onSheetRectChange?: (rect: SheetRect | null) => void;
   readonly onSceneBuilt?: (scene: {
     readonly primitives: PlanScene<string>['primitives'];
     readonly bounds: {
@@ -354,6 +335,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     wallDimensions,
     wallOpenings,
     onSceneBuilt,
+    onSheetRectChange,
   } = props;
 
   /**
@@ -532,6 +514,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
      * around inside. Skipped when there is nothing on it: an empty page is a
      * claim that something is there.
      */
+    let sheetRect: SheetRect | null = null;
     if (rooms.length > 0 || walls.length > 0) {
       const bounds = contentBounds(content);
       const marginMm = Math.max(
@@ -564,6 +547,22 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       );
       ctx.fill();
       ctx.restore();
+      /*
+       * Reported in CSS pixels, so DOM chrome can be anchored to the page
+       * rather than to the canvas.
+       *
+       * The sheet is painted, not laid out - it has no element, so React had no
+       * way to know where it is. The view's title belongs on the drawing's own
+       * corner, which is where the reference puts it, and without this it could
+       * only float over the middle of the canvas and hope not to land on a
+       * room. Which it did, at 1024px.
+       */
+      sheetRect = {
+        x: topLeft.x / devicePixelRatio,
+        y: topLeft.y / devicePixelRatio,
+        width: (bottomRight.x - topLeft.x) / devicePixelRatio,
+        height: (bottomRight.y - topLeft.y) / devicePixelRatio,
+      };
     }
 
     // The thickest wall on the level, so a room label is measured against the
@@ -875,6 +874,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     // Reported after painting, so what a caller receives is what was drawn -
     // not a scene that was built and then discarded by a later guard.
     onSceneBuilt?.({ primitives: scene.primitives, bounds: contentBounds(content) });
+    onSheetRectChange?.(sheetRect);
 
     // The marquee is view furniture like the grid: CAD convention, solid
     // edge for a window (left-to-right) drag, dashed for crossing.
@@ -908,6 +908,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     wallDimensions,
     wallOpenings,
     onSceneBuilt,
+    onSheetRectChange,
   ]);
 
   useEffect(() => {
@@ -964,7 +965,6 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
           // is a starting extent rather than a fit.
           const fitted = fitContent(
             emptyContentBounds({ rooms, walls }) ?? contentBounds({ rooms, walls }),
-            canvas,
             rect,
           );
           onViewportPixelsPerUnitChange?.(fitted.pixelsPerUnit);
@@ -1147,11 +1147,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       const devicePixelRatio = devicePixelRatioRef.current;
       // Fit on an empty surface returns to the starting extent rather than to
       // NaN - the same guard as the first paint, for the same reason.
-      const fitted = fitContent(
-        emptyContentBounds(content) ?? contentBounds(content),
-        canvas,
-        rect,
-      );
+      const fitted = fitContent(emptyContentBounds(content) ?? contentBounds(content), rect);
       updateViewport({
         ...fitted,
         screenWidth: canvas.width,
