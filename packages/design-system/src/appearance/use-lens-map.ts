@@ -58,18 +58,32 @@ export function useLensMap(spec: LensSpec | null, enabled: boolean): LensMapStat
   const [failed, setFailed] = useState(false);
   // Read in the cleanup, where the spec prop may already be the next one.
   const held = useRef<ReturnType<typeof normalizeLensSpec> | null>(null);
+  /*
+   * The latest shape, read inside the effect rather than depended on.
+   *
+   * Every caller builds its spec inline, because it comes from a measurement -
+   * so the object is new on every render. Depending on it re-ran this effect
+   * every render, and because each run aborts the previous one's controller,
+   * no generation ever survived long enough to finish: the map failed, the
+   * surface downgraded to plain material, and the downgrade looked so much like
+   * correct behaviour that it took a dump of the resolved environment to see
+   * `runtimeFailed: true` and realise the lens had never had a chance.
+   */
+  const latest = useRef(spec);
+  latest.current = spec;
 
   const key = spec === null ? null : JSON.stringify(spec);
 
   useEffect(() => {
-    if (!enabled || spec === null) {
+    const current = latest.current;
+    if (!enabled || current === null) {
       setResource(null);
       return;
     }
 
     let normalized: ReturnType<typeof normalizeLensSpec>;
     try {
-      normalized = normalizeLensSpec(spec);
+      normalized = normalizeLensSpec(current);
     } catch {
       // A shape this cannot generate is not an error the user should see; the
       // surface simply stays material.
@@ -108,16 +122,8 @@ export function useLensMap(spec: LensSpec | null, enabled: boolean): LensMapStat
         held.current = null;
       }
     };
-    /*
-     * Keyed on the serialised shape rather than on the object.
-     *
-     * A caller building the spec inline - which is every caller, because it is
-     * derived from a measurement - passes a new object every render, and
-     * depending on the object would regenerate the map each time. `spec` is
-     * read inside the effect and `key` is what changes when it meaningfully
-     * does.
-     */
-  }, [key, enabled, spec]);
+    // Keyed on the serialised shape, never on the object. See `latest`.
+  }, [key, enabled]);
 
   return { resource, failed };
 }
