@@ -1869,10 +1869,7 @@ export function App(): JSX.Element {
         }
         statusBar={
           <StatusBar
-            unitLabel="mm"
-            cursorWorldPosition={cursorWorldPosition}
             activeSnapLabel={activeSnapLabel}
-            selectionCount={selectionCount}
             modelHealth={modelHealth}
             localJournalStateLabel={journalLabel}
             syncState={DEMO_SYNC_STATE}

@@ -1,20 +1,14 @@
 import {
   formatActiveSnap,
-  formatCoordinates,
   formatModelHealth,
   formatPerformanceWarning,
-  formatSelectionCount,
   type ModelHealthSummary,
-  type StatusBarCoordinates,
 } from './status-bar-state';
 import type { SyncState } from './top-bar-state';
 import { describeSyncState } from './top-bar-state';
 
 export interface StatusBarProps {
-  readonly unitLabel: string;
-  readonly cursorWorldPosition: StatusBarCoordinates | null;
   readonly activeSnapLabel: string | null;
-  readonly selectionCount: number;
   readonly modelHealth: ModelHealthSummary;
   /**
    * The tool a tap on the canvas will use, or null when there is none.
@@ -75,10 +69,7 @@ export interface StatusBarProps {
  */
 export function StatusBar(props: StatusBarProps): JSX.Element {
   const {
-    unitLabel,
-    cursorWorldPosition,
     activeSnapLabel,
-    selectionCount,
     modelHealth,
     activeToolLabel = null,
     localJournalStateLabel,
@@ -90,6 +81,7 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
   const full = variant === 'full';
 
   const performanceWarning = formatPerformanceWarning(supportModeEnabled);
+  const issuesToReport = modelHealth.errorCount > 0 || modelHealth.warningCount > 0;
 
   return (
     <footer
@@ -98,6 +90,8 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
         display: 'flex',
         alignItems: 'center',
         gap: 'var(--arq-space-section)',
+        // Two groups, pushed to the two ends of the strip.
+        justifyContent: 'space-between',
         padding: 'var(--arq-space-micro) var(--arq-space-panel)',
         borderTop: '1px solid var(--arq-ui-line-subtle)',
         color: 'var(--arq-ui-text-secondary)',
@@ -118,45 +112,66 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
       }}
     >
       {/*
-       * The strip carried nine fields and now carries five, and the four that
-       * went were duplicates rather than sacrifices.
+       * Two groups, at the two ends of the strip, and only the fields that are
+       * worth permanent space.
        *
-       * The units label stood alone beside a coordinate readout that already
-       * carries its units, so it said "mm" twice. The level name and the view
-       * scale are both on the view's own title card over the drawing, which is
-       * where a reader looks for them - reporting them again at the far edge of
-       * the window is not redundancy that helps.
+       * It carried nine, then five: coordinates, snap, selection count, model
+       * health, the working copy, sync. The reference carries two - what the
+       * pointer will snap to, and where the work is being kept - and reading
+       * the two side by side, the reference is right about the ones it drops.
        *
-       * Nothing about save, sync or the working copy was touched. Those are the
-       * fields that stop the product implying a save it has not made, and they
-       * are the reason this strip exists at all.
+       * Cursor coordinates change on every pointer move and are read by almost
+       * nobody at almost any moment; selection is stated by the Inspector,
+       * which is the surface a reader is already looking at when they care.
+       * Neither carries a guarantee, and the strip's whole reason to exist is
+       * the two fields that do.
+       *
+       * Model health is the exception, and it is now conditional: a permanent
+       * "No issues" is a phrase the eye stops seeing, so when it changes to "3
+       * errors" nobody notices. Shown only when there is something to say, it
+       * is the one thing on the strip that ever moves, and it is announced.
        */}
-      {/*
-       * The tool leads the strip on a phone, because it is the field that
-       * changes what the next tap does. aria-live because the change is usually
-       * made from a sheet that has closed by the time it takes effect, so there
-       * is nothing left on screen for a screen reader to have announced.
-       */}
-      {!full && activeToolLabel !== null && (
-        <span role="status" aria-live="polite">
-          Tool: {activeToolLabel}
+      <span className="arq-status-bar__group">
+        {!full && activeToolLabel !== null && (
+          /*
+           * The tool leads on a phone, because it is the field that changes
+           * what the next tap does. aria-live because the change is usually
+           * made from a sheet that has closed by the time it takes effect, so
+           * there is nothing left on screen for a screen reader to announce.
+           */
+          <span role="status" aria-live="polite">
+            Tool: {activeToolLabel}
+          </span>
+        )}
+        {full && (
+          /*
+           * Labelled only when there is something to label. `formatActiveSnap`
+           * already words the empty case as "No snap", so prefixing it
+           * unconditionally produced "Snap: No snap" - a phrase that reads as a
+           * bug even though both halves are correct.
+           */
+          <span>
+            {activeSnapLabel === null ? formatActiveSnap(null) : `Snap: ${activeSnapLabel}`}
+          </span>
+        )}
+        {issuesToReport && (
+          <span role="status" aria-live="polite">
+            {formatModelHealth(modelHealth)}
+          </span>
+        )}
+        {performanceWarning !== null && <span role="alert">{performanceWarning}</span>}
+      </span>
+
+      {/* Save and sync are announced by top-bar.tsx; repeating the announcement
+          here made a screen reader say each change twice. On a phone they are
+          on the project bar instead, so the strip omits them rather than
+          showing the same fact in two places. */}
+      {full && (
+        <span className="arq-status-bar__group">
+          <span>{localJournalStateLabel}</span>
+          <span>{describeSyncState(syncState)}</span>
         </span>
       )}
-      {full && <span>{formatCoordinates(cursorWorldPosition, unitLabel)}</span>}
-      {full && <span>{formatActiveSnap(activeSnapLabel)}</span>}
-      <span>{formatSelectionCount(selectionCount)}</span>
-      {/* The one field announced: validation results change without the user
-          having just typed them, and nothing else reports them aloud. */}
-      <span role="status" aria-live="polite">
-        {formatModelHealth(modelHealth)}
-      </span>
-      {/* Save and sync are announced by top-bar.tsx. Repeating the
-          announcement here made a screen reader say each change twice. On a
-          phone they are on the project bar instead, so the strip omits them
-          rather than showing the same fact in two places. */}
-      {full && <span>{localJournalStateLabel}</span>}
-      {full && <span>{describeSyncState(syncState)}</span>}
-      {performanceWarning !== null && <span role="alert">{performanceWarning}</span>}
     </footer>
   );
 }

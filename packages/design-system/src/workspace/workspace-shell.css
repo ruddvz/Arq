@@ -67,6 +67,23 @@
  * colour, so in dark appearance the margin showed as a pale frame around the
  * whole application - the root element was still the browser's default.
  */
+/*
+ * Padding counts inside a width, everywhere.
+ *
+ * Nothing in this design system ever set `box-sizing`, so every element in it
+ * was the CSS default of `content-box`: an element given a width and padding is
+ * that width *plus* its padding, and any `width: 100%` with padding overflows
+ * its parent by exactly the padding. The status strip was the visible case -
+ * full width plus 32px of inner padding, so its right-hand group was clipped
+ * mid-word by the edge of the window - but it is a property of every padded box
+ * here, and fixing the one that showed would have left the rest waiting.
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body {
   margin: 0;
@@ -193,7 +210,13 @@ body {
    * of structure, and the reference composition has none there.
    */
   .arq-workspace__bar--status {
-    align-self: flex-start;
+    /*
+     * Stretch, not `flex-start`. The strip has two groups pushed to opposite
+     * ends now, and in a flex column `flex-start` sizes the slot to its content
+     * on the cross axis - so the slot shrank to the text's own width, the pill
+     * with it, and the right-hand group was clipped mid-word.
+     */
+    align-self: stretch;
     min-width: 0;
     border-radius: 999px;
     box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
@@ -206,7 +229,7 @@ body {
    * inside it, and that is what has to shrink.
    */
   .arq-workspace__bar--status > .arq-status-bar {
-    width: fit-content;
+    width: 100%;
     max-width: 100%;
     padding-inline: var(--arq-space-panel);
     border-radius: 999px;
@@ -320,10 +343,27 @@ body {
  * readout jitter horizontally as the pointer moves, which is exactly the
  * readout a user is trying to hold their eye on.
  */
-.arq-status-bar,
+/*
+ * Figures read as measurements - but only where there are figures.
+ *
+ * The status bar was set in the mono face along with the numeric HUD, and it
+ * carries no numbers any more: "Snap: endpoint" and "Local working copy ·
+ * portable source unchanged" are sentences, and a sentence set in a monospace
+ * face reads as terminal output rather than as the product speaking. The HUD
+ * keeps it, because exact length and angle entry is exactly what the face is
+ * for.
+ */
 .arq-context-hud__surface {
   font-family: var(--arq-font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/* Two groups at the two ends, each a row of its own fields. */
+.arq-status-bar__group {
+  display: flex;
+  align-items: center;
+  gap: var(--arq-space-section);
+  min-width: 0;
 }
 
 /*
