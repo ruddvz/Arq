@@ -83,6 +83,13 @@
    */
   --arq-plan-hatch-outdoor: #9db39a;
   --arq-plan-room-neutral: #f4f6f7;
+  /*
+   * The wash behind a selected row. Derived from the brand accent rather than
+   * being a new hue - a tint of the same green the marker and the label use, so
+   * selection reads as one idea at three strengths instead of three colours.
+   */
+  --arq-ui-selected-surface: #e8f2ee;
+
   --arq-ui-surface-1: #fafafa;
   --arq-ui-surface-2: #f4f4f4;
   --arq-ui-surface-3: #ececec;
@@ -246,6 +253,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     /* The table the cards rest on, darker than any of them. */
+    --arq-ui-selected-surface: #16302a;
     --arq-ui-canvas: #101315;
     --arq-ui-paper: #171a1d;
     --arq-ui-surface-1: #1e2225;

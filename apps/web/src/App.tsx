@@ -1412,6 +1412,92 @@ export function App(): JSX.Element {
     [setTabs],
   );
 
+  /** Shows a level's plan: its walls, rooms, dimensions and openings, and nothing of the last one. */
+  const handleShowLevel = useCallback(
+    (levelId: string) => {
+      if (openNativeProject === null) return;
+      setActiveNativeLevelId(levelId);
+      const shown = wallsForLevel(openNativeProject.project.model, levelId);
+      setDrawnWalls(shown);
+      drawnWallsRef.current = shown;
+      setProjectRooms(roomsForLevel(openNativeProject.project.model, levelId));
+      setWallDimensions(wallDimensionsForLevel(openNativeProject.project.model, levelId));
+      setWallOpenings(wallOpeningsForLevel(openNativeProject.project.model, levelId));
+      // The selection is a wall id, and a wall on another level is not on
+      // screen. Keeping it would leave the inspector describing something the
+      // reader cannot see.
+      setModelSelection({ primary: null, secondary: new Set() });
+    },
+    [openNativeProject],
+  );
+
+  /**
+   * Closing has to put back everything adoption replaced, not just hide the
+   * panel. Leaving the project's walls on the canvas under the workspace's own
+   * name is the worst of both: the reader is told no project is open while
+   * still looking at one, and the next open would draw over it.
+   */
+  const handleCloseNativeProject = useCallback(() => {
+    void nativeSessionRef.current?.close().catch(() => undefined);
+    nativeSessionRef.current = null;
+    setOpenNativeProject(null);
+    setActiveNativeLevelId(null);
+    setProjectRooms(null);
+    setWallDimensions(new Map());
+    setWallOpenings(new Map());
+    setActiveWorkingCopyId(null);
+    setDrawnWalls([]);
+    drawnWallsRef.current = [];
+    setProjectName('Untitled project');
+    setModelSelection({ primary: null, secondary: new Set() });
+    setSaveState('saved');
+    setJournalLabel('Journal current');
+  }, []);
+
+  /**
+   * The project directory, for whichever browser section asked for it.
+   *
+   * One wiring, two sections: Views lists the levels and the file's non-plan
+   * views, Model lists the counted elements and the tree. They were a single
+   * scroll under one tab called "Project" while three sibling tabs rendered
+   * "Nothing here yet", which is a panel that looks broken rather than one that
+   * is honest about what it holds.
+   */
+  const projectDirectory = useCallback(
+    (section: 'views' | 'model'): ReactNode => {
+      const tree = (
+        <ModelPanel
+          tree={modelTree}
+          selection={modelSelection}
+          onSelectNode={(nodeId) => setModelSelection({ primary: nodeId, secondary: new Set() })}
+        />
+      );
+      if (openNativeProject === null || activeNativeLevelId === null) {
+        return tree;
+      }
+      return (
+        <NativeProjectPanel
+          fileName={openNativeProject.fileName}
+          staged={openNativeProject.project}
+          activeLevelId={activeNativeLevelId}
+          section={section}
+          onShowLevel={handleShowLevel}
+          onCloseProject={handleCloseNativeProject}
+        >
+          {tree}
+        </NativeProjectPanel>
+      );
+    },
+    [
+      openNativeProject,
+      activeNativeLevelId,
+      modelTree,
+      modelSelection,
+      handleShowLevel,
+      handleCloseNativeProject,
+    ],
+  );
+
   const activeToolLabel = useMemo(() => {
     const contract = toolContract(toolState.activeToolId);
     return contract === null ? null : contract.name;
@@ -1717,81 +1803,14 @@ export function App(): JSX.Element {
             }
             sections={{
               /*
-               * Only Project has real content: the semantic tree is the one
-               * thing this build can actually enumerate. Views, Documents and
-               * Files render their own empty state rather than a fabricated
-               * list - doc 35's "never invent" rule is not specific to the
-               * overview.
+               * Views and Model are both real: the levels and views the file
+               * declares, and the counted elements. Sheets renders its own
+               * empty state rather than a fabricated list, because this build
+               * reads no sheet records - doc 35's "never invent" rule is not
+               * specific to the overview.
                */
-              project:
-                openNativeProject !== null && activeNativeLevelId !== null ? (
-                  <NativeProjectPanel
-                    fileName={openNativeProject.fileName}
-                    staged={openNativeProject.project}
-                    activeLevelId={activeNativeLevelId}
-                    onShowLevel={(levelId) => {
-                      setActiveNativeLevelId(levelId);
-                      const shown = wallsForLevel(openNativeProject.project.model, levelId);
-                      setDrawnWalls(shown);
-                      drawnWallsRef.current = shown;
-                      setProjectRooms(roomsForLevel(openNativeProject.project.model, levelId));
-                      setWallDimensions(
-                        wallDimensionsForLevel(openNativeProject.project.model, levelId),
-                      );
-                      setWallOpenings(
-                        wallOpeningsForLevel(openNativeProject.project.model, levelId),
-                      );
-                      // The selection is a wall id, and a wall on another level
-                      // is not on screen. Keeping it would leave the inspector
-                      // describing something the reader cannot see.
-                      setModelSelection({ primary: null, secondary: new Set() });
-                    }}
-                    onCloseProject={() => {
-                      // Closing has to put back everything adoption replaced, not
-                      // just hide the panel. Leaving the project's walls on the
-                      // canvas under the workspace's own name is the worst of both:
-                      // the reader is told no project is open while still looking
-                      // at one, and the next open would draw over it.
-                      void nativeSessionRef.current?.close().catch(() => undefined);
-                      nativeSessionRef.current = null;
-                      setOpenNativeProject(null);
-                      setActiveNativeLevelId(null);
-                      setProjectRooms(null);
-                      setWallDimensions(new Map());
-                      setWallOpenings(new Map());
-                      setActiveWorkingCopyId(null);
-                      setDrawnWalls([]);
-                      drawnWallsRef.current = [];
-                      setProjectName('Untitled project');
-                      setModelSelection({ primary: null, secondary: new Set() });
-                      setSaveState('saved');
-                      setJournalLabel('Journal current');
-                    }}
-                  >
-                    <ModelPanel
-                      tree={modelTree}
-                      selection={modelSelection}
-                      onSelectNode={(nodeId) =>
-                        setModelSelection({ primary: nodeId, secondary: new Set() })
-                      }
-                    />
-                  </NativeProjectPanel>
-                ) : (
-                  <ModelPanel
-                    tree={modelTree}
-                    selection={modelSelection}
-                    onSelectNode={(nodeId) =>
-                      setModelSelection({ primary: nodeId, secondary: new Set() })
-                    }
-                  />
-                ),
-              views: (
-                <ViewSwitcherList
-                  state={tabs}
-                  onActivateTab={(id) => setTabs((state) => activateTab(state, id))}
-                  onCloseTab={(id) => setTabs((state) => closeTab(state, id))}
-                />
-              ),
+              views: projectDirectory('views'),
+              model: projectDirectory('model'),
             }}
           />
         }

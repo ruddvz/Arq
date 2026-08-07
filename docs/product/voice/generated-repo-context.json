@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "9c5d8e8cdff25a41abf1dbdfe7b2505aaa33d0fd3e193e96f065782f235f7617",
+  "sourceSetDigest": "2096d7bbf55c95e1b775ebd42a5627e5ed8fcb392b2c75014ff4a66c07899af4",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -266,7 +266,7 @@
       "id": "workspace-registries",
       "kind": "directory",
       "path": "packages/workspace/src/registry",
-      "sha256": "babbb7978c4e2b31ed1bc13f9ea1d4460d8ed232170a6436440d3a13756918bf",
+      "sha256": "7958ff8f80ff4e7c1d776eacf1dbbdd8a195f15aaf26ba4e229edc901269a04b",
       "files": [
         {
           "rel": "packages/workspace/src/registry/workspace-capability-gates.json",
@@ -300,8 +300,8 @@
         },
         {
           "rel": "packages/workspace/src/registry/workspace-panel-registry.json",
-          "sha256": "7082c0f56e294e26e2c012fe2aa9333bb22325c9b9bfe3bc9272dcaa40a203e8",
-          "bytes": 1952
+          "sha256": "ff3e782d183a4d306efcfba217b8992f0c97c39a50cdfa4de8e828ca0dd8b195",
+          "bytes": 1938
         },
         {
           "rel": "packages/workspace/src/registry/workspace-platform-layouts.json",
@@ -430,8 +430,8 @@
       "id": "web-app",
       "kind": "file",
       "path": "apps/web/src/App.tsx",
-      "sha256": "e33e210d2fe18a540d2012d350d72a0ab515ad316afa479b945a098ab41cb528",
-      "bytes": 80772
+      "sha256": "c31ab40c7a9efbae47e87fe08bba5c1bb7f5364d929feefc58b5b7bafea599e1",
+      "bytes": 80556
     },
     "plan-canvas": {
       "id": "plan-canvas",
@@ -1435,7 +1435,7 @@
           "id": "P-left-browser",
           "name": "Project Browser",
           "desktop": { "defaultWidth": 268, "min": 232, "max": 384, "dock": "left" },
-          "tabs": ["Project", "Views", "Documents", "Files"],
+          "tabs": ["Views", "Model", "Sheets"],
           "phone": "full-height sheet via View/Project action",
           "tablet": "overlay or drawer; never permanently steal narrow canvas"
         },

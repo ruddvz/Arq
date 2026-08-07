@@ -53,7 +53,7 @@ function EmptySection(props: { readonly section: BrowserSection }): JSX.Element 
 export function ProjectBrowserPanel(props: ProjectBrowserPanelProps): JSX.Element {
   const { state, mode, reviewCapabilityEnabled, onSelectSection, sections } = props;
   const available = browserSectionsForMode(mode, reviewCapabilityEnabled);
-  const active = available.includes(state.section) ? state.section : (available[0] ?? 'project');
+  const active = available.includes(state.section) ? state.section : (available[0] ?? 'model');
 
   function onKeyDown(event: React.KeyboardEvent<HTMLDivElement>): void {
     const delta = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;

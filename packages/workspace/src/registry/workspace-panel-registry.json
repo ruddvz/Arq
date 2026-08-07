@@ -10,7 +10,7 @@
         "max": 384,
         "dock": "left"
       },
-      "tabs": ["Project", "Views", "Documents", "Files"],
+      "tabs": ["Views", "Model", "Sheets"],
       "phone": "full-height sheet via View/Project action",
       "tablet": "overlay or drawer; never permanently steal narrow canvas"
     },

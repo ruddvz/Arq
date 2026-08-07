@@ -234,7 +234,9 @@ export async function openNativeProject(
     if (manifest === null) {
       return rejected('ARQ_MANIFEST_INVALID', 'This project has no usable identity.');
     }
-    const decoded = decodeNativeProjectModel(archive.model);
+    // `views.json` comes through the same import as the model, and is what the
+    // project browser's Views section lists beside the levels.
+    const decoded = decodeNativeProjectModel(archive.model, archive.views);
     if (decoded.status === 'rejected') {
       return rejected('ARQ_MODEL_REJECTED', decoded.reason);
     }

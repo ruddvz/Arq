@@ -611,10 +611,34 @@ button.arq-project-directory__row:hover {
   background: var(--arq-ui-surface-2);
 }
 
+/*
+ * The level on show.
+ *
+ * It was a solid ink slab with reversed text - the loudest thing on a panel
+ * whose job is to be scanned, and heavier than the drawing it points at. The
+ * reference marks it with a wash of the brand accent, the accent for the label
+ * and a bar at the leading edge.
+ *
+ * Three cues, and the tint is the least of them. Blueprint section 126's
+ * "status not colour-only" is why: the weight and the marker carry the state on
+ * their own, so a reader who cannot separate the wash from the panel behind it
+ * loses nothing. `aria-pressed` remains what assistive technology is told.
+ */
 button.arq-project-directory__row[aria-pressed='true'] {
-  background: var(--arq-ui-ink);
-  color: var(--arq-ui-paper);
+  position: relative;
+  background: var(--arq-ui-selected-surface);
+  color: var(--arq-active-indicator);
   font-weight: 600;
+}
+
+button.arq-project-directory__row[aria-pressed='true']::before {
+  content: '';
+  position: absolute;
+  inset-block: 4px;
+  inset-inline-start: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--arq-active-indicator);
 }
 
 .arq-project-directory__label {
@@ -633,7 +657,7 @@ button.arq-project-directory__row[aria-pressed='true'] {
 }
 
 button.arq-project-directory__row[aria-pressed='true'] .arq-project-directory__count {
-  color: var(--arq-ui-paper);
+  color: var(--arq-active-indicator);
 }
 
 .arq-project-directory__row[aria-disabled='true'] {
@@ -740,4 +764,77 @@ button.arq-project-directory__row[aria-pressed='true'] .arq-project-directory__c
   .arq-workspace__dock .arq-shell-button[aria-pressed='true'] {
     color: var(--arq-black);
   }
+}
+
+/*
+ * The browser's own tabs had no visual state at all.
+ *
+ * They are rendered with `aria-selected`, and `.arq-shell-button`'s pressed
+ * treatment keys on `aria-pressed` - so nothing matched and the active section
+ * was identifiable only by which panel body happened to be showing. A tab
+ * strip where every tab looks the same is a tab strip that has stopped being
+ * one.
+ *
+ * Underline and weight, matching the view tabs rather than inventing a second
+ * selection language for the same gesture.
+ */
+.arq-project-browser__tabs {
+  gap: var(--arq-space-micro);
+  padding-inline: var(--arq-space-compact);
+  border-bottom: 1px solid var(--arq-ui-line-subtle);
+}
+
+.arq-project-browser__tab {
+  min-width: 0;
+  padding-inline: var(--arq-space-compact);
+  border-radius: 0;
+  color: var(--arq-ui-text-secondary);
+}
+
+.arq-project-browser__tab[aria-selected='true'] {
+  border-bottom: 2px solid var(--arq-ui-ink);
+  color: var(--arq-ui-text-primary);
+  font-weight: 600;
+}
+
+/*
+ * A text field, which the design system had none of.
+ *
+ * Every input in the shell rendered as the browser's default control: a beige
+ * box with a bevelled border, in a panel made of flat surfaces and hairlines.
+ * The project browser's search field was the most visible of them.
+ */
+.arq-field {
+  width: 100%;
+  min-height: 28px;
+  padding: var(--arq-space-micro) var(--arq-space-compact);
+  border: 1px solid var(--arq-ui-line-subtle);
+  border-radius: var(--arq-radius-control);
+  background: var(--arq-ui-surface-1);
+  color: var(--arq-ui-text-primary);
+  font: var(--arq-text-body);
+}
+
+.arq-field::placeholder {
+  color: var(--arq-ui-text-muted);
+}
+
+.arq-field:focus-visible {
+  outline: 2px solid var(--arq-focus-ring);
+  outline-offset: 1px;
+}
+
+.arq-project-directory__search {
+  padding-inline: var(--arq-space-compact);
+}
+
+/* Reserves no row when it is empty, so an unused filter costs no height. */
+.arq-project-directory__result-count {
+  margin: 0;
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+}
+
+.arq-project-directory__result-count:empty {
+  display: none;
 }
