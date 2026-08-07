@@ -18,6 +18,11 @@ rows Version 13 renumbers.
 `verified` (built, tested, **and observed running at the required viewports**) ·
 `blocked`. Only `verified` is green.
 
+Per-claim evidence in the tables below uses the Zeus vocabulary rather than these
+slice states: `verified` · `partially-verified` · `inferred` · `assumed` ·
+`blocked` · `not-inspected` · `failed`. No other word is used, so a row can never
+be graded on a scale invented for it.
+
 ## Package provenance
 
 - ZIP SHA-256 `bfdf37357b9f94e1458cb4f8c5ddb65452db6d79b5c7aedf009a17f7357b6e85`,
@@ -510,12 +515,21 @@ re-read - and none of it changes the standing blockers, which are unchanged.
 | Status strip stating a cursor a touch device has not got   | 1024, phone     | verified       |
 | Tool chip taking a third strip above the phone dock        | phone           | verified       |
 | An empty 38px context bar across the bottom of the drawing | desktop         | verified       |
-| The view identity pill printed over a room                 | 1024            | verified       |
+| The view identity pill printed over a room                 | 1024            | partially-verified |
 | The 3D ground plane swamping the building it stands under  | 3D view         | verified       |
 | The Project overview rendering behind the project browser  | overview        | verified       |
 | `view.kind` printed as copy: "3D 3d", "Level 1 Plan plan"  | overview        | verified       |
 | Two panel disclosures, one shouting in caps                | desktop         | verified       |
 | The panel's one command drawn without an edge              | desktop         | verified       |
+
+One row above has been downgraded from `verified` to `partially-verified`, and
+the correction belongs here rather than only in the section that found it. "The
+view identity pill printed over a room" was marked `verified` on the strength of
+having moved the pill to the sheet's corner and then looking at the captures.
+Measuring them later showed it still covered the drawing by seven pixels at
+1024x768. The fix was real; the evidence state was not. Reading a capture is not
+measuring one, and `verified` was claimed on the weaker of the two. It is
+measured under "The page did not fit on the page" below, and green there.
 
 Three of these were the same mistake in different places: a surface that knew
 its own geometry and not what was about to be drawn on top of it. The room label
@@ -544,6 +558,81 @@ the first and deleting the second are the same fix.
   document, which is what was fixed.
 - Wall joins and linear dimensions remain audited and not started, for the
   reasons written above. Nothing in this pass changed that analysis.
+
+## Optical Glass 2.0
+
+Four stages, from the package uploaded with the question of why the shell was not
+following the platform's squircle and glass language. What follows separates what
+was verified from what was inferred, because the stage that mattered most is the
+one that was nearly recorded as verified while being false.
+
+| Slice                                                        | Evidence state | How                                                                     |
+| ------------------------------------------------------------ | -------------- | ----------------------------------------------------------------------- |
+| Quality policy resolving in order of authority                | verified       | 10 unit tests, and the resolved value read off the DOM in a browser      |
+| Lens map: quantisation, LRU, ref counting, URL release        | verified       | 13 unit tests                                                           |
+| Refraction lens rendering on the view capsule                 | verified       | filter, map URL and transform read from a live page                     |
+| Downgrade to material and to opaque                           | verified       | `run-optical-glass-capability-check.mjs`, three browser configurations   |
+| `prefers-reduced-transparency` fallback                       | partially-verified | stylesheet inspection only; Playwright cannot emulate the setting   |
+| Squircle corners via `corner-shape`                           | inferred       | declared and additive; Chrome 141 supports it, no per-corner assertion   |
+| How the material reads to a person                            | not-inspected  | no human has looked at it; captures are not judgement                    |
+| Cost of the effect on a real GPU                              | not-inspected  | no frame timing was taken                                               |
+
+### The stage that passed while being false
+
+The capability check passed on its first run. It should not have, and the reason
+is worth keeping: it only asserted what happens when the effect turns **off**.
+Nothing asserted that it was ever on.
+
+It was not. Four surfaces carried `.arq-material--optical` and not one rendered
+it. `.arq-workspace__bar > *` stripped the top bar's fill and border, leaving a
+blur with no tint over it - a surface you can read the model straight through,
+which is the outcome ADR-0031's unsupported-browser fallback exists to prevent,
+reached from the supported path. The status bar and the dock were overridden to
+an opaque paper fill with the `backdrop-filter` still running underneath: full
+cost, no visible effect. The view capsule, nested inside the top bar's material,
+had its fill and blur stripped by the never-nested rule while keeping the optical
+variant's inset rim and 34px drop shadow - a bevel around an empty box.
+
+Two failures made this invisible. The check tested the computed background
+against a pattern written for the `rgb(r g b / a)` form, and Chromium serialises
+`rgba(r, g, b, a)`, so it matched nothing in either direction and every row
+reported `translucent: false`. And no assertion covered the default state at all.
+A check that only watches a feature turn off cannot notice it was never on.
+
+Both are fixed: the alpha is parsed rather than matched, and the default state is
+asserted as strictly as the fallbacks - a surface that is bare, or opaque with a
+blur behind it, now fails. One rule resolves the cascade: `material.css` decides
+a material surface's fill, border and shadow, and nothing outside it may take
+that decision back.
+
+`--arq-optical-fill-solid` was 98% opaque. It is what every reduced-transparency,
+increased-contrast and no-backdrop-filter path renders - readers who asked for no
+transparency - so it is now fully opaque.
+
+## The page did not fit on the page
+
+Found by measuring the captures rather than reading them. The sheet is painted
+six per cent outside the drawing's bounds and the fit fitted the drawing, so the
+page ran off the top and bottom of the canvas at every viewport: the surface was
+visible to the left and right of it and never above or below.
+
+It broke the view title too. The title is placed from the sheet's top-left
+corner, half its height above the edge. With that edge above the canvas, the
+clamp that keeps chrome on screen fired at every band and pinned the title to the
+canvas edge - seven pixels over the drawing's top wall at 1024x768. That is the
+room-label defect from the correction pass above, on a different piece of chrome,
+and it was introduced by the same pass that removed the fit's title reserve on
+the reasoning that "the page's own margin holds it". The margin was real; the
+page it belonged to was off-screen.
+
+`run-sheet-chrome-capability-check.mjs` reads the rendered canvas pixels, because
+the sheet has no element a DOM assertion could find. Evidence in both directions:
+against the previous renderer it fails at all three bands; against this one the
+page is inset 27-36px and the title clears the ink by 19-23px. `verified`.
+
+The drawing renders slightly smaller as a result - the measured scale moves from
+1:66 to 1:74 at desktop. That is the cost of showing the whole page, and the
+readout is measured rather than declared, so it states it.
 
 ## Standing blockers
 
