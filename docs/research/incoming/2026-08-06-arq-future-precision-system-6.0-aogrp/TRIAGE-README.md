@@ -20,7 +20,14 @@ here unextracted, as the pack's own background material.
 ## What this package actually proposes
 
 A candidate binary file format ("AOGRP" — ARQ Object Graph and Revision
-Pack) as a possible eventual alternative or complement to `.arq`-as-SQLite:
+Pack) as a possible eventual alternative to `.arq`-as-SQLite. **Correction
+to this document's earlier framing**: an independent architecture review
+(below) found that the package's own normative text does not actually
+propose AOGRP as a *complement* sitting alongside SQLite — `03_ARQ_NOT_A_
+SQLITE_WRAPPER.md` and `05_SQLITE_AND_OTHER_ENGINE_BOUNDARIES.md` assign
+AOGRP *canonical* status and demote SQLite to a disposable working-copy
+cache. That is a proposed successor to ADR-0019's canonical-tier decision,
+not a complement to it, and should be evaluated as such. The design itself:
 content-addressed objects, a dual-superblock recovery header, append-only
 revision segments, and a storage-adapter boundary that could sit under
 SQLite, IndexedDB, or other backends. 25 non-normative candidate spec
@@ -102,6 +109,90 @@ dual-generation-root scheme is designed for an immutable, content-addressed
 pack format and doesn't map onto a single mutable database file — there was
 no transferable bug and no fix was applied.
 
+## Independent adversarial review (2026-08-07): concrete bugs and gaps found
+
+Three independent reviews (file-integrity, architecture, security/AI-trust
+boundary) were run against this package after the initial triage above, to
+find concrete defects rather than restate the package's own claims. All
+three read the actual code and specs, not the summary. Ranked by severity:
+
+**Critical — exploitable bugs, verified against the actual reference code:**
+
+1. **Dual-root recovery has no fallback path (reproduced).**
+   `format.py`'s `open_manifest()` picks the highest-generation root and
+   reads its manifest segment uncaught. If that root's superblock struct is
+   intact but the segment *content* it points to is corrupted, the reader
+   throws instead of falling back to the older, still-valid root —
+   defeating the entire point of dual-root recovery. Reproduced directly:
+   corrupting only the newer root's manifest payload (leaving the older
+   root, and the newer root's own superblock checksum, untouched) makes
+   `open_manifest` fail outright. Every existing fixture only corrupts the
+   *older* slot's superblock struct; the adversarial case (newer root's
+   *content* corrupt, older root sound) is untested and unhandled.
+2. **MCP approval replay bug.** `mcp.py`'s `approve()` can be called
+   repeatedly on one proposal, minting multiple live tokens; `consume()`
+   never checks the proposal's status before returning operations. A
+   second still-valid token from an earlier `approve()` call replays the
+   same operations after the first has already committed. The included
+   test only reuses the *same* token, never a second one.
+3. **Approval isn't bound to a live "current head" check (TOCTOU).** The
+   exact-digest binding covers the proposal payload only; nothing re-checks
+   that `base_revision` still equals the file's actual current revision
+   before treating an approved digest as ready to commit, despite
+   `22_MCP_AND_AUTOMATION_HARNESS.md` claiming the host validates this.
+4. **No aggregate decompression budget (zip-bomb path).** Each segment is
+   size-capped individually, but `deep_validate()` fully decompresses every
+   segment into memory before checking any total. A ~1GB crafted file using
+   near-maximal zlib ratios could force hundreds of GB into memory before
+   any limit rejects it — reachable via `cli.py inspect --deep` on an
+   untrusted file.
+
+**High — architecture problems, not implementation bugs:**
+
+5. See the correction above: the package proposes succeeding ADR-0019, not
+   complementing it.
+6. **A second content-addressed ID scheme with no defined relationship to
+   the one Arq already ships.** `packages/arqfs` already does SHA-256
+   content-addressed resource chunking, and Arq already has a real stable
+   entity ID (`ElementId`, `@arq/bim-core`). AOGRP's "content identifier"
+   and "stable entity ID" never state whether they reuse or replace either.
+7. **A second, competing operation/revision history model**, parallel to
+   the real, shipped `@arq/operations` + `@arq/sync-protocol` typed
+   operation contract, with zero conversion code and no defined bridge.
+8. **The storage-adapter recovery contract is asserted, not defined** —
+   "adapters must produce the same identities or report a failure" never
+   says what "report a failure" does. `packages/arqfs`'s real atomic-swap
+   code already has a concrete, tested answer that this spec is strictly
+   weaker than.
+
+**Medium — real gaps, safety unverifiable from this package:**
+
+9. Hash-agility is claimed (citing Git's hash-transition design) but not
+   built — hashes are raw 32-byte fields with no algorithm tag anywhere.
+10. Garbage collection is entirely unimplemented — zero code, zero tests.
+    Its reachability/safety claims cannot be verified from this package.
+11. Capability claims aren't cross-validated against actual segment
+    content — a file could under- or over-declare requirements to gain
+    higher-trust mode or force a downgrade.
+12. The binary envelope spec explicitly defers byte widths/order/magic to
+    a future ADR, so it currently gives no overflow-safety requirement for
+    a non-Python (C/Rust) implementation to follow.
+
+**Low — disclosure problems, not defects:**
+
+13. Encryption/signing (`19_SECURITY_LIMITS_ENCRYPTION_SIGNING.md`) is
+    written in present tense with zero implementation; its "not real yet"
+    disclaimer lives in a different document (`24`), so doc 19 read alone
+    is misleading.
+14. SQLite migration (`20_MIGRATION_FROM_SQLITE_ARQ.md`) is unimplemented
+    prose — no code.
+15. A file with a corrupted data segment still opens in shallow "editable"
+    mode; only `--deep` catches it, and fixture verdicts don't distinguish
+    the two — a tool trusting the shallow check alone would report a
+    corrupt file as healthy.
+16. CRDT/merge conflicts for precision geometry are named but not
+    resolved — honestly left open, not hidden.
+
 ## Recommendation
 
 Nothing here should be applied to `packages/`, `docs/adr/`, or
@@ -109,20 +200,28 @@ Nothing here should be applied to `packages/`, `docs/adr/`, or
 go-ahead — both because the repository's SQLite direction (ADR-0019) is
 already partially implemented and shipped-against (`packages/arqfs`,
 ARQ-195 onward), and because the package's own handoff docs ask for exactly
-this stopping point. Concrete, non-committal follow-ups if this is ever
-revisited:
+this stopping point. The adversarial review above raises the bar further:
+findings 1–4 are exploitable defects in the reference implementation itself,
+so even an experimental, feature-flagged vertical slice should not be built
+on top of `reference-v6/` as-is. Concrete, non-committal follow-ups if this
+is ever revisited:
 
-1. `normative-v6/08_DUAL_ROOT_APPEND_AND_RECOVERY.md` and
+1. Findings 1–4 (dual-root fallback, MCP replay, TOCTOU approval, zip-bomb
+   budget) would need fixing in the reference implementation before it's
+   safe to prototype against, even experimentally.
+2. `normative-v6/08_DUAL_ROOT_APPEND_AND_RECOVERY.md` and
    `normative-v6/20_MIGRATION_FROM_SQLITE_ARQ.md` are worth a read if a
    future ADR ever proposes federation/partial-clone or offline-sync work
    that the current SQLite-only design doesn't cover — those are the two
    capabilities AOGRP's design targets that aren't native to a single mutable
    SQLite file.
-2. If a "dual-format vertical slice" is ever authorised, it should live
+3. If a "dual-format vertical slice" is ever authorised, it should live
    behind a feature flag with non-production identifiers, exactly as
    `handoff-v6/REPOSITORY_IMPLEMENTATION_PROMPT.md` itself asks for — not as
-   a default code path.
-3. The reference implementation (`reference-v6/`) and fixtures
-   (`fixtures-v6/`) are preserved here, verified working, as a starting
-   point for that slice if it's ever greenlit — not wired into this
-   monorepo's build or test suite.
+   a default code path, and only after resolving findings 6–8's identity/
+   operation-model collisions with what's already shipped.
+4. The reference implementation (`reference-v6/`) and fixtures
+   (`fixtures-v6/`) are preserved here, verified working for what they
+   actually test (not for what findings 1–16 show they don't cover), as a
+   starting point for that slice if it's ever greenlit — not wired into
+   this monorepo's build or test suite.
