@@ -8,6 +8,7 @@ import {
 } from 'react';
 import {
   screenPoint,
+  wallOutline,
   worldPoint,
   worldToScreen,
   type Viewport,
@@ -17,6 +18,7 @@ import {
   boundsFromCorners,
   createWallDrawTool,
   fitToBounds,
+  preserveWorldUnderViewportRect,
   panByScreenDelta,
   parseNumericOverlay,
   zoomAtScreenPoint,
@@ -32,11 +34,22 @@ import { WallHudEntry } from './canvas/wall-hud-entry';
 import {
   buildPlanScene,
   paintPlanScene,
+  DEFAULT_PLAN_PALETTE,
+  type PlanPalette,
   snapGlyphPrimitives,
   withSelectionHandles,
   SNAP_GLYPH_LABEL,
   type PlanPrimitiveInput,
   type PlanSelectionState,
+  planOpeningsForWall,
+  swingPolyline,
+  wallPiers,
+  type PlanOpeningInput,
+  roomLabelAnchors,
+  roomLabelFits,
+  roomTint,
+  type RoomLabelObstacle,
+  type PlanScene,
 } from '@arq/plan-renderer';
 import {
   GRID_SPACING_MM,
@@ -59,62 +72,285 @@ import type { PlanRoom } from './canvas/canvas-interaction';
  * hit-test, and fit - all against the in-memory plan document
  * (see canvas/plan-document.ts for why that document is honest scope).
  *
- * The demo room fixture remains, labelled as such: it gives a new canvas
- * something measurable to snap to, exactly like a template would.
  */
 
 /**
- * The workspace's own starting room, used when no project is open. It gives a new
- * canvas something measurable to snap to, exactly like a template would, and it
- * is labelled as a fixture so it is never mistaken for project content. When a
- * real project is open the caller passes that project's rooms instead and this is
- * not rendered at all - a demo room drawn over someone's house would be a lie
- * about their model.
+ * No content is drawn when no project is open.
+ *
+ * A hard-coded 4.20 x 3.60 room used to sit here, on the grounds that it gave a
+ * new canvas something measurable to snap to. It was labelled "(demo fixture)",
+ * which made it honest but did not make it right: it was the first thing every
+ * reader saw, rendered by the real plan renderer at real world coordinates, and
+ * a rectangle drawn by the product is read as the product's model whatever the
+ * label says. An empty drawing surface is the truthful answer to "no project is
+ * open", and the snapping it was there to demonstrate works against the walls a
+ * user draws.
  */
-const DEMO_ROOM_WIDTH_MM = 4200;
-const DEMO_ROOM_HEIGHT_MM = 3600;
+const NO_ROOMS: readonly PlanRoom[] = [];
 
-const DEMO_ROOMS: readonly PlanRoom[] = [
-  {
-    id: 'demo-room',
-    label: '4.20 m x 3.60 m (demo fixture)',
-    polygon: [
-      worldPoint(0, 0),
-      worldPoint(DEMO_ROOM_WIDTH_MM, 0),
-      worldPoint(DEMO_ROOM_WIDTH_MM, DEMO_ROOM_HEIGHT_MM),
-      worldPoint(0, DEMO_ROOM_HEIGHT_MM),
-    ],
-  },
-];
+/**
+ * The view an empty surface opens at, since there is nothing to fit to.
+ * `contentBounds` over nothing returns an inverted infinite box, which
+ * `fitToBounds` turns into NaN - so an empty canvas needs a starting extent
+ * rather than a fit. Twelve metres across is a room-to-small-house span: near
+ * enough that a drawn wall is immediately legible, wide enough that the first
+ * one does not run off the edge.
+ */
+const EMPTY_VIEW_EXTENT_MM = 12_000;
+
+/**
+ * The starting extent for a surface with nothing on it, or null when there is
+ * something to fit to. Returned rather than branched at each call site so the
+ * first paint and the fit tool cannot disagree about what an empty plan shows.
+ */
+function emptyContentBounds(
+  content: PlanContent,
+): { readonly min: WorldPoint; readonly max: WorldPoint } | null {
+  if (content.rooms.length > 0 || content.walls.length > 0) return null;
+  const half = EMPTY_VIEW_EXTENT_MM / 2;
+  return { min: worldPoint(-half, -half), max: worldPoint(half, half) };
+}
+
+/**
+ * Clear space around the drawing when it is fitted, in CSS pixels.
+ *
+ * `fitToBounds` defaults to a flat 40px a side. That is five per cent of a
+ * desktop canvas and nineteen per cent of a 414px phone, so the same constant
+ * that reads as a comfortable margin on a laptop throws away a fifth of a
+ * phone's width - and the sheet adds its own margin on top, doubling it. A
+ * proportional margin keeps the same visual breathing room at every size,
+ * with a floor so a very small canvas still has an edge.
+ */
+function fitMarginPx(width: number, height: number): number {
+  return Math.max(8, Math.min(40, Math.min(width, height) * 0.04));
+}
+
+/**
+ * Fits the whole page into the canvas - the drawing and the sheet around it.
+ *
+ * This used to fit the drawing alone. The sheet is painted a further six per
+ * cent outside the content, so fitting the content meant the page itself never
+ * fitted: it ran off the top and bottom of the canvas at every viewport, which
+ * is why the surface was only ever visible to the left and right of it. A page
+ * cut off by the window does not read as a page on a desk, which is the entire
+ * reason the sheet is drawn.
+ *
+ * It also broke the view's title. The title straddles the sheet's top-left
+ * corner, and with the sheet's top edge above the canvas there was nowhere to
+ * straddle - it clamped to the canvas edge instead, and at 1024x768 that put it
+ * seven pixels over the drawing's top wall. Measured, not guessed: the check in
+ * `run-sheet-chrome-capability-check.mjs` reads both from the rendered canvas.
+ *
+ * Inflating the bounds here rather than reserving a band keeps one source of
+ * truth for the margin - `SHEET_MARGIN_FRACTION` - instead of a constant here
+ * that has to be kept in step with the paint by hand.
+ */
+function fitContent(
+  bounds: { readonly min: WorldPoint; readonly max: WorldPoint },
+  rect: { readonly width: number; readonly height: number },
+): Viewport {
+  return fitToBounds(
+    inflateToSheet(bounds),
+    rect.width,
+    rect.height,
+    fitMarginPx(rect.width, rect.height),
+  );
+}
+
+/** Matches `TEXT_LINE_HEIGHT_PX` in the paint, which is what actually spaces the lines. */
+const ROOM_LABEL_LINE_HEIGHT_PX = 12;
+
+/** Every tint key the palette can carry, so the reader asks for all of them once. */
+const ROOM_TINTS = [
+  'room-living',
+  'room-cooking',
+  'room-dining',
+  'room-sleeping',
+  'room-wet',
+  'room-service',
+  'room-circulation',
+  'room-outdoor',
+  'room-neutral',
+] as const;
+
+/** Clear page around the drawing, as a fraction of the drawing's own size. */
+const SHEET_MARGIN_FRACTION = 0.06;
+
+/** The page's corner radius, in CSS pixels - a sheet, not a card. */
+const SHEET_RADIUS_CSS_PX = 6;
+
+/**
+ * The page's margin in world millimetres, from the drawing's own size.
+ *
+ * One margin for both axes, taken from the longer one, so the page keeps an
+ * even border rather than a wide one across the short dimension.
+ */
+function sheetMarginMm(bounds: { readonly min: WorldPoint; readonly max: WorldPoint }): number {
+  return Math.max(
+    (bounds.max.x - bounds.min.x) * SHEET_MARGIN_FRACTION,
+    (bounds.max.y - bounds.min.y) * SHEET_MARGIN_FRACTION,
+  );
+}
+
+/** The drawing's bounds grown to the page's, which is what has to fit on screen. */
+function inflateToSheet(bounds: { readonly min: WorldPoint; readonly max: WorldPoint }): {
+  readonly min: WorldPoint;
+  readonly max: WorldPoint;
+} {
+  const margin = sheetMarginMm(bounds);
+  return {
+    min: worldPoint(bounds.min.x - margin, bounds.min.y - margin),
+    max: worldPoint(bounds.max.x + margin, bounds.max.y + margin),
+  };
+}
+
+/** A polygon's world-space bounding box, used to narrow an obstacle search. */
+function polygonBounds(polygon: readonly WorldPoint[]): {
+  readonly minX: number;
+  readonly minY: number;
+  readonly maxX: number;
+  readonly maxY: number;
+} {
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  for (const point of polygon) {
+    minX = Math.min(minX, point.x);
+    minY = Math.min(minY, point.y);
+    maxX = Math.max(maxX, point.x);
+    maxY = Math.max(maxY, point.y);
+  }
+  return { minX, minY, maxX, maxY };
+}
+
+/**
+ * Whether a segment could possibly reach a room, allowing for its own width.
+ *
+ * Deliberately generous - it compares bounding boxes, so a diagonal keeps
+ * things it cannot touch. Being generous costs a few extra exact tests; being
+ * tight would drop a wall that really does cross the label.
+ */
+function segmentNearBounds(
+  segment: RoomLabelObstacle,
+  bounds: ReturnType<typeof polygonBounds>,
+  slackMm: number,
+): boolean {
+  const pad = segment.clearance + slackMm;
+  return (
+    Math.min(segment.start.x, segment.end.x) <= bounds.maxX + pad &&
+    Math.max(segment.start.x, segment.end.x) >= bounds.minX - pad &&
+    Math.min(segment.start.y, segment.end.y) <= bounds.maxY + pad &&
+    Math.max(segment.start.y, segment.end.y) >= bounds.minY - pad
+  );
+}
+
+/** The four edges of a placed label's box, so the next label has to clear it. */
+function labelKeepOut(
+  anchor: WorldPoint,
+  width: number,
+  height: number,
+): readonly RoomLabelObstacle[] {
+  const halfWidth = width / 2;
+  const halfHeight = height / 2;
+  const corners = [
+    worldPoint(anchor.x - halfWidth, anchor.y - halfHeight),
+    worldPoint(anchor.x + halfWidth, anchor.y - halfHeight),
+    worldPoint(anchor.x + halfWidth, anchor.y + halfHeight),
+    worldPoint(anchor.x - halfWidth, anchor.y + halfHeight),
+  ];
+  return corners.map((corner, index) => ({
+    start: corner,
+    end: corners[(index + 1) % corners.length]!,
+    clearance: 0,
+  }));
+}
+
+/**
+ * The exponent that makes a superellipse read as an Apple corner.
+ *
+ * `border-radius` and `roundRect` both draw a quarter-circle, which is the
+ * n = 2 case. A quarter-circle meets the straight edge beside it with a break
+ * in curvature, and the corner visibly "pops". Raising the exponent ramps the
+ * curvature in continuously, so the shape reads as one outline rather than as
+ * four arcs joined to four lines. Four is the value the platform convention
+ * settled on and the one CSS `corner-shape: squircle` uses, which is what keeps
+ * the painted page and the chrome around it the same shape.
+ */
+const SQUIRCLE_EXPONENT = 4;
+
+/** Enough segments that a corner is smooth at any size this draws at. */
+const SQUIRCLE_SEGMENTS = 12;
+
+/**
+ * Paths a rounded rectangle with continuous corners.
+ *
+ * Written out rather than taken from the canvas API because there is no
+ * superellipse in it: `roundRect` is circular, and the page would have been the
+ * one shape on screen still drawn the old way once the chrome around it was
+ * not. Each corner is sampled from |x|^n + |y|^n = 1 over a quarter turn.
+ */
+function squirclePath(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+): void {
+  // Never more than half the shorter side, or opposite corners would overlap
+  // and the outline would fold through itself.
+  const r = Math.max(0, Math.min(radius, Math.min(width, height) / 2));
+  if (r === 0) {
+    ctx.rect(x, y, width, height);
+    return;
+  }
+  const right = x + width;
+  const bottom = y + height;
+  /** A quarter of the superellipse, from the edge midpoint towards the corner. */
+  const corner = (
+    cx: number,
+    cy: number,
+    signX: number,
+    signY: number,
+    startAtVertical: boolean,
+  ): void => {
+    for (let step = 0; step <= SQUIRCLE_SEGMENTS; step += 1) {
+      const t = (step / SQUIRCLE_SEGMENTS) * (Math.PI / 2);
+      const angle = startAtVertical ? Math.PI / 2 - t : t;
+      const ux = Math.cos(angle);
+      const uy = Math.sin(angle);
+      const scale =
+        1 /
+        Math.pow(
+          Math.pow(Math.abs(ux), SQUIRCLE_EXPONENT) + Math.pow(Math.abs(uy), SQUIRCLE_EXPONENT),
+          1 / SQUIRCLE_EXPONENT,
+        );
+      ctx.lineTo(cx + signX * ux * scale * r, cy + signY * uy * scale * r);
+    }
+  };
+
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(right - r, y);
+  corner(right - r, y + r, 1, -1, true);
+  ctx.lineTo(right, bottom - r);
+  corner(right - r, bottom - r, 1, 1, false);
+  ctx.lineTo(x + r, bottom);
+  corner(x + r, bottom - r, -1, 1, true);
+  ctx.lineTo(x, y + r);
+  corner(x + r, y + r, -1, -1, false);
+  ctx.closePath();
+}
+
+/** The drawing's page on screen, in CSS pixels relative to the canvas element. */
+export interface SheetRect {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+}
 
 const EMPTY_SET: ReadonlySet<string> = new Set<string>();
-
-/**
- * Area centroid of a simple polygon, so a room label sits inside a room of any
- * shape. Falls back to the vertex average for a degenerate (zero-area) ring,
- * which cannot be a real room but can be a malformed one.
- */
-function polygonCentroid(polygon: readonly WorldPoint[]): WorldPoint {
-  let twiceArea = 0;
-  let x = 0;
-  let y = 0;
-  for (let index = 0; index < polygon.length; index += 1) {
-    const current = polygon[index]!;
-    const next = polygon[(index + 1) % polygon.length]!;
-    const cross = current.x * next.y - next.x * current.y;
-    twiceArea += cross;
-    x += (current.x + next.x) * cross;
-    y += (current.y + next.y) * cross;
-  }
-  if (twiceArea === 0) {
-    const count = Math.max(1, polygon.length);
-    return worldPoint(
-      polygon.reduce((sum, point) => sum + point.x, 0) / count,
-      polygon.reduce((sum, point) => sum + point.y, 0) / count,
-    );
-  }
-  return worldPoint(x / (3 * twiceArea), y / (3 * twiceArea));
-}
 
 export interface PlanCanvasProps {
   /** The workspace's active tool id - the canvas responds to select/wall/pan/fit. */
@@ -148,6 +384,44 @@ export interface PlanCanvasProps {
   ) => void;
   /** Reports the viewport's current zoom in CSS-pixel terms (device-pixel-ratio removed) - drives the status bar's view-scale readout. */
   readonly onViewportPixelsPerUnitChange?: (cssPixelsPerUnit: number) => void;
+  /**
+   * Thickness per wall id, in the same world units as the geometry.
+   *
+   * A wall with no entry is drawn as its centreline, which is what the drawing
+   * tools produce while a chain is still being placed and what the workspace's
+   * own walls are. A wall with one is drawn as its footprint - the same
+   * `wallOutline` the 3D surface extrudes, so plan and model cannot disagree
+   * about where a wall's faces are.
+   */
+  readonly wallDimensions?: ReadonlyMap<string, { readonly thicknessMm: number }>;
+  /**
+   * The hosted openings each wall carries, keyed by wall id. Supplied by an
+   * opened project; the workspace's own drawn walls have none, and a wall with
+   * no entry is drawn solid exactly as before.
+   */
+  readonly wallOpenings?: ReadonlyMap<string, readonly PlanOpeningInput[]>;
+  /**
+   * Reports the scene the canvas just built, with the model-space box it
+   * occupies. Exists so a sheet exports the drawing that is actually on screen
+   * rather than a second projection of the same model - two projections would
+   * eventually disagree, and the sheet is the one nobody can check against the
+   * screen once it is printed.
+   */
+  /**
+   * Where the drawing's page is on screen, in CSS pixels relative to the
+   * canvas, or null when nothing is drawn and there is no page.
+   *
+   * The sheet is painted into the canvas rather than laid out as an element, so
+   * this is the only way anything in the DOM can sit on its corner.
+   */
+  readonly onSheetRectChange?: (rect: SheetRect | null) => void;
+  readonly onSceneBuilt?: (scene: {
+    readonly primitives: PlanScene<string>['primitives'];
+    readonly bounds: {
+      readonly min: { readonly x: number; readonly y: number };
+      readonly max: { readonly x: number; readonly y: number };
+    };
+  }) => void;
 }
 
 interface PanState {
@@ -176,6 +450,10 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     onActiveSnapChange,
     onPointerWorldPositionChange,
     onViewportPixelsPerUnitChange,
+    wallDimensions,
+    wallOpenings,
+    onSceneBuilt,
+    onSheetRectChange,
   } = props;
 
   /**
@@ -189,6 +467,13 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [viewport, setViewport] = useState<Viewport | null>(null);
   const devicePixelRatioRef = useRef(1);
+  /** The surface's last measured CSS rect, for the stability rule in `resize`. */
+  const previousCssRectRef = useRef<{
+    readonly left: number;
+    readonly top: number;
+    readonly width: number;
+    readonly height: number;
+  } | null>(null);
   const wallToolRef = useRef<ReturnType<typeof createWallDrawTool> | null>(null);
   const [draftPoints, setDraftPoints] = useState<readonly WorldPoint[]>([]);
   const [previewPoint, setPreviewPoint] = useState<WorldPoint | null>(null);
@@ -224,12 +509,73 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     readonly moved: boolean;
   } | null>(null);
 
-  const rooms = props.rooms ?? DEMO_ROOMS;
+  const rooms = props.rooms ?? NO_ROOMS;
   const content: PlanContent = useMemo(() => ({ rooms, walls }), [rooms, walls]);
 
   /* ------------------------------------------------------------------ */
   /* Painting                                                            */
   /* ------------------------------------------------------------------ */
+
+  /**
+   * The appearance's own ink, paper and accent, read from the resolved custom
+   * properties rather than duplicated here.
+   *
+   * A canvas cannot inherit CSS colours the way the rest of the shell does, so
+   * without this the plan kept drawing black-on-white while everything around
+   * it followed the appearance - under dark that left black linework on a
+   * near-black surface. Re-read whenever the appearance changes.
+   */
+  const [palette, setPalette] = useState<PlanPalette>(DEFAULT_PLAN_PALETTE);
+  /**
+   * The family the shell is set in, read from the same token the chrome uses.
+   * A plan whose labels are `sans-serif` while the panel beside it is Plus
+   * Jakarta Sans reads as two applications sharing a window.
+   */
+  const [planTextFamily, setPlanTextFamily] = useState('sans-serif');
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas === null || typeof window === 'undefined') {
+      return;
+    }
+    const read = (): void => {
+      const style = window.getComputedStyle(canvas);
+      const value = (name: string, fallback: string): string => {
+        const resolved = style.getPropertyValue(name).trim();
+        return resolved === '' ? fallback : resolved;
+      };
+      setPalette({
+        ink: value('--arq-ui-ink', DEFAULT_PLAN_PALETTE.ink),
+        paper: value('--arq-ui-paper', DEFAULT_PLAN_PALETTE.paper),
+        accent: value('--arq-selection-outline', DEFAULT_PLAN_PALETTE.accent),
+        // Read from the appearance like everything else here, so poché stays a
+        // solid against the paper in dark as well as light rather than a black
+        // shape on a near-black page.
+        poche: value('--arq-plan-poche', DEFAULT_PLAN_PALETTE.ink),
+        roomFill: value('--arq-plan-room-fill', 'transparent'),
+        roomFills: Object.fromEntries(
+          ROOM_TINTS.map((tint) => [tint, value(`--arq-plan-${tint}`, 'transparent')]),
+        ),
+        /*
+         * Only outdoor rooms are hatched, and only when the appearance names a
+         * colour for it. A tint with no hatch colour is drawn exactly as it was
+         * before, which is what keeps this additive rather than a change to how
+         * every room reads.
+         */
+        roomHatches: { 'room-outdoor': value('--arq-plan-hatch-outdoor', 'transparent') },
+      });
+      setPlanTextFamily(value('--arq-font-ui', 'sans-serif'));
+    };
+    read();
+    const scheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const contrast = window.matchMedia('(prefers-contrast: more)');
+    scheme.addEventListener('change', read);
+    contrast.addEventListener('change', read);
+    return () => {
+      scheme.removeEventListener('change', read);
+      contrast.removeEventListener('change', read);
+    };
+  }, []);
 
   const paint = useCallback(() => {
     const canvas = canvasRef.current;
@@ -252,7 +598,10 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     if (gridPx >= 6) {
       const origin = worldToScreen(currentViewport, worldPoint(0, 0));
       const step = GRID_SPACING_MM * currentViewport.pixelsPerUnit;
-      ctx.strokeStyle = 'rgba(128, 128, 128, 0.16)';
+      // Derived from the appearance's ink rather than a fixed grey, so the
+      // grid stays a faint version of the linework in both appearances.
+      ctx.strokeStyle = palette.ink;
+      ctx.globalAlpha = 0.16;
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let x = origin.x % step; x < canvas.width; x += step) {
@@ -264,27 +613,323 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         ctx.lineTo(canvas.width, y);
       }
       ctx.stroke();
+      // Everything painted after the grid is at full strength; leaving the
+      // alpha set would silently wash out the entire drawing.
+      ctx.globalAlpha = 1;
+    }
+
+    /*
+     * The sheet the drawing sits on.
+     *
+     * A plan is drawn on a page, and the reference composition shows exactly
+     * that: a white sheet with a soft edge, floating on the gridded surface.
+     * Before this the grid ran under the drawing and out to the window edges,
+     * so the model read as marks on graph paper with no boundary of its own -
+     * and the eye had nothing to tell it where the drawing stopped.
+     *
+     * Sized from the content and drawn in world space, so it pans and zooms
+     * with the model rather than being a fixed rectangle the drawing slides
+     * around inside. Skipped when there is nothing on it: an empty page is a
+     * claim that something is there.
+     */
+    let sheetRect: SheetRect | null = null;
+    if (rooms.length > 0 || walls.length > 0) {
+      // The same inflation the fit uses, from the same helper, so the page that
+      // is drawn is exactly the page that was made to fit.
+      const page = inflateToSheet(contentBounds(content));
+      const topLeft = worldToScreen(currentViewport, worldPoint(page.min.x, page.max.y));
+      const bottomRight = worldToScreen(currentViewport, worldPoint(page.max.x, page.min.y));
+      const radius = SHEET_RADIUS_CSS_PX * devicePixelRatio;
+      ctx.save();
+      // The shadow is what separates the page from the surface. Kept soft and
+      // low-contrast: a drawing sheet sits on a desk, it does not hover.
+      ctx.shadowColor = 'rgba(15, 23, 28, 0.16)';
+      ctx.shadowBlur = 24 * devicePixelRatio;
+      ctx.shadowOffsetY = 4 * devicePixelRatio;
+      ctx.fillStyle = palette.paper;
+      ctx.beginPath();
+      squirclePath(
+        ctx,
+        topLeft.x,
+        topLeft.y,
+        bottomRight.x - topLeft.x,
+        bottomRight.y - topLeft.y,
+        radius,
+      );
+      ctx.fill();
+      ctx.restore();
+      /*
+       * Reported in CSS pixels, so DOM chrome can be anchored to the page
+       * rather than to the canvas.
+       *
+       * The sheet is painted, not laid out - it has no element, so React had no
+       * way to know where it is. The view's title belongs on the drawing's own
+       * corner, which is where the reference puts it, and without this it could
+       * only float over the middle of the canvas and hope not to land on a
+       * room. Which it did, at 1024px.
+       */
+      sheetRect = {
+        x: topLeft.x / devicePixelRatio,
+        y: topLeft.y / devicePixelRatio,
+        width: (bottomRight.x - topLeft.x) / devicePixelRatio,
+        height: (bottomRight.y - topLeft.y) / devicePixelRatio,
+      };
+    }
+
+    // The thickest wall on the level, so a room label is measured against the
+    // space it can actually occupy. Zero when nothing declares a thickness,
+    // which leaves the test exactly as it was.
+    const maxWallThicknessMm =
+      wallDimensions === undefined
+        ? 0
+        : [...wallDimensions.values()].reduce((max, entry) => Math.max(max, entry.thicknessMm), 0);
+
+    /*
+     * The text state is set before anything is measured, not after everything
+     * is drawn.
+     *
+     * It used to be assigned immediately before `paintPlanScene`, three hundred
+     * lines after `measureText` was called to decide whether a room label fits.
+     * So the fit test measured in whatever font the context happened to be
+     * carrying - the browser default 10px on the first frame - and the labels
+     * were then drawn at 12px. Every label was measured about twenty per cent
+     * narrower than it renders, which is why "Linen" and "Guest ensuite" passed
+     * the fit and then crossed the wall between them.
+     *
+     * The family is the shell's own, resolved from the token rather than left
+     * as `sans-serif`: a plan whose labels are set in a different typeface from
+     * the panel beside it looks like two applications.
+     */
+    ctx.font = `${ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio}px ${planTextFamily}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    /*
+     * The walls and their openings are built before the room labels, not after,
+     * because a label has to clear the linework that will be painted over it.
+     * The room's own ring cannot answer that: a wall can cross a room whose
+     * boundary was calculated before that wall existed, and a door's swing arc
+     * sweeps into a room by design and belongs to no room's boundary at all.
+     * On the golden fixture "Linen" had an interior wall through the middle of
+     * the word and "Inner hall" and "Entry foyer" each had a swing arc struck
+     * through them, all three while passing a containment test that had no way
+     * to know any of it was there.
+     */
+    const labelObstacles: RoomLabelObstacle[] = [];
+    const wallPrimitives: PlanPrimitiveInput<string>[] = [];
+    for (const wall of walls) {
+      /*
+       * A wall with a known thickness is drawn as its footprint rather than
+       * its centreline. The outline comes from the same `wallOutline` the 3D
+       * surface extrudes, so the two views cannot disagree about where a
+       * wall's faces are - and a null result (a zero-length segment) falls
+       * back to the centreline rather than dropping the wall from the plan.
+       */
+      const thicknessMm = wallDimensions?.get(wall.id)?.thicknessMm;
+      if (thicknessMm === undefined || thicknessMm <= 0) {
+        wallPrimitives.push({ kind: 'line', elementId: wall.id, points: [wall.start, wall.end] });
+        labelObstacles.push({ start: wall.start, end: wall.end, clearance: 0 });
+        continue;
+      }
+      const host = { start: wall.start, end: wall.end, thickness: thicknessMm };
+      const openings = wallOpenings?.get(wall.id) ?? [];
+      // Each pier keeps the wall out of a label by its own half-thickness, so a
+      // 125mm partition is not held at a 250mm exterior wall's distance.
+      const halfThicknessMm = thicknessMm / 2;
+      if (openings.length === 0) {
+        const outline = wallOutline(
+          { start: wall.start, end: wall.end },
+          thicknessMm,
+          'centre',
+          1e-6,
+        );
+        wallPrimitives.push(
+          outline === null
+            ? { kind: 'line', elementId: wall.id, points: [wall.start, wall.end] }
+            : { kind: 'polygon', elementId: wall.id, points: outline, fill: 'poche' },
+        );
+        labelObstacles.push({
+          start: wall.start,
+          end: wall.end,
+          clearance: halfThicknessMm,
+        });
+        continue;
+      }
+
+      /*
+       * A wall with openings is drawn as the stretches that remain solid.
+       * Painting the whole wall and then covering each opening in the paper
+       * colour would look identical here and stop being a hole the moment
+       * anything is layered under it - a lid, not a gap - and it would print
+       * as a filled wall in a vector sheet.
+       *
+       * Every pier keeps the wall's own element id, so selecting any part of
+       * a wall still selects the wall rather than a fragment of it.
+       */
+      for (const pier of wallPiers(host, openings)) {
+        const outline = wallOutline(pier, thicknessMm, 'centre', 1e-6);
+        if (outline !== null) {
+          wallPrimitives.push({
+            kind: 'polygon',
+            elementId: wall.id,
+            points: outline,
+            fill: 'poche',
+          });
+        }
+        // The pier, not the whole wall: an opening is a gap a label may sit
+        // beside, and holding it clear of the run the wall no longer occupies
+        // would suppress labels for a wall that is not there.
+        labelObstacles.push({
+          start: pier.start,
+          end: pier.end,
+          clearance: halfThicknessMm,
+        });
+      }
+      for (const opening of planOpeningsForWall(host, openings)) {
+        // The jambs close the poché where the wall stops. Without them the
+        // drawing shows two wall stubs and no evidence they are one wall.
+        for (const jamb of opening.jambs) {
+          wallPrimitives.push({
+            kind: 'line',
+            elementId: opening.id,
+            points: [jamb.start, jamb.end],
+          });
+        }
+        for (const glazing of opening.glazing) {
+          wallPrimitives.push({
+            kind: 'line',
+            elementId: opening.id,
+            points: [glazing.start, glazing.end],
+          });
+        }
+        // Jambs and glazing sit within the wall's own footprint, which the
+        // piers either side already keep a label clear of. The leaf and the
+        // swing do not - they are the part of a door that reaches into the
+        // room - so those two are the ones a label has to be told about.
+        if (opening.leaf !== null) {
+          wallPrimitives.push({
+            kind: 'line',
+            elementId: opening.id,
+            points: [opening.leaf.start, opening.leaf.end],
+          });
+          labelObstacles.push({
+            start: opening.leaf.start,
+            end: opening.leaf.end,
+            clearance: 0,
+          });
+        }
+        if (opening.swing !== null) {
+          const arc = swingPolyline(opening.swing);
+          wallPrimitives.push({ kind: 'line', elementId: opening.id, points: arc });
+          for (let index = 1; index < arc.length; index += 1) {
+            labelObstacles.push({
+              start: arc[index - 1]!,
+              end: arc[index]!,
+              clearance: 0,
+            });
+          }
+        }
+      }
     }
 
     const inputs: PlanPrimitiveInput<string>[] = [
       ...rooms.map((room): PlanPrimitiveInput<string> => ({
         kind: 'polygon',
+        // Tinted so an enclosed area reads as a room rather than as four walls
+        // that happen to meet. Drawn first, so the walls sit on top of it.
+        fill: 'room',
+        // Derived from the room's name, because `Room` carries no type field.
+        // An unrecognised name takes the neutral tint rather than a guess.
+        fillTint: roomTint(room.label),
         elementId: room.id,
         points: room.polygon,
       })),
-      ...rooms.map((room): PlanPrimitiveInput<string> => ({
-        kind: 'text',
-        // Labelled at the polygon's centroid rather than a fixed offset, so a
-        // room of any shape carries its label inside itself.
-        elementId: `${room.id}-label`,
-        anchor: polygonCentroid(room.polygon),
-        text: room.label,
-      })),
-      ...walls.map((wall): PlanPrimitiveInput<string> => ({
-        kind: 'line',
-        elementId: wall.id,
-        points: [wall.start, wall.end],
-      })),
+      ...rooms.flatMap((room): PlanPrimitiveInput<string>[] => {
+        /*
+         * A label is drawn only where it fits: inside its own room, clear of
+         * the walls that bound it, clear of the linework about to be painted
+         * over it, and clear of the labels already placed. When none of the
+         * positions the room offers can hold it, the room goes unnamed - it is
+         * still drawn, still selectable and still names itself in the
+         * Inspector, so nothing is lost except a claim that could not be read.
+         *
+         * Two things are tried, in this order: the fuller text first, then a
+         * shorter one; and for each, the room's centre first, then positions
+         * further out. Text before position, because the area is information
+         * and a slightly off-centre label still reads as belonging to its room.
+         *
+         * The shorter text is the name without the area. A room label is two
+         * lines and the rule used to be all-or-nothing: if both did not fit,
+         * the room went unnamed. A drawn plan does not behave that way; it
+         * drops the area first and keeps the name, because the name identifies
+         * the room and the area qualifies it.
+         */
+        const fullLines = room.label.split('\n');
+        const textCandidates =
+          fullLines.length > 1 ? [fullLines, [fullLines[0] ?? '']] : [fullLines];
+
+        /*
+         * Only the linework near this room, so the search below stays cheap.
+         * A level carries a few hundred segments and a room is asked about
+         * dozens of positions; testing every segment against every position
+         * would be a repaint's worth of work for no different answer, because
+         * a wall on the far side of the building cannot cross a label here.
+         */
+        const bounds = polygonBounds(room.polygon);
+        const nearby = labelObstacles.filter((obstacle) =>
+          segmentNearBounds(obstacle, bounds, maxWallThicknessMm),
+        );
+
+        const halfWallMm = maxWallThicknessMm / 2;
+        for (const lines of textCandidates) {
+          /*
+           * Measured in world units against the room's own shape.
+           *
+           * The text is measured on the canvas, at the size it will be painted,
+           * because legibility is a screen-pixel question; it is then divided
+           * by the scale, because containment is a question about the room.
+           */
+          const labelWidth =
+            Math.max(...lines.map((line) => ctx.measureText(line).width)) /
+            currentViewport.pixelsPerUnit;
+          const labelHeight =
+            (lines.length * ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio) /
+            currentViewport.pixelsPerUnit;
+          for (const anchor of roomLabelAnchors(room.polygon)) {
+            if (
+              !roomLabelFits({
+                polygon: room.polygon,
+                anchor,
+                labelWidth,
+                labelHeight,
+                // Half the thickest wall on the level: a room's boundary runs
+                // to the wall centrelines, so that much of the ring is poché
+                // rather than floor. The thickest is conservative and needs no
+                // per-room lookup; the piers below hold each wall at its own
+                // real thickness anyway.
+                wallInset: halfWallMm,
+                obstacles: nearby,
+              })
+            ) {
+              continue;
+            }
+            /*
+             * A placed label becomes something the next one has to clear.
+             * Without this two rooms whose rings overlap - which the golden
+             * fixture has, its "Linen" ring reaching into "South gallery" -
+             * can each be told they fit and print on top of each other.
+             */
+            for (const edge of labelKeepOut(anchor, labelWidth, labelHeight)) {
+              labelObstacles.push(edge);
+            }
+            return [
+              { kind: 'text', elementId: `${room.id}-label`, anchor, text: lines.join('\n') },
+            ];
+          }
+        }
+        return [];
+      }),
+      ...wallPrimitives,
     ];
 
     const scene = buildPlanScene(inputs, EMPTY_SET, selection, EMPTY_SET);
@@ -336,10 +981,11 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       painted = { primitives: [...painted.primitives, glyph.marker, glyph.label] };
     }
 
-    ctx.font = `${12 * devicePixelRatio}px sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    paintPlanScene(ctx, currentViewport, devicePixelRatio, painted);
+    paintPlanScene(ctx, currentViewport, devicePixelRatio, painted, palette);
+    // Reported after painting, so what a caller receives is what was drawn -
+    // not a scene that was built and then discarded by a later guard.
+    onSceneBuilt?.({ primitives: scene.primitives, bounds: contentBounds(content) });
+    onSheetRectChange?.(sheetRect);
 
     // The marquee is view furniture like the grid: CAD convention, solid
     // edge for a window (left-to-right) drag, dashed for crossing.
@@ -347,7 +993,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       const a = worldToScreen(currentViewport, marquee.anchor);
       const b = worldToScreen(currentViewport, marquee.corner);
       const crossing = marquee.corner.x < marquee.anchor.x;
-      ctx.strokeStyle = 'rgba(11, 107, 80, 0.9)';
+      ctx.strokeStyle = palette.accent;
       ctx.lineWidth = 1;
       ctx.setLineDash(crossing ? [4 * devicePixelRatio, 4 * devicePixelRatio] : []);
       ctx.strokeRect(
@@ -358,7 +1004,23 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       );
       ctx.setLineDash([]);
     }
-  }, [viewport, rooms, walls, selection, draftPoints, previewPoint, snapPoint, hoveredId, marquee]);
+  }, [
+    viewport,
+    rooms,
+    walls,
+    selection,
+    draftPoints,
+    previewPoint,
+    snapPoint,
+    hoveredId,
+    marquee,
+    palette,
+    planTextFamily,
+    wallDimensions,
+    wallOpenings,
+    onSceneBuilt,
+    onSheetRectChange,
+  ]);
 
   useEffect(() => {
     paint();
@@ -383,11 +1045,39 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       const rect = canvas.getBoundingClientRect();
       canvas.width = Math.max(1, Math.round(rect.width * devicePixelRatio));
       canvas.height = Math.max(1, Math.round(rect.height * devicePixelRatio));
+
+      // Kept in CSS pixels and scaled by the *current* ratio on both sides
+      // below, so a window dragged to a display with a different pixel ratio
+      // compares like with like rather than mixing two pixel spaces.
+      const previousCssRect = previousCssRectRef.current;
+      previousCssRectRef.current = {
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height,
+      };
+
       setViewport((current) => {
         if (current === null) {
+          /*
+           * A surface with no width has no fit. The flex shell lays this canvas
+           * out at 0x740 before its first real pass, and fitting into that box
+           * asks fitToBounds for a scale of 1/4200, which it clamps to the
+           * minimum zoom - so the plan opened at 1%, a few pixels across, and
+           * stayed there, because the fit only runs while the viewport is still
+           * null. Waiting for a real box costs one frame and is the difference
+           * between opening on the drawing and opening on a dot.
+           */
+          if (rect.width <= 0 || rect.height <= 0) {
+            return current;
+          }
           // Fit to what is actually there on first paint: for an opened project
-          // that is the project, not a fixture room it does not contain.
-          const fitted = fitToBounds(contentBounds({ rooms, walls }), rect.width, rect.height);
+          // that is the project, and for an empty surface that is nothing, which
+          // is a starting extent rather than a fit.
+          const fitted = fitContent(
+            emptyContentBounds({ rooms, walls }) ?? contentBounds({ rooms, walls }),
+            rect,
+          );
           onViewportPixelsPerUnitChange?.(fitted.pixelsPerUnit);
           return {
             ...fitted,
@@ -396,8 +1086,35 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
             pixelsPerUnit: fitted.pixelsPerUnit * devicePixelRatio,
           };
         }
-        // Keep the current view on resize - only the screen extent changes.
-        return { ...current, screenWidth: canvas.width, screenHeight: canvas.height };
+        if (previousCssRect === null) {
+          return { ...current, screenWidth: canvas.width, screenHeight: canvas.height };
+        }
+        /*
+         * Doc 09's stability rule: opening the Navigator or Inspector must not
+         * move the model. Carrying `center` across unchanged - what this did
+         * before - keeps the world point at the canvas *centre* fixed, but a
+         * panel opening on the left moves that centre rightwards on screen, so
+         * every wall slid out from under a stationary cursor. Nothing refitted,
+         * yet the drawing moved.
+         *
+         * Scale is untouched either way: a resize is not a view command.
+         */
+        const scale = (value: number): number => value * devicePixelRatio;
+        return preserveWorldUnderViewportRect(
+          current,
+          {
+            left: scale(previousCssRect.left),
+            top: scale(previousCssRect.top),
+            width: scale(previousCssRect.width),
+            height: scale(previousCssRect.height),
+          },
+          {
+            left: scale(rect.left),
+            top: scale(rect.top),
+            width: canvas.width,
+            height: canvas.height,
+          },
+        );
       });
     }
 
@@ -539,7 +1256,9 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     if (canvas !== null) {
       const rect = canvas.getBoundingClientRect();
       const devicePixelRatio = devicePixelRatioRef.current;
-      const fitted = fitToBounds(contentBounds(content), rect.width, rect.height);
+      // Fit on an empty surface returns to the starting extent rather than to
+      // NaN - the same guard as the first paint, for the same reason.
+      const fitted = fitContent(emptyContentBounds(content) ?? contentBounds(content), rect);
       updateViewport({
         ...fitted,
         screenWidth: canvas.width,

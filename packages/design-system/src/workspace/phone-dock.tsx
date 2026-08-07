@@ -2,7 +2,6 @@ import type { SheetId } from '@arq/workspace';
 
 export interface PhoneDockProps {
   readonly openSheet: SheetId | null;
-  readonly activeToolLabel: string | null;
   readonly onSelectTool: () => void;
   readonly onToggleSheet: (sheet: SheetId) => void;
   /**
@@ -27,9 +26,13 @@ interface DockEntry {
  *
  * `Select` is not a sheet. It activates the select tool directly, because doc
  * 47 wants the most common action to be one tap rather than a sheet the user
- * must open and then choose from. The active tool is echoed as a chip above the
- * dock ("Selected tool remains visible in bottom dock or a compact tool chip"),
- * which is what stops the user losing track of what a tap on the canvas will do.
+ * must open and then choose from.
+ *
+ * Doc 47's "selected tool remains visible in bottom dock or a compact tool
+ * chip" used to be a chip rendered here, between the status strip and the dock.
+ * That made three stacked strips under the canvas - "No selection  No issues",
+ * then "Tool: Select", then five dock buttons - two of which said one thing
+ * each. The status strip carries the tool now; this component is the dock.
  *
  * `More` maps to the project browser: on a phone the browser *is* the "where
  * else can I go" surface, and doc 47's own View entry already covers switching
@@ -44,28 +47,10 @@ const ENTRIES: readonly DockEntry[] = [
 ];
 
 export function PhoneDock(props: PhoneDockProps): JSX.Element {
-  const { openSheet, activeToolLabel, onSelectTool, onToggleSheet, reviewDisabledReason } = props;
+  const { openSheet, onSelectTool, onToggleSheet, reviewDisabledReason } = props;
 
   return (
     <div className="arq-phone-dock-region" style={{ flex: '0 0 auto' }}>
-      {activeToolLabel !== null && (
-        <p
-          className="arq-phone-dock__tool-chip"
-          // Doc 47: "Selected tool remains visible in bottom dock or a compact
-          // tool chip." aria-live so a screen-reader user hears the tool change
-          // they just made from a sheet that has since closed.
-          aria-live="polite"
-          style={{
-            margin: 0,
-            padding: 'var(--arq-space-micro) var(--arq-space-panel)',
-            fontSize: '0.875em',
-            color: 'var(--arq-ui-text-secondary)',
-            borderTop: '1px solid var(--arq-ui-line-subtle)',
-          }}
-        >
-          Tool: {activeToolLabel}
-        </p>
-      )}
       <nav
         className="arq-phone-dock arq-shell-panel"
         aria-label="Workspace"

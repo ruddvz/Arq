@@ -1,0 +1,86 @@
+{
+  "generatedFrom": "apps/web dist, built by this script",
+  "fixture": "fixtures/ARQ_Courtyard_House_Golden_Fixture_v2.arq",
+  "fixtureSha256": "0afd9a9785b99ba4338e73067a1af383079363893c30fdc6d538c7e44ed87bd6",
+  "captures": [
+    {
+      "name": "desktop-1600x1000",
+      "width": 1600,
+      "height": 1000,
+      "touch": false,
+      "band": "desktop",
+      "canvas": {
+        "width": 1518,
+        "height": 868
+      },
+      "horizontalOverflow": false,
+      "hasDemoFixtureString": false,
+      "hasFixtureWallString": false,
+      "showsProjectName": true,
+      "opened": true,
+      "openFailure": null,
+      "consoleErrors": [],
+      "screenshot": "benchmarks/results/responsive/desktop-1600x1000.png"
+    },
+    {
+      "name": "ipad-regular-1366x1024",
+      "width": 1366,
+      "height": 1024,
+      "touch": true,
+      "band": "desktop",
+      "canvas": {
+        "width": 1308,
+        "height": 920
+      },
+      "horizontalOverflow": false,
+      "hasDemoFixtureString": false,
+      "hasFixtureWallString": false,
+      "showsProjectName": true,
+      "opened": true,
+      "openFailure": null,
+      "consoleErrors": [],
+      "screenshot": "benchmarks/results/responsive/ipad-regular-1366x1024.png"
+    },
+    {
+      "name": "ipad-compact-1024x768",
+      "width": 1024,
+      "height": 768,
+      "touch": true,
+      "band": "tablet-landscape",
+      "canvas": {
+        "width": 1024,
+        "height": 621
+      },
+      "horizontalOverflow": false,
+      "hasDemoFixtureString": false,
+      "hasFixtureWallString": false,
+      "showsProjectName": true,
+      "opened": true,
+      "openFailure": null,
+      "consoleErrors": [],
+      "screenshot": "benchmarks/results/responsive/ipad-compact-1024x768.png"
+    },
+    {
+      "name": "phone-430x932",
+      "width": 430,
+      "height": 932,
+      "touch": true,
+      "band": "phone",
+      "canvas": {
+        "width": 430,
+        "height": 766
+      },
+      "horizontalOverflow": false,
+      "hasDemoFixtureString": false,
+      "hasFixtureWallString": false,
+      "showsProjectName": true,
+      "opened": true,
+      "openFailure": null,
+      "consoleErrors": [],
+      "screenshot": "benchmarks/results/responsive/phone-430x932.png"
+    }
+  ],
+  "failures": [],
+  "ok": true,
+  "limitation": "Chromium only. Each capture is a real browser laid out at that viewport with the fixture opened through the real dialog - no image is scaled, reused between sizes, or viewed in a device frame. It proves composition and content at these four sizes; it proves nothing about other engines, or about how the composition compares to the Version 13 reference, which no baseline yet checks."
+}

@@ -196,12 +196,13 @@ async function run(screenshotPath) {
     );
 
     /* -------------------------------------------------------------- */
-    /* Reachability: the 3D tab, through the real tab strip            */
+    /* Reachability: the 3D view, through the real control             */
     /* -------------------------------------------------------------- */
 
-    // The tab's accessible name is tabLabel()'s "3D, 3D. Press Delete to
-    // close." - matching on the '3D' fragment finds exactly this tab (the
-    // other tabs are 'Project overview' and 'Level 1 Plan').
+    // The closeable tab strip is a `Plan | 3D | Sheets` capsule in the project
+    // bar now. It is still a tablist with `aria-selected`, so what is asserted
+    // here has not moved: 3D is reachable from the shell without a menu, and
+    // the control says which view is on show.
     const tab3d = page.getByRole('tab', { name: /3D/ });
     const tabAccessibleName = await tab3d.getAttribute('aria-label');
     await tab3d.click();
@@ -241,7 +242,12 @@ async function run(screenshotPath) {
     // Back to the plan view, and draw one wall through the real tools -
     // ModelCanvas only extrudes drawn walls, so a drawn wall is the one
     // element whose selection is observable on both surfaces.
-    await page.getByRole('tab', { name: /Level 1 Plan/ }).click();
+    // The capsule's Plan segment. The alternatives keep this valid against a
+    // shell that names the segment for the level it is showing.
+    await page
+      .getByRole('tab', { name: /^Plan$|Ground floor|Level 1 Plan/ })
+      .first()
+      .click();
     const toolRail = page.getByRole('navigation', { name: 'Tools' });
     await toolRail.getByRole('button', { name: 'Draw', exact: true }).click();
     await toolRail
@@ -281,11 +287,19 @@ async function run(screenshotPath) {
       .getByRole('button', { name: 'Select', exact: true })
       .click();
     await page.mouse.click((startX + endX) / 2, y);
-    await page.waitForFunction(
-      (sel) => document.querySelector(sel)?.textContent?.includes('1 selected'),
-      STATUS_BAR,
-      { timeout: 5000 },
-    );
+    /*
+     * The context bar appearing is the observable that a selection exists.
+     *
+     * This waited for "1 selected" in the status strip. The strip carries the
+     * two fields that are guarantees now - what the pointer snaps to and where
+     * the work is kept - and the selection readout moved to the Inspector and
+     * to the actions the shell offers for what is selected. The context bar is
+     * rendered only when there is a selection *and* something to do with it,
+     * so it is a stricter observable than the count string it replaces.
+     */
+    await page
+      .getByRole('toolbar', { name: 'Context actions' })
+      .waitFor({ state: 'visible', timeout: 5000 });
 
     // Same selection object, other surface: the highlight must appear in 3D
     // without touching anything there.
@@ -307,12 +321,29 @@ async function run(screenshotPath) {
     // And the reverse direction: a click on empty 3D space clears the shared
     // selection (ModelCanvas raycasts, finds nothing, selects null), which
     // the plan-side status bar and the 3D highlight must both reflect.
-    await modelCanvas.click({ position: { x: 8, y: 8 } });
-    await page.waitForFunction(
-      (sel) => document.querySelector(sel)?.textContent?.includes('No selection'),
-      STATUS_BAR,
-      { timeout: 5000 },
-    );
+    //
+    // The point is measured rather than fixed at the canvas corner. Since the
+    // desktop composition floats the browser and inspector *over* an
+    // edge-to-edge canvas, the corner sits underneath the navigator and a click
+    // there lands on the panel - which is correct behaviour, and exactly what
+    // this check caught when the composition changed. Clearing the selection
+    // needs any empty point the user can actually reach, so this takes one just
+    // clear of the panel's trailing edge.
+    const emptyPoint = await page.evaluate(() => {
+      const canvas = document.querySelector('canvas[aria-label="3D model view"]');
+      const panel = document.querySelector('.arq-workspace__overlay--left');
+      const canvasBox = canvas.getBoundingClientRect();
+      const panelBox = panel?.getBoundingClientRect() ?? null;
+      const clearOfPanel =
+        panelBox === null ? 8 : Math.max(8, panelBox.right - canvasBox.left + 24);
+      return { x: clearOfPanel, y: 24 };
+    });
+    await modelCanvas.click({ position: emptyPoint });
+    // The inverse of the selection observable above: with nothing selected the
+    // shell has no actions to offer for it, so the context bar goes.
+    await page
+      .getByRole('toolbar', { name: 'Context actions' })
+      .waitFor({ state: 'hidden', timeout: 5000 });
     const clearPoll = await pollSampleUntil(
       page,
       async () => analyzeCanvasPixels(page, await modelCanvas.screenshot()),

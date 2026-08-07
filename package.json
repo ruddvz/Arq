@@ -28,6 +28,8 @@
     "benchmark:design-system-dialog": "node scripts/run-design-system-dialog-capability-check.mjs",
     "benchmark:file-open": "node scripts/run-file-open-capability-check.mjs",
     "benchmark:workspace-layout": "node scripts/run-workspace-layout-capability-check.mjs",
+    "benchmark:optical-glass": "node scripts/run-optical-glass-capability-check.mjs",
+    "benchmark:sheet-chrome": "node scripts/run-sheet-chrome-capability-check.mjs",
     "benchmark:journal-recovery": "node scripts/run-journal-recovery-capability-check.mjs",
     "benchmark:model-canvas": "node scripts/run-model-canvas-capability-check.mjs",
     "benchmark:wall-hud": "node scripts/run-wall-hud-capability-check.mjs",

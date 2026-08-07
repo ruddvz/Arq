@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { worldPoint, type Viewport } from '@arq/geometry-2d';
 import type { PlanScene } from './plan-scene';
-import { paintPlanScene, type Canvas2dPaintTarget } from './canvas2d-paint';
+import { DEFAULT_PLAN_PALETTE, paintPlanScene, type Canvas2dPaintTarget } from './canvas2d-paint';
 
 type RecordedCall = readonly [method: string, ...args: unknown[]];
 
@@ -172,5 +172,103 @@ describe('paintPlanScene', () => {
     const fillTextIndex = target.calls.findIndex((call) => call[0] === 'fillText');
     const firstBeginPathIndex = target.calls.findIndex((call) => call[0] === 'beginPath');
     expect(firstBeginPathIndex).toBeLessThan(fillTextIndex);
+  });
+});
+
+describe('polygon fills', () => {
+  function recordingTarget() {
+    const calls: string[] = [];
+    const target = {
+      beginPath: () => calls.push('beginPath'),
+      closePath: () => calls.push('closePath'),
+      moveTo: () => calls.push('moveTo'),
+      lineTo: () => calls.push('lineTo'),
+      arc: () => calls.push('arc'),
+      stroke: () => calls.push('stroke'),
+      fill: () => calls.push('fill'),
+      fillText: () => calls.push('fillText'),
+      setLineDash: () => calls.push('setLineDash'),
+      strokeStyle: '',
+      fillStyle: '',
+      lineWidth: 0,
+      font: '',
+    } as unknown as Canvas2dPaintTarget & { fillStyle: string };
+    return { target, calls };
+  }
+
+  const VIEWPORT = {
+    center: worldPoint(0, 0),
+    pixelsPerUnit: 1,
+    screenWidth: 100,
+    screenHeight: 100,
+  };
+  const SQUARE = [worldPoint(0, 0), worldPoint(10, 0), worldPoint(10, 10), worldPoint(0, 10)];
+
+  it('leaves a polygon without a fill exactly as it was: outline only', () => {
+    const { target, calls } = recordingTarget();
+    paintPlanScene(
+      target,
+      VIEWPORT,
+      1,
+      { primitives: [{ kind: 'polygon', elementId: 'w', points: SQUARE, styleToken: 'default' }] },
+      DEFAULT_PLAN_PALETTE,
+    );
+    expect(calls).not.toContain('fill');
+    expect(calls).toContain('stroke');
+  });
+
+  it('fills before it strokes, so the outline is not half-covered by its own fill', () => {
+    const { target, calls } = recordingTarget();
+    paintPlanScene(
+      target,
+      VIEWPORT,
+      1,
+      {
+        primitives: [
+          { kind: 'polygon', elementId: 'w', points: SQUARE, styleToken: 'default', fill: 'poche' },
+        ],
+      },
+      { ...DEFAULT_PLAN_PALETTE, poche: '#123456' },
+    );
+    expect(calls.indexOf('fill')).toBeLessThan(calls.lastIndexOf('stroke'));
+  });
+
+  it('skips a fill the palette has no colour for, rather than defaulting one', () => {
+    const { target, calls } = recordingTarget();
+    paintPlanScene(
+      target,
+      VIEWPORT,
+      1,
+      {
+        primitives: [
+          { kind: 'polygon', elementId: 'r', points: SQUARE, styleToken: 'default', fill: 'room' },
+        ],
+      },
+      // An unasked-for colour on a drawing is worse than no colour at all.
+      DEFAULT_PLAN_PALETTE,
+    );
+    expect(calls).not.toContain('fill');
+  });
+
+  it('does not fill a degenerate polygon that cannot enclose anything', () => {
+    const { target, calls } = recordingTarget();
+    paintPlanScene(
+      target,
+      VIEWPORT,
+      1,
+      {
+        primitives: [
+          {
+            kind: 'polygon',
+            elementId: 'w',
+            points: [worldPoint(0, 0), worldPoint(10, 0)],
+            styleToken: 'default',
+            fill: 'poche',
+          },
+        ],
+      },
+      { ...DEFAULT_PLAN_PALETTE, poche: '#123456' },
+    );
+    expect(calls).not.toContain('fill');
   });
 });

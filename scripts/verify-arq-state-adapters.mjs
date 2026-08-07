@@ -39,7 +39,15 @@ for (const adapter of adapters.adapters ?? []) {
     if (!existsSync(path)) fail(`${adapter.id} source missing: ${adapter.sourcePath}`);
     else {
       const text = readFileSync(path, 'utf8');
-      const match = text.match(/useState<\s*([\s\S]*?)>\s*\(\s*'no-project'\s*\)/);
+      /*
+       * The type parameter as a union of string literals, matching
+       * `parseJournalUi` in refresh-arq-language-context.mjs. `[\s\S]*?` is
+       * lazy but still anchors on the first `useState<` in the file, so it ran
+       * from an unrelated declaration down to this one and turned an apostrophe
+       * in an intervening comment into a quote delimiter - reporting a sentence
+       * of prose as an unmapped state of the save machine.
+       */
+      const match = text.match(/useState<\s*((?:'[^']*'\s*\|?\s*)+)>\s*\(\s*'no-project'\s*\)/);
       if (!match) fail(`${adapter.id} could not extract saveState union`);
       else {
         const sourceStates = new Set([...match[1].matchAll(/'([^']+)'/g)].map((x) => x[1]));

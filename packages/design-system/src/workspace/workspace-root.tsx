@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import {
   CLOSED_SHEET_STATE,
   occupiesLayoutWidth,
   panelDockingPolicy,
+  phoneBottomOwner,
   resolveLayoutSlots,
   resolveWorkspacePlatform,
   viewSwitcherHeightPx,
@@ -16,7 +17,7 @@ import {
   type WorkspaceProjectContext,
 } from '@arq/workspace';
 import { ModeRail, MODE_RAIL_WIDTH_PX } from './mode-rail';
-import { TOOL_RAIL_WIDTH_PX } from '../shell/tool-rail';
+import { TOOL_RAIL_DOCK_WIDTH_PX, TOOL_RAIL_WIDTH_PX } from '../shell/tool-rail';
 import { WorkspaceSheet } from './workspace-sheet';
 import { PhoneDock } from './phone-dock';
 import { TabletDrawerBar } from './tablet-drawer-bar';
@@ -31,13 +32,36 @@ import { PanelResizeHandle } from './panel-resize-handle';
  *
  * Zero on the touch bands, where `WorkspaceRoot` renders no rails at all.
  */
-export const WORKSPACE_RAILS_WIDTH_PX = MODE_RAIL_WIDTH_PX + TOOL_RAIL_WIDTH_PX;
+/*
+ * The rails are stacked in one column now rather than set side by side, so the
+ * dock is as wide as the wider of the two, not as wide as both. Summing them
+ * described a 112px slab that is no longer on screen and left every downstream
+ * measurement - the canvas floor, the floating panel's offset - short by the
+ * width of a whole rail.
+ */
+export const WORKSPACE_RAILS_WIDTH_PX = Math.max(MODE_RAIL_WIDTH_PX, TOOL_RAIL_WIDTH_PX);
 
-export function workspaceRailsWidthPx(platform: WorkspacePlatform): number {
-  return panelDockingPolicy(platform) === 'drawers-only' ? 0 : WORKSPACE_RAILS_WIDTH_PX;
+/** The same pair once the tool rail is an icon dock rather than a labelled column. */
+export const WORKSPACE_RAILS_DOCK_WIDTH_PX = Math.max(MODE_RAIL_WIDTH_PX, TOOL_RAIL_DOCK_WIDTH_PX);
+
+/**
+ * `toolRailIsDock` has to be told, not guessed: the rail decides its own width
+ * from whether the host gave it a glyph for every category, and the canvas
+ * floor and the floating panels' inset both depend on the answer. Getting it
+ * wrong does not throw - it leaves the navigator hanging in the middle of the
+ * drawing, which is exactly what happened when the dock landed and this still
+ * reported 312px.
+ */
+export function workspaceRailsWidthPx(platform: WorkspacePlatform, toolRailIsDock = false): number {
+  if (panelDockingPolicy(platform) === 'drawers-only') {
+    return 0;
+  }
+  return toolRailIsDock ? WORKSPACE_RAILS_DOCK_WIDTH_PX : WORKSPACE_RAILS_WIDTH_PX;
 }
 
 export interface WorkspaceRootProps {
+  /** Glyphs for the mode rail, resolved by the host - this package imports no icon library. */
+  readonly modeIcons?: Readonly<Partial<Record<WorkspaceMode, ReactNode>>>;
   readonly project: WorkspaceProjectContext;
   readonly activeMode: WorkspaceMode;
   readonly onSelectMode: (mode: WorkspaceMode) => void;
@@ -96,7 +120,6 @@ export interface WorkspaceRootProps {
   readonly onSheetDragToDetent?: (detent: SheetDetent) => void;
   /** Doc 47: the dock's Select entry activates the tool rather than opening a sheet. */
   readonly onSelectPointerTool?: () => void;
-  readonly activeToolLabel?: string | null;
   readonly toolsSheet?: ReactNode;
   readonly viewSwitcherSheet?: ReactNode;
   readonly reviewSheet?: ReactNode;
@@ -107,6 +130,11 @@ export interface WorkspaceRootProps {
    * stores is worse than none.
    */
   readonly onResizePanel?: (panel: 'project-browser' | 'inspector', widthPx: number) => void;
+  /**
+   * True when the host supplied a glyph for every tool category, so the rail
+   * rendered as a 48px dock. Only affects where floating panels start.
+   */
+  readonly toolRailIsDock?: boolean;
 }
 
 function OverlayPanel(props: {
@@ -120,7 +148,14 @@ function OverlayPanel(props: {
   const { side, widthPx, label, onDismiss, children } = props;
   return (
     <div
-      className={`arq-workspace__overlay arq-workspace__overlay--${side}`}
+      /*
+       * The inspector is a large presentation over varied content, which is
+       * the case the strong variant exists for. The project browser on the
+       * left is a list and reads cleanly at regular strength.
+       */
+      className={`arq-workspace__overlay arq-workspace__overlay--${side} arq-material${
+        side === 'right' ? ' arq-material--strong' : ''
+      }`}
       role={label === undefined ? undefined : 'dialog'}
       aria-label={label}
       /*
@@ -140,17 +175,18 @@ function OverlayPanel(props: {
             }
       }
       style={{
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        [side]: 0,
+        /*
+         * Width only. Placement lives in workspace-shell.css, because an inline
+         * `left: 0` beats any rule a stylesheet can write - which is exactly
+         * what happened when the floating composition tried to inset this panel
+         * past the rails and silently lost to the inline value.
+         *
+         * Surface and border belong to `arq-material` (ADR-0031) for the same
+         * reason: an inline background would turn the material off one surface
+         * at a time without removing anything.
+         */
         width: widthPx,
         maxWidth: '100%',
-        zIndex: 2,
-        borderLeft: side === 'right' ? '1px solid var(--arq-ui-line-default)' : undefined,
-        borderRight: side === 'left' ? '1px solid var(--arq-ui-line-default)' : undefined,
-        background: 'var(--arq-ui-paper)',
-        overflow: 'auto',
       }}
     >
       {children}
@@ -208,6 +244,7 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
     project,
     activeMode,
     onSelectMode,
+    modeIcons,
     probe,
     panels,
     projectBar,
@@ -227,12 +264,12 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
     onCollapseSheet,
     onSheetDragToDetent,
     onSelectPointerTool,
-    activeToolLabel = null,
     toolsSheet,
     viewSwitcherSheet,
     reviewSheet,
     reviewDisabledReason,
     onResizePanel,
+    toolRailIsDock = false,
   } = props;
 
   const platform: WorkspacePlatform = resolveWorkspacePlatform(probe);
@@ -279,17 +316,54 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
    */
   const shellInert = openSheetId !== null && usesBottomSheets && sheet.detent === 'full';
 
+  /**
+   * Which control owns the bottom of the screen. The rule lives in
+   * @arq/workspace beside the rest of the sheet state, so it is testable
+   * without rendering and cannot drift from what the sheet reducer believes.
+   */
+  const bottomOwner = touchControlsAvailable
+    ? phoneBottomOwner(sheet, platform, usesBottomSheets)
+    : 'none';
+
   return (
     <div
       className={`arq-workspace arq-workspace--${platform}`}
       data-workspace-mode={activeMode}
+      /*
+       * The band the workspace actually resolved, stated rather than inferred.
+       * It was only ever in the class name, so a responsive check had to parse
+       * `arq-workspace--phone` out of a string, or - worse - assume the band
+       * from the viewport it asked for, which is how a desktop composition
+       * captured at phone width gets recorded as phone evidence.
+       */
+      data-workspace-platform={platform}
       data-workspace-open-state={project.openState}
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
+        /*
+         * Dynamic viewport height, not `100vh`. On a phone `vh` is the height
+         * with the browser's chrome retracted, so a shell sized in `vh` puts
+         * its own bottom bar underneath the address bar until the user
+         * scrolls - and this shell does not scroll.
+         */
+        height: '100dvh',
         minHeight: 0,
         position: 'relative',
+        /*
+         * How much of the viewport each floating panel covers. Published here
+         * because a panel is resizable, so its width is state and cannot be a
+         * token - and the stylesheet that positions the panels owns the rest of
+         * the arithmetic. A document surface reads these to keep clear of a
+         * panel it cannot be panned out from under; a drawing ignores them and
+         * runs behind, which is the point of a panel that floats.
+         */
+        ...({
+          '--arq-overlay-left-width': browserFloating
+            ? `${panels['project-browser'].widthPx}px`
+            : '0px',
+          '--arq-overlay-right-width': inspectorFloating ? `${panels.inspector.widthPx}px` : '0px',
+        } as CSSProperties),
       }}
     >
       {/*
@@ -311,12 +385,29 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
         {...(shellInert ? { inert: '' } : {})}
         style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}
       >
-        <div style={{ minHeight: slots.topBar, flex: '0 0 auto' }}>
+        <div
+          className="arq-workspace__bar arq-workspace__bar--project"
+          style={{ minHeight: slots.topBar, flex: '0 0 auto' }}
+        >
           {phone ? (phoneProjectBar ?? projectBar) : projectBar}
         </div>
-        <div style={{ minHeight: viewSwitcherHeightPx(slots), flex: '0 0 auto' }}>
-          {phone ? (compactViewControl ?? tabStrip) : tabStrip}
-        </div>
+        {/*
+          The phone keeps a row of its own here, and nothing else does.
+
+          On the docking bands the view switcher is a capsule in the project bar
+          above, which is what the reference composition shows - so this row was
+          spending forty pixels of the drawing on a second place to say which
+          view is open. A phone has no room in its bar for a capsule and keeps
+          `CompactViewControl`, which is a single control rather than a strip.
+        */}
+        {phone && (
+          <div
+            className="arq-workspace__bar arq-workspace__bar--views"
+            style={{ minHeight: viewSwitcherHeightPx(slots), flex: '0 0 auto' }}
+          >
+            {compactViewControl ?? tabStrip}
+          </div>
+        )}
         {touchControlsAvailable && !phone && (
           <TabletDrawerBar
             openSheet={sheet.openSheet}
@@ -325,11 +416,48 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
           />
         )}
 
-        <div style={{ position: 'relative', flex: 1, display: 'flex', minHeight: 0 }}>
+        <div
+          className="arq-workspace__row"
+          style={{
+            position: 'relative',
+            flex: 1,
+            display: 'flex',
+            minHeight: 0,
+            /*
+             * How far in from the row's leading edge the canvas actually
+             * starts. A floating panel is absolutely positioned within this
+             * row, so without it the left panel begins at the row edge and
+             * covers the two rails it is supposed to sit beside.
+             */
+            ['--arq-rails-width' as string]: `${
+              canvasFirst ? 0 : workspaceRailsWidthPx(platform, toolRailIsDock)
+            }px`,
+          }}
+        >
+          {/*
+            One dock, one column.
+
+            The two rails are separate components on purpose - they answer
+            different questions ("what am I doing?" and "what am I doing it
+            with?"), each keeps its own landmark and label, and doc 36 requires
+            they stay semantically apart. But they were also two *columns*,
+            side by side, so the left edge read as a 112px slab of eleven
+            glyphs in a grid. The reference gives the whole edge to one 56px
+            column. Doc 36 allows exactly this - "merge visually" - and asks
+            that the grouping be carried by spacing rather than a second colour
+            system, which is what the divider between them is.
+          */}
           {!canvasFirst && (
-            <ModeRail project={project} activeMode={activeMode} onSelectMode={onSelectMode} />
+            <div className="arq-workspace__dock arq-material arq-material--optical">
+              <ModeRail
+                project={project}
+                activeMode={activeMode}
+                onSelectMode={onSelectMode}
+                {...(modeIcons === undefined ? {} : { modeIcons })}
+              />
+              {toolRail}
+            </div>
           )}
-          {!canvasFirst && toolRail}
 
           {browserDocked && (
             <>
@@ -409,7 +537,15 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
           )}
         </div>
 
-        {!phone && (
+        {/*
+          Doc 09: "no permanent bottom command surface while idle". ContextBar
+          returns null when there is no active tool and nothing selected, but a
+          null child inside a slot with a `minHeight` still reserves the slot -
+          so an idle desktop kept a 38px empty strip pinned under the canvas,
+          taking height from the drawing to show nothing. A host that has
+          nothing for the bar passes null and the slot goes with it.
+        */}
+        {!phone && contextBar !== null && (
           <div
             className="arq-workspace__context-bar"
             style={{ minHeight: slots.contextBar ?? 0, flex: '0 0 auto' }}
@@ -417,13 +553,21 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
             {contextBar}
           </div>
         )}
-        <div style={{ minHeight: slots.statusBar ?? slots.statusMinimal ?? 0, flex: '0 0 auto' }}>
+        <div
+          className="arq-workspace__bar arq-workspace__bar--status"
+          style={{ minHeight: slots.statusBar ?? slots.statusMinimal ?? 0, flex: '0 0 auto' }}
+        >
           {statusBar}
         </div>
-        {touchControlsAvailable && phone && (
+        {/*
+          Doc 47 and the Version 12 layout contract: exactly one bottom
+          interaction owner. A raised sheet replaces this bar rather than
+          stacking above it - rendering both left the dock focusable and
+          hit-testable underneath a peeking sheet.
+        */}
+        {touchControlsAvailable && bottomOwner === 'review-bar' && (
           <PhoneDock
             openSheet={sheet.openSheet}
-            activeToolLabel={activeToolLabel}
             onSelectTool={onSelectPointerTool ?? (() => undefined)}
             onToggleSheet={onToggleSheet}
             {...(reviewDisabledReason === undefined ? {} : { reviewDisabledReason })}

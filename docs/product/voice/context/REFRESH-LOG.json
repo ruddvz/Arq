@@ -2,6 +2,234 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "generatedAt": "2026-08-07T13:11:39.747Z",
+      "sourceSetDigest": "902d378da04bb93fac8e2840153b498ffbd66419aeeb7992a448c9e3a75f9a98",
+      "previousSourceSetDigest": "a8485a12f01269d710be013e81c2ca7cfac6acd4a2bd6e262927963ae05c48ed",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-07T04:06:36.875Z",
+      "sourceSetDigest": "a8485a12f01269d710be013e81c2ca7cfac6acd4a2bd6e262927963ae05c48ed",
+      "previousSourceSetDigest": "a0a02de3ad305e53df3adcae6ac6562aed519f24d7ec71827b8ee1682e512079",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-07T04:01:39.759Z",
+      "sourceSetDigest": "a0a02de3ad305e53df3adcae6ac6562aed519f24d7ec71827b8ee1682e512079",
+      "previousSourceSetDigest": "89f010ff204d124bf932b7b40afb8751c9d46562be25301013b0ebd3cac6c877",
+      "changedSourceSets": ["file-open-ui", "status", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-07T03:50:51.175Z",
+      "sourceSetDigest": "89f010ff204d124bf932b7b40afb8751c9d46562be25301013b0ebd3cac6c877",
+      "previousSourceSetDigest": "a07a157d57b4a862867f1006fc0fe89d3c359764a4df85d26584e3a66e6feb2d",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-07T02:44:07.783Z",
+      "sourceSetDigest": "a07a157d57b4a862867f1006fc0fe89d3c359764a4df85d26584e3a66e6feb2d",
+      "previousSourceSetDigest": "70ec1b0d5a64c0d9db3c80078f9c279e2fae9b33d3cc1e3829419ea61e61fd66",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-07T02:25:42.410Z",
+      "sourceSetDigest": "70ec1b0d5a64c0d9db3c80078f9c279e2fae9b33d3cc1e3829419ea61e61fd66",
+      "previousSourceSetDigest": "98ba90380cde1efd96e0b83d30fd594fc267cb1d913006dfc6c5ca4f8c72dd76",
+      "changedSourceSets": ["plan-canvas"]
+    },
+    {
+      "generatedAt": "2026-08-07T02:01:58.341Z",
+      "sourceSetDigest": "98ba90380cde1efd96e0b83d30fd594fc267cb1d913006dfc6c5ca4f8c72dd76",
+      "previousSourceSetDigest": "619505fcc6c44f577bb0d73ca02aab949fecb54573768b006c871037d34d024e",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-07T01:52:02.906Z",
+      "sourceSetDigest": "619505fcc6c44f577bb0d73ca02aab949fecb54573768b006c871037d34d024e",
+      "previousSourceSetDigest": "2096d7bbf55c95e1b775ebd42a5627e5ed8fcb392b2c75014ff4a66c07899af4",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-07T01:40:44.547Z",
+      "sourceSetDigest": "2096d7bbf55c95e1b775ebd42a5627e5ed8fcb392b2c75014ff4a66c07899af4",
+      "previousSourceSetDigest": "9c5d8e8cdff25a41abf1dbdfe7b2505aaa33d0fd3e193e96f065782f235f7617",
+      "changedSourceSets": ["web-app", "workspace-registries"]
+    },
+    {
+      "generatedAt": "2026-08-07T01:18:59.296Z",
+      "sourceSetDigest": "9c5d8e8cdff25a41abf1dbdfe7b2505aaa33d0fd3e193e96f065782f235f7617",
+      "previousSourceSetDigest": "9ddafa93ddb42c515b430c81c0828d085e0c9950d71290e3f52c6b25327332a2",
+      "changedSourceSets": ["plan-canvas"]
+    },
+    {
+      "generatedAt": "2026-08-07T01:05:31.932Z",
+      "sourceSetDigest": "9ddafa93ddb42c515b430c81c0828d085e0c9950d71290e3f52c6b25327332a2",
+      "previousSourceSetDigest": "ddad5b71c7f1d05600526d310f0d7dec2cd83045dfd7fdf74682513a67f1f127",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T22:33:11.974Z",
+      "sourceSetDigest": "ddad5b71c7f1d05600526d310f0d7dec2cd83045dfd7fdf74682513a67f1f127",
+      "previousSourceSetDigest": "31285ca63d22ad87209ba90b44c42da06d3937a97dd46ed766ce7b9c027ba74b",
+      "changedSourceSets": ["model-canvas"]
+    },
+    {
+      "generatedAt": "2026-08-06T22:21:38.981Z",
+      "sourceSetDigest": "31285ca63d22ad87209ba90b44c42da06d3937a97dd46ed766ce7b9c027ba74b",
+      "previousSourceSetDigest": "88ba71b8894486a5fdacfe8dc8577e120b3fa01f072a6cce349deed466234736",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T22:12:47.031Z",
+      "sourceSetDigest": "88ba71b8894486a5fdacfe8dc8577e120b3fa01f072a6cce349deed466234736",
+      "previousSourceSetDigest": "1ae332cc9547b4d922a8e6909aa9061493c7fc72160e306273d9d288d557f906",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T21:29:54.988Z",
+      "sourceSetDigest": "1ae332cc9547b4d922a8e6909aa9061493c7fc72160e306273d9d288d557f906",
+      "previousSourceSetDigest": "e0b95cacd31e18dc00277dd44f0f168860df1f57cb0bbebbaf658cd169d63486",
+      "changedSourceSets": ["plan-canvas"]
+    },
+    {
+      "generatedAt": "2026-08-06T21:21:00.248Z",
+      "sourceSetDigest": "e0b95cacd31e18dc00277dd44f0f168860df1f57cb0bbebbaf658cd169d63486",
+      "previousSourceSetDigest": "085c3105ac30c13251c9e8e37c9146ee6c2f76bc610076f13ebe49e7c60dd72b",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T20:49:44.106Z",
+      "sourceSetDigest": "085c3105ac30c13251c9e8e37c9146ee6c2f76bc610076f13ebe49e7c60dd72b",
+      "previousSourceSetDigest": "ed435055e2ca1229450f45c3723ecda80a2ef69ae040ae8ddcd4905210f539ca",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T20:37:35.629Z",
+      "sourceSetDigest": "ed435055e2ca1229450f45c3723ecda80a2ef69ae040ae8ddcd4905210f539ca",
+      "previousSourceSetDigest": "f2c8d463397c9b6a18f379ca97024e798c5d698fec7c381417c1e143e43a6b19",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T20:29:44.265Z",
+      "sourceSetDigest": "f2c8d463397c9b6a18f379ca97024e798c5d698fec7c381417c1e143e43a6b19",
+      "previousSourceSetDigest": "cfe653f63c480721e664c491904e8d569f009e10cb3fb3b5876a557b50bebd84",
+      "changedSourceSets": ["plan-canvas"]
+    },
+    {
+      "generatedAt": "2026-08-06T20:25:23.084Z",
+      "sourceSetDigest": "cfe653f63c480721e664c491904e8d569f009e10cb3fb3b5876a557b50bebd84",
+      "previousSourceSetDigest": "c3fb1045cded81bf17139665a5bc58cc6a6f077c045f714e4b30b77c9803dcec",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T17:08:24.063Z",
+      "sourceSetDigest": "c3fb1045cded81bf17139665a5bc58cc6a6f077c045f714e4b30b77c9803dcec",
+      "previousSourceSetDigest": "8f149cc9fcbb8a5c7ef2be8bd83bc8bcd3e3fe45135c6216b8d6f52f807dc2ad",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T17:01:37.807Z",
+      "sourceSetDigest": "8f149cc9fcbb8a5c7ef2be8bd83bc8bcd3e3fe45135c6216b8d6f52f807dc2ad",
+      "previousSourceSetDigest": "5fbcfc27431ccbb6704c8e947cd8435f72922d204dc1182bdd6186e1e7d90611",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T16:46:07.166Z",
+      "sourceSetDigest": "5fbcfc27431ccbb6704c8e947cd8435f72922d204dc1182bdd6186e1e7d90611",
+      "previousSourceSetDigest": "1ba00d8817af4446a296f3f9e157ab392576049e2cf99d874cf94eded1d790f2",
+      "changedSourceSets": ["model-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T16:36:35.073Z",
+      "sourceSetDigest": "1ba00d8817af4446a296f3f9e157ab392576049e2cf99d874cf94eded1d790f2",
+      "previousSourceSetDigest": "b9c989a1ecbc88a28aaa9f69f0cd87ab76745b35ece422ff41d267893061592f",
+      "changedSourceSets": ["plan-canvas"]
+    },
+    {
+      "generatedAt": "2026-08-06T16:31:59.080Z",
+      "sourceSetDigest": "b9c989a1ecbc88a28aaa9f69f0cd87ab76745b35ece422ff41d267893061592f",
+      "previousSourceSetDigest": "a737c4206829ebe4caf82e24552751c8f85d7b93644f4138a19b03804d38abec",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T16:09:09.315Z",
+      "sourceSetDigest": "a737c4206829ebe4caf82e24552751c8f85d7b93644f4138a19b03804d38abec",
+      "previousSourceSetDigest": "13782de1d4be9959c52bfb4197e93ddc1ca79429814a3be4ff1cfb3c1ee5bf8c",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T16:02:47.710Z",
+      "sourceSetDigest": "13782de1d4be9959c52bfb4197e93ddc1ca79429814a3be4ff1cfb3c1ee5bf8c",
+      "previousSourceSetDigest": "aa2fb8aa75689683cee279920bed7f3b095f47a07950b3325aed0d2589d06e3c",
+      "changedSourceSets": ["arqfs-safe-mode"]
+    },
+    {
+      "generatedAt": "2026-08-06T15:51:12.839Z",
+      "sourceSetDigest": "aa2fb8aa75689683cee279920bed7f3b095f47a07950b3325aed0d2589d06e3c",
+      "previousSourceSetDigest": "aec5ba44fc99df906e95a6b2dd0cef2def369205560e10bb867bffac2d9357f1",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T15:28:04.015Z",
+      "sourceSetDigest": "aec5ba44fc99df906e95a6b2dd0cef2def369205560e10bb867bffac2d9357f1",
+      "previousSourceSetDigest": "54881770b417e5256204c44ae0e7a97359a818fce1e312bfb0c2c0216e3e055e",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T15:21:21.220Z",
+      "sourceSetDigest": "54881770b417e5256204c44ae0e7a97359a818fce1e312bfb0c2c0216e3e055e",
+      "previousSourceSetDigest": "9cd0ec28e8e6c53a565220ef1f91959936d2e6c2ba7e5eed71ebbc19857e2a48",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T15:14:19.767Z",
+      "sourceSetDigest": "9cd0ec28e8e6c53a565220ef1f91959936d2e6c2ba7e5eed71ebbc19857e2a48",
+      "previousSourceSetDigest": "06067590eebaca21b8b564fb269c18b6b41f80ccae28dfe730574947ff3d91db",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T15:03:24.490Z",
+      "sourceSetDigest": "06067590eebaca21b8b564fb269c18b6b41f80ccae28dfe730574947ff3d91db",
+      "previousSourceSetDigest": "38508a1ade9fb8bbdb8aab7ed5dfbf56923d9168d00f2c118e9e1a36076d4a3d",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T03:40:41.622Z",
+      "sourceSetDigest": "38508a1ade9fb8bbdb8aab7ed5dfbf56923d9168d00f2c118e9e1a36076d4a3d",
+      "previousSourceSetDigest": "64f006127fe9d03448a2840466bf82a89765ddbae2e9ded1796d7f2c4fa39f6f",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T02:34:07.678Z",
+      "sourceSetDigest": "64f006127fe9d03448a2840466bf82a89765ddbae2e9ded1796d7f2c4fa39f6f",
+      "previousSourceSetDigest": "a4a4e82ad8be00a6cdf284b42387b308be02f6e83cdd2763d3628770ff217ac4",
+      "changedSourceSets": ["model-canvas", "plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T02:01:48.120Z",
+      "sourceSetDigest": "a4a4e82ad8be00a6cdf284b42387b308be02f6e83cdd2763d3628770ff217ac4",
+      "previousSourceSetDigest": "2e11c0f75e1a197ad0ad7305395d4fb685be655b142f92384ad60474448a1168",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T01:57:33.775Z",
+      "sourceSetDigest": "2e11c0f75e1a197ad0ad7305395d4fb685be655b142f92384ad60474448a1168",
+      "previousSourceSetDigest": "948511dcebd56ba33eb0870e79c9f6ec5b86bcf7fe26b062a4e649ee326c52e0",
+      "changedSourceSets": ["web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T01:52:47.833Z",
+      "sourceSetDigest": "948511dcebd56ba33eb0870e79c9f6ec5b86bcf7fe26b062a4e649ee326c52e0",
+      "previousSourceSetDigest": "c86444cba8568617fe71f9d24edd21788bb740edd75a6aa7d4ef0d5e661d2b11",
+      "changedSourceSets": ["plan-canvas", "web-app"]
+    },
+    {
+      "generatedAt": "2026-08-06T01:35:19.027Z",
+      "sourceSetDigest": "c86444cba8568617fe71f9d24edd21788bb740edd75a6aa7d4ef0d5e661d2b11",
+      "previousSourceSetDigest": "49f983ddfda3c49b06ebf653cf1fca5d113b1d60c65a5cd96c04958df5777a6b",
+      "changedSourceSets": ["accepted-adrs"]
+    },
+    {
       "generatedAt": "2026-08-05T23:36:14.565Z",
       "sourceSetDigest": "b87dc453e6e830c3fb627ff15c6dc39af80abc22935f405493815a4254f26cec",
       "previousSourceSetDigest": "7b178064daf9691f161e2de30df21807077d8aff87b5974723425176a23b5968",

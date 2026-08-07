@@ -56,6 +56,28 @@ function resolveChromiumExecutablePath() {
   return undefined;
 }
 
+/**
+ * Is this request leaving the machine?
+ *
+ * The privacy claim is that nothing the product does reaches an origin other
+ * than the one that served it, and three URL forms satisfy that without being
+ * network requests at all. `data:` was already allowed. `blob:` was not, and it
+ * had to be once the optical material began generating its displacement map:
+ * that map is drawn into an offscreen canvas and handed to an SVG filter as an
+ * object URL, so every lens produced a `blob:` request and the check read the
+ * product's own in-memory bytes as traffic off the device.
+ *
+ * Allowed on the origin embedded in the URL rather than on the scheme, because
+ * that is the part that carries the guarantee: `blob:` and `filesystem:` URLs
+ * are minted by a document and name the origin that minted them, so one naming
+ * a different origin is still a finding.
+ */
+function isOffOrigin(url, origin) {
+  if (url.startsWith(origin) || url.startsWith('data:')) return false;
+  const inner = /^(?:blob|filesystem):(.*)$/.exec(url);
+  return inner === null || !inner[1].startsWith(origin);
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const webDir = path.join(repoRoot, 'apps/web');
@@ -255,9 +277,7 @@ async function run() {
     // Covers the page and its Workers: a Worker that phoned home would appear
     // here even though its responses do not reach the `response` event.
     page.on('request', (request) => {
-      if (!request.url().startsWith(origin) && !request.url().startsWith('data:')) {
-        offOriginRequests.push(request.url());
-      }
+      if (isOffOrigin(request.url(), origin)) offOriginRequests.push(request.url());
     });
 
     await page.goto(`${origin}/`);
@@ -283,8 +303,11 @@ async function run() {
     const panelText = await page.locator('body').innerText();
     observed.projectHeader = panelText.includes('Courtyard House Reference');
     check(observed.projectHeader, 'the opened project name did not reach the workspace');
+    // Case-insensitive: the bar reads "Revision 191 . metric" now, and which
+    // letter is capitalised is not the fact being checked - that the revision
+    // the file records reached the workspace is.
     check(
-      panelText.includes('revision 191'),
+      /revision 191/i.test(panelText),
       'the project revision from the file did not reach the workspace',
     );
     // Read from the project, not from this script: the fixture's ground floor
@@ -313,6 +336,17 @@ async function run() {
     const planCanvas = page.locator('canvas').first();
     const groundFloorImage = await analyzeScreenshot(page, await planCanvas.screenshot());
     observed.groundFloorPlan = groundFloorImage;
+    /*
+     * The plan itself, saved as evidence rather than only measured. The
+     * workspace shot below is whatever tab the run ends on, which is 3D - so
+     * until this existed there was no capture of the surface most of the
+     * fixture work changes, and the ink counts were the only thing anyone could
+     * check the plan against.
+     */
+    writeFileSync(
+      path.join(repoRoot, 'benchmarks/results', 'native-open-plan.png'),
+      await planCanvas.screenshot(),
+    );
     // An empty plan is not near this number, it is at zero: the grid is drawn at
     // rgba(128,128,128,0.16) over white, which composites to about (223,223,223)
     // and so is never counted as ink. Anything in the thousands is drawn geometry.
@@ -321,9 +355,16 @@ async function run() {
       `the ground-floor plan looks empty (${groundFloorImage.inkPixels} ink pixels)`,
     );
 
-    // Scoped to the level control: the model tree also has a row per level, and
-    // clicking that would select a level rather than switch to it.
-    const levelControl = page.getByRole('group', { name: 'Level' });
+    /*
+     * Scoped to the level control: the model tree also has a row per level, and
+     * clicking that would select a level rather than switch to it.
+     *
+     * That control is the project directory's "Floor plans" region now, not the
+     * old `Level` group - a `<section>` with an accessible name is a `region`.
+     * The property being checked has not moved: a reader can put a different
+     * storey on the plan from the panel, and the drawing changes when they do.
+     */
+    const levelControl = page.getByRole('region', { name: 'Floor plans' });
     await levelControl.getByRole('button', { name: /Upper floor/ }).click();
     await page.waitForTimeout(300);
     const upperFloorImage = await analyzeScreenshot(page, await planCanvas.screenshot());
@@ -338,16 +379,39 @@ async function run() {
     /* ---------------------------------------------------------------- */
     /* 3D holds the same canonical ids                                   */
     /* ---------------------------------------------------------------- */
-    // Selected from the model tree by the project's own wall id, so what is
-    // being proven is that 3D knows that id - not that two surfaces happen to
-    // agree about a wall this script drew.
+    /*
+     * Selected from the model tree by the project's own wall id, so what is
+     * being proven is that 3D knows that id - not that two surfaces happen to
+     * agree about a wall this script drew.
+     *
+     * The tree is two interactions further in than it was. The panel's Model
+     * tab holds it, and it sits inside a collapsed "All elements" disclosure -
+     * it used to be open, which ended the panel in seventy-nine near-identical
+     * rows under a directory that already said "Walls 79". Both are opened here
+     * rather than reached around, because a reader has to open them too.
+     */
+    await page.getByRole('tab', { name: 'Model', exact: true }).click();
+    // The summary element itself: `details`/`summary` role mapping differs
+    // between engines, and the toggle is the summary rather than the group.
+    await page.locator('details.arq-project-directory__tree > summary').click();
     const wallRow = page.getByRole('treeitem').filter({ hasText: 'Exterior 250 mm' }).first();
     await wallRow.click();
-    await page.waitForFunction(
-      (sel) => document.querySelector(sel)?.textContent?.includes('1 selected'),
-      STATUS_BAR,
-      { timeout: 10_000 },
-    );
+    /*
+     * Asserted on the row itself rather than on a status-bar string.
+     *
+     * It used to wait for "1 selected" in the strip. The strip carries the two
+     * fields that are guarantees now - what the pointer snaps to and where the
+     * work is kept - and selection is stated by the Inspector and by the row's
+     * own state, so that phrase is not on screen anywhere. `aria-selected` on
+     * the tree item is the better assertion in any case: it is the thing a
+     * screen reader is told, and it is about the row that was clicked rather
+     * than about a count somewhere else agreeing.
+     */
+    await page
+      .locator('[role="treeitem"][aria-selected="true"]')
+      .filter({ hasText: 'Exterior 250 mm' })
+      .first()
+      .waitFor({ timeout: 10_000 });
     await page.getByRole('tab', { name: /3D/ }).click();
     const modelCanvas = page.locator('canvas').first();
     await modelCanvas.waitFor({ timeout: 20_000 });
@@ -453,7 +517,7 @@ async function run() {
     check(page.workers().length === 1, 'reopening after a close did not produce a working project');
     const reopenedText = await page.locator('body').innerText();
     check(
-      reopenedText.includes('revision 191'),
+      /revision 191/i.test(reopenedText),
       'the reopened project did not report the same revision',
     );
 

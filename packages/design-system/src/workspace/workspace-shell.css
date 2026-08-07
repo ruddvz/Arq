@@ -19,6 +19,7 @@
  * composition anyway.
  */
 @import '../shell/shell-controls.css';
+@import '../appearance/material.css';
 
 @media (pointer: fine) {
   .arq-tab-strip .arq-shell-button,
@@ -34,6 +35,370 @@
   .arq-tab-strip__close {
     padding: var(--arq-space-micro);
   }
+}
+
+/*
+ * The base surface, and the reason dark appearance did not work before it.
+ *
+ * Every panel referenced `--arq-ui-*` tokens, so the chrome went dark
+ * correctly - but nothing applied a background or a text colour at the root, so
+ * the page itself stayed the browser default. In light that is invisible,
+ * because the default happens to be white. In dark it left a full-height white
+ * rectangle where the drawing surface is, with black default text on it: the
+ * single most visible defect in the whole appearance, and one no token value
+ * could have fixed, because no rule was reading them.
+ */
+/*
+ * The page itself, which nothing had ever claimed.
+ *
+ * A browser gives `body` an 8px margin by default and no rule here removed it,
+ * so the shell was inset 8px on every side of every band. Two things followed
+ * from that, and both were visible in every capture:
+ *
+ * - The shell asks for `100dvh` of height starting 8px down the page, so its
+ *   last 8px were always below the fold. On a band wide enough to keep the
+ *   status strip on one line the overhang landed in padding and nothing was
+ *   lost. At 1024px the strip wraps to two lines, and the second line - which
+ *   is where sync state was - was cut off by the bottom of the window.
+ * - Sixteen pixels of every viewport's width went to a margin, which on a
+ *   430px phone is four per cent of the drawing.
+ *
+ * The surface moves to the page with it. `.arq-workspace` carried the canvas
+ * colour, so in dark appearance the margin showed as a pale frame around the
+ * whole application - the root element was still the browser's default.
+ */
+/*
+ * Padding counts inside a width, everywhere.
+ *
+ * Nothing in this design system ever set `box-sizing`, so every element in it
+ * was the CSS default of `content-box`: an element given a width and padding is
+ * that width *plus* its padding, and any `width: 100%` with padding overflows
+ * its parent by exactly the padding. The status strip was the visible case -
+ * full width plus 32px of inner padding, so its right-hand group was clipped
+ * mid-word by the edge of the window - but it is a property of every padded box
+ * here, and fixing the one that showed would have left the rest waiting.
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--arq-ui-canvas);
+  /* Tells the browser which form controls and scrollbars to draw, which is the
+     part of dark appearance no token can reach. */
+  color-scheme: light dark;
+}
+
+.arq-workspace {
+  background: var(--arq-ui-canvas);
+  color: var(--arq-ui-text-primary);
+  font: var(--arq-text-body);
+}
+
+/*
+ * The floating composition, on the bands wide enough to hold it.
+ *
+ * The shell was a set of full-bleed docked columns sharing hard edges, which is
+ * the boxed, dashboard-like look the Version 12 critique names. The structure
+ * does not change - the same regions in the same order, so keyboard order,
+ * panel reducers and the canvas floor all behave exactly as before - but each
+ * region becomes a card resting on the canvas, separated by a gutter rather
+ * than a 1px rule.
+ *
+ * Kept to `pointer: fine` and a minimum width because the gutters cost real
+ * estate a phone does not have, and doc 46's rule is that a touch band gets its
+ * own composition rather than a scaled-down desktop one.
+ */
+@media (pointer: fine) and (min-width: 1180px) {
+  .arq-workspace__shell {
+    gap: var(--arq-space-compact);
+    padding: var(--arq-space-compact);
+  }
+
+  .arq-workspace__row {
+    gap: var(--arq-space-compact);
+  }
+
+  .arq-workspace__bar,
+  .arq-workspace__docked,
+  .arq-workspace .arq-mode-rail,
+  .arq-workspace .arq-tool-rail {
+    border-radius: var(--arq-radius-panel);
+    background: var(--arq-ui-paper);
+    border: 1px solid var(--arq-ui-line-subtle);
+    overflow: hidden;
+  }
+
+  /*
+   * The drawing gets no card of its own: it is the content the cards float
+   * over, so it keeps the canvas colour and simply occupies the gap between
+   * them. Giving it a surface would put the model back inside a box.
+   */
+  .arq-workspace__viewport {
+    border-radius: var(--arq-radius-panel);
+  }
+
+  /*
+   * The bars are chrome, not content, so they sit on the raised surface.
+   *
+   * Scoped away from material surfaces. Unscoped, this stripped the fill and
+   * the border off the top bar and the status bar - both of which are
+   * `.arq-material--optical` - and left them blurring a backdrop with no tint
+   * over it and a drop shadow around nothing. That is the one outcome
+   * ADR-0031's `@supports not` fallback exists to prevent, reached from the
+   * supported path instead: a surface you can read the model straight through.
+   *
+   * The rule that decides a material surface's fill, border and shadow is
+   * `material.css`, and nothing outside it may take that decision back.
+   */
+  .arq-workspace__bar > *:not(.arq-material) {
+    border: 0;
+    background: transparent;
+  }
+
+  /*
+   * The two rails size to what they contain instead of stretching the full
+   * height of the workspace. Stretched, they were 780px slabs holding eleven
+   * words between them and nothing else - the single largest area of empty
+   * chrome on the screen, and exactly the "boxy" reading the critique gives.
+   * A dock that ends where its controls end lets the canvas colour run behind
+   * it, which is what makes the rest of the composition read as floating.
+   */
+  .arq-workspace .arq-mode-rail,
+  .arq-workspace .arq-tool-rail {
+    align-self: flex-start;
+    max-height: 100%;
+    overflow: auto;
+  }
+
+  /*
+   * One dock, one column.
+   *
+   * The rails used to be joined edge to edge with a negative margin, which
+   * removed the gutter between them and left the two columns reading as one
+   * slab: eleven glyphs in a 112px grid down the side of the drawing. The
+   * reference gives the edge a single 56px column, so the dock stacks them
+   * instead of abutting them, and the seam between the two groups is a rule
+   * rather than a gap - doc 36's "grouping/spacing, not a second colour
+   * system".
+   */
+  .arq-workspace__dock {
+    align-self: flex-start;
+    max-height: 100%;
+    overflow: auto;
+    /*
+     * Shape only, for the same reason as the status bar: the fill and the
+     * border belong to `material.css`. An opaque paper background here meant
+     * the dock paid for a `backdrop-filter` that resolved a backdrop no pixel
+     * ever showed.
+     */
+    border-radius: var(--arq-radius-panel);
+  }
+
+  .arq-workspace__dock > .arq-mode-rail,
+  .arq-workspace__dock > .arq-tool-rail {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .arq-workspace__dock > .arq-mode-rail + .arq-tool-rail {
+    border-top: 1px solid var(--arq-ui-line-subtle);
+  }
+
+  /*
+   * The status strip is the quietest thing in the workspace and does not earn
+   * a full-width card. It shrinks to its content and sits at the leading edge,
+   * which is also what stops it competing with the drawing above it.
+   */
+  /*
+   * The status strip is the quietest thing in the workspace and reads as a
+   * floating pill rather than a bar welded to the window edge. It shrinks to
+   * its content, which is also what stops it competing with the drawing above
+   * it - a full-bleed band at the bottom of the screen reads as a second piece
+   * of structure, and the reference composition has none there.
+   */
+  .arq-workspace__bar--status {
+    /*
+     * Stretch, not `flex-start`. The strip has two groups pushed to opposite
+     * ends now, and in a flex column `flex-start` sizes the slot to its content
+     * on the cross axis - so the slot shrank to the text's own width, the pill
+     * with it, and the right-hand group was clipped mid-word.
+     */
+    align-self: stretch;
+    min-width: 0;
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+  }
+
+  /*
+   * The pill is the inner panel, not the slot around it. The slot is a layout
+   * row that stretches to the shell's width by definition, so rounding it did
+   * nothing visible - the element a reader actually sees is `.arq-status-bar`
+   * inside it, and that is what has to shrink.
+   */
+  /*
+   * Shape and space only. The fill, the border and the shadow are the
+   * material's, and this rule used to overwrite all three with an opaque
+   * paper background - which left a `backdrop-filter` running underneath a
+   * surface nothing could be seen through. Blur that resolves a backdrop
+   * hidden behind an opaque fill is GPU cost with no pixel to show for it,
+   * which is the cost rule ADR-0031 sets, failed in the quietest way.
+   */
+  .arq-workspace__bar--status > .arq-status-bar {
+    width: 100%;
+    max-width: 100%;
+    padding-inline: var(--arq-space-panel);
+    border-radius: 999px;
+  }
+}
+
+/*
+ * The view switcher, as the reference draws it: one capsule in the project bar.
+ *
+ * This used to be a run of CSS that made the *tab strip* look like a capsule
+ * while leaving it on a full-width row of its own beneath the bar. Two stacked
+ * full-bleed bars is most of what makes the top of a window read as a
+ * dashboard, and the row cost forty pixels of drawing to say something the bar
+ * had room for. The switcher is a real segmented control now and lives in the
+ * bar, so the row is gone on every band that has a bar wide enough for it.
+ *
+ * The track is the recessed surface and the selected segment is the raised one
+ * - the same figure/ground relationship a physical segmented control has, and
+ * the reason the selected segment reads as selected without a colour.
+ */
+.arq-view-kinds {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--arq-ui-line-subtle);
+  border-radius: 999px;
+  background: var(--arq-ui-surface-2);
+}
+
+.arq-view-kinds__segment {
+  gap: var(--arq-space-micro);
+  border-radius: 999px;
+  color: var(--arq-ui-text-secondary);
+  white-space: nowrap;
+}
+
+/*
+ * Raised, weighted and named - three cues, none of which is a colour.
+ * Blueprint section 126: status is never carried by colour alone, and "which
+ * view am I looking at" is exactly the kind of status that rule is about.
+ */
+.arq-view-kinds__segment[aria-selected='true'] {
+  background: var(--arq-ui-paper);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
+  color: var(--arq-ui-text-primary);
+  font-weight: 600;
+}
+
+.arq-view-kinds__segment:disabled {
+  color: var(--arq-ui-text-muted);
+  /* Legible, not invisible: the segment carries its reason and a reader has to
+     be able to read the label the reason is about. */
+  opacity: 1;
+}
+
+/*
+ * A glyph beside a word does not need the 44px square a glyph alone does - on a
+ * mouse. A finger does, and `.arq-shell-button`'s minimum is there for exactly
+ * that reason, so the relaxation is scoped to a fine pointer the way every
+ * other density relaxation in this file already is. Dropping it globally would
+ * have put three 28px-tall targets in the middle of an iPad's project bar.
+ */
+@media (pointer: fine) {
+  .arq-view-kinds__segment,
+  .arq-top-bar__home,
+  .arq-view-tools .arq-shell-button {
+    min-width: 0;
+  }
+
+  .arq-view-tools .arq-shell-button {
+    min-width: 32px;
+    min-height: 32px;
+  }
+}
+
+.arq-view-kinds__segment svg,
+.arq-top-bar__home svg {
+  flex-shrink: 0;
+}
+
+.arq-top-bar__home {
+  padding: var(--arq-space-micro);
+}
+
+/*
+ * Project identity carries the weight in the bar, and the state readouts sit
+ * below it in the reading order rather than beside it in the same voice. The
+ * bar previously gave a project's name exactly the emphasis it gave Redo.
+ */
+.arq-top-bar__identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  max-width: 280px;
+  line-height: 1.15;
+}
+
+.arq-top-bar__identity-name {
+  font: var(--arq-text-project-title);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arq-top-bar__identity-detail {
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.arq-top-bar [data-top-bar-slot='save-state'],
+.arq-top-bar [data-top-bar-slot='sync-state'] {
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+}
+
+/*
+ * Figures that are read as measurements rather than prose: coordinates, view
+ * scale, level and selection counts. Proportional digits make a coordinate
+ * readout jitter horizontally as the pointer moves, which is exactly the
+ * readout a user is trying to hold their eye on.
+ */
+/*
+ * Figures read as measurements - but only where there are figures.
+ *
+ * The status bar was set in the mono face along with the numeric HUD, and it
+ * carries no numbers any more: "Snap: endpoint" and "Local working copy ·
+ * portable source unchanged" are sentences, and a sentence set in a monospace
+ * face reads as terminal output rather than as the product speaking. The HUD
+ * keeps it, because exact length and angle entry is exactly what the face is
+ * for.
+ */
+.arq-context-hud__surface {
+  font-family: var(--arq-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Two groups at the two ends, each a row of its own fields. */
+.arq-status-bar__group {
+  display: flex;
+  align-items: center;
+  gap: var(--arq-space-section);
+  min-width: 0;
 }
 
 /*
@@ -78,9 +443,77 @@
  * A floating panel is the one place a shadow is correct - it is above the
  * canvas rather than beside it, and without one its edge reads as a docked
  * separator. Reduced-motion users get the same shadow; it is depth, not motion.
+ *
+ * It also carries `arq-material` (ADR-0031): it is floating chrome over model
+ * content, which is exactly the case the material layer exists for. The docked
+ * panels deliberately do not - they share an edge with the canvas and are
+ * already separated by it.
  */
+/*
+ * A floating panel's footprint, published so content underneath can account
+ * for it.
+ *
+ * A drawing is meant to run behind these panels - that is the whole point of a
+ * panel that floats rather than docks, and a plan can be panned out from under
+ * one. A document cannot. The Project overview is a document: its heading is
+ * the project's own name, it does not scroll sideways, and it was rendering
+ * under the project browser with the name cut in half by the panel's edge.
+ *
+ * The offset is a variable rather than a repeated calc so the panel's position
+ * and the space content leaves for it are the same declaration. The width is
+ * set by the shell, which is the only place that knows it - a panel is
+ * resizable, so it is state rather than a token.
+ */
+.arq-workspace__row {
+  --arq-overlay-left-offset: 0px;
+  --arq-overlay-right-offset: 0px;
+}
+
 .arq-workspace__overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: var(--arq-z-shell-raised);
+  overflow: auto;
   box-shadow: 0 0 12px rgb(0 0 0 / 18%);
+}
+
+.arq-workspace__overlay--left {
+  left: var(--arq-overlay-left-offset);
+}
+
+.arq-workspace__overlay--right {
+  right: var(--arq-overlay-right-offset);
+}
+
+/*
+ * In the floating composition an overlay panel is a card resting on the
+ * drawing, not a full-height slab pinned to the window edge. It is inset on
+ * three sides so the canvas is visibly continuous behind and around it, which
+ * is the whole point of the panel floating rather than docking.
+ */
+@media (pointer: fine) and (min-width: 1180px) {
+  .arq-workspace__overlay {
+    top: 0;
+    bottom: 0;
+    border-radius: var(--arq-radius-panel);
+  }
+
+  /*
+   * Begins where the canvas begins, not where the row does, so the panel rests
+   * on the drawing and leaves the rails beside it visible rather than covering
+   * them.
+   *
+   * `--arq-rails-width` is the rails' own content width. Each rail is a card in
+   * this composition, so it also carries a 1px border on each side and a
+   * gutter after it - two rails, hence twice `2px + gutter` - and one more
+   * gutter separates the panel from the last rail.
+   */
+  .arq-workspace__row {
+    --arq-overlay-left-offset: calc(
+      var(--arq-rails-width, 0px) + 2 * (2px + var(--arq-space-compact)) + var(--arq-space-compact)
+    );
+  }
 }
 
 /*
@@ -122,4 +555,511 @@
   .arq-skip-link {
     transition: transform var(--arq-motion-fast) var(--arq-ease-standard);
   }
+}
+
+/*
+ * A glyph keeps its own width.
+ *
+ * Icons sit in flex rows beside their labels, and a flex item's default
+ * `min-width: auto` lets it be crushed when the row is narrower than its
+ * content. In the 48px tool dock every tool icon measured 0 x 16 - present in
+ * the DOM, sized correctly in one axis, and invisible - which read as "the
+ * icons were never wired" and was in fact the layout squeezing them flat.
+ */
+.arq-tool-rail svg,
+.arq-mode-rail svg,
+.arq-shell-button svg {
+  flex-shrink: 0;
+}
+
+/*
+ * The view's own title, on the corner of the drawing.
+ *
+ * A drawing without one is untitled: a reader who opens a project on the wrong
+ * level, or reads a 1:200 plan as 1:100, has nothing on screen telling them so.
+ *
+ * It used to float centred over the canvas, because the sheet is *painted* into
+ * the canvas rather than laid out as an element and nothing in the DOM knew
+ * where the page was. Centred, it had to be kept clear of the drawing by
+ * reserving a band at the top of the fit - chrome taking space from the model
+ * to avoid landing on it. `PlanCanvas` reports the sheet's rectangle now, so
+ * the chip sits on the page's own top-left corner, straddling its edge the way
+ * the reference draws it, and the reserved band is gone.
+ */
+.arq-view-identity {
+  position: absolute;
+  z-index: var(--arq-z-shell-raised);
+  display: flex;
+  align-items: baseline;
+  gap: var(--arq-space-compact);
+  padding: var(--arq-space-micro) var(--arq-space-panel);
+  border: 1px solid var(--arq-ui-line-subtle);
+  border-radius: 999px;
+  background: var(--arq-ui-paper);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/*
+ * The drawing's own controls, on the opposite corner.
+ *
+ * Paired with the title rather than put in a toolbar: both belong to the sheet,
+ * both move with it, and a reader looking at a drawing should not have to look
+ * away from it to act on it.
+ */
+.arq-view-tools {
+  position: absolute;
+  z-index: var(--arq-z-shell-raised);
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--arq-ui-line-subtle);
+  border-radius: 999px;
+  background: var(--arq-ui-paper);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+.arq-view-tools .arq-shell-button {
+  padding: var(--arq-space-micro);
+  border-radius: 999px;
+}
+
+.arq-view-identity strong {
+  font: var(--arq-text-panel-title);
+}
+
+.arq-view-identity span {
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * The project directory: three headed groups of one-line rows.
+ *
+ * Every measurement here is doing one job - making a row scannable at a glance.
+ * A fixed row height and a single baseline mean the eye runs down the labels
+ * without re-finding them, and the counts sit on their own right-hand column so
+ * "79" and "16" line up rather than trailing their labels at different offsets.
+ * That column is what the panel had none of, and what made it read as prose.
+ */
+.arq-project-directory {
+  display: flex;
+  flex-direction: column;
+  gap: var(--arq-space-panel);
+  padding: var(--arq-space-compact);
+  min-height: 0;
+  flex: 1;
+}
+
+.arq-project-directory__heading {
+  margin: 0 0 var(--arq-space-micro);
+  padding-inline: var(--arq-space-compact);
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.arq-project-directory__row {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  align-items: center;
+  gap: var(--arq-space-compact);
+  width: 100%;
+  min-height: 30px;
+  padding: 0 var(--arq-space-compact);
+  border: 0;
+  border-radius: var(--arq-radius-control);
+  background: transparent;
+  color: var(--arq-ui-text-primary);
+  font: var(--arq-text-body);
+  text-align: start;
+}
+
+/* A row that is a button behaves like one; a row that is a readout does not. */
+button.arq-project-directory__row {
+  cursor: pointer;
+}
+
+button.arq-project-directory__row:hover {
+  background: var(--arq-ui-surface-2);
+}
+
+/*
+ * The level on show.
+ *
+ * It was a solid ink slab with reversed text - the loudest thing on a panel
+ * whose job is to be scanned, and heavier than the drawing it points at. The
+ * reference marks it with a wash of the brand accent, the accent for the label
+ * and a bar at the leading edge.
+ *
+ * Three cues, and the tint is the least of them. Blueprint section 126's
+ * "status not colour-only" is why: the weight and the marker carry the state on
+ * their own, so a reader who cannot separate the wash from the panel behind it
+ * loses nothing. `aria-pressed` remains what assistive technology is told.
+ */
+button.arq-project-directory__row[aria-pressed='true'] {
+  position: relative;
+  background: var(--arq-ui-selected-surface);
+  color: var(--arq-active-indicator);
+  font-weight: 600;
+}
+
+button.arq-project-directory__row[aria-pressed='true']::before {
+  content: '';
+  position: absolute;
+  inset-block: 4px;
+  inset-inline-start: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--arq-active-indicator);
+}
+
+.arq-project-directory__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * Tabular so a column of counts is a column: proportional digits put "79" and
+ * "16" at different widths and the right edge stops being a line.
+ */
+.arq-project-directory__count {
+  color: var(--arq-ui-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+button.arq-project-directory__row[aria-pressed='true'] .arq-project-directory__count {
+  color: var(--arq-active-indicator);
+}
+
+.arq-project-directory__row[aria-disabled='true'] {
+  color: var(--arq-ui-text-secondary);
+}
+
+/*
+ * The two disclosures read as one kind of thing, because they are one.
+ *
+ * "All elements" was styled as a section heading - uppercase, letter-spaced,
+ * semibold - and sat directly under "Not shown (2)", which was not. So the
+ * panel ended in two rows with the same triangle and the same job, one of them
+ * shouting. Worse, the shout matched "FLOOR PLANS" and "MODEL", which are
+ * headings and are not controls: a reader scanning for structure found a thing
+ * that opened when clicked.
+ *
+ * Sentence case for both, and the heading treatment stays with the headings.
+ */
+.arq-project-directory__notices,
+.arq-project-directory__tree > summary {
+  padding-inline: var(--arq-space-compact);
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+}
+
+.arq-project-directory__notices ul {
+  margin: var(--arq-space-micro) 0 0;
+  padding-inline-start: 1.2em;
+  color: var(--arq-ui-text-secondary);
+}
+
+.arq-project-directory__tree {
+  min-height: 0;
+  overflow: auto;
+}
+
+/*
+ * The write guarantee, above the panel's one command.
+ *
+ * Secondary rather than muted: it is quiet, but it is a promise about the
+ * reader's own file, and muted is the weight this file gives to counts and
+ * disclosure labels. `margin-top: auto` pins it to the foot of the panel so it
+ * sits with "Close project" whatever the directory above it contains.
+ */
+.arq-project-directory__write-state {
+  margin: auto 0 0;
+  padding-inline: var(--arq-space-compact);
+  color: var(--arq-ui-text-secondary);
+  font: var(--arq-text-label);
+}
+
+.arq-project-directory__write-state strong {
+  color: var(--arq-ui-text-primary);
+}
+
+/*
+ * The panel's one command, drawn as one.
+ *
+ * `.arq-shell-button`'s border is transparent by default, which is right for a
+ * rail of glyphs sitting on a panel and wrong for a lone action at the foot of
+ * a list. It read as a centred caption below the counts - the only thing on the
+ * panel that does something, and the only thing with no edge to say so.
+ *
+ * Closing releases the Worker and the project's resident pages and touches
+ * nothing on disk, so it stays quiet: an outline, not a filled or destructive
+ * button.
+ */
+.arq-project-directory > .arq-shell-button {
+  align-self: stretch;
+  border-color: var(--arq-ui-line-subtle);
+}
+
+.arq-project-directory__tree > summary,
+.arq-project-directory__notices > summary {
+  padding-block: var(--arq-space-micro);
+  cursor: pointer;
+}
+
+/*
+ * A document surface, unlike a drawing, cannot be moved out from under a
+ * floating panel - so it keeps clear of one instead. Both sides are asked,
+ * because the inspector floats on the right on the same bands. Each term is
+ * zero when nothing is floating there, which leaves a full-width page.
+ */
+.arq-project-overview {
+  padding-inline-start: calc(
+    var(--arq-space-page) + var(--arq-overlay-left-offset, 0px) + var(--arq-overlay-left-width, 0px)
+  );
+  padding-inline-end: calc(
+    var(--arq-space-page) + var(--arq-overlay-right-offset, 0px) +
+      var(--arq-overlay-right-width, 0px)
+  );
+}
+
+/*
+ * The dock's active control: a filled circle in the brand accent.
+ *
+ * `.arq-shell-button[aria-pressed='true']` paints an ink square, and it is
+ * shared by the tab strip, the panel rows and the phone dock - so this is
+ * scoped rather than a change to that rule. The reference gives the rail's
+ * active glyph a phthalo-green disc, which is the one place the brand colour is
+ * meant to appear in the chrome (brand spec: black, white, and the accent
+ * "reserved for" active states).
+ *
+ * Not colour alone: the disc is a fill against an otherwise flat column, so the
+ * state is carried by contrast and shape as well as hue, and `aria-pressed`
+ * remains the source of truth that assistive technology reads. The token
+ * resolves to #0b6b50 in light and #35c99b in dark, which is why the dark value
+ * exists at all - the brand green measures 2.83:1 on dark paper.
+ */
+.arq-workspace__dock .arq-shell-button[aria-pressed='true'] {
+  background: var(--arq-active-indicator);
+  border-radius: 999px;
+  color: var(--arq-white);
+}
+
+/*
+ * Dark appearance reverses which of the brand's two neutrals reads as "on top
+ * of the accent": #35c99b is a light green, and white glyphs on it fall below
+ * the contrast the rest of the shell holds itself to.
+ */
+@media (prefers-color-scheme: dark) {
+  .arq-workspace__dock .arq-shell-button[aria-pressed='true'] {
+    color: var(--arq-black);
+  }
+}
+
+/*
+ * The browser's own tabs had no visual state at all.
+ *
+ * They are rendered with `aria-selected`, and `.arq-shell-button`'s pressed
+ * treatment keys on `aria-pressed` - so nothing matched and the active section
+ * was identifiable only by which panel body happened to be showing. A tab
+ * strip where every tab looks the same is a tab strip that has stopped being
+ * one.
+ *
+ * Underline and weight, matching the view tabs rather than inventing a second
+ * selection language for the same gesture.
+ */
+.arq-project-browser__tabs {
+  gap: var(--arq-space-micro);
+  padding-inline: var(--arq-space-compact);
+  border-bottom: 1px solid var(--arq-ui-line-subtle);
+}
+
+.arq-project-browser__tab {
+  min-width: 0;
+  padding-inline: var(--arq-space-compact);
+  border-radius: 0;
+  color: var(--arq-ui-text-secondary);
+}
+
+.arq-project-browser__tab[aria-selected='true'] {
+  border-bottom: 2px solid var(--arq-ui-ink);
+  color: var(--arq-ui-text-primary);
+  font-weight: 600;
+}
+
+/*
+ * A text field, which the design system had none of.
+ *
+ * Every input in the shell rendered as the browser's default control: a beige
+ * box with a bevelled border, in a panel made of flat surfaces and hairlines.
+ * The project browser's search field was the most visible of them.
+ */
+.arq-field {
+  width: 100%;
+  min-height: 28px;
+  padding: var(--arq-space-micro) var(--arq-space-compact);
+  border: 1px solid var(--arq-ui-line-subtle);
+  border-radius: var(--arq-radius-control);
+  background: var(--arq-ui-surface-1);
+  color: var(--arq-ui-text-primary);
+  font: var(--arq-text-body);
+}
+
+.arq-field::placeholder {
+  color: var(--arq-ui-text-muted);
+}
+
+.arq-field:focus-visible {
+  outline: 2px solid var(--arq-focus-ring);
+  outline-offset: 1px;
+}
+
+.arq-project-directory__search {
+  padding-inline: var(--arq-space-compact);
+}
+
+/* Reserves no row when it is empty, so an unused filter costs no height. */
+.arq-project-directory__result-count {
+  margin: 0;
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-label);
+}
+
+.arq-project-directory__result-count:empty {
+  display: none;
+}
+
+/*
+ * The optical material is applied as a *class*, not redeclared here.
+ *
+ * ADR-0031 makes `material.css` the only file in this repository that may
+ * declare `backdrop-filter`, and its own policy test enforces it. A first
+ * attempt wrote the surface rules into this stylesheet, which is precisely the
+ * second material system the ADR exists to prevent, and the test caught it -
+ * so the shell's optical surfaces carry `arq-material arq-material--optical`
+ * from their components and this file styles only their geometry.
+ *
+ * Which surfaces: bounded navigation shells, floating tool groups and compact
+ * overlays - the project bar, the view capsule, the dock, the status strip and
+ * the drawing's own corner chrome. Every one floats over the canvas, which is
+ * the condition that makes a material worth anything: there is something behind
+ * it to be behind.
+ *
+ * What is deliberately not on the list is the other half of the package's rule.
+ * Project truth stays solid: the project browser and the Inspector are large
+ * presentations of numbers, names and dense lists, and a translucent surface
+ * lowers the contrast of everything drawn on it.
+ */
+
+/*
+ * The selected segment is the one raised thing on a recessed track, so it reads
+ * as the piece of glass and the track as its housing. Solid enough to keep its
+ * label legible over whatever the drawing is doing behind it - the package's
+ * "selected tabs" case, and the surface the refraction lens sits on.
+ */
+.arq-view-kinds__segment[aria-selected='true'] {
+  background: var(--arq-optical-fill-solid);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 55%),
+    0 2px 8px rgb(16 27 23 / 10%);
+}
+
+/*
+ * The refraction lens, and its slot.
+ *
+ * The slot is what moves; the lens inside it only ever draws at the origin.
+ * Separating them means the animation is a transform on one element rather
+ * than a filter region being recomputed as it travels, which is the difference
+ * between the compositor moving a layer and the main thread re-resolving a
+ * backdrop every frame.
+ *
+ * Decorative, so it takes no input and announces nothing. `pointer-events:
+ * none` matters as much as the `aria-hidden` on the element: the lens sits over
+ * the button it decorates, and a decoration that swallows the click is worse
+ * than no decoration.
+ */
+.arq-refraction-lens__slot {
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-start: 2px;
+  pointer-events: none;
+  z-index: 1;
+  transition: transform var(--arq-motion-duration-fast, 160ms) var(--arq-motion-ease-standard, ease);
+}
+
+.arq-refraction-lens {
+  display: block;
+  pointer-events: none;
+  contain: layout paint style;
+}
+
+/* Zero-sized: it holds the filter definition, not a picture. */
+.arq-refraction-lens__defs {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+  overflow: hidden;
+}
+
+/*
+ * The lens is a moving object, so a request for less motion removes the
+ * movement rather than the object - it lands where it belongs without
+ * travelling there.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .arq-refraction-lens__slot {
+    transition: none;
+  }
+}
+
+/*
+ * Every configuration that turns the material off turns the lens off with it.
+ * A distortion over an opaque surface distorts nothing and costs a filter.
+ */
+@media (prefers-reduced-transparency: reduce),
+  (prefers-contrast: more),
+  (forced-colors: active),
+  print {
+  .arq-refraction-lens__slot {
+    display: none;
+  }
+}
+
+/*
+ * Continuous corners, everywhere, including the pills.
+ *
+ * `border-radius` draws a quarter-circle. A quarter-circle meets the straight
+ * edge beside it with a jump in curvature - tangent-continuous but not
+ * curvature-continuous, G1 rather than G2 - and that discontinuity is what
+ * makes a corner "pop". Apple's platforms have been G2 for a decade: curvature
+ * ramps in and out continuously, which is why their shapes read as one outline
+ * rather than as arcs joined to lines.
+ *
+ * A first pass applied this only to the rounded rectangles, on the reasoning
+ * that a capsule's ends are true semicircles. That is the wrong reading. A
+ * stadium's semicircular end has the same curvature discontinuity where it
+ * meets the straight side, and Apple's capsules are G2 too - the continuity is
+ * the point, not the radius. So it applies to every corner in the shell.
+ *
+ * One declaration over the subtree rather than a list of selectors, because a
+ * list is a thing to forget to add to: any surface that gets a radius later
+ * gets a continuous one without anybody remembering. Elements with no radius
+ * are unaffected - the property has nothing to shape.
+ *
+ * `corner-shape` applies to whatever `border-radius` is already set, so this is
+ * purely additive: a browser that does not know the property ignores it and
+ * keeps the circular corner it drew before. No fallback machinery is needed and
+ * none is written.
+ */
+.arq-workspace,
+.arq-workspace *,
+.arq-modal-dialog,
+.arq-modal-dialog * {
+  corner-shape: squircle;
 }

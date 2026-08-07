@@ -29,11 +29,21 @@
 export type ForcedColorsMode = 'none' | 'active';
 export type ContrastPreference = 'no-preference' | 'more' | 'less';
 export type MotionPreference = 'no-preference' | 'reduce';
+export type TransparencyPreference = 'no-preference' | 'reduce';
 
 export interface DisplayPreferences {
   readonly forcedColors: ForcedColorsMode;
   readonly contrast: ContrastPreference;
   readonly motion: MotionPreference;
+  /**
+   * `prefers-reduced-transparency`. The fourth axis, and the one this module
+   * was missing: the other three describe how colour and movement may be used,
+   * and none of them answers whether a surface may let the content behind it
+   * show through. A user who asks for reduced transparency is asking about
+   * exactly that, and the request is not covered by the contrast preference -
+   * translucency and contrast are separate complaints with separate remedies.
+   */
+  readonly transparency: TransparencyPreference;
 }
 
 /** What a browser that reports nothing gets. Every preference defaults to the unmodified product. */
@@ -41,6 +51,7 @@ export const DEFAULT_DISPLAY_PREFERENCES: DisplayPreferences = {
   forcedColors: 'none',
   contrast: 'no-preference',
   motion: 'no-preference',
+  transparency: 'no-preference',
 };
 
 /**
@@ -112,6 +123,31 @@ export function motionMayCarryMeaning(preferences: DisplayPreferences): boolean 
 }
 
 /**
+ * Whether a control-layer surface may be translucent.
+ *
+ * Three independent reasons make this false, each sufficient on its own:
+ *
+ * - the user asked for reduced transparency, which is the direct request;
+ * - forced colours, because the substitution replaces the tint anyway and
+ *   leaves only the cost - a blur that buys nothing and still occupies the GPU;
+ * - a more-contrast request, because a translucent surface lowers the contrast
+ *   of everything drawn on it by definition, which is the opposite of what was
+ *   asked for.
+ *
+ * This answers the accessibility question only. Whether ARQ uses translucent
+ * material *at all* is a separate product question, and blueprint section 14
+ * currently answers it no - see `appearance-policy.ts`. A caller needs both
+ * answers to be yes; this one is not permission on its own.
+ */
+export function materialMayUseTransparency(preferences: DisplayPreferences): boolean {
+  return (
+    preferences.transparency !== 'reduce' &&
+    preferences.forcedColors !== 'active' &&
+    preferences.contrast !== 'more'
+  );
+}
+
+/**
  * Reads the preferences from a matchMedia-like function.
  *
  * Injected rather than reaching for `window`, so this is testable and so a
@@ -141,5 +177,11 @@ export function readDisplayPreferences(
         ? 'less'
         : 'no-preference',
     motion: matches('(prefers-reduced-motion: reduce)') ? 'reduce' : 'no-preference',
+    // Browsers that predate `prefers-reduced-transparency` report no match
+    // rather than throwing, which reads as 'no-preference' - the same answer a
+    // user who expressed no preference gets. That is the correct default here
+    // and not a silent failure: the product's surfaces are opaque anyway (see
+    // appearance-policy.ts), so an unread preference changes nothing today.
+    transparency: matches('(prefers-reduced-transparency: reduce)') ? 'reduce' : 'no-preference',
   };
 }

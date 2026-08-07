@@ -1,4 +1,25 @@
 /*
+ * The website's own font files, served from `apps/web/public/fonts`. Declared
+ * beside the tokens that name the family: a token naming a font nothing loaded
+ * is a silent fallback to the system stack, which is the state this replaced.
+ */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/PlusJakartaSans-Variable.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
  * Blueprint section 17 ("Colour tokens") and section 19 ("Spacing and shape") -
  * the UI-chrome tokens the desktop/iPad shell (section 12/13) needs, distinct
  * from brand.v4.css's three brand-identity colours (black/white/phthalo green,
@@ -6,8 +27,69 @@
  * copied verbatim from the blueprint's tables, not invented.
  */
 :root {
+  /*
+   * Tells the browser both appearances are supported, so form controls,
+   * scrollbars and the canvas backdrop follow the appearance instead of staying
+   * light. Without it a bare <input> renders as white-on-white in dark: the
+   * project browser's search field was exactly that.
+   */
+  color-scheme: light dark;
+
   /* Section 17 */
   --arq-ui-paper: #ffffff;
+  /*
+   * The surface the workspace itself sits on, behind every floating card.
+   *
+   * Distinct from `paper`, which is what a panel is made of. The two were the
+   * same colour while the shell was a set of docked columns, so nothing needed
+   * to tell them apart - but once chrome floats, a white card on a white
+   * background has no edge, and the composition collapses back into the boxed
+   * look it was meant to replace. A faintly cool grey reads as the drawing
+   * table the panels rest on.
+   */
+  --arq-ui-canvas: #eef1f3;
+
+  /*
+   * Plan drawing solids. Poché is the cut-through fill where the section plane
+   * passes through a wall, and it is deliberately not `--arq-ui-ink`: a wall
+   * filled with the same value as its own outline loses the outline, and loses
+   * the join between two walls with it. The room tint is barely there on
+   * purpose - it has to make an enclosed area read as a room without competing
+   * with the linework that defines it.
+   */
+  --arq-plan-poche: #1c2124;
+  --arq-plan-room-fill: #f4f6f7;
+
+  /*
+   * A wash per room category, so a plan can be read before a label is. Kept
+   * barely-there on purpose: these sit under the linework that actually defines
+   * the building, and a plan whose colours compete with its walls is a diagram,
+   * not a drawing.
+   */
+  --arq-plan-room-living: #eaeef4;
+  --arq-plan-room-cooking: #f4efe6;
+  --arq-plan-room-dining: #efeaf2;
+  --arq-plan-room-sleeping: #f4ece9;
+  --arq-plan-room-wet: #e9f0f1;
+  --arq-plan-room-service: #f1f0ec;
+  --arq-plan-room-circulation: #f4f6f7;
+  --arq-plan-room-outdoor: #e9f0e7;
+  /*
+   * The hatch drawn over the outdoor tint. A drawn plan hatches what is not
+   * floor, and the tint alone asks a reader to tell two pale greens apart -
+   * which is the kind of distinction blueprint section 126 says must not be
+   * left to colour. Muted rather than ink: hatching is a material note, not
+   * linework, and at full strength it competes with the walls.
+   */
+  --arq-plan-hatch-outdoor: #9db39a;
+  --arq-plan-room-neutral: #f4f6f7;
+  /*
+   * The wash behind a selected row. Derived from the brand accent rather than
+   * being a new hue - a tint of the same green the marker and the label use, so
+   * selection reads as one idea at three strengths instead of three colours.
+   */
+  --arq-ui-selected-surface: #e8f2ee;
+
   --arq-ui-surface-1: #fafafa;
   --arq-ui-surface-2: #f4f4f4;
   --arq-ui-surface-3: #ececec;
@@ -18,6 +100,44 @@
   --arq-ui-text-secondary: #555555;
   --arq-ui-text-primary: #151515;
   --arq-ui-ink: #000000;
+
+  /*
+   * Typography. The product had no `font-family` declaration anywhere, so every
+   * surface rendered in the browser's default serif - a drawing instrument that
+   * looked like a document, and the single largest reason the interface read as
+   * unfinished. Nothing failed, because nothing was asserting it.
+   *
+   * The operating system's own UI face, per the Version 12 typography rules. No
+   * font file is bundled or redistributed: Apple's faces are named so a Mac
+   * uses them and every other platform falls through to its own.
+   */
+  /*
+   * The family the ARQ website is set in, from the same self-hosted files.
+   * Not a new typeface: `apps/marketing` has shipped Plus Jakarta Sans as a
+   * variable woff2 since it was built, while the editor was set in the system
+   * stack - so the product and the site that sells it did not look related.
+   * The fallbacks stay, because a variable font that fails to load should
+   * degrade to a humanist sans rather than to a serif.
+   */
+  --arq-font-ui:
+    'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial,
+    sans-serif;
+
+  /* Figures read as measurements: coordinates, view scale, areas. */
+  --arq-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /*
+   * The desktop scale. Deliberately small: the canvas is dense, so the chrome
+   * has to be quiet, and a CAD tree at browser-default 16px wastes a third of
+   * the panel on leading. Touch overrides these below rather than inheriting
+   * them - "do not reduce iPad or phone type below readability thresholds to
+   * preserve desktop structure".
+   */
+  --arq-text-project-title: 700 14px / 18px var(--arq-font-ui);
+  --arq-text-panel-title: 700 13px / 17px var(--arq-font-ui);
+  --arq-text-body: 500 11px / 16px var(--arq-font-ui);
+  --arq-text-label: 600 10px / 14px var(--arq-font-ui);
+  --arq-text-micro: 600 9px / 12px var(--arq-font-ui);
 
   /* Section 19: 4-point base grid */
   --arq-space-micro: 4px;
@@ -33,6 +153,13 @@
   --arq-radius-menu: 6px;
   --arq-radius-dialog: 8px;
   --arq-radius-ipad-palette: 10px;
+  /*
+   * The floating-card radius. Larger than a control's, so a panel reads as the
+   * container and the controls inside it as its contents - the concentric
+   * relationship the Version 12 rules ask for, rather than one radius reused at
+   * every scale.
+   */
+  --arq-radius-panel: 14px;
 
   /* Section 121/section 30: iPad touch targets must be at least 44x44 CSS px. */
   --arq-touch-target-min: 44px;
@@ -84,11 +211,88 @@
   --arq-ease-exit: cubic-bezier(0.4, 0, 1, 1);
 }
 
+/*
+ * Touch bands read at arm's length on a held device, so the desktop scale is
+ * raised rather than inherited: the Version 12 rules put iPad body at 13pt
+ * minimum and phone property rows at 12-13pt. Keyed on pointer rather than
+ * width, because the constraint is how far away the screen is, not how wide.
+ */
+@media (pointer: coarse) {
+  :root {
+    --arq-text-project-title: 700 17px / 22px var(--arq-font-ui);
+    --arq-text-panel-title: 700 15px / 20px var(--arq-font-ui);
+    --arq-text-body: 500 13px / 18px var(--arq-font-ui);
+    --arq-text-label: 600 12px / 16px var(--arq-font-ui);
+    --arq-text-micro: 600 11px / 14px var(--arq-font-ui);
+  }
+}
+
+/*
+ * ADR-0032: the dark appearance. Section 15's lock is superseded; its actual
+ * objection - "dark mode should not be shipped as an untested token inversion"
+ * - is honoured by designing these values for dark and measuring every pair
+ * the interface renders (appearance/dark-appearance.test.ts).
+ *
+ * Three things make this a design rather than an inversion:
+ *
+ * - The surface ramp reverses direction. In light, a raised surface is darker
+ *   than paper (#fff -> #ececec). In dark, a raised surface is lighter than
+ *   paper. An inversion would have produced the opposite and made raised
+ *   panels recede.
+ * - Paper is not black. Pure black behind 1px CAD linework produces halation,
+ *   and the strokes shimmer against it during pan and zoom.
+ * - Primary text is not pure white. `--arq-ui-ink` still is, because it is the
+ *   deliberate maximum used for the active tab rule and error text, but body
+ *   text sits below it: white-on-near-black over a long session is fatiguing,
+ *   which is the readability section 14 asks for.
+ *
+ * Scope is UI chrome only. The drawing surfaces keep their own colour model -
+ * a dark canvas is a separate decision with its own legibility and printing
+ * consequences, and ADR-0032 says so explicitly.
+ */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Section 15: "Locked for Release 1: light appearance only." No dark-mode
-       token set is approved yet - intentionally left unset rather than
-       guessing values, a documented gap like canvas2d-paint.ts's colour
-       fallback. */
+    /* The table the cards rest on, darker than any of them. */
+    --arq-ui-selected-surface: #16302a;
+    --arq-ui-canvas: #101315;
+    --arq-ui-paper: #171a1d;
+    --arq-ui-surface-1: #1e2225;
+    --arq-ui-surface-2: #252a2e;
+    --arq-ui-surface-3: #2d3338;
+    --arq-ui-line-subtle: #2e3439;
+    --arq-ui-line-default: #3f474d;
+    --arq-ui-line-strong: #79848a;
+    --arq-ui-text-muted: #939da3;
+    --arq-ui-text-secondary: #b6bfc5;
+    --arq-ui-text-primary: #e8edf0;
+    --arq-ui-ink: #ffffff;
+    /* Dark: poché is a light solid on a dark page, which is the same figure and
+       ground relationship inverted rather than a black shape on near-black. */
+    --arq-plan-poche: #c9d1d6;
+    --arq-plan-room-fill: #1b1f22;
+    /* Dark: the same relationships, an order of magnitude quieter, because a
+       wash that reads gently on paper shouts on a near-black page. */
+    --arq-plan-room-living: #1a2027;
+    --arq-plan-room-cooking: #232019;
+    --arq-plan-room-dining: #201c24;
+    --arq-plan-room-sleeping: #241d1a;
+    --arq-plan-room-wet: #182123;
+    --arq-plan-room-service: #201f1b;
+    --arq-plan-room-circulation: #1b1f22;
+    --arq-plan-room-outdoor: #182119;
+    --arq-plan-hatch-outdoor: #4a5c48;
+    --arq-plan-room-neutral: #1b1f22;
+
+    /* A black scrim over already-dark content barely reads, so the dark
+       backdrop is heavier than the light one to do the same job: say "what is
+       behind this is inert". */
+    --arq-overlay-backdrop: rgb(0 0 0 / 60%);
+
+    /* Shadows carry almost no signal on a dark background - there is little
+       luminance left below the surface to darken. They are strengthened so a
+       floating layer still separates, and the material layer's border is what
+       actually does the work (see material.css). */
+    --arq-shadow-overlay: 0 8px 24px rgb(0 0 0 / 48%);
+    --arq-shadow-menu: 0 4px 16px rgb(0 0 0 / 56%);
   }
 }

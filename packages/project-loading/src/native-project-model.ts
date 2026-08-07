@@ -27,11 +27,18 @@
  */
 import { toMillimetres, type Length, type LengthUnit } from '@arq/bim-core';
 import type {
+  Door,
+  DoorHand,
+  DoorSide,
   Level,
+  Opening,
+  OpeningKind,
   Room,
   Wall,
   WallAlignment,
   WallType,
+  Window,
+  WindowSide,
   ProjectUnitsPreference,
 } from '@arq/bim-core';
 import { worldPoint, type WorldPoint } from '@arq/geometry-2d';
@@ -84,6 +91,15 @@ export interface NativeProjectModel {
   readonly levels: readonly Level[];
   readonly wallTypes: readonly WallType[];
   readonly walls: readonly Wall[];
+  /**
+   * Hosted openings, and the doors and windows that occupy them. Three lists
+   * rather than one because that is the canonical shape: an Opening is the void
+   * in the wall and carries the geometry, while a Door or Window is the thing
+   * placed in it and carries only what the void does not - side, hand, swing.
+   */
+  readonly openings: readonly Opening[];
+  readonly doors: readonly Door[];
+  readonly windows: readonly Window[];
   readonly rooms: readonly Room[];
   readonly views: readonly NativeProjectView[];
   readonly unsupported: readonly NativeUnsupportedContent[];
@@ -300,6 +316,138 @@ function parseWalls(raw: readonly unknown[]): readonly Wall[] {
   });
 }
 
+/**
+ * How far past its host wall's end an opening may reach before the model is
+ * refused. Not zero: offsets and wall endpoints are authored independently and
+ * both round, so an opening that ends exactly at the wall face can miss by a
+ * fraction of a millimetre. A tenth of a millimetre is below anything drawable
+ * and far below anything buildable.
+ */
+const OPENING_FIT_TOLERANCE_MM = 0.1;
+
+const OPENING_KINDS: readonly string[] = ['door', 'window', 'void'];
+const SIDES: readonly string[] = ['left', 'right'];
+
+/**
+ * Hosted openings.
+ *
+ * Until this existed the reader counted `openings` as unsupported content and
+ * told the user "Openings are recorded but not drawn in plan or 3D yet" - which
+ * was true, and was the honest thing to say while it was true. Parsing them is
+ * what makes it stop being true.
+ *
+ * Geometry is validated here rather than at the renderer because an opening
+ * wider than its host wall, or one hanging off the end of it, is not a drawing
+ * problem: it is a model that does not describe a building. Both renderers would
+ * otherwise have to guess, and would guess differently.
+ */
+function parseOpenings(raw: readonly unknown[]): readonly Opening[] {
+  return raw.map((entry, index) => {
+    if (!isRecord(entry)) {
+      reject(`model.json openings[${index}] is not an object`);
+    }
+    const id = nonEmptyString(entry.id);
+    const hostWallId = nonEmptyString(entry.hostWallId);
+    const kind =
+      typeof entry.kind === 'string' && OPENING_KINDS.includes(entry.kind) ? entry.kind : null;
+    const offsetMm = lengthMillimetres(entry.offsetFromWallStart);
+    const widthMm = lengthMillimetres(entry.width);
+    const sillMm = lengthMillimetres(entry.sillHeight);
+    const heightMm = lengthMillimetres(entry.height);
+    if (
+      id === null ||
+      hostWallId === null ||
+      kind === null ||
+      offsetMm === null ||
+      widthMm === null ||
+      sillMm === null ||
+      heightMm === null
+    ) {
+      reject(
+        `model.json openings[${index}] is missing a usable id, host wall, kind, offset, width, sill or height`,
+      );
+    }
+    if (widthMm <= 0 || heightMm <= 0) {
+      // A zero-width opening cuts nothing and draws nothing, and a negative one
+      // would invert the panel decomposition in geometry-3d.
+      reject(`model.json openings[${index}] has a width or height that is not positive`);
+    }
+    if (offsetMm < 0 || sillMm < 0) {
+      reject(`model.json openings[${index}] has a negative offset or sill height`);
+    }
+    return {
+      id: id as Opening['id'],
+      hostWallId: hostWallId as Opening['hostWallId'],
+      kind: kind as OpeningKind,
+      offsetFromWallStart: { value: offsetMm, unit: 'mm' },
+      width: { value: widthMm, unit: 'mm' },
+      sillHeight: { value: sillMm, unit: 'mm' },
+      height: { value: heightMm, unit: 'mm' },
+    };
+  });
+}
+
+function parseDoors(raw: readonly unknown[]): readonly Door[] {
+  return raw.map((entry, index) => {
+    if (!isRecord(entry)) {
+      reject(`model.json doors[${index}] is not an object`);
+    }
+    const id = nonEmptyString(entry.id);
+    const typeId = nonEmptyString(entry.typeId);
+    const openingId = nonEmptyString(entry.openingId);
+    const levelId = nonEmptyString(entry.levelId);
+    if (id === null || typeId === null || openingId === null || levelId === null) {
+      reject(`model.json doors[${index}] is missing a usable id, type, opening or level`);
+    }
+    const side = typeof entry.side === 'string' && SIDES.includes(entry.side) ? entry.side : null;
+    const hand = typeof entry.hand === 'string' && SIDES.includes(entry.hand) ? entry.hand : null;
+    if (side === null || hand === null) {
+      reject(`model.json doors[${index}] has an unrecognised side or hand`);
+    }
+    const swingAngle = finiteNumber(entry.swingAngle);
+    // A swing is drawn as an arc from the leaf's closed position. Outside
+    // 0..180 the arc would sweep back through the wall it is hosted in.
+    if (swingAngle === null || swingAngle < 0 || swingAngle > 180) {
+      reject(`model.json doors[${index}] has a swing angle outside 0 to 180 degrees`);
+    }
+    return {
+      id: id as Door['id'],
+      typeId: typeId as Door['typeId'],
+      openingId: openingId as Door['openingId'],
+      levelId: levelId as Door['levelId'],
+      side: side as DoorSide,
+      hand: hand as DoorHand,
+      swingAngle,
+    };
+  });
+}
+
+function parseWindows(raw: readonly unknown[]): readonly Window[] {
+  return raw.map((entry, index) => {
+    if (!isRecord(entry)) {
+      reject(`model.json windows[${index}] is not an object`);
+    }
+    const id = nonEmptyString(entry.id);
+    const typeId = nonEmptyString(entry.typeId);
+    const openingId = nonEmptyString(entry.openingId);
+    const levelId = nonEmptyString(entry.levelId);
+    if (id === null || typeId === null || openingId === null || levelId === null) {
+      reject(`model.json windows[${index}] is missing a usable id, type, opening or level`);
+    }
+    const side = typeof entry.side === 'string' && SIDES.includes(entry.side) ? entry.side : null;
+    if (side === null) {
+      reject(`model.json windows[${index}] has an unrecognised side`);
+    }
+    return {
+      id: id as Window['id'],
+      typeId: typeId as Window['typeId'],
+      openingId: openingId as Window['openingId'],
+      levelId: levelId as Window['levelId'],
+      side: side as WindowSide,
+    };
+  });
+}
+
 function parseRooms(raw: readonly unknown[]): readonly Room[] {
   return raw.map((entry, index) => {
     if (!isRecord(entry)) {
@@ -354,17 +502,25 @@ function parseRooms(raw: readonly unknown[]): readonly Room[] {
 }
 
 /** Every id in a project must be unique across the sets a selection can address. */
-function assertUniqueIds(model: {
+interface ModelParts {
   readonly levels: readonly Level[];
   readonly wallTypes: readonly WallType[];
   readonly walls: readonly Wall[];
+  readonly openings: readonly Opening[];
+  readonly doors: readonly Door[];
+  readonly windows: readonly Window[];
   readonly rooms: readonly Room[];
-}): void {
+}
+
+function assertUniqueIds(model: ModelParts): void {
   const seen = new Set<string>();
   for (const [section, ids] of [
     ['levels', model.levels.map((level) => level.id as string)],
     ['wallTypes', model.wallTypes.map((type) => type.id as string)],
     ['walls', model.walls.map((wall) => wall.id as string)],
+    ['openings', model.openings.map((opening) => opening.id as string)],
+    ['doors', model.doors.map((door) => door.id as string)],
+    ['windows', model.windows.map((window) => window.id as string)],
     ['rooms', model.rooms.map((room) => room.id as string)],
   ] as const) {
     for (const id of ids) {
@@ -378,12 +534,7 @@ function assertUniqueIds(model: {
   }
 }
 
-function assertReferencesResolve(model: {
-  readonly levels: readonly Level[];
-  readonly wallTypes: readonly WallType[];
-  readonly walls: readonly Wall[];
-  readonly rooms: readonly Room[];
-}): void {
+function assertReferencesResolve(model: ModelParts): void {
   const levelIds = new Set(model.levels.map((level) => level.id as string));
   const wallTypeIds = new Set(model.wallTypes.map((type) => type.id as string));
   for (const wall of model.walls) {
@@ -399,6 +550,70 @@ function assertReferencesResolve(model: {
   for (const room of model.rooms) {
     if (!levelIds.has(room.levelId as string)) {
       reject(`model.json room ${room.id} references level ${room.levelId}, which is not defined`);
+    }
+  }
+
+  /*
+   * An opening's host wall decides everything about where it is drawn: the
+   * offset is measured along that wall's centreline and the void is cut through
+   * that wall's thickness. An unresolved host is not a missing label, it is an
+   * opening with no position at all.
+   */
+  const wallsById = new Map(model.walls.map((wall) => [wall.id as string, wall]));
+  const wallLengths = new Map<string, number>();
+  for (const opening of model.openings) {
+    const host = wallsById.get(opening.hostWallId as string);
+    if (host === undefined) {
+      reject(
+        `model.json opening ${opening.id} references wall ${opening.hostWallId}, which is not defined`,
+      );
+    }
+    let hostLength = wallLengths.get(host.id as string);
+    if (hostLength === undefined) {
+      hostLength = Math.hypot(host.end.x - host.start.x, host.end.y - host.start.y);
+      wallLengths.set(host.id as string, hostLength);
+    }
+    // Checked against the host rather than in `parseOpenings`, because "too
+    // wide" is only meaningful once the wall it sits in is known. An opening
+    // running past the end of its wall would decompose into a negative-width
+    // pier in geometry-3d and a reversed gap in plan.
+    const end = opening.offsetFromWallStart.value + opening.width.value;
+    if (end > hostLength + OPENING_FIT_TOLERANCE_MM) {
+      reject(
+        `model.json opening ${opening.id} ends ${(end - hostLength).toFixed(1)} mm past the end of wall ${host.id}`,
+      );
+    }
+  }
+
+  const openingsById = new Map(model.openings.map((opening) => [opening.id as string, opening]));
+  const occupied = new Map<string, string>();
+  for (const [section, placed] of [
+    ['door', model.doors],
+    ['window', model.windows],
+  ] as const) {
+    for (const instance of placed) {
+      const openingId = instance.openingId as string;
+      const opening = openingsById.get(openingId);
+      if (opening === undefined) {
+        reject(
+          `model.json ${section} ${instance.id} references opening ${openingId}, which is not defined`,
+        );
+      }
+      if (!levelIds.has(instance.levelId as string)) {
+        reject(
+          `model.json ${section} ${instance.id} references level ${instance.levelId}, which is not defined`,
+        );
+      }
+      // One void holds one thing. Two instances in one opening would draw a
+      // door and a window in the same hole, and neither renderer has a rule for
+      // which wins.
+      const existing = occupied.get(openingId);
+      if (existing !== undefined) {
+        reject(
+          `model.json opening ${openingId} is occupied by both ${existing} and ${instance.id}`,
+        );
+      }
+      occupied.set(openingId, instance.id as string);
     }
   }
 }
@@ -495,17 +710,36 @@ export function parseNativeProjectModel(
     const walls = parseWalls(requireArray(raw, 'walls'));
     // Rooms are optional: a project may legitimately have none.
     const rooms = Array.isArray(raw.rooms) ? parseRooms(raw.rooms) : [];
+    /*
+     * Openings and their occupants are optional in the same way, and for a
+     * stronger reason: a project written by this build has none, so requiring
+     * them would refuse files this build itself produced.
+     */
+    const openings = Array.isArray(raw.openings) ? parseOpenings(raw.openings) : [];
+    const doors = Array.isArray(raw.doors) ? parseDoors(raw.doors) : [];
+    const windows = Array.isArray(raw.windows) ? parseWindows(raw.windows) : [];
     if (levels.length === 0) {
       reject('model.json declares no levels, so there is nothing to place geometry on');
     }
-    const parts = { levels, wallTypes, walls, rooms };
+    const parts = { levels, wallTypes, walls, openings, doors, windows, rooms };
     assertUniqueIds(parts);
     assertReferencesResolve(parts);
 
+    /*
+     * What is left unsupported, and nothing more.
+     *
+     * Openings, doors and windows used to be counted here with the message
+     * "recorded but not drawn in plan or 3D yet". They are parsed now, so that
+     * message would be untrue in the other direction - and an unsupported-content
+     * warning a user cannot act on, about content that is in fact drawn, is
+     * worse than none: it teaches them to ignore the warnings that are real.
+     *
+     * A `void` opening is the exception that stays. It is a hole with nothing
+     * placed in it, and this build draws the void but has no elevation surface
+     * on which its sill and head heights mean anything, so it is reported rather
+     * than silently flattened.
+     */
     const unsupported = [
-      countUnsupported(raw, 'openings', 'Openings are recorded but not drawn in plan or 3D yet.'),
-      countUnsupported(raw, 'doors', 'Doors are recorded but not drawn in plan or 3D yet.'),
-      countUnsupported(raw, 'windows', 'Windows are recorded but not drawn in plan or 3D yet.'),
       countUnsupported(
         raw,
         'linearDimensions',
@@ -527,6 +761,9 @@ export function parseNativeProjectModel(
         levels,
         wallTypes,
         walls,
+        openings,
+        doors,
+        windows,
         rooms,
         views,
         unsupported,

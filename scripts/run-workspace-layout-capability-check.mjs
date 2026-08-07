@@ -195,15 +195,31 @@ async function measure(page) {
       canvasWidth: canvas ? Math.round(canvas.getBoundingClientRect().width) : 0,
       canvasHeight: canvas ? Math.round(canvas.getBoundingClientRect().height) : 0,
       dockedPanels: document.querySelectorAll('.arq-workspace__docked').length,
+      // Either presentation of a side panel. A docking band has to *show* the
+      // browser and inspector; whether they take a column or rest on the canvas
+      // is a composition choice, and since ADR-0031's canvas-first desktop they
+      // float.
+      sidePanels: document.querySelectorAll('.arq-workspace__docked, .arq-workspace__overlay')
+        .length,
       rails: document.querySelectorAll('.arq-mode-rail, .arq-tool-rail').length,
-      tabStrips: document.querySelectorAll('.arq-tab-strip').length,
+      /*
+       * Either presentation of the view switcher.
+       *
+       * A docking band has to offer a way between the project's views without
+       * opening a menu; whether that is a strip of tabs or a segmented capsule
+       * in the project bar is a composition choice, and since the Version 12
+       * reference it is the capsule. Asserting on the tab strip specifically
+       * asserted the composition rather than the capability.
+       */
+      viewSwitchers: document.querySelectorAll('.arq-tab-strip, .arq-view-kinds').length,
       compactViewControls: document.querySelectorAll('.arq-compact-view-control').length,
       panelSummonControls: document.querySelectorAll(
         '.arq-phone-dock__button[aria-haspopup="dialog"], .arq-tablet-drawer-bar button',
       ).length,
       activeTabVisible:
-        document.querySelector('.arq-tab-strip [role="tab"][aria-selected="true"]') !== null ||
-        document.querySelector('.arq-compact-view-control button') !== null,
+        document.querySelector(
+          '.arq-tab-strip [role="tab"][aria-selected="true"], .arq-view-kinds [role="tab"][aria-selected="true"]',
+        ) !== null || document.querySelector('.arq-compact-view-control button') !== null,
       // The fixture check is "save and sync separately visible **or available
       // in the project menu**" - both must be nameable, never merged into one
       // word, but doc 36 explicitly allows the low-priority status text to
@@ -278,11 +294,19 @@ function checkViewport(viewport, m, consoleErrors) {
       failures.push('no control to summon the browser or inspector');
     }
   } else {
-    if (m.dockedPanels === 0) {
-      failures.push('no docked panel on a docking band');
+    /*
+     * The mirror of the touch band's "a panel that cannot be summoned back does
+     * not exist": a docking band must show its side panels. It deliberately
+     * does not require them to be *docked* - the desktop composition floats
+     * them over an edge-to-edge canvas, which is a presentation change and not
+     * a missing panel. Asserting `docked > 0` here would have been asserting
+     * the old layout rather than the requirement it was standing in for.
+     */
+    if (m.sidePanels === 0) {
+      failures.push('no browser or inspector on a docking band');
     }
-    if (m.tabStrips === 0) {
-      failures.push('no view tab strip on a docking band');
+    if (m.viewSwitchers === 0) {
+      failures.push('no way to switch view on a docking band');
     }
   }
   if (viewport.band === 'phone' && m.compactViewControls === 0) {

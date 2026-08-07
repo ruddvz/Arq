@@ -40,6 +40,12 @@ import * as THREE from 'three';
 export interface ModelSceneOptions {
   /** Ground plane extent in world units (metres/mm per whichever ADR-0004 eventually decides, D-014 - this module treats it as a plain number, the same provisional stance geometry-2d's WorldPoint already takes). Defaults to 100. */
   readonly floorSize?: number;
+  /**
+   * Where the ground sits under the model, in world units. Defaults to the
+   * origin, which is only the right answer for a model that happens to be
+   * centred there - see `placeModelFloor`.
+   */
+  readonly floorCenter?: { readonly x: number; readonly z: number };
   readonly floorColor?: THREE.ColorRepresentation;
   readonly ambientIntensity?: number;
   readonly directionalIntensity?: number;
@@ -90,7 +96,47 @@ export function createModelScene(options: ModelSceneOptions = {}): THREE.Scene {
   // PlaneGeometry is authored in the XY plane by default; rotate -90
   // degrees about X so it lies flat on XZ (this module's ground plane).
   floor.rotation.x = -Math.PI / 2;
+  if (options.floorCenter !== undefined) {
+    floor.position.set(options.floorCenter.x, 0, options.floorCenter.z);
+  }
   scene.add(floor);
 
   return scene;
+}
+
+/** The scene's ground plane, or null if the scene has none. */
+export function modelFloor(scene: THREE.Scene): THREE.Mesh | null {
+  const found = scene.getObjectByName('arq-floor');
+  return found instanceof THREE.Mesh ? found : null;
+}
+
+/**
+ * Re-sizes and re-places the ground under whatever the model currently is.
+ *
+ * The floor was built once, at a fixed 30m square centred on the world origin,
+ * and never touched again. A model is neither of those things: the golden
+ * fixture is a 12m house whose corner is at the origin, so the ground was two
+ * and a half times its width in each direction and the house stood in one
+ * quadrant of it. The camera frames the model, not the floor, so the result was
+ * a grey plane filling the viewport with a small building somewhere off-centre
+ * in it - the ground reading as the subject.
+ *
+ * Ground is context. It says "this stands on something" and should extend far
+ * enough past the building to say it, and no further.
+ */
+export function placeModelFloor(
+  scene: THREE.Scene,
+  placement: { readonly size: number; readonly x: number; readonly z: number },
+): void {
+  const floor = modelFloor(scene);
+  if (floor === null) return;
+  if (!Number.isFinite(placement.size) || placement.size <= 0) {
+    throw new RangeError('floor size must be a positive finite number');
+  }
+  if (!Number.isFinite(placement.x) || !Number.isFinite(placement.z)) {
+    throw new RangeError('floor centre must be finite');
+  }
+  floor.geometry.dispose();
+  floor.geometry = new THREE.PlaneGeometry(placement.size, placement.size);
+  floor.position.set(placement.x, 0, placement.z);
 }

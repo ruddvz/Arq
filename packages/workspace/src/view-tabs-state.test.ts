@@ -10,6 +10,7 @@ import {
   moveTab,
   openTab,
   partitionTabsForOverflow,
+  renameTab,
   semanticViewsLosingLastInstance,
   togglePin,
   type ViewTabsState,
@@ -43,6 +44,22 @@ describe('openTab', () => {
     const state = openTab(withTabs(), { id: 'plan-l1', kind: 'plan', title: 'Level 1 Plan' });
     expect(state.tabs.filter((t) => t.id === 'plan-l1')).toHaveLength(1);
     expect(state.activeId).toBe('plan-l1');
+  });
+});
+
+describe('renameTab', () => {
+  it('renames only the named tab, leaving the rest and activeId untouched', () => {
+    const state = activateTab(withTabs(), 'overview');
+    const renamed = renameTab(state, 'plan-l1', 'Ground floor');
+    expect(renamed.tabs.find((t) => t.id === 'plan-l1')?.title).toBe('Ground floor');
+    expect(renamed.tabs.find((t) => t.id === 'view-3d')?.title).toBe('3D');
+    expect(renamed.tabs.find((t) => t.id === 'sheet-a101')?.title).toBe('Sheet A101');
+    expect(renamed.activeId).toBe('overview');
+  });
+
+  it('is a no-op on an unknown id', () => {
+    const state = withTabs();
+    expect(renameTab(state, 'no-such-tab', 'Ground floor')).toBe(state);
   });
 });
 

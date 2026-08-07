@@ -293,12 +293,22 @@ async function run() {
     // open path was wired.
     await page.getByRole('button', { name: 'Choose another file' }).click();
     await fileInput.setInputFiles(goodPath);
-    const projectNameControl = page.getByRole('button', { name: /^Project name:/ });
+    /*
+     * Matched on the control's accessible name rather than by intersecting it
+     * with a text locator.
+     *
+     * The bar sets the name on its own line above the project's revision and
+     * units now, so the words live in a child span and `.and(getByText(...))` -
+     * which needs both locators to resolve to the *same* element - stopped
+     * matching the button. The accessible name is the better assertion anyway:
+     * it is what a screen reader announces, and it cannot drift as the visual
+     * structure does.
+     */
+    const projectNameControl = page.getByRole('button', {
+      name: /^Project name: Capability check project\./,
+    });
     try {
-      await projectNameControl.and(page.getByText('Capability check project')).waitFor({
-        state: 'visible',
-        timeout: 15_000,
-      });
+      await projectNameControl.waitFor({ state: 'visible', timeout: 15_000 });
     } catch (error) {
       throw new Error(
         `valid project fixture: the workspace never adopted the project. Panel showed ` +

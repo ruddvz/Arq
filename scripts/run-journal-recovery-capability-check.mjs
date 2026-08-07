@@ -291,17 +291,30 @@ async function run() {
     // 'Offline' (remote sync exists but cannot run) to 'Sync not configured'
     // (there is no remote sync), which is a strictly more honest statement of
     // the very separation this check exists to protect.
-    const statusBarText = await page.locator(STATUS_BAR).innerText();
+    /*
+     * Read across the shell's chrome, not the status strip alone.
+     *
+     * Sync is reported on the top bar. The strip used to repeat it, which is
+     * the thing doc 09 forbids - save and sync are not stated twice across two
+     * bars - so the duplicate was removed and this check, scoped to the strip,
+     * saw a missing readout rather than a de-duplicated one. The invariant it
+     * exists to protect is unchanged and still asserted here: the shell reports
+     * sync, separately from save, and never claims to have synchronised.
+     */
+    const chromeText = [
+      await page.locator('.arq-top-bar').innerText(),
+      await page.locator(STATUS_BAR).innerText(),
+    ].join('\n');
     const journalNotFileSave = {
       journalLabelNamesJournalReplay: recoveredCountMatch !== null,
       saveStateLabelNamesLocalTier: afterReload.saveStateLabel === 'Recovered locally',
       downloadsProduced: downloads,
-      syncNeverClaimsSynchronised: !/\bSynced\b|\bSyncing\b/.test(statusBarText),
+      syncNeverClaimsSynchronised: !/\bSynced\b|\bSyncing\b/.test(chromeText),
       // ...and still reports something, so a silently missing sync readout
       // cannot pass by saying nothing at all.
       syncStateReported:
         /Sync not configured|Offline|Sync error|Sync failed|Sync conflict|Changes queued/.test(
-          statusBarText,
+          chromeText,
         ),
     };
 

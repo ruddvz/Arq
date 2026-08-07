@@ -25,7 +25,7 @@ import {
 } from '@arq/arqfs/src/arqfs-single-writer-lock';
 import type { ArqfsOpenResult } from '@arq/arqfs/src/arqfs-open';
 import { ArqfsWorkerClient } from '@arq/arqfs/src/arqfs-worker-client';
-import { resolveNativeOpenCapabilities } from './native-open-policy';
+import { describeOpenCondition, resolveNativeOpenCapabilities } from './native-open-policy';
 import { decodeNativeProjectModel } from './native-project-model';
 import { NativeProjectSession, type NativeProjectSnapshot } from './native-project-session';
 
@@ -167,11 +167,27 @@ export async function openNativeProject(
     if (openResult.status === 'rejected') {
       return rejected('ARQ_OPEN_REJECTED', openResult.reason);
     }
+    /*
+     * The file's condition, which until now nothing asked for. `openArqfs`
+     * says what the format permits; it says nothing about whether the last
+     * local write reached commit or whether SQLite's own checks pass. So a
+     * working copy holding a half-written revision opened fully editable, and
+     * the first save committed on top of a revision the project never
+     * committed to - destroying, at that moment, the only state a recovery
+     * could have been built from.
+     */
+    const conditionWarning = describeOpenCondition(openPayload.safeMode);
+    if (!openPayload.safeMode.canOpen && conditionWarning !== null) {
+      return rejected('ARQ_OPEN_UNSOUND', conditionWarning);
+    }
+
     const capabilities = resolveNativeOpenCapabilities(openResult);
-    const readOnly = capabilities.readOnly || writerLocked;
-    const warnings = writerLocked
-      ? [...capabilities.warnings, describeReadOnlyReason(lease.reason)]
-      : capabilities.warnings;
+    const readOnly = capabilities.readOnly || writerLocked || conditionWarning !== null;
+    const warnings = [
+      ...capabilities.warnings,
+      ...(conditionWarning === null ? [] : [conditionWarning]),
+      ...(writerLocked ? [describeReadOnlyReason(lease.reason)] : []),
+    ];
     if (!openResult.capabilities.canRead) {
       return rejected('ARQ_OPEN_NOT_READABLE', capabilities.warnings[0] ?? 'Not readable.');
     }
@@ -235,7 +251,9 @@ export async function openNativeProject(
     if (manifest === null) {
       return rejected('ARQ_MANIFEST_INVALID', 'This project has no usable identity.');
     }
-    const decoded = decodeNativeProjectModel(archive.model);
+    // `views.json` comes through the same import as the model, and is what the
+    // project browser's Views section lists beside the levels.
+    const decoded = decodeNativeProjectModel(archive.model, archive.views);
     if (decoded.status === 'rejected') {
       return rejected('ARQ_MODEL_REJECTED', decoded.reason);
     }

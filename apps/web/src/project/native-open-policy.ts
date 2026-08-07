@@ -11,6 +11,15 @@
  * the reverse.
  */
 import type { ArqfsOpenResult } from '@arq/arqfs';
+/*
+ * Deep import, deliberately, and the same seam `native-project-session.ts` uses
+ * for the publication types. `@arq/arqfs`'s barrel also exports the Node-only
+ * atomic swap, so taking a *value* from it drags `node:fs` into the browser
+ * bundle and the build fails - which is exactly what happened when this was a
+ * barrel import. Types are erased and safe to take from the barrel; values are
+ * not.
+ */
+import { conditionForcesReadOnly, type ArqfsSafeModePlan } from '@arq/arqfs/src/arqfs-safe-mode';
 
 export interface NativeOpenCapabilities {
   readonly readOnly: boolean;
@@ -30,7 +39,32 @@ export const NATIVE_OPEN_WARNINGS = {
     'This project was saved by a newer version of Arq. It is open for reading only, because writing it with this version could discard information this version does not understand.',
   safeMode:
     'Parts of this project use features this version of Arq does not understand. It is open for reading only.',
+  interruptedWrite:
+    'The last change to this project did not finish being written, so what is in the file is a change the project never completed. It is open for reading only, and the original is untouched, so you can save a copy of it before anything is changed.',
+  corrupt:
+    'This project file did not pass its own consistency checks, so it was not opened. The file has not been changed, so a backup or an earlier copy can still be opened instead.',
 } as const;
+
+/**
+ * What the *condition* of a file says, as opposed to what its format version
+ * permits. `resolveNativeOpenCapabilities` answers the second; this answers the
+ * first, and the two are combined by the caller rather than merged here,
+ * because a project can be limited by both at once and a user is owed both
+ * reasons.
+ *
+ * Returns null when the condition places no limit - which includes every
+ * condition the format side already covers. Only the two that mean this working
+ * copy's own last write did not land are answered here; `conditionForcesReadOnly`
+ * is the single definition of which those are, shared with the Worker that
+ * enforces it, so the message a user reads and the connection that refuses the
+ * write can never disagree.
+ */
+export function describeOpenCondition(plan: ArqfsSafeModePlan): string | null {
+  if (!conditionForcesReadOnly(plan)) return null;
+  return plan.kind === 'corrupt'
+    ? NATIVE_OPEN_WARNINGS.corrupt
+    : NATIVE_OPEN_WARNINGS.interruptedWrite;
+}
 
 /**
  * A rejected open has no product capabilities at all - the caller must not reach

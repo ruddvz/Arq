@@ -1,0 +1,130 @@
+{
+  "check": "mcp-protocol-capability",
+  "adr": "ADR-0027",
+  "serverBundle": "packages/mcp-server/dist/arq-mcp-stdio.mjs",
+  "node": "v22.22.2",
+  "ranAt": "2026-08-07T04:40:12.420Z",
+  "passed": true,
+  "observations": [
+    {
+      "name": "initialize negotiates the requested protocol version",
+      "passed": true,
+      "detail": "2026-07-28"
+    },
+    {
+      "name": "initialize returns instructions that name the canonical-mutation field",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "with no grant file, every tool reports that nothing is shared",
+      "passed": true,
+      "detail": "ARQ_NO_GRANT"
+    },
+    {
+      "name": "a refusal still states that canonical state did not change",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "tools/list returns the full surface",
+      "passed": true,
+      "detail": "24"
+    },
+    {
+      "name": "no tool commits, approves, opens a path or runs a query language",
+      "passed": true,
+      "detail": "arq_get_capabilities,arq_list_domain_profiles,arq_get_domain_profile,arq_list_projects,arq_get_project_snapshot,arq_query_model,arq_get_operation_catalog,arq_save_brief,arq_get_brief,arq_list_briefs,arq_save_design_program,arq_get_design_program,arq_list_design_programs,arq_assess_design_program_coverage,arq_create_project_draft,arq_request_project_open,arq_stage_changeset,arq_get_changeset,arq_list_changesets,arq_request_changeset_review,arq_cancel_changeset,arq_request_undo,arq_request_publish,arq_get_audit_trail"
+    },
+    {
+      "name": "approval is reported as Arq-side only",
+      "passed": true,
+      "detail": "arq_side_only"
+    },
+    {
+      "name": "the absent capabilities are named rather than merely missing",
+      "passed": true,
+      "detail": "[\"canonical.commit\",\"proposal.approve\",\"filesystem.path_open\",\"database.raw_query\",\"native_file.write\",\"reference.fetch\"]"
+    },
+    {
+      "name": "the seeded project reports a revision",
+      "passed": true,
+      "detail": "rev-000001"
+    },
+    {
+      "name": "the snapshot says plainly that this is not a project file",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "a valid change set stages for review",
+      "passed": true,
+      "detail": "ready_for_review The change set passed validation and can be sent for review in Arq. Nothing in the project has changed."
+    },
+    {
+      "name": "staging changes nothing",
+      "passed": true,
+      "detail": "none"
+    },
+    {
+      "name": "requesting review queues it for the operator and changes nothing",
+      "passed": true,
+      "detail": "awaiting_user_approval"
+    },
+    {
+      "name": "a degenerate wall is refused by the repository’s own validation rule",
+      "passed": true,
+      "detail": "WALL_TOO_SHORT"
+    },
+    {
+      "name": "a design program for any domain is accepted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "an unbuildable domain is blocked rather than substituted",
+      "passed": true,
+      "detail": "blocked_by_capability"
+    },
+    {
+      "name": "the refusal names the profile that would own the work",
+      "passed": true,
+      "detail": "vehicle.concept"
+    },
+    {
+      "name": "the refusal names concrete blockers",
+      "passed": true,
+      "detail": "7"
+    },
+    {
+      "name": "the next action tells the caller not to substitute a different operation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "deleting the grant file withdraws access on the very next call",
+      "passed": true,
+      "detail": "ARQ_NO_GRANT"
+    },
+    {
+      "name": "the connection survives a malformed line and keeps answering",
+      "passed": true,
+      "detail": "{\"jsonrpc\":\"2.0\",\"id\":12,\"result\":{}}"
+    },
+    {
+      "name": "a malformed line is answered with a parse error rather than dropped",
+      "passed": true,
+      "detail": "[{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":-32700,\"message\":\"That line was not valid JSON.\"}}]"
+    },
+    {
+      "name": "standard output was never polluted by a stray log line",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "diagnostics went to standard error",
+      "passed": true,
+      "detail": "[arq-mcp] listening on stdio\n"
+    }
+  ]
+}

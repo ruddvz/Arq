@@ -67,11 +67,38 @@ export interface PlanLinePrimitive<TId> {
 }
 
 /** Single-ring only, same scope limit as polygon-area.ts (ARQ-085) and room-boundary-graph.ts (ARQ-111). */
+/**
+ * What a closed polygon is filled with, if anything.
+ *
+ * A paint property rather than a new primitive kind, which is why it lives on
+ * the existing polygon instead of beside it: a filled wall is the same shape in
+ * the same place as an unfilled one, and every consumer that already knows how
+ * to hit-test, select, export or measure a polygon keeps working unchanged. A
+ * new kind would have had to be taught to all of them to say one extra thing
+ * about paint.
+ *
+ * Named by meaning, not by colour. `poche` is the cut-through solid a plan
+ * shows where the section plane passes through a wall; `room` is the tint that
+ * makes an enclosed area read as a room rather than as four walls that happen
+ * to meet. The palette decides what either looks like, so both survive a change
+ * of appearance.
+ */
+export type PlanFill = 'poche' | 'room';
+
 export interface PlanPolygonPrimitive<TId> {
   readonly kind: 'polygon';
   readonly elementId: TId;
   readonly points: readonly WorldPoint[];
   readonly styleToken: StyleToken;
+  /** Absent means outline only, which is what every polygon was before this existed. */
+  readonly fill?: PlanFill;
+  /**
+   * Which of the palette's room tints to use, for a `room` fill. A key rather
+   * than a colour, so the plan scene stays free of appearance: the same drawing
+   * has to paint correctly in light, dark and increased contrast, and only the
+   * palette knows what any of those look like.
+   */
+  readonly fillTint?: string;
 }
 
 /** The annotation-primitive half of section 60 (dimension/note/room-label text). */

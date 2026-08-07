@@ -23,6 +23,7 @@
     "@arq/local-storage": "workspace:*",
     "@arq/model-renderer": "workspace:*",
     "@arq/operations": "workspace:*",
+    "@arq/pdf-export": "workspace:*",
     "@arq/plan-renderer": "workspace:*",
     "@arq/project-format": "workspace:*",
     "@arq/project-loading": "workspace:*",

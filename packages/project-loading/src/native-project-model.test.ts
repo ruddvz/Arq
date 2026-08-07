@@ -65,8 +65,29 @@ function validModel(): Record<string, unknown> {
         status: 'valid',
       },
     ],
-    openings: [{ id: 'opening-1' }],
-    doors: [{ id: 'door-1' }, { id: 'door-2' }],
+    openings: [
+      {
+        id: 'opening-1',
+        hostWallId: 'wall-1',
+        kind: 'door',
+        offsetFromWallStart: { value: 400, unit: 'mm' },
+        width: { value: 900, unit: 'mm' },
+        sillHeight: { value: 0, unit: 'mm' },
+        height: { value: 2100, unit: 'mm' },
+      },
+    ],
+    doors: [
+      {
+        id: 'door-1',
+        typeId: 'door-type-1',
+        openingId: 'opening-1',
+        levelId: 'lvl-1',
+        side: 'right',
+        hand: 'right',
+        swingAngle: 90,
+      },
+    ],
+    linearDimensions: [{ id: 'dim-1' }, { id: 'dim-2' }],
   };
 }
 
@@ -102,9 +123,100 @@ describe('parseNativeProjectModel', () => {
     if (result.status !== 'parsed') throw new Error('expected a parsed model');
     const sections = result.model.unsupported.map((entry) => `${entry.section}:${entry.count}`);
     // The alternative - dropping these silently - lets a user believe a project
-    // with two doors has none.
-    expect(sections).toEqual(['openings:1', 'doors:2']);
+    // with two dimensions has none.
+    expect(sections).toEqual(['linearDimensions:2']);
     expect(result.model.unsupported.every((entry) => entry.reason.length > 0)).toBe(true);
+  });
+
+  it('no longer calls openings and doors unsupported, because they are read', () => {
+    const result = parse();
+
+    if (result.status !== 'parsed') throw new Error('expected a parsed model');
+    // A warning about content that is in fact drawn is worse than no warning:
+    // it teaches a user to ignore the ones that are real.
+    expect(result.model.unsupported.map((entry) => entry.section)).not.toContain('openings');
+    expect(result.model.unsupported.map((entry) => entry.section)).not.toContain('doors');
+    expect(result.model.openings).toHaveLength(1);
+    expect(result.model.doors).toHaveLength(1);
+    expect(result.model.openings[0]?.width).toEqual({ value: 900, unit: 'mm' });
+  });
+
+  describe('hosted openings', () => {
+    it('refuses an opening whose host wall is not defined, because it has no position at all', () => {
+      const result = parse((m) => {
+        (m.openings as Record<string, unknown>[])[0]!.hostWallId = 'wall-missing';
+      });
+      expect(result.status).toBe('rejected');
+    });
+
+    it('refuses an opening that runs past the end of its host wall', () => {
+      // wall-1 is 5000 mm long in this fixture; 4500 + 900 overruns it.
+      const result = parse((m) => {
+        (m.openings as Record<string, unknown>[])[0]!.offsetFromWallStart = {
+          value: 4500,
+          unit: 'mm',
+        };
+      });
+      expect(result.status).toBe('rejected');
+      if (result.status === 'rejected') expect(result.reason).toContain('past the end of wall');
+    });
+
+    it('accepts an opening that ends exactly at the wall end, within rounding', () => {
+      const result = parse((m) => {
+        (m.openings as Record<string, unknown>[])[0]!.offsetFromWallStart = {
+          value: 4100.05,
+          unit: 'mm',
+        };
+      });
+      expect(result.status).toBe('parsed');
+    });
+
+    it('refuses a door pointing at an opening that is not defined', () => {
+      const result = parse((m) => {
+        (m.doors as Record<string, unknown>[])[0]!.openingId = 'opening-missing';
+      });
+      expect(result.status).toBe('rejected');
+    });
+
+    it('refuses two instances occupying one opening', () => {
+      const result = parse((m) => {
+        m.windows = [
+          {
+            id: 'win-1',
+            typeId: 'window-type-1',
+            openingId: 'opening-1',
+            levelId: 'lvl-1',
+            side: 'right',
+          },
+        ];
+      });
+      expect(result.status).toBe('rejected');
+      if (result.status === 'rejected') expect(result.reason).toContain('occupied by both');
+    });
+
+    it('refuses a swing angle that would sweep back through the wall', () => {
+      const result = parse((m) => {
+        (m.doors as Record<string, unknown>[])[0]!.swingAngle = 270;
+      });
+      expect(result.status).toBe('rejected');
+    });
+
+    it('refuses a zero-width opening, which cuts nothing and draws nothing', () => {
+      const result = parse((m) => {
+        (m.openings as Record<string, unknown>[])[0]!.width = { value: 0, unit: 'mm' };
+      });
+      expect(result.status).toBe('rejected');
+    });
+
+    it('reads a project that has no openings at all, which is what this build writes', () => {
+      const result = parse((m) => {
+        delete m.openings;
+        delete m.doors;
+      });
+      expect(result.status).toBe('parsed');
+      if (result.status !== 'parsed') return;
+      expect(result.model.openings).toEqual([]);
+    });
   });
 
   it('accepts a schema tag with an annotation suffix but refuses an unknown base', () => {

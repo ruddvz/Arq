@@ -20,6 +20,7 @@
 import { worldPoint, type WorldPoint } from '@arq/geometry-2d';
 import {
   parseNativeProjectModel,
+  parseNativeProjectViews,
   type NativeProjectModel as NativeProjectDocument,
 } from '@arq/project-loading';
 import type { DrawnWall } from '../canvas/plan-document';
@@ -87,7 +88,19 @@ function decodeWall(value: unknown, index: number): DrawnWall | string {
  * why this returns a result rather than throwing or returning a partially
  * populated model: there is no "mostly decoded" project worth adopting.
  */
-export function decodeNativeProjectModel(value: unknown): NativeProjectModelDecodeResult {
+export function decodeNativeProjectModel(
+  value: unknown,
+  /**
+   * The archive's `views.json`, already parsed.
+   *
+   * Optional because the flat shape has no archive around it. Omitted means no
+   * declared views, which is what this decoded before - `parseNativeProjectViews`
+   * had been written and tested and never called from anywhere, so every opened
+   * project reported an empty view list and the browser's Views section showed
+   * only the levels.
+   */
+  viewsValue?: unknown,
+): NativeProjectModelDecodeResult {
   if (!isRecord(value)) {
     return { status: 'rejected', reason: 'model.json is not an object' };
   }
@@ -96,7 +109,7 @@ export function decodeNativeProjectModel(value: unknown): NativeProjectModelDeco
   // try the reference model - the format a project written by anything other
   // than this build actually uses.
   if (typeof projectName !== 'string') {
-    return decodeReferenceModel(value);
+    return decodeReferenceModel(value, viewsValue);
   }
   if (!Array.isArray(walls)) {
     return { status: 'rejected', reason: 'model.json has no wall list' };
@@ -132,8 +145,8 @@ export function decodeNativeProjectModel(value: unknown): NativeProjectModelDeco
  * them through the branded constructors, so re-deriving them would be a second
  * opinion about the same bytes rather than a check.
  */
-function decodeReferenceModel(value: unknown): NativeProjectModelDecodeResult {
-  const parsed = parseNativeProjectModel(value);
+function decodeReferenceModel(value: unknown, viewsValue: unknown): NativeProjectModelDecodeResult {
+  const parsed = parseNativeProjectModel(value, parseNativeProjectViews(viewsValue));
   if (parsed.status === 'rejected') {
     return { status: 'rejected', reason: parsed.reason };
   }

@@ -58,14 +58,14 @@ describe('selectProjectOverviewCards', () => {
     const three = Array.from({ length: 3 }, (_, i) => ({
       id: `v${i}`,
       title: `V${i}`,
-      kind: 'plan',
+      kind: 'plan' as const,
     }));
     expect(cardIds({ projectName: 'P', recentViews: three })).toEqual(['continue-working']);
 
     const five = Array.from({ length: 5 }, (_, i) => ({
       id: `v${i}`,
       title: `V${i}`,
-      kind: 'plan',
+      kind: 'plan' as const,
     }));
     expect(cardIds({ projectName: 'P', recentViews: five })).toEqual([
       'continue-working',

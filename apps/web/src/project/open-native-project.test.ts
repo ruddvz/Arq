@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createManifest, exportArchive } from '@arq/project-format';
 import { openNativeProject, type NativeWorkerHandle } from './open-native-project';
+import { NATIVE_OPEN_WARNINGS } from './native-open-policy';
 import type { ArqfsWriterLease } from '@arq/arqfs/src/arqfs-single-writer-lock';
 
 /**
@@ -44,6 +45,19 @@ function sqliteBytes(journal: 'rollback' | 'wal' = 'rollback'): Uint8Array {
   return bytes;
 }
 
+/**
+ * A file whose condition places no limit of its own. Spelled out in the doubles
+ * because the Worker now reports condition and format separately, and a double
+ * that omits it would be testing an open the real Worker never performs.
+ */
+const HEALTHY_CONDITION = {
+  kind: 'healthy',
+  canOpen: true,
+  openReadOnly: false,
+  missingRequiredEntries: [],
+  reason: 'healthy',
+} as const;
+
 const WRITABLE = {
   status: 'opened',
   header: { major: 1, minor: 0, schema: 2, minReaderMajor: 1, minWriterMajor: 1 },
@@ -86,7 +100,12 @@ function fakeWorker(overrides: Record<string, () => Promise<unknown>> = {}) {
         if (override) return override();
         if (request.type === 'importDatabase') return { kind: 'importDatabase', byteLength: 0 };
         if (request.type === 'open')
-          return { kind: 'open', result: WRITABLE, usedVfs: 'opfs-sahpool' };
+          return {
+            kind: 'open',
+            result: WRITABLE,
+            safeMode: HEALTHY_CONDITION,
+            usedVfs: 'opfs-sahpool',
+          };
         if (request.type === 'checkIntegrity')
           return {
             kind: 'checkIntegrity',
@@ -289,6 +308,107 @@ describe('openNativeProject', () => {
     expect(fake.terminate).toHaveBeenCalledOnce();
   });
 
+  /*
+   * The condition half of the open verdict, which nothing consulted before.
+   * These are the two states where the working copy's own last write did not
+   * land, and where writing on top of it destroys the only state a recovery
+   * could have been built from.
+   */
+  describe('file condition', () => {
+    function conditionWorker(safeMode: unknown) {
+      return fakeWorker({
+        open: async () => ({
+          kind: 'open',
+          result: WRITABLE,
+          safeMode,
+          usedVfs: 'opfs-sahpool',
+        }),
+      });
+    }
+
+    it('opens a project whose last write did not commit read-only, and says why', async () => {
+      const fake = conditionWorker({
+        kind: 'interrupted-write',
+        canOpen: true,
+        openReadOnly: true,
+        missingRequiredEntries: [],
+        reason: 'a previous local write did not reach commit',
+      });
+      fake.setEntries(await archiveEntries());
+
+      const result = await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+
+      expect(result.status).toBe('opened');
+      if (result.status === 'opened') {
+        // Read-only even though the format itself permits writing: this is the
+        // condition overruling the format, which is the only direction allowed.
+        expect(result.snapshot.readOnly).toBe(true);
+        expect(result.snapshot.warnings).toContain(NATIVE_OPEN_WARNINGS.interruptedWrite);
+      }
+    });
+
+    it('refuses a project that failed its own consistency checks rather than opening it read-only', async () => {
+      const fake = conditionWorker({
+        kind: 'corrupt',
+        canOpen: false,
+        openReadOnly: true,
+        missingRequiredEntries: [],
+        reason: 'SQLite integrity checks failed',
+      });
+      fake.setEntries(await archiveEntries());
+
+      const result = await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+
+      expect(result.status).toBe('rejected');
+      if (result.status === 'rejected') {
+        expect(result.code).toBe('ARQ_OPEN_UNSOUND');
+        expect(result.reason).toBe(NATIVE_OPEN_WARNINGS.corrupt);
+      }
+    });
+
+    it('leaves a condition the format side already covers to the format side', async () => {
+      // `missing-required-entries` is a property of the chosen file, and a
+      // working copy this build just initialised has none either. Treating it
+      // as a condition here would open every new project read-only.
+      const fake = conditionWorker({
+        kind: 'missing-required-entries',
+        canOpen: true,
+        openReadOnly: true,
+        missingRequiredEntries: ['manifest.json'],
+        reason: 'missing required archive entries: manifest.json',
+      });
+      fake.setEntries(await archiveEntries());
+
+      const result = await openNativeProject(
+        sqliteBytes(),
+        fake.factory,
+        'house.arq',
+        undefined,
+        null,
+        grantsWriterLock,
+      );
+
+      expect(result.status).toBe('opened');
+      if (result.status === 'opened') {
+        expect(result.snapshot.readOnly).toBe(false);
+      }
+    });
+  });
+
   it('opens an older-schema project read-only rather than editable', async () => {
     const fake = fakeWorker({
       open: async () => ({
@@ -297,6 +417,7 @@ describe('openNativeProject', () => {
           ...WRITABLE,
           capabilities: { ...WRITABLE.capabilities, canMigrate: true },
         },
+        safeMode: HEALTHY_CONDITION,
         usedVfs: 'opfs-sahpool',
       }),
     });

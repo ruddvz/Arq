@@ -103,10 +103,24 @@ function feedbackTexts(page) {
 }
 
 /** The status bar's view-scale span is the one matching /^\d+%$/. */
+/**
+ * The view's scale, from the drawing's own identity chip.
+ *
+ * This used to read a `NN%` zoom span out of the status strip. The strip
+ * carries the two fields that are guarantees now, and the zoom readout moved to
+ * the chip on the sheet's corner, where it reads as a drawing scale - "1:74" -
+ * rather than as a percentage of nothing in particular.
+ *
+ * Returns null rather than undefined when it finds nothing, because the caller
+ * has to be able to tell "the view did not zoom" from "the readout is not on
+ * screen". Comparing two undefineds is how the wheel-over-the-HUD half of this
+ * check came to pass without observing anything at all.
+ */
 function readViewScale(page) {
   return page.evaluate(() => {
-    const spans = [...document.querySelectorAll('.arq-status-bar > span')];
-    return spans.map((span) => (span.textContent ?? '').trim()).find((text) => /^\d+%$/.test(text));
+    const chip = document.querySelector('.arq-view-identity');
+    const match = /1:\d+/.exec(chip?.textContent ?? '');
+    return match === null ? null : match[0];
   });
 }
 
@@ -299,6 +313,11 @@ async function run() {
         .catch(() => false),
     );
     const scaleBefore = await readViewScale(page);
+    if (scaleBefore === null) {
+      throw new Error(
+        'the view scale readout is not on screen, so no zoom assertion here means anything',
+      );
+    }
     // The HUD surface is pointer-transparent by design; the numeric FIELD is
     // the element that owns the pointer again, and the ownership rule is
     // about exactly it: wheel over the field must not alter the model.

@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type ReactNode,
 } from 'react';
 import {
@@ -20,6 +21,8 @@ import {
   CompactViewControl,
   PhoneProjectBar,
   ViewSwitcherList,
+  ViewKindSwitcher,
+  type ViewKindSegment,
   InspectorPanel,
   ProjectBrowserPanel,
   ProjectOverviewSurface,
@@ -36,8 +39,11 @@ import {
   type CommandPaletteEntry,
   type ToolRailCategory,
   CommandFeedbackRegion,
+  isContextBarVisible,
+  type ContextBarAction,
   createCommandFeedbackStore,
   isEditableEventTarget,
+  ArqModalDialog,
 } from '@arq/design-system';
 import {
   CLOSED_SHEET_STATE,
@@ -69,6 +75,8 @@ import {
   reconcileInspectorTab,
   selectInspectorTab,
   reconcileDockedPanels,
+  renameTab,
+  setPanelOpen,
   resizePanel,
   selectBrowserSection,
   resolveLayoutSlots,
@@ -83,7 +91,9 @@ import {
   type ProjectOverviewData,
   type ViewportProbe,
   type WorkspaceProjectContext,
+  type WorkspaceViewKind,
 } from '@arq/workspace';
+import { FitIcon, InspectIcon, Model3dIcon, PlanIcon, SheetIcon } from '@arq/icons';
 import type { WorldPoint } from '@arq/geometry-2d';
 import { createUndoStack, hasErrors, type ValidationMessage } from '@arq/operations';
 import { validateUniqueElementIds, validateWallSegments } from '@arq/validation';
@@ -96,14 +106,31 @@ import {
 } from './canvas/plan-document';
 import { createPlanJournal, type PlanJournal } from './canvas/plan-journal';
 import type { NativeProjectSession, NativeProjectSnapshot } from './project/native-project-session';
+import {
+  browserCopyDelivery,
+  deliverPublishedCopy,
+  publishedCopyFileName,
+} from './project/deliver-published-copy';
+import {
+  describeDeliveryFailure,
+  describePublicationOutcome,
+  type PublicationOutcomeDescription,
+} from './project/describe-publication-outcome';
 import { publishNativeProject } from './project/publish-native-project';
 import { createBrowserArqfsWorker } from './project/browser-worker-factory';
 import { NativeProjectPanel } from './NativeProjectPanel';
 import { buildNativeProjectTree, type OpenNativeProject } from './native-project-view';
 import {
+  roomsOnLevel,
+  wallTypeFor,
   wallsOnLevel,
   type NativeProjectModel as NativeProjectDocument,
 } from '@arq/project-loading';
+import type { WallSolidDimensions } from './ModelCanvas';
+import type { PlanRoom } from './canvas/canvas-interaction';
+import { roomLabelText, type PlanOpeningInput, type PlanScene } from '@arq/plan-renderer';
+import { exportPlanSheet, PAPER_SIZES } from './sheets/sheet-export';
+import type { ModelOpeningSpan } from './ModelCanvas';
 
 /**
  * The walls of one level, in the shape the plan and 3D surfaces draw. The
@@ -118,39 +145,137 @@ function wallsForLevel(document: NativeProjectDocument, levelId: string): readon
     end: wall.end,
   }));
 }
-import {
-  AlignIcon,
-  CommentIcon,
-  CopyIcon,
-  CrossingSelectIcon,
-  DimensionIcon,
-  DoorIcon,
-  ElevationIcon,
-  ExtendIcon,
-  FitIcon,
-  GridIcon,
-  JoinIcon,
-  MirrorIcon,
-  ModelHealthIcon,
-  MoveIcon,
-  OffsetIcon,
-  OrbitIcon,
-  OrthographicIcon,
-  PanIcon,
-  PerspectiveIcon,
-  RevisionIcon,
-  RoomIcon,
-  RotateIcon,
-  SectionIcon,
-  SelectIcon,
-  SplitIcon,
-  TextNoteIcon,
-  TrimIcon,
-  WallIcon,
-  WindowIcon,
-  WindowSelectIcon,
-} from '@arq/icons';
-import { PlanCanvas } from './PlanCanvas';
+
+/**
+ * Thickness and height per wall id, read from each wall's own type.
+ *
+ * Both surfaces already accept this and neither was being given it, so a
+ * project's "Exterior 250 mm" walls drew as hairlines in plan and extruded at a
+ * borrowed demo default in 3D. The wall type is the only place those numbers
+ * exist, and reading them per wall rather than per level is what lets one
+ * storey mix exterior and partition types - which the golden fixture does.
+ */
+function wallDimensionsForLevel(
+  document: NativeProjectDocument,
+  levelId: string,
+): ReadonlyMap<string, WallSolidDimensions> {
+  const dimensions = new Map<string, WallSolidDimensions>();
+  for (const wall of wallsOnLevel(document, levelId)) {
+    const type = wallTypeFor(document, wall);
+    if (type === null) {
+      continue;
+    }
+    dimensions.set(wall.id, {
+      thicknessMm: type.thickness.value,
+      heightMm: type.defaultHeight.value,
+    });
+  }
+  return dimensions;
+}
+
+/**
+ * The hosted openings each wall on a level carries, in the shape the plan
+ * surface draws.
+ *
+ * Keyed by wall rather than returned as a flat list because that is how an
+ * opening is positioned: its offset is measured along its host wall's
+ * centreline, so the wall has to be in hand before the opening means anything.
+ *
+ * The door's side, hand and swing come from the Door record and the window's
+ * side from the Window record, because the Opening itself is only the void -
+ * which is the same split the canonical model keeps, and the reason a door and
+ * a window hosted in identical openings still draw differently.
+ */
+/**
+ * One opening, carrying what both surfaces need.
+ *
+ * Kept as one record rather than derived twice because plan and 3D read the
+ * same opening and differ only in which fields they use: plan needs the swing
+ * and ignores the sill, 3D needs the sill and has no swing. Two derivations
+ * would let the two views disagree about where an opening is, which is the one
+ * disagreement neither view can show.
+ */
+type LevelOpening = PlanOpeningInput & ModelOpeningSpan;
+
+function wallOpeningsForLevel(
+  document: NativeProjectDocument,
+  levelId: string,
+): ReadonlyMap<string, readonly LevelOpening[]> {
+  const wallIds = new Set(wallsOnLevel(document, levelId).map((wall) => wall.id as string));
+  const doorsByOpening = new Map(
+    document.doors.map((door) => [door.openingId as string, door] as const),
+  );
+  const windowsByOpening = new Map(
+    document.windows.map((window) => [window.openingId as string, window] as const),
+  );
+
+  const byWall = new Map<string, LevelOpening[]>();
+  for (const opening of document.openings) {
+    const hostId = opening.hostWallId as string;
+    // Openings are model-wide; only the ones hosted by a wall on the level
+    // being drawn belong on this drawing.
+    if (!wallIds.has(hostId)) continue;
+
+    const door = doorsByOpening.get(opening.id as string);
+    const window = windowsByOpening.get(opening.id as string);
+    const placed: LevelOpening = {
+      id: opening.id as string,
+      kind: opening.kind,
+      offsetFromWallStart: opening.offsetFromWallStart.value,
+      width: opening.width.value,
+      sillHeight: opening.sillHeight.value,
+      height: opening.height.value,
+      ...(door === undefined
+        ? window === undefined
+          ? {}
+          : { side: window.side }
+        : { side: door.side, hand: door.hand, swingAngle: door.swingAngle }),
+    };
+    const existing = byWall.get(hostId);
+    if (existing === undefined) byWall.set(hostId, [placed]);
+    else existing.push(placed);
+  }
+  return byWall;
+}
+
+/**
+ * The rooms of one level, in the shape the plan surface draws.
+ *
+ * Without this the plan drew a project's walls and none of its rooms - the
+ * golden fixture's ground floor is 37 walls and 18 rooms, and only the walls
+ * appeared - while the workspace's own demo room went on being drawn on top,
+ * label and all. PlanCanvas's own contract says an opened project passes its
+ * rooms and the fixture "is not rendered at all", because "a demo room drawn
+ * over someone's house would be a lie about their model". Nothing was passing
+ * them.
+ *
+ * Area comes from the model rather than being recomputed here: the room label
+ * has to agree with what the inspector and schedules say, and two independent
+ * area calculations is how they stop agreeing.
+ */
+function roomsForLevel(document: NativeProjectDocument, levelId: string): readonly PlanRoom[] {
+  return roomsOnLevel(document, levelId).map((room) => ({
+    id: room.id,
+    // `calculatedArea` is already square metres - `recalculateRoomArea` stores
+    // the result of `roomAreaSquareMetres`. Converting again here read every
+    // room in the golden fixture as "0.0 m2".
+    /*
+     * Two lines, which is what `roomLabelText` in @arq/plan-renderer has built
+     * since it was written and what nothing was using: name on one, area on the
+     * next. As one line it was twice as wide as it needed to be, and that width
+     * is most of why labels collided at small scales.
+     */
+    label: roomLabelText({
+      elementId: room.id as string,
+      seedPoint: room.seedPoint,
+      name: room.name ?? 'Room',
+      areaSquareMetres: room.calculatedArea,
+    }),
+    polygon: room.calculatedBoundary,
+  }));
+}
+import { MODE_ICONS, TOOL_GROUP_ICONS, TOOL_ICONS, TOP_BAR_ACTION_ICONS } from './tool-icons';
+import { PlanCanvas, type SheetRect } from './PlanCanvas';
 /**
  * The 3D surface carries three.js and the model renderer, which together are the
  * largest single contributor to the initial bundle. It is only ever rendered for
@@ -164,8 +289,8 @@ const ModelCanvas = lazy(async () => ({
 import {
   buildDemoWallAccessibleDescription,
   buildDemoWallInspectorGroups,
-  buildDrawnWallAccessibleDescription,
-  buildDrawnWallInspectorGroups,
+  buildDrawnWallSelectionAccessibleDescription,
+  buildDrawnWallSelectionInspectorGroups,
 } from './inspector-data';
 import { FileOpenPanel } from './file-handling/FileOpenPanel';
 
@@ -182,49 +307,6 @@ import { FileOpenPanel } from './file-handling/FileOpenPanel';
  * which today is the recent-view list and nothing else. No model-health card,
  * no issue counts, no activity feed, because no engine produces them yet.
  */
-
-/**
- * Registry tool id -> the icon @arq/icons actually ships for it.
- *
- * Partial by design. `workspace-icon-registry.json` inventories 215 glyphs and
- * says of the ones this repository does not have that they "must be produced
- * through the same icon workflow as the existing ARQ family" - so the tools
- * with no entry here render as a text label rather than a borrowed or
- * approximated glyph. Doc 48's own note applies: an automatically generated
- * placeholder vector is not ARQ artwork.
- */
-const TOOL_ICONS: Readonly<Record<string, ReactNode>> = {
-  select: <SelectIcon width={16} height={16} />,
-  'window-select': <WindowSelectIcon width={16} height={16} />,
-  'crossing-select': <CrossingSelectIcon width={16} height={16} />,
-  wall: <WallIcon width={16} height={16} />,
-  grid: <GridIcon width={16} height={16} />,
-  door: <DoorIcon width={16} height={16} />,
-  window: <WindowIcon width={16} height={16} />,
-  'room-boundary': <RoomIcon width={16} height={16} />,
-  move: <MoveIcon width={16} height={16} />,
-  copy: <CopyIcon width={16} height={16} />,
-  rotate: <RotateIcon width={16} height={16} />,
-  mirror: <MirrorIcon width={16} height={16} />,
-  offset: <OffsetIcon width={16} height={16} />,
-  align: <AlignIcon width={16} height={16} />,
-  trim: <TrimIcon width={16} height={16} />,
-  extend: <ExtendIcon width={16} height={16} />,
-  join: <JoinIcon width={16} height={16} />,
-  split: <SplitIcon width={16} height={16} />,
-  dimension: <DimensionIcon width={16} height={16} />,
-  'text-note': <TextNoteIcon width={16} height={16} />,
-  'section-marker': <SectionIcon width={16} height={16} />,
-  'elevation-marker': <ElevationIcon width={16} height={16} />,
-  pan: <PanIcon width={16} height={16} />,
-  orbit: <OrbitIcon width={16} height={16} />,
-  fit: <FitIcon width={16} height={16} />,
-  perspective: <PerspectiveIcon width={16} height={16} />,
-  orthographic: <OrthographicIcon width={16} height={16} />,
-  comment: <CommentIcon width={16} height={16} />,
-  'model-health': <ModelHealthIcon width={16} height={16} />,
-  'compare-revisions': <RevisionIcon width={16} height={16} />,
-};
 
 const MODEL_TREE: readonly ModelPanelNode[] = [
   {
@@ -245,26 +327,29 @@ const MODEL_TREE: readonly ModelPanelNode[] = [
             nodeType: 'Level',
             hidden: false,
             children: [
-              {
-                id: 'demo-wall-1',
-                displayName: 'Interior Wall 100mm',
-                nodeType: 'Wall',
-                hidden: false,
-              },
-              { id: 'demo-room', displayName: 'Room 4.20 x 3.60', nodeType: 'Room', hidden: false },
               /*
-               * Doc 39's stated performance case: "expanding a 5,000-element
-               * model must not render every row". A synthetic level of that
-               * size is the only way this build can exercise the virtualiser -
-               * it is fixture data for the tree, clearly named as such, not a
-               * claim that the project contains these elements.
+               * No invented children. An "Interior Wall 100mm" and a "Room
+               * 4.20 x 3.60" used to sit here so the tree had something in it.
+               * Neither existed anywhere else in the application - selecting
+               * the wall showed an Inspector describing a wall that was not on
+               * the canvas, and the room named a rectangle the plan drew from
+               * its own separate constant. A tree that lists nothing when there
+               * is nothing is the honest empty state, and the walls a user
+               * draws appear below by their real measured length.
                */
-              ...Array.from({ length: 5000 }, (_, index) => ({
-                id: `fixture-wall-${index}`,
-                displayName: `Fixture wall ${index + 1}`,
-                nodeType: 'Wall',
-                hidden: false,
-              })),
+              /*
+               * Five thousand synthetic `Fixture wall N` rows used to sit here,
+               * on the grounds that they were "the only way this build can
+               * exercise the virtualiser". They were not: `visibleModelTreeRows`
+               * has its own unit test, which windows a tree without rendering
+               * anything and without shipping the rows to a reader.
+               *
+               * What they did do was dominate the first screen of every session
+               * - fifteen rows of invented walls above the fold, under a real
+               * project's heading - which reads as the product's content rather
+               * than as a test aid. An opened project replaces this tree with
+               * canonical data; until then the tree should be small and true.
+               */
             ],
           },
         ],
@@ -290,6 +375,24 @@ const COMMAND_ENTRIES: readonly Omit<CommandPaletteEntry, 'shortcutLabel'>[] = [
     label: 'Export DXF',
     category: 'File',
     disabledReason: 'No project open yet',
+  },
+  /*
+   * Portable publication, and the first command in this list that reaches the
+   * `.arq` tier rather than the in-memory document. Its `disabledReason` is
+   * filled in per render rather than fixed here: it depends on whether a native
+   * project is open, which is the difference between a command a user can run
+   * and one that would refuse the moment it started.
+   */
+  { id: 'save-a-copy', label: 'Save a copy', category: 'File', synonyms: ['export', 'download'] },
+  /*
+   * Vector sheet export. Like `save-a-copy`, its availability is state rather
+   * than a constant: there has to be something on the plan to put on a sheet.
+   */
+  {
+    id: 'export-sheet-pdf',
+    label: 'Export sheet as PDF',
+    category: 'File',
+    synonyms: ['sheet', 'print', 'plot'],
   },
   {
     id: 'publish',
@@ -327,6 +430,33 @@ function highestWallIdSuffix(walls: readonly DrawnWall[]): number {
 
 const INITIAL_PROBE: ViewportProbe = { widthPx: 1536, heightPx: 864, coarsePointer: false };
 
+/**
+ * How far in from the page's corner its chrome sits, in CSS pixels.
+ *
+ * A little in, so the chip reads as belonging to the page rather than being
+ * pinned to its very corner - the reference draws it inset by about the sheet's
+ * own margin.
+ */
+const SHEET_CHROME_INSET_PX = 12;
+
+/**
+ * How far the chrome rides above the page's top edge, in CSS pixels.
+ *
+ * Roughly half its own height, so it straddles the edge the way a tab on a
+ * folder does. Sitting entirely inside would make it a label printed on the
+ * drawing; entirely outside would leave it floating unattached.
+ */
+const SHEET_CHROME_LIFT_PX = 14;
+
+const PLAN_TAB_ID = 'plan-level-1';
+
+/**
+ * The plan tab's title before any project has opened, and again once one
+ * closes. Named rather than inlined because the rename effect below has to
+ * restore exactly this string - see the `activeLevelName` effect.
+ */
+const PLAN_TAB_PLACEHOLDER_TITLE = 'Level 1 Plan';
+
 const INITIAL_TABS = openTab(
   openTab(
     openTab(EMPTY_VIEW_TABS_STATE, {
@@ -336,7 +466,12 @@ const INITIAL_TABS = openTab(
     }),
     { id: 'model-3d', kind: '3d', title: '3D', semanticViewId: 'view-3d' },
   ),
-  { id: 'plan-level-1', kind: 'plan', title: 'Level 1 Plan', semanticViewId: 'view-plan-level-1' },
+  {
+    id: PLAN_TAB_ID,
+    kind: 'plan',
+    title: PLAN_TAB_PLACEHOLDER_TITLE,
+    semanticViewId: 'view-plan-level-1',
+  },
 );
 
 export function App(): JSX.Element {
@@ -353,6 +488,19 @@ export function App(): JSX.Element {
   const [drawnWalls, setDrawnWalls] = useState<readonly DrawnWall[]>([]);
   const drawnWallsRef = useRef<readonly DrawnWall[]>([]);
   drawnWallsRef.current = drawnWalls;
+  /**
+   * The open project's rooms for the level on show, or null when no project is
+   * open. Null and empty mean different things to the plan surface: null asks
+   * for the workspace's own demo fixture, an empty list draws no rooms at all.
+   */
+  const [projectRooms, setProjectRooms] = useState<readonly PlanRoom[] | null>(null);
+  /** Thickness and height per wall id for the level on show; empty with no project open. */
+  const [wallOpenings, setWallOpenings] = useState<ReadonlyMap<string, readonly LevelOpening[]>>(
+    () => new Map(),
+  );
+  const [wallDimensions, setWallDimensions] = useState<ReadonlyMap<string, WallSolidDimensions>>(
+    new Map(),
+  );
 
   /*
    * Real local persistence: the journal is opened once, recovery replays it
@@ -489,6 +637,21 @@ export function App(): JSX.Element {
           : opened.snapshot.walls;
       setDrawnWalls(shown);
       drawnWallsRef.current = shown;
+      setProjectRooms(
+        opened.snapshot.document !== null && initialLevelId !== null
+          ? roomsForLevel(opened.snapshot.document, initialLevelId)
+          : [],
+      );
+      setWallDimensions(
+        opened.snapshot.document !== null && initialLevelId !== null
+          ? wallDimensionsForLevel(opened.snapshot.document, initialLevelId)
+          : new Map(),
+      );
+      setWallOpenings(
+        opened.snapshot.document !== null && initialLevelId !== null
+          ? wallOpeningsForLevel(opened.snapshot.document, initialLevelId)
+          : new Map(),
+      );
       wallIdCounterRef.current = highestWallIdSuffix(shown);
       setProjectName(opened.snapshot.displayName);
       // Read from the working copy, not written to it yet: "opened" is not
@@ -598,7 +761,18 @@ export function App(): JSX.Element {
    * `workspaceRailsWidthPx`. Passing the registry allowance here would make the
    * floor fire ~150px later than it should.
    */
-  const railsWidthPx = workspaceRailsWidthPx(platform);
+  /*
+   * Canvas-first once there is room for it: the drawing runs the full width of
+   * the workspace and the panels rest on top, rather than each taking a column
+   * and boxing the model in. Below that width the panels would cover more of
+   * the canvas than they freed, so the docked composition is the better answer
+   * and stays the default.
+   */
+  const workspaceComposition = platform === 'desktop' ? 'floating' : 'docked';
+
+  // Every category has a glyph, so the rail renders as a dock and the floor
+  // has to be told the narrower width.
+  const railsWidthPx = workspaceRailsWidthPx(platform, true);
   useEffect(() => {
     setPanels((current) =>
       reconcileDockedPanels(current, {
@@ -606,9 +780,29 @@ export function App(): JSX.Element {
         slots,
         railsWidthPx,
         platform,
+        composition: workspaceComposition,
       }),
     );
-  }, [probe.widthPx, slots, railsWidthPx, platform]);
+  }, [probe.widthPx, slots, railsWidthPx, platform, workspaceComposition]);
+
+  /*
+   * The Inspector follows the selection.
+   *
+   * It was docked open permanently, so roughly 300px of a 1600px window was
+   * given over to the words "No selection" whenever nothing was selected -
+   * which is most of the time, and is the single largest thing the drawing was
+   * losing width to. The reference composition shows it only when there is
+   * something to inspect, and the canvas runs to the window edge otherwise.
+   *
+   * Driven from selection rather than from a user preference because that is
+   * what it is: a panel about the selected element has nothing to say when
+   * there is no selected element. Toggling it by hand still works, until the
+   * selection changes again and answers the question for itself.
+   */
+  const hasSelection = modelSelection.primary !== null || modelSelection.secondary.size > 0;
+  useEffect(() => {
+    setPanels((current) => setPanelOpen(current, 'inspector', hasSelection));
+  }, [hasSelection]);
 
   /*
    * Doc 34: each mode leads with the browser section it is about, unless the
@@ -736,6 +930,142 @@ export function App(): JSX.Element {
   }, [publishing]);
 
   /*
+   * The outcome of the last "Save a copy", held until the user dismisses it.
+   *
+   * Deliberately not routed through the command-feedback toasts alone. Those
+   * expire after four seconds and carry a title only, and a publication refusal
+   * is the one message in this app where the diagnostic and the "your work is
+   * still here" sentence are the whole point - a user who misses them is left
+   * believing their project is damaged. So the toast stays as the transient
+   * acknowledgement and the full description gets a dialog the user closes.
+   */
+  const [publicationNotice, setPublicationNotice] = useState<PublicationOutcomeDescription | null>(
+    null,
+  );
+  const [savingCopy, setSavingCopy] = useState(false);
+  const [exportingSheet, setExportingSheet] = useState(false);
+  /**
+   * The plan scene the canvas last built, so a sheet exports the drawing on
+   * screen rather than a second projection of the same model that could
+   * disagree with it. A ref because nothing renders from it.
+   */
+  const planSceneRef = useRef<{
+    readonly primitives: PlanScene<string>['primitives'];
+    readonly bounds: {
+      readonly min: { readonly x: number; readonly y: number };
+      readonly max: { readonly x: number; readonly y: number };
+    };
+  } | null>(null);
+
+  /**
+   * Publishes the open project to a verified portable file and hands it over.
+   *
+   * The order is the contract: `publish` returns bytes only after an
+   * independent reader has opened them and matched project, revision and
+   * semantic hash, so nothing reaches the browser until the copy has been
+   * proved. A refusal at any step hands over nothing at all, which is what lets
+   * the failure copy tell the user their work is untouched.
+   */
+  const handleSaveCopy = useCallback(async (): Promise<void> => {
+    const session = nativeSessionRef.current;
+    if (session === null || savingCopy) return;
+
+    const fileName = publishedCopyFileName(session.snapshot().displayName);
+    setSavingCopy(true);
+    try {
+      const result = await session.publish();
+      const described = describePublicationOutcome(result, fileName);
+      if (result.status !== 'published') {
+        setPublicationNotice(described);
+        feedbackStoreRef.current.publish('error', described.headline, Date.now());
+        return;
+      }
+
+      const delivered = deliverPublishedCopy(result.bytes, fileName, browserCopyDelivery(document));
+      if (delivered.status === 'failed') {
+        const failure = describeDeliveryFailure(delivered.detail);
+        setPublicationNotice(failure);
+        feedbackStoreRef.current.publish('error', failure.headline, Date.now());
+        return;
+      }
+
+      setPublicationNotice(described);
+      feedbackStoreRef.current.publish('success', described.headline, Date.now());
+    } catch (error) {
+      // A thrown publish is the read-only refusal or a closed session, neither
+      // of which produced a file. Reported as a delivery-side failure rather
+      // than as a verification one, because no verification ran.
+      const failure = describeDeliveryFailure(
+        error instanceof Error ? error.message : String(error),
+      );
+      setPublicationNotice(failure);
+      feedbackStoreRef.current.publish('error', failure.headline, Date.now());
+    } finally {
+      setSavingCopy(false);
+    }
+  }, [savingCopy]);
+
+  /**
+   * Exports what is on the plan as a vector PDF sheet.
+   *
+   * The scene comes from the canvas rather than being rebuilt here, so the
+   * sheet carries exactly the drawing on screen - the same walls, poché,
+   * openings and labels - instead of a second projection that could disagree
+   * with it. The export's real limits travel with the result and are shown, not
+   * logged: a PDF that quietly substitutes a font and flattens line weights
+   * looks finished, and a user discovers otherwise at the printer.
+   */
+  const handleExportSheet = useCallback(async (): Promise<void> => {
+    const scene = planSceneRef.current;
+    if (scene === null || scene.primitives.length === 0 || exportingSheet) return;
+
+    setExportingSheet(true);
+    try {
+      const active = tabs.tabs.find((tab) => tab.id === tabs.activeId);
+      const result = await exportPlanSheet({
+        scene: { primitives: scene.primitives },
+        projectName,
+        sheetNumber: 'A101',
+        sheetTitle: active?.title ?? 'Plan',
+        paper: PAPER_SIZES.A1,
+        scaleDenominator: 100,
+        contentBounds: scene.bounds,
+      });
+      const delivered = deliverPublishedCopy(
+        result.bytes,
+        result.fileName,
+        browserCopyDelivery(document),
+        'application/pdf',
+      );
+      if (delivered.status === 'failed') {
+        feedbackStoreRef.current.publish('error', 'No sheet was exported.', Date.now());
+        setPublicationNotice({
+          headline: 'No sheet was exported.',
+          detail: `The sheet was written but this browser did not accept the download. (${delivered.detail})`,
+          tone: 'error',
+        });
+        return;
+      }
+      feedbackStoreRef.current.publish('success', `Exported ${result.fileName}.`, Date.now());
+      setPublicationNotice({
+        headline: `Exported ${result.fileName}.`,
+        detail: `This sheet is vector linework, not a screenshot. What it does not do yet: ${result.limitations.join(' ')}`,
+        tone: 'success',
+      });
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      feedbackStoreRef.current.publish('error', 'No sheet was exported.', Date.now());
+      setPublicationNotice({
+        headline: 'No sheet was exported.',
+        detail: `The sheet could not be written. (${detail})`,
+        tone: 'error',
+      });
+    } finally {
+      setExportingSheet(false);
+    }
+  }, [exportingSheet, projectName, tabs]);
+
+  /*
    * §4.3 gate on the one committing edit this build has: a finished wall
    * chain is validated against @arq/validation's rules before it becomes
    * an operation. Errors block the commit and surface through the command
@@ -811,6 +1141,23 @@ export function App(): JSX.Element {
     },
     [handleActivateTool],
   );
+
+  /*
+   * Frame the project when one is adopted.
+   *
+   * Doc 09 requires that camera changes come from an explicit view command, and
+   * this is one: the fit tool, dispatched by id, the same command the rail and
+   * the palette send. Without it the drawing kept whatever view the empty
+   * workspace had - the golden fixture opened at 16% with most of the house
+   * outside the viewport, which reads as a broken renderer rather than as a
+   * camera that was never asked to move.
+   */
+  useEffect(() => {
+    if (openNativeProject === null) {
+      return;
+    }
+    handleActivateTool('fit');
+  }, [openNativeProject, handleActivateTool]);
 
   /*
    * `workspace-keyboard-map.json`'s rules, applied at the one place the app
@@ -937,10 +1284,25 @@ export function App(): JSX.Element {
     ];
   }, [drawnWalls, openNativeProject, activeNativeLevelId]);
 
-  const selectedDrawnWall = useMemo(
-    () => drawnWalls.find((wall) => wall.id === modelSelection.primary) ?? null,
-    [drawnWalls, modelSelection.primary],
-  );
+  /**
+   * Every selected drawn wall, not just the primary one.
+   *
+   * The inspector used to receive only the primary and describe it under a
+   * heading saying how many were selected, so a reader checking a length got an
+   * answer about a wall they had not asked about. The merge in
+   * buildDrawnWallSelectionInspectorGroups is what makes a disagreeing property
+   * read as "Multiple values" instead.
+   */
+  const selectedDrawnWalls = useMemo(() => {
+    const ids = [modelSelection.primary, ...modelSelection.secondary].filter(
+      (id): id is string => id !== null,
+    );
+    const byId = new Map(drawnWalls.map((wall) => [wall.id, wall]));
+    return ids
+      .map((id) => byId.get(id))
+      .filter((wall): wall is DrawnWall => wall !== undefined)
+      .map((wall) => ({ id: wall.id, lengthMm: wallLength(wall) }));
+  }, [drawnWalls, modelSelection]);
 
   /*
    * Undo/redo can remove the selected wall out from under the selection;
@@ -965,7 +1327,12 @@ export function App(): JSX.Element {
     });
   }, [drawnWalls]);
 
-  const isWallSelected = modelSelection.primary === 'demo-wall-1';
+  /*
+   * There is no longer a demo wall to select. What used to be here -
+   * `modelSelection.primary === 'demo-wall-1'` - gated an Inspector describing
+   * a wall that existed in no document, and a Delete action that journalled a
+   * note instead of deleting anything. Both went with the node.
+   */
   const selectionCount = modelSelection.primary === null ? 0 : 1 + modelSelection.secondary.size;
   /*
    * Doc 40. warningCount comes from the real model-health evaluation below;
@@ -1030,6 +1397,27 @@ export function App(): JSX.Element {
     [platform, probe.coarsePointer],
   );
 
+  /*
+   * "Save a copy" is the only entry whose availability is state, not a
+   * constant: it publishes the `.arq` working copy, which exists only while a
+   * native project is open. Shown with its reason rather than hidden, which is
+   * the rule the tool rail already follows - a command that vanishes teaches a
+   * user it was never there.
+   */
+  const exportSheetDisabledReason =
+    projectRooms === null && drawnWalls.length === 0
+      ? 'Draw something or open a project to export a sheet'
+      : exportingSheet
+        ? 'Exporting a sheet'
+        : undefined;
+
+  const saveCopyDisabledReason =
+    openNativeProject === null
+      ? 'Open a project file to save a copy of it'
+      : savingCopy
+        ? 'Saving a copy'
+        : undefined;
+
   /**
    * The real reason `publish` is or is not currently invokable, computed once
    * here rather than re-derived at each of the several places a disabled
@@ -1049,18 +1437,200 @@ export function App(): JSX.Element {
       COMMAND_ENTRIES.map((entry) => {
         const label = shortcutLabel(entry.id, shortcutDialect);
         const withShortcut = label === null ? entry : { ...entry, shortcutLabel: label };
-        if (entry.id !== 'publish') return withShortcut;
-        // The static entry's own `disabledReason` is only ever the instant
-        // before this computes the real one - dropped here rather than
-        // merged, so a since-resolved reason cannot linger.
-        const { disabledReason: _staticReason, ...withoutStaticReason } = withShortcut;
-        return {
-          ...withoutStaticReason,
-          ...(publishDisabledReason === undefined ? {} : { disabledReason: publishDisabledReason }),
-        };
+        if (entry.id === 'save-a-copy' && saveCopyDisabledReason !== undefined) {
+          return { ...withShortcut, disabledReason: saveCopyDisabledReason };
+        }
+        if (entry.id === 'export-sheet-pdf' && exportSheetDisabledReason !== undefined) {
+          return { ...withShortcut, disabledReason: exportSheetDisabledReason };
+        }
+        if (entry.id === 'publish') {
+          // The static entry's own `disabledReason` is only ever the instant
+          // before this computes the real one - dropped here rather than
+          // merged, so a since-resolved reason cannot linger.
+          const { disabledReason: _staticReason, ...withoutStaticReason } = withShortcut;
+          return {
+            ...withoutStaticReason,
+            ...(publishDisabledReason === undefined
+              ? {}
+              : { disabledReason: publishDisabledReason }),
+          };
+        }
+        return withShortcut;
       }),
-    [shortcutDialect, publishDisabledReason],
+    [shortcutDialect, saveCopyDisabledReason, exportSheetDisabledReason, publishDisabledReason],
   );
+
+  /**
+   * The bar's "most likely immediate controls" for what is selected right now.
+   *
+   * Built here rather than inline in the slot because the shell has to know how
+   * many there are before it decides whether to reserve the slot at all - a bar
+   * with no actions is an empty strip taken from the drawing.
+   */
+  const contextBarActions: readonly ContextBarAction[] = useMemo(
+    () =>
+      selectedDrawnWalls.length === 0
+        ? []
+        : [
+            {
+              id: 'delete',
+              label: selectionCount > 1 ? `Delete ${selectionCount} walls` : 'Delete',
+              // A real, undoable deletion of every selected drawn wall - one
+              // operation, one undo step.
+              onActivate: () => {
+                const drawnIds = new Set(drawnWalls.map((wall) => wall.id));
+                const selectedIds = [modelSelection.primary, ...modelSelection.secondary].filter(
+                  (id): id is string => id !== null && drawnIds.has(id),
+                );
+                performOperation({ kind: 'remove-walls', wallIds: selectedIds });
+                setModelSelection({ primary: null, secondary: new Set() });
+              },
+            },
+          ],
+    [selectedDrawnWalls, selectionCount, drawnWalls, modelSelection, performOperation],
+  );
+
+  /*
+   * The capsule's three segments: how you are looking at the building.
+   *
+   * Which level, or which sheet, is a different question and the project
+   * browser answers it. Project overview is deliberately absent - the logo is
+   * its entrance, because the reference composition has three segments and
+   * adding a fourth would be inventing chrome rather than matching it.
+   *
+   * Sheets carries its reason rather than being omitted. The golden fixture
+   * really does contain a sheet (A101, A3 landscape), and this build really can
+   * export one as a PDF - what it has no surface for is *showing* one. A
+   * segment that opened a sheet tab would fall through to the plan canvas and
+   * draw a plan while claiming to be a sheet, which is the one thing worse than
+   * saying so.
+   */
+  const VIEW_KIND_SEGMENTS: readonly ViewKindSegment[] = useMemo(
+    () => [
+      { kind: 'plan', label: 'Plan', icon: <PlanIcon width={16} height={16} /> },
+      { kind: '3d', label: '3D', icon: <Model3dIcon width={16} height={16} /> },
+      {
+        kind: 'sheet',
+        label: 'Sheets',
+        icon: <SheetIcon width={16} height={16} />,
+        disabledReason: 'This build can export a sheet as a PDF but has no sheet view to open yet.',
+      },
+    ],
+    [],
+  );
+
+  /**
+   * Activates the open view of a kind, or opens one if none is open.
+   *
+   * `openTab` is idempotent by id, so this is one call rather than a
+   * find-then-branch: an id that already exists is activated and nothing is
+   * duplicated. The plan segment prefers the tab already open, so switching to
+   * 3D and back returns to the level the user was on rather than to Level 1.
+   */
+  const handleSelectViewKind = useCallback(
+    (kind: WorkspaceViewKind) => {
+      setTabs((state) => {
+        const existing = state.tabs.find((tab) => tab.kind === kind);
+        if (existing !== undefined) {
+          return activateTab(state, existing.id);
+        }
+        return state;
+      });
+    },
+    [setTabs],
+  );
+
+  /** Shows a level's plan: its walls, rooms, dimensions and openings, and nothing of the last one. */
+  const handleShowLevel = useCallback(
+    (levelId: string) => {
+      if (openNativeProject === null) return;
+      setActiveNativeLevelId(levelId);
+      const shown = wallsForLevel(openNativeProject.project.model, levelId);
+      setDrawnWalls(shown);
+      drawnWallsRef.current = shown;
+      setProjectRooms(roomsForLevel(openNativeProject.project.model, levelId));
+      setWallDimensions(wallDimensionsForLevel(openNativeProject.project.model, levelId));
+      setWallOpenings(wallOpeningsForLevel(openNativeProject.project.model, levelId));
+      // The selection is a wall id, and a wall on another level is not on
+      // screen. Keeping it would leave the inspector describing something the
+      // reader cannot see.
+      setModelSelection({ primary: null, secondary: new Set() });
+    },
+    [openNativeProject],
+  );
+
+  /**
+   * Closing has to put back everything adoption replaced, not just hide the
+   * panel. Leaving the project's walls on the canvas under the workspace's own
+   * name is the worst of both: the reader is told no project is open while
+   * still looking at one, and the next open would draw over it.
+   */
+  const handleCloseNativeProject = useCallback(() => {
+    void nativeSessionRef.current?.close().catch(() => undefined);
+    nativeSessionRef.current = null;
+    setOpenNativeProject(null);
+    setActiveNativeLevelId(null);
+    setProjectRooms(null);
+    setWallDimensions(new Map());
+    setWallOpenings(new Map());
+    setActiveWorkingCopyId(null);
+    setDrawnWalls([]);
+    drawnWallsRef.current = [];
+    setProjectName('Untitled project');
+    setModelSelection({ primary: null, secondary: new Set() });
+    setSaveState('saved');
+    setJournalLabel('Journal current');
+  }, []);
+
+  /**
+   * The project directory, for whichever browser section asked for it.
+   *
+   * One wiring, two sections: Views lists the levels and the file's non-plan
+   * views, Model lists the counted elements and the tree. They were a single
+   * scroll under one tab called "Project" while three sibling tabs rendered
+   * "Nothing here yet", which is a panel that looks broken rather than one that
+   * is honest about what it holds.
+   */
+  const projectDirectory = useCallback(
+    (section: 'views' | 'model'): ReactNode => {
+      const tree = (
+        <ModelPanel
+          tree={modelTree}
+          selection={modelSelection}
+          onSelectNode={(nodeId) => setModelSelection({ primary: nodeId, secondary: new Set() })}
+        />
+      );
+      if (openNativeProject === null || activeNativeLevelId === null) {
+        return tree;
+      }
+      return (
+        <NativeProjectPanel
+          fileName={openNativeProject.fileName}
+          staged={openNativeProject.project}
+          activeLevelId={activeNativeLevelId}
+          section={section}
+          onShowLevel={handleShowLevel}
+          onCloseProject={handleCloseNativeProject}
+        >
+          {tree}
+        </NativeProjectPanel>
+      );
+    },
+    [
+      openNativeProject,
+      activeNativeLevelId,
+      modelTree,
+      modelSelection,
+      handleShowLevel,
+      handleCloseNativeProject,
+    ],
+  );
+
+  /**
+   * Where the drawing's page is on screen, reported by the canvas that paints
+   * it. Null until the first paint, and whenever nothing is drawn.
+   */
+  const [sheetRect, setSheetRect] = useState<SheetRect | null>(null);
 
   const activeToolLabel = useMemo(() => {
     const contract = toolContract(toolState.activeToolId);
@@ -1092,6 +1662,151 @@ export function App(): JSX.Element {
     [projectName, tabs.tabs],
   );
 
+  /*
+   * The level actually on show, and the scale actually being drawn at.
+   *
+   * The status bar said "Level 1" whatever level was open - a constant written
+   * into a readout whose whole job is to say where the reader is. With the
+   * golden fixture open on its upper floor it was simply wrong.
+   *
+   * The scale is derived from the viewport rather than declared, and the
+   * derivation is worth writing out because it is easy to invert - the first
+   * version read "1:5" for a fourteen-metre house drawn across six hundred
+   * pixels, which is off by a factor of sixteen and looks plausible enough to
+   * ship.
+   *
+   * One CSS pixel is 25.4/96 mm of paper and covers 1/pixelsPerUnit mm of
+   * world. A drawing scale is paper to world, so the denominator is world over
+   * paper: (1 / pixelsPerUnit) / (25.4 / 96), which is 96 / (25.4 *
+   * pixelsPerUnit). The label moves when the reader zooms, which is the only
+   * way it can stay true.
+   */
+  /** What this project is, for under its name in the bar: revision and units. */
+  const projectSubtitle =
+    openNativeProject === null
+      ? null
+      : `Revision ${openNativeProject.project.model.summary.revision} \u00b7 ${openNativeProject.project.model.summary.units}`;
+
+  const activeLevelName =
+    openNativeProject === null || activeNativeLevelId === null
+      ? null
+      : (openNativeProject.project.model.levels.find(
+          (level) => (level.id as string) === activeNativeLevelId,
+        )?.name ?? null);
+
+  /*
+   * The plan tab's title, kept in step with the level actually on screen.
+   *
+   * `INITIAL_TABS` seeds the tab with a placeholder before any project exists,
+   * because nothing else is true to say yet. Without this it stayed that way
+   * forever - opening the Courtyard fixture and showing "Ground floor" left the
+   * bar still reading "Level 1 Plan" a few hundred pixels above the sheet
+   * chip's "Ground floor", the same drawing named twice, differently. The
+   * placeholder is restored on close so a title from the last project does not
+   * linger on a tab that is no longer drawing it.
+   */
+  useEffect(() => {
+    setTabs((state) =>
+      renameTab(state, PLAN_TAB_ID, activeLevelName ?? PLAN_TAB_PLACEHOLDER_TITLE),
+    );
+  }, [activeLevelName]);
+
+  const planScaleLabel =
+    pixelsPerUnit > 0 && Number.isFinite(pixelsPerUnit)
+      ? `1:${Math.round(96 / (25.4 * pixelsPerUnit))}`
+      : null;
+
+  /**
+   * The view's own identity, pinned to the corner of the drawing.
+   *
+   * The reference plans carry it and ours did not: which view this is, what
+   * kind of drawing it is, and at what scale. Without it the canvas is a
+   * drawing with no title - a reader who opens a project on the wrong level, or
+   * reads a 1:200 plan as 1:100, has nothing on screen telling them so.
+   *
+   * Every part of it is read from state rather than written down: the level
+   * comes from the open project, the scale from the viewport's own zoom. A
+   * hard-coded "1:100" would be exactly the kind of decoration this work has
+   * been removing.
+   */
+  /*
+   * Both pieces of drawing chrome sit on the page's own corners.
+   *
+   * The sheet is painted into the canvas, so `PlanCanvas` reports its rectangle
+   * and these are placed against it - the title straddling the top-left edge
+   * and the drawing's controls on the top-right, which is where the reference
+   * puts them. Half the chip's height above the edge, so it reads as a tab on
+   * the page rather than a label inside it.
+   *
+   * Nothing is placed until the rect arrives: a chip guessing at the middle of
+   * the canvas is what used to land on top of a room.
+   */
+  const sheetChromeStyle = (side: 'start' | 'end'): CSSProperties | undefined => {
+    if (sheetRect === null) return undefined;
+    /*
+     * Clamped to the canvas, not merely offset from the page.
+     *
+     * A page fitted close to the top of the canvas would otherwise carry its
+     * chrome up past the canvas edge and behind the project bar, where it is
+     * both unreadable and unclickable. The lift is a nicety; staying on screen
+     * is not.
+     */
+    const top = Math.max(0, sheetRect.y - SHEET_CHROME_LIFT_PX);
+    return side === 'start'
+      ? { left: Math.max(0, sheetRect.x + SHEET_CHROME_INSET_PX), top }
+      : {
+          left: sheetRect.x + sheetRect.width - SHEET_CHROME_INSET_PX,
+          top,
+          transform: 'translateX(-100%)',
+        };
+  };
+
+  const viewIdentity =
+    activeTab === null || sheetRect === null ? null : (
+      <div
+        className="arq-view-identity arq-material arq-material--optical"
+        style={sheetChromeStyle('start')}
+      >
+        <strong>{activeLevelName ?? activeTab.title}</strong>
+        <span>
+          {activeTab.kind === '3d' ? 'Model' : 'Plan'}
+          {planScaleLabel === null ? '' : ` \u00b7 ${planScaleLabel}`}
+        </span>
+      </div>
+    );
+
+  /*
+   * The drawing's own controls, paired with its title on the opposite corner.
+   *
+   * Each does something this build can already do, which is the whole test for
+   * whether it belongs here: the grid toggles the plan's own grid, and search
+   * opens the command palette. Nothing here is a placeholder.
+   */
+  const viewTools =
+    activeTab === null || sheetRect === null ? null : (
+      <div
+        className="arq-view-tools arq-material arq-material--optical"
+        style={sheetChromeStyle('end')}
+      >
+        <button
+          type="button"
+          className="arq-shell-button"
+          aria-label="Fit the drawing to the window"
+          onClick={() => handleActivateTool('fit')}
+        >
+          <FitIcon width={16} height={16} />
+        </button>
+        <button
+          type="button"
+          className="arq-shell-button"
+          aria-label="Search commands"
+          onClick={() => setCommandPaletteOpen(true)}
+        >
+          <InspectIcon width={16} height={16} />
+        </button>
+      </div>
+    );
+
   const viewport =
     activeTab?.kind === '3d' ? (
       <Suspense
@@ -1103,6 +1818,11 @@ export function App(): JSX.Element {
       >
         <ModelCanvas
           walls={drawnWalls}
+          // The same dimensions and the same openings the plan is drawn from.
+          // 3D extruded at a single borrowed default before this, so an opened
+          // project's own wall types reached the plan and not the model.
+          wallDimensions={wallDimensions}
+          wallOpenings={wallOpenings}
           selection={modelSelection}
           onSelectElement={(elementId) =>
             setModelSelection({ primary: elementId, secondary: new Set() })
@@ -1117,34 +1837,47 @@ export function App(): JSX.Element {
         onOpenView={(viewId) => setTabs((state) => activateTab(state, viewId))}
       />
     ) : (
-      <PlanCanvas
-        activeToolId={toolState.activeToolId}
-        walls={drawnWalls}
-        selection={modelSelection}
-        onSelectElement={(elementId) =>
-          setModelSelection({ primary: elementId, secondary: new Set() })
-        }
-        onSelectMany={(elementIds) =>
-          setModelSelection({
-            primary: elementIds[0] ?? null,
-            secondary: new Set(elementIds.slice(1)),
-          })
-        }
-        onCommitWalls={handleCommitWallSegments}
-        onFitCompleted={() => handleActivateTool('select')}
-        onActiveSnapChange={setActiveSnapLabel}
-        onPointerWorldPositionChange={setCursorWorldPosition}
-        onViewportPixelsPerUnitChange={setPixelsPerUnit}
-      />
+      <div style={{ position: 'relative', height: '100%', minHeight: 0 }}>
+        {viewIdentity}
+        {viewTools}
+        <PlanCanvas
+          activeToolId={toolState.activeToolId}
+          walls={drawnWalls}
+          {...(projectRooms === null ? {} : { rooms: projectRooms })}
+          wallDimensions={wallDimensions}
+          wallOpenings={wallOpenings}
+          onSceneBuilt={(scene) => {
+            planSceneRef.current = scene;
+          }}
+          onSheetRectChange={setSheetRect}
+          selection={modelSelection}
+          onSelectElement={(elementId) =>
+            setModelSelection({ primary: elementId, secondary: new Set() })
+          }
+          onSelectMany={(elementIds) =>
+            setModelSelection({
+              primary: elementIds[0] ?? null,
+              secondary: new Set(elementIds.slice(1)),
+            })
+          }
+          onCommitWalls={handleCommitWallSegments}
+          onFitCompleted={() => handleActivateTool('select')}
+          onActiveSnapChange={setActiveSnapLabel}
+          onPointerWorldPositionChange={setCursorWorldPosition}
+          onViewportPixelsPerUnitChange={setPixelsPerUnit}
+        />
+      </div>
     );
 
   return (
     <>
       <WorkspaceRoot
+        modeIcons={MODE_ICONS}
         project={project}
         activeMode={modeState.mode}
         onSelectMode={(mode) => setModeState((state) => switchModeIfAvailable(state, mode))}
         probe={probe}
+        toolRailIsDock
         panels={panels}
         sheet={sheet}
         onToggleSheet={(id) => setSheet((state) => toggleSheet(state, id))}
@@ -1154,7 +1887,6 @@ export function App(): JSX.Element {
         onSheetDragToDetent={(detent) => setSheet((state) => setDetent(state, detent))}
         onResizePanel={(panel, width) => setPanels((current) => resizePanel(current, panel, width))}
         onSelectPointerTool={() => handleActivateTool('select')}
-        activeToolLabel={activeToolLabel}
         phoneProjectBar={
           <PhoneProjectBar
             projectName={projectName}
@@ -1222,7 +1954,14 @@ export function App(): JSX.Element {
           <TopBar
             projectName={projectName}
             onRenameProject={setProjectName}
-            activeViewName={activeTab?.title ?? 'No view open'}
+            viewSwitcher={
+              <ViewKindSwitcher
+                segments={VIEW_KIND_SEGMENTS}
+                state={tabs}
+                onSelectKind={handleSelectViewKind}
+              />
+            }
+            onOpenProjectOverview={() => setTabs((state) => activateTab(state, 'overview'))}
             // Save state is real: it tracks the IndexedDB operation journal
             // (recover on boot, append per edit). Sync stays 'offline'
             // because no sync backend exists - the two are reported
@@ -1239,6 +1978,8 @@ export function App(): JSX.Element {
             onShare={() => recordDemoAction('share')}
             onOpenCommandPalette={() => setCommandPaletteOpen(true)}
             onOpenAccountMenu={() => recordDemoAction('open account menu')}
+            actionIcons={TOP_BAR_ACTION_ICONS}
+            {...(projectSubtitle === null ? {} : { projectSubtitle })}
           />
         }
         tabStrip={
@@ -1272,6 +2013,7 @@ export function App(): JSX.Element {
           <ToolRail
             toolsByCategory={railModel.toolsByCategory}
             visibleCategories={railModel.visibleCategories}
+            categoryIcons={TOOL_GROUP_ICONS}
             state={toolRailState}
             onToggleCategory={(category) =>
               setToolRailState((state) => toggleCategory(state, category))
@@ -1289,71 +2031,14 @@ export function App(): JSX.Element {
             }
             sections={{
               /*
-               * Only Project has real content: the semantic tree is the one
-               * thing this build can actually enumerate. Views, Documents and
-               * Files render their own empty state rather than a fabricated
-               * list - doc 35's "never invent" rule is not specific to the
-               * overview.
+               * Views and Model are both real: the levels and views the file
+               * declares, and the counted elements. Sheets renders its own
+               * empty state rather than a fabricated list, because this build
+               * reads no sheet records - doc 35's "never invent" rule is not
+               * specific to the overview.
                */
-              project:
-                openNativeProject !== null && activeNativeLevelId !== null ? (
-                  <NativeProjectPanel
-                    fileName={openNativeProject.fileName}
-                    staged={openNativeProject.project}
-                    activeLevelId={activeNativeLevelId}
-                    onShowLevel={(levelId) => {
-                      setActiveNativeLevelId(levelId);
-                      const shown = wallsForLevel(openNativeProject.project.model, levelId);
-                      setDrawnWalls(shown);
-                      drawnWallsRef.current = shown;
-                      // The selection is a wall id, and a wall on another level
-                      // is not on screen. Keeping it would leave the inspector
-                      // describing something the reader cannot see.
-                      setModelSelection({ primary: null, secondary: new Set() });
-                    }}
-                    onCloseProject={() => {
-                      // Closing has to put back everything adoption replaced, not
-                      // just hide the panel. Leaving the project's walls on the
-                      // canvas under the workspace's own name is the worst of both:
-                      // the reader is told no project is open while still looking
-                      // at one, and the next open would draw over it.
-                      void nativeSessionRef.current?.close().catch(() => undefined);
-                      nativeSessionRef.current = null;
-                      setOpenNativeProject(null);
-                      setActiveNativeLevelId(null);
-                      setActiveWorkingCopyId(null);
-                      setDrawnWalls([]);
-                      drawnWallsRef.current = [];
-                      setProjectName('Untitled project');
-                      setModelSelection({ primary: null, secondary: new Set() });
-                      setSaveState('saved');
-                      setJournalLabel('Journal current');
-                    }}
-                  >
-                    <ModelPanel
-                      tree={modelTree}
-                      selection={modelSelection}
-                      onSelectNode={(nodeId) =>
-                        setModelSelection({ primary: nodeId, secondary: new Set() })
-                      }
-                    />
-                  </NativeProjectPanel>
-                ) : (
-                  <ModelPanel
-                    tree={modelTree}
-                    selection={modelSelection}
-                    onSelectNode={(nodeId) =>
-                      setModelSelection({ primary: nodeId, secondary: new Set() })
-                    }
-                  />
-                ),
-              views: (
-                <ViewSwitcherList
-                  state={tabs}
-                  onActivateTab={(id) => setTabs((state) => activateTab(state, id))}
-                  onCloseTab={(id) => setTabs((state) => closeTab(state, id))}
-                />
-              ),
+              views: projectDirectory('views'),
+              model: projectDirectory('model'),
             }}
           />
         }
@@ -1362,13 +2047,7 @@ export function App(): JSX.Element {
           <InspectorPanel
             state={inspectorTabs}
             context={inspectorContext}
-            commonTypeName={
-              selectedDrawnWall !== null
-                ? 'Wall (drawn)'
-                : isWallSelected
-                  ? 'Interior Wall 100mm'
-                  : null
-            }
+            commonTypeName={selectedDrawnWalls.length > 0 ? 'Wall (drawn)' : null}
             onSelectTab={(tab) => setInspectorTabs((current) => selectInspectorTab(current, tab))}
             tabs={{
               /*
@@ -1381,24 +2060,14 @@ export function App(): JSX.Element {
               properties: (
                 <InspectorShell
                   groups={
-                    selectedDrawnWall !== null
-                      ? buildDrawnWallInspectorGroups(
-                          selectedDrawnWall.id,
-                          wallLength(selectedDrawnWall),
-                        )
-                      : isWallSelected
-                        ? buildDemoWallInspectorGroups()
-                        : buildEmptyInspectorGroups()
+                    selectedDrawnWalls.length > 0
+                      ? buildDrawnWallSelectionInspectorGroups(selectedDrawnWalls)
+                      : buildEmptyInspectorGroups()
                   }
                   selectedElementDescription={
-                    selectedDrawnWall !== null
-                      ? buildDrawnWallAccessibleDescription(
-                          selectedDrawnWall.id,
-                          wallLength(selectedDrawnWall),
-                        )
-                      : isWallSelected
-                        ? buildDemoWallAccessibleDescription()
-                        : null
+                    selectedDrawnWalls.length > 0
+                      ? buildDrawnWallSelectionAccessibleDescription(selectedDrawnWalls)
+                      : null
                   }
                 />
               ),
@@ -1406,52 +2075,46 @@ export function App(): JSX.Element {
           />
         }
         contextBar={
-          <ContextBar
-            activeToolId={toolState.activeToolId}
-            selectionCount={selectionCount}
-            actions={
-              selectedDrawnWall !== null
-                ? [
-                    {
-                      id: 'delete',
-                      label: selectionCount > 1 ? `Delete ${selectionCount} walls` : 'Delete',
-                      // A real, undoable deletion of every selected drawn
-                      // wall - one operation, one undo step.
-                      onActivate: () => {
-                        const drawnIds = new Set(drawnWalls.map((wall) => wall.id));
-                        const selectedIds = [
-                          modelSelection.primary,
-                          ...modelSelection.secondary,
-                        ].filter((id): id is string => id !== null && drawnIds.has(id));
-                        performOperation({ kind: 'remove-walls', wallIds: selectedIds });
-                        setModelSelection({ primary: null, secondary: new Set() });
-                      },
-                    },
-                  ]
-                : isWallSelected
-                  ? [
-                      {
-                        id: 'delete',
-                        label: 'Delete',
-                        onActivate: () => recordDemoAction('delete wall'),
-                      },
-                    ]
-                  : []
-            }
-          />
+          /*
+           * Doc 09: the shell reserves the bottom slot only when something
+           * occupies it, so the decision is made here rather than left to the
+           * bar rendering null inside a slot that still holds its height. The
+           * rule itself is ContextBar's own, reused rather than restated - and
+           * it needs the actions, because "there is an active tool" was true on
+           * arrival with nothing to put in the bar.
+           */
+          !isContextBarVisible(
+            toolState.activeToolId,
+            selectionCount,
+            contextBarActions.length,
+          ) ? null : (
+            <ContextBar
+              activeToolId={toolState.activeToolId}
+              selectionCount={selectionCount}
+              actions={contextBarActions}
+            />
+          )
         }
         statusBar={
           <StatusBar
-            unitLabel="mm"
-            cursorWorldPosition={cursorWorldPosition}
             activeSnapLabel={activeSnapLabel}
-            selectionCount={selectionCount}
-            currentLevelName="Level 1"
-            pixelsPerUnit={pixelsPerUnit}
             modelHealth={modelHealth}
             localJournalStateLabel={journalLabel}
-            syncState={DEMO_SYNC_STATE}
             supportModeEnabled={false}
+            /* Doc 47: the strip carries only what its input can act on, and
+               the tool joins it rather than taking a row of its own above the
+               dock.
+
+               Keyed on the pointer rather than on a list of device bands,
+               because that is what the fields depend on. Cursor coordinates
+               and active snap describe a pointer a touch device does not have,
+               and save and sync are already stated above - on the project bar
+               on a phone, on the top bar everywhere else - so a touch band was
+               spending its whole strip restating two facts and reporting two
+               that cannot happen. At 1024px that ran to two rows and pushed
+               sync state off the bottom of the window. */
+            activeToolLabel={activeToolLabel}
+            variant={probe.coarsePointer ? 'minimal' : 'full'}
           />
         }
       />
@@ -1481,6 +2144,18 @@ export function App(): JSX.Element {
                   setTabs((state) => closeTab(state, active.id));
                 }
                 recordDemoAction(entry.label);
+              } else if (entry.id === 'export-sheet-pdf') {
+                void handleExportSheet();
+                setCommandPaletteOpen(false);
+                return;
+              } else if (entry.id === 'save-a-copy') {
+                // Returns before `recordDemoAction`: saving a copy reads the
+                // project and does not change it, and journalling a note here
+                // would move the project to "unsaved changes" for an action
+                // that changed nothing.
+                void handleSaveCopy();
+                setCommandPaletteOpen(false);
+                return;
               } else if (entry.id === 'publish') {
                 // Reports its own real outcome through the feedback region -
                 // a `recordDemoAction` note here would be a second, redundant
@@ -1496,6 +2171,39 @@ export function App(): JSX.Element {
           />
         </div>
       )}
+
+      {/*
+        The outcome of a "Save a copy", shown until the user closes it.
+
+        Not dismissable by clicking away: on a refusal this is the only place
+        that carries the diagnostic and the sentence saying the project on this
+        device still holds every change, and a stray click on the canvas behind
+        it would take both away.
+      */}
+      <ArqModalDialog
+        isOpen={publicationNotice !== null}
+        onOpenChange={(open) => {
+          if (!open) setPublicationNotice(null);
+        }}
+        isDismissable={false}
+        aria-labelledby="arq-publication-notice-heading"
+      >
+        {({ close }) => (
+          <div style={{ display: 'grid', gap: 'var(--arq-space-panel)', maxWidth: '46ch' }}>
+            <h2 id="arq-publication-notice-heading" style={{ font: 'var(--arq-text-panel-title)' }}>
+              {publicationNotice?.headline ?? ''}
+            </h2>
+            <p style={{ color: 'var(--arq-ui-text-secondary)' }}>
+              {publicationNotice?.detail ?? ''}
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="button" className="arq-shell-button" onClick={close}>
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </ArqModalDialog>
 
       {/* Renders its own full-viewport ArqModalDialog (backdrop, focus trap),
           so it sits beside WorkspaceRoot rather than inside a layout slot. */}

@@ -4,6 +4,7 @@ import {
   type ProjectOverviewData,
   type WorkspaceCapabilities,
 } from '@arq/workspace';
+import { viewKindQualifier } from './view-kind-label';
 
 export interface ProjectOverviewSurfaceProps {
   readonly data: ProjectOverviewData;
@@ -42,7 +43,14 @@ function CardBody(props: {
                 onClick={() => onOpenView(view.id)}
               >
                 {view.title}
-                <span style={{ color: 'var(--arq-ui-text-muted)' }}> {view.kind}</span>
+                {/* Only when the title does not already say it - "Level 1 Plan
+                    plan" was what printing the registry token produced. */}
+                {viewKindQualifier(view.title, view.kind) === null ? null : (
+                  <span style={{ color: 'var(--arq-ui-text-muted)' }}>
+                    {' '}
+                    {viewKindQualifier(view.title, view.kind)}
+                  </span>
+                )}
               </button>
             </li>
           ))}
@@ -138,7 +146,13 @@ export function ProjectOverviewSurface(props: ProjectOverviewSurfaceProps): JSX.
         display: 'grid',
         gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
         gap: 'var(--arq-space-section)',
-        padding: 'var(--arq-space-page)',
+        /*
+         * Block padding only. The inline sides come from the stylesheet, which
+         * is where the floating panels' footprints are known - a document
+         * cannot be panned out from under one the way a drawing can, and this
+         * page was rendering the project's own name behind the project browser.
+         */
+        paddingBlock: 'var(--arq-space-page)',
         overflow: 'auto',
       }}
     >

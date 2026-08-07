@@ -113,3 +113,27 @@ export function resolveArqfsSafeModePlan(report: ArqfsRecoveryReport): ArqfsSafe
     reason: 'healthy',
   };
 }
+
+/**
+ * The subset of conditions that must take write access away from an *open
+ * working copy*, as opposed to describing a file someone is choosing.
+ *
+ * The distinction matters because `resolveArqfsSafeModePlan` answers a question
+ * about a file: given everything this report says, how should it be opened. Two
+ * of its answers - `missing-required-entries` and the two format-derived kinds -
+ * are properties of the chosen file, and `apps/web`'s own open policy
+ * (`native-open-policy.ts`) already decides what the product does about them. A
+ * working copy that this build just initialised has no required entries either,
+ * and it is not damaged; it is empty.
+ *
+ * These two are different. `corrupt` means SQLite's own checks failed on the
+ * pages being read, and `interrupted-write` means a previous local write never
+ * reached commit - so the current bytes describe a revision the project never
+ * committed to. Writing on top of either turns a recoverable state into a
+ * committed one, which is the single way an open can destroy work that was
+ * still there when it started. Neither is a property of the format, so nothing
+ * else in the stack refuses them.
+ */
+export function conditionForcesReadOnly(plan: ArqfsSafeModePlan): boolean {
+  return plan.kind === 'corrupt' || plan.kind === 'interrupted-write';
+}

@@ -12,9 +12,29 @@
   --arq-active-indicator: var(--arq-phthalo-green);
 }
 
+/*
+ * A lighter tint of the same hue, for dark appearance only (ADR-0032).
+ *
+ * Phthalo green at its brand value reaches 2.83:1 against dark paper, below the
+ * 3:1 a focus ring has to meet to be seen at all. The brand colour itself is
+ * unchanged - this is the dark-appearance rendering of it, the way a printed
+ * ink and its on-screen equivalent are the same colour expressed twice.
+ */
+:root {
+  --arq-phthalo-green-light: #35c99b;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --arq-brand-foreground: var(--arq-white);
     --arq-brand-background: var(--arq-black);
+
+    /* The three semantic roles derived from the accent. Left at the brand value
+       they would each fail contrast against dark chrome, and the focus ring
+       failing is the one that locks a keyboard user out. */
+    --arq-brand-accent: var(--arq-phthalo-green-light);
+    --arq-focus-ring: var(--arq-phthalo-green-light);
+    --arq-selection-outline: var(--arq-phthalo-green-light);
+    --arq-active-indicator: var(--arq-phthalo-green-light);
   }
 }

@@ -43,9 +43,9 @@ describe('browserSectionsForMode', () => {
 
 describe('defaultBrowserSection', () => {
   it('leads with the section each mode is about', () => {
-    expect(defaultBrowserSection('design')).toBe('project');
-    expect(defaultBrowserSection('inspect')).toBe('project');
-    expect(defaultBrowserSection('document')).toBe('documents');
+    expect(defaultBrowserSection('design')).toBe('views');
+    expect(defaultBrowserSection('inspect')).toBe('views');
+    expect(defaultBrowserSection('document')).toBe('sheets');
     expect(defaultBrowserSection('review')).toBe('issues');
     expect(defaultBrowserSection('present')).toBe('views');
   });
@@ -55,16 +55,16 @@ describe('reconcileBrowserSection', () => {
   it('follows the mode default until the user chooses', () => {
     let state = INITIAL_BROWSER_PANEL_STATE;
     state = reconcileBrowserSection(state, 'document', true);
-    expect(state.section).toBe('documents');
+    expect(state.section).toBe('sheets');
     state = reconcileBrowserSection(state, 'design', true);
-    expect(state.section).toBe('project');
+    expect(state.section).toBe('views');
   });
 
   /** Doc 34's rule: preserve the user's manual selection during the session. */
   it('respects a user choice across mode switches', () => {
-    const chosen = selectBrowserSection(INITIAL_BROWSER_PANEL_STATE, 'files');
+    const chosen = selectBrowserSection(INITIAL_BROWSER_PANEL_STATE, 'sheets');
     const afterSwitch = reconcileBrowserSection(chosen, 'document', true);
-    expect(afterSwitch.section).toBe('files');
+    expect(afterSwitch.section).toBe('sheets');
     expect(afterSwitch).toBe(chosen);
   });
 
@@ -75,14 +75,14 @@ describe('reconcileBrowserSection', () => {
   it('falls back when the chosen section is unavailable in the new mode', () => {
     const chosen = selectBrowserSection(INITIAL_BROWSER_PANEL_STATE, 'issues');
     const afterSwitch = reconcileBrowserSection(chosen, 'design', true);
-    expect(afterSwitch.section).toBe('project');
+    expect(afterSwitch.section).toBe('views');
     expect(afterSwitch.userChose).toBe(false);
   });
 
-  it('falls back to project when review capability removes the default', () => {
+  it('falls back to views when review capability removes the default', () => {
     // Review mode defaults to Issues, but with collaboration off it does not exist.
     const state = reconcileBrowserSection(INITIAL_BROWSER_PANEL_STATE, 'review', false);
-    expect(state.section).toBe('project');
+    expect(state.section).toBe('views');
   });
 
   it('is stable when nothing needs to change', () => {

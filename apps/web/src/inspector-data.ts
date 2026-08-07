@@ -19,6 +19,7 @@ import {
 } from '@arq/operations';
 import {
   buildEmptyInspectorGroups,
+  mergeInspectorFields,
   type InspectorField,
   type InspectorGroup,
 } from '@arq/design-system';
@@ -280,4 +281,70 @@ export function buildDemoWallInspectorGroups(): readonly InspectorGroup[] {
   });
 
   return Array.from(groupById.values());
+}
+
+/**
+ * Inspector groups for a selection of drawn walls.
+ *
+ * One wall behaves exactly as before. Several collapse through
+ * `mergeInspectorFields`, so a property the walls disagree on reads as
+ * "Multiple values" rather than reporting whichever wall happened to be
+ * primary - which is what the inspector did before this existed, under a
+ * heading that said how many were selected.
+ *
+ * History is dropped for a multi-selection rather than merged: an edit log is a
+ * sequence belonging to one element, and interleaving several would invent an
+ * order that never happened. Warnings are unioned, because a warning on any
+ * selected wall is a warning the reader needs.
+ */
+export function buildDrawnWallSelectionInspectorGroups(
+  walls: readonly { readonly id: string; readonly lengthMm: number }[],
+): readonly InspectorGroup[] {
+  if (walls.length === 0) {
+    return buildEmptyInspectorGroups();
+  }
+  const perWall = walls.map((wall) => buildDrawnWallInspectorGroups(wall.id, wall.lengthMm));
+  if (perWall.length === 1) {
+    return perWall[0]!;
+  }
+
+  return buildEmptyInspectorGroups().map((empty) => {
+    const contents = perWall.map(
+      (groups) => groups.find((group) => group.id === empty.id)?.content ?? empty.content,
+    );
+
+    if (empty.id === 'history') {
+      return { ...empty, content: { kind: 'lines' as const, lines: [] } };
+    }
+    if (empty.content.kind === 'lines') {
+      const lines = contents.flatMap((content) => (content.kind === 'lines' ? content.lines : []));
+      return { ...empty, content: { kind: 'lines' as const, lines: [...new Set(lines)] } };
+    }
+    return {
+      ...empty,
+      content: {
+        kind: 'fields' as const,
+        fields: mergeInspectorFields(
+          contents.map((content) => (content.kind === 'fields' ? content.fields : [])),
+        ),
+      },
+    };
+  });
+}
+
+/** Screen-reader description for a multi-wall selection. */
+export function buildDrawnWallSelectionAccessibleDescription(
+  walls: readonly { readonly id: string; readonly lengthMm: number }[],
+): string | null {
+  if (walls.length === 0) {
+    return null;
+  }
+  if (walls.length === 1) {
+    return buildDrawnWallAccessibleDescription(walls[0]!.id, walls[0]!.lengthMm);
+  }
+  // Deliberately not one wall's description: the reader asked about a
+  // selection, and naming a member of it as though it were the whole is the
+  // same error the visible inspector used to make.
+  const total = walls.reduce((sum, wall) => sum + wall.lengthMm, 0);
+  return `${walls.length} walls selected. Total length ${Math.round(total)}mm.`;
 }

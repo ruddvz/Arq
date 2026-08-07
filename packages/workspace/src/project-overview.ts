@@ -19,13 +19,24 @@ import {
   type CapabilityId,
   type WorkspaceCapabilities,
 } from './capability-gates';
+import type { WorkspaceViewKind } from './workspace-types';
 
 export type ReferenceStatus = 'current' | 'missing' | 'outdated' | 'loading';
 
 export interface RecentViewSummary {
   readonly id: string;
   readonly title: string;
-  readonly kind: string;
+  /**
+   * The registry kind, not a display string.
+   *
+   * It was typed `string`, and the Project overview rendered it straight into
+   * the page beside the title - so the first card on the first surface an
+   * opened project shows read "3D 3d" and "Level 1 Plan plan". Narrowing it to
+   * the union makes that a rendering decision a caller has to make rather than
+   * a value it can print, and `viewKindLabel` is exhaustive over the same union
+   * so a new kind cannot arrive without a name.
+   */
+  readonly kind: WorkspaceViewKind;
   readonly thumbnailUrl?: string;
   readonly lastOpenedIso?: string;
 }

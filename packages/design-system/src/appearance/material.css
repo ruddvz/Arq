@@ -1,0 +1,267 @@
+/*
+ * ADR-0031: the functional material layer.
+ *
+ * The only place `backdrop-filter` may appear in this repository. Blueprint
+ * section 14 still forbids decorative glass; what ADR-0031 permits is one
+ * bounded material that marks the boundary between floating chrome and the
+ * drawing underneath it, which is a question a flat surface answers less well
+ * in an edge-to-edge CAD workspace.
+ *
+ * Apply `.arq-material` to a floating control surface. Do not apply it to
+ * model content, to a docked panel (which already has an edge against the
+ * canvas), or to a full-viewport element.
+ */
+@import '../tokens.css';
+@import '../shell/shell-tokens.css';
+
+:root {
+  /* Tuned so the surface reads as chrome without the content behind it
+     becoming legible through it - a control you can read the model through is
+     worse than either a solid panel or no panel. Blur and saturation follow
+     the design package's `glass-materials.json` regular variant. */
+  --arq-material-tint: rgb(252 252 253 / 72%);
+  --arq-material-filter: saturate(165%) blur(28px);
+  --arq-material-border: rgb(0 0 0 / 10%);
+
+  /* The `strong` variant, for the large presentations that have to stay
+     legible over busy content: the inspector, the open-project surface and
+     recovery. More tint rather than only more blur - blur alone raises cost
+     without raising legibility, and legibility is the whole reason this
+     variant exists. */
+  --arq-material-tint-strong: rgb(252 252 253 / 88%);
+  --arq-material-filter-strong: saturate(165%) blur(34px);
+
+  /* The fallback is the real design, not a degradation: it is what every
+     reduced-transparency, increased-contrast and forced-colours configuration
+     renders, and it must lose no control and no information. */
+  --arq-material-opaque: var(--arq-ui-surface-1);
+  --arq-material-opaque-border: var(--arq-ui-line-default);
+
+  /*
+   * The optical variant, from the Optical Glass 2.0 package.
+   *
+   * Same layer and the same `backdrop-filter` budget - this is a second set of
+   * values for `.arq-material`, not a second material system. What it adds over
+   * the regular variant is edge definition: a fine rim highlight and a shallow
+   * gradient across the surface, which is what makes a control read as a piece
+   * of glass with a thickness rather than as a tinted rectangle.
+   *
+   * Blur is lower than the regular variant on purpose. The package's visual
+   * character is "precision optical equipment... thin edge definition, quiet
+   * depth, no excessive blur"; 28px reads as frosted, and frosted is the thing
+   * it explicitly rules out.
+   */
+  --arq-optical-fill: rgb(248 250 249 / 72%);
+  /*
+   * Fully opaque, and it has to be exactly that.
+   *
+   * This was 98%, which looks identical and is wrong for the only reason the
+   * token exists: it is what reduced-transparency, increased-contrast and
+   * no-backdrop-filter render, and each of those is a reader who has asked for
+   * - or whose browser requires - no transparency at all. Honouring 98% of
+   * that request is not honouring it, and a stack of two such surfaces
+   * compounds it.
+   */
+  --arq-optical-fill-solid: rgb(248 250 249);
+  --arq-optical-border: rgb(255 255 255 / 72%);
+  --arq-optical-inner: rgb(11 107 80 / 7%);
+  --arq-optical-rim: rgb(255 255 255 / 74%);
+  --arq-optical-shadow: 0 12px 34px rgb(16 27 23 / 11%), 0 2px 8px rgb(16 27 23 / 6%);
+  --arq-optical-filter: blur(16px) saturate(1.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Not the light tint inverted. A dark material lightens what is behind it
+       rather than darkening it, so chrome still reads as being in front, and
+       the border carries more of the separation because shadows barely register
+       on a dark background. */
+    --arq-material-tint: rgb(32 36 40 / 76%);
+    --arq-material-tint-strong: rgb(32 36 40 / 90%);
+    --arq-material-border: rgb(255 255 255 / 12%);
+
+    /* Not the light values inverted, for the same reason as the regular
+       variant: a dark surface lightens what is behind it, and the rim carries
+       the separation that a shadow cannot on a dark background. */
+    --arq-optical-fill: rgb(18 24 22 / 76%);
+    /* Opaque for the same reason as the light value. */
+    --arq-optical-fill-solid: rgb(18 24 22);
+    --arq-optical-border: rgb(255 255 255 / 15%);
+    --arq-optical-inner: rgb(255 255 255 / 5%);
+    --arq-optical-rim: rgb(255 255 255 / 18%);
+  }
+}
+
+.arq-material {
+  background: var(--arq-material-tint);
+  backdrop-filter: var(--arq-material-filter);
+  -webkit-backdrop-filter: var(--arq-material-filter);
+  border: 1px solid var(--arq-material-border);
+
+  /* Bounds the blurred region to this surface. Without it the compositor can
+     be asked to sample a far larger backdrop than the element occupies, which
+     is the cost ADR-0031 requires to stay proportional to visible area. */
+  contain: paint;
+}
+
+/*
+ * The optical variant: glass with an edge.
+ *
+ * The package calls this an interaction material, and the distinction is load
+ * bearing - it goes on bounded navigation shells, floating tool groups and
+ * compact overlays, and never on project truth. Numbers, inspector fields,
+ * dense lists, warnings, recovery, legal copy and renderer output stay solid,
+ * because a translucent surface lowers the contrast of everything drawn on it
+ * and those are the things that must not lose any.
+ *
+ * The gradient runs across the surface rather than down it, so the highlight
+ * reads as light catching an edge rather than as a button bevel.
+ */
+.arq-material--optical {
+  background:
+    linear-gradient(
+      145deg,
+      rgb(255 255 255 / 28%),
+      rgb(255 255 255 / 4%) 44%,
+      var(--arq-optical-inner)
+    ),
+    var(--arq-optical-fill);
+  backdrop-filter: var(--arq-optical-filter);
+  -webkit-backdrop-filter: var(--arq-optical-filter);
+  border-color: var(--arq-optical-border);
+  box-shadow:
+    inset 0 1px 0 var(--arq-optical-rim),
+    var(--arq-optical-shadow);
+}
+
+/*
+ * The `strong` variant. Same layer, more tint: a large surface covers more
+ * varied content, so the regular tint that reads cleanly behind a toolbar
+ * stops being enough behind a full inspector.
+ *
+ * There is deliberately no `clear` variant. The design package defines one and
+ * then disallows it by default, and a variant that exists in CSS is a variant
+ * somebody will reach for, so it is simply not written.
+ */
+.arq-material--strong {
+  background: var(--arq-material-tint-strong);
+  backdrop-filter: var(--arq-material-filter-strong);
+  -webkit-backdrop-filter: var(--arq-material-filter-strong);
+}
+
+/*
+ * ADR-0031: never nested. Depth stops carrying meaning the moment it repeats,
+ * and a second backdrop-filter inside the first pays full GPU cost to produce
+ * an effect nobody can see - it samples a backdrop that is already blurred.
+ *
+ * Expressed as a descendant selector rather than a prop the child reads,
+ * because this way a nested surface cannot forget to ask.
+ */
+.arq-material .arq-material {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: var(--arq-ui-line-subtle);
+  contain: none;
+  /*
+   * The rim and the shadow go with the blur, and they were not being reset.
+   * A nested optical surface kept `inset 0 1px 0` and a 34px drop shadow while
+   * this rule turned its fill transparent - an edge highlight and a cast
+   * shadow around a box with nothing in it, which reads as a bevel floating
+   * over the parent surface. Depth has to stop where the material stops.
+   */
+  box-shadow: none;
+}
+
+/*
+ * The four fallbacks ADR-0031 makes mandatory. Each is a complete opaque
+ * surface, not a reduced one.
+ */
+
+/* The direct request. */
+@media (prefers-reduced-transparency: reduce) {
+  .arq-material,
+  .arq-material .arq-material {
+    background: var(--arq-material-opaque);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--arq-material-opaque-border);
+  }
+}
+
+/* A translucent surface lowers the contrast of everything drawn on it by
+   definition, which is the opposite of what was asked for. */
+@media (prefers-contrast: more) {
+  .arq-material,
+  .arq-material .arq-material {
+    background: var(--arq-material-opaque);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--arq-ui-line-strong);
+  }
+}
+
+/* The substitution replaces the tint anyway, so the blur would cost GPU to
+   produce nothing. A named system colour keeps the surface separated once the
+   product's own palette stops applying. */
+@media (forced-colors: active) {
+  .arq-material,
+  .arq-material .arq-material {
+    background: Canvas;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: CanvasText;
+  }
+}
+
+/* Browsers without the property would otherwise render the tint alone, which
+   is a translucent surface with nothing behind it resolved - the one genuinely
+   unreadable outcome. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .arq-material {
+    background: var(--arq-material-opaque);
+    border-color: var(--arq-material-opaque-border);
+  }
+}
+
+/*
+ * The optical variant's own fallbacks, declared after the shared ones so they
+ * win at equal specificity.
+ *
+ * Each is a complete surface rather than a reduced one - the same rule
+ * ADR-0031 already sets for the regular variant. What has to go in every case
+ * is the rim and the shadow along with the blur: an inset highlight on an
+ * opaque surface is a bevel, and a bevel is a different visual language from
+ * the one this is trying to speak.
+ */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .arq-material--optical {
+    background: var(--arq-optical-fill-solid);
+    box-shadow: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .arq-material--optical {
+    background: Canvas;
+    border-color: ButtonText;
+    box-shadow: none;
+  }
+}
+
+/* Printing a translucent surface produces a grey box over nothing. */
+@media print {
+  .arq-material--optical {
+    background: #ffffff;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .arq-material--optical {
+    background: var(--arq-optical-fill-solid);
+    box-shadow: none;
+  }
+}

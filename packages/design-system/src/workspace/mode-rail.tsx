@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   WORKSPACE_MODES,
   modeUnavailableReason,
@@ -9,6 +10,12 @@ export interface ModeRailProps {
   readonly project: WorkspaceProjectContext;
   readonly activeMode: WorkspaceMode;
   readonly onSelectMode: (mode: WorkspaceMode) => void;
+  /**
+   * An already-resolved glyph per mode, so this package stays icon-agnostic -
+   * the same seam `ToolRail` keeps with `categoryIcons`. Absent means the rail
+   * falls back to the mode's label, which is what it showed before.
+   */
+  readonly modeIcons?: Readonly<Partial<Record<WorkspaceMode, ReactNode>>>;
 }
 
 /**
@@ -24,7 +31,7 @@ export interface ModeRailProps {
  * Exported for the same reason as `TOOL_RAIL_WIDTH_PX`: the canvas-floor
  * calculation needs the width that is actually on screen.
  */
-export const MODE_RAIL_WIDTH_PX = 112;
+export const MODE_RAIL_WIDTH_PX = 56;
 
 const MODE_LABEL: Readonly<Record<WorkspaceMode, string>> = {
   design: 'Design',
@@ -57,8 +64,20 @@ const MODE_LABEL: Readonly<Record<WorkspaceMode, string>> = {
  * that every control must be able to explain itself. A read-only collaborator
  * should be able to see that Design exists and learn why they cannot enter it.
  */
+/**
+ * One glyph per mode.
+ *
+ * The rail carried its labels - "Design", "Document", "Inspect", "Review",
+ * "Present" - which needed 112px of column for five words that never change,
+ * beside a tool rail that is 48px of icons. The reference composition gives the
+ * whole left edge to one narrow dock, and the drawing takes the width back.
+ *
+ * The label does not disappear: it is still the button's accessible name and
+ * its tooltip, so the rail is no less legible to a screen reader than it was,
+ * and a pointer user can still ask.
+ */
 export function ModeRail(props: ModeRailProps): JSX.Element {
-  const { project, activeMode, onSelectMode } = props;
+  const { project, activeMode, onSelectMode, modeIcons } = props;
 
   return (
     <nav
@@ -67,9 +86,9 @@ export function ModeRail(props: ModeRailProps): JSX.Element {
       style={{
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
         gap: 'var(--arq-space-micro)',
         padding: 'var(--arq-space-micro)',
-        borderRight: '1px solid var(--arq-ui-line-subtle)',
         width: MODE_RAIL_WIDTH_PX,
         flex: '0 0 auto',
       }}
@@ -88,7 +107,7 @@ export function ModeRail(props: ModeRailProps): JSX.Element {
             title={reason ?? undefined}
             onClick={() => onSelectMode(mode)}
           >
-            {label}
+            {modeIcons?.[mode] ?? label}
           </button>
         );
       })}

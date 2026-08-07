@@ -24,7 +24,8 @@ export interface ContextBarProps {
  * never a fields/groups view like inspector-shell.tsx.
  *
  * States: renders nothing at all when `isContextBarVisible` is false (not
- * an empty/disabled bar left on screen) - "it disappears after tool exit."
+ * an empty/disabled bar left on screen) - "it disappears after tool exit",
+ * which includes having no actions to carry.
  * Keyboard: each action is a native button, Tab-reachable in order.
  * Positioning ("never covers critical model content without
  * repositioning") is left to the caller's layout (a fixed shell slot in
@@ -33,7 +34,7 @@ export interface ContextBarProps {
  */
 export function ContextBar(props: ContextBarProps): JSX.Element | null {
   const { activeToolId, selectionCount, actions } = props;
-  if (!isContextBarVisible(activeToolId, selectionCount)) {
+  if (!isContextBarVisible(activeToolId, selectionCount, actions.length)) {
     return null;
   }
   return (

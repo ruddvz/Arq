@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "b87dc453e6e830c3fb627ff15c6dc39af80abc22935f405493815a4254f26cec",
+  "sourceSetDigest": "902d378da04bb93fac8e2840153b498ffbd66419aeeb7992a448c9e3a75f9a98",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -23,7 +23,7 @@
       "id": "accepted-adrs",
       "kind": "directory",
       "path": "docs/adr",
-      "sha256": "e2bff6ad9d6a5741b9e9902877c718ddaea3db008d057f0a0101bbf57b46b8de",
+      "sha256": "ce3bf8585d52066d65a5bfad69392db2835c60ce8870a5c00302a55705b317cf",
       "files": [
         {
           "rel": "docs/adr/0000-adr-template.md",
@@ -179,6 +179,16 @@
           "rel": "docs/adr/0030-browser-working-copy-and-recovery-tiers.md",
           "sha256": "7db91ccb55d6bb5b6c2452f12e7db59f0c6227fabbb3b0113843e46076ef7046",
           "bytes": 5888
+        },
+        {
+          "rel": "docs/adr/0031-functional-material-layer.md",
+          "sha256": "ca8f9bc3f3b5cc28cd7cc89fb3e70604b44447342cb4e9bfd47e8662f962c59f",
+          "bytes": 4960
+        },
+        {
+          "rel": "docs/adr/0032-dark-appearance.md",
+          "sha256": "1ad8997bcf99a3eec4250315a04c8e731d8427e1fb80c089bcdea789ca796387",
+          "bytes": 4263
         }
       ]
     },
@@ -256,7 +266,7 @@
       "id": "workspace-registries",
       "kind": "directory",
       "path": "packages/workspace/src/registry",
-      "sha256": "babbb7978c4e2b31ed1bc13f9ea1d4460d8ed232170a6436440d3a13756918bf",
+      "sha256": "7958ff8f80ff4e7c1d776eacf1dbbdd8a195f15aaf26ba4e229edc901269a04b",
       "files": [
         {
           "rel": "packages/workspace/src/registry/workspace-capability-gates.json",
@@ -290,8 +300,8 @@
         },
         {
           "rel": "packages/workspace/src/registry/workspace-panel-registry.json",
-          "sha256": "7082c0f56e294e26e2c012fe2aa9333bb22325c9b9bfe3bc9272dcaa40a203e8",
-          "bytes": 1952
+          "sha256": "ff3e782d183a4d306efcfba217b8992f0c97c39a50cdfa4de8e828ca0dd8b195",
+          "bytes": 1938
         },
         {
           "rel": "packages/workspace/src/registry/workspace-platform-layouts.json",
@@ -343,8 +353,8 @@
       "id": "arqfs-safe-mode",
       "kind": "file",
       "path": "packages/arqfs/src/arqfs-safe-mode.ts",
-      "sha256": "0b3e1b3b8d5e7ac1580096372422e8fd54ac1719a3e3c30728af0fa50651bff9",
-      "bytes": 3673
+      "sha256": "6b96e6466e15fff1251beff9a71ed0fbac31c28e86edb94eabf43654cc8c3f0a",
+      "bytes": 5002
     },
     "file-open-ui": {
       "id": "file-open-ui",
@@ -420,22 +430,22 @@
       "id": "web-app",
       "kind": "file",
       "path": "apps/web/src/App.tsx",
-      "sha256": "f85f12653e202a6095a7b784db85b9c530bc47e2431f773ed3ade9c01c6b1de6",
-      "bytes": 60055
+      "sha256": "526425d5a1d6525f1f2be66fe261ed1f743b159f3a6a74a3935ae908b8559bf4",
+      "bytes": 89982
     },
     "plan-canvas": {
       "id": "plan-canvas",
       "kind": "file",
       "path": "apps/web/src/PlanCanvas.tsx",
-      "sha256": "7a84db5853dc4c05301d74434ccbbf44fa733289ec6ea548c3fe75f5c81ac5c3",
-      "bytes": 40356
+      "sha256": "a42126dfbc1bdf5dc269c47e8d17be59145d1df3d78629acb497d73eb78928cb",
+      "bytes": 70346
     },
     "model-canvas": {
       "id": "model-canvas",
       "kind": "file",
       "path": "apps/web/src/ModelCanvas.tsx",
-      "sha256": "ce3c57c32591813a618eb21c388aac2cafc4d2264dea365b1de814eafecd71cd",
-      "bytes": 14005
+      "sha256": "af4676bd00a581fe741bdf3b9d5ee7e5efbf378365bfc2e0fc94460040164a6f",
+      "bytes": 21137
     },
     "local-storage": {
       "id": "local-storage",
@@ -1425,7 +1435,7 @@
           "id": "P-left-browser",
           "name": "Project Browser",
           "desktop": { "defaultWidth": 268, "min": 232, "max": 384, "dock": "left" },
-          "tabs": ["Project", "Views", "Documents", "Files"],
+          "tabs": ["Views", "Model", "Sheets"],
           "phone": "full-height sheet via View/Project action",
           "tablet": "overlay or drawer; never permanently steal narrow canvas"
         },
@@ -2893,16 +2903,7 @@
       "published",
       "closed"
     ],
-    "web-plan-journal-status": [
-      "recovered",
-      "saving",
-      "unsaved-changes",
-      "no-project",
-      "saved",
-      "saving",
-      "unsaved-changes",
-      "recovered"
-    ]
+    "web-plan-journal-status": ["no-project", "saved", "saving", "unsaved-changes", "recovered"]
   },
   "textSources": {
     "readme": "<h1 align=\"center\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"brand/01_VECTOR/ARQ_Wordmark_White.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"brand/01_VECTOR/ARQ_Wordmark_PhthaloGreen.svg\">\n    <img src=\"brand/01_VECTOR/ARQ_Wordmark_PhthaloGreen.svg\" alt=\"ARQ\" width=\"280\">\n  </picture>\n</h1>\n\n<p align=\"center\"><strong>Architecture made simple.</strong></p>\n\n<p align=\"center\">\n  Browser-first architectural authoring with visible BIM semantics, recoverable local project files, and dependable documentation.\n</p>\n\n<p align=\"center\">\n  <a href=\"#project-status\"><img alt=\"Stage: pre-release\" src=\"https://img.shields.io/badge/stage-pre--release-0B6B50?style=flat-square\"></a>\n  <a href=\"#quick-start\"><img alt=\"Node.js 20 or newer\" src=\"https://img.shields.io/badge/Node.js-20%2B-111111?style=flat-square\"></a>\n  <a href=\"#architecture\"><img alt=\"Core: Rust and WebAssembly\" src=\"https://img.shields.io/badge/core-Rust%20%2B%20WebAssembly-111111?style=flat-square\"></a>\n  <a href=\"#licence\"><img alt=\"Licence: proprietary\" src=\"https://img.shields.io/badge/licence-proprietary-555555?style=flat-square\"></a>\n</p>\n\n<p align=\"center\">\n  <a href=\"#overview\">Overview</a> ·\n  <a href=\"#project-status\">Status</a> ·\n  <a href=\"#quick-start\">Quick start</a> ·\n  <a href=\"#architecture\">Architecture</a> ·\n  <a href=\"#repository-map\">Repository</a> ·\n  <a href=\"#contributing\">Contributing</a>\n</p>\n\n---\n\n> [!WARNING]\n> ARQ is pre-release software. This repository contains working application, core, storage, design-system, test, and benchmark code, but the protected end-to-end architectural workflow is not complete or ready for production projects.\n\n## Overview\n\nARQ is a browser-based architectural plan and lightweight BIM editor for independent architects and small practices.\n\nIt combines direct CAD-style interaction with an inspectable semantic building model. Walls, openings, rooms, levels, dimensions, views, sheets, and their relationships are project data. Canvas primitives and 3D meshes are derived representations, not the source of truth.\n\n<table>\n  <tr>\n    <td width=\"25%\"><strong>Direct</strong><br><sub>Precise selection, snaps, numeric entry, and predictable editing.</sub></td>\n    <td width=\"25%\"><strong>Semantic</strong><br><sub>Plan, 3D, dimensions, and sheets refer to the same building objects.</sub></td>\n    <td width=\"25%\"><strong>Local-first</strong><br><sub>Ordinary authoring and recovery do not depend on a server round trip.</sub></td>\n    <td width=\"25%\"><strong>Explainable</strong><br><sub>Changes, failures, imports, and automation show their impact.</sub></td>\n  </tr>\n</table>\n\nThe protected first workflow is intentionally narrow:\n\n```text\nNew project\n    ↓\nDimensioned residential plan\n    ↓\nCoordinated 3D\n    ↓\nScaled vector PDF\n```\n\nARQ is not initially a replacement for every AutoCAD, Revit, Archicad, SketchUp, Rhino, or Blender workflow. The first objective is one complete residential authoring path that remains fast, inspectable, recoverable, and printable.\n\n## Project status\n\nThe repository is in active technical validation and vertical-slice implementation.\nThe maintained area-by-area summary, gap list, and open decisions live in\n[`STATUS.md`](STATUS.md).\n\n| Area                  | Current repository state                                                                             |\n| --------------------- | ---------------------------------------------------------------------------------------------------- |\n| Browser editor        | Full workspace shell with an interactive plan canvas: wall drawing, snapping, selection, pan/zoom    |\n| Design system         | Product shell components, design tokens, and a generated technical icon package                      |\n| Domain boundaries     | Geometry, semantic model, operations, validation, rendering, storage, and adapter packages           |\n| Shared core           | Rust crate with WebAssembly build and parity-check tooling                                           |\n| Local project storage | Native SQLite and browser OPFS prototypes, single-writer protection, export, and recovery groundwork |\n| Synchronisation       | Narrow operation and snapshot protocol groundwork, not a finished collaboration product              |\n| Quality system        | Unit, property, browser, capability, performance, formatting, type, dependency, and licence checks   |\n| Public website        | All seventeen public pages from `docs/pages/` as a static site with claim-honesty tests              |\n| Product workflow      | Incomplete. The first wall-to-room-to-plan-to-3D-to-sheet workflow remains the release gate          |\n\n### Current milestone\n\nThe active milestone is the first dependable architectural vertical slice:\n\n1. create or trace a small plan;\n2. create semantic walls and hosted openings;\n3. derive rooms and coordinated plan output;\n4. inspect the same objects in 3D;\n5. add stable dimensions and a plan sheet;\n6. export a clean scaled PDF;\n7. close, recover, reopen, and verify the project.\n\n### Deferred until the protected workflow is dependable\n\n- broad DXF and IFC exchange;\n- review, comments, issues, and multi-user collaboration;\n- design options and semantic comparison;\n- public AI authoring;\n- native desktop and iPad applications;\n- enterprise BIM, structural, MEP, fabrication, 4D, and 5D workflows.\n\n## Product principles\n\n1. **The semantic model is authoritative.** Renderer objects, canvas primitives, and caches are disposable projections.\n2. **Every committed edit is explicit.** Operations carry preconditions, affected elements, invalidations, validation results, and inverse behaviour where meaningful.\n3. **Invalid work fails safely.** A rejected operation must leave the previous project state unchanged.\n4. **Recovery is local.** Acknowledged work and project access must not depend on cloud availability.\n5. **Performance is product quality.** Selection, snapping, drawing, moving, opening, saving, and projection updates are measured as user actions.\n6. **Interoperability reports fidelity.** Import and export must explain what was preserved, approximated, flattened, omitted, or retained as opaque data.\n7. **Automation is reviewable.** AI may propose typed operations, but it cannot bypass deterministic validation or user approval.\n8. **Complexity appears progressively.** ARQ should behave like a professional instrument, not an enterprise dashboard compressed into a drawing canvas.\n\n## Architecture\n\n```mermaid\nflowchart LR\n    U[Architect]\n    W[Web editor<br/>React + Vite + TypeScript]\n    I[Command and input systems<br/>pointer · touch · keyboard · Pencil]\n    D[Typed operations and semantic model]\n    R[arq-core<br/>Rust + WebAssembly]\n    P[Plan renderer<br/>Canvas 2D]\n    M[3D renderer boundary]\n    F[ARQFS prototype<br/>SQLite + OPFS working copy]\n    C[Disposable derived caches]\n    X[PDF · DXF · IFC adapters]\n    S[Optional operation and snapshot sync]\n    A[Typed AI proposals]\n\n    U --> W\n    W --> I\n    I --> D\n    D <--> R\n    D --> P\n    D --> M\n    D <--> F\n    D --> C\n    D -. staged .-> X\n    F -. optional .-> S\n    D -. later .-> A\n\n    classDef current fill:#0B6B50,color:#FFFFFF,stroke:#0B6B50;\n    classDef core fill:#111111,color:#FFFFFF,stroke:#111111;\n    classDef boundary fill:#FFFFFF,color:#111111,stroke:#8A8A8A;\n    classDef later fill:#FFFFFF,color:#555555,stroke:#8A8A8A,stroke-dasharray:5 5;\n\n    class W,D,F current;\n    class R core;\n    class U,I,P,M,C boundary;\n    class X,S,A later;\n```\n\n### State boundaries\n\n- **Interface state:** active tools, panels, hover, menus, temporary previews, and cameras\n- **Canonical project state:** semantic entities, operations, views, sheets, annotations, resources, and revisions\n- **Derived state:** meshes, room boundaries, projections, render lists, spatial indexes, validation results, and thumbnails\n- **Adapters:** isolated exchange boundaries that cannot mutate canonical data directly\n- **Cloud services:** optional metadata and collaboration services, not a requirement for ordinary local authoring\n\n## Native `.arq` project format\n\nThe current ARQFS direction implements `.arq` as a native SQLite application database, not a renamed ZIP archive.\n\nThe canonical project is intended to contain semantic entities, typed operation history, views, sheets, annotations, resources, schema versions, migrations, and integrity metadata. Browser work uses an OPFS working copy with explicit writer ownership.\n\nThe implementation is being validated against these rules:\n\n- local ownership and reopening without mandatory cloud access;\n- transactional writes and deterministic migrations;\n- backup or original-file retention before migration;\n- recovery from an interrupted session;\n- explicit schema and application versions;\n- safe handling of unknown optional data;\n- canonical project data that never depends on a cache;\n- clean publication from a working copy to a portable `.arq` file.\n\nDerived meshes, projections, indexes, and thumbnails may be cached for speed. Missing, stale, or corrupt derived data must trigger recomputation, not project failure.\n\n## Quick start\n\n### Requirements\n\n- Node.js 20 or newer\n- pnpm 9 through Corepack\n- Rust toolchain for `arq-core` or WebAssembly work\n- a current Chromium, Firefox, or Safari browser for browser validation\n\n### Install and run the browser editor\n\n```bash\ncorepack enable\npnpm install\npnpm --filter @arq/web dev\n```\n\nBuild and preview the browser app:\n\n```bash\npnpm --filter @arq/web build\npnpm --filter @arq/web preview\n```\n\nThe current browser app renders the real ARQ shell and Canvas 2D pipeline with a small demo scene. It is not yet a complete project authoring workflow.\n\n### Rust and WebAssembly\n\n```bash\nrustup target add wasm32-unknown-unknown\n```\n\nInstall a `wasm-bindgen-cli` version compatible with the locked `wasm-bindgen` crate, then run:\n\n```bash\npnpm rust:build-wasm\npnpm rust:verify-wasm-parity\n```\n\n## Development checks\n\nRun the standard repository checks before opening a pull request:\n\n```bash\npnpm format:check\npnpm lint\npnpm typecheck\npnpm test\npnpm build\n```\n\nRun the Rust checks when changing the shared core:\n\n```bash\npnpm rust:fmt-check\npnpm rust:clippy\npnpm rust:test\n```\n\nReview dependency licences:\n\n```bash\npnpm check:dependency-licences\n```\n\n<details>\n<summary><strong>Capability and performance checks</strong></summary>\n\n```bash\npnpm benchmark:canvas2d\npnpm benchmark:pixijs\npnpm benchmark:canvaskit\npnpm benchmark:render-frame\npnpm benchmark:pencil-input\npnpm benchmark:hover-sequence\npnpm benchmark:arqfs-opfs\npnpm benchmark:arqfs-writer-lock\npnpm benchmark:arq-core-worker\n```\n\nBenchmark results apply only to the tested commit, device, operating system, browser, project fixture, and measurement method. They are engineering evidence, not universal product claims.\n\n</details>\n\n## Repository map\n\n```text\nArq/\n├── apps/\n│   ├── web/                  # Primary browser authoring surface\n│   ├── marketing/            # Public website (static build of all PUB pages)\n│   └── api/                  # Service boundary\n├── packages/\n│   ├── design-system/        # Product shell and shared interface components\n│   ├── icons/                # Generated ARQ technical icon package\n│   ├── editor-shell/         # Viewport and editor-shell contracts\n│   ├── command-system/       # Command lifecycle and invocation\n│   ├── input-system/         # Pointer, touch, keyboard, and Pencil abstractions\n│   ├── geometry-2d/          # Plan geometry and spatial logic\n│   ├── geometry-3d/          # 3D geometry boundary\n│   ├── bim-core/             # Semantic building model\n│   ├── operations/           # Typed project operations and undo groundwork\n│   ├── plan-renderer/        # Canvas 2D plan rendering\n│   ├── model-renderer/       # Coordinated 3D rendering boundary\n│   ├── project-format/       # Native project-format contracts\n│   ├── local-storage/        # Browser-local persistence\n│   ├── validation/           # Deterministic validation\n│   ├── pdf-export/           # Drawing and sheet export boundary\n│   ├── dxf-adapter/          # DXF exchange boundary\n│   └── ifc-adapter/          # IFC exchange boundary\n├── workers/                  # Geometry and import/export workers\n├── rust/\n│   └── arq-core/             # Shared deterministic Rust core and WASM target\n├── brand/                    # Canonical logo, favicon, app, social, and print assets\n├── design/                   # Tokens and design resources\n├── docs/                     # Product, ADR, architecture, UX, security, and research docs\n├── benchmarks/                # Performance fixtures and results\n├── scripts/                  # Build, benchmark, validation, and maintenance tools\n├── prototype/                # Static product-shell prototype\n└── .github/                  # Ownership, templates, workflows, and automation\n```\n\nSee [`docs/architecture/REPOSITORY-STRUCTURE.md`](docs/architecture/REPOSITORY-STRUCTURE.md) for the package-level structure.\n\n## Documentation and decisions\n\nWhen sources disagree, use this order:\n\n1. approved Architecture Decision Records in [`docs/adr/`](docs/adr/);\n2. the active product blueprint, [`docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md`](docs/product/ARQ-COMPLETE-PRODUCT-ENGINEERING-BLUEPRINT-v1.0.md);\n3. package, API, schema, page, component, and flow specifications;\n4. machine-readable backlog, quality, and validation registers;\n5. historical planning documents.\n\nA material architecture change should be recorded through an ADR. Planning prose must not silently override accepted decisions, package contracts, tests, or working code.\n\n## Brand system\n\nThis README uses the canonical ARQ wordmark from `brand/01_VECTOR/`. GitHub switches between the Phthalo Green and white variants based on the reader's colour scheme.\n\n| Use                                             | Canonical location                                                                                       |\n| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------- |\n| Brand guidelines                                | [`brand/00_GUIDE/ARQ_Brand_Guidelines_FINAL.pdf`](brand/00_GUIDE/ARQ_Brand_Guidelines_FINAL.pdf)         |\n| Quick reference                                 | [`brand/00_GUIDE/ARQ_Logo_Quick_Reference_FINAL.pdf`](brand/00_GUIDE/ARQ_Logo_Quick_Reference_FINAL.pdf) |\n| SVG wordmarks and symbols                       | [`brand/01_VECTOR/`](brand/01_VECTOR/)                                                                   |\n| High-resolution transparent PNGs                | [`brand/02_4K_PNG/`](brand/02_4K_PNG/)                                                                   |\n| Favicons, manifest, PWA icons, and social image | [`brand/03_WEB/`](brand/03_WEB/)                                                                         |\n| App icon masters                                | [`brand/04_APP_ICONS/`](brand/04_APP_ICONS/)                                                             |\n| Print-ready assets                              | [`brand/05_PRINT/`](brand/05_PRINT/)                                                                     |\n\nBrand rules for implementation:\n\n- use supplied assets without redrawing or retyping the wordmark;\n- preserve the `q` descender and the required clear space;\n- use vector artwork where possible;\n- do not stretch, compress, rotate, outline, shadow, glow, or recolour the mark;\n- use only ARQ Black `#000000`, ARQ White `#FFFFFF`, and ARQ Phthalo Green `#0B6B50` for the logo system;\n- do not use the wordmark below 64 px, the symbol below 24 px, or the tagline lockup below 360 px;\n- use the shared [`Logo`](packages/design-system/src/logo.tsx) component inside the product rather than importing logo files ad hoc.\n\n## AI boundary\n\nARQ is not a chat interface that directly rewrites hidden geometry.\n\nThe intended AI contract is:\n\n1. interpret a request against a known project revision;\n2. produce a typed proposal;\n3. show assumptions, affected objects, warnings, and document impact;\n4. run deterministic validation;\n5. require approval for consequential changes;\n6. apply the accepted operation group;\n7. preserve provenance and grouped undo.\n\nAI output does not establish professional approval, building-code compliance, structural safety, fire safety, accessibility compliance, constructability, cost accuracy, or design correctness.\n\n## Contributing\n\nARQ uses an ordered, backlog-driven contribution process. Coordinate work before starting, especially while architecture and file-format boundaries are still changing.\n\nBefore opening a pull request:\n\n1. select an issue and confirm its phase, owner, dependencies, and acceptance criteria;\n2. read the relevant ADR and package specification;\n3. state the problem, proposed solution, and non-goals;\n4. add tests and performance evidence where relevant;\n5. record any new dependency and its licence;\n6. document accessibility, project-format, migration, security, and rollback effects.\n\nRead [`CONTRIBUTING.md`](CONTRIBUTING.md) and use the repository pull-request template.\n\n## Security\n\nDo not disclose an unpatched vulnerability through a public issue. Use the private reporting process described in [`SECURITY.md`](SECURITY.md).\n\nTreat file import, migrations, project recovery, authentication, sharing, synchronisation, and future AI orchestration as security-sensitive boundaries.\n\n## Professional-use boundary\n\nARQ is architectural authoring software under development. It does not certify professional approval, regulatory compliance, structural safety, fire safety, accessibility compliance, cost, or constructability. Qualified professionals remain responsible for project decisions and issued documents.\n\n## Licence\n\nCopyright © 2026 the ARQ project. All rights reserved.\n\nThis repository is proprietary. Source code, documentation, designs, schemas, and other materials may not be copied, modified, distributed, sublicensed, or sold without prior written permission. Third-party components remain governed by their own licences.\n\nSee [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) for the current terms and third-party notices.\n\n---\n\n<p align=\"center\">\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"brand/01_VECTOR/ARQ_Symbol_White.svg\">\n    <source media=\"(prefers-color-scheme: light)\" srcset=\"brand/01_VECTOR/ARQ_Symbol_PhthaloGreen.svg\">\n    <img src=\"brand/01_VECTOR/ARQ_Symbol_PhthaloGreen.svg\" alt=\"ARQ symbol\" width=\"48\">\n  </picture>\n</p>\n\n<p align=\"center\"><sub>Direct while drawing. Structured while coordinating. Dependable while documenting.</sub></p>\n",

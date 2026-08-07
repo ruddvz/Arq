@@ -6,7 +6,6 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "generate": "node ../../scripts/generate-icon-components.mjs",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
@@ -14,5 +13,8 @@
   },
   "devDependencies": {
     "@types/react": "^18"
+  },
+  "dependencies": {
+    "@tabler/icons-react": "3.45.0"
   }
 }
