@@ -1,4 +1,10 @@
-import { useRef, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { RefractionLens } from '../appearance/refraction-lens';
+import {
+  readOpticalEnvironment,
+  resolveOpticalQuality,
+  type OpticalQuality,
+} from '../appearance/optical-quality';
 import type { ViewTabsState, WorkspaceViewKind } from '@arq/workspace';
 
 export interface ViewKindSegment {
@@ -22,6 +28,12 @@ export interface ViewKindSwitcherProps {
   readonly state: ViewTabsState;
   /** Activate the open view of this kind, or open one if none is open yet. */
   readonly onSelectKind: (kind: WorkspaceViewKind) => void;
+  /**
+   * How much optical material this control may use. Defaults to `auto`, which
+   * lets the environment decide; a host can pass `off` to turn it off outright
+   * without touching the component.
+   */
+  readonly opticalQuality?: OpticalQuality;
 }
 
 /**
@@ -48,8 +60,24 @@ export interface ViewKindSwitcherProps {
  * where they are rather than about tabs specifically.
  */
 export function ViewKindSwitcher(props: ViewKindSwitcherProps): JSX.Element {
-  const { segments, state, onSelectKind } = props;
+  const { segments, state, onSelectKind, opticalQuality = 'auto' } = props;
   const segmentRefs = useRef(new Map<WorkspaceViewKind, HTMLButtonElement>());
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [runtimeFailed, setRuntimeFailed] = useState(false);
+  /**
+   * The selected segment's box, measured rather than computed.
+   *
+   * The package is explicit that index arithmetic is not allowed here, and the
+   * reason is visible in this very control: "Plan", "3D" and "Sheets" are three
+   * different widths, so the nth segment is not at n times anything. Measuring
+   * is also what keeps the lens correct after a font loads, a label is
+   * translated, or the capsule is resized.
+   */
+  const [indicator, setIndicator] = useState<{
+    readonly x: number;
+    readonly width: number;
+    readonly height: number;
+  } | null>(null);
   const activeKind = state.tabs.find((tab) => tab.id === state.activeId)?.kind ?? null;
   const enabled = segments.filter((segment) => segment.disabledReason === undefined);
   /*
@@ -92,8 +120,59 @@ export function ViewKindSwitcher(props: ViewKindSwitcherProps): JSX.Element {
     onSelectKind(next.kind);
   }
 
+  /*
+   * Resolved once per render rather than held in state: the environment can
+   * change under the user (a system setting, a window moved to another
+   * display), and a value cached at mount would keep rendering the material
+   * somebody has since asked not to see.
+   */
+  const quality = resolveOpticalQuality(readOpticalEnvironment(opticalQuality, { runtimeFailed }));
+
+  /*
+   * Measured in a layout effect so the lens is placed in the same frame the
+   * selection moves in. In a passive effect the user sees one frame of the lens
+   * on the old segment, which on a control this small reads as a glitch rather
+   * than as motion.
+   */
+  useLayoutEffect(() => {
+    const measure = (): void => {
+      const track = trackRef.current;
+      const selected = activeKind === null ? undefined : segmentRefs.current.get(activeKind);
+      if (track === undefined || track === null || selected === undefined) {
+        setIndicator(null);
+        return;
+      }
+      const trackBox = track.getBoundingClientRect();
+      const box = selected.getBoundingClientRect();
+      setIndicator({ x: box.left - trackBox.left, width: box.width, height: box.height });
+    };
+    measure();
+    const track = trackRef.current;
+    if (track === null || typeof ResizeObserver === 'undefined') return;
+    // The capsule resizes when a label changes or the bar reflows, and the lens
+    // has to follow rather than being measured once at mount.
+    const observer = new ResizeObserver(measure);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [activeKind, segments]);
+
+  useEffect(() => {
+    if (quality !== 'refraction') setIndicator((current) => current);
+  }, [quality]);
+
   return (
     <div
+      ref={trackRef}
+      /*
+       * The resolved quality, on the element, so a browser test can assert the
+       * downgrade ladder from outside rather than by reaching into React. The
+       * package's test matrix asks for exactly this: forced colours, reduced
+       * transparency and an unsupported filter each have to be observable.
+       */
+      data-optical-quality={quality}
+      data-lens-measured={
+        indicator === null ? 'no' : `${Math.round(indicator.width)}x${Math.round(indicator.height)}`
+      }
       className="arq-view-kinds arq-material arq-material--optical"
       role="tablist"
       aria-label="View kind"
@@ -105,6 +184,34 @@ export function ViewKindSwitcher(props: ViewKindSwitcherProps): JSX.Element {
         moveFocus(focusableKind, delta);
       }}
     >
+      {/*
+       * Positioned behind the labels and in front of the track, so the
+       * distortion reads as the selected segment's own glass. It is drawn from
+       * the measured box rather than from the segment's index, and it is simply
+       * absent whenever the quality policy has resolved below refraction.
+       */}
+      {quality === 'refraction' && indicator !== null && (
+        <span
+          className="arq-refraction-lens__slot"
+          aria-hidden="true"
+          style={{ transform: `translate3d(${indicator.x}px, 0, 0)` }}
+        >
+          <RefractionLens
+            enabled
+            onFailed={() => setRuntimeFailed(true)}
+            spec={{
+              width: indicator.width,
+              height: indicator.height,
+              // A capsule's radius is half its height, and the lens has to
+              // match the shape it sits in or the bend shows outside it.
+              borderRadius: indicator.height / 2,
+              displacement: 6,
+              curvature: 2.2,
+              splay: 1,
+            }}
+          />
+        </span>
+      )}
       {segments.map((segment) => {
         const disabled = segment.disabledReason !== undefined;
         const selected = !disabled && segment.kind === activeKind;

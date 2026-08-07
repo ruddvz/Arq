@@ -931,6 +931,67 @@ button.arq-project-directory__row[aria-pressed='true'] .arq-project-directory__c
 }
 
 /*
+ * The refraction lens, and its slot.
+ *
+ * The slot is what moves; the lens inside it only ever draws at the origin.
+ * Separating them means the animation is a transform on one element rather
+ * than a filter region being recomputed as it travels, which is the difference
+ * between the compositor moving a layer and the main thread re-resolving a
+ * backdrop every frame.
+ *
+ * Decorative, so it takes no input and announces nothing. `pointer-events:
+ * none` matters as much as the `aria-hidden` on the element: the lens sits over
+ * the button it decorates, and a decoration that swallows the click is worse
+ * than no decoration.
+ */
+.arq-refraction-lens__slot {
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-start: 2px;
+  pointer-events: none;
+  z-index: 1;
+  transition: transform var(--arq-motion-duration-fast, 160ms) var(--arq-motion-ease-standard, ease);
+}
+
+.arq-refraction-lens {
+  display: block;
+  pointer-events: none;
+  contain: layout paint style;
+}
+
+/* Zero-sized: it holds the filter definition, not a picture. */
+.arq-refraction-lens__defs {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+  overflow: hidden;
+}
+
+/*
+ * The lens is a moving object, so a request for less motion removes the
+ * movement rather than the object - it lands where it belongs without
+ * travelling there.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .arq-refraction-lens__slot {
+    transition: none;
+  }
+}
+
+/*
+ * Every configuration that turns the material off turns the lens off with it.
+ * A distortion over an opaque surface distorts nothing and costs a filter.
+ */
+@media (prefers-reduced-transparency: reduce),
+  (prefers-contrast: more),
+  (forced-colors: active),
+  print {
+  .arq-refraction-lens__slot {
+    display: none;
+  }
+}
+
+/*
  * Continuous corners, everywhere, including the pills.
  *
  * `border-radius` draws a quarter-circle. A quarter-circle meets the straight

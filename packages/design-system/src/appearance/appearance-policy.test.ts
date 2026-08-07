@@ -84,9 +84,21 @@ describe('ADR-0031: the material layer has exactly one implementation', () => {
       return;
     }
 
-    // A second material system is the defect ADR-0031 names explicitly, and it
-    // arrives as one more file quietly declaring its own blur.
-    expect(declaring).toEqual([MATERIAL_CSS]);
+    /*
+     * A second material system is the defect ADR-0031 names explicitly, and it
+     * arrives as one more file quietly declaring its own blur. The list is
+     * exact for that reason: adding to it has to be a decision.
+     *
+     * `refraction-lens.tsx` is on it, and is the only thing that ever should
+     * be. Its filter is `url(#id)` where the id is generated per instance, so
+     * it cannot be written in a stylesheet at all - and it is not a second
+     * material either way: it is the same layer's third visual class, sitting
+     * on a surface `material.css` already made.
+     */
+    expect(declaring).toEqual([
+      MATERIAL_CSS,
+      'packages/design-system/src/appearance/refraction-lens.tsx',
+    ]);
   });
 
   it('renders a nested material surface flat', () => {
