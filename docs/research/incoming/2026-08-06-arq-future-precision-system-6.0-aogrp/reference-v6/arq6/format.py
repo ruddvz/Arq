@@ -22,6 +22,11 @@ CODEC_NONE=0; CODEC_ZLIB=1
 class ArqFormatError(ValueError): pass
 class Limits:
     max_file=1<<30; max_segments=100000; max_segment_stored=1<<28; max_segment_uncompressed=1<<30; max_objects=2_000_000
+    # Bug 4 fix: per-segment caps alone don't bound total memory across a validation
+    # pass - up to max_segments segments each near max_segment_uncompressed could
+    # force far more decompressed data into memory than the on-disk file size would
+    # suggest (zip-bomb amplification). This caps the running total across one pass.
+    max_total_uncompressed=1<<31
 
 def align(n,a=ALIGN): return (n+a-1)//a*a
 
@@ -50,13 +55,21 @@ def _pack_segment(seg_type:int,payload:bytes,object_count=0,codec=CODEC_ZLIB,sem
     header=SEG.pack(SEG_MAGIC,seg_type,codec,0,len(stored),len(payload),object_count,0,ph,semantic_hash,b"\0"*24)
     return header+stored,ph,len(stored),len(payload)
 
-def _read_segment(f,offset:int,limits=Limits):
+def _read_segment(f,offset:int,limits=Limits,budget=None):
     f.seek(offset); raw=f.read(SEG.size)
     if len(raw)!=SEG.size: raise ArqFormatError("truncated segment header")
     v=SEG.unpack(raw)
     if v[0]!=SEG_MAGIC: raise ArqFormatError("bad segment magic")
     seg_type,codec,stored_len,raw_len,obj_count=v[1],v[2],v[4],v[5],v[6]
     if stored_len>limits.max_segment_stored or raw_len>limits.max_segment_uncompressed: raise ArqFormatError("segment budget exceeded")
+    # Bug 4 fix: check the *cumulative* decompressed-byte budget for this validation
+    # pass before decompressing this segment, not just this segment's own cap - a
+    # per-segment-only check lets many near-maximal segments amplify far past any
+    # single limit before the loop that calls us ever sees a total.
+    if budget is not None:
+        if budget["used"]+raw_len>limits.max_total_uncompressed:
+            raise ArqFormatError("aggregate decompression budget exceeded")
+        budget["used"]+=raw_len
     stored=f.read(stored_len)
     if len(stored)!=stored_len: raise ArqFormatError("truncated segment payload")
     if codec==CODEC_ZLIB:
@@ -129,24 +142,39 @@ def open_manifest(path,known_required=None,limits=Limits):
             f.seek(BOOT_SIZE+i*SB_SIZE); sb=_unpack_sb(f.read(SB_SIZE))
             if sb and sb["manifest_offset"]+sb["manifest_len"]<=size: roots.append((i,sb))
         if not roots: raise ArqFormatError("no valid recovery root")
-        slot,sb=max(roots,key=lambda x:x[1]["generation"])
-        seg=_read_segment(f,sb["manifest_offset"],limits)
-        if seg["type"]!=SEG_MANIFEST: raise ArqFormatError("root does not point to manifest")
-        if bytes.fromhex(seg["payload_hash"])!=sb["manifest_hash"]: raise ArqFormatError("manifest hash differs from root")
-        manifest=json.loads(seg["payload"].decode("utf-8"))
-        if manifest.get("generation")!=sb["generation"]: raise ArqFormatError("generation mismatch")
-        if manifest.get("semantic_root")!=sb["semantic_root"].hex(): raise ArqFormatError("semantic root differs from root")
-        known=set(known_required or SUPPORTED_REQUIRED); missing=sorted(set(manifest.get("required_capabilities",[]))-known)
-        mode="editable" if not missing else "preserving-read-only"
-        return {"bootstrap":boot,"root_slot":slot,"root":sb,"manifest":manifest,"mode":mode,"missing_required":missing}
+        # Bug 1 fix: a root whose superblock struct is intact can still point at a
+        # corrupt or truncated manifest segment - the struct's own checksum only
+        # covers itself, not the content it references. Picking only the highest
+        # generation and letting _read_segment's error propagate uncaught defeats
+        # dual-root recovery's entire purpose whenever *that* root's target content
+        # (not its struct) is what's damaged. Try every candidate root, newest
+        # generation first, and fall back to the next one on any content-validation
+        # failure; only fail once every root has been content-verified and rejected.
+        last_error=None
+        for slot,sb in sorted(roots,key=lambda x:x[1]["generation"],reverse=True):
+            try:
+                seg=_read_segment(f,sb["manifest_offset"],limits)
+                if seg["type"]!=SEG_MANIFEST: raise ArqFormatError("root does not point to manifest")
+                if bytes.fromhex(seg["payload_hash"])!=sb["manifest_hash"]: raise ArqFormatError("manifest hash differs from root")
+                manifest=json.loads(seg["payload"].decode("utf-8"))
+                if manifest.get("generation")!=sb["generation"]: raise ArqFormatError("generation mismatch")
+                if manifest.get("semantic_root")!=sb["semantic_root"].hex(): raise ArqFormatError("semantic root differs from root")
+                known=set(known_required or SUPPORTED_REQUIRED); missing=sorted(set(manifest.get("required_capabilities",[]))-known)
+                mode="editable" if not missing else "preserving-read-only"
+                return {"bootstrap":boot,"root_slot":slot,"root":sb,"manifest":manifest,"mode":mode,"missing_required":missing}
+            except ArqFormatError as error:
+                last_error=error
+                continue
+        raise ArqFormatError(f"no recovery root content-verifies: {last_error}")
 
 def deep_validate(path,known_required=None,limits=Limits):
     result=open_manifest(path,known_required,limits); m=result["manifest"]
     objects=[]; revisions=[]; operations=[]
+    budget={"used":0}
     with Path(path).open("rb") as f:
         if len(m["segments"])>limits.max_segments: raise ArqFormatError("segment count budget exceeded")
         for ent in m["segments"]:
-            seg=_read_segment(f,ent["offset"],limits)
+            seg=_read_segment(f,ent["offset"],limits,budget)
             if seg["payload_hash"]!=ent["payload_hash"]: raise ArqFormatError("manifest segment hash mismatch")
             data=json.loads(seg["payload"].decode("utf-8"))
             if seg["type"]==SEG_OBJECTS: objects.extend(data)

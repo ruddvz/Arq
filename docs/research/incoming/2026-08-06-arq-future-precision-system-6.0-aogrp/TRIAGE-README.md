@@ -2,8 +2,8 @@
 
 **Status: not adopted, and not recommended for adoption without a separate,
 explicit repository decision.** This directory holds a zip the user uploaded
-to a working session, stored verbatim (`00_README_FIRST.md` is the pack's own
-index). The repository's actual source of truth is unchanged: ADR-0019
+to a working session (`00_README_FIRST.md` is the pack's own index). The
+repository's actual source of truth is unchanged: ADR-0019
 (`docs/adr/0019-arq-native-sqlite-file-format.md`, **Status: Proposed**) and
 `packages/arqfs` (SQLite, ARQ-195 onward) as the canonical semantic tier, with
 `packages/local-storage` (Dexie/IndexedDB) as the derived, device-local tier —
@@ -13,9 +13,18 @@ This is a different lineage from the "v4.0 CORE" and "2026-07-24 CAD/BIM"
 packages already triaged in the parent `docs/research/incoming/README.md`
 and `2026-07-24-cad-bim-architecture-package/README.md`. It is the "Version
 6.0" continuation of a "Version 5.0" package the same lineage produced
-earlier (`background/ARQ_FUTURE_PRECISION_FILE_SYSTEM_5.0_2026-08-06.zip`,
-itself containing a "Version 4.0" package one level deeper) — both are kept
-here unextracted, as the pack's own background material.
+earlier.
+
+**Not kept verbatim, unlike prior packages in this directory**: the
+upload's `background/` folder (3.2MB of a nested `ARQ_FUTURE_PRECISION_FILE_
+SYSTEM_5.0_2026-08-06.zip`, which itself contained a nested `...4.0...zip` one
+level deeper, plus a full parallel `version-5-expanded/` markdown tree largely
+superseded by this package's own `normative-v6`/`reference-v6`/etc.) was
+removed after initial staging. It was pure duplicate bulk — opaque nested
+archives and a prior-version copy with no incremental review value once the
+6.0 content and this triage exist — and kept the package at 3.9MB/382 files
+for no reason. The package is now ~730KB. If the v4.0/v5.0 lineage is ever
+needed again, it's still recoverable from this directory's git history.
 
 ## What this package actually proposes
 
@@ -193,6 +202,52 @@ three read the actual code and specs, not the summary. Ranked by severity:
 16. CRDT/merge conflicts for precision geometry are named but not
     resolved — honestly left open, not hidden.
 
+## Fixes applied in this repo (2026-08-07)
+
+Findings 1–4 (the exploitable reference-implementation bugs) were fixed
+directly in the staged `reference-v6/` code, not just documented, since
+fixing them was tractable, isolated, and made the staged material actually
+trustworthy for anyone reading it later:
+
+1. **Dual-root fallback** — `format.py`'s `open_manifest()` now sorts
+   candidate roots by generation descending and tries each in turn, catching
+   `ArqFormatError` per root and only failing once every root has been
+   content-verified and rejected — not just struct-checksum-verified.
+2. **MCP replay** — `mcp.py`'s `approve()` now refuses to mint a token for a
+   proposal that isn't `"draft"`; `consume()` independently refuses a token
+   whose proposal isn't `"approved"`, as defence in depth.
+3. **TOCTOU** — `mcp.py`'s `consume()` now takes a required
+   `current_base_revision` argument and rejects the commit if it no longer
+   matches the proposal's approved `base_revision`.
+4. **Zip-bomb budget** — `format.py`'s `_read_segment()` now takes an
+   optional running budget tracker; `deep_validate()` threads one across a
+   full validation pass and aborts once cumulative decompressed bytes exceed
+   `Limits.max_total_uncompressed`, instead of only capping each segment in
+   isolation.
+
+Six new regression tests were added (`test_newer_root_content_corrupt_falls_
+back_to_older_root`, `test_both_roots_content_corrupt_fail`,
+`test_reapproval_minting_a_second_token_is_rejected`,
+`test_consume_after_status_desync_is_rejected`,
+`test_stale_base_revision_is_rejected`,
+`test_aggregate_decompression_budget_enforced`) covering exactly the
+adversarial cases the original 21 tests missed. Full suite:
+`python3 -m unittest discover -s reference-v6/tests -v` → **27 tests, all
+pass**. All 10 fixtures in `fixtures-v6/` were re-run through
+`reference-v6/arq6/cli.py inspect --deep` after the fix and still produce
+the exact generation/mode/verdict recorded in `EXPECTED_VERDICTS.json` — the
+fix changes only the previously-untested failure path, not documented
+passing behavior.
+
+**`MANIFEST_SHA256.txt` and `PACKAGE_INVENTORY.json` are now stale by
+design** for every file touched by this pruning-and-fixing pass — they
+record hashes for the *original, unmodified upload*. That's an intentional,
+disclosed divergence, not silent drift: this file is the record of what
+changed and why. Findings 6–16 (architecture and lower-severity gaps) were
+not fixed — they're either specification-level (not somewhere `reference-v6/`
+code can fix them), or genuinely require a repository decision this triage
+doesn't have authority to make.
+
 ## Recommendation
 
 Nothing here should be applied to `packages/`, `docs/adr/`, or
@@ -200,16 +255,13 @@ Nothing here should be applied to `packages/`, `docs/adr/`, or
 go-ahead — both because the repository's SQLite direction (ADR-0019) is
 already partially implemented and shipped-against (`packages/arqfs`,
 ARQ-195 onward), and because the package's own handoff docs ask for exactly
-this stopping point. The adversarial review above raises the bar further:
-findings 1–4 are exploitable defects in the reference implementation itself,
-so even an experimental, feature-flagged vertical slice should not be built
-on top of `reference-v6/` as-is. Concrete, non-committal follow-ups if this
-is ever revisited:
+this stopping point. Findings 1–4 are now fixed in `reference-v6/` (see
+above), which removes that specific blocker for future experimentation, but
+does not change the architecture-level findings (6–8) or the underlying
+governance requirement. Concrete, non-committal follow-ups if this is ever
+revisited:
 
-1. Findings 1–4 (dual-root fallback, MCP replay, TOCTOU approval, zip-bomb
-   budget) would need fixing in the reference implementation before it's
-   safe to prototype against, even experimentally.
-2. `normative-v6/08_DUAL_ROOT_APPEND_AND_RECOVERY.md` and
+1. `normative-v6/08_DUAL_ROOT_APPEND_AND_RECOVERY.md` and
    `normative-v6/20_MIGRATION_FROM_SQLITE_ARQ.md` are worth a read if a
    future ADR ever proposes federation/partial-clone or offline-sync work
    that the current SQLite-only design doesn't cover — those are the two
