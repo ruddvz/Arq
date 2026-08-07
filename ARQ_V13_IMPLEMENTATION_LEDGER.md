@@ -571,9 +571,11 @@ one that was nearly recorded as verified while being false.
 | Quality policy resolving in order of authority                | verified       | 10 unit tests, and the resolved value read off the DOM in a browser      |
 | Lens map: quantisation, LRU, ref counting, URL release        | verified       | 13 unit tests                                                           |
 | Refraction lens rendering on the view capsule                 | verified       | filter, map URL and transform read from a live page                     |
-| Downgrade to material and to opaque                           | verified       | `run-optical-glass-capability-check.mjs`, three browser configurations   |
+| Downgrade to material and to opaque                           | verified       | `run-optical-glass-capability-check.mjs`, four browser configurations    |
+| The material rendering in dark appearance                     | verified       | same check; the dark tokens are a separate block and were never run      |
 | `prefers-reduced-transparency` fallback                       | partially-verified | stylesheet inspection only; Playwright cannot emulate the setting   |
-| Squircle corners via `corner-shape`                           | inferred       | declared and additive; Chrome 141 supports it, no per-corner assertion   |
+| Squircle corners via `corner-shape`, pills included           | verified       | computed `corner-shape` read per control; the assertion fails when removed |
+| That the squircle *reads* as the platform's shape             | not-inspected  | the property is applied; whether the silhouette is right is a judgement  |
 | How the material reads to a person                            | not-inspected  | no human has looked at it; captures are not judgement                    |
 | Cost of the effect on a real GPU                              | not-inspected  | no frame timing was taken                                               |
 

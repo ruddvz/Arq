@@ -116,11 +116,42 @@ async function measure(page, selectors, controls) {
         };
       };
 
+      /*
+       * The corner shape, read rather than assumed.
+       *
+       * `corner-shape` is additive - a browser that does not know the property
+       * ignores the declaration and renders an ordinary rounded corner, which
+       * is a perfectly good fallback and also completely silent. Declaring it
+       * and never checking is how a stylesheet ends up asserting a platform
+       * shape language it is not actually speaking, which is the same failure
+       * as the material carrying a class it was being overridden out of.
+       *
+       * The pills matter most here. A capsule's corners are clamped to half its
+       * height, and the question the package's G2 geometry turns on is whether
+       * that clamped corner is a semicircle or a superellipse - so a control
+       * with a 999px radius is exactly where the difference shows.
+       */
+      const cornerShapeOf = (selector) => {
+        const element = document.querySelector(selector);
+        if (element === null) return null;
+        const style = getComputedStyle(element);
+        return {
+          cornerShape: style.getPropertyValue('corner-shape') || null,
+          borderRadius: style.borderRadius,
+        };
+      };
+
       return {
         surfaces: Object.fromEntries(list.map((selector) => [selector, read(selector)])),
         controls: Object.fromEntries(
           controlList.map((selector) => [selector, document.querySelector(selector) !== null]),
         ),
+        squircle: {
+          supported: CSS.supports('corner-shape', 'squircle'),
+          capsule: cornerShapeOf('.arq-view-kinds'),
+          selectedSegment: cornerShapeOf('.arq-view-kinds__segment[aria-selected="true"]'),
+          button: cornerShapeOf('.arq-shell-button'),
+        },
         quality:
           document.querySelector('.arq-view-kinds')?.getAttribute('data-optical-quality') ?? null,
         lensPresent: document.querySelector('.arq-refraction-lens') !== null,
@@ -188,6 +219,23 @@ async function main() {
 
     for (const [selector, present] of Object.entries(measured.controls)) {
       if (!present) failures.push(`${configuration.name}: ${selector} is missing from the page`);
+    }
+
+    /*
+     * Asserted only where the engine supports the property. On an engine that
+     * does not, the rounded fallback is the correct rendering and a failure
+     * here would be the check disagreeing with the design rather than with the
+     * build.
+     */
+    if (measured.squircle.supported) {
+      for (const [name, shape] of Object.entries(measured.squircle)) {
+        if (name === 'supported' || shape === null) continue;
+        if (shape.cornerShape !== 'squircle') {
+          failures.push(
+            `${configuration.name}: ${name} renders corner-shape "${shape.cornerShape}", not squircle`,
+          );
+        }
+      }
     }
 
     if (measured.quality !== configuration.expect.quality) {
