@@ -674,3 +674,110 @@ rather than passing on absent evidence:
 
 Recorded here so no slice is marked `verified` on their account, and so the
 absence is never presented as a pass.
+
+## Optical Glass 2.0 handoff report
+
+The package's `10_REPOSITORY_IMPLEMENTATION_PROMPT.md` asks for Completed,
+Verified, Inferred, Assumed, Blocked and Failed reported separately. They are.
+
+**Base** `ca363be` (`claude/arq-cad-platform-research-ba8rav`).
+**Head** `c8469ac` (`claude/arq-liquid-glass-12-5gstys`).
+
+### Completed
+
+Systems extended, not created. `material.css` gained a second set of values for
+the existing `.arq-material` layer under ADR-0031; no second material system, no
+new token file, no new appearance store. Fourteen files:
+
+`appearance/optical-quality.ts` and its test - the quality policy.
+`appearance/lens-map.ts`, `use-lens-map.ts`, `refraction-lens.tsx` and their
+tests - the displacement map, its cache, and the filter that uses it.
+`appearance/material.css` - the optical variant and its four fallbacks.
+`appearance/index.ts`, `appearance-policy.ts` and the two policy tests.
+`workspace/view-kind-switcher.tsx` - the capsule the lens decorates.
+`workspace/workspace-shell.css` - the cascade fixes, and the squircle rule.
+`scripts/run-optical-glass-capability-check.mjs` - the browser check.
+
+### Verified
+
+- The quality policy resolves in order of authority. 10 unit tests, and the
+  resolved value read off the DOM in a real page.
+- The map layer quantises, deduplicates in-flight requests, ref-counts, evicts
+  oldest-first, never evicts a held map, and revokes what it drops. 13 tests.
+- The lens renders: filter, map URL and slot transform read from a live page.
+- The downgrade ladder holds in light, dark, forced colours and increased
+  contrast: 0.72 alpha with blur by default, 1.0 with no blur in both
+  fallbacks. `benchmark:optical-glass`, now run in CI.
+- `corner-shape: squircle` is applied to the pills and buttons, asserted on the
+  computed value. Proved to bite: replacing it with `round` fails the check at
+  every configuration.
+- Nothing the plan renderer draws changed. The renderer packages are untouched
+  by this work, and the plan, Inspector and status output are unchanged.
+
+### Inferred
+
+- That the material reads as one surface rather than several at bands not
+  captured. Four viewports were read; the other four pass the layout check but
+  were not looked at for material quality.
+
+### Assumed
+
+- That Chromium's `corner-shape` implementation matches the platform's
+  superellipse closely enough for the G2 intent. The property is applied and
+  measured; its exact silhouette against Apple's is not something this
+  repository can check.
+
+### Blocked
+
+- `prefers-reduced-transparency` has no Playwright emulation, so that row is
+  stylesheet inspection rather than a rendered result. Stated in the check's own
+  report as weaker evidence.
+
+### Failed
+
+- Nothing outstanding. Two failures during the work, both fixed and both
+  recorded above: the lens aborted its own generation every render, and the
+  capability check passed while the material was being overridden out from under
+  every surface carrying it.
+
+### Browser and device matrix
+
+Chromium 141 only, headless, at 1600x1000, 1366x1024, 1024x768 and 430x932.
+No other engine, no real device, no touch hardware. The optical check runs at
+1600x1000 in four configurations.
+
+### Performance and memory
+
+The map cache is bounded and ref-counted, and object URLs are revoked on
+eviction and teardown - asserted by unit test, which is a claim about the code
+rather than about a device. **No frame timing and no memory profile was taken on
+any hardware.** `not-inspected`, deliberately: the package asks for performance
+evidence and this work has none to offer beyond the cost argument that the blur
+is 16px rather than 28px and bounded by `contain: paint`.
+
+### Feature control and rollback drill
+
+`resolveOpticalQuality` is the single control. Returning `off` from it removes
+the effect everywhere - proved by the forced-colours and increased-contrast rows,
+which reach exactly that state through real settings and leave every surface
+opaque with its controls intact. Removing `.arq-material--optical` from a surface
+returns it to the regular material with no other change; removing the class from
+`view-kind-switcher.tsx` was done during this work and is the rollback path for
+the capsule specifically.
+
+### Conflicts and unrelated changes
+
+The cascade fixes in `workspace-shell.css` are not cosmetic and are not optional:
+without them the optical variant does not render at all. They change how three
+shell surfaces look, which is a wider blast radius than "add a variant" implies,
+and is called out here rather than buried in the diff.
+
+Unrelated to optical glass but in the same branch and the same push: the sheet
+fit, the status-bar de-duplication, the base merge and the six stale checks. Each
+has its own commit.
+
+### Next concrete action
+
+Owner: add `VERCEL_AUTOMATION_BYPASS_SECRET` so `verify-routes` can gather
+evidence, and decide whether a preview for `apps/web` is in scope. Neither is
+implementable here, and the delivery stop asks for a verified preview.
