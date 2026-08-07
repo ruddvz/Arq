@@ -143,8 +143,20 @@ body {
     border-radius: var(--arq-radius-panel);
   }
 
-  /* The bars are chrome, not content, so they sit on the raised surface. */
-  .arq-workspace__bar > * {
+  /*
+   * The bars are chrome, not content, so they sit on the raised surface.
+   *
+   * Scoped away from material surfaces. Unscoped, this stripped the fill and
+   * the border off the top bar and the status bar - both of which are
+   * `.arq-material--optical` - and left them blurring a backdrop with no tint
+   * over it and a drop shadow around nothing. That is the one outcome
+   * ADR-0031's `@supports not` fallback exists to prevent, reached from the
+   * supported path instead: a surface you can read the model straight through.
+   *
+   * The rule that decides a material surface's fill, border and shadow is
+   * `material.css`, and nothing outside it may take that decision back.
+   */
+  .arq-workspace__bar > *:not(.arq-material) {
     border: 0;
     background: transparent;
   }
@@ -179,9 +191,13 @@ body {
     align-self: flex-start;
     max-height: 100%;
     overflow: auto;
+    /*
+     * Shape only, for the same reason as the status bar: the fill and the
+     * border belong to `material.css`. An opaque paper background here meant
+     * the dock paid for a `backdrop-filter` that resolved a backdrop no pixel
+     * ever showed.
+     */
     border-radius: var(--arq-radius-panel);
-    border: 1px solid var(--arq-ui-line-subtle);
-    background: var(--arq-ui-paper);
   }
 
   .arq-workspace__dock > .arq-mode-rail,
@@ -228,14 +244,19 @@ body {
    * nothing visible - the element a reader actually sees is `.arq-status-bar`
    * inside it, and that is what has to shrink.
    */
+  /*
+   * Shape and space only. The fill, the border and the shadow are the
+   * material's, and this rule used to overwrite all three with an opaque
+   * paper background - which left a `backdrop-filter` running underneath a
+   * surface nothing could be seen through. Blur that resolves a backdrop
+   * hidden behind an opaque fill is GPU cost with no pixel to show for it,
+   * which is the cost rule ADR-0031 sets, failed in the quietest way.
+   */
   .arq-workspace__bar--status > .arq-status-bar {
     width: 100%;
     max-width: 100%;
     padding-inline: var(--arq-space-panel);
     border-radius: 999px;
-    border: 1px solid var(--arq-ui-line-subtle);
-    background: var(--arq-ui-paper);
-    box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
   }
 }
 

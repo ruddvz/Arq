@@ -173,7 +173,22 @@ export function ViewKindSwitcher(props: ViewKindSwitcherProps): JSX.Element {
       data-lens-measured={
         indicator === null ? 'no' : `${Math.round(indicator.width)}x${Math.round(indicator.height)}`
       }
-      className="arq-view-kinds arq-material arq-material--optical"
+      /*
+       * Not a material, deliberately.
+       *
+       * The capsule sits inside the top bar, which is one - and ADR-0031
+       * forbids nesting them, so `.arq-material .arq-material` was stripping
+       * this element's fill and blur anyway. What it left was worse than
+       * either choice: a transparent box wearing the optical variant's rim and
+       * drop shadow, with the recessed track that makes the selected segment
+       * read as raised never painting at all.
+       *
+       * A segmented control does not want to be glass. It wants a recess for
+       * the raised segment to sit in, which is `.arq-view-kinds`' own rule.
+       * The lens still refracts - it draws the backdrop of the surface behind
+       * it, which is the top bar's material.
+       */
+      className="arq-view-kinds"
       role="tablist"
       aria-label="View kind"
       aria-orientation="horizontal"

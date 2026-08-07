@@ -52,7 +52,17 @@
    * it explicitly rules out.
    */
   --arq-optical-fill: rgb(248 250 249 / 72%);
-  --arq-optical-fill-solid: rgb(248 250 249 / 98%);
+  /*
+   * Fully opaque, and it has to be exactly that.
+   *
+   * This was 98%, which looks identical and is wrong for the only reason the
+   * token exists: it is what reduced-transparency, increased-contrast and
+   * no-backdrop-filter render, and each of those is a reader who has asked for
+   * - or whose browser requires - no transparency at all. Honouring 98% of
+   * that request is not honouring it, and a stack of two such surfaces
+   * compounds it.
+   */
+  --arq-optical-fill-solid: rgb(248 250 249);
   --arq-optical-border: rgb(255 255 255 / 72%);
   --arq-optical-inner: rgb(11 107 80 / 7%);
   --arq-optical-rim: rgb(255 255 255 / 74%);
@@ -74,7 +84,8 @@
        variant: a dark surface lightens what is behind it, and the rim carries
        the separation that a shadow cannot on a dark background. */
     --arq-optical-fill: rgb(18 24 22 / 76%);
-    --arq-optical-fill-solid: rgb(18 24 22 / 98%);
+    /* Opaque for the same reason as the light value. */
+    --arq-optical-fill-solid: rgb(18 24 22);
     --arq-optical-border: rgb(255 255 255 / 15%);
     --arq-optical-inner: rgb(255 255 255 / 5%);
     --arq-optical-rim: rgb(255 255 255 / 18%);
@@ -152,6 +163,14 @@
   -webkit-backdrop-filter: none;
   border-color: var(--arq-ui-line-subtle);
   contain: none;
+  /*
+   * The rim and the shadow go with the blur, and they were not being reset.
+   * A nested optical surface kept `inset 0 1px 0` and a 34px drop shadow while
+   * this rule turned its fill transparent - an edge highlight and a cast
+   * shadow around a box with nothing in it, which reads as a bevel floating
+   * over the parent surface. Depth has to stop where the material stops.
+   */
+  box-shadow: none;
 }
 
 /*
