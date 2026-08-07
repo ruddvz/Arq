@@ -151,12 +151,53 @@ describe('ADR-0031: the material layer has exactly one implementation', () => {
       .filter(({ path, text }) => path.endsWith('.tsx') && text.includes('arq-material'))
       .map(({ path }) => path);
 
+    /*
+     * An allow-list, so a surface cannot start wearing the material without
+     * somebody deciding it should. The five added for Optical Glass 2.0 are the
+     * package's own first case - bounded navigation shells, floating tool
+     * groups and compact overlays - and every one of them floats over the
+     * canvas, which is the condition ADR-0031 sets.
+     *
+     * `App.tsx` is on it for the drawing's own corner chrome, the title and the
+     * view controls. It is not on it for the canvas: the test below keeps
+     * material off `PlanCanvas` and `ModelCanvas`, which is where model content
+     * lives.
+     */
     expect(wearing.sort()).toEqual([
+      'apps/web/src/App.tsx',
       'packages/design-system/src/interaction-foundation/feedback/command-feedback.tsx',
       'packages/design-system/src/interaction-foundation/overlays/context-hud.tsx',
       'packages/design-system/src/shell/modal-dialog.tsx',
+      'packages/design-system/src/shell/status-bar.tsx',
+      'packages/design-system/src/shell/top-bar.tsx',
+      'packages/design-system/src/workspace/view-kind-switcher.tsx',
       'packages/design-system/src/workspace/workspace-root.tsx',
     ]);
+  });
+
+  it('gives the optical variant every fallback the regular one has', () => {
+    const css = materialCss();
+
+    expect(css).toMatch(/\.arq-material--optical\s*\{/);
+    /*
+     * The variant is a second set of values on the same layer, not a second
+     * layer - so it has to carry the same four escapes. A translucent surface
+     * that stays translucent under forced colours or reduced transparency is
+     * the defect the fallbacks exist to prevent, and adding a variant is
+     * exactly when one gets forgotten.
+     */
+    const opticalRules = css.match(/\.arq-material--optical[^{]*\{[^}]*\}/g) ?? [];
+    expect(opticalRules.length).toBeGreaterThanOrEqual(5);
+    for (const condition of [
+      'prefers-reduced-transparency: reduce',
+      'prefers-contrast: more',
+      'forced-colors: active',
+    ]) {
+      const block = new RegExp(
+        `@media[^{]*${condition.replace(/[()]/g, '\\$&')}[^{]*\\{[\\s\\S]*?\\.arq-material--optical`,
+      );
+      expect(css, `optical variant has no fallback for ${condition}`).toMatch(block);
+    }
   });
 
   it('leaves the full-viewport modal backdrop a plain scrim', () => {

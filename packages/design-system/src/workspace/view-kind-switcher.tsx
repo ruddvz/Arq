@@ -94,7 +94,7 @@ export function ViewKindSwitcher(props: ViewKindSwitcherProps): JSX.Element {
 
   return (
     <div
-      className="arq-view-kinds"
+      className="arq-view-kinds arq-material arq-material--optical"
       role="tablist"
       aria-label="View kind"
       aria-orientation="horizontal"

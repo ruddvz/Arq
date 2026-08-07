@@ -36,6 +36,28 @@
      renders, and it must lose no control and no information. */
   --arq-material-opaque: var(--arq-ui-surface-1);
   --arq-material-opaque-border: var(--arq-ui-line-default);
+
+  /*
+   * The optical variant, from the Optical Glass 2.0 package.
+   *
+   * Same layer and the same `backdrop-filter` budget - this is a second set of
+   * values for `.arq-material`, not a second material system. What it adds over
+   * the regular variant is edge definition: a fine rim highlight and a shallow
+   * gradient across the surface, which is what makes a control read as a piece
+   * of glass with a thickness rather than as a tinted rectangle.
+   *
+   * Blur is lower than the regular variant on purpose. The package's visual
+   * character is "precision optical equipment... thin edge definition, quiet
+   * depth, no excessive blur"; 28px reads as frosted, and frosted is the thing
+   * it explicitly rules out.
+   */
+  --arq-optical-fill: rgb(248 250 249 / 72%);
+  --arq-optical-fill-solid: rgb(248 250 249 / 98%);
+  --arq-optical-border: rgb(255 255 255 / 72%);
+  --arq-optical-inner: rgb(11 107 80 / 7%);
+  --arq-optical-rim: rgb(255 255 255 / 74%);
+  --arq-optical-shadow: 0 12px 34px rgb(16 27 23 / 11%), 0 2px 8px rgb(16 27 23 / 6%);
+  --arq-optical-filter: blur(16px) saturate(1.06);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -47,6 +69,15 @@
     --arq-material-tint: rgb(32 36 40 / 76%);
     --arq-material-tint-strong: rgb(32 36 40 / 90%);
     --arq-material-border: rgb(255 255 255 / 12%);
+
+    /* Not the light values inverted, for the same reason as the regular
+       variant: a dark surface lightens what is behind it, and the rim carries
+       the separation that a shadow cannot on a dark background. */
+    --arq-optical-fill: rgb(18 24 22 / 76%);
+    --arq-optical-fill-solid: rgb(18 24 22 / 98%);
+    --arq-optical-border: rgb(255 255 255 / 15%);
+    --arq-optical-inner: rgb(255 255 255 / 5%);
+    --arq-optical-rim: rgb(255 255 255 / 18%);
   }
 }
 
@@ -60,6 +91,36 @@
      be asked to sample a far larger backdrop than the element occupies, which
      is the cost ADR-0031 requires to stay proportional to visible area. */
   contain: paint;
+}
+
+/*
+ * The optical variant: glass with an edge.
+ *
+ * The package calls this an interaction material, and the distinction is load
+ * bearing - it goes on bounded navigation shells, floating tool groups and
+ * compact overlays, and never on project truth. Numbers, inspector fields,
+ * dense lists, warnings, recovery, legal copy and renderer output stay solid,
+ * because a translucent surface lowers the contrast of everything drawn on it
+ * and those are the things that must not lose any.
+ *
+ * The gradient runs across the surface rather than down it, so the highlight
+ * reads as light catching an edge rather than as a button bevel.
+ */
+.arq-material--optical {
+  background:
+    linear-gradient(
+      145deg,
+      rgb(255 255 255 / 28%),
+      rgb(255 255 255 / 4%) 44%,
+      var(--arq-optical-inner)
+    ),
+    var(--arq-optical-fill);
+  backdrop-filter: var(--arq-optical-filter);
+  -webkit-backdrop-filter: var(--arq-optical-filter);
+  border-color: var(--arq-optical-border);
+  box-shadow:
+    inset 0 1px 0 var(--arq-optical-rim),
+    var(--arq-optical-shadow);
 }
 
 /*
@@ -141,5 +202,47 @@
   .arq-material {
     background: var(--arq-material-opaque);
     border-color: var(--arq-material-opaque-border);
+  }
+}
+
+/*
+ * The optical variant's own fallbacks, declared after the shared ones so they
+ * win at equal specificity.
+ *
+ * Each is a complete surface rather than a reduced one - the same rule
+ * ADR-0031 already sets for the regular variant. What has to go in every case
+ * is the rim and the shadow along with the blur: an inset highlight on an
+ * opaque surface is a bevel, and a bevel is a different visual language from
+ * the one this is trying to speak.
+ */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .arq-material--optical {
+    background: var(--arq-optical-fill-solid);
+    box-shadow: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .arq-material--optical {
+    background: Canvas;
+    border-color: ButtonText;
+    box-shadow: none;
+  }
+}
+
+/* Printing a translucent surface produces a grey box over nothing. */
+@media print {
+  .arq-material--optical {
+    background: #ffffff;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .arq-material--optical {
+    background: var(--arq-optical-fill-solid);
+    box-shadow: none;
   }
 }

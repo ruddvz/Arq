@@ -1637,7 +1637,10 @@ export function App(): JSX.Element {
 
   const viewIdentity =
     activeTab === null || sheetRect === null ? null : (
-      <div className="arq-view-identity" style={sheetChromeStyle('start')}>
+      <div
+        className="arq-view-identity arq-material arq-material--optical"
+        style={sheetChromeStyle('start')}
+      >
         <strong>{activeLevelName ?? activeTab.title}</strong>
         <span>
           {activeTab.kind === '3d' ? 'Model' : 'Plan'}
@@ -1655,7 +1658,10 @@ export function App(): JSX.Element {
    */
   const viewTools =
     activeTab === null || sheetRect === null ? null : (
-      <div className="arq-view-tools" style={sheetChromeStyle('end')}>
+      <div
+        className="arq-view-tools arq-material arq-material--optical"
+        style={sheetChromeStyle('end')}
+      >
         <button
           type="button"
           className="arq-shell-button"

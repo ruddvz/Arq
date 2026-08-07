@@ -448,7 +448,7 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
             system, which is what the divider between them is.
           */}
           {!canvasFirst && (
-            <div className="arq-workspace__dock">
+            <div className="arq-workspace__dock arq-material arq-material--optical">
               <ModeRail
                 project={project}
                 activeMode={activeMode}

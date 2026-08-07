@@ -29,8 +29,8 @@
       "touch": true,
       "band": "desktop",
       "canvas": {
-        "width": 1310,
-        "height": 921
+        "width": 1308,
+        "height": 920
       },
       "horizontalOverflow": false,
       "hasDemoFixtureString": false,
@@ -49,7 +49,7 @@
       "band": "tablet-landscape",
       "canvas": {
         "width": 1024,
-        "height": 622
+        "height": 621
       },
       "horizontalOverflow": false,
       "hasDemoFixtureString": false,
@@ -68,7 +68,7 @@
       "band": "phone",
       "canvas": {
         "width": 430,
-        "height": 767
+        "height": 766
       },
       "horizontalOverflow": false,
       "hasDemoFixtureString": false,

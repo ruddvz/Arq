@@ -541,7 +541,13 @@ export function TopBar(props: TopBarProps): JSX.Element {
   return (
     <header
       ref={barRef}
-      className="arq-top-bar arq-shell-panel"
+      /*
+       * The optical material, from `material.css` - the only file permitted to
+       * declare `backdrop-filter` (ADR-0031). The bar is a bounded navigation
+       * shell floating over the canvas, which is the package's first case for
+       * it, and its own fallbacks travel with the class.
+       */
+      className="arq-top-bar arq-shell-panel arq-material arq-material--optical"
       /*
        * The collapse plan, exposed for the workspace layout capability check.
        * Doc 36's priority is a layout promise, and a promise that cannot be

@@ -85,7 +85,7 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
 
   return (
     <footer
-      className="arq-status-bar arq-shell-panel"
+      className="arq-status-bar arq-shell-panel arq-material arq-material--optical"
       style={{
         display: 'flex',
         alignItems: 'center',
