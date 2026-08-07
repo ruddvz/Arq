@@ -17,7 +17,7 @@
 
 export type TopBarSlot =
   | 'project-identity'
-  | 'active-view'
+  | 'view-switcher'
   | 'save-state'
   | 'sync-state'
   | 'undo'
@@ -30,11 +30,16 @@ export type TopBarSlot =
 
 /**
  * Doc 36's protected set: these never collapse, at any width. Project identity
- * answers "which building am I in" and the active view answers "which drawing" -
- * a user who cannot see either has lost their place, which is worse than any
- * amount of crowding.
+ * answers "which building am I in" and the view switcher answers "which drawing,
+ * and how do I get to the others" - a user who cannot see either has lost their
+ * place, which is worse than any amount of crowding.
+ *
+ * The second slot used to be `active-view`, a text readout of the open view's
+ * name. It is a control now rather than a label, which raises the stakes rather
+ * than lowering them: collapsing it into an overflow menu would put the only
+ * way between plan, model and sheets behind a button marked with three dots.
  */
-export const NEVER_COLLAPSED_SLOTS: readonly TopBarSlot[] = ['project-identity', 'active-view'];
+export const NEVER_COLLAPSED_SLOTS: readonly TopBarSlot[] = ['project-identity', 'view-switcher'];
 
 /**
  * Collapse order, lowest value collapsing first. Read straight from doc 36's
@@ -59,7 +64,7 @@ const COLLAPSE_RANK: Readonly<Record<TopBarSlot, number>> = {
   redo: 5,
   undo: 6,
   'command-search': 7,
-  'active-view': 98,
+  'view-switcher': 98,
   'project-identity': 99,
 };
 

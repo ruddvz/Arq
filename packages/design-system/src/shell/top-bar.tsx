@@ -1,5 +1,4 @@
 import {
-  Fragment,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -22,7 +21,19 @@ import {
 export interface TopBarProps {
   readonly projectName: string;
   readonly onRenameProject: (name: string) => void;
-  readonly activeViewName: string;
+  /**
+   * The view switcher, already built by the host - plan, model, sheets.
+   *
+   * This slot used to be a text readout of the open view's name, on the bar
+   * beside four other phrases, while the switching itself happened on a row of
+   * closeable tabs underneath. The reference composition has one control in the
+   * centre of the bar and no second row, so the readout became the control: the
+   * view's name is on the drawing's own identity chip, which is where a reader
+   * looks for it.
+   */
+  readonly viewSwitcher: ReactNode;
+  /** Opens the project overview. The logo is its entrance - see the render. */
+  readonly onOpenProjectOverview: () => void;
   readonly saveState: SaveState;
   readonly syncState: SyncState;
   readonly canUndo: boolean;
@@ -76,7 +87,33 @@ export interface TopBarProps {
  * critique's "navigation and commands were not sufficiently separated" was
  * literally true of the top of the window.
  */
-const FIRST_ACTION_SLOT: TopBarSlot = 'active-view';
+/**
+ * Which of the bar's three regions each slot belongs to.
+ *
+ * The bar is a three-column grid, not a flex row with a gutter in it, and the
+ * difference is the reason the switcher is actually in the middle. Two equal
+ * flex gutters only centre a child when the content either side of them is
+ * equally wide, and here it never is - the project's name on the left against
+ * two state readouts and six buttons on the right. The capsule sat visibly left
+ * of centre for exactly that reason. `1fr auto 1fr` centres it whatever flanks
+ * it.
+ *
+ * Exhaustive over `TopBarSlot`, so a new slot has to declare where it lives
+ * rather than defaulting into a region by accident.
+ */
+const SLOT_REGION: Readonly<Record<TopBarSlot, 'lead' | 'centre' | 'trail'>> = {
+  'project-identity': 'lead',
+  'view-switcher': 'centre',
+  'save-state': 'trail',
+  'sync-state': 'trail',
+  undo: 'trail',
+  redo: 'trail',
+  presence: 'trail',
+  open: 'trail',
+  share: 'trail',
+  'command-search': 'trail',
+  account: 'trail',
+};
 
 /*
  * Order is the reading order, and the identity group is now one thing: the
@@ -90,7 +127,7 @@ const FIRST_ACTION_SLOT: TopBarSlot = 'active-view';
  */
 const ALL_SLOTS: readonly TopBarSlot[] = [
   'project-identity',
-  'active-view',
+  'view-switcher',
   'save-state',
   'sync-state',
   'undo',
@@ -112,7 +149,8 @@ export function TopBar(props: TopBarProps): JSX.Element {
   const {
     projectName,
     onRenameProject,
-    activeViewName,
+    viewSwitcher,
+    onOpenProjectOverview,
     saveState,
     syncState,
     canUndo,
@@ -185,7 +223,12 @@ export function TopBar(props: TopBarProps): JSX.Element {
     const observer = new ResizeObserver(measure);
     observer.observe(bar);
     return () => observer.disconnect();
-  }, [projectName, activeViewName, saveState, syncState]);
+    /*
+     * `viewSwitcher` is in the dependencies because the capsule's width changes
+     * with what is in it - a project with sheets is wider than one without -
+     * and a plan measured against the old width would collapse the wrong slot.
+     */
+  }, [projectName, viewSwitcher, saveState, syncState]);
 
   useEffect(() => {
     if (!menuOpen) {
@@ -270,23 +313,7 @@ export function TopBar(props: TopBarProps): JSX.Element {
         </button>
       ),
     },
-    'active-view': {
-      label: 'Active view',
-      node: (
-        <span
-          aria-label="Active view"
-          style={{
-            maxWidth: 220,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            display: 'inline-block',
-          }}
-        >
-          {activeViewName}
-        </span>
-      ),
-    },
+    'view-switcher': { label: 'View kind', node: viewSwitcher },
     undo: {
       label: 'Undo',
       node: (
@@ -400,6 +427,87 @@ export function TopBar(props: TopBarProps): JSX.Element {
     account: onOpenAccountMenu,
   };
 
+  const overflow =
+    plan.collapsed.length === 0 ? null : (
+      <>
+        <button
+          type="button"
+          ref={triggerRef}
+          className="arq-shell-button arq-top-bar__overflow"
+          aria-label={`${plan.collapsed.length} more project controls`}
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span aria-hidden="true">⋯</span>
+        </button>
+        {menuOpen && (
+          <div
+            ref={menuRef}
+            role="menu"
+            aria-label="More project controls"
+            className="arq-shell-panel"
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') {
+                event.stopPropagation();
+                closeMenuAndRestoreFocus();
+              }
+            }}
+            style={{
+              position: 'absolute',
+              top: '100%',
+              right: 'var(--arq-space-panel)',
+              zIndex: 8,
+              minWidth: 220,
+              padding: 'var(--arq-space-micro)',
+              border: '1px solid var(--arq-ui-line-default)',
+              borderRadius: 'var(--arq-radius-menu)',
+              background: 'var(--arq-ui-paper)',
+              boxShadow: 'var(--arq-shadow-menu)',
+            }}
+          >
+            {plan.collapsed.map((slot) => {
+              const action = MENU_ACTIONS[slot];
+              const content = SLOT_CONTENT[slot];
+              if (content.node === null) {
+                return null;
+              }
+              if (action === undefined) {
+                return (
+                  <p
+                    key={slot}
+                    role="presentation"
+                    style={{
+                      margin: 0,
+                      padding: 'var(--arq-space-compact) var(--arq-space-control-group)',
+                      color: 'var(--arq-ui-text-secondary)',
+                    }}
+                  >
+                    {content.label}
+                  </p>
+                );
+              }
+              return (
+                <button
+                  key={slot}
+                  type="button"
+                  role="menuitem"
+                  className="arq-shell-button"
+                  style={{ width: '100%', justifyContent: 'flex-start' }}
+                  onClick={() => {
+                    action();
+                    closeMenuAndRestoreFocus();
+                  }}
+                >
+                  {content.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </>
+    );
+
   return (
     <header
       ref={barRef}
@@ -412,136 +520,86 @@ export function TopBar(props: TopBarProps): JSX.Element {
       data-collapsed-slots={plan.collapsed.join(',')}
       data-measured-available={measuredAvailable}
       style={{
-        display: 'flex',
+        display: 'grid',
+        gridTemplateColumns: '1fr auto 1fr',
         alignItems: 'center',
         gap: 'var(--arq-space-control-group)',
         padding: 'var(--arq-space-compact) var(--arq-space-panel)',
         borderBottom: '1px solid var(--arq-ui-line-subtle)',
-        /*
-         * Doc 36's collapse priority, implemented in `planTopBarLayout`: the bar
-         * measures itself and folds the lowest-priority controls into the
-         * overflow menu, protecting project identity and active view at any
-         * width. `nowrap` is safe now precisely because nothing is left to
-         * overflow - before the plan existed this had to wrap, costing three
-         * rows and 173px at phone width.
-         */
-        flexWrap: 'nowrap',
         minWidth: 0,
         position: 'relative',
       }}
     >
-      <Logo variant="symbol" heightPx={24} />
-
-      {ALL_SLOTS.map((slot) => {
-        const content = SLOT_CONTENT[slot];
-        if (content.node === null) {
-          return null;
-        }
-        return (
-          <Fragment key={slot}>
-            {/*
-              The gutter that separates identity from actions. Not a measured
-              slot - `planTopBarLayout` only ever sees the slots themselves, so
-              the collapse priority is unaffected by where this sits.
-            */}
-            {slot === FIRST_ACTION_SLOT && <div style={{ flex: 1, minWidth: 0 }} />}
-            <span
-              ref={registerSlot(slot)}
-              data-top-bar-slot={slot}
-              style={{
-                flex: '0 0 auto',
-                minWidth: 0,
-                // Collapsed slots keep their box for measurement but take no
-                // space and are unreachable, so the plan can restore them when
-                // the window widens again.
-                display: visible.has(slot) ? 'inline-flex' : 'none',
-              }}
-            >
-              {content.node}
-            </span>
-          </Fragment>
-        );
-      })}
-
-      {plan.collapsed.length > 0 && (
-        <>
-          <button
-            type="button"
-            ref={triggerRef}
-            className="arq-shell-button arq-top-bar__overflow"
-            aria-label={`${plan.collapsed.length} more project controls`}
-            aria-haspopup="menu"
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            <span aria-hidden="true">⋯</span>
-          </button>
-          {menuOpen && (
-            <div
-              ref={menuRef}
-              role="menu"
-              aria-label="More project controls"
-              className="arq-shell-panel"
-              onKeyDown={(event) => {
-                if (event.key === 'Escape') {
-                  event.stopPropagation();
-                  closeMenuAndRestoreFocus();
-                }
-              }}
-              style={{
-                position: 'absolute',
-                top: '100%',
-                right: 'var(--arq-space-panel)',
-                zIndex: 8,
-                minWidth: 220,
-                padding: 'var(--arq-space-micro)',
-                border: '1px solid var(--arq-ui-line-default)',
-                borderRadius: 'var(--arq-radius-menu)',
-                background: 'var(--arq-ui-paper)',
-                boxShadow: 'var(--arq-shadow-menu)',
-              }}
-            >
-              {plan.collapsed.map((slot) => {
-                const action = MENU_ACTIONS[slot];
-                const content = SLOT_CONTENT[slot];
-                if (content.node === null) {
-                  return null;
-                }
-                if (action === undefined) {
-                  return (
-                    <p
-                      key={slot}
-                      role="presentation"
-                      style={{
-                        margin: 0,
-                        padding: 'var(--arq-space-compact) var(--arq-space-control-group)',
-                        color: 'var(--arq-ui-text-secondary)',
-                      }}
-                    >
-                      {content.label}
-                    </p>
-                  );
-                }
-                return (
-                  <button
-                    key={slot}
-                    type="button"
-                    role="menuitem"
-                    className="arq-shell-button"
-                    style={{ width: '100%', justifyContent: 'flex-start' }}
-                    onClick={() => {
-                      action();
-                      closeMenuAndRestoreFocus();
-                    }}
-                  >
-                    {content.label}
-                  </button>
-                );
-              })}
-            </div>
+      {(['lead', 'centre', 'trail'] as const).map((region) => (
+        <div
+          key={region}
+          className={`arq-top-bar__region arq-top-bar__region--${region}`}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--arq-space-control-group)',
+            /*
+             * `nowrap` is safe because `planTopBarLayout` folds the
+             * lowest-priority controls into the overflow menu rather than
+             * letting them run on - before that plan existed this bar wrapped
+             * to three rows and cost 173px at phone width.
+             */
+            flexWrap: 'nowrap',
+            minWidth: 0,
+            justifyContent: region === 'trail' ? 'flex-end' : 'flex-start',
+          }}
+        >
+          {region === 'lead' && (
+            <>
+              {/*
+               * The logo is the way back to the project overview.
+               *
+               * The overview used to be the first tab on a strip this bar
+               * replaced, and the reference composition has no entrance for it
+               * at all. Rather than lose a whole surface or add a fourth
+               * segment the reference does not have, the mark becomes the
+               * control - which is where a reader of almost any application
+               * already expects "take me to the top" to be. It is the one
+               * affordance here not taken from the reference, and it is a
+               * button with a name rather than a picture that happens to be
+               * clickable.
+               */}
+              <button
+                type="button"
+                className="arq-shell-button arq-top-bar__home"
+                aria-label="Project overview"
+                onClick={onOpenProjectOverview}
+              >
+                <Logo variant="symbol" heightPx={24} />
+              </button>
+            </>
           )}
-        </>
-      )}
+          {ALL_SLOTS.filter((slot) => SLOT_REGION[slot] === region).map((slot) => {
+            const content = SLOT_CONTENT[slot];
+            if (content.node === null) {
+              return null;
+            }
+            return (
+              <span
+                key={slot}
+                ref={registerSlot(slot)}
+                data-top-bar-slot={slot}
+                style={{
+                  flex: '0 0 auto',
+                  minWidth: 0,
+                  // Collapsed slots keep their box for measurement but take no
+                  // space and are unreachable, so the plan can restore them
+                  // when the window widens again.
+                  display: visible.has(slot) ? 'inline-flex' : 'none',
+                }}
+              >
+                {content.node}
+              </span>
+            );
+          })}
+          {region === 'trail' && overflow}
+        </div>
+      ))}
     </header>
   );
 }

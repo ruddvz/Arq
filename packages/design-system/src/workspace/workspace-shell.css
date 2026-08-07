@@ -210,47 +210,67 @@ body {
 }
 
 /*
- * The destination strip as a segmented control.
+ * The view switcher, as the reference draws it: one capsule in the project bar.
  *
- * The reference screens put Plan, 3D and Sheets in one centred capsule rather
- * than a second full-width bar under the project bar. Two stacked full-bleed
- * bars is most of what makes the top of the window read as a dashboard, and the
- * strip was carrying no more information than a capsule would.
+ * This used to be a run of CSS that made the *tab strip* look like a capsule
+ * while leaving it on a full-width row of its own beneath the bar. Two stacked
+ * full-bleed bars is most of what makes the top of a window read as a
+ * dashboard, and the row cost forty pixels of drawing to say something the bar
+ * had room for. The switcher is a real segmented control now and lives in the
+ * bar, so the row is gone on every band that has a bar wide enough for it.
  *
- * Presentation only: these are still the repository's real project tabs, with
- * their close affordances, overflow menu and `aria-selected` state intact. A
- * three-way switcher would have been a smaller product, not a tidier one.
+ * The track is the recessed surface and the selected segment is the raised one
+ * - the same figure/ground relationship a physical segmented control has, and
+ * the reason the selected segment reads as selected without a colour.
  */
-@media (pointer: fine) and (min-width: 1180px) {
-  .arq-workspace__bar--views {
-    display: flex;
-    justify-content: center;
-    background: transparent;
-    border: 0;
-    overflow: visible;
-  }
+.arq-view-kinds {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--arq-ui-line-subtle);
+  border-radius: 999px;
+  background: var(--arq-ui-surface-2);
+}
 
-  .arq-workspace__bar--views > .arq-tab-strip {
-    width: auto;
-    padding: var(--arq-space-micro);
-    border: 1px solid var(--arq-ui-line-subtle);
-    border-radius: 999px;
-    background: var(--arq-ui-paper);
-  }
+.arq-view-kinds__segment {
+  gap: var(--arq-space-micro);
+  border-radius: 999px;
+  color: var(--arq-ui-text-secondary);
+  white-space: nowrap;
+}
 
-  /*
-   * Half the height, per the Version 12 shape rule that a capsule's radius is
-   * half its height. The active segment is filled rather than underlined,
-   * because an underline inside a pill reads as a stray rule.
-   */
-  .arq-workspace__bar--views .arq-tab-strip__label {
-    border-radius: 999px;
-  }
+/*
+ * Raised, weighted and named - three cues, none of which is a colour.
+ * Blueprint section 126: status is never carried by colour alone, and "which
+ * view am I looking at" is exactly the kind of status that rule is about.
+ */
+.arq-view-kinds__segment[aria-selected='true'] {
+  background: var(--arq-ui-paper);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
+  color: var(--arq-ui-text-primary);
+  font-weight: 600;
+}
 
-  .arq-workspace__bar--views .arq-tab-strip__label[aria-selected='true'] {
-    border-bottom: 0;
-    background: var(--arq-ui-surface-3);
-  }
+.arq-view-kinds__segment:disabled {
+  color: var(--arq-ui-text-muted);
+  /* Legible, not invisible: the segment carries its reason and a reader has to
+     be able to read the label the reason is about. */
+  opacity: 1;
+}
+
+/* A glyph beside a word does not need the 44px square a glyph alone does. */
+.arq-view-kinds__segment,
+.arq-top-bar__home {
+  min-width: 0;
+}
+
+.arq-view-kinds__segment svg,
+.arq-top-bar__home svg {
+  flex-shrink: 0;
+}
+
+.arq-top-bar__home {
+  padding: var(--arq-space-micro);
 }
 
 /*

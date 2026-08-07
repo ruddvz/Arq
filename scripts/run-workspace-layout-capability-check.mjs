@@ -202,14 +202,24 @@ async function measure(page) {
       sidePanels: document.querySelectorAll('.arq-workspace__docked, .arq-workspace__overlay')
         .length,
       rails: document.querySelectorAll('.arq-mode-rail, .arq-tool-rail').length,
-      tabStrips: document.querySelectorAll('.arq-tab-strip').length,
+      /*
+       * Either presentation of the view switcher.
+       *
+       * A docking band has to offer a way between the project's views without
+       * opening a menu; whether that is a strip of tabs or a segmented capsule
+       * in the project bar is a composition choice, and since the Version 12
+       * reference it is the capsule. Asserting on the tab strip specifically
+       * asserted the composition rather than the capability.
+       */
+      viewSwitchers: document.querySelectorAll('.arq-tab-strip, .arq-view-kinds').length,
       compactViewControls: document.querySelectorAll('.arq-compact-view-control').length,
       panelSummonControls: document.querySelectorAll(
         '.arq-phone-dock__button[aria-haspopup="dialog"], .arq-tablet-drawer-bar button',
       ).length,
       activeTabVisible:
-        document.querySelector('.arq-tab-strip [role="tab"][aria-selected="true"]') !== null ||
-        document.querySelector('.arq-compact-view-control button') !== null,
+        document.querySelector(
+          '.arq-tab-strip [role="tab"][aria-selected="true"], .arq-view-kinds [role="tab"][aria-selected="true"]',
+        ) !== null || document.querySelector('.arq-compact-view-control button') !== null,
       // The fixture check is "save and sync separately visible **or available
       // in the project menu**" - both must be nameable, never merged into one
       // word, but doc 36 explicitly allows the low-priority status text to
@@ -295,8 +305,8 @@ function checkViewport(viewport, m, consoleErrors) {
     if (m.sidePanels === 0) {
       failures.push('no browser or inspector on a docking band');
     }
-    if (m.tabStrips === 0) {
-      failures.push('no view tab strip on a docking band');
+    if (m.viewSwitchers === 0) {
+      failures.push('no way to switch view on a docking band');
     }
   }
   if (viewport.band === 'phone' && m.compactViewControls === 0) {

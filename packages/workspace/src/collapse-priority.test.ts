@@ -8,7 +8,7 @@ import {
 
 const ALL: readonly TopBarSlot[] = [
   'project-identity',
-  'active-view',
+  'view-switcher',
   'save-state',
   'sync-state',
   'undo',
@@ -41,9 +41,9 @@ describe('planTopBarLayout', () => {
     for (const width of [0, 50, 150, 300]) {
       const plan = planTopBarLayout(ALL, width, EVEN, 40);
       expect(plan.visible).toContain('project-identity');
-      expect(plan.visible).toContain('active-view');
+      expect(plan.visible).toContain('view-switcher');
       expect(plan.collapsed).not.toContain('project-identity');
-      expect(plan.collapsed).not.toContain('active-view');
+      expect(plan.collapsed).not.toContain('view-switcher');
     }
   });
 
@@ -95,7 +95,7 @@ describe('planTopBarLayout', () => {
 
 describe('NEVER_COLLAPSED_SLOTS', () => {
   it('is exactly doc 36’s protected pair', () => {
-    expect([...NEVER_COLLAPSED_SLOTS].sort()).toEqual(['active-view', 'project-identity']);
+    expect([...NEVER_COLLAPSED_SLOTS].sort()).toEqual(['project-identity', 'view-switcher']);
     expect(isProtectedTopBarSlot('share')).toBe(false);
   });
 });

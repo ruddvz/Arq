@@ -384,12 +384,23 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
         >
           {phone ? (phoneProjectBar ?? projectBar) : projectBar}
         </div>
-        <div
-          className="arq-workspace__bar arq-workspace__bar--views"
-          style={{ minHeight: viewSwitcherHeightPx(slots), flex: '0 0 auto' }}
-        >
-          {phone ? (compactViewControl ?? tabStrip) : tabStrip}
-        </div>
+        {/*
+          The phone keeps a row of its own here, and nothing else does.
+
+          On the docking bands the view switcher is a capsule in the project bar
+          above, which is what the reference composition shows - so this row was
+          spending forty pixels of the drawing on a second place to say which
+          view is open. A phone has no room in its bar for a capsule and keeps
+          `CompactViewControl`, which is a single control rather than a strip.
+        */}
+        {phone && (
+          <div
+            className="arq-workspace__bar arq-workspace__bar--views"
+            style={{ minHeight: viewSwitcherHeightPx(slots), flex: '0 0 auto' }}
+          >
+            {compactViewControl ?? tabStrip}
+          </div>
+        )}
         {touchControlsAvailable && !phone && (
           <TabletDrawerBar
             openSheet={sheet.openSheet}

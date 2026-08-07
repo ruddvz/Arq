@@ -20,6 +20,8 @@ import {
   CompactViewControl,
   PhoneProjectBar,
   ViewSwitcherList,
+  ViewKindSwitcher,
+  type ViewKindSegment,
   InspectorPanel,
   ProjectBrowserPanel,
   ProjectOverviewSurface,
@@ -87,7 +89,9 @@ import {
   type ProjectOverviewData,
   type ViewportProbe,
   type WorkspaceProjectContext,
+  type WorkspaceViewKind,
 } from '@arq/workspace';
+import { Model3dIcon, PlanIcon, SheetIcon } from '@arq/icons';
 import type { WorldPoint } from '@arq/geometry-2d';
 import { createUndoStack, hasErrors, type ValidationMessage } from '@arq/operations';
 import { validateUniqueElementIds, validateWallSegments } from '@arq/validation';
@@ -1358,6 +1362,56 @@ export function App(): JSX.Element {
     [selectedDrawnWalls, selectionCount, drawnWalls, modelSelection, performOperation],
   );
 
+  /*
+   * The capsule's three segments: how you are looking at the building.
+   *
+   * Which level, or which sheet, is a different question and the project
+   * browser answers it. Project overview is deliberately absent - the logo is
+   * its entrance, because the reference composition has three segments and
+   * adding a fourth would be inventing chrome rather than matching it.
+   *
+   * Sheets carries its reason rather than being omitted. The golden fixture
+   * really does contain a sheet (A101, A3 landscape), and this build really can
+   * export one as a PDF - what it has no surface for is *showing* one. A
+   * segment that opened a sheet tab would fall through to the plan canvas and
+   * draw a plan while claiming to be a sheet, which is the one thing worse than
+   * saying so.
+   */
+  const VIEW_KIND_SEGMENTS: readonly ViewKindSegment[] = useMemo(
+    () => [
+      { kind: 'plan', label: 'Plan', icon: <PlanIcon width={16} height={16} /> },
+      { kind: '3d', label: '3D', icon: <Model3dIcon width={16} height={16} /> },
+      {
+        kind: 'sheet',
+        label: 'Sheets',
+        icon: <SheetIcon width={16} height={16} />,
+        disabledReason: 'This build can export a sheet as a PDF but has no sheet view to open yet.',
+      },
+    ],
+    [],
+  );
+
+  /**
+   * Activates the open view of a kind, or opens one if none is open.
+   *
+   * `openTab` is idempotent by id, so this is one call rather than a
+   * find-then-branch: an id that already exists is activated and nothing is
+   * duplicated. The plan segment prefers the tab already open, so switching to
+   * 3D and back returns to the level the user was on rather than to Level 1.
+   */
+  const handleSelectViewKind = useCallback(
+    (kind: WorkspaceViewKind) => {
+      setTabs((state) => {
+        const existing = state.tabs.find((tab) => tab.kind === kind);
+        if (existing !== undefined) {
+          return activateTab(state, existing.id);
+        }
+        return state;
+      });
+    },
+    [setTabs],
+  );
+
   const activeToolLabel = useMemo(() => {
     const contract = toolContract(toolState.activeToolId);
     return contract === null ? null : contract.name;
@@ -1586,7 +1640,14 @@ export function App(): JSX.Element {
           <TopBar
             projectName={projectName}
             onRenameProject={setProjectName}
-            activeViewName={activeTab?.title ?? 'No view open'}
+            viewSwitcher={
+              <ViewKindSwitcher
+                segments={VIEW_KIND_SEGMENTS}
+                state={tabs}
+                onSelectKind={handleSelectViewKind}
+              />
+            }
+            onOpenProjectOverview={() => setTabs((state) => activateTab(state, 'overview'))}
             // Save state is real: it tracks the IndexedDB operation journal
             // (recover on boot, append per edit). Sync stays 'offline'
             // because no sync backend exists - the two are reported
