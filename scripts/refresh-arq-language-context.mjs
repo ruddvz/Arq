@@ -136,8 +136,24 @@ function parseFileFlow(text) {
 function parseSafeMode(text) {
   return parseUnion(text, /export type ArqfsSafeModePlanKind\s*=([\s\S]*?);/, /'([^']+)'/g);
 }
+/**
+ * The journal state machine's members, read off its `useState` declaration.
+ *
+ * The type parameter is matched as what it is - a union of string literals and
+ * nothing else. It used to be `[\s\S]*?`, which is lazy but still starts at the
+ * *first* `useState<` in the file, so the capture ran roughly thirty lines from
+ * an unrelated declaration down to this one. Any apostrophe in a comment along
+ * the way then became a quote delimiter, and a sentence out of a comment about
+ * room state was published into the generated context as a member of the save
+ * machine - which the state-language coverage check duly failed as an unmapped
+ * external state, correctly and for a completely misleading reason.
+ *
+ * A union cannot contain prose, so requiring the shape rather than allowing
+ * anything binds this to the right declaration without depending on where it
+ * sits in the file.
+ */
 function parseJournalUi(text) {
-  const match = text.match(/useState<\s*([\s\S]*?)>\s*\(\s*'no-project'\s*\)/);
+  const match = text.match(/useState<\s*((?:'[^']*'\s*\|?\s*)+)>\s*\(\s*'no-project'\s*\)/);
   return match ? [...match[1].matchAll(/'([^']+)'/g)].map((x) => x[1]) : [];
 }
 

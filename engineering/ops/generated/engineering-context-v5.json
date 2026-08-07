@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "6244e8615c2d572ba58524985a8db0f25b6f727b1a96be2751489dc7cb7244d3",
+  "source_hash": "2bfeb5a69c358f29f97128e3b741587f9282fd35b6a828acd9d7fe1737a616d4",
   "source_records": [
     {
       "scope": "package",
@@ -89,7 +89,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "ac877ae31a607d825da146f02d29d9a56cfd52a586a44d4b654dafb8c35adbb9"
+      "sha256": "311d582692d5400366cf8b2a94bd13e40a9135f96c76c238bb15a3b97b1ce2a2"
     },
     {
       "scope": "repository",
@@ -204,7 +204,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/App.tsx",
-      "sha256": "f85f12653e202a6095a7b784db85b9c530bc47e2431f773ed3ade9c01c6b1de6"
+      "sha256": "11e94338fff4db8b25c94df804ce3b726e467effd4dc43cf23958ee8bf77dca0"
     },
     {
       "scope": "repository",
@@ -219,12 +219,12 @@
     {
       "scope": "repository",
       "path": "apps/web/src/ModelCanvas.tsx",
-      "sha256": "ce3c57c32591813a618eb21c388aac2cafc4d2264dea365b1de814eafecd71cd"
+      "sha256": "af4676bd00a581fe741bdf3b9d5ee7e5efbf378365bfc2e0fc94460040164a6f"
     },
     {
       "scope": "repository",
       "path": "apps/web/src/PlanCanvas.tsx",
-      "sha256": "7a84db5853dc4c05301d74434ccbbf44fa733289ec6ea548c3fe75f5c81ac5c3"
+      "sha256": "a42126dfbc1bdf5dc269c47e8d17be59145d1df3d78629acb497d73eb78928cb"
     },
     {
       "scope": "repository",
@@ -383,8 +383,18 @@
     },
     {
       "scope": "repository",
+      "path": "docs/adr/0031-functional-material-layer.md",
+      "sha256": "ca8f9bc3f3b5cc28cd7cc89fb3e70604b44447342cb4e9bfd47e8662f962c59f"
+    },
+    {
+      "scope": "repository",
+      "path": "docs/adr/0032-dark-appearance.md",
+      "sha256": "1ad8997bcf99a3eec4250315a04c8e731d8427e1fb80c089bcdea789ca796387"
+    },
+    {
+      "scope": "repository",
       "path": "package.json",
-      "sha256": "a7d10d5432a2920b946788753cc2c9ab0b3b58f0f78d8e5b15327508e8a5d9d2"
+      "sha256": "f0a4472621653628e9ecabf7576fa73e0ef9a44cd2833cefa4e49fe24eb039f0"
     },
     {
       "scope": "repository",
@@ -614,7 +624,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-safe-mode.ts",
-      "sha256": "0b3e1b3b8d5e7ac1580096372422e8fd54ac1719a3e3c30728af0fa50651bff9"
+      "sha256": "6b96e6466e15fff1251beff9a71ed0fbac31c28e86edb94eabf43654cc8c3f0a"
     },
     {
       "scope": "repository",
@@ -684,7 +694,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.ts",
-      "sha256": "f24dcc5a76ec3d08666b7a1fe586235e40f3505106dd17ebe7b80e9b2cc47f26"
+      "sha256": "ef3478734ebdb0860eb647e36e5dd6bcfba77835dc14e05ca3040a3c8eb7d6b0"
     },
     {
       "scope": "repository",
@@ -694,7 +704,7 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-protocol.ts",
-      "sha256": "6c0b398ed8b333920b692be829536b896263369fabb462ea79bbaa1f5a760626"
+      "sha256": "4dc447d1acb4e805a79e666ecb86f0e90080d9e91c107ce3056b9948d739f1b3"
     },
     {
       "scope": "repository",

@@ -636,8 +636,41 @@ The drawing renders slightly smaller as a result - the measured scale moves from
 1:66 to 1:74 at desktop. That is the cost of showing the whole page, and the
 readout is measured rather than declared, so it states it.
 
+## The blocker that was not a blocker
+
+"GitHub Actions has produced no run for this pull request" was recorded here
+twice as an owner action, with the pattern said to point at repository run
+approval or billing. It pointed at neither. The pull request had been
+un-mergeable against its base, and a `pull_request` workflow runs against
+`refs/pull/303/merge` - a ref GitHub cannot create while the merge conflicts.
+No approval was withheld and no billing was exhausted; the branch had simply
+drifted and nobody had merged the base into it.
+
+Resolving five conflicts produced thirteen check runs where there had been one.
+Two conclusions worth keeping:
+
+- An absent signal is not evidence about why it is absent. The right reading was
+  "no runs, cause not established"; what was written was a cause, inferred from
+  a pattern, and filed under actions someone else had to take.
+- Nothing had run against this branch for its whole life, so six checks had gone
+  stale against a UI this work reshaped and one product guarantee had been
+  removed - the panel line saying nothing is written back to the reader's own
+  `.arq` file. All six are fixed and the guarantee is restored; the point is
+  that local green said nothing about any of it.
+
+Two checks fail for reasons that are genuinely not mine, and both fail correctly
+rather than passing on absent evidence:
+
+- `verify-routes` cannot read the marketing preview. Deployment Protection is on
+  for that origin and no `VERCEL_AUTOMATION_BYPASS_SECRET` repository secret
+  exists, so every path returns the sign-in page. The script refuses to report
+  on routing it could not observe, which is the right behaviour. Owner action:
+  Vercel project settings, Protection Bypass for Automation, stored as that
+  secret.
+- `benchmark:arq-core-worker` needs `rust/arq-core/pkg`, which this environment
+  has not built. It is not in the CI job that runs the browser checks.
+
 ## Standing blockers
 
-Neither clears by implementing more; both are owner actions. Recorded here so no
-slice is marked `verified` on their account, and so the absence is never
-presented as a pass.
+Recorded here so no slice is marked `verified` on their account, and so the
+absence is never presented as a pass.
