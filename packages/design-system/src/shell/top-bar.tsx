@@ -139,10 +139,21 @@ const ALL_SLOTS: readonly TopBarSlot[] = [
   'account',
 ];
 
+/** The slots that compete for the trailing column. See the measure loop. */
+const TRAIL_SLOTS: readonly TopBarSlot[] = ALL_SLOTS.filter(
+  (slot) => SLOT_REGION[slot] === 'trail',
+);
+
 /** `--arq-space-control-group`, the flex gap each slot also occupies. */
 const GAP_PX = 12;
-/** The logo plus the header's own horizontal padding. */
-const RESERVED_PX = 24 + 32;
+/**
+ * Slack kept inside the trailing column, in CSS pixels.
+ *
+ * The column's own width already excludes the bar's padding - it is a grid
+ * track, not the bar - so this is only a margin of error against sub-pixel
+ * rounding and the gap between the last control and the column's edge.
+ */
+const TRAIL_RESERVE_PX = 8;
 const OVERFLOW_WIDTH_PX = 44;
 
 export function TopBar(props: TopBarProps): JSX.Element {
@@ -171,6 +182,7 @@ export function TopBar(props: TopBarProps): JSX.Element {
   const [draftName, setDraftName] = useState(projectName);
   const [menuOpen, setMenuOpen] = useState(false);
   const barRef = useRef<HTMLElement>(null);
+  const trailRef = useRef<HTMLDivElement>(null);
   const slotRefs = useRef(new Map<TopBarSlot, HTMLElement>());
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -215,9 +227,27 @@ export function TopBar(props: TopBarProps): JSX.Element {
       const widths = Object.fromEntries(naturalWidths.current) as Partial<
         Record<TopBarSlot, number>
       >;
-      const available = bar.clientWidth - RESERVED_PX;
+      /*
+       * The budget is the trailing region's own width, not the bar's.
+       *
+       * The bar is `1fr auto 1fr` and the switcher is the `auto`, so keeping it
+       * centred means the two side columns are equal by construction: whatever
+       * space is left after the switcher, the trailing controls can only have
+       * half of it. Planning against the whole bar told them they had twice
+       * what they do, so at 1366px "Sheets" and "Unsaved changes" were painted
+       * on top of each other.
+       *
+       * Measured rather than derived, because a `1fr` column's width is a fact
+       * the browser already knows and any arithmetic here would be a second
+       * opinion about it.
+       */
+      const trail = trailRef.current;
+      const available = (trail?.clientWidth ?? bar.clientWidth) - TRAIL_RESERVE_PX;
       setMeasuredAvailable(available);
-      setPlan(planTopBarLayout(ALL_SLOTS, available, widths, OVERFLOW_WIDTH_PX));
+      // Only the trailing slots are planned. The other two are protected and
+      // live in their own columns, so they are not competing for this space and
+      // including them would have the planner reserve room twice.
+      setPlan(planTopBarLayout(TRAIL_SLOTS, available, widths, OVERFLOW_WIDTH_PX));
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -521,7 +551,16 @@ export function TopBar(props: TopBarProps): JSX.Element {
       data-measured-available={measuredAvailable}
       style={{
         display: 'grid',
-        gridTemplateColumns: '1fr auto 1fr',
+        /*
+         * `minmax(0, 1fr)`, not `1fr`. A grid track's default minimum is
+         * `auto`, so a `1fr` side column grows to fit its content rather than
+         * shrinking - and the project's name is wide enough to push the centre
+         * column off centre, which is the one thing this layout exists to
+         * prevent. The name already truncates with an ellipsis, which is what
+         * doc 36's "identity never disappears" means at a width where it cannot
+         * all be shown.
+         */
+        gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
         alignItems: 'center',
         gap: 'var(--arq-space-control-group)',
         padding: 'var(--arq-space-compact) var(--arq-space-panel)',
@@ -533,6 +572,7 @@ export function TopBar(props: TopBarProps): JSX.Element {
       {(['lead', 'centre', 'trail'] as const).map((region) => (
         <div
           key={region}
+          ref={region === 'trail' ? trailRef : undefined}
           className={`arq-top-bar__region arq-top-bar__region--${region}`}
           style={{
             display: 'flex',
@@ -590,7 +630,13 @@ export function TopBar(props: TopBarProps): JSX.Element {
                   // Collapsed slots keep their box for measurement but take no
                   // space and are unreachable, so the plan can restore them
                   // when the window widens again.
-                  display: visible.has(slot) ? 'inline-flex' : 'none',
+                  /*
+                   * Only the trailing column is planned, so only it can hide a
+                   * slot. The lead and the centre are protected and have
+                   * columns of their own; asking the plan about them would
+                   * report them collapsed and blank the bar.
+                   */
+                  display: region !== 'trail' || visible.has(slot) ? 'inline-flex' : 'none',
                 }}
               >
                 {content.node}

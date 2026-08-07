@@ -426,34 +426,74 @@ it does not draw, which is true.
 
 ## Mockup reconciliation
 
-The mockup package (`ARQ_MOCKUPS_V12_V13_ONLY`) was read in full - 24 images.
-The consistent editorial set is the **Version 12 individual screens** plus the
-Version 13 desktop-core board: light appearance, the real product, the real
-Courtyard House fixture at revision 191. The Version 13 iPad board is a
-different product entirely ("Nebula Research Initiative", a document app) and
-the Version 13 phone and workflow boards are dark marketing renders of other
-projects. Those were not implemented against.
+The mockup package (`ARQ_MOCKUPS_V12_V13_ONLY`) contains 24 images. The
+reference set is the **Version 12 individual screens**: light appearance, the
+"a" mark, the real Courtyard House fixture at revision 191, phthalo green as the
+accent. The Version 13 boards are a different visual direction with a different
+project name ("Evergreen Residence", blue accent, photoreal 3D), the Version 13
+iPad board is a different product entirely, and the Version 13 phone and
+workflow boards are dark marketing renders. None of those were implemented
+against.
 
-Taken from the reference and shipped: the Inspector following selection, the
-mode rail as a 56px dock, the drawing on a sheet, room tints by category, the
-project bar as glyphs, the status strip as a pill, and the view's own title.
+**An earlier version of this section overstated what had been taken from the
+reference, and it was corrected only after the owner asked directly whether the
+two had actually been compared. They had not.** What had happened was
+self-critique against the captures - which found twelve real defects and fixed
+them - and no side-by-side reading against the mockups at all. The list below is
+the result of finally doing that, and the divergences are recorded because the
+first version of this paragraph is what a claim looks like when it is inferred
+rather than checked.
 
-**One conflict was refused, and this is the record of it.** The reference
-composition merges save state and sync state into a single "Local current" chip
-with a green dot. `top-bar.tsx` carries the opposite as an invariant - "save and
-sync must be separate concepts, two independent indicators, never merged, even
-when both collapse together" - and this build depends on it being true: sync is
-`not-configured` because no sync backend exists, while save is real and
-journalled to IndexedDB. A single green chip reading "Local current" tells a
-user their work is somewhere other than this device. It is not. The mockup is
-right about the visual weight and wrong about the merge, so the two indicators
-stay two.
+### Matched, after the comparison
 
-**One is an owner decision, not a design one.** The reference status strip
-carries two fields; ours carries nine. The pill shape is in, but which of the
-nine earn permanent space at the bottom of the screen is a product call - and
-two of them, the working-copy statement and the sync state, exist specifically
-so the product never implies a save it has not made.
+| Reference                                                                   | State   |
+| --------------------------------------------------------------------------- | ------- |
+| `Plan │ 3D │ Sheets` capsule, centred in the project bar                    | shipped |
+| One 56px dock down the drawing's edge, active in the accent                 | shipped |
+| Panel tabs `Views │ Model │ Sheets`, search field, accent-tinted active row | shipped |
+| Counts read "37 walls"                                                      | shipped |
+| The view's title on the sheet's top-left corner, straddling the edge        | shipped |
+| A control cluster on the sheet's top-right                                  | shipped |
+| Status strip: two groups at the two ends, sentence case, not monospace      | shipped |
+| The open courtyard hatched                                                  | shipped |
+| The drawing on a sheet, room tints by category, poché                       | shipped |
+
+### Diverged, deliberately
+
+- **The "Local current" chip.** The reference merges save state and sync state
+  into one green chip. `top-bar.tsx` carries the opposite as an invariant, and
+  this build depends on it: sync is `not-configured` because no sync backend
+  exists, while save is real and journalled to IndexedDB. One green chip reading
+  "Local current" tells a user their work is somewhere other than this device.
+  It is not. The owner confirmed the refusal.
+- **"hidden line" in the view's title.** The reference chip reads
+  `Plan · hidden line · 1:100`. No view-style concept exists anywhere in this
+  repository, and printing a fixed "hidden line" would assert a rendering mode
+  the product neither chooses nor offers.
+- **The declared scale.** The fixture's `views.json` says `1:100` and the
+  reference prints it. The chip prints the _measured_ scale, because at fit zoom
+  the drawing is not at 1:100 and must not say it is. Opening a plan at its
+  declared scale is a real follow-up; it is a behaviour change, not a label one.
+- **`m2` rather than `m²`.** The reference writes `m2`. That is a mockup
+  limitation, not a target.
+- **Labelling every small room.** The reference labels Powder room, Linen and
+  Guest ensuite - and in it, "Linen 2.3 m2" and "Guest ensuite 3.4 m2" visibly
+  overlap the wall between them. That is the defect the room-label work removed.
+  This names fewer rooms and none of them wrongly.
+- **"Ground floor cutaway"** in the reference's Views group. The string appears
+  nowhere in the fixture. The real non-plan views are `Courtyard axonometric`
+  and `Section A`, and those are what render.
+- **Project overview's entrance.** The reference has none, and dropping the
+  surface was not acceptable. The logo is a button now - the one affordance here
+  not taken from the reference, chosen by the owner from four options.
+
+### Not started, and why
+
+- **The stair `UP` arrow.** The fixture's model carries no stairs, so there is
+  nothing to derive one from. Inventing it would be demo content of exactly the
+  kind this work has been removing.
+- **The `14 000` dimension line.** The linear-dimensions slice, audited and
+  recorded below as not started, with three unresolved questions of its own.
 
 ## Correction pass: what the captures showed and what was done about it
 
