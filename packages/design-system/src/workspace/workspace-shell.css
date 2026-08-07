@@ -148,29 +148,36 @@ body {
   }
 
   /*
-   * One dock, not two.
+   * One dock, one column.
    *
-   * The rails are separate components on purpose - they answer different
-   * questions ("what am I doing?" and "what am I doing it with?") and stay
-   * semantically apart, each with its own landmark and label. But they were
-   * also two *cards*, floating side by side with a gutter between them, so the
-   * left edge read as two toolbars competing for the same job. The reference
-   * gives the whole edge to one dock.
-   *
-   * Joined by geometry rather than by merging the markup: the seam closes, the
-   * outer corners keep their radius, and a single divider line says where one
-   * ends. Nothing about the accessibility tree changes.
+   * The rails used to be joined edge to edge with a negative margin, which
+   * removed the gutter between them and left the two columns reading as one
+   * slab: eleven glyphs in a 112px grid down the side of the drawing. The
+   * reference gives the edge a single 56px column, so the dock stacks them
+   * instead of abutting them, and the seam between the two groups is a rule
+   * rather than a gap - doc 36's "grouping/spacing, not a second colour
+   * system".
    */
-  .arq-workspace .arq-mode-rail {
-    border-start-end-radius: 0;
-    border-end-end-radius: 0;
-    border-inline-end: 0;
+  .arq-workspace__dock {
+    align-self: flex-start;
+    max-height: 100%;
+    overflow: auto;
+    border-radius: var(--arq-radius-panel);
+    border: 1px solid var(--arq-ui-line-subtle);
+    background: var(--arq-ui-paper);
   }
 
-  .arq-workspace .arq-mode-rail + .arq-tool-rail {
-    margin-inline-start: calc(-1 * var(--arq-space-compact));
-    border-start-start-radius: 0;
-    border-end-start-radius: 0;
+  .arq-workspace__dock > .arq-mode-rail,
+  .arq-workspace__dock > .arq-tool-rail {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .arq-workspace__dock > .arq-mode-rail + .arq-tool-rail {
+    border-top: 1px solid var(--arq-ui-line-subtle);
   }
 
   /*
@@ -700,4 +707,37 @@ button.arq-project-directory__row[aria-pressed='true'] .arq-project-directory__c
     var(--arq-space-page) + var(--arq-overlay-right-offset, 0px) +
       var(--arq-overlay-right-width, 0px)
   );
+}
+
+/*
+ * The dock's active control: a filled circle in the brand accent.
+ *
+ * `.arq-shell-button[aria-pressed='true']` paints an ink square, and it is
+ * shared by the tab strip, the panel rows and the phone dock - so this is
+ * scoped rather than a change to that rule. The reference gives the rail's
+ * active glyph a phthalo-green disc, which is the one place the brand colour is
+ * meant to appear in the chrome (brand spec: black, white, and the accent
+ * "reserved for" active states).
+ *
+ * Not colour alone: the disc is a fill against an otherwise flat column, so the
+ * state is carried by contrast and shape as well as hue, and `aria-pressed`
+ * remains the source of truth that assistive technology reads. The token
+ * resolves to #0b6b50 in light and #35c99b in dark, which is why the dark value
+ * exists at all - the brand green measures 2.83:1 on dark paper.
+ */
+.arq-workspace__dock .arq-shell-button[aria-pressed='true'] {
+  background: var(--arq-active-indicator);
+  border-radius: 999px;
+  color: var(--arq-white);
+}
+
+/*
+ * Dark appearance reverses which of the brand's two neutrals reads as "on top
+ * of the accent": #35c99b is a light green, and white glyphs on it fall below
+ * the contrast the rest of the shell holds itself to.
+ */
+@media (prefers-color-scheme: dark) {
+  .arq-workspace__dock .arq-shell-button[aria-pressed='true'] {
+    color: var(--arq-black);
+  }
 }

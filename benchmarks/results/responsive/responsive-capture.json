@@ -10,7 +10,7 @@
       "touch": false,
       "band": "desktop",
       "canvas": {
-        "width": 1461,
+        "width": 1510,
         "height": 867
       },
       "horizontalOverflow": false,
@@ -29,7 +29,7 @@
       "touch": true,
       "band": "desktop",
       "canvas": {
-        "width": 1253,
+        "width": 1302,
         "height": 921
       },
       "horizontalOverflow": false,

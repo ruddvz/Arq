@@ -32,10 +32,17 @@ import { PanelResizeHandle } from './panel-resize-handle';
  *
  * Zero on the touch bands, where `WorkspaceRoot` renders no rails at all.
  */
-export const WORKSPACE_RAILS_WIDTH_PX = MODE_RAIL_WIDTH_PX + TOOL_RAIL_WIDTH_PX;
+/*
+ * The rails are stacked in one column now rather than set side by side, so the
+ * dock is as wide as the wider of the two, not as wide as both. Summing them
+ * described a 112px slab that is no longer on screen and left every downstream
+ * measurement - the canvas floor, the floating panel's offset - short by the
+ * width of a whole rail.
+ */
+export const WORKSPACE_RAILS_WIDTH_PX = Math.max(MODE_RAIL_WIDTH_PX, TOOL_RAIL_WIDTH_PX);
 
 /** The same pair once the tool rail is an icon dock rather than a labelled column. */
-export const WORKSPACE_RAILS_DOCK_WIDTH_PX = MODE_RAIL_WIDTH_PX + TOOL_RAIL_DOCK_WIDTH_PX;
+export const WORKSPACE_RAILS_DOCK_WIDTH_PX = Math.max(MODE_RAIL_WIDTH_PX, TOOL_RAIL_DOCK_WIDTH_PX);
 
 /**
  * `toolRailIsDock` has to be told, not guessed: the rail decides its own width
@@ -427,15 +434,30 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
             }px`,
           }}
         >
+          {/*
+            One dock, one column.
+
+            The two rails are separate components on purpose - they answer
+            different questions ("what am I doing?" and "what am I doing it
+            with?"), each keeps its own landmark and label, and doc 36 requires
+            they stay semantically apart. But they were also two *columns*,
+            side by side, so the left edge read as a 112px slab of eleven
+            glyphs in a grid. The reference gives the whole edge to one 56px
+            column. Doc 36 allows exactly this - "merge visually" - and asks
+            that the grouping be carried by spacing rather than a second colour
+            system, which is what the divider between them is.
+          */}
           {!canvasFirst && (
-            <ModeRail
-              project={project}
-              activeMode={activeMode}
-              onSelectMode={onSelectMode}
-              {...(modeIcons === undefined ? {} : { modeIcons })}
-            />
+            <div className="arq-workspace__dock">
+              <ModeRail
+                project={project}
+                activeMode={activeMode}
+                onSelectMode={onSelectMode}
+                {...(modeIcons === undefined ? {} : { modeIcons })}
+              />
+              {toolRail}
+            </div>
           )}
-          {!canvasFirst && toolRail}
 
           {browserDocked && (
             <>
