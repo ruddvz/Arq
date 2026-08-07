@@ -4,8 +4,6 @@ import {
   formatPerformanceWarning,
   type ModelHealthSummary,
 } from './status-bar-state';
-import type { SyncState } from './top-bar-state';
-import { describeSyncState } from './top-bar-state';
 
 export interface StatusBarProps {
   readonly activeSnapLabel: string | null;
@@ -21,7 +19,6 @@ export interface StatusBarProps {
    */
   readonly activeToolLabel?: string | null;
   readonly localJournalStateLabel: string;
-  readonly syncState: SyncState;
   readonly supportModeEnabled: boolean;
   /**
    * `'minimal'` is the touch strip the layout registry already sizes
@@ -73,7 +70,6 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
     modelHealth,
     activeToolLabel = null,
     localJournalStateLabel,
-    syncState,
     supportModeEnabled,
     variant = 'full',
   } = props;
@@ -162,14 +158,22 @@ export function StatusBar(props: StatusBarProps): JSX.Element {
         {performanceWarning !== null && <span role="alert">{performanceWarning}</span>}
       </span>
 
-      {/* Save and sync are announced by top-bar.tsx; repeating the announcement
-          here made a screen reader say each change twice. On a phone they are
-          on the project bar instead, so the strip omits them rather than
-          showing the same fact in two places. */}
+      {/*
+       * Where the work is kept - the one guarantee no other bar makes.
+       *
+       * Sync used to be printed beside it, and that was the rule this file
+       * states being broken by this file. Doc 09: save and sync are not
+       * repeated across bars, which is why the minimal strip drops them and why
+       * the announcements were removed from here. The full strip kept showing
+       * sync anyway, so at desktop "Sync not configured" was on screen twice at
+       * once - top bar and status strip - and the save condition was stated
+       * twice in two different wordings. Dropping the announcement and keeping
+       * the text is not applying the rule; it just makes the repetition silent
+       * to a screen reader and visible to everyone else.
+       */}
       {full && (
         <span className="arq-status-bar__group">
           <span>{localJournalStateLabel}</span>
-          <span>{describeSyncState(syncState)}</span>
         </span>
       )}
     </footer>

@@ -1966,7 +1966,6 @@ export function App(): JSX.Element {
             activeSnapLabel={activeSnapLabel}
             modelHealth={modelHealth}
             localJournalStateLabel={journalLabel}
-            syncState={DEMO_SYNC_STATE}
             supportModeEnabled={false}
             /* Doc 47: the strip carries only what its input can act on, and
                the tool joins it rather than taking a row of its own above the

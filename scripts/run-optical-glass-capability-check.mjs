@@ -144,6 +144,21 @@ async function main() {
 
   const configurations = [
     { name: 'default', options: {}, expect: { quality: 'refraction', lens: true, opaque: false } },
+    /*
+     * Dark appearance, which the first version of this check never ran.
+     *
+     * The dark tokens are a separate set of values in their own media block -
+     * a dark material lightens what is behind it rather than darkening it - so
+     * every way the light values could be overridden out from under the
+     * material, the dark ones could be too, independently and invisibly. A
+     * check that only ever runs in light appearance is testing half the
+     * stylesheet and reporting on all of it.
+     */
+    {
+      name: 'dark',
+      options: { colorScheme: 'dark' },
+      expect: { quality: 'refraction', lens: true, opaque: false },
+    },
     {
       name: 'forced-colors',
       options: { forcedColors: 'active' },
