@@ -85,6 +85,60 @@ class FormatTests(unittest.TestCase):
    max_total_uncompressed=1
   with self.assertRaises(ArqFormatError):
    deep_validate(self.p,limits=TinyBudgetLimits)
+ def test_content_verified_distinguishes_shallow_from_deep(self):
+  # Finding 15 regression: a shallow open must not look identical to a fully
+  # verified one - callers need to be able to tell the two apart.
+  self.assertFalse(open_manifest(self.p)["content_verified"])
+  self.assertTrue(deep_validate(self.p)["content_verified"])
+ def test_undeclared_capability_for_present_segment_rejected(self):
+  # Finding 11 regression: a file containing an OPERATIONS segment but not
+  # declaring "arq.ops.v1" (required or optional) must be rejected rather
+  # than silently granted "editable" mode for content it never declared.
+  q=Path(self.t.name)/"under.arq"
+  create(q,self.objects,[],required=["arq.core.semantic.v1","arq.revision.v1"])
+  with self.assertRaises(ArqFormatError): open_manifest(q)
+ def test_declared_capability_as_optional_is_accepted(self):
+  q=Path(self.t.name)/"opt.arq"
+  create(q,self.objects,[],required=["arq.core.semantic.v1","arq.revision.v1"],optional=["arq.ops.v1"])
+  self.assertEqual(open_manifest(q)["mode"],"editable")
+ def test_gc_preserves_full_revision_history(self):
+  # Finding 10 regression: gc_repack must be history-preserving, unlike
+  # compact_publish - every revision ever appended, not just the head, must
+  # survive a repack. This is the closest this format's actual data model
+  # gets to "content reachable only from a non-head revision must not be
+  # collected."
+  append_revision(self.p,[object_record("arq.room","room-1",{"name":"A"})])
+  append_revision(self.p,[object_record("arq.room","room-2",{"name":"B"})])
+  before=deep_validate(self.p)
+  self.assertEqual(len(before["revisions"]),3)
+  q=Path(self.t.name)/"gc.arq"
+  after=gc_repack(self.p,q)
+  self.assertEqual(len(after["revisions"]),3)
+  self.assertEqual(
+   sorted(r["id"] for r in after["revisions"]),
+   sorted(r["id"] for r in before["revisions"]),
+  )
+  self.assertEqual(after["manifest"]["head_revision"],before["manifest"]["head_revision"])
+  self.assertEqual(after["manifest"]["semantic_root"],before["manifest"]["semantic_root"])
+ def test_gc_reclaims_superseded_manifest_bytes(self):
+  # The actual garbage this format produces: each append_revision call leaves
+  # its superseded manifest generation's bytes behind once its superblock
+  # slot is overwritten by a later generation. A repack should be smaller
+  # than the unrepacked file once there's more than one generation to shed.
+  append_revision(self.p,[object_record("arq.room","room-1",{"name":"A"})])
+  append_revision(self.p,[object_record("arq.room","room-2",{"name":"B"})])
+  append_revision(self.p,[object_record("arq.room","room-3",{"name":"C"})])
+  q=Path(self.t.name)/"gc.arq"; gc_repack(self.p,q)
+  self.assertLess(q.stat().st_size,self.p.stat().st_size)
+ def test_gc_output_still_deep_validates_and_recovers(self):
+  append_revision(self.p,[object_record("arq.room","room-1",{"name":"A"})])
+  q=Path(self.t.name)/"gc.arq"; gc_repack(self.p,q)
+  self.assertTrue(deep_validate(q)["validated"])
+  self.assertEqual(open_manifest(q)["manifest"]["generation"],2)
+ def test_failed_gc_preserves_destination(self):
+  q=Path(self.t.name)/"out.arq"; q.write_bytes(b"existing")
+  with self.assertRaises(RuntimeError): gc_repack(self.p,q,True)
+  self.assertEqual(q.read_bytes(),b"existing")
  def test_corrupt_segment(self):
   st=open_manifest(self.p); off=st["manifest"]["segments"][0]["offset"]+SEG.size
   with self.p.open("r+b") as f: f.seek(off); x=f.read(1); f.seek(off); f.write(bytes([x[0]^1]))

@@ -202,12 +202,9 @@ three read the actual code and specs, not the summary. Ranked by severity:
 16. CRDT/merge conflicts for precision geometry are named but not
     resolved — honestly left open, not hidden.
 
-## Fixes applied in this repo (2026-08-07)
+## Fixes applied in this repo (2026-08-07, two passes)
 
-Findings 1–4 (the exploitable reference-implementation bugs) were fixed
-directly in the staged `reference-v6/` code, not just documented, since
-fixing them was tractable, isolated, and made the staged material actually
-trustworthy for anyone reading it later:
+**Pass 1 — findings 1–4, the exploitable reference-implementation bugs:**
 
 1. **Dual-root fallback** — `format.py`'s `open_manifest()` now sorts
    candidate roots by generation descending and tries each in turn, catching
@@ -225,28 +222,93 @@ trustworthy for anyone reading it later:
    `Limits.max_total_uncompressed`, instead of only capping each segment in
    isolation.
 
-Six new regression tests were added (`test_newer_root_content_corrupt_falls_
-back_to_older_root`, `test_both_roots_content_corrupt_fail`,
-`test_reapproval_minting_a_second_token_is_rejected`,
-`test_consume_after_status_desync_is_rejected`,
-`test_stale_base_revision_is_rejected`,
-`test_aggregate_decompression_budget_enforced`) covering exactly the
-adversarial cases the original 21 tests missed. Full suite:
-`python3 -m unittest discover -s reference-v6/tests -v` → **27 tests, all
-pass**. All 10 fixtures in `fixtures-v6/` were re-run through
-`reference-v6/arq6/cli.py inspect --deep` after the fix and still produce
-the exact generation/mode/verdict recorded in `EXPECTED_VERDICTS.json` — the
-fix changes only the previously-untested failure path, not documented
-passing behavior.
+**Pass 2 — findings 8–15, addressed as far as each one honestly can be:**
 
-**`MANIFEST_SHA256.txt` and `PACKAGE_INVENTORY.json` are now stale by
-design** for every file touched by this pruning-and-fixing pass — they
-record hashes for the *original, unmodified upload*. That's an intentional,
-disclosed divergence, not silent drift: this file is the record of what
-changed and why. Findings 6–16 (architecture and lower-severity gaps) were
-not fixed — they're either specification-level (not somewhere `reference-v6/`
-code can fix them), or genuinely require a repository decision this triage
-doesn't have authority to make.
+| # | Finding | Resolution |
+|---|---|---|
+| 5 | Package succeeds ADR-0019, doesn't complement it | Documented above (framing correction, not a code fix) |
+| 6 | Second content-addressed ID scheme, no mapping to Arq's `ElementId`/resource-chunk hashing | **Not completable here** — see "What can't be completed by this triage" below |
+| 7 | Second, competing operation/revision model vs `@arq/operations` + `@arq/sync-protocol` | **Not completable here** — see below |
+| 8 | Storage-adapter recovery contract asserted, not defined | **Fixed (doc)** — `normative-v6/10_STORAGE_ADAPTER_ABI.md` now has a concrete four-point contract (detect-before-visibility, no-replace-on-failure, three explicit host actions, exactly-two-states-after-crash), modeled on `packages/arqfs/src/arqfs-node-atomic-swap.ts`'s real, tested behavior without copying it wholesale |
+| 9 | Hash-agility claimed (citing Git), not built | **Fixed (doc correction)** — `research-v6/07_MERKLE_DAG_AND_HASH_AGILITY.md` and `normative-v6/05_DETERMINISTIC_ENCODING_AND_HASHES.md` corrected: the false "hash references include algorithm and profile IDs" claim is removed, and the actual mechanism (profile-level version gating via the boot header, not per-object dual-hash coexistence) is now accurately described, with the honest reasoning for why Git's model doesn't fit a single-writer mutable file |
+| 10 | Garbage collection entirely unimplemented | **Fixed (code)** — `format.py`'s new `gc_repack()` is a real, history-preserving compaction (see below) with 4 new tests |
+| 11 | Capability claims not cross-validated against segment content | **Fixed (code)** — `open_manifest()` now cross-checks declared `required_capabilities`/`optional_capabilities` against the segment types the manifest actually lists, rejecting under-declaration, with 2 new tests |
+| 12 | Envelope spec gives no overflow-safety requirement | **Fixed (doc)** — `normative-v6/01_AOGRP_BINARY_ENVELOPE.md` now explicitly requires checked/saturating arithmetic for offset+length validation in any conforming (non-Python) implementation |
+| 13 | Encryption/signing claim misleading in isolation | **Fixed (doc)** — `normative-v6/19_SECURITY_LIMITS_ENCRYPTION_SIGNING.md` now has an implementation-status banner co-located with the claim itself |
+| 14 | SQLite migration is unimplemented prose | **Fixed (bounded code)** — new `reference-v6/arq6/migrate.py` implements read-only inspection and row-to-object translation for real, against a synthetic schema (not Arq's actual `.arq` schema — see below), with 6 new tests including a proof that the source file is byte-for-byte unchanged after inspection |
+| 15 | Shallow open doesn't certify segment integrity, verdict looks identical to deep | **Fixed (code)** — `open_manifest()`/`deep_validate()` now return an explicit `content_verified` field (`False`/`True`), surfaced through `cli.py`'s output, with 1 new test |
+| 16 | CRDT/merge conflicts named but unresolved | **Left open, honestly** — see below; not fabricated |
+
+Ten new regression tests from findings 10/11/15, plus 6 from finding 14's
+migration module, plus the original 6 from findings 1–4: **40 tests total,
+all pass** (`python3 -m unittest discover -s reference-v6/tests -v`). All 10
+fixtures in `fixtures-v6/` re-verified unchanged against
+`EXPECTED_VERDICTS.json` after every code change in both passes.
+
+### What can't be completed by this triage (6, 7)
+
+Findings 6 and 7 both describe the same underlying issue: AOGRP defines a
+content-addressed object identity and an operation/revision history model
+with no stated relationship to the ones Arq already ships
+(`ElementId`/`@arq/bim-core`, `packages/arqfs`'s resource-chunk hashing,
+`@arq/operations`'s `ModelOperation`, `@arq/sync-protocol`'s
+`OperationEnvelope`). This can't be fixed by editing `reference-v6/` or the
+normative docs, because there is no single correct answer to write down —
+it's a real architecture decision with at least three genuinely different
+resolutions, and picking one is exactly the kind of choice
+`engineering/30_ZEUS_AND_ENGINEERING_AUTHORITY.md` reserves for a designated
+owner, not something this triage should decide by editing a document:
+
+1. **AOGRP IDs/operations are demoted to interchange-only** — never used as
+   Arq's live identity or history inside the app; AOGRP is purely an export/
+   snapshot format, and a translation layer maps `ElementId` ↔ AOGRP content
+   ID and `ModelOperation` ↔ AOGRP operation group only at export/import
+   boundaries. Lowest risk, closest to what `03_ARQ_NOT_A_SQLITE_WRAPPER.md`
+   claims to want (despite the framing correction in finding 5) — but this
+   is a genuine constraint AOGRP's own normative docs don't currently state.
+2. **`ElementId` is redefined to *be* (or be derived from) an AOGRP content
+   ID**, unifying identity but requiring every existing `ElementId`
+   reference in the shipped codebase to either migrate or gain a
+   translation shim — a real, cross-cutting, hard-to-reverse change.
+3. **AOGRP's operation model is dropped in favor of `ModelOperation`/
+   `OperationEnvelope`**, and AOGRP becomes purely a byte-level pack format
+   for whatever operation representation Arq already uses — narrows AOGRP's
+   scope but removes the duplication finding 7 flags.
+
+This triage is not the place to choose between these — it's the place to
+make sure the choice, when made, is made with this list in hand rather than
+discovered later as an integration surprise.
+
+### What was deliberately not fully solved (14, 16)
+
+**Finding 14's migration demo is real but intentionally narrow.** It proves
+the read-only-then-translate mechanism works; it does not read Arq's actual
+`packages/arqfs` schema or propose a real column-by-column mapping for any
+actual Arq entity type, because that mapping decision has the same "not
+this triage's call" status as findings 6–7 above — see
+`normative-v6/20_MIGRATION_FROM_SQLITE_ARQ.md`'s updated implementation-
+status note.
+
+**Finding 16 (CRDT/merge conflicts) was not resolved, and no algorithm was
+invented for it.** It remains a real, open problem — the package's own
+`research-v6/09_CRDT_OT_AND_PRECISION_CONFLICTS.md` correctly identifies
+that generic CRDTs are unsafe for constrained geometry, and
+`normative-v6/07_BRANCH_MERGE_AND_CONFLICTS.md` lists conflict categories
+without defining a merge algorithm. Worth noting for context: Arq's real,
+shipped `packages/sync-protocol/src/conflict-classification.ts` already
+implements exactly the approach the package's own research doc recommends
+instead of CRDTs — a real, tested, standard optimistic-concurrency
+touched-entity-set conflict classifier (`classifyConflict()`, "no-conflict"
+/ "concurrent-write" / "write-after-delete"), not a placeholder. AOGRP's own
+`normative-v6/07_BRANCH_MERGE_AND_CONFLICTS.md` doesn't reference it. That's
+additional evidence for findings 6–7's core point — Arq already has real
+answers AOGRP's docs don't engage with — not a fix to the actual open
+merge-semantics-for-geometry research question, which remains open.
+
+**`MANIFEST_SHA256.txt` and `PACKAGE_INVENTORY.json` are stale by design**
+for every file touched across both fix passes — they record hashes for the
+*original, unmodified upload*. That's an intentional, disclosed divergence:
+this file is the record of what changed and why.
 
 ## Recommendation
 
@@ -255,13 +317,15 @@ Nothing here should be applied to `packages/`, `docs/adr/`, or
 go-ahead — both because the repository's SQLite direction (ADR-0019) is
 already partially implemented and shipped-against (`packages/arqfs`,
 ARQ-195 onward), and because the package's own handoff docs ask for exactly
-this stopping point. Findings 1–4 are now fixed in `reference-v6/` (see
-above), which removes that specific blocker for future experimentation, but
-does not change the architecture-level findings (6–8) or the underlying
-governance requirement. Concrete, non-committal follow-ups if this is ever
-revisited:
+this stopping point. Findings 1–4, 8–15 are now fixed or documented in
+`reference-v6/`/`normative-v6/` (see above); findings 6, 7, and 16 remain
+open by necessity, not by omission. Concrete, non-committal follow-ups if
+this is ever revisited:
 
-1. `normative-v6/08_DUAL_ROOT_APPEND_AND_RECOVERY.md` and
+1. Findings 6–7's reconciliation options (above) are the actual decision
+   that has to be made before any AOGRP concept touches live Arq identity or
+   history — read those first, before the normative docs.
+2. `normative-v6/08_DUAL_ROOT_APPEND_AND_RECOVERY.md` and
    `normative-v6/20_MIGRATION_FROM_SQLITE_ARQ.md` are worth a read if a
    future ADR ever proposes federation/partial-clone or offline-sync work
    that the current SQLite-only design doesn't cover — those are the two
@@ -270,10 +334,10 @@ revisited:
 3. If a "dual-format vertical slice" is ever authorised, it should live
    behind a feature flag with non-production identifiers, exactly as
    `handoff-v6/REPOSITORY_IMPLEMENTATION_PROMPT.md` itself asks for — not as
-   a default code path, and only after resolving findings 6–8's identity/
+   a default code path, and only after resolving findings 6–7's identity/
    operation-model collisions with what's already shipped.
-4. The reference implementation (`reference-v6/`) and fixtures
-   (`fixtures-v6/`) are preserved here, verified working for what they
-   actually test (not for what findings 1–16 show they don't cover), as a
+4. The reference implementation (`reference-v6/`), including the new
+   `gc_repack()` and `migrate.py`, and fixtures (`fixtures-v6/`) are
+   preserved here, verified working for what they actually test, as a
    starting point for that slice if it's ever greenlit — not wired into
    this monorepo's build or test suite.

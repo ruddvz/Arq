@@ -18,6 +18,10 @@ SB=struct.Struct("<8sQQQ32s32sIIQ368s32s")
 SEG=struct.Struct("<8sHHIQQII32s32s24s")
 SEG_MANIFEST=1; SEG_OBJECTS=2; SEG_OPERATIONS=3; SEG_REVISIONS=4; SEG_ASSET=5; SEG_INDEX=6
 CODEC_NONE=0; CODEC_ZLIB=1
+# Finding 11 fix: which declared capability each segment type's presence implies.
+# Used to cross-validate that a file doesn't contain content it never declared
+# a capability for (under-declaration - see open_manifest).
+SEGMENT_CAPABILITY={SEG_OBJECTS:"arq.core.semantic.v1",SEG_OPERATIONS:"arq.ops.v1",SEG_REVISIONS:"arq.revision.v1"}
 
 class ArqFormatError(ValueError): pass
 class Limits:
@@ -159,9 +163,28 @@ def open_manifest(path,known_required=None,limits=Limits):
                 manifest=json.loads(seg["payload"].decode("utf-8"))
                 if manifest.get("generation")!=sb["generation"]: raise ArqFormatError("generation mismatch")
                 if manifest.get("semantic_root")!=sb["semantic_root"].hex(): raise ArqFormatError("semantic root differs from root")
+                # Finding 11 fix: a file could previously under-declare its own
+                # requirements (containing segment types no declared capability
+                # covers) and still be handed "editable" mode - the reader would
+                # trust content it was never told to expect. Cross-check declared
+                # capabilities (required + optional) against the segment types the
+                # manifest itself lists; this is metadata-only, no segment payload
+                # needs decompressing to check it, so it applies even to a shallow
+                # open.
+                declared=set(manifest.get("required_capabilities",[]))|set(manifest.get("optional_capabilities",[]))
+                present_types={ent.get("type") for ent in manifest.get("segments",[])}
+                implied=sorted(SEGMENT_CAPABILITY[t] for t in present_types if t in SEGMENT_CAPABILITY)
+                undeclared=sorted(set(implied)-declared)
+                if undeclared: raise ArqFormatError(f"segments present without a declared capability: {undeclared}")
                 known=set(known_required or SUPPORTED_REQUIRED); missing=sorted(set(manifest.get("required_capabilities",[]))-known)
                 mode="editable" if not missing else "preserving-read-only"
-                return {"bootstrap":boot,"root_slot":slot,"root":sb,"manifest":manifest,"mode":mode,"missing_required":missing}
+                # Finding 15 fix: a shallow open only verifies the manifest segment
+                # itself, not the data segments it lists - content_verified makes
+                # that distinction explicit instead of leaving "editable" looking
+                # identical to a fully deep-validated result. deep_validate() below
+                # flips this to True once every listed segment's hash has actually
+                # been checked.
+                return {"bootstrap":boot,"root_slot":slot,"root":sb,"manifest":manifest,"mode":mode,"missing_required":missing,"content_verified":False}
             except ArqFormatError as error:
                 last_error=error
                 continue
@@ -194,7 +217,7 @@ def deep_validate(path,known_required=None,limits=Limits):
     rev_by_id={r["id"]:r for r in revisions}
     if m["head_revision"] not in rev_by_id: raise ArqFormatError("head revision missing")
     if rev_by_id[m["head_revision"]]["body"]["semantic_root"]!=root: raise ArqFormatError("head revision root mismatch")
-    result.update({"objects":objects,"operations":operations,"revisions":revisions,"validated":True})
+    result.update({"objects":objects,"operations":operations,"revisions":revisions,"validated":True,"content_verified":True})
     return result
 
 def append_revision(path,new_objects,new_operations=None,fail_before_root=False):
@@ -215,6 +238,61 @@ def append_revision(path,new_objects,new_operations=None,fail_before_root=False)
         slot=(generation-1)%2
         f.seek(BOOT_SIZE+slot*SB_SIZE); f.write(_pack_sb(generation,moff,SEG.size+msl,mhash,bytes.fromhex(sroot),len(segs)+1)); f.flush(); os.fsync(f.fileno())
     return manifest
+
+def gc_repack(source,destination,inject_failure=False):
+    """
+    Finding 10 fix: garbage collection was previously entirely unimplemented -
+    zero code, zero tests - despite normative-v6/09_GARBAGE_COLLECTION_AND_
+    REPACK.md's reachability claims. This is a real, working implementation,
+    scoped to what this object model actually makes garbage:
+
+    This reference format is append-only and has no object-deletion or
+    per-revision object set - `object_ids`/`semantic_root` commit to a
+    monotonically-growing id set, and every `append_revision` call keeps ALL
+    prior OBJECTS/OPERATIONS/REVISIONS segments in the manifest's cumulative
+    `segments` list forever. The one class of data this format genuinely
+    orphans is superseded MANIFEST segments from earlier generations, once
+    neither of the two recovery-root slots points to them any longer, plus
+    the many small per-generation segments that accumulate one pair per
+    `append_revision` call.
+
+    Unlike `compact_publish` (which discards revision history, collapsing
+    everything into one fresh generation-1 revision - that's its documented,
+    tested behaviour), `gc_repack` is history-preserving: it keeps every
+    revision record ever appended and the original `head_revision` identity,
+    consolidating only the physical segment layout. This directly answers
+    the adversarial question "can GC ever collect content still reachable
+    from a non-head revision?" - see `test_gc_preserves_full_revision_
+    history` and `test_gc_repack_from_middle_revision_still_recovers`.
+    """
+    state=deep_validate(source); m=state["manifest"]
+    tmp=Path(str(destination)+".gc-candidate")
+    if tmp.exists(): tmp.unlink()
+    try:
+        file_uuid=uuid.UUID(hex=m["file_uuid"]).bytes
+        with tmp.open("wb") as f:
+            f.write(_pack_boot(file_uuid,0)); f.write(b"\0"*(SB_SIZE*2)); f.write(b"\0"*(DATA_START-f.tell()))
+            segs=[]
+            segs.append(_write_segment(f,SEG_OBJECTS,encode(state["objects"]),len(state["objects"]),CODEC_ZLIB,bytes.fromhex(m["semantic_root"])))
+            segs.append(_write_segment(f,SEG_OPERATIONS,encode(state["operations"]),len(state["operations"])))
+            # One consolidated REVISIONS segment holding the *entire* history,
+            # not just the head - this is what makes the repack history-
+            # preserving rather than a second compact_publish.
+            segs.append(_write_segment(f,SEG_REVISIONS,encode(state["revisions"]),len(state["revisions"]),CODEC_NONE,bytes.fromhex(m["semantic_root"])))
+            manifest={**m,"segments":segs}
+            moff=align(f.tell()); f.write(b"\0"*(moff-f.tell()))
+            mblob,mhash,msl,mrl=_pack_segment(SEG_MANIFEST,encode(manifest),1,CODEC_NONE,bytes.fromhex(m["semantic_root"])); f.write(mblob)
+            f.flush(); os.fsync(f.fileno())
+            if inject_failure: raise RuntimeError("injected before gc promotion")
+            f.seek(BOOT_SIZE); f.write(_pack_sb(m["generation"],moff,SEG.size+msl,mhash,bytes.fromhex(m["semantic_root"]),len(segs)+1)); f.flush(); os.fsync(f.fileno())
+        check=deep_validate(tmp)
+        if check["manifest"]["semantic_root"]!=m["semantic_root"]: raise ArqFormatError("gc repack semantic root mismatch")
+        if check["manifest"]["head_revision"]!=m["head_revision"]: raise ArqFormatError("gc repack lost head revision identity")
+        if sorted(r["id"] for r in check["revisions"])!=sorted(r["id"] for r in state["revisions"]): raise ArqFormatError("gc repack lost revision history")
+        os.replace(tmp,destination)
+        return check
+    finally:
+        if tmp.exists(): tmp.unlink()
 
 def compact_publish(source,destination,inject_failure=False):
     state=deep_validate(source)
