@@ -299,6 +299,45 @@ async function main() {
       } else {
         console.log('Upper:  no level control matched - level switching not asserted.');
       }
+
+      /*
+       * The 3D view.
+       *
+       * Left untested until now, and that omission cost: the model surface drew
+       * walls and nothing else for as long as this check has existed, because
+       * nothing ever opened the tab to look. The view switcher's segments are
+       * `role="tab"`, not buttons, which is why a `getByRole('button')` lookup
+       * had matched nothing and silently passed.
+       */
+      const modelTab = page.getByRole('tab', { name: /^3D$/ });
+      if ((await modelTab.count()) > 0) {
+        await modelTab.first().click();
+        // The 3D surface is a lazy chunk and a WebGL context; the first frame
+        // is not up when the click resolves.
+        await page.waitForTimeout(3000);
+        const model = await page.screenshot();
+        writeFileSync(path.join(out, 'house-17-3d.png'), model);
+        const modelStats = await analyzeScreenshot(page, model);
+        console.log(
+          `3D:     ink ${modelStats.inkPixels}, unique colours ${modelStats.uniqueColors}`,
+        );
+        check(
+          modelStats.inkPixels > MINIMUM_INK_PIXELS,
+          `the 3D view drew only ${modelStats.inkPixels} ink pixels, below the ${MINIMUM_INK_PIXELS} a hydrated model clears`,
+        );
+        /*
+         * A model of walls alone is nearly monochrome: one grey, one ground,
+         * one sky. The furniture, the plates and the stair carry materials, so
+         * a hydrated storey is visibly more varied than a bare shell. This is
+         * the assertion that would have caught the empty model.
+         */
+        check(
+          modelStats.uniqueColors > 200,
+          `the 3D view used only ${modelStats.uniqueColors} colours, which is what a walls-only model looks like`,
+        );
+      } else {
+        console.log('3D:     no 3D tab matched - the model view is not asserted.');
+      }
     }
 
     const afterHash = sha256(arqPath);

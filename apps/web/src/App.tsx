@@ -129,7 +129,8 @@ import {
   type NativeStair,
   type NativeProjectModel as NativeProjectDocument,
 } from '@arq/project-loading';
-import type { WallSolidDimensions } from './ModelCanvas';
+import { plateSolids, stairFlightSolids } from '@arq/geometry-3d';
+import type { ModelPlacedSolid, WallSolidDimensions } from './ModelCanvas';
 import type { PlanRoom } from './canvas/canvas-interaction';
 import { roomLabelText, type PlanOpeningInput, type PlanScene } from '@arq/plan-renderer';
 import { exportPlanSheet, PAPER_SIZES } from './sheets/sheet-export';
@@ -271,6 +272,24 @@ interface LevelPlacedContent {
 const EMPTY_LEVEL_CONTENT: LevelPlacedContent = { furnishings: [], slabs: [], stairs: [] };
 
 /**
+ * What a plate is drawn as in 3D. Mirrors ModelCanvas's own reserved material
+ * name; a plate is a solid like any other and differs only in what it is made
+ * of.
+ */
+const SLAB_MATERIAL = 'slab';
+
+/**
+ * A landing's own thickness, in millimetres, when the stair has no flight to
+ * take one from. Only reachable for a stair recorded as landings alone, which
+ * is not a stair - but a zero-thickness plate disappears edge-on, and the view
+ * a person has of a landing they are about to step onto is edge-on.
+ */
+const LANDING_THICKNESS_MM = 180;
+
+/** Stable empty, so a render with no project open does not rebuild the 3D scene. */
+const EMPTY_PLACED_SOLIDS: readonly ModelPlacedSolid[] = [];
+
+/**
  * Everything on a level that is not a wall, a room or an opening: the
  * furniture, the floor plate and the stairs rising from it.
  *
@@ -311,6 +330,81 @@ function placedContentForLevel(
             return foot >= elevation && (above === undefined || foot < above);
           }),
   };
+}
+
+/**
+ * The level's furniture, floor plate and stairs, as solids for the 3D view.
+ *
+ * The three become one list because 3D does not care which is which - it
+ * extrudes an outline between two heights - and keeping them apart would only
+ * mean three props saying the same thing three ways.
+ *
+ * Heights are absolute here, where the plan's are not. A plan is a horizontal
+ * cut and a chair's height is nothing to it; a model has to know that the chair
+ * stands on the upper floor and not on the ground. So the level's elevation is
+ * added once, at the point the two views stop sharing an answer.
+ */
+function placedSolidsForLevel(
+  document: NativeProjectDocument,
+  levelId: string,
+  content: LevelPlacedContent,
+): readonly ModelPlacedSolid[] {
+  const elevation =
+    document.levels.find((level) => (level.id as string) === levelId)?.elevation ?? 0;
+  const solids: ModelPlacedSolid[] = [];
+
+  for (const slab of content.slabs) {
+    for (const piece of plateSolids(
+      slab.id,
+      slab.outline,
+      slab.voids,
+      elevation,
+      slab.thicknessMillimetres,
+    )) {
+      solids.push({ ...piece, elementId: slab.id, material: SLAB_MATERIAL });
+    }
+  }
+
+  for (const furnishing of content.furnishings) {
+    solids.push({
+      id: furnishing.id,
+      elementId: furnishing.id,
+      outline: furnishing.footprint,
+      // Furniture stands on the finished floor, which is the level datum.
+      baseElevation: elevation,
+      height: furnishing.heightMillimetres,
+      material: furnishing.material,
+    });
+  }
+
+  for (const stair of content.stairs) {
+    for (const flight of stair.flights) {
+      for (const tread of stairFlightSolids(flight)) {
+        solids.push({ ...tread, elementId: stair.id, material: null });
+      }
+    }
+    /*
+     * Landings are flat plates at their own height, given the same thickness a
+     * tread has at the top of its flight. A landing drawn as a zero-thickness
+     * surface disappears edge-on, which is exactly the view a person has of the
+     * one they are about to step onto.
+     */
+    for (const landing of stair.landings) {
+      const thickness = stair.flights[0]
+        ? (stair.flights[0].topElevation - stair.flights[0].baseElevation) /
+          Math.max(1, stair.flights[0].treadCount)
+        : LANDING_THICKNESS_MM;
+      solids.push({
+        id: landing.id,
+        elementId: stair.id,
+        outline: landing.footprint,
+        baseElevation: landing.elevation - thickness,
+        height: thickness,
+        material: null,
+      });
+    }
+  }
+  return solids;
 }
 
 function roomsForLevel(document: NativeProjectDocument, levelId: string): readonly PlanRoom[] {
@@ -803,6 +897,25 @@ export function App(): JSX.Element {
     readonly project: OpenNativeProject;
   } | null>(null);
   const [activeNativeLevelId, setActiveNativeLevelId] = useState<string | null>(null);
+  /*
+   * The same content the plan draws, reduced to 3D solids.
+   *
+   * Derived rather than stored beside it: one source means the two views cannot
+   * come to describe different furniture, which is the disagreement neither
+   * view can show. Memoised because the reduction cuts a plate into rectangles
+   * and a flight into treads, and a repaint is not a reason to redo it.
+   */
+  const placedSolids = useMemo(
+    () =>
+      openNativeProject === null || activeNativeLevelId === null
+        ? EMPTY_PLACED_SOLIDS
+        : placedSolidsForLevel(
+            openNativeProject.project.model,
+            activeNativeLevelId,
+            levelPlacedContent,
+          ),
+    [openNativeProject, activeNativeLevelId, levelPlacedContent],
+  );
   const [modeState, setModeState] = useState(() =>
     initialModeState({
       projectId: 'demo-project',
@@ -1960,6 +2073,7 @@ export function App(): JSX.Element {
           // project's own wall types reached the plan and not the model.
           wallDimensions={wallDimensions}
           wallOpenings={wallOpenings}
+          placedSolids={placedSolids}
           selection={modelSelection}
           onSelectElement={(elementId) =>
             setModelSelection({ primary: elementId, secondary: new Set() })

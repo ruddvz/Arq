@@ -106,7 +106,9 @@ export function furnishingPrimitives(
       elementId: furnishing.id,
       points: furnishing.footprint,
       fill: 'furnishing',
-      ...(furnishing.material == null ? {} : { fillTint: furnishing.material }),
+      ...(furnishing.material === null || furnishing.material === undefined
+        ? {}
+        : { fillTint: furnishing.material }),
     },
   ];
 }
