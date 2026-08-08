@@ -27,23 +27,9 @@
       "type": "string"
     },
     "status": {
-      "enum": [
-        "draft",
-        "validated",
-        "review",
-        "approved",
-        "committed",
-        "rejected",
-        "stale"
-      ]
+      "enum": ["draft", "validated", "review", "approved", "committed", "rejected", "stale"]
     }
   },
-  "required": [
-    "project",
-    "base_revision",
-    "operations",
-    "assumptions",
-    "digest"
-  ],
+  "required": ["project", "base_revision", "operations", "assumptions", "digest"],
   "type": "object"
 }

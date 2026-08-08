@@ -33,10 +33,6 @@
       "type": "string"
     }
   },
-  "required": [
-    "parents",
-    "operation_groups",
-    "semantic_root"
-  ],
+  "required": ["parents", "operation_groups", "semantic_root"],
   "type": "object"
 }

@@ -23,10 +23,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "source_id",
-          "result"
-        ],
+        "required": ["source_id", "result"],
         "type": "object"
       },
       "type": "array"
@@ -38,10 +35,6 @@
       "type": "string"
     }
   },
-  "required": [
-    "source_format",
-    "target_profile",
-    "items"
-  ],
+  "required": ["source_format", "target_profile", "items"],
   "type": "object"
 }
