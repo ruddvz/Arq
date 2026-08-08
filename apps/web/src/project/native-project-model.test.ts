@@ -123,3 +123,120 @@ describe('native project model round trip', () => {
     });
   });
 });
+
+/**
+ * ARQ House 17.0 carries a root `projectName` and a full reference model at the
+ * same time. Dispatching on `projectName` alone took the flat path and opened
+ * the project as bare wall centrelines with `document: null` - every level,
+ * room, opening, door and window silently discarded, with nothing shown to say
+ * so. These pin the richer read, and pin that a genuinely flat file still takes
+ * the flat path.
+ */
+describe('decodeNativeProjectModel on the ARQ House 17.0 vocabulary', () => {
+  function house17(): Record<string, unknown> {
+    return {
+      projectName: 'House',
+      id: 'arq-project-house',
+      name: 'House',
+      revision: 670,
+      units: 'mm',
+      levelIds: ['level-ground'],
+      levels: [{ id: 'level-ground', name: 'Ground Floor', elevation: 0, storeyHeight: 3200 }],
+      wallTypes: [{ id: 'wt-ext-300', name: 'Exterior 300', width: 300 }],
+      walls: [
+        {
+          id: 'w-south',
+          typeId: 'wt-ext-300',
+          levelId: 'level-ground',
+          start: { x: 0, y: 0 },
+          end: { x: 10000, y: 0 },
+          alignment: 'centre',
+          joinStart: 'union-solid',
+          joinEnd: 'union-solid',
+          semanticRole: 'outer-envelope',
+          height: 3000,
+          hostedOpeningIds: ['op-1'],
+        },
+      ],
+      openings: [
+        {
+          id: 'op-1',
+          hostWallId: 'w-south',
+          kind: 'pocket-door',
+          offsetFromWallStart: { value: 500, unit: 'mm' },
+          width: { value: 800, unit: 'mm' },
+          sillHeight: { value: 0, unit: 'mm' },
+          height: { value: 2100, unit: 'mm' },
+        },
+      ],
+      doorTypes: [{ id: 'dt-p', name: 'Pocket', operation: 'pocket', width: 800, height: 2100 }],
+      doors: [
+        {
+          id: 'd-1',
+          typeId: 'dt-p',
+          openingId: 'op-1',
+          levelId: 'level-ground',
+          side: 'configured',
+          hand: 'start',
+          swingDirection: 1,
+        },
+      ],
+      windows: [],
+      rooms: [
+        {
+          id: 'rm-1',
+          levelId: 'level-ground',
+          seedPoint: { x: 5000, y: 2000 },
+          name: 'Living',
+          number: 'G01',
+          boundaryElementIds: ['w-south'],
+          calculatedBoundary: [
+            { x: 0, y: 0 },
+            { x: 10000, y: 0 },
+            { x: 10000, y: 4000 },
+          ],
+          calculatedArea: 40,
+          status: 'coordinated-17.0',
+        },
+      ],
+    };
+  }
+
+  it('reads the full reference model rather than only its wall centrelines', () => {
+    const result = decodeNativeProjectModel(house17(), { views: [] });
+
+    expect(result.status).toBe('decoded');
+    if (result.status !== 'decoded') return;
+    // The regression this exists for: `document` was null, so everything below
+    // this line was silently absent from an opened project.
+    expect(result.model.document).not.toBeNull();
+    expect(result.model.document?.levels).toHaveLength(1);
+    expect(result.model.document?.rooms).toHaveLength(1);
+    expect(result.model.document?.openings).toHaveLength(1);
+    expect(result.model.document?.doors).toHaveLength(1);
+    expect(result.model.document?.wallTypes).toHaveLength(1);
+  });
+
+  it('keeps the walls the flat path would have drawn', () => {
+    const result = decodeNativeProjectModel(house17(), { views: [] });
+
+    expect(result.status).toBe('decoded');
+    if (result.status !== 'decoded') return;
+    expect(result.model.walls).toHaveLength(1);
+    expect(result.model.projectName).toBe('House');
+  });
+
+  it('still takes the flat path for a file this build wrote', () => {
+    const flat = {
+      projectName: 'Flat',
+      walls: [{ id: 'w1', start: { x: 0, y: 0 }, end: { x: 1000, y: 0 } }],
+    };
+
+    const result = decodeNativeProjectModel(flat);
+
+    expect(result.status).toBe('decoded');
+    if (result.status !== 'decoded') return;
+    expect(result.model.document).toBeNull();
+    expect(result.model.walls).toHaveLength(1);
+  });
+});
