@@ -440,6 +440,23 @@ const INITIAL_PROBE: ViewportProbe = { widthPx: 1536, heightPx: 864, coarsePoint
 const SHEET_CHROME_INSET_PX = 12;
 
 /**
+ * The smallest gap the sheet's chrome may leave against the viewport edge, in
+ * CSS pixels - `--arq-space-compact`, the gutter every other surface in the
+ * shell already uses.
+ *
+ * The clamp that keeps this chrome on screen used to bottom out at `0`, which
+ * kept it visible and put it flush against the edge. Measured across levels
+ * that showed as an inconsistency rather than a nicety: on the ground floor the
+ * title and tools sat 17px inside the viewport, and on the upper floor - whose
+ * sheet fits closer to the top - they sat at exactly 0, touching it, while
+ * every other card on screen held an 8px gutter. Clamping to the gutter instead
+ * of to the edge keeps the guarantee the original clamp was written for and
+ * stops the chrome breaking the shell's rhythm when a drawing happens to fit
+ * tall.
+ */
+const SHEET_CHROME_MIN_GUTTER_PX = 8;
+
+/**
  * How far the chrome rides above the page's top edge, in CSS pixels.
  *
  * Roughly half its own height, so it straddles the edge the way a tab on a
@@ -1751,9 +1768,9 @@ export function App(): JSX.Element {
      * both unreadable and unclickable. The lift is a nicety; staying on screen
      * is not.
      */
-    const top = Math.max(0, sheetRect.y - SHEET_CHROME_LIFT_PX);
+    const top = Math.max(SHEET_CHROME_MIN_GUTTER_PX, sheetRect.y - SHEET_CHROME_LIFT_PX);
     return side === 'start'
-      ? { left: Math.max(0, sheetRect.x + SHEET_CHROME_INSET_PX), top }
+      ? { left: Math.max(SHEET_CHROME_MIN_GUTTER_PX, sheetRect.x + SHEET_CHROME_INSET_PX), top }
       : {
           left: sheetRect.x + sheetRect.width - SHEET_CHROME_INSET_PX,
           top,
