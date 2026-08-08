@@ -28,11 +28,15 @@ export type Canvas2dPaintTarget = Pick<
   | 'stroke'
   | 'fill'
   | 'fillText'
+  // `strokeText` and `lineJoin` are here only for the halo behind label text -
+  // see `paintTextWithHalo`. Nothing else in this backend strokes text.
+  | 'strokeText'
   | 'arc'
   | 'setLineDash'
   | 'strokeStyle'
   | 'fillStyle'
   | 'lineWidth'
+  | 'lineJoin'
   | 'font'
 >;
 
@@ -47,6 +51,53 @@ const HANDLE_RADIUS_CSS_PX = 4;
  * are passed in rather than measured.
  */
 const TEXT_LINE_HEIGHT_PX = 12;
+
+/**
+ * Width of the paper-coloured halo drawn behind label text, in CSS pixels.
+ *
+ * A drawn plan does not move a room's name off its furniture; it knocks the
+ * furniture out from behind the name. Until the plan carried furniture there
+ * was nothing to knock out, and "Kitchen 35.3 m²" printed over the kitchen
+ * island the moment there was one - the label and the island both legible
+ * alone, neither legible together.
+ *
+ * Two pixels a side. Less does not separate the text from linework crossing it;
+ * more starts eating the drawing around short labels, which trades one
+ * unreadable thing for another.
+ */
+const TEXT_HALO_CSS_PX = 2;
+
+/**
+ * One line of label text, knocked out of whatever is behind it.
+ *
+ * The halo is a stroke of the same glyphs in the paper colour, drawn first and
+ * filled over - the standard way a drawing puts text on top of linework without
+ * a rectangle around it. A rectangle would be simpler and worse: it clears the
+ * label's whole bounding box, including the corners the letters never reach, so
+ * a two-word room name punches a visible white slab out of the plan.
+ *
+ * `lineJoin` is round because the default mitre spikes on the sharp interior
+ * angles of letterforms - a capital A grows horns at this stroke width.
+ *
+ * The paper colour rather than white: under a dark appearance the surface
+ * behind the drawing is dark, and a white halo would be the brightest thing on
+ * the page.
+ */
+function paintTextWithHalo(
+  target: Canvas2dPaintTarget,
+  text: string,
+  x: number,
+  y: number,
+  haloColor: string,
+  haloWidth: number,
+): void {
+  target.strokeStyle = haloColor;
+  target.lineWidth = haloWidth;
+  target.lineJoin = 'round';
+  target.strokeText(text, x, y);
+  target.lineJoin = 'miter';
+  target.fillText(text, x, y);
+}
 
 /**
  * The two colours the plan is drawn in, and the one it is drawn on.
@@ -287,14 +338,23 @@ function paintPrimitive<TId>(
        * it was anchored to rather than hanging below it.
        */
       const lines = primitive.text.split('\n');
+      const haloColor = palette.paper;
+      const haloWidth = TEXT_HALO_CSS_PX * 2 * devicePixelRatio;
       if (lines.length === 1) {
-        target.fillText(primitive.text, screen.x, screen.y);
+        paintTextWithHalo(target, primitive.text, screen.x, screen.y, haloColor, haloWidth);
         break;
       }
       const lineHeight = TEXT_LINE_HEIGHT_PX * devicePixelRatio;
       const firstOffset = -((lines.length - 1) * lineHeight) / 2;
       lines.forEach((line, index) => {
-        target.fillText(line, screen.x, screen.y + firstOffset + index * lineHeight);
+        paintTextWithHalo(
+          target,
+          line,
+          screen.x,
+          screen.y + firstOffset + index * lineHeight,
+          haloColor,
+          haloWidth,
+        );
       });
       break;
     }

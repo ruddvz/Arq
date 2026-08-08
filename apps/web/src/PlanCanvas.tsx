@@ -48,6 +48,12 @@ import {
   roomLabelAnchors,
   roomLabelFits,
   roomTint,
+  furnishingPrimitives,
+  slabPrimitives,
+  stairPrimitives,
+  type PlacedFootprint,
+  type PlanSlabInput,
+  type PlanStairInput,
   type RoomLabelObstacle,
   type PlanScene,
 } from '@arq/plan-renderer';
@@ -87,6 +93,15 @@ import type { PlanRoom } from './canvas/canvas-interaction';
  * user draws.
  */
 const NO_ROOMS: readonly PlanRoom[] = [];
+
+/**
+ * The same for the content that stands on a level. Stable module constants
+ * rather than fresh `[]` literals, so a surface that passes none of them does
+ * not rebuild the scene on every render.
+ */
+const NO_FURNISHINGS: readonly PlacedFootprint[] = [];
+const NO_SLABS: readonly PlanSlabInput[] = [];
+const NO_STAIRS: readonly PlanStairInput[] = [];
 
 /**
  * The view an empty surface opens at, since there is nothing to fit to.
@@ -384,6 +399,24 @@ export interface PlanCanvasProps {
    * opened project passes its own rooms, and passing an empty list draws none.
    */
   readonly rooms?: readonly PlanRoom[];
+  /**
+   * The furniture, sanitary fittings and fixed equipment on the level, drawn as
+   * footprint outlines beneath the walls.
+   *
+   * Outlines rather than fills, and beneath rather than over, because furniture
+   * describes how a room is used and the room, its dimensions and its walls are
+   * what it is describing. A hundred and forty filled blocks would hide the plan
+   * they annotate.
+   */
+  readonly furnishings?: readonly PlacedFootprint[];
+  /**
+   * The floor or roof plates on the level. Their voids are the point: a
+   * courtyard or a stairwell is a hole a person can fall through, and a plan
+   * that leaves it out describes a floor that is not there.
+   */
+  readonly slabs?: readonly PlanSlabInput[];
+  /** The stairs rising from the level, with their flights, nosings and direction of travel. */
+  readonly stairs?: readonly PlanStairInput[];
   /** True when the canvas must refuse to author - an opened .arq project is inspected, not edited. */
   readonly readOnly?: boolean;
   /** Current selection, shared with the model panel and inspector. */
@@ -533,6 +566,9 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   } | null>(null);
 
   const rooms = props.rooms ?? NO_ROOMS;
+  const furnishings = props.furnishings ?? NO_FURNISHINGS;
+  const slabs = props.slabs ?? NO_SLABS;
+  const stairs = props.stairs ?? NO_STAIRS;
   const content: PlanContent = useMemo(() => ({ rooms, walls }), [rooms, walls]);
 
   /* ------------------------------------------------------------------ */
@@ -741,6 +777,39 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
      * to know any of it was there.
      */
     const labelObstacles: RoomLabelObstacle[] = [];
+    /*
+     * Furniture is something a room label has to clear.
+     *
+     * The first attempt left it out, on the reasoning that a drawn plan does
+     * print room names over furniture. It does - but only over a rug or a
+     * bedside table, never over a kitchen island or a dining table and its six
+     * chairs, and this fixture has both. Rendered, "Kitchen 35.3 m²" came out
+     * struck through by the island's outline and the room could not be read at
+     * all. Every position the label search offers is inside its own room, so
+     * with the furniture in hand the label lands on clear floor instead.
+     *
+     * Zero clearance rather than a margin: a name may sit right up against a
+     * wardrobe without becoming unreadable, and demanding a gap around every one
+     * of 140 items is what would leave rooms unnamed.
+     *
+     * Held apart from `labelObstacles` because it is a softer constraint than
+     * the rest. A label struck through by a wall is wrong; a label over a
+     * bedside table in a room with nowhere else to go is only untidy, and the
+     * paper halo behind the text keeps it legible. So the search below tries to
+     * clear the furniture and, failing that, prints the name anyway rather than
+     * leaving a small crowded room with no name at all.
+     */
+    const furnishingObstacles: RoomLabelObstacle[] = [];
+    for (const furnishing of furnishings) {
+      const outline = furnishing.footprint;
+      for (let index = 0; index < outline.length; index += 1) {
+        furnishingObstacles.push({
+          start: outline[index]!,
+          end: outline[(index + 1) % outline.length]!,
+          clearance: 0,
+        });
+      }
+    }
     const wallPrimitives: PlanPrimitiveInput<string>[] = [];
     for (const wall of walls) {
       /*
@@ -858,6 +927,12 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     }
 
     const inputs: PlanPrimitiveInput<string>[] = [
+      /*
+       * The plates first, under everything. A slab's edge and its voids are the
+       * ground the rest of the drawing sits on, and drawing them last would put
+       * the courtyard's outline over the rooms that look into it.
+       */
+      ...slabs.flatMap(slabPrimitives),
       ...rooms.map((room): PlanPrimitiveInput<string> => ({
         kind: 'polygon',
         // Tinted so an enclosed area reads as a room rather than as four walls
@@ -904,56 +979,80 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         const nearby = labelObstacles.filter((obstacle) =>
           segmentNearBounds(obstacle, bounds, maxWallThicknessMm),
         );
+        const nearbyFurniture = furnishingObstacles.filter((obstacle) =>
+          segmentNearBounds(obstacle, bounds, maxWallThicknessMm),
+        );
+
+        /*
+         * Two passes, hardest constraint first: clear of the furniture as well
+         * as the linework, then clear of the linework alone. Both text lengths
+         * are tried within each pass, so a room drops its area before it gives
+         * up on standing clear of the dining table - the area is the part a
+         * reader can get from the schedule.
+         */
+        const obstacleSets =
+          nearbyFurniture.length === 0 ? [nearby] : [[...nearby, ...nearbyFurniture], nearby];
 
         const halfWallMm = maxWallThicknessMm / 2;
-        for (const lines of textCandidates) {
-          /*
-           * Measured in world units against the room's own shape.
-           *
-           * The text is measured on the canvas, at the size it will be painted,
-           * because legibility is a screen-pixel question; it is then divided
-           * by the scale, because containment is a question about the room.
-           */
-          const labelWidth =
-            Math.max(...lines.map((line) => ctx.measureText(line).width)) /
-            currentViewport.pixelsPerUnit;
-          const labelHeight =
-            (lines.length * ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio) /
-            currentViewport.pixelsPerUnit;
-          for (const anchor of roomLabelAnchors(room.polygon)) {
-            if (
-              !roomLabelFits({
-                polygon: room.polygon,
-                anchor,
-                labelWidth,
-                labelHeight,
-                // Half the thickest wall on the level: a room's boundary runs
-                // to the wall centrelines, so that much of the ring is poché
-                // rather than floor. The thickest is conservative and needs no
-                // per-room lookup; the piers below hold each wall at its own
-                // real thickness anyway.
-                wallInset: halfWallMm,
-                obstacles: nearby,
-              })
-            ) {
-              continue;
-            }
+        for (const obstacles of obstacleSets)
+          for (const lines of textCandidates) {
             /*
-             * A placed label becomes something the next one has to clear.
-             * Without this two rooms whose rings overlap - which the golden
-             * fixture has, its "Linen" ring reaching into "South gallery" -
-             * can each be told they fit and print on top of each other.
+             * Measured in world units against the room's own shape.
+             *
+             * The text is measured on the canvas, at the size it will be painted,
+             * because legibility is a screen-pixel question; it is then divided
+             * by the scale, because containment is a question about the room.
              */
-            for (const edge of labelKeepOut(anchor, labelWidth, labelHeight)) {
-              labelObstacles.push(edge);
+            const labelWidth =
+              Math.max(...lines.map((line) => ctx.measureText(line).width)) /
+              currentViewport.pixelsPerUnit;
+            const labelHeight =
+              (lines.length * ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio) /
+              currentViewport.pixelsPerUnit;
+            for (const anchor of roomLabelAnchors(room.polygon)) {
+              if (
+                !roomLabelFits({
+                  polygon: room.polygon,
+                  anchor,
+                  labelWidth,
+                  labelHeight,
+                  // Half the thickest wall on the level: a room's boundary runs
+                  // to the wall centrelines, so that much of the ring is poché
+                  // rather than floor. The thickest is conservative and needs no
+                  // per-room lookup; the piers below hold each wall at its own
+                  // real thickness anyway.
+                  wallInset: halfWallMm,
+                  obstacles,
+                })
+              ) {
+                continue;
+              }
+              /*
+               * A placed label becomes something the next one has to clear.
+               * Without this two rooms whose rings overlap - which the golden
+               * fixture has, its "Linen" ring reaching into "South gallery" -
+               * can each be told they fit and print on top of each other.
+               */
+              for (const edge of labelKeepOut(anchor, labelWidth, labelHeight)) {
+                labelObstacles.push(edge);
+              }
+              return [
+                { kind: 'text', elementId: `${room.id}-label`, anchor, text: lines.join('\n') },
+              ];
             }
-            return [
-              { kind: 'text', elementId: `${room.id}-label`, anchor, text: lines.join('\n') },
-            ];
           }
-        }
         return [];
       }),
+      /*
+       * Furniture and stairs between the rooms and the walls: over the room
+       * tint they sit on, under the walls that contain them. A wardrobe drawn
+       * over the wall it stands against would read as passing through it.
+       *
+       * The furnishings were added to `labelObstacles` above, before the walls,
+       * so a room name lands on clear floor rather than across a dining table.
+       */
+      ...furnishings.flatMap(furnishingPrimitives),
+      ...stairs.flatMap(stairPrimitives),
       ...wallPrimitives,
     ];
 
@@ -1032,6 +1131,9 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   }, [
     viewport,
     rooms,
+    furnishings,
+    slabs,
+    stairs,
     walls,
     selection,
     draftPoints,

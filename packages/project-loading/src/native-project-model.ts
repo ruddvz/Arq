@@ -42,6 +42,13 @@ import type {
   ProjectUnitsPreference,
 } from '@arq/bim-core';
 import { worldPoint, type WorldPoint } from '@arq/geometry-2d';
+import {
+  parsePlacedContent,
+  type NativeFurnishing,
+  type NativeSlab,
+  type NativeStair,
+  type PlacedContent,
+} from './placed-content';
 
 /**
  * The model-schema tags this reader understands. A tag may carry a `+suffix`
@@ -101,6 +108,15 @@ export interface NativeProjectModel {
   readonly doors: readonly Door[];
   readonly windows: readonly Window[];
   readonly rooms: readonly Room[];
+  /**
+   * What stands on the levels besides walls: furniture and fixed equipment, the
+   * floor and roof plates, and the stairs between them. Optional in the file and
+   * empty for a project this build wrote; see `placed-content.ts` for why these
+   * are footprints rather than semantic Furniture/Slab/Stair records.
+   */
+  readonly furnishings: readonly NativeFurnishing[];
+  readonly slabs: readonly NativeSlab[];
+  readonly stairs: readonly NativeStair[];
   readonly views: readonly NativeProjectView[];
   readonly unsupported: readonly NativeUnsupportedContent[];
 }
@@ -534,6 +550,56 @@ function assertUniqueIds(model: ModelParts): void {
   }
 }
 
+/**
+ * Placed content points at the same levels and rooms everything else does.
+ *
+ * Separate from `assertReferencesResolve` because it runs on a separate parse:
+ * these three sections are optional and a project this build wrote has none of
+ * them, so folding them into `ModelParts` would make every existing caller
+ * carry three empty lists to say nothing.
+ *
+ * An unresolved `roomId` is rejected rather than nulled. The file is asserting
+ * that this desk is in the study; if the study is not there, the assertion is
+ * about a different model than the one being opened, and quietly dropping the
+ * link would leave a desk in no room with nothing to say it ever claimed one.
+ */
+function assertPlacedContentResolves(content: PlacedContent, model: ModelParts): void {
+  const levelIds = new Set(model.levels.map((level) => level.id as string));
+  const roomIds = new Set(model.rooms.map((room) => room.id as string));
+  const seen = new Set<string>();
+  const claim = (section: string, id: string): void => {
+    if (seen.has(id)) {
+      reject(`model.json contains a duplicate id in ${section}: ${id}`);
+    }
+    seen.add(id);
+  };
+
+  for (const furnishing of content.furnishings) {
+    claim('furnishings', furnishing.id);
+    if (!levelIds.has(furnishing.levelId)) {
+      reject(
+        `model.json furnishing ${furnishing.id} references level ${furnishing.levelId}, which is not defined`,
+      );
+    }
+    if (furnishing.roomId !== null && !roomIds.has(furnishing.roomId)) {
+      reject(
+        `model.json furnishing ${furnishing.id} references room ${furnishing.roomId}, which is not defined`,
+      );
+    }
+  }
+  for (const slab of content.slabs) {
+    claim('slabs', slab.id);
+    if (!levelIds.has(slab.levelId)) {
+      reject(`model.json slab ${slab.id} references level ${slab.levelId}, which is not defined`);
+    }
+  }
+  for (const stair of content.stairs) {
+    claim('stairs', stair.id);
+    for (const flight of stair.flights) claim('stairs', flight.id);
+    for (const landing of stair.landings) claim('stairs', landing.id);
+  }
+}
+
 function assertReferencesResolve(model: ModelParts): void {
   const levelIds = new Set(model.levels.map((level) => level.id as string));
   const wallTypeIds = new Set(model.wallTypes.map((type) => type.id as string));
@@ -726,6 +792,18 @@ export function parseNativeProjectModel(
     assertReferencesResolve(parts);
 
     /*
+     * Furnishings, slabs and stairs. Parsed after the walls and rooms so their
+     * level and room references can be checked against real levels and rooms:
+     * a wardrobe on a level that does not exist would draw on whichever storey
+     * happened to be on show, which is worse than not drawing it.
+     */
+    const placed = parsePlacedContent(raw);
+    if (placed.status === 'rejected') {
+      reject(placed.reason);
+    }
+    assertPlacedContentResolves(placed.content, parts);
+
+    /*
      * What is left unsupported, and nothing more.
      *
      * Openings, doors and windows used to be counted here with the message
@@ -765,6 +843,9 @@ export function parseNativeProjectModel(
         doors,
         windows,
         rooms,
+        furnishings: placed.content.furnishings,
+        slabs: placed.content.slabs,
+        stairs: placed.content.stairs,
         views,
         unsupported,
       },

@@ -175,9 +175,26 @@ async function main() {
   console.log(`File: ${arqPath}`);
   console.log(`SHA-256 before: ${beforeHash}`);
 
+  /*
+   * Always rebuilt, never reused.
+   *
+   * This guarded the build with `if (!existsSync(dist/index.html))`, which asks
+   * "is there a build?" when the only question a check may ask is "is there a
+   * build of *this* code?". Once a bundle existed, every later run tested
+   * whatever was compiled last time - so this check reported a verdict about
+   * code it had not run. It was caught by a change that adds 140 visible objects
+   * to the drawing passing, and producing a screenshot with none of them in it.
+   *
+   * Every other capability check in this repository already builds
+   * unconditionally, and `run-workspace-layout-capability-check.mjs` records
+   * having been bitten by the same stale bundle and fixed the same way. This one
+   * was written against the wrong pattern; it now matches. The rebuild costs
+   * about nine seconds, which is the price of the verdict meaning anything.
+   */
+  console.log('Building apps/web …');
+  execFileSync('npx', ['vite', 'build'], { cwd: webDir, stdio: 'inherit' });
   if (!existsSync(path.join(distDir, 'index.html'))) {
-    console.log('Building apps/web …');
-    execFileSync('npx', ['vite', 'build'], { cwd: webDir, stdio: 'inherit' });
+    throw new Error('vite build did not produce apps/web/dist/index.html');
   }
 
   const unservedUrls = [];

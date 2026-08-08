@@ -535,8 +535,67 @@ export function adaptArqHouse17Model(raw: unknown): ArqHouse17AdaptResult {
       'Both 17.0 statuses assert the room passed coordination, and the package’s own validation records zero room failures.',
   });
 
+  /*
+   * Furnishings, slabs and stairs.
+   *
+   * 17.0 files them under `semanticExtensions`, a bag of fifty-eight sections
+   * that the reader has never looked at, so every one of the 140 fixtures, the
+   * three floor plates and the stair went into the app and came out again
+   * without being drawn or counted. The building arrived as an empty shell.
+   *
+   * Only the location changes. `fixturesAndFurniture` entries already carry an
+   * id, a level, a room, a kind, `bounds`, a height and a rotation, which is
+   * exactly what `placed-content.ts` reads; the slabs already carry an outer
+   * rectangle, voids and a thickness; the stair already carries its flight and
+   * landing definitions. Nothing is computed and nothing is filled in, which is
+   * why all three are `derived` - a second reader given this file would lift the
+   * same records to the same places.
+   *
+   * The rest of `semanticExtensions` stays where it is and is counted as
+   * unsupported content by name, rather than being half-lifted into fields the
+   * reader would then have to guess the meaning of.
+   */
+  const extensions = isRecord(raw.semanticExtensions) ? raw.semanticExtensions : {};
+  const furnishings = records(extensions.fixturesAndFurniture);
+  const slabs = records(extensions.slabs);
+  const stairs = records(extensions.stairs);
+
+  record({
+    section: 'furnishings',
+    field: '(section)',
+    from: 'semanticExtensions.fixturesAndFurniture',
+    to: 'furnishings',
+    entries: furnishings.length,
+    basis: 'derived',
+    rationale:
+      'Each entry already states its id, level, room, kind, bounds, height and rotation; only the section it lives in moves.',
+  });
+  record({
+    section: 'slabs',
+    field: '(section)',
+    from: 'semanticExtensions.slabs',
+    to: 'slabs',
+    entries: slabs.length,
+    basis: 'derived',
+    rationale:
+      'Each plate already states its level, outer rectangle, voids and thickness; only the section it lives in moves.',
+  });
+  record({
+    section: 'stairs',
+    field: '(section)',
+    from: 'semanticExtensions.stairs',
+    to: 'stairs',
+    entries: stairs.length,
+    basis: 'derived',
+    rationale:
+      'The flight and landing definitions are read as stated, including the mid-landing that the bounded single-flight Stair type cannot hold.',
+  });
+
   const model: Record<string, unknown> = {
     ...raw,
+    furnishings,
+    slabs,
+    stairs,
     modelSchema: ADAPTED_MODEL_SCHEMA,
     sourceRepositoryRevision:
       isRecord(raw.repositoryContract) &&

@@ -124,6 +124,9 @@ import {
   roomsOnLevel,
   wallTypeFor,
   wallsOnLevel,
+  type NativeFurnishing,
+  type NativeSlab,
+  type NativeStair,
   type NativeProjectModel as NativeProjectDocument,
 } from '@arq/project-loading';
 import type { WallSolidDimensions } from './ModelCanvas';
@@ -253,6 +256,63 @@ function wallOpeningsForLevel(
  * has to agree with what the inspector and schedules say, and two independent
  * area calculations is how they stop agreeing.
  */
+/** One level's furniture, floor plates and stairs, as the surfaces draw them. */
+interface LevelPlacedContent {
+  readonly furnishings: readonly NativeFurnishing[];
+  readonly slabs: readonly NativeSlab[];
+  readonly stairs: readonly NativeStair[];
+}
+
+/**
+ * What a level with no project open, or a project that carries none of this,
+ * shows. A shared constant so every reset points at the same empty value and no
+ * render is handed a fresh object that changed nothing.
+ */
+const EMPTY_LEVEL_CONTENT: LevelPlacedContent = { furnishings: [], slabs: [], stairs: [] };
+
+/**
+ * Everything on a level that is not a wall, a room or an opening: the
+ * furniture, the floor plate and the stairs rising from it.
+ *
+ * One derivation returning all three rather than three beside the existing
+ * per-level functions, because they are read together, drawn together and have
+ * one question to answer between them - "what else is on this storey?".
+ *
+ * A stair is placed by elevation rather than by a level id, because the file
+ * does not give it one and could not sensibly: a flight spans two levels and its
+ * mid-landing belongs to neither. It is shown on the storey it rises *from*,
+ * which is where a plan draws it - a stair appears on the lower floor going up,
+ * with the floor above showing the void it arrives through. That void is the
+ * slab's, and the slab already carries it.
+ */
+function placedContentForLevel(
+  document: NativeProjectDocument,
+  levelId: string,
+): LevelPlacedContent {
+  const level = document.levels.find((entry) => (entry.id as string) === levelId) ?? null;
+  const elevation = level?.elevation ?? null;
+  // The next level up, if there is one. A stair belongs to this storey when it
+  // starts at or above this level's datum and below the next one's.
+  const above = document.levels
+    .map((entry) => entry.elevation)
+    .filter((value) => elevation !== null && value > elevation)
+    .sort((a, b) => a - b)[0];
+
+  return {
+    furnishings: document.furnishings.filter((entry) => entry.levelId === levelId),
+    slabs: document.slabs.filter((entry) => entry.levelId === levelId),
+    stairs:
+      elevation === null
+        ? []
+        : document.stairs.filter((stair) => {
+            const bases = stair.flights.map((flight) => flight.baseElevation);
+            if (bases.length === 0) return false;
+            const foot = Math.min(...bases);
+            return foot >= elevation && (above === undefined || foot < above);
+          }),
+  };
+}
+
 function roomsForLevel(document: NativeProjectDocument, levelId: string): readonly PlanRoom[] {
   return roomsOnLevel(document, levelId).map((room) => ({
     id: room.id,
@@ -518,6 +578,15 @@ export function App(): JSX.Element {
   const [wallDimensions, setWallDimensions] = useState<ReadonlyMap<string, WallSolidDimensions>>(
     new Map(),
   );
+  /**
+   * The furniture, floor plates and stairs on the level being drawn.
+   *
+   * One record rather than three states because they are always set together
+   * from one derivation, and three setters is three chances for a level switch
+   * to leave one of them still showing the previous storey.
+   */
+  const [levelPlacedContent, setLevelPlacedContent] =
+    useState<LevelPlacedContent>(EMPTY_LEVEL_CONTENT);
 
   /*
    * Real local persistence: the journal is opened once, recovery replays it
@@ -668,6 +737,11 @@ export function App(): JSX.Element {
         opened.snapshot.document !== null && initialLevelId !== null
           ? wallOpeningsForLevel(opened.snapshot.document, initialLevelId)
           : new Map(),
+      );
+      setLevelPlacedContent(
+        opened.snapshot.document !== null && initialLevelId !== null
+          ? placedContentForLevel(opened.snapshot.document, initialLevelId)
+          : EMPTY_LEVEL_CONTENT,
       );
       wallIdCounterRef.current = highestWallIdSuffix(shown);
       setProjectName(opened.snapshot.displayName);
@@ -1568,6 +1642,7 @@ export function App(): JSX.Element {
       setProjectRooms(roomsForLevel(openNativeProject.project.model, levelId));
       setWallDimensions(wallDimensionsForLevel(openNativeProject.project.model, levelId));
       setWallOpenings(wallOpeningsForLevel(openNativeProject.project.model, levelId));
+      setLevelPlacedContent(placedContentForLevel(openNativeProject.project.model, levelId));
       // The selection is a wall id, and a wall on another level is not on
       // screen. Keeping it would leave the inspector describing something the
       // reader cannot see.
@@ -1590,6 +1665,7 @@ export function App(): JSX.Element {
     setProjectRooms(null);
     setWallDimensions(new Map());
     setWallOpenings(new Map());
+    setLevelPlacedContent(EMPTY_LEVEL_CONTENT);
     setActiveWorkingCopyId(null);
     setDrawnWalls([]);
     drawnWallsRef.current = [];
@@ -1906,6 +1982,9 @@ export function App(): JSX.Element {
           walls={drawnWalls}
           sheetBounds={projectSheetBounds}
           {...(projectRooms === null ? {} : { rooms: projectRooms })}
+          furnishings={levelPlacedContent.furnishings}
+          slabs={levelPlacedContent.slabs}
+          stairs={levelPlacedContent.stairs}
           wallDimensions={wallDimensions}
           wallOpenings={wallOpenings}
           onSceneBuilt={(scene) => {
