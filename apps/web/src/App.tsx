@@ -2157,6 +2157,7 @@ export function App(): JSX.Element {
           stairs={levelPlacedContent.stairs}
           servicePoints={servicesShown ? levelPlacedContent.servicePoints : EMPTY_SERVICE_POINTS}
           pathways={servicesShown ? levelPlacedContent.pathways : EMPTY_PATHWAYS}
+          northBearingDegrees={openNativeProject?.project.model.summary.northBearingDegrees ?? null}
           wallDimensions={wallDimensions}
           wallOpenings={wallOpenings}
           onSceneBuilt={(scene) => {

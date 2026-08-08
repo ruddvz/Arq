@@ -109,6 +109,7 @@ describe('parseNativeProjectModel', () => {
       units: 'metric',
       revision: 7,
       modelSchema: 'arq-bim-core-reference-v0',
+      northBearingDegrees: null,
       sourceRepositoryRevision: 'abc123',
     });
     // Declared in metres in the file, consumed in millimetres, so no caller has
@@ -397,5 +398,70 @@ describe('parseNativeProjectViews', () => {
     expect(parseNativeProjectViews({ views: 'nope' })).toEqual([]);
     // An entry with no id cannot be addressed, so it is skipped, not guessed at.
     expect(parseNativeProjectViews({ views: [{ kind: 'plan' }, 3, null] })).toEqual([]);
+  });
+});
+
+/**
+ * The project's north.
+ *
+ * Null and zero are different answers and both are real: zero is "north is up
+ * the page", which a file can state; null is "this file does not say". A
+ * drawing that assumes zero for null has invented an orientation, and a reader
+ * trusts an arrow.
+ */
+describe('parseNativeProjectModel - north', () => {
+  function withCoordinateSystem(coordinateSystem: unknown): unknown {
+    return {
+      modelSchema: 'arq-bim-core-reference-v0',
+      project: {
+        id: 'proj-1',
+        name: 'Test project',
+        units: 'metric',
+        revision: 1,
+        levelIds: ['level-1'],
+      },
+      levels: [{ id: 'level-1', name: 'Ground', elevation: 0 }],
+      wallTypes: [
+        {
+          id: 'wt-1',
+          name: 'Wall',
+          thickness: { value: 100, unit: 'mm' },
+          defaultHeight: { value: 2400, unit: 'mm' },
+          function: 'interior',
+        },
+      ],
+      walls: [],
+      rooms: [],
+      coordinateSystem,
+    };
+  }
+
+  function bearing(coordinateSystem: unknown): number | null {
+    const parsed = parseNativeProjectModel(withCoordinateSystem(coordinateSystem), []);
+    if (parsed.status !== 'parsed') throw new Error(parsed.reason);
+    return parsed.model.summary.northBearingDegrees;
+  }
+
+  it('reads the axis spelling a generator writes', () => {
+    expect(bearing({ north: '+Y' })).toBe(0);
+    expect(bearing({ north: '+X' })).toBe(90);
+    expect(bearing({ north: '-Y' })).toBe(180);
+    expect(bearing({ north: '-x' })).toBe(270);
+  });
+
+  /** A project surveyed at an angle must not be rounded to the nearest axis. */
+  it('prefers a stated bearing over an axis name', () => {
+    expect(bearing({ north: '+Y', northBearingDegrees: 23.5 })).toBe(23.5);
+  });
+
+  it('normalises a negative or over-turned bearing into [0, 360)', () => {
+    expect(bearing({ northBearingDegrees: -90 })).toBe(270);
+    expect(bearing({ northBearingDegrees: 450 })).toBe(90);
+  });
+
+  it('says nothing rather than guessing when the file does not state north', () => {
+    expect(bearing(undefined)).toBeNull();
+    expect(bearing({})).toBeNull();
+    expect(bearing({ north: 'magnetic' })).toBeNull();
   });
 });

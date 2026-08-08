@@ -53,6 +53,7 @@ import {
   stairPrimitives,
   servicePointPrimitives,
   pathwayPrimitives,
+  northArrowPrimitives,
   type PlanFurnishingInput,
   type PlanSlabInput,
   type PlanStairInput,
@@ -454,6 +455,12 @@ export interface PlanCanvasProps {
   readonly servicePoints?: readonly PlanServicePointInput[];
   /** The walkable routes through the level, as centrelines. */
   readonly pathways?: readonly PlanPathwayInput[];
+  /**
+   * Which way north runs, clockwise from +Y, or null when the project does not
+   * say. Omitted draws no arrow: a plan with an invented orientation is worse
+   * than one with none, because a reader trusts an arrow.
+   */
+  readonly northBearingDegrees?: number | null;
   /** True when the canvas must refuse to author - an opened .arq project is inspected, not edited. */
   readonly readOnly?: boolean;
   /** Current selection, shared with the model panel and inspector. */
@@ -608,6 +615,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   const stairs = props.stairs ?? NO_STAIRS;
   const servicePoints = props.servicePoints ?? NO_SERVICE_POINTS;
   const pathways = props.pathways ?? NO_PATHWAYS;
+  const northBearingDegrees = props.northBearingDegrees ?? null;
   const content: PlanContent = useMemo(() => ({ rooms, walls }), [rooms, walls]);
 
   /* ------------------------------------------------------------------ */
@@ -662,6 +670,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
          * material is deliberately clear" - the first draws an outline, and the
          * second would be a claim the file never made.
          */
+        glazing: value('--arq-plan-glazing', 'transparent'),
         materialFills: Object.fromEntries(
           FURNISHING_MATERIALS.map((material) => [
             material,
@@ -942,6 +951,20 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
             points: [jamb.start, jamb.end],
           });
         }
+        /*
+         * The glass first, then the centreline over it. The pane is what makes
+         * a window read as a window at plan scale; the line is the drafting
+         * convention and stays because it is what survives when the drawing is
+         * printed without colour.
+         */
+        if (opening.pane !== null) {
+          wallPrimitives.push({
+            kind: 'polygon',
+            elementId: `${opening.id}-pane`,
+            points: opening.pane,
+            fill: 'glazing',
+          });
+        }
         for (const glazing of opening.glazing) {
           wallPrimitives.push({
             kind: 'line',
@@ -1115,6 +1138,14 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       ...pathways.flatMap(pathwayPrimitives),
       ...servicePoints.flatMap(servicePointPrimitives),
       ...wallPrimitives,
+      /*
+       * North last, so nothing is drawn over it. It sits outside the building
+       * on the page, so it collides with nothing - but it is the one mark on a
+       * drawing whose meaning is destroyed by being half-covered.
+       */
+      ...(northBearingDegrees === null || sheetBounds === null || sheetBounds === undefined
+        ? []
+        : northArrowPrimitives(sheetBounds, northBearingDegrees)),
     ];
 
     const scene = buildPlanScene(inputs, EMPTY_SET, selection, EMPTY_SET);
@@ -1197,6 +1228,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     stairs,
     servicePoints,
     pathways,
+    northBearingDegrees,
     walls,
     selection,
     draftPoints,

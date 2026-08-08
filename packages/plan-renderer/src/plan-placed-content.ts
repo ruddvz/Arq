@@ -367,3 +367,92 @@ export function stairPrimitives(stair: PlanStairInput): readonly PlanPrimitiveIn
   }
   return primitives;
 }
+
+/**
+ * The north arrow's length, as a fraction of the drawing's larger dimension.
+ *
+ * Proportional rather than fixed, because the arrow belongs to the sheet: it
+ * should be the same size relative to the drawing whether the project is a
+ * bathroom or a business park. Six per cent is about what a drawn sheet uses -
+ * legible, and not competing with the building.
+ */
+const NORTH_ARROW_FRACTION = 0.06;
+
+/** How far outside the drawing the arrow stands, as a fraction of its own length. */
+const NORTH_ARROW_MARGIN = 0.8;
+
+/**
+ * A north arrow, placed just outside the drawing's top-right corner.
+ *
+ * Drawn in world space rather than as screen chrome, so it belongs to the
+ * drawing: it exports with the sheet, it sits in a fixed place on the page
+ * rather than following the viewport, and it turns with the plan if the plan is
+ * ever rotated. A north arrow that stayed upright while the drawing turned
+ * would be the one piece of a plan that lies.
+ *
+ * `bearingDegrees` is clockwise from the model's +Y axis, which is the
+ * convention `NativeProjectSummary.northBearingDegrees` normalises to. A
+ * project that does not state its north gets no arrow at all - see that field
+ * for why null and zero are different answers.
+ */
+export function northArrowPrimitives(
+  bounds: { readonly min: WorldPoint; readonly max: WorldPoint },
+  bearingDegrees: number,
+): readonly PlanPrimitiveInput<string>[] {
+  const width = bounds.max.x - bounds.min.x;
+  const height = bounds.max.y - bounds.min.y;
+  if (!(width > 0) || !(height > 0) || !Number.isFinite(bearingDegrees)) return [];
+
+  const length = Math.max(width, height) * NORTH_ARROW_FRACTION;
+  const margin = length * NORTH_ARROW_MARGIN;
+  /*
+   * The bottom-right of the drawing, not the top-right.
+   *
+   * Top-right is where a sheet's north arrow usually goes and where this was
+   * put first - and it is also where the workspace floats its view-tools
+   * control, so the arrow came out half behind it and clipped by the page edge.
+   * The bottom-right corner is beside where a title block would sit, which is
+   * the other conventional home for it, and it is empty on this page.
+   */
+  const originX = bounds.max.x + margin;
+  const originY = bounds.min.y + length / 2;
+
+  // Clockwise from +Y: a bearing of 0 points up the page, 90 points right.
+  const radians = (bearingDegrees * Math.PI) / 180;
+  const dirX = Math.sin(radians);
+  const dirY = Math.cos(radians);
+  const tipX = originX + dirX * length;
+  const tipY = originY + dirY * length;
+
+  // Barbs swept back from the tip, and a tail behind the origin, so the arrow
+  // reads as a needle rather than as a line with a triangle stuck on it.
+  const barb = length * 0.28;
+  const spread = Math.PI / 7;
+  const angle = Math.atan2(dirY, dirX);
+  const barbPoint = (sign: number): WorldPoint =>
+    worldPoint(
+      tipX - barb * Math.cos(angle + sign * spread),
+      tipY - barb * Math.sin(angle + sign * spread),
+    );
+
+  return [
+    {
+      kind: 'line',
+      elementId: 'north-arrow-shaft',
+      points: [worldPoint(originX, originY), worldPoint(tipX, tipY)],
+    },
+    {
+      kind: 'line',
+      elementId: 'north-arrow-head',
+      points: [barbPoint(-1), worldPoint(tipX, tipY), barbPoint(1)],
+    },
+    {
+      // Set beyond the tip along the same bearing, so the letter stays at the
+      // pointed end whichever way north runs.
+      kind: 'text',
+      elementId: 'north-arrow-label',
+      anchor: worldPoint(tipX + dirX * barb, tipY + dirY * barb),
+      text: 'N',
+    },
+  ];
+}

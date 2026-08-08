@@ -156,6 +156,11 @@ export interface PlanPalette {
    */
   readonly materialFills?: Readonly<Record<string, string>>;
   /**
+   * The glass in a window opening. Absent draws the pane unfilled, which is
+   * what a window looked like before it had one - a hairline across a gap.
+   */
+  readonly glazing?: string;
+  /**
    * Tints whose rooms are hatched as well as filled, keyed by `RoomTint`, with
    * the colour to draw the hatching in.
    *
@@ -300,20 +305,22 @@ function paintPrimitive<TId>(
         const colour =
           primitive.fill === 'poche'
             ? palette.poche
-            : primitive.fill === 'furnishing'
-              ? /*
-                 * A furnishing whose material the palette does not name is left
-                 * unfilled rather than given the generic tint. An outline is an
-                 * honest "a thing is here"; a wrong colour claims a material the
-                 * file did not state, and the whole point of tinting these is
-                 * that the colour means something.
-                 */
-                primitive.fillTint === undefined
-                ? undefined
-                : palette.materialFills?.[primitive.fillTint]
-              : primitive.fillTint === undefined
-                ? palette.roomFill
-                : (palette.roomFills?.[primitive.fillTint] ?? palette.roomFill);
+            : primitive.fill === 'glazing'
+              ? palette.glazing
+              : primitive.fill === 'furnishing'
+                ? /*
+                   * A furnishing whose material the palette does not name is left
+                   * unfilled rather than given the generic tint. An outline is an
+                   * honest "a thing is here"; a wrong colour claims a material the
+                   * file did not state, and the whole point of tinting these is
+                   * that the colour means something.
+                   */
+                  primitive.fillTint === undefined
+                  ? undefined
+                  : palette.materialFills?.[primitive.fillTint]
+                : primitive.fillTint === undefined
+                  ? palette.roomFill
+                  : (palette.roomFills?.[primitive.fillTint] ?? palette.roomFill);
         if (colour !== undefined) {
           target.setLineDash([]);
           target.fillStyle = colour;

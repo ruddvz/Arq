@@ -71,6 +71,18 @@ export interface NativeProjectSummary {
   readonly modelSchema: string;
   /** The repository revision recorded by whatever wrote the model, when it recorded one. */
   readonly sourceRepositoryRevision: string | null;
+  /**
+   * Which way is north, as a bearing in degrees clockwise from the model's +Y
+   * axis, or null when the file does not say.
+   *
+   * Null and zero are different answers and both are real. Zero is "north is up
+   * the page", which most projects are and which a file can state. Null is "this
+   * file does not say", and a drawing that assumes zero for it has invented an
+   * orientation - so a surface can draw the arrow for one and omit it for the
+   * other, which is the difference between a plan that is oriented and a plan
+   * that merely looks oriented.
+   */
+  readonly northBearingDegrees: number | null;
 }
 
 /** A view the file declares, and whether this build can present it. */
@@ -257,6 +269,37 @@ function parseDeclaredUnsupported(value: unknown): readonly NativeUnsupportedCon
     entries.push({ section, count: Math.floor(count), reason });
   }
   return entries;
+}
+
+/**
+ * The project's north, as a bearing clockwise from +Y.
+ *
+ * The file states it as an axis name - `"+Y"`, `"-X"` - rather than as an
+ * angle, which is how a generator that only ever produces axis-aligned north
+ * would write it. Both spellings are read, and a numeric bearing wins where a
+ * file gives one, so a project surveyed at 23 degrees is not rounded to the
+ * nearest axis.
+ *
+ * Anything else is null rather than a guess. A wrongly oriented plan is worse
+ * than an unoriented one: a reader trusts an arrow.
+ */
+const NORTH_AXIS_BEARINGS: Readonly<Record<string, number>> = {
+  '+y': 0,
+  '+x': 90,
+  '-y': 180,
+  '-x': 270,
+};
+
+function parseNorthBearing(value: unknown): number | null {
+  if (!isRecord(value)) return null;
+  const numeric = finiteNumber(value.northBearingDegrees ?? value.northDegrees);
+  if (numeric !== null) {
+    // Normalised into [0, 360) so a surface never has to. A file may state -90.
+    return ((numeric % 360) + 360) % 360;
+  }
+  const axis = nonEmptyString(value.north);
+  if (axis === null) return null;
+  return NORTH_AXIS_BEARINGS[axis.toLowerCase().replace(/\s+/g, '')] ?? null;
 }
 
 function parseLevels(raw: readonly unknown[]): readonly Level[] {
@@ -909,6 +952,7 @@ export function parseNativeProjectModel(
           revision,
           modelSchema,
           sourceRepositoryRevision: optionalString(raw.sourceRepositoryRevision),
+          northBearingDegrees: parseNorthBearing(raw.coordinateSystem),
         },
         levels,
         wallTypes,

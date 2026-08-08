@@ -72,7 +72,29 @@ export interface PlanOpening {
   readonly swing: PlanSwingArc | null;
   /** Glazing across the reveal. Windows only. */
   readonly glazing: readonly PlanSegment[];
+  /**
+   * The glass itself, as a closed band within the reveal. Windows only.
+   *
+   * The centreline in `glazing` was the whole window symbol, and at a domestic
+   * plan scale it is a hairline in a white gap - the fixture's own coordinated
+   * drawings give the glass a visible band, and side by side theirs is the one
+   * where a reader can tell a window from a doorway without counting jambs.
+   *
+   * Narrower than the reveal because glass is thinner than the wall it sits in.
+   * Filling the whole reveal would say the opening is solid glass from face to
+   * face, which is a different detail and a rarer one.
+   */
+  readonly pane: readonly WorldPoint[] | null;
 }
+
+/**
+ * How much of the wall's thickness the glass band occupies.
+ *
+ * A third: thick enough to read as a pane at 1:100, thin enough to leave the
+ * reveal visible either side of it, which is what says the glass sits inside a
+ * wall rather than replacing it.
+ */
+const PANE_THICKNESS_FRACTION = 1 / 3;
 
 /** Below this the opening is not a hole, and its reveal would be degenerate. */
 const MIN_WIDTH = 1e-6;
@@ -112,7 +134,7 @@ export function planOpening(host: PlanWallHost, opening: PlanOpeningInput): Plan
 
   if (opening.kind === 'door') {
     const { leaf, swing } = doorLeaf(opening, { at, ux, uy, nx, ny, a0, a1 });
-    return { id: opening.id, kind: 'door', reveal, jambs, leaf, swing, glazing: [] };
+    return { id: opening.id, kind: 'door', reveal, jambs, leaf, swing, glazing: [], pane: null };
   }
 
   if (opening.kind === 'window') {
@@ -127,6 +149,12 @@ export function planOpening(host: PlanWallHost, opening: PlanOpeningInput): Plan
       leaf: null,
       swing: null,
       glazing: [{ start: at(a0, 0), end: at(a1, 0) }],
+      pane: [
+        at(a0, half * PANE_THICKNESS_FRACTION),
+        at(a1, half * PANE_THICKNESS_FRACTION),
+        at(a1, -half * PANE_THICKNESS_FRACTION),
+        at(a0, -half * PANE_THICKNESS_FRACTION),
+      ],
     };
   }
 
@@ -140,6 +168,7 @@ export function planOpening(host: PlanWallHost, opening: PlanOpeningInput): Plan
     leaf: null,
     swing: null,
     glazing: [],
+    pane: null,
   };
 }
 

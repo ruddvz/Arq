@@ -83,10 +83,12 @@ export interface PlanLinePrimitive<TId> {
  * to meet. `furnishing` is the body of a piece of furniture or fixed equipment,
  * tinted by the material the model states for it - which is how a reader tells
  * a glazed shower screen from a stone counter without a legend. The palette
- * decides what any of them look like, so all three survive a change of
- * appearance.
+ * decides what any of them look like, so all of them survive a change of
+ * appearance. `glazing` is the glass in a window opening - the same idea as a
+ * furnishing tint, but the glass is part of the building rather than something
+ * standing in it, so it is named for what it is instead of borrowing a material.
  */
-export type PlanFill = 'poche' | 'room' | 'furnishing';
+export type PlanFill = 'poche' | 'room' | 'furnishing' | 'glazing';
 
 export interface PlanPolygonPrimitive<TId> {
   readonly kind: 'polygon';
