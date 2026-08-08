@@ -275,6 +275,25 @@ body {
  * the reason the selected segment reads as selected without a colour.
  */
 .arq-view-kinds {
+  /*
+   * Positioned because the refraction lens inside it is not.
+   *
+   * `.arq-refraction-lens__slot` is `position: absolute` with a 2px inset, and
+   * absolute means "relative to the nearest positioned ancestor" - which was
+   * not this control, because nothing here established one. The lens resolved
+   * against an ancestor far up the tree and rendered at x=15 while the switcher
+   * it decorates sat at x=609, then applied its own translate to follow the
+   * selected segment and landed at x=85: exactly on top of
+   * `.arq-top-bar__identity-name`. With `z-index: 1` and a distortion filter,
+   * it drew over the project's own name and revision, which came out visibly
+   * smeared and half-erased in the 3D tab - the segment whose offset carried
+   * the lens furthest into the title.
+   *
+   * A decoration that leaves the control it decorates and corrupts the
+   * project's name is worse than no decoration, which is the same reasoning the
+   * lens's own comment gives for `pointer-events: none`.
+   */
+  position: relative;
   display: flex;
   gap: 2px;
   padding: 2px;
