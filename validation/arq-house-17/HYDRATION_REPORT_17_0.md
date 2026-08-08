@@ -266,7 +266,44 @@ It also refuses to run on anything that is not this vocabulary
 (`status: 'not-applicable'`), so it can never quietly rewrite an unrelated
 project that merely happens to be missing a field.
 
-## What this does not change
+## Why the file appeared not to open — it was never the size
+
+The project history records the Version 17 upload failing because `house.arq`
+was too large, with roughly 30 MB believed to be the ceiling, and the compact
+rebuild (34.69 MB → 21.43 MB) was made to get under it.
+
+**No such limit exists in this codebase, and there is no upload.** Read from the
+source:
+
+| Gate                                 |       Limit | Where                                              |
+| ------------------------------------ | ----------: | -------------------------------------------------- |
+| `preflightArqfsBytes` `maxFileBytes` |   **8 GiB** | `packages/arqfs/src/arqfs-preflight.ts`            |
+| `MAX_ARCHIVE_TOTAL_BYTES`            |   **1 GiB** | `packages/project-format/src/complexity-limits.ts` |
+| `MAX_ENTRY_BYTES`                    | **500 MiB** | `packages/project-format/src/archive.ts`           |
+
+The 34.69 MB file was roughly 250× under the smallest gate that applies to it.
+
+And opening is entirely client-side: `FileOpenPanel` reads the chosen file with
+`file.arrayBuffer()` from an `<input type="file">`, and `apps/api` has no route
+for `.arq` at all. Nothing is transmitted, so no request-body limit — Vercel's
+or anyone's — can be reached. There was no upload to be too large for.
+
+The real cause is the one this report documents above, fixed in
+`apps/web/src/project/native-project-model.ts`: the app **did** accept the file,
+took the flat decode path on its root `projectName`, and opened it as 68 bare
+wall centrelines with `document: null` — no levels, no rooms, no openings, no
+doors, no windows, no wall thickness, and no message saying so. A user opening
+their coordinated house and being shown a stick figure of it would reasonably
+report that the upload "did not work".
+
+That also explains why compaction did not help: it changed the container, and
+the fault was in the decode path, which is identical for both files — their
+`model.json` is byte-identical.
+
+The compaction remains worth keeping. It removed two duplicate copies of the
+model, a redundant contact sheet and seven orphaned resource rows, and it
+regenerated `checksums.json` consistently. It was good hygiene applied to the
+wrong diagnosis.
 
 `house.arq` was opened read-only and is byte-identical after every check; its
 SHA-256 is unchanged, and nothing in the shipped package was modified.
