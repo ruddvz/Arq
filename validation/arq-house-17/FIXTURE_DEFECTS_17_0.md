@@ -12,17 +12,17 @@ tracked separately; this document is only about the file.
 Worth stating first, because it sets the standard the defects fall short of. The
 model is unusually clean:
 
-| Check | Result |
-| --- | --- |
-| Unique ids across all 17 id-bearing collections | 706 / 706, no collisions |
-| Unresolved references (level, room, wall, opening) | 0 |
-| Openings running past the end of their host wall | 0 of 47 |
-| Rooms whose stated area disagrees with their own polygon | 0 of 48 |
-| Rooms whose seed point falls outside their own boundary | 0 of 48 |
-| Furniture whose centre falls outside its assigned room | 0 of 140 |
-| Duplicate room numbers | 0 of 48 |
-| Stair arithmetic (19 risers × 168.42 mm, 17 treads × 280 mm) | exact |
-| Container integrity, foreign keys, table set | passes, arqfs v2 |
+| Check                                                        | Result                   |
+| ------------------------------------------------------------ | ------------------------ |
+| Unique ids across all 17 id-bearing collections              | 706 / 706, no collisions |
+| Unresolved references (level, room, wall, opening)           | 0                        |
+| Openings running past the end of their host wall             | 0 of 47                  |
+| Rooms whose stated area disagrees with their own polygon     | 0 of 48                  |
+| Rooms whose seed point falls outside their own boundary      | 0 of 48                  |
+| Furniture whose centre falls outside its assigned room       | 0 of 140                 |
+| Duplicate room numbers                                       | 0 of 48                  |
+| Stair arithmetic (19 risers × 168.42 mm, 17 treads × 280 mm) | exact                    |
+| Container integrity, foreign keys, table set                 | passes, arqfs v2         |
 
 The defects below are real, but they sit on top of a model that is internally
 consistent almost everywhere.
@@ -36,10 +36,10 @@ consistent almost everywhere.
 The model carries a grid in two places and they are not the same grid. Nothing
 states which is authoritative.
 
-| Axis | `structuralConcept.gridX/gridY` | `structuralModel.grid` |
-| --- | --- | --- |
-| x | 300, 4500, 6000, **12000**, 13500, **14000**, 17700 | 300, 4500, 6000, **9000**, 12000, 13500, 17700 |
-| y | 300, 3500, 5000, **8500**, 11000, **12500**, 15700 | 300, 3500, 5000, **8000**, 11000, **13700**, 15700 |
+| Axis | `structuralConcept.gridX/gridY`                     | `structuralModel.grid`                             |
+| ---- | --------------------------------------------------- | -------------------------------------------------- |
+| x    | 300, 4500, 6000, **12000**, 13500, **14000**, 17700 | 300, 4500, 6000, **9000**, 12000, 13500, 17700     |
+| y    | 300, 3500, 5000, **8500**, 11000, **12500**, 15700  | 300, 3500, 5000, **8000**, 11000, **13700**, 15700 |
 
 Any consumer — Arq, the PDF generator, a structural engineer — picks one and is
 right half the time. This is the only outright contradiction found in the model.
@@ -49,12 +49,12 @@ one is for.
 
 ### 1.2 Four services points sit outside the room they are assigned to
 
-| Point | Kind | At | Assigned room | Room extent | Off by |
-| --- | --- | --- | --- | --- | --- |
-| `pl-rf-drain-2` | roof-drain | 17400, 600 | `rm-rf-open` | 300–6000 × 5000–11000 | 11 400 mm x, 4 400 mm y |
-| `pl-rf-drain-3` | roof-drain | 600, 15400 | `rm-rf-mech` | 12000–17700 × 12200–15700 | 11 400 mm x |
-| `pl-rf-drain-1` | roof-drain | 600, 600 | `rm-rf-open` | 300–6000 × 5000–11000 | 4 400 mm y |
-| `ep-rf-solar-isolator` | solar-isolator | 12500, 12000 | `rm-rf-mech` | 12000–17700 × 12200–15700 | 200 mm y |
+| Point                  | Kind           | At           | Assigned room | Room extent               | Off by                  |
+| ---------------------- | -------------- | ------------ | ------------- | ------------------------- | ----------------------- |
+| `pl-rf-drain-2`        | roof-drain     | 17400, 600   | `rm-rf-open`  | 300–6000 × 5000–11000     | 11 400 mm x, 4 400 mm y |
+| `pl-rf-drain-3`        | roof-drain     | 600, 15400   | `rm-rf-mech`  | 12000–17700 × 12200–15700 | 11 400 mm x             |
+| `pl-rf-drain-1`        | roof-drain     | 600, 600     | `rm-rf-open`  | 300–6000 × 5000–11000     | 4 400 mm y              |
+| `ep-rf-solar-isolator` | solar-isolator | 12500, 12000 | `rm-rf-mech`  | 12000–17700 × 12200–15700 | 200 mm y                |
 
 The three roof drains are at the corners of the roof, which is where drains
 belong — their **positions** look right and their **room assignments** are wrong.
@@ -70,11 +70,11 @@ the rule is clearly intended.
 
 ### 1.3 Three walls carry no height, alignment, join intent or role
 
-| Wall | Level | Length | Missing |
-| --- | --- | --- | --- |
-| `gf-guest-bath-east` | ground | 3 200 mm | height, alignment, joinStart/End, semanticRole |
-| `gf-dining-south-join` | ground | 500 mm | same |
-| `uf-bed02-south-join` | upper | 700 mm | same |
+| Wall                   | Level  | Length   | Missing                                        |
+| ---------------------- | ------ | -------- | ---------------------------------------------- |
+| `gf-guest-bath-east`   | ground | 3 200 mm | height, alignment, joinStart/End, semanticRole |
+| `gf-dining-south-join` | ground | 500 mm   | same                                           |
+| `uf-bed02-south-join`  | upper  | 700 mm   | same                                           |
 
 Two are short junction stubs where defaulting is defensible. `gf-guest-bath-east`
 is not — it is a **3.2 metre interior wall**, the full depth of the guest
@@ -130,7 +130,7 @@ belongs to, and whether it measures to centreline or to face.
 There is no position, no canopy radius, no trunk, no level, no id. The whole
 `landscape` block is prose — `courtyard`, `external`, `roofGarden`, `terraces`.
 
-The contrast that matters: the **11 planters** in the same file *are* real
+The contrast that matters: the **11 planters** in the same file _are_ real
 objects with bounds, heights and levels, and Arq draws all 11. So this is not
 about the reader.
 
@@ -159,10 +159,10 @@ finding.
 Every drawing, schedule, document and the PDF appears both in `archive_entry`
 and in the `resource` / `resource_chunk` tables, byte for byte.
 
-| | Count | Bytes |
-| --- | --- | --- |
-| Resources also present in `archive_entry` | 66 | **13 676 715 duplicated** |
-| Resources stored once | 6 | 5 963 758 |
+|                                           | Count | Bytes                     |
+| ----------------------------------------- | ----- | ------------------------- |
+| Resources also present in `archive_entry` | 66    | **13 676 715 duplicated** |
+| Resources stored once                     | 6     | 5 963 758                 |
 
 **Fix:** store each blob once. `resource` + `resource_reference` is the store
 designed for this; `archive_entry` should point at it rather than hold a second
@@ -170,11 +170,11 @@ copy.
 
 ### 3.2 The model is stored three times
 
-| Path | Bytes | Note |
-| --- | --- | --- |
-| `model.json` | 1 090 546 | |
-| `model/canonical-model-17.0.json` | 1 090 546 | byte-identical to the above |
-| `model/canonical-model-17.0.pretty.json` | 2 468 846 | same model, whitespace |
+| Path                                     | Bytes     | Note                        |
+| ---------------------------------------- | --------- | --------------------------- |
+| `model.json`                             | 1 090 546 |                             |
+| `model/canonical-model-17.0.json`        | 1 090 546 | byte-identical to the above |
+| `model/canonical-model-17.0.pretty.json` | 2 468 846 | same model, whitespace      |
 
 **3 559 392 bytes for one model**, where 1 090 546 would do. The pretty-printed
 copy in particular is a development convenience shipped to every user on every
@@ -185,10 +185,10 @@ demand.
 
 ### 3.3 Two different documentation PDFs
 
-| Bytes | Role | Where |
-| --- | --- | --- |
+| Bytes     | Role             | Where                        |
+| --------- | ---------------- | ---------------------------- |
 | 5 244 027 | portable-preview | `archive_entry` + `resource` |
-| 5 228 395 | portable-preview | `resource` only |
+| 5 228 395 | portable-preview | `resource` only              |
 
 These are **different files** — different byte lengths — both marked
 `portable-preview`, with nothing saying which is current. A reader offered "the
@@ -218,13 +218,13 @@ repository's migration path.
 `semanticExtensions` carries **58 sections**, and five of them are version
 series where only the newest is live:
 
-| Series | Sections present | Live |
-| --- | --- | --- |
-| `validation` | 12, 13, 14, 15, 16, 17 | `validation17` |
-| `solidGeometry` | 15, 16, 17 (plus an unnumbered `solidGeometry`) | `solidGeometry17` |
-| `planTopology` | 14, 16, 17 | `planTopology17` |
-| `floorAssemblies` | 15, 16, 17 | `floorAssemblies17` |
-| `walkability` | 15, 16, 17 | `walkability17` |
+| Series            | Sections present                                | Live                |
+| ----------------- | ----------------------------------------------- | ------------------- |
+| `validation`      | 12, 13, 14, 15, 16, 17                          | `validation17`      |
+| `solidGeometry`   | 15, 16, 17 (plus an unnumbered `solidGeometry`) | `solidGeometry17`   |
+| `planTopology`    | 14, 16, 17                                      | `planTopology17`    |
+| `floorAssemblies` | 15, 16, 17                                      | `floorAssemblies17` |
+| `walkability`     | 15, 16, 17                                      | `walkability17`     |
 
 **379 334 bytes** of superseded blocks. `currentPlanTopology: "planTopology17"`
 names the live one for that series only; the other four leave a consumer to infer
@@ -243,22 +243,22 @@ Arq's own `native-project-model.ts` (`d867e6a`), so two vocabularies developed i
 parallel. Arq now adapts all 15. Listing them because closing them at the source
 would remove the adapter, and with it the risk that an adaptation is wrong.
 
-| Section | Field | File says | Contract wants |
-| --- | --- | --- | --- |
-| model | `modelSchema` | absent | a schema tag |
-| model | `project` | id/name/revision/units at the root | a nested project record |
-| wallTypes | `thickness` | bare `width: 300` | `{ value, unit }` |
-| wallTypes | `defaultHeight` | absent (height is per wall) | `{ value, unit }` |
-| wallTypes | `function` | absent (role is per wall) | `exterior` / `interior` |
-| walls | `alignment` | absent on 3 | `centre` / `interior` / `exterior` |
-| walls | `joinStart` / `joinEnd` | `"union-solid"` | `auto` / `butt` / `mitre` / `disallow` |
-| walls | `height` *(lossy)* | bare number per wall | `heightOverride: { value, unit }` |
-| openings | `kind` | `sliding-door`, `pocket-door`, `opening` | `door` / `window` / `void` |
-| doors | `side` | `"configured"` | `left` / `right` |
-| doors | `hand` | `"start"` / `"end"` | `left` / `right` |
-| doors | `swingAngle` | absent | degrees |
-| windows | `side` | `"configured"` | `left` / `right` |
-| rooms | `status` | `coordinated-17.0` | `valid` |
+| Section   | Field                   | File says                                | Contract wants                         |
+| --------- | ----------------------- | ---------------------------------------- | -------------------------------------- |
+| model     | `modelSchema`           | absent                                   | a schema tag                           |
+| model     | `project`               | id/name/revision/units at the root       | a nested project record                |
+| wallTypes | `thickness`             | bare `width: 300`                        | `{ value, unit }`                      |
+| wallTypes | `defaultHeight`         | absent (height is per wall)              | `{ value, unit }`                      |
+| wallTypes | `function`              | absent (role is per wall)                | `exterior` / `interior`                |
+| walls     | `alignment`             | absent on 3                              | `centre` / `interior` / `exterior`     |
+| walls     | `joinStart` / `joinEnd` | `"union-solid"`                          | `auto` / `butt` / `mitre` / `disallow` |
+| walls     | `height` _(lossy)_      | bare number per wall                     | `heightOverride: { value, unit }`      |
+| openings  | `kind`                  | `sliding-door`, `pocket-door`, `opening` | `door` / `window` / `void`             |
+| doors     | `side`                  | `"configured"`                           | `left` / `right`                       |
+| doors     | `hand`                  | `"start"` / `"end"`                      | `left` / `right`                       |
+| doors     | `swingAngle`            | absent                                   | degrees                                |
+| windows   | `side`                  | `"configured"`                           | `left` / `right`                       |
+| rooms     | `status`                | `coordinated-17.0`                       | `valid`                                |
 
 The `walls.height` row is marked lossy rather than blocking for a reason: a
 reader that ignored it would open the file successfully and silently lose all
