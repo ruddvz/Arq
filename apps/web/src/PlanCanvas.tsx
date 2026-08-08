@@ -355,6 +355,28 @@ const EMPTY_SET: ReadonlySet<string> = new Set<string>();
 export interface PlanCanvasProps {
   /** The workspace's active tool id - the canvas responds to select/wall/pan/fit. */
   readonly activeToolId: string | null;
+  /**
+   * The extent the page is drawn around and fitted to, when it should be
+   * something other than what is on screen.
+   *
+   * The page used to be sized from the level on show, which gave every floor of
+   * one building its own page. Switching level then resized and moved the sheet
+   * under a drawing that had not moved at all - the ground floor's page ended
+   * 53px short of the upper floor's, and the title and view tools, which are
+   * placed against the page, jumped with it.
+   *
+   * That is not how a set of floor plans works. The floors of a building are
+   * vertically aligned, and they are drawn at one scale on one sheet precisely
+   * so a reader can compare them: a stair that lands over a stair, a wall that
+   * runs through. Re-fitting per level throws that away and makes the building
+   * appear to shift between storeys.
+   *
+   * So a project passes the extent of all its levels together and every floor
+   * is drawn on that one page. Omitted - the workspace's own scratch surface,
+   * which has no levels to reconcile - the page falls back to what is on
+   * screen, which for a single surface is the same thing.
+   */
+  readonly sheetBounds?: { readonly min: WorldPoint; readonly max: WorldPoint } | null;
   /** The walls to draw - the workspace's own drawn walls, or an opened project's walls for the level on show. */
   readonly walls: readonly DrawnWall[];
   /**
@@ -442,6 +464,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     activeToolId: requestedToolId,
     readOnly = false,
     walls,
+    sheetBounds = null,
     selection,
     onSelectElement,
     onSelectMany,
@@ -635,8 +658,10 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     let sheetRect: SheetRect | null = null;
     if (rooms.length > 0 || walls.length > 0) {
       // The same inflation the fit uses, from the same helper, so the page that
-      // is drawn is exactly the page that was made to fit.
-      const page = inflateToSheet(contentBounds(content));
+      // is drawn is exactly the page that was made to fit. `sheetBounds` when a
+      // project supplies one, so every level of it is drawn on one page rather
+      // than each floor getting its own.
+      const page = inflateToSheet(sheetBounds ?? contentBounds(content));
       const topLeft = worldToScreen(currentViewport, worldPoint(page.min.x, page.max.y));
       const bottomRight = worldToScreen(currentViewport, worldPoint(page.max.x, page.min.y));
       const radius = SHEET_RADIUS_CSS_PX * devicePixelRatio;
@@ -1075,7 +1100,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
           // that is the project, and for an empty surface that is nothing, which
           // is a starting extent rather than a fit.
           const fitted = fitContent(
-            emptyContentBounds({ rooms, walls }) ?? contentBounds({ rooms, walls }),
+            sheetBounds ?? emptyContentBounds({ rooms, walls }) ?? contentBounds({ rooms, walls }),
             rect,
           );
           onViewportPixelsPerUnitChange?.(fitted.pixelsPerUnit);
@@ -1258,7 +1283,13 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       const devicePixelRatio = devicePixelRatioRef.current;
       // Fit on an empty surface returns to the starting extent rather than to
       // NaN - the same guard as the first paint, for the same reason.
-      const fitted = fitContent(emptyContentBounds(content) ?? contentBounds(content), rect);
+      // Fit means "show me the page", and the page is the whole project's when
+      // one is open - so Fit lands on the same framing on every level instead
+      // of zooming to whichever floor happens to be on screen.
+      const fitted = fitContent(
+        sheetBounds ?? emptyContentBounds(content) ?? contentBounds(content),
+        rect,
+      );
       updateViewport({
         ...fitted,
         screenWidth: canvas.width,
@@ -1267,7 +1298,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       });
     }
     onFitCompleted();
-  }, [activeToolId, content, onFitCompleted, updateViewport]);
+  }, [activeToolId, content, sheetBounds, onFitCompleted, updateViewport]);
 
   // Escape cancels an in-progress marquee before anything else - the
   // region-selection contract's own rule - on capture, so the shell's

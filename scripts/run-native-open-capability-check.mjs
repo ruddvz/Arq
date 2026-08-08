@@ -209,10 +209,26 @@ async function openFixture(page, label = 'open') {
     // that passes or fails on render ordering. It passed locally and failed on
     // CI for exactly that reason. The project panel's header is durable: it is
     // there for as long as the project is.
+    /*
+     * Case-insensitive, and that is the whole point rather than a tidy-up.
+     *
+     * This wait was written to stop depending on the dialog, but it kept the
+     * dialog's *wording*: `describe-file-flow-state.ts` writes "… is open ·
+     * revision 191" in lower case, and the durable project panel writes
+     * "Revision 191". A case-sensitive `includes('revision 191')` therefore
+     * only ever matched while the dialog was still mounted - so the check was
+     * still racing the dialog it had been fixed to stop racing, and passed
+     * because the dialog happened to outlive the panel's first paint.
+     *
+     * It stopped passing the moment anything shifted first-paint timing, which
+     * is exactly the kind of false failure that teaches people to re-run a
+     * check rather than read it. Matching either casing waits on the panel
+     * header, which is what the comment above always said this wait was for.
+     */
     await page.waitForFunction(
       () => {
         const text = document.body.textContent ?? '';
-        return text.includes('Courtyard House Reference') && text.includes('revision 191');
+        return text.includes('Courtyard House Reference') && /revision\s*191/i.test(text);
       },
       undefined,
       { timeout: 120_000 },

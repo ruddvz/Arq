@@ -94,7 +94,7 @@ import {
   type WorkspaceViewKind,
 } from '@arq/workspace';
 import { FitIcon, InspectIcon, Model3dIcon, PlanIcon, SheetIcon } from '@arq/icons';
-import type { WorldPoint } from '@arq/geometry-2d';
+import { worldPoint, type WorldPoint } from '@arq/geometry-2d';
 import { createUndoStack, hasErrors, type ValidationMessage } from '@arq/operations';
 import { validateUniqueElementIds, validateWallSegments } from '@arq/validation';
 import {
@@ -1698,6 +1698,50 @@ export function App(): JSX.Element {
    * pixelsPerUnit). The label moves when the reader zooms, which is the only
    * way it can stay true.
    */
+  /**
+   * The page every level of the open project is drawn on.
+   *
+   * One extent across all levels, not one per level. The floors of a building
+   * are vertically aligned and are drawn at one scale on one sheet so a reader
+   * can compare them - a stair landing over a stair, a wall running through.
+   * Sizing the page from the level on show instead gave each floor its own,
+   * and switching level then resized and moved the sheet under a drawing that
+   * had not moved: measured on house.arq, the ground floor's page ended 53px
+   * short of the upper floor's, and the title and view tools, placed against
+   * the page, jumped with it.
+   *
+   * Every level's walls and rooms, because a level's extent is not only its
+   * walls: a roof terrace's boundary can reach past the storey below it.
+   *
+   * Null when no project is open - the scratch surface has a single level's
+   * worth of content and nothing to reconcile it against, so the canvas keeps
+   * sizing the page from what is on it.
+   */
+  const projectSheetBounds = useMemo(() => {
+    if (openNativeProject === null) return null;
+    const model = openNativeProject.project.model;
+    const points: WorldPoint[] = [];
+    for (const level of model.levels) {
+      for (const wall of wallsOnLevel(model, level.id)) points.push(wall.start, wall.end);
+      for (const room of roomsOnLevel(model, level.id)) points.push(...room.calculatedBoundary);
+    }
+    if (points.length === 0) return null;
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    for (const point of points) {
+      if (point.x < minX) minX = point.x;
+      if (point.y < minY) minY = point.y;
+      if (point.x > maxX) maxX = point.x;
+      if (point.y > maxY) maxY = point.y;
+    }
+    // A project whose every point coincides has no extent to fit; the canvas's
+    // own fallback handles that better than a zero-sized page would.
+    if (!(maxX > minX) || !(maxY > minY)) return null;
+    return { min: worldPoint(minX, minY), max: worldPoint(maxX, maxY) };
+  }, [openNativeProject]);
+
   /** What this project is, for under its name in the bar: revision and units. */
   const projectSubtitle =
     openNativeProject === null
@@ -1860,6 +1904,7 @@ export function App(): JSX.Element {
         <PlanCanvas
           activeToolId={toolState.activeToolId}
           walls={drawnWalls}
+          sheetBounds={projectSheetBounds}
           {...(projectRooms === null ? {} : { rooms: projectRooms })}
           wallDimensions={wallDimensions}
           wallOpenings={wallOpenings}
