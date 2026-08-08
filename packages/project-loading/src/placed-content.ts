@@ -122,16 +122,82 @@ export interface NativeStair {
   readonly landings: readonly NativeStairLanding[];
 }
 
+/**
+ * The four building-services disciplines this reads.
+ *
+ * A closed set, unlike `kind` and `material`, because the discipline decides
+ * which drawing a point belongs on and how it is symbolised - a reflected
+ * ceiling plan shows luminaires and not waste stacks. A file naming a fifth
+ * discipline is left uncounted rather than folded into one of these, which the
+ * unsupported-content inventory then reports by name.
+ */
+export type ServiceDiscipline = 'lighting' | 'electrical' | 'plumbing' | 'hvac';
+
+export const SERVICE_DISCIPLINES: readonly ServiceDiscipline[] = [
+  'lighting',
+  'electrical',
+  'plumbing',
+  'hvac',
+];
+
+/** One luminaire, outlet, fitting or unit, at a point. */
+export interface NativeServicePoint {
+  readonly id: string;
+  readonly discipline: ServiceDiscipline;
+  readonly levelId: string;
+  readonly roomId: string | null;
+  readonly kind: string;
+  readonly position: WorldPoint;
+  /**
+   * Height above the level datum, or null where the file states none.
+   *
+   * Null is a real answer here, not a missing one: this fixture gives every
+   * lighting, electrical and HVAC point a `z` and gives its plumbing points
+   * none, because a waste or supply run is set out in plan and its invert is a
+   * drainage calculation rather than a placed height. Defaulting the absent
+   * ones to zero would put every sanitary fitting on the floor slab and look
+   * deliberate.
+   */
+  readonly elevationMillimetres: number | null;
+  /** The circuit or system the point belongs to, when the file names one. */
+  readonly system: string | null;
+  readonly note: string | null;
+}
+
+/**
+ * A walkable route through the building, as its centreline and clear width.
+ *
+ * The centreline is what is drawn. Sweeping the width into a band is the
+ * drawing a walkability study wants, and it needs a polyline offset with proper
+ * join handling - mitres at the bends, and a decision about what happens when a
+ * bend is tighter than the width. An offset that is subtly wrong at the corners
+ * would be a route claiming clearances it does not have, which is worse than a
+ * line that claims only where it runs. The width travels with the model so a
+ * surface that can show it properly has it.
+ */
+export interface NativePathway {
+  readonly id: string;
+  readonly levelId: string;
+  /** What the route is for, in the file's own words. */
+  readonly purpose: string;
+  readonly widthMillimetres: number;
+  readonly points: readonly WorldPoint[];
+}
+
 export interface PlacedContent {
   readonly furnishings: readonly NativeFurnishing[];
   readonly slabs: readonly NativeSlab[];
   readonly stairs: readonly NativeStair[];
+  readonly servicePoints: readonly NativeServicePoint[];
+  readonly pathways: readonly NativePathway[];
 }
 
 export const EMPTY_PLACED_CONTENT: PlacedContent = {
   furnishings: [],
   slabs: [],
   stairs: [],
+  servicePoints: [],
+  pathways: [],
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -377,8 +443,85 @@ function parseStairs(raw: readonly unknown[]): readonly NativeStair[] {
   });
 }
 
+function parseServicePoints(raw: readonly unknown[]): readonly NativeServicePoint[] {
+  return raw.map((entry, index) => {
+    if (!isRecord(entry)) fail(`model.json servicePoints[${index}] is not an object`);
+    const id = nonEmpty(entry.id);
+    const levelId = nonEmpty(entry.levelId);
+    const kind = nonEmpty(entry.kind);
+    const discipline = nonEmpty(entry.discipline);
+    if (id === null || levelId === null || kind === null || discipline === null) {
+      fail(
+        `model.json servicePoints[${index}] is missing a usable id, levelId, kind or discipline`,
+      );
+    }
+    if (!SERVICE_DISCIPLINES.includes(discipline as ServiceDiscipline)) {
+      fail(`model.json servicePoints[${index}] (${id}) names an unknown discipline ${discipline}`);
+    }
+    const point = isRecord(entry.point) ? entry.point : null;
+    const x = point === null ? null : finite(point.x);
+    const y = point === null ? null : finite(point.y);
+    if (x === null || y === null) {
+      // A services point with no position is not a point. Drawing it at the
+      // origin would put every one of them in the same corner of the building.
+      fail(`model.json servicePoints[${index}] (${id}) has no usable position`);
+    }
+    return {
+      id,
+      discipline: discipline as ServiceDiscipline,
+      levelId,
+      roomId: nonEmpty(entry.roomId),
+      kind,
+      position: worldPoint(x, y),
+      elevationMillimetres: point === null ? null : finite(point.z),
+      // `circuit` for electrical, `system` for plumbing - one field either way,
+      // because a consumer wants "what does this belong to" and does not care
+      // which discipline chose which word for it.
+      system: nonEmpty(entry.circuit) ?? nonEmpty(entry.system),
+      note: nonEmpty(entry.note),
+    };
+  });
+}
+
+function parsePathways(raw: readonly unknown[]): readonly NativePathway[] {
+  return raw.map((entry, index) => {
+    if (!isRecord(entry)) fail(`model.json pathways[${index}] is not an object`);
+    const id = nonEmpty(entry.id);
+    const levelId = nonEmpty(entry.levelId);
+    if (id === null || levelId === null) {
+      fail(`model.json pathways[${index}] is missing a usable id or levelId`);
+    }
+    const width = finite(entry.width);
+    if (width === null || width <= 0) {
+      fail(`model.json pathways[${index}] (${id}) has no usable clear width`);
+    }
+    const rawPoints = Array.isArray(entry.points) ? entry.points : [];
+    const points = rawPoints.map((value, pointIndex) => {
+      const pair = Array.isArray(value) && value.length >= 2 ? value : null;
+      const x = pair === null ? null : finite(pair[0]);
+      const y = pair === null ? null : finite(pair[1]);
+      if (x === null || y === null) {
+        fail(
+          `model.json pathways[${index}] (${id}) point ${pointIndex} is not a usable coordinate`,
+        );
+      }
+      return worldPoint(x, y);
+    });
+    // One point is a place, not a route; it would draw as nothing and claim to
+    // be a path through the building.
+    if (points.length < 2) fail(`model.json pathways[${index}] (${id}) has fewer than two points`);
+    return {
+      id,
+      levelId,
+      purpose: nonEmpty(entry.purpose) ?? 'Route',
+      widthMillimetres: width,
+      points,
+    };
+  });
+}
+
 /**
- * Reads the three optional sections, or explains why they cannot be read.
+ * Reads the optional sections, or explains why they cannot be read.
  *
  * Absent sections are not an error: a project written by this build has none of
  * them, and requiring them would refuse files the product itself produced. A
@@ -397,6 +540,10 @@ export function parsePlacedContent(
         furnishings: Array.isArray(raw.furnishings) ? parseFurnishings(raw.furnishings) : [],
         slabs: Array.isArray(raw.slabs) ? parseSlabs(raw.slabs) : [],
         stairs: Array.isArray(raw.stairs) ? parseStairs(raw.stairs) : [],
+        servicePoints: Array.isArray(raw.servicePoints)
+          ? parseServicePoints(raw.servicePoints)
+          : [],
+        pathways: Array.isArray(raw.pathways) ? parsePathways(raw.pathways) : [],
       },
     };
   } catch (error) {

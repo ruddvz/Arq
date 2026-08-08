@@ -536,21 +536,34 @@ describe('what the adapter leaves behind', () => {
   }
 
   it('counts every section it did not lift, by name and quantity', () => {
-    const declared = inventory({ lighting: [1, 2, 3], hvac: [1] });
+    const declared = inventory({ roomBoundaryLines: [1, 2, 3], issueRegister: [1] });
     expect(declared).toEqual([
-      { section: 'semanticExtensions.lighting', count: 3, reason: expect.any(String) },
-      { section: 'semanticExtensions.hvac', count: 1, reason: expect.any(String) },
+      { section: 'semanticExtensions.roomBoundaryLines', count: 3, reason: expect.any(String) },
+      { section: 'semanticExtensions.issueRegister', count: 1, reason: expect.any(String) },
     ]);
   });
 
-  it('does not report the three sections it did lift', () => {
+  /**
+   * The lifted set grew from three sections to nine when the four services
+   * disciplines and the pathways were drawn. This asserts the inventory tracks
+   * that rather than reporting content the app now shows - a warning about
+   * something a user can see is how warnings get ignored.
+   */
+  it('does not report the sections it did lift', () => {
     const declared = inventory({
       fixturesAndFurniture: [{ id: 'a' }],
       slabs: [{ id: 'b' }],
       stairs: [{ id: 'c' }],
       lighting: [1],
+      electrical: [1],
+      plumbing: [1],
+      hvac: [1],
+      pathways: [1],
+      roomBoundaryLines: [1],
     });
-    expect(declared.map((entry) => entry.section)).toEqual(['semanticExtensions.lighting']);
+    expect(declared.map((entry) => entry.section)).toEqual([
+      'semanticExtensions.roomBoundaryLines',
+    ]);
   });
 
   /** A section that is an object, not a list, is one thing rather than none. */
@@ -559,13 +572,17 @@ describe('what the adapter leaves behind', () => {
   });
 
   it('leaves an empty section out rather than reporting nothing missing', () => {
-    expect(inventory({ lighting: [], hvac: [1] }).map((entry) => entry.section)).toEqual([
-      'semanticExtensions.hvac',
-    ]);
+    expect(
+      inventory({ roomBoundaryLines: [], issueRegister: [1] }).map((entry) => entry.section),
+    ).toEqual(['semanticExtensions.issueRegister']);
   });
 
   it('puts the largest omission first', () => {
-    const declared = inventory({ acousticIntent: { a: 1 }, roomBoundaryLines: [1, 2], hvac: [1] });
+    const declared = inventory({
+      acousticIntent: { a: 1 },
+      roomBoundaryLines: [1, 2],
+      issueRegister: [1],
+    });
     expect(declared.map((entry) => entry.count)).toEqual([2, 1, 1]);
     // Ties break by name, so the order is stable rather than whatever the file
     // happened to write first.

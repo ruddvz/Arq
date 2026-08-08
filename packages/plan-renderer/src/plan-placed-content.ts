@@ -211,6 +211,141 @@ function directionArrow(flight: PlanStairFlightInput): readonly PlanPrimitiveInp
 }
 
 /**
+ * Symbol radius for a services point, in world millimetres.
+ *
+ * 180mm is roughly the size a drawn luminaire symbol is at 1:100 - large enough
+ * to tell one discipline's shape from another's, small enough that 126 of them
+ * annotate the plan rather than becoming it. In world units rather than screen
+ * pixels because a symbol is part of the drawing: zoom in on a bathroom and the
+ * WC symbol stays the size of the fitting, not the size of a cursor.
+ */
+const SERVICE_SYMBOL_RADIUS_MM = 180;
+
+/** How many segments approximate a circle. Twelve reads as round at plan scales. */
+const CIRCLE_SEGMENTS = 12;
+
+function circle(
+  centre: WorldPoint,
+  radius: number,
+  segments = CIRCLE_SEGMENTS,
+): readonly WorldPoint[] {
+  const points: WorldPoint[] = [];
+  for (let step = 0; step < segments; step += 1) {
+    const angle = (step / segments) * Math.PI * 2;
+    points.push(
+      worldPoint(centre.x + radius * Math.cos(angle), centre.y + radius * Math.sin(angle)),
+    );
+  }
+  return points;
+}
+
+function square(centre: WorldPoint, half: number): readonly WorldPoint[] {
+  return [
+    worldPoint(centre.x - half, centre.y - half),
+    worldPoint(centre.x + half, centre.y - half),
+    worldPoint(centre.x + half, centre.y + half),
+    worldPoint(centre.x - half, centre.y + half),
+  ];
+}
+
+export interface PlanServicePointInput {
+  readonly id: string;
+  readonly discipline: 'lighting' | 'electrical' | 'plumbing' | 'hvac';
+  readonly position: WorldPoint;
+}
+
+/**
+ * One services point, as a symbol whose shape says which discipline it is.
+ *
+ * Shape rather than colour, and shape rather than a label. Colour alone fails
+ * the design system's own rule that status may not be carried by hue; a label
+ * at 126 points would bury the plan under text. So each discipline gets a
+ * distinguishable outline a reader learns once:
+ *
+ * - lighting: a circle crossed through, the drafting convention for a luminaire
+ * - electrical: a circle with a single radial stem, as an outlet is drawn
+ * - plumbing: a circle within a circle, reading as a fitting with a waste
+ * - hvac: a square crossed through, since plant is not a point fitting
+ *
+ * These are recognisable rather than standards-conformant. A real symbol
+ * library is per-jurisdiction and per-discipline and is a much larger piece of
+ * work; this is enough to tell four disciplines apart on one drawing, which is
+ * what the plan needs before it needs anything else.
+ */
+export function servicePointPrimitives(
+  point: PlanServicePointInput,
+): readonly PlanPrimitiveInput<string>[] {
+  const r = SERVICE_SYMBOL_RADIUS_MM;
+  const { position: at, id } = point;
+  switch (point.discipline) {
+    case 'lighting':
+      return [
+        { kind: 'polygon', elementId: id, points: circle(at, r) },
+        {
+          kind: 'line',
+          elementId: `${id}-cross-a`,
+          points: [worldPoint(at.x - r, at.y), worldPoint(at.x + r, at.y)],
+        },
+        {
+          kind: 'line',
+          elementId: `${id}-cross-b`,
+          points: [worldPoint(at.x, at.y - r), worldPoint(at.x, at.y + r)],
+        },
+      ];
+    case 'electrical':
+      return [
+        { kind: 'polygon', elementId: id, points: circle(at, r * 0.7) },
+        {
+          kind: 'line',
+          elementId: `${id}-stem`,
+          points: [worldPoint(at.x, at.y + r * 0.7), worldPoint(at.x, at.y + r * 1.6)],
+        },
+      ];
+    case 'plumbing':
+      return [
+        { kind: 'polygon', elementId: id, points: circle(at, r) },
+        { kind: 'polygon', elementId: `${id}-inner`, points: circle(at, r * 0.45, 8) },
+      ];
+    case 'hvac':
+      return [
+        { kind: 'polygon', elementId: id, points: square(at, r) },
+        {
+          kind: 'line',
+          elementId: `${id}-cross-a`,
+          points: [worldPoint(at.x - r, at.y - r), worldPoint(at.x + r, at.y + r)],
+        },
+        {
+          kind: 'line',
+          elementId: `${id}-cross-b`,
+          points: [worldPoint(at.x - r, at.y + r), worldPoint(at.x + r, at.y - r)],
+        },
+      ];
+  }
+}
+
+export interface PlanPathwayInput {
+  readonly id: string;
+  readonly points: readonly WorldPoint[];
+}
+
+/**
+ * A walkable route, as its centreline.
+ *
+ * The centreline and not the swept width band. A band is the drawing a
+ * walkability study wants, and it needs a polyline offset with proper join
+ * handling - mitres at the bends, and an answer for a bend tighter than the
+ * width. An offset that is subtly wrong at the corners draws a route claiming
+ * clearances it does not have, and a reader cannot tell that from a correct
+ * one. A line claims only where the route runs, which is true.
+ */
+export function pathwayPrimitives(
+  pathway: PlanPathwayInput,
+): readonly PlanPrimitiveInput<string>[] {
+  if (pathway.points.length < 2) return [];
+  return [{ kind: 'line', elementId: pathway.id, points: pathway.points }];
+}
+
+/**
  * A stair: each flight's outline, its nosings and its direction, and each
  * landing's outline.
  *

@@ -47,6 +47,8 @@ import {
   type NativeFurnishing,
   type NativeSlab,
   type NativeStair,
+  type NativeServicePoint,
+  type NativePathway,
   type PlacedContent,
 } from './placed-content';
 
@@ -117,6 +119,13 @@ export interface NativeProjectModel {
   readonly furnishings: readonly NativeFurnishing[];
   readonly slabs: readonly NativeSlab[];
   readonly stairs: readonly NativeStair[];
+  /**
+   * Building services - luminaires, outlets, sanitary fittings and plant - and
+   * the walkable routes between them. Both carry real coordinates in the file
+   * and were being counted as unread content until they were drawn.
+   */
+  readonly servicePoints: readonly NativeServicePoint[];
+  readonly pathways: readonly NativePathway[];
   readonly views: readonly NativeProjectView[];
   readonly unsupported: readonly NativeUnsupportedContent[];
 }
@@ -621,6 +630,38 @@ function assertPlacedContentResolves(content: PlacedContent, model: ModelParts):
     for (const flight of stair.flights) claim('stairs', flight.id);
     for (const landing of stair.landings) claim('stairs', landing.id);
   }
+  for (const point of content.servicePoints) {
+    claim('servicePoints', point.id);
+    if (!levelIds.has(point.levelId)) {
+      reject(
+        `model.json service point ${point.id} references level ${point.levelId}, which is not defined`,
+      );
+    }
+    /*
+     * An unresolved `roomId` is rejected on a furnishing and tolerated here.
+     *
+     * The difference is what the field is doing. A desk claims to be in the
+     * study, and a study that is not there means the claim is about a different
+     * model. A services point's room is a schedule grouping - which room's
+     * lighting circuit this belongs to - and the point still has a position,
+     * still draws in the right place, and is still the fitting the file says it
+     * is. Refusing to open a house because one roof drain is filed under the
+     * wrong roof room would be a validator with no sense of proportion.
+     *
+     * This fixture has four such points, and they are recorded in
+     * `validation/arq-house-17/FIXTURE_DEFECTS_17_0.md` rather than silently
+     * accepted: three roof drains at the roof corners filed under whichever
+     * room was nearest to hand, one of them 11.4 metres from it.
+     */
+  }
+  for (const pathway of content.pathways) {
+    claim('pathways', pathway.id);
+    if (!levelIds.has(pathway.levelId)) {
+      reject(
+        `model.json pathway ${pathway.id} references level ${pathway.levelId}, which is not defined`,
+      );
+    }
+  }
 }
 
 function assertReferencesResolve(model: ModelParts): void {
@@ -879,6 +920,8 @@ export function parseNativeProjectModel(
         furnishings: placed.content.furnishings,
         slabs: placed.content.slabs,
         stairs: placed.content.stairs,
+        servicePoints: placed.content.servicePoints,
+        pathways: placed.content.pathways,
         views,
         unsupported,
       },

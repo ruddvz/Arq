@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { worldPoint } from '@arq/geometry-2d';
-import { furnishingPrimitives, slabPrimitives, stairPrimitives } from './plan-placed-content';
+import {
+  furnishingPrimitives,
+  pathwayPrimitives,
+  servicePointPrimitives,
+  slabPrimitives,
+  stairPrimitives,
+} from './plan-placed-content';
 
 const RECTANGLE = [
   worldPoint(16_400, 500),
@@ -199,5 +205,56 @@ describe('stairPrimitives', () => {
     expect(a?.x).toBeCloseTo(0, 9);
     expect(b?.x).toBeCloseTo(0, 9);
     expect(Math.abs((b?.y ?? 0) - (a?.y ?? 0))).toBeCloseTo(1100, 9);
+  });
+});
+
+describe('servicePointPrimitives', () => {
+  const at = worldPoint(2400, 1900);
+
+  /**
+   * Shape, not colour, and not a label. Colour alone fails the design system's
+   * rule that status may not be carried by hue; a label at 126 points buries
+   * the plan. So the four disciplines have to be tellable apart by outline.
+   */
+  it('gives each discipline a distinguishable symbol', () => {
+    const shapes = (['lighting', 'electrical', 'plumbing', 'hvac'] as const).map((discipline) =>
+      servicePointPrimitives({ id: 'p', discipline, position: at })
+        .map((entry) => `${entry.kind}:${entry.kind === 'polygon' ? entry.points.length : 'n'}`)
+        .join('|'),
+    );
+    expect(new Set(shapes).size).toBe(4);
+  });
+
+  it('centres every symbol on the point it describes', () => {
+    for (const discipline of ['lighting', 'electrical', 'plumbing', 'hvac'] as const) {
+      const [body] = servicePointPrimitives({ id: 'p', discipline, position: at });
+      if (body?.kind !== 'polygon') throw new Error('expected a polygon body');
+      const cx = body.points.reduce((sum, p) => sum + p.x, 0) / body.points.length;
+      const cy = body.points.reduce((sum, p) => sum + p.y, 0) / body.points.length;
+      expect(cx).toBeCloseTo(2400, 6);
+      expect(cy).toBeCloseTo(1900, 6);
+    }
+  });
+
+  it('carries the point’s own id on its body, so a click selects the fitting', () => {
+    const [body] = servicePointPrimitives({ id: 'lt-study', discipline: 'lighting', position: at });
+    expect(body?.elementId).toBe('lt-study');
+  });
+});
+
+describe('pathwayPrimitives', () => {
+  it('draws the route as one polyline through every stated point', () => {
+    const [line, ...rest] = pathwayPrimitives({
+      id: 'p17-entry',
+      points: [worldPoint(9000, -900), worldPoint(9000, 900), worldPoint(9000, 4200)],
+    });
+    expect(rest).toEqual([]);
+    expect(line?.kind).toBe('line');
+    if (line?.kind !== 'line') return;
+    expect(line.points).toHaveLength(3);
+  });
+
+  it('draws nothing for a route with a single point', () => {
+    expect(pathwayPrimitives({ id: 'p', points: [worldPoint(0, 0)] })).toEqual([]);
   });
 });

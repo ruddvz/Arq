@@ -44,6 +44,7 @@
  * (`status: 'not-applicable'`), so it can never quietly rewrite an unrelated
  * project that happens to be missing a field.
  */
+import { SERVICE_DISCIPLINES } from './placed-content';
 import type { NativeProjectView } from './native-project-model';
 
 /** One vocabulary translation, at the granularity a reviewer would question it. */
@@ -607,7 +608,50 @@ export function adaptArqHouse17Model(raw: unknown): ArqHouse17AdaptResult {
    * not draw; they are not entitled to find that out by noticing the ceiling is
    * empty.
    */
-  const lifted = new Set(['fixturesAndFurniture', 'slabs', 'stairs']);
+  /*
+   * Building services. Four sections in the file, one list here, because the
+   * discipline is what differs and everything else about them is the same
+   * shape: an id, a level, a room, a kind, a point, and the circuit or system
+   * it belongs to. Keeping them apart would mean four near-identical readers
+   * and four near-identical draw paths.
+   *
+   * The discipline is added rather than read, because the file states it by
+   * which section the point is filed under. That is `derived` and not
+   * `assumed`: the section name is a statement, not a gap.
+   */
+  const servicePoints = SERVICE_DISCIPLINES.flatMap((discipline) =>
+    records(extensions[discipline]).map((point) => ({ ...point, discipline })),
+  );
+  record({
+    section: 'servicePoints',
+    field: 'discipline',
+    from: 'four separate semanticExtensions sections',
+    to: 'one list, each point tagged with the section it came from',
+    entries: servicePoints.length,
+    basis: 'derived',
+    rationale:
+      'The section a point is filed under is the file’s own statement of its discipline; only the shape changes.',
+  });
+
+  const pathways = records(extensions.pathways);
+  record({
+    section: 'pathways',
+    field: '(section)',
+    from: 'semanticExtensions.pathways',
+    to: 'pathways',
+    entries: pathways.length,
+    basis: 'derived',
+    rationale:
+      'Each route already states its level, purpose, clear width and point list; only the section it lives in moves.',
+  });
+
+  const lifted = new Set([
+    'fixturesAndFurniture',
+    'slabs',
+    'stairs',
+    'pathways',
+    ...SERVICE_DISCIPLINES,
+  ]);
   const unsupportedContent = Object.entries(extensions)
     .filter(([name]) => !lifted.has(name))
     .map(([name, value]) => ({
@@ -626,6 +670,8 @@ export function adaptArqHouse17Model(raw: unknown): ArqHouse17AdaptResult {
     furnishings,
     slabs,
     stairs,
+    servicePoints,
+    pathways,
     unsupportedContent,
     modelSchema: ADAPTED_MODEL_SCHEMA,
     sourceRepositoryRevision:

@@ -93,7 +93,7 @@ import {
   type WorkspaceProjectContext,
   type WorkspaceViewKind,
 } from '@arq/workspace';
-import { FitIcon, InspectIcon, Model3dIcon, PlanIcon, SheetIcon } from '@arq/icons';
+import { FitIcon, InspectIcon, Model3dIcon, PlanIcon, SheetIcon, ViewStyleIcon } from '@arq/icons';
 import { worldPoint, type WorldPoint } from '@arq/geometry-2d';
 import { createUndoStack, hasErrors, type ValidationMessage } from '@arq/operations';
 import { validateUniqueElementIds, validateWallSegments } from '@arq/validation';
@@ -127,6 +127,8 @@ import {
   type NativeFurnishing,
   type NativeSlab,
   type NativeStair,
+  type NativeServicePoint,
+  type NativePathway,
   type NativeProjectModel as NativeProjectDocument,
 } from '@arq/project-loading';
 import { plateSolids, stairFlightSolids } from '@arq/geometry-3d';
@@ -262,6 +264,8 @@ interface LevelPlacedContent {
   readonly furnishings: readonly NativeFurnishing[];
   readonly slabs: readonly NativeSlab[];
   readonly stairs: readonly NativeStair[];
+  readonly servicePoints: readonly NativeServicePoint[];
+  readonly pathways: readonly NativePathway[];
 }
 
 /**
@@ -269,7 +273,13 @@ interface LevelPlacedContent {
  * shows. A shared constant so every reset points at the same empty value and no
  * render is handed a fresh object that changed nothing.
  */
-const EMPTY_LEVEL_CONTENT: LevelPlacedContent = { furnishings: [], slabs: [], stairs: [] };
+const EMPTY_LEVEL_CONTENT: LevelPlacedContent = {
+  furnishings: [],
+  slabs: [],
+  stairs: [],
+  servicePoints: [],
+  pathways: [],
+};
 
 /**
  * What a plate is drawn as in 3D. Mirrors ModelCanvas's own reserved material
@@ -288,6 +298,10 @@ const LANDING_THICKNESS_MM = 180;
 
 /** Stable empty, so a render with no project open does not rebuild the 3D scene. */
 const EMPTY_PLACED_SOLIDS: readonly ModelPlacedSolid[] = [];
+
+/** The same, for the services overlay when it is switched off. */
+const EMPTY_SERVICE_POINTS: readonly NativeServicePoint[] = [];
+const EMPTY_PATHWAYS: readonly NativePathway[] = [];
 
 /**
  * Everything on a level that is not a wall, a room or an opening: the
@@ -320,6 +334,8 @@ function placedContentForLevel(
   return {
     furnishings: document.furnishings.filter((entry) => entry.levelId === levelId),
     slabs: document.slabs.filter((entry) => entry.levelId === levelId),
+    servicePoints: document.servicePoints.filter((entry) => entry.levelId === levelId),
+    pathways: document.pathways.filter((entry) => entry.levelId === levelId),
     stairs:
       elevation === null
         ? []
@@ -681,6 +697,8 @@ export function App(): JSX.Element {
    */
   const [levelPlacedContent, setLevelPlacedContent] =
     useState<LevelPlacedContent>(EMPTY_LEVEL_CONTENT);
+  /** Whether the services-and-routes overlay is on. Off until a reader asks for it. */
+  const [servicesShown, setServicesShown] = useState(false);
 
   /*
    * Real local persistence: the journal is opened once, recovery replays it
@@ -2032,6 +2050,14 @@ export function App(): JSX.Element {
    * whether it belongs here: the grid toggles the plan's own grid, and search
    * opens the command palette. Nothing here is a placeholder.
    */
+  /*
+   * The toggle appears only when there is something for it to reveal. A control
+   * that does nothing on a project carrying no services is a control a reader
+   * has to try in order to learn it is empty.
+   */
+  const hasServicesOverlay =
+    levelPlacedContent.servicePoints.length > 0 || levelPlacedContent.pathways.length > 0;
+
   const viewTools =
     activeTab === null || sheetRect === null ? null : (
       <div
@@ -2046,6 +2072,36 @@ export function App(): JSX.Element {
         >
           <FitIcon width={16} height={16} />
         </button>
+        {/*
+          Building services and walkable routes, off by default.
+
+          A general arrangement plan does not carry 126 fittings. The fixture's
+          own drawing set puts them on their own sheets - A111 electrical, A121
+          plumbing and HVAC, E111 reflected ceiling - precisely because drawing
+          them over the floor plan buries the floor plan, which is what happened
+          when they were first drawn here: three room names went unreadable
+          under the sockets.
+
+          Arq has no sheet-per-discipline surface yet, so this is the honest
+          middle: the content is in the model, it is one control away, and the
+          drawing underneath stays readable. It is not a substitute for
+          discipline sheets and should not become one.
+        */}
+        {hasServicesOverlay && (
+          <button
+            type="button"
+            className="arq-shell-button"
+            aria-pressed={servicesShown}
+            aria-label={
+              servicesShown
+                ? 'Hide building services and routes'
+                : 'Show building services and routes'
+            }
+            onClick={() => setServicesShown((shown) => !shown)}
+          >
+            <ViewStyleIcon width={16} height={16} />
+          </button>
+        )}
         <button
           type="button"
           className="arq-shell-button"
@@ -2099,6 +2155,8 @@ export function App(): JSX.Element {
           furnishings={levelPlacedContent.furnishings}
           slabs={levelPlacedContent.slabs}
           stairs={levelPlacedContent.stairs}
+          servicePoints={servicesShown ? levelPlacedContent.servicePoints : EMPTY_SERVICE_POINTS}
+          pathways={servicesShown ? levelPlacedContent.pathways : EMPTY_PATHWAYS}
           wallDimensions={wallDimensions}
           wallOpenings={wallOpenings}
           onSceneBuilt={(scene) => {

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parsePlacedContent } from './placed-content';
 
 /**
- * The three sections that used to be dropped on open.
+ * The sections that used to be dropped on open.
  *
  * The cases worth writing here are the ones where a wrong answer is invisible:
  * a rotation applied to the wrong centre still produces a rectangle, and a
@@ -244,15 +244,114 @@ describe('parsePlacedContent - absence', () => {
    * section that is present and malformed is, because that is a file claiming
    * to contain furniture and failing to say where any of it is.
    */
-  it('reads a model with none of the three sections as empty, not as a failure', () => {
+  it('reads a model with none of the sections as empty, not as a failure', () => {
     const result = parsePlacedContent({ projectName: 'Untitled', walls: [] });
     if (result.status !== 'parsed') throw new Error(result.reason);
-    expect(result.content).toEqual({ furnishings: [], slabs: [], stairs: [] });
+    expect(result.content).toEqual({
+      furnishings: [],
+      slabs: [],
+      stairs: [],
+      servicePoints: [],
+      pathways: [],
+    });
   });
 
   it('ignores a section that is present but not a list', () => {
     const result = parsePlacedContent({ furnishings: 'lots' });
     if (result.status !== 'parsed') throw new Error(result.reason);
     expect(result.content.furnishings).toEqual([]);
+  });
+});
+
+describe('parsePlacedContent - service points', () => {
+  const point = {
+    id: 'lt-rm-gf-study-ambient',
+    discipline: 'lighting',
+    levelId: 'level-ground',
+    roomId: 'rm-gf-study',
+    kind: 'ceiling-light',
+    point: { x: 2400, y: 1900, z: 2750 },
+    circuit: 'lighting-a',
+    note: 'dimmable ambient layer',
+  };
+
+  it('reads a point with its discipline, position and height', () => {
+    const result = parsePlacedContent({ servicePoints: [point] });
+    if (result.status !== 'parsed') throw new Error(result.reason);
+    const [read] = result.content.servicePoints;
+    expect(read?.discipline).toBe('lighting');
+    expect(read?.position).toEqual({ x: 2400, y: 1900 });
+    expect(read?.elevationMillimetres).toBe(2750);
+    expect(read?.system).toBe('lighting-a');
+  });
+
+  /**
+   * The fixture's plumbing points carry no `z`, because a waste run is set out
+   * in plan and its invert is a drainage calculation. Defaulting them to zero
+   * would put every sanitary fitting on the floor slab and look deliberate.
+   */
+  it('keeps a missing height as null rather than defaulting it to the floor', () => {
+    const result = parsePlacedContent({
+      servicePoints: [{ ...point, id: 'pl-wc', discipline: 'plumbing', point: { x: 100, y: 200 } }],
+    });
+    if (result.status !== 'parsed') throw new Error(result.reason);
+    expect(result.content.servicePoints[0]!.elevationMillimetres).toBeNull();
+  });
+
+  /** `circuit` for electrical, `system` for plumbing - one field either way. */
+  it('reads a plumbing system where an electrical point has a circuit', () => {
+    const result = parsePlacedContent({
+      servicePoints: [
+        { ...point, id: 'pl-wc', discipline: 'plumbing', circuit: undefined, system: 'soil' },
+      ],
+    });
+    if (result.status !== 'parsed') throw new Error(result.reason);
+    expect(result.content.servicePoints[0]!.system).toBe('soil');
+  });
+
+  it('rejects a point with no position, which would draw every fitting in one corner', () => {
+    const result = parsePlacedContent({ servicePoints: [{ ...point, point: undefined }] });
+    expect(result.status).toBe('rejected');
+  });
+
+  it('rejects a discipline it has no symbol for rather than guessing one', () => {
+    const result = parsePlacedContent({ servicePoints: [{ ...point, discipline: 'sprinkler' }] });
+    expect(result.status).toBe('rejected');
+    if (result.status !== 'rejected') return;
+    expect(result.reason).toContain('sprinkler');
+  });
+});
+
+describe('parsePlacedContent - pathways', () => {
+  const route = {
+    id: 'p17-entry',
+    levelId: 'level-ground',
+    purpose: 'entry and courtyard sightline',
+    width: 1600,
+    points: [
+      [9000, -900],
+      [9000, 900],
+      [9000, 4200],
+    ],
+  };
+
+  it('reads the route as points with its clear width and purpose', () => {
+    const result = parsePlacedContent({ pathways: [route] });
+    if (result.status !== 'parsed') throw new Error(result.reason);
+    const [read] = result.content.pathways;
+    expect(read?.points).toHaveLength(3);
+    expect(read?.points[0]).toEqual({ x: 9000, y: -900 });
+    expect(read?.widthMillimetres).toBe(1600);
+    expect(read?.purpose).toBe('entry and courtyard sightline');
+  });
+
+  /** One point is a place, not a route. It draws as nothing and claims to be a path. */
+  it('rejects a route with fewer than two points', () => {
+    const result = parsePlacedContent({ pathways: [{ ...route, points: [[9000, 0]] }] });
+    expect(result.status).toBe('rejected');
+  });
+
+  it('rejects a route with no clear width', () => {
+    expect(parsePlacedContent({ pathways: [{ ...route, width: 0 }] }).status).toBe('rejected');
   });
 });

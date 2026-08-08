@@ -51,9 +51,13 @@ import {
   furnishingPrimitives,
   slabPrimitives,
   stairPrimitives,
+  servicePointPrimitives,
+  pathwayPrimitives,
   type PlanFurnishingInput,
   type PlanSlabInput,
   type PlanStairInput,
+  type PlanServicePointInput,
+  type PlanPathwayInput,
   type RoomLabelObstacle,
   type PlanScene,
 } from '@arq/plan-renderer';
@@ -121,6 +125,8 @@ const FURNISHING_MATERIALS: readonly string[] = [
 const NO_FURNISHINGS: readonly PlanFurnishingInput[] = [];
 const NO_SLABS: readonly PlanSlabInput[] = [];
 const NO_STAIRS: readonly PlanStairInput[] = [];
+const NO_SERVICE_POINTS: readonly PlanServicePointInput[] = [];
+const NO_PATHWAYS: readonly PlanPathwayInput[] = [];
 
 /**
  * The view an empty surface opens at, since there is nothing to fit to.
@@ -436,6 +442,18 @@ export interface PlanCanvasProps {
   readonly slabs?: readonly PlanSlabInput[];
   /** The stairs rising from the level, with their flights, nosings and direction of travel. */
   readonly stairs?: readonly PlanStairInput[];
+  /**
+   * Building services on the level - luminaires, outlets, sanitary fittings and
+   * plant - drawn as a symbol per discipline.
+   *
+   * Drawn on the floor plan rather than on their own discipline sheets, which
+   * is where a set of drawings would put them. Arq has no sheet-per-discipline
+   * surface yet, and a hundred and twenty-six fittings a user cannot see at all
+   * is a worse answer than a hundred and twenty-six they can see all at once.
+   */
+  readonly servicePoints?: readonly PlanServicePointInput[];
+  /** The walkable routes through the level, as centrelines. */
+  readonly pathways?: readonly PlanPathwayInput[];
   /** True when the canvas must refuse to author - an opened .arq project is inspected, not edited. */
   readonly readOnly?: boolean;
   /** Current selection, shared with the model panel and inspector. */
@@ -588,6 +606,8 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   const furnishings = props.furnishings ?? NO_FURNISHINGS;
   const slabs = props.slabs ?? NO_SLABS;
   const stairs = props.stairs ?? NO_STAIRS;
+  const servicePoints = props.servicePoints ?? NO_SERVICE_POINTS;
+  const pathways = props.pathways ?? NO_PATHWAYS;
   const content: PlanContent = useMemo(() => ({ rooms, walls }), [rooms, walls]);
 
   /* ------------------------------------------------------------------ */
@@ -1086,6 +1106,14 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
        */
       ...furnishings.flatMap(furnishingPrimitives),
       ...stairs.flatMap(stairPrimitives),
+      /*
+       * Routes under the services, and both over the furniture they thread
+       * between. A route is a property of the floor; a fitting sits on or above
+       * it, and a socket hidden behind a walking line would be the one thing on
+       * the drawing a reader is trying to find.
+       */
+      ...pathways.flatMap(pathwayPrimitives),
+      ...servicePoints.flatMap(servicePointPrimitives),
       ...wallPrimitives,
     ];
 
@@ -1167,6 +1195,8 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     furnishings,
     slabs,
     stairs,
+    servicePoints,
+    pathways,
     walls,
     selection,
     draftPoints,
