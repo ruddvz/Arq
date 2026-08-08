@@ -51,7 +51,7 @@ import {
   furnishingPrimitives,
   slabPrimitives,
   stairPrimitives,
-  type PlacedFootprint,
+  type PlanFurnishingInput,
   type PlanSlabInput,
   type PlanStairInput,
   type RoomLabelObstacle,
@@ -99,7 +99,26 @@ const NO_ROOMS: readonly PlanRoom[] = [];
  * rather than fresh `[]` literals, so a surface that passes none of them does
  * not rebuild the scene on every render.
  */
-const NO_FURNISHINGS: readonly PlacedFootprint[] = [];
+/**
+ * The furnishing materials the appearance carries a tint for.
+ *
+ * A list rather than a scan of the stylesheet because `getComputedStyle` can
+ * only be asked about a property by name. A project naming a material outside
+ * this list is not an error - `canvas2d-paint` draws it as an outline, which is
+ * the honest answer for a material nobody has chosen a colour for.
+ */
+const FURNISHING_MATERIALS: readonly string[] = [
+  'wood',
+  'stone',
+  'fabric',
+  'metal',
+  'glass',
+  'white',
+  'green',
+  'solar',
+];
+
+const NO_FURNISHINGS: readonly PlanFurnishingInput[] = [];
 const NO_SLABS: readonly PlanSlabInput[] = [];
 const NO_STAIRS: readonly PlanStairInput[] = [];
 
@@ -408,7 +427,7 @@ export interface PlanCanvasProps {
    * what it is describing. A hundred and forty filled blocks would hide the plan
    * they annotate.
    */
-  readonly furnishings?: readonly PlacedFootprint[];
+  readonly furnishings?: readonly PlanFurnishingInput[];
   /**
    * The floor or roof plates on the level. Their voids are the point: a
    * courtyard or a stairwell is a hole a person can fall through, and a plan
@@ -614,6 +633,20 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         roomFill: value('--arq-plan-room-fill', 'transparent'),
         roomFills: Object.fromEntries(
           ROOM_TINTS.map((tint) => [tint, value(`--arq-plan-${tint}`, 'transparent')]),
+        ),
+        /*
+         * Read the same way as the room washes, and read at all only for the
+         * materials the appearance names. A material the tokens do not carry is
+         * left out of this map entirely rather than mapped to `transparent`, so
+         * `canvas2d-paint` can tell "no colour for this material" from "this
+         * material is deliberately clear" - the first draws an outline, and the
+         * second would be a claim the file never made.
+         */
+        materialFills: Object.fromEntries(
+          FURNISHING_MATERIALS.map((material) => [
+            material,
+            value(`--arq-plan-material-${material}`, ''),
+          ]).filter(([, colour]) => colour !== ''),
         ),
         /*
          * Only outdoor rooms are hatched, and only when the appearance names a

@@ -61,11 +61,13 @@ const TEXT_LINE_HEIGHT_PX = 12;
  * island the moment there was one - the label and the island both legible
  * alone, neither legible together.
  *
- * Two pixels a side. Less does not separate the text from linework crossing it;
- * more starts eating the drawing around short labels, which trades one
- * unreadable thing for another.
+ * Three pixels a side. Two was enough against linework alone and not against a
+ * filled body: once furniture is drawn as solid material rather than outline,
+ * the halo is separating text from a field of colour rather than from a few
+ * strokes. More than three starts eating the drawing around short labels, which
+ * trades one unreadable thing for another.
  */
-const TEXT_HALO_CSS_PX = 2;
+const TEXT_HALO_CSS_PX = 3;
 
 /**
  * One line of label text, knocked out of whatever is behind it.
@@ -142,6 +144,17 @@ export interface PlanPalette {
    * one wash instead of several, which is what this looked like before.
    */
   readonly roomFills?: Readonly<Record<string, string>>;
+  /**
+   * A tint per furnishing material, keyed by the material name the model
+   * states - `wood`, `fabric`, `stone`, `glass` and the rest.
+   *
+   * Keyed by the file's own vocabulary rather than by a closed set this package
+   * defines, for the same reason `NativeFurnishing.kind` is: a project may name
+   * a material nothing here has heard of, and the honest response is to draw it
+   * as an outline rather than to collapse it into "other" and colour it as
+   * something it is not. An absent key means exactly that.
+   */
+  readonly materialFills?: Readonly<Record<string, string>>;
   /**
    * Tints whose rooms are hatched as well as filled, keyed by `RoomTint`, with
    * the colour to draw the hatching in.
@@ -287,9 +300,20 @@ function paintPrimitive<TId>(
         const colour =
           primitive.fill === 'poche'
             ? palette.poche
-            : primitive.fillTint === undefined
-              ? palette.roomFill
-              : (palette.roomFills?.[primitive.fillTint] ?? palette.roomFill);
+            : primitive.fill === 'furnishing'
+              ? /*
+                 * A furnishing whose material the palette does not name is left
+                 * unfilled rather than given the generic tint. An outline is an
+                 * honest "a thing is here"; a wrong colour claims a material the
+                 * file did not state, and the whole point of tinting these is
+                 * that the colour means something.
+                 */
+                primitive.fillTint === undefined
+                ? undefined
+                : palette.materialFills?.[primitive.fillTint]
+              : primitive.fillTint === undefined
+                ? palette.roomFill
+                : (palette.roomFills?.[primitive.fillTint] ?? palette.roomFill);
         if (colour !== undefined) {
           target.setLineDash([]);
           target.fillStyle = colour;

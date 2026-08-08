@@ -10,12 +10,42 @@ const RECTANGLE = [
 ];
 
 describe('furnishingPrimitives', () => {
-  it('draws one outline, not a fill', () => {
-    const [primitive, ...rest] = furnishingPrimitives({ id: 'it-desk', footprint: RECTANGLE });
+  /**
+   * This asserted the opposite until the render was put beside the fixture's
+   * own coordinated drawings, which fill their furniture and are the more
+   * readable for it. The reasoning against filling - that 140 filled shapes
+   * would hide the plan - turned out to be wrong about the drawing it was
+   * protecting: an outlined wardrobe against an outlined wall is two rectangles
+   * sharing an edge, and a filled one is plainly an object standing there.
+   */
+  it('fills the body and tints it with the stated material', () => {
+    const [primitive, ...rest] = furnishingPrimitives({
+      id: 'it-desk',
+      footprint: RECTANGLE,
+      material: 'wood',
+    });
     expect(rest).toEqual([]);
     expect(primitive?.kind).toBe('polygon');
-    // No `fill`: 140 filled blocks would hide the plan they are annotating.
-    expect(primitive && 'fill' in primitive ? primitive.fill : undefined).toBeUndefined();
+    if (primitive?.kind !== 'polygon') return;
+    expect(primitive.fill).toBe('furnishing');
+    expect(primitive.fillTint).toBe('wood');
+  });
+
+  /**
+   * A material the file does not state leaves the tint off entirely, rather
+   * than naming one. `canvas2d-paint` draws an untinted furnishing as its
+   * outline, which says "a thing is here" without claiming what it is made of.
+   */
+  it('leaves the tint off when the file states no material', () => {
+    for (const material of [null, undefined]) {
+      const [primitive] = furnishingPrimitives({
+        id: 'it-desk',
+        footprint: RECTANGLE,
+        ...(material === undefined ? {} : { material }),
+      });
+      if (primitive?.kind !== 'polygon') throw new Error('expected a polygon');
+      expect(primitive.fillTint).toBeUndefined();
+    }
   });
 
   it('draws nothing for a footprint that is not a shape', () => {

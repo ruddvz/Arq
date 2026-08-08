@@ -33,6 +33,15 @@ export interface PlacedFootprint {
   readonly footprint: readonly WorldPoint[];
 }
 
+export interface PlanFurnishingInput extends PlacedFootprint {
+  /**
+   * The material the model states, used as the fill tint key. Absent, or a name
+   * the palette does not carry, draws the outline alone - see
+   * `canvas2d-paint.ts` for why an unknown material is not given a colour.
+   */
+  readonly material?: string | null;
+}
+
 export interface PlanSlabInput {
   readonly id: string;
   /** The plate's outer boundary. */
@@ -73,18 +82,33 @@ const ARROW_HEAD_MM = 300;
 const ARROW_HEAD_HALF_ANGLE = Math.PI / 6;
 
 /**
- * A furnishing's footprint outline.
+ * A furnishing, as a filled body with its outline on top.
  *
- * One primitive, not a filled shape: furniture in a plan is drawn as outline so
- * the floor finish, the room tint and the dimensions underneath stay readable
- * through it. A filled block of 140 items would hide the room it is meant to
- * describe.
+ * Drawn as an outline alone at first, reasoning that 140 filled shapes would
+ * hide the plan they annotate. The fixture's own coordinated drawings fill
+ * them, and side by side the filled drawing is the more readable: an outlined
+ * wardrobe against an outlined wall is two rectangles sharing an edge, while a
+ * filled one is plainly an object standing against a wall.
+ *
+ * The tint is the material the model already states, so the fill carries
+ * information rather than decoration - a glazed shower screen and a stone
+ * counter are the same rectangle otherwise. A material the palette has no
+ * colour for falls back to the outline, rather than being coloured as something
+ * it is not.
  */
 export function furnishingPrimitives(
-  furnishing: PlacedFootprint,
+  furnishing: PlanFurnishingInput,
 ): readonly PlanPrimitiveInput<string>[] {
   if (furnishing.footprint.length < 3) return [];
-  return [{ kind: 'polygon', elementId: furnishing.id, points: furnishing.footprint }];
+  return [
+    {
+      kind: 'polygon',
+      elementId: furnishing.id,
+      points: furnishing.footprint,
+      fill: 'furnishing',
+      ...(furnishing.material == null ? {} : { fillTint: furnishing.material }),
+    },
+  ];
 }
 
 /**

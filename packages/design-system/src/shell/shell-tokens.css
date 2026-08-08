@@ -66,6 +66,29 @@
    * the building, and a plan whose colours compete with its walls is a diagram,
    * not a drawing.
    */
+  /*
+   * A tint per furnishing material.
+   *
+   * Furniture was drawn as outline only, on the reasoning that a filled plan
+   * hides the drawing underneath it. The fixture's own coordinated drawings
+   * fill it, and they are the more readable of the two: a filled body separates
+   * a wardrobe from the wall it stands against, and the colour carries the one
+   * thing the outline cannot say - a glazed shower screen and a stone counter
+   * are the same rectangle.
+   *
+   * Stronger than the room washes above and deliberately so. These are objects
+   * standing on the floor, not the floor; a furniture tint as faint as a room
+   * tint would disappear into the room it sits in.
+   */
+  --arq-plan-material-wood: #cfa877;
+  --arq-plan-material-stone: #d8d5cd;
+  --arq-plan-material-fabric: #c9c6c2;
+  --arq-plan-material-metal: #c3cace;
+  --arq-plan-material-glass: #b6dcea;
+  --arq-plan-material-white: #eef1f2;
+  --arq-plan-material-green: #b6ceac;
+  --arq-plan-material-solar: #93a3b2;
+
   --arq-plan-room-living: #eaeef4;
   --arq-plan-room-cooking: #f4efe6;
   --arq-plan-room-dining: #efeaf2;
@@ -272,6 +295,18 @@
     --arq-plan-room-fill: #1b1f22;
     /* Dark: the same relationships, an order of magnitude quieter, because a
        wash that reads gently on paper shouts on a near-black page. */
+    /* Dark: the same eight materials, darkened to sit on a near-black page
+       while keeping their hue relationships - wood warm, glass cool, greenery
+       green - because the colour is the information. */
+    --arq-plan-material-wood: #6a5334;
+    --arq-plan-material-stone: #57554f;
+    --arq-plan-material-fabric: #4f4d4a;
+    --arq-plan-material-metal: #4a5257;
+    --arq-plan-material-glass: #2f5c6c;
+    --arq-plan-material-white: #5b6165;
+    --arq-plan-material-green: #435339;
+    --arq-plan-material-solar: #3b4653;
+
     --arq-plan-room-living: #1a2027;
     --arq-plan-room-cooking: #232019;
     --arq-plan-room-dining: #201c24;
