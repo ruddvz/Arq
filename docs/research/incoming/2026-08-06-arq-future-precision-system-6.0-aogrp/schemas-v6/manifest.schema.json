@@ -59,12 +59,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "type",
-          "offset",
-          "stored_length",
-          "payload_hash"
-        ],
+        "required": ["type", "offset", "stored_length", "payload_hash"],
         "type": "object"
       },
       "type": "array"

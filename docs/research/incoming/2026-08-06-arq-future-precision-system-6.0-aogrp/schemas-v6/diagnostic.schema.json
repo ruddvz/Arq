@@ -20,19 +20,9 @@
       "type": "string"
     },
     "severity": {
-      "enum": [
-        "info",
-        "warning",
-        "error",
-        "fatal"
-      ]
+      "enum": ["info", "warning", "error", "fatal"]
     }
   },
-  "required": [
-    "code",
-    "severity",
-    "message",
-    "safe_state"
-  ],
+  "required": ["code", "severity", "message", "safe_state"],
   "type": "object"
 }

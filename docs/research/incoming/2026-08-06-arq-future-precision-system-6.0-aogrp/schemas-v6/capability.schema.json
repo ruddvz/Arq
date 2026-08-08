@@ -8,12 +8,7 @@
       "type": "string"
     },
     "preservation": {
-      "enum": [
-        "understood",
-        "opaque",
-        "reference-only",
-        "unsupported"
-      ]
+      "enum": ["understood", "opaque", "reference-only", "unsupported"]
     },
     "required": {
       "type": "boolean"
@@ -23,10 +18,6 @@
       "type": "integer"
     }
   },
-  "required": [
-    "id",
-    "version",
-    "required"
-  ],
+  "required": ["id", "version", "required"],
   "type": "object"
 }

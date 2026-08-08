@@ -26,11 +26,6 @@
       "type": "string"
     }
   },
-  "required": [
-    "type_id",
-    "schema_version",
-    "entity_id",
-    "payload"
-  ],
+  "required": ["type_id", "schema_version", "entity_id", "payload"],
   "type": "object"
 }

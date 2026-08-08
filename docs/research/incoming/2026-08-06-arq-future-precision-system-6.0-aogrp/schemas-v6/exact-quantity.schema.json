@@ -16,10 +16,6 @@
       "type": "string"
     }
   },
-  "required": [
-    "coefficient",
-    "scale",
-    "unit"
-  ],
+  "required": ["coefficient", "scale", "unit"],
   "type": "object"
 }

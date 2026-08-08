@@ -11,7 +11,7 @@ names an outcome without saying what the host does when that outcome is
 shipped in `packages/arqfs/src/arqfs-node-atomic-swap.ts` for the real
 `.arq` SQLite adapter (not copied wholesale — a transactional single-file
 engine and an append-only pack format differ in what's achievable, but the
-*shape* of the guarantee below is engine-independent):
+_shape_ of the guarantee below is engine-independent):
 
 1. **Detection must happen before visibility.** An adapter MUST verify its
    own materialisation (its own integrity check, not a trust of the write
