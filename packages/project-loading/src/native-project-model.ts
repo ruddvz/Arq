@@ -227,6 +227,29 @@ function countUnsupported(
   return { section, count: value.length, reason };
 }
 
+/**
+ * Unsupported content the model declares about itself.
+ *
+ * Malformed entries are skipped rather than rejected. This list is a courtesy -
+ * it says what a build cannot show - and refusing to open a project because its
+ * apology is badly formed would turn a warning into an outage.
+ */
+function parseDeclaredUnsupported(value: unknown): readonly NativeUnsupportedContent[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  const entries: NativeUnsupportedContent[] = [];
+  for (const entry of value) {
+    if (!isRecord(entry)) continue;
+    const section = nonEmptyString(entry.section);
+    const reason = nonEmptyString(entry.reason);
+    const count = finiteNumber(entry.count);
+    if (section === null || reason === null || count === null || count <= 0) continue;
+    entries.push({ section, count: Math.floor(count), reason });
+  }
+  return entries;
+}
+
 function parseLevels(raw: readonly unknown[]): readonly Level[] {
   return raw.map((entry, index) => {
     if (!isRecord(entry)) {
@@ -823,6 +846,16 @@ export function parseNativeProjectModel(
         'linearDimensions',
         'Dimensions are recorded but not drawn in plan yet.',
       ),
+      /*
+       * Content the file declares that this reader has no field for at all.
+       *
+       * Counted here from `unsupportedContent` rather than discovered, because
+       * discovery would mean this module knowing every vocabulary any file might
+       * use. Whatever adapts a foreign model knows what it left behind and is the
+       * only thing that can say so honestly; this carries the declaration through
+       * to a surface that can show it.
+       */
+      ...parseDeclaredUnsupported(raw.unsupportedContent),
     ].filter((entry): entry is NativeUnsupportedContent => entry !== null);
 
     return {

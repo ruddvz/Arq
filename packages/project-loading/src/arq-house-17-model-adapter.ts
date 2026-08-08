@@ -591,11 +591,42 @@ export function adaptArqHouse17Model(raw: unknown): ArqHouse17AdaptResult {
       'The flight and landing definitions are read as stated, including the mid-landing that the bounded single-flight Stair type cannot hold.',
   });
 
+  /*
+   * What is left in `semanticExtensions`, counted by name.
+   *
+   * The three sections above are the ones the model can carry today. The other
+   * fifty-five are not - lighting layouts, electrical and plumbing points, HVAC,
+   * room boundary lines, walkability rules, the validation histories of every
+   * version back to 12. Lifting them into fields whose meaning this build would
+   * then have to guess would be worse than not reading them.
+   *
+   * But dropping them silently is what this whole change exists to stop. So each
+   * remaining section is counted from the file and declared, and the reader
+   * carries the declaration through to a surface that can name it. A user is
+   * entitled to know that their file contains 47 lighting points this build does
+   * not draw; they are not entitled to find that out by noticing the ceiling is
+   * empty.
+   */
+  const lifted = new Set(['fixturesAndFurniture', 'slabs', 'stairs']);
+  const unsupportedContent = Object.entries(extensions)
+    .filter(([name]) => !lifted.has(name))
+    .map(([name, value]) => ({
+      section: `semanticExtensions.${name}`,
+      count: Array.isArray(value) ? value.length : 1,
+      reason: 'Recorded in the file and not read by this build.',
+    }))
+    .filter((entry) => entry.count > 0)
+    // Largest omission first. Fifty-five entries is a long list, and a reader
+    // scanning it should meet the 188 room boundary lines before the one-line
+    // acoustic intent rather than after it.
+    .sort((a, b) => b.count - a.count || a.section.localeCompare(b.section));
+
   const model: Record<string, unknown> = {
     ...raw,
     furnishings,
     slabs,
     stairs,
+    unsupportedContent,
     modelSchema: ADAPTED_MODEL_SCHEMA,
     sourceRepositoryRevision:
       isRecord(raw.repositoryContract) &&

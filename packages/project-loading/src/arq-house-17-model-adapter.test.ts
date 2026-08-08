@@ -505,3 +505,83 @@ describe('formatArqHouse17Translations', () => {
     expect(text).toContain('[assumed] doors.swingAngle');
   });
 });
+
+/**
+ * The leftovers.
+ *
+ * Three of the file's 58 `semanticExtensions` sections are lifted into model
+ * fields; the other 55 are not, and the point of this block is that not-lifted
+ * must never mean not-mentioned. A user is entitled to know their file carries
+ * 47 lighting points this build does not draw; they are not entitled to find
+ * that out by noticing the ceiling is empty.
+ */
+describe('what the adapter leaves behind', () => {
+  function modelWithExtensions(extensions: Record<string, unknown>): Record<string, unknown> {
+    return {
+      id: 'arq-project-house',
+      name: 'House',
+      revision: 670,
+      units: 'mm',
+      levels: [{ id: 'level-ground', name: 'Ground', elevation: 0 }],
+      wallTypes: [{ id: 'wt', name: 'Wall', width: 300 }],
+      walls: [],
+      semanticExtensions: extensions,
+    };
+  }
+
+  function inventory(extensions: Record<string, unknown>): { section: string; count: number }[] {
+    const adapted = adaptArqHouse17Model(modelWithExtensions(extensions));
+    if (adapted.status !== 'adapted') throw new Error('expected the model to adapt');
+    return adapted.model['unsupportedContent'] as { section: string; count: number }[];
+  }
+
+  it('counts every section it did not lift, by name and quantity', () => {
+    const declared = inventory({ lighting: [1, 2, 3], hvac: [1] });
+    expect(declared).toEqual([
+      { section: 'semanticExtensions.lighting', count: 3, reason: expect.any(String) },
+      { section: 'semanticExtensions.hvac', count: 1, reason: expect.any(String) },
+    ]);
+  });
+
+  it('does not report the three sections it did lift', () => {
+    const declared = inventory({
+      fixturesAndFurniture: [{ id: 'a' }],
+      slabs: [{ id: 'b' }],
+      stairs: [{ id: 'c' }],
+      lighting: [1],
+    });
+    expect(declared.map((entry) => entry.section)).toEqual(['semanticExtensions.lighting']);
+  });
+
+  /** A section that is an object, not a list, is one thing rather than none. */
+  it('counts a non-list section as one', () => {
+    expect(inventory({ designIntent: { concept: 'courtyard' } })[0]?.count).toBe(1);
+  });
+
+  it('leaves an empty section out rather than reporting nothing missing', () => {
+    expect(inventory({ lighting: [], hvac: [1] }).map((entry) => entry.section)).toEqual([
+      'semanticExtensions.hvac',
+    ]);
+  });
+
+  it('puts the largest omission first', () => {
+    const declared = inventory({ acousticIntent: { a: 1 }, roomBoundaryLines: [1, 2], hvac: [1] });
+    expect(declared.map((entry) => entry.count)).toEqual([2, 1, 1]);
+    // Ties break by name, so the order is stable rather than whatever the file
+    // happened to write first.
+    expect(declared[1]?.section).toBe('semanticExtensions.acousticIntent');
+  });
+
+  it('declares nothing for a model that carries no extensions at all', () => {
+    const adapted = adaptArqHouse17Model({
+      id: 'p',
+      name: 'P',
+      units: 'mm',
+      levels: [{ id: 'l', name: 'L', elevation: 0 }],
+      wallTypes: [{ id: 'wt', name: 'W', width: 300 }],
+      walls: [],
+    });
+    if (adapted.status !== 'adapted') throw new Error('expected the model to adapt');
+    expect(adapted.model['unsupportedContent']).toEqual([]);
+  });
+});
