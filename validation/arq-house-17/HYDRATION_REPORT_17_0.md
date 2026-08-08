@@ -139,18 +139,22 @@ is being refused, not missing:
 
 ## Claims and their evidence state
 
-| Claim                                                              | State                                                          |
-| ------------------------------------------------------------------ | -------------------------------------------------------------- |
-| ZIP, `house.arq`, PDF and GLB SHA-256 match the published values   | verified                                                       |
-| ZIP integrity and the package's own 67-file checksum manifest pass | verified                                                       |
-| `house.arq` is a structurally valid arqfs v2 container             | verified                                                       |
-| `manifest.json` parses under `@arq/project-format`                 | verified                                                       |
-| `views.json` hydrates — 6 views, 4 presentable                     | verified                                                       |
-| The live application hydrates every 17.0 semantic element          | **failed** — refused at `modelSchema`; 14 blocking divergences |
-| 65 wall heights would be silently lost even once opening succeeds  | verified                                                       |
-| Schema-v2 named indexes are absent from the container              | verified                                                       |
-| The 17.0 model's geometry is architecturally correct               | not inspected — outside this gate                              |
-| Structural, electrical, plumbing, HVAC and construction approval   | not inspected — separate professional gates, unchanged         |
+| Claim                                                                      | State                                                                                    |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| ZIP, `house.arq`, PDF and GLB SHA-256 match the published values           | verified                                                                                 |
+| ZIP integrity and the package's own 67-file checksum manifest pass         | verified                                                                                 |
+| `house.arq` is a structurally valid arqfs v2 container                     | verified                                                                                 |
+| `manifest.json` parses under `@arq/project-format`                         | verified                                                                                 |
+| `views.json` hydrates — 6 views, 4 presentable                             | verified                                                                                 |
+| The live application hydrates every 17.0 semantic element **as shipped**   | **failed** — refused at `modelSchema`; 14 blocking divergences                           |
+| The live application hydrates every 17.0 semantic element **once adapted** | verified — 3 levels, 5 wall types, 68 walls, 47 openings, 26 doors, 13 windows, 48 rooms |
+| The adapter preserves all 65 stated wall heights and all element ids       | verified                                                                                 |
+| The adapter leaves wall geometry unchanged                                 | verified — 0 endpoint changes                                                            |
+| The 6 assumed translations reflect this project's drawing intent           | assumed — conventions applied, each with a stated rationale, owner review open           |
+| 65 wall heights would be silently lost even once opening succeeds          | verified                                                                                 |
+| Schema-v2 named indexes are absent from the container                      | verified                                                                                 |
+| The 17.0 model's geometry is architecturally correct                       | not inspected — outside this gate                                                        |
+| Structural, electrical, plumbing, HVAC and construction approval           | not inspected — separate professional gates, unchanged                                   |
 
 ## Second artifact: the slimmed container
 
@@ -186,11 +190,93 @@ still absent from both.
 So this is container housekeeping, not a fix for the gate above. The blocking
 work remains the model vocabulary.
 
+## The adapter: the file now hydrates
+
+`adaptArqHouse17Model` (`@arq/project-loading`) translates the 17.0 vocabulary
+into the reader's, and with it the file opens. Run it with:
+
+```
+pnpm check:arq-hydration <path-to>/house.arq --adapt --json out.json
+```
+
+Evidence: [`HYDRATION_CHECK_ADAPTED.json`](./HYDRATION_CHECK_ADAPTED.json).
+
+**Every element hydrates, and nothing is lost:**
+
+|            | Declared in file | Hydrated |
+| ---------- | ---------------: | -------: |
+| levels     |                3 |        3 |
+| wall types |                5 |        5 |
+| walls      |               68 |       68 |
+| openings   |               47 |       47 |
+| doors      |               26 |       26 |
+| windows    |               13 |       13 |
+| rooms      |               48 |       48 |
+
+Zero remaining divergences, zero unsupported content. Verified additionally:
+all **65 stated wall heights** survive exactly (57 matching their wall type's
+derived default, 8 carried as explicit `heightOverride`), every element id
+survives, and **no wall endpoint moves** — the geometry is untouched.
+
+### Sixteen translations, and which are which
+
+The adapter reports every translation with a `basis`, because the difference
+matters: **10 derived** (computed from what the file already states — a second
+reader would compute the same) and **6 assumed** (the file does not carry it and
+a convention was applied).
+
+| Translation                                                              | Entries | Basis       |
+| ------------------------------------------------------------------------ | ------: | ----------- |
+| `wallTypes.thickness` — bare `width` → `{ value, unit }` mm              |       5 | derived     |
+| `wallTypes.defaultHeight` — from the walls using each type               |       5 | derived     |
+| `wallTypes.function` — from the walls' `semanticRole`                    |       5 | derived     |
+| `walls.joinStart/joinEnd` — `union-solid` → `auto`                       |     130 | derived     |
+| `walls.height` → `heightOverride` where it differs from the type default |       8 | derived     |
+| `openings.kind` — sliding/pocket → `door`, plain → `void`                |      28 | derived     |
+| `doors.side` — from the file's own `swingDirection`                      |      26 | derived     |
+| `rooms.status` — `coordinated-*` → `valid`                               |      48 | derived     |
+| `model.project` — flat → nested                                          |       1 | derived     |
+| `project.units` — `mm` → `metric`                                        |       1 | derived     |
+| `model.modelSchema` — tagged `+arq-house-17`                             |       1 | **assumed** |
+| `walls.alignment` — absent → `centre`                                    |       3 | **assumed** |
+| `walls.joinStart/joinEnd` — absent → `auto`                              |       6 | **assumed** |
+| `doors.hand` — `start`/`end` → `left`/`right`                            |      26 | **assumed** |
+| `doors.swingAngle` — absent → 90° swing, 0° sliding/pocket               |      26 | **assumed** |
+| `windows.side` — `configured` → `left`                                   |      13 | **assumed** |
+
+The `derived` ones are safe to rely on. The six `assumed` ones are conventions,
+and each carries a written rationale in the translation record so a reviewer can
+weigh it rather than discover it. Two are worth an owner's explicit view:
+
+- **`doors.hand`** — the file hinges by wall end (`start`/`end`); the adapter
+  reads `start` as the left edge looking along the wall. If that convention is
+  backwards for this project, 26 doors read mirrored on plan.
+- **`doors.swingAngle`** — plans draw a swing at 90°, and a sliding or pocket
+  leaf is given 0° because it sweeps no arc. Drawing one at 90° would be a
+  fiction; if a different drawing standard applies, this is where to set it.
+
+### What the adapter deliberately does not do
+
+It does not write to the file. It takes a decoded `model.json` and returns a new
+one, so `house.arq` keeps its SHA-256 and stays the artifact that was
+checksummed. Persisting an adapted model into a `.arq` is a separate decision
+with its own review.
+
+It also refuses to run on anything that is not this vocabulary
+(`status: 'not-applicable'`), so it can never quietly rewrite an unrelated
+project that merely happens to be missing a field.
+
 ## What this does not change
 
-`house.arq` was opened read-only and is byte-identical after this check; its
-SHA-256 is unchanged. Nothing in the shipped package was modified. Making the
-file hydrate requires a writer change or an explicit import adapter, and this
-report deliberately stops short of either — translating `union-solid` to `auto`
-or `configured` to `left` is a modelling decision about a real building, not a
-mechanical rename, and it belongs to whoever owns the model.
+`house.arq` was opened read-only and is byte-identical after every check; its
+SHA-256 is unchanged, and nothing in the shipped package was modified.
+
+The adapter changes what this build can _read_, not what the file _is_. As
+shipped, `house.arq` still does not hydrate, and any claim that it opens has to
+carry "once adapted" with it — the two are different statements and the tooling
+keeps them apart on purpose.
+
+The six assumed translations remain open for owner review. They are conventions
+this report applies and states, not facts the file supplies, and the two that
+affect how the building reads on plan — door hand and swing angle — are named
+above so they can be confirmed or overridden rather than inherited silently.

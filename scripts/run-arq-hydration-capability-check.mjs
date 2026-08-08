@@ -57,15 +57,18 @@ const REQUIRED_TABLES = [
 function parseArguments(argv) {
   const positional = [];
   let jsonOut = null;
+  let adapt = false;
   for (let index = 0; index < argv.length; index += 1) {
     if (argv[index] === '--json') {
       jsonOut = argv[index + 1] ?? null;
       index += 1;
+    } else if (argv[index] === '--adapt') {
+      adapt = true;
     } else {
       positional.push(argv[index]);
     }
   }
-  return { arqPath: positional[0] ?? null, jsonOut };
+  return { arqPath: positional[0] ?? null, jsonOut, adapt };
 }
 
 function fail(message, code) {
@@ -137,7 +140,7 @@ function readContainer(arqPath) {
  * relative import. Same reason, and same shape, as
  * run-file-open-capability-check.mjs's fixture generation.
  */
-function runHydration(workDir) {
+function runHydration(workDir, adapt) {
   const testFilePath = path.join(
     repoRoot,
     'packages/project-loading/src/_arq-hydration.generated.test.ts',
@@ -149,22 +152,42 @@ function runHydration(workDir) {
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseNativeProjectModel, parseNativeProjectViews } from './native-project-model';
 import { checkArqModelConformance } from './arq-model-conformance';
+import { adaptArqHouse17Model } from './arq-house-17-model-adapter';
 
 const dir = '${escaped}';
+const adapt = ${adapt ? 'true' : 'false'};
 
 it('hydrates the model under check', () => {
-  const model = JSON.parse(readFileSync(dir + '/model.json', 'utf8'));
+  const original = JSON.parse(readFileSync(dir + '/model.json', 'utf8'));
   let views: readonly ReturnType<typeof parseNativeProjectViews>[number][] = [];
   try {
     views = parseNativeProjectViews(JSON.parse(readFileSync(dir + '/views.json', 'utf8')));
   } catch {
     views = [];
   }
+
+  // Reported whether or not --adapt was asked for, so the output always states
+  // what the file is as it stands before saying what an adapter could make it.
+  const beforeAdapting = checkArqModelConformance(original, views);
+
+  let model: unknown = original;
+  let adaptation: unknown = null;
+  if (adapt) {
+    const result = adaptArqHouse17Model(original);
+    adaptation =
+      result.status === 'adapted'
+        ? { status: result.status, translations: result.translations }
+        : { status: result.status, reason: result.reason };
+    if (result.status === 'adapted') model = result.model;
+  }
+
   const conformance = checkArqModelConformance(model, views);
   const parsed = parseNativeProjectModel(model, views);
   writeFileSync(
     dir + '/result.json',
     JSON.stringify({
+      beforeAdapting: { hydrates: beforeAdapting.hydrates, findings: beforeAdapting.findings },
+      adaptation,
       conformance,
       views: views.map((view) => ({ id: view.id, kind: view.kind, supported: view.supported })),
       hydrated:
@@ -180,6 +203,9 @@ it('hydrates the model under check', () => {
                 windows: parsed.model.windows.length,
                 rooms: parsed.model.rooms.length,
               },
+              wallHeightOverrides: parsed.model.walls.filter(
+                (wall) => wall.heightOverride !== undefined,
+              ).length,
               unsupported: parsed.model.unsupported,
             }
           : null,
@@ -206,10 +232,10 @@ it('hydrates the model under check', () => {
 }
 
 function main() {
-  const { arqPath, jsonOut } = parseArguments(process.argv.slice(2));
+  const { arqPath, jsonOut, adapt } = parseArguments(process.argv.slice(2));
   if (arqPath === null) {
     fail(
-      'usage: node scripts/run-arq-hydration-capability-check.mjs <path-to.arq> [--json <out>]',
+      'usage: node scripts/run-arq-hydration-capability-check.mjs <path-to.arq> [--adapt] [--json <out>]',
       2,
     );
   }
@@ -252,7 +278,7 @@ function main() {
     } else {
       writeFileSync(path.join(workDir, 'views.json'), '{"views":[]}');
     }
-    result = runHydration(workDir);
+    result = runHydration(workDir, adapt);
   } catch (error) {
     rmSync(workDir, { recursive: true, force: true });
     fail(error.message, 2);
@@ -260,6 +286,35 @@ function main() {
   rmSync(workDir, { recursive: true, force: true });
 
   const { conformance } = result;
+
+  /*
+   * Printed before the adapted verdict, always: a run with --adapt must never
+   * read as though the file itself hydrates. What the file is, then what an
+   * adapter can make of it - in that order.
+   */
+  if (adapt) {
+    console.log('--- As shipped (before adapting) ---');
+    console.log(`  hydrates: ${result.beforeAdapting.hydrates ? 'yes' : 'no'}`);
+    console.log(`  divergences: ${result.beforeAdapting.findings.length}`);
+    const { adaptation } = result;
+    if (adaptation === null || adaptation.status !== 'adapted') {
+      console.log(`--- Adapter --- not applicable: ${adaptation?.reason ?? 'no adaptation run'}`);
+    } else {
+      const derived = adaptation.translations.filter((entry) => entry.basis === 'derived');
+      const assumed = adaptation.translations.filter((entry) => entry.basis === 'assumed');
+      console.log(
+        `--- Adapter --- ${adaptation.translations.length} translations (${derived.length} derived, ${assumed.length} assumed)`,
+      );
+      for (const entry of adaptation.translations) {
+        console.log(
+          `  [${entry.basis}] ${entry.section}.${entry.field} - ${entry.entries} entr${entry.entries === 1 ? 'y' : 'ies'}`,
+        );
+        console.log(`      ${entry.from}  ->  ${entry.to}`);
+        console.log(`      ${entry.rationale}`);
+      }
+    }
+  }
+
   console.log('--- Hydration ---');
   console.log(`  reader verdict: ${conformance.readerVerdict}`);
   if (conformance.readerReason !== null) {
@@ -276,6 +331,7 @@ function main() {
         .map(([section, count]) => `${section} ${count}`)
         .join(', ')}`,
     );
+    console.log(`  wall height overrides carried: ${result.hydrated.wallHeightOverrides}`);
     for (const entry of result.hydrated.unsupported) {
       console.log(`  not displayed: ${entry.section} (${entry.count}) - ${entry.reason}`);
     }
@@ -316,6 +372,7 @@ function main() {
             missingTables: container.missingTables,
             meta: container.meta,
           },
+          adapted: adapt,
           hydration: result,
         },
         null,
@@ -326,9 +383,16 @@ function main() {
     console.log(`Wrote ${jsonOut}`);
   }
 
+  /*
+   * The adapted result is never reported as the file's own property. "Hydrates
+   * once adapted" and "hydrates" are different claims, and collapsing them is
+   * how a package ends up believed to open when it does not.
+   */
   console.log(
     conformance.hydrates
-      ? 'RESULT: this build opens and hydrates the file.'
+      ? adapt
+        ? 'RESULT: this build hydrates the file once adapted. As shipped it does not.'
+        : 'RESULT: this build opens and hydrates the file.'
       : 'RESULT: this build does not hydrate the file - see the divergences above.',
   );
   process.exit(conformance.hydrates ? 0 : 1);
