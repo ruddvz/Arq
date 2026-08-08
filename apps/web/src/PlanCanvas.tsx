@@ -49,6 +49,7 @@ import {
   roomLabelFits,
   roomTint,
   furnishingPrimitives,
+  furnishingDetailPrimitives,
   slabPrimitives,
   stairPrimitives,
   servicePointPrimitives,
@@ -1127,7 +1128,14 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
        * The furnishings were added to `labelObstacles` above, before the walls,
        * so a room name lands on clear floor rather than across a dining table.
        */
+      /*
+       * The body first, then the detail over it. A WC's pan has to sit on top
+       * of the fill it is cut out of, and both belong to the same element - so
+       * a glyph carries its furnishing's id with a suffix, the same rule the
+       * wall panels and the stair treads already follow.
+       */
       ...furnishings.flatMap(furnishingPrimitives),
+      ...furnishings.flatMap(furnishingDetailPrimitives),
       ...stairs.flatMap(stairPrimitives),
       /*
        * Routes under the services, and both over the furniture they thread

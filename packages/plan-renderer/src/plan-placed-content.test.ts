@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { worldPoint } from '@arq/geometry-2d';
 import {
+  furnishingDetailPrimitives,
   furnishingPrimitives,
   pathwayPrimitives,
   servicePointPrimitives,
@@ -256,5 +257,108 @@ describe('pathwayPrimitives', () => {
 
   it('draws nothing for a route with a single point', () => {
     expect(pathwayPrimitives({ id: 'p', points: [worldPoint(0, 0)] })).toEqual([]);
+  });
+});
+
+describe('furnishingDetailPrimitives', () => {
+  /** A WC 700 wide by 750 deep, against a wall to its north, facing south. */
+  const wc = {
+    id: 'it-gf-bath-wc',
+    footprint: [
+      worldPoint(1000, 2000),
+      worldPoint(1700, 2000),
+      worldPoint(1700, 2750),
+      worldPoint(1000, 2750),
+    ],
+    kind: 'toilet',
+    facingDirection: 'south',
+  };
+
+  it('draws a cistern and a pan for a WC', () => {
+    const ids = furnishingDetailPrimitives(wc).map((entry) => entry.elementId);
+    expect(ids).toEqual(['it-gf-bath-wc-cistern', 'it-gf-bath-wc-pan']);
+  });
+
+  /**
+   * The whole point of reading `facingDirection`. A cistern belongs against the
+   * wall; the pan sits in front of it. Facing south means the back is at the
+   * north edge - the higher y - and a wrongly-oriented WC looks deliberate.
+   */
+  it('puts the cistern at the back, away from the way the fitting faces', () => {
+    const [cistern, pan] = furnishingDetailPrimitives(wc);
+    if (cistern?.kind !== 'polygon' || pan?.kind !== 'polygon')
+      throw new Error('expected polygons');
+    const centre = (p: typeof cistern) =>
+      p.points.reduce((sum, point) => sum + point.y, 0) / p.points.length;
+    // Facing south, so the back is north: the cistern sits at higher y.
+    expect(centre(cistern)).toBeGreaterThan(centre(pan));
+  });
+
+  it('flips the cistern to the other edge for a fitting facing north', () => {
+    const [cistern, pan] = furnishingDetailPrimitives({ ...wc, facingDirection: 'north' });
+    if (cistern?.kind !== 'polygon' || pan?.kind !== 'polygon')
+      throw new Error('expected polygons');
+    const centre = (p: typeof cistern) =>
+      p.points.reduce((sum, point) => sum + point.y, 0) / p.points.length;
+    expect(centre(cistern)).toBeLessThan(centre(pan));
+  });
+
+  /**
+   * The glyph is built in the footprint's own frame, so a rotated item's symbol
+   * rotates with it without the glyph ever seeing a world axis. This fixture's
+   * four WCs are all at 90 degrees.
+   */
+  it('keeps the glyph inside a rotated footprint', () => {
+    const angle = Math.PI / 4;
+    const centre = { x: 1350, y: 2375 };
+    const rotated = wc.footprint.map((p) => {
+      const dx = p.x - centre.x;
+      const dy = p.y - centre.y;
+      return worldPoint(
+        centre.x + dx * Math.cos(angle) - dy * Math.sin(angle),
+        centre.y + dx * Math.sin(angle) + dy * Math.cos(angle),
+      );
+    });
+    for (const primitive of furnishingDetailPrimitives({ ...wc, footprint: rotated })) {
+      if (primitive.kind !== 'polygon') continue;
+      for (const point of primitive.points) {
+        // Inside the rotated footprint's circumcircle, which a glyph escaping
+        // into the room next door would not be.
+        expect(Math.hypot(point.x - centre.x, point.y - centre.y)).toBeLessThan(600);
+      }
+    }
+  });
+
+  it('draws four burners for a hob and two bowls for a double vanity', () => {
+    const box = [worldPoint(0, 0), worldPoint(900, 0), worldPoint(900, 600), worldPoint(0, 600)];
+    expect(
+      furnishingDetailPrimitives({
+        id: 'h',
+        footprint: box,
+        kind: 'hob',
+        facingDirection: 'north',
+      }),
+    ).toHaveLength(4);
+    expect(
+      furnishingDetailPrimitives({
+        id: 'v',
+        footprint: box,
+        kind: 'double-vanity',
+        facingDirection: 'south',
+      }),
+    ).toHaveLength(4);
+  });
+
+  /**
+   * A kind with no conventional symbol keeps its filled body and gets nothing
+   * else. Inventing a glyph for a media console would teach a reader a
+   * vocabulary that exists nowhere else.
+   */
+  it('draws nothing for a kind with no conventional symbol', () => {
+    const box = [worldPoint(0, 0), worldPoint(900, 0), worldPoint(900, 600), worldPoint(0, 600)];
+    expect(furnishingDetailPrimitives({ id: 'm', footprint: box, kind: 'media-console' })).toEqual(
+      [],
+    );
+    expect(furnishingDetailPrimitives({ id: 'm', footprint: box })).toEqual([]);
   });
 });

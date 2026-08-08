@@ -70,6 +70,19 @@ export interface NativeFurnishing {
   readonly heightMillimetres: number;
   /** The stated material name, or null. Free vocabulary, same reasoning as `kind`. */
   readonly material: string | null;
+  /**
+   * Which way the item faces - `north`, `south`, `east`, `west` - or null.
+   *
+   * It is what tells a symbol where its back is: a WC's cistern belongs against
+   * the wall and not across the room, and a bed's pillows belong at the head.
+   * Without it a fitting's glyph is a coin toss, which is worse than no glyph,
+   * because a wrongly-oriented WC looks deliberate.
+   *
+   * Kept as the file's own word rather than converted to an angle: the fixture
+   * states cardinal directions, and turning "north" into 0 degrees would invent
+   * a precision the field does not have.
+   */
+  readonly facingDirection: string | null;
 }
 
 /** A floor or roof plate, as an outer ring with the holes cut out of it. */
@@ -317,6 +330,7 @@ function parseFurnishings(raw: readonly unknown[]): readonly NativeFurnishing[] 
       rotationDegrees,
       heightMillimetres: height,
       material: nonEmpty(entry.material),
+      facingDirection: nonEmpty(entry.facingDirection),
     };
   });
 }

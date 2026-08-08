@@ -456,3 +456,238 @@ export function northArrowPrimitives(
     },
   ];
 }
+
+/**
+ * Kind-specific detail drawn inside a furnishing's footprint.
+ *
+ * A rectangle says a thing is there and nothing about what it is. A WC and a
+ * bedside table are the same rectangle; a shower and a wardrobe are the same
+ * rectangle. The file names 64 kinds exactly, so the information is there and
+ * the drawing was throwing it away.
+ *
+ * Everything below is built in the footprint's own frame - `u` across it, `v`
+ * along it - and mapped out to world coordinates at the end. That is what makes
+ * a rotated item's symbol rotate with it: the beds at 90 degrees and the lounge
+ * chairs at -10 need no special handling, because the glyph never sees a world
+ * axis.
+ *
+ * Only kinds where the symbol is conventional and unambiguous are drawn. A
+ * `media-console` or a `shoe-cabinet` gets its filled body and no glyph,
+ * because inventing a symbol for it would teach a reader a vocabulary that
+ * exists nowhere else.
+ */
+
+/** The footprint's local frame: an origin corner and the two edge vectors from it. */
+interface LocalFrame {
+  readonly ox: number;
+  readonly oy: number;
+  readonly ux: number;
+  readonly uy: number;
+  readonly vx: number;
+  readonly vy: number;
+}
+
+/**
+ * The frame of a four-corner footprint, with `v` pointing away from the side
+ * the item faces.
+ *
+ * Orienting from `facingDirection` is what puts a cistern against the wall
+ * rather than across the room. Where the file states no facing, `v` is left as
+ * the footprint's own second edge - an arbitrary but stable choice, and the
+ * symbols that care about a back are exactly the ones this fixture states a
+ * facing for.
+ */
+function localFrame(footprint: readonly WorldPoint[], facing: string | null): LocalFrame | null {
+  if (footprint.length < 4) return null;
+  const [a, b, , d] = footprint as readonly [WorldPoint, WorldPoint, WorldPoint, WorldPoint];
+  let frame: LocalFrame = {
+    ox: a.x,
+    oy: a.y,
+    ux: b.x - a.x,
+    uy: b.y - a.y,
+    vx: d.x - a.x,
+    vy: d.y - a.y,
+  };
+
+  const facingVector: Readonly<Record<string, readonly [number, number]>> = {
+    north: [0, 1],
+    south: [0, -1],
+    east: [1, 0],
+    west: [-1, 0],
+  };
+  const want = facing === null ? undefined : facingVector[facing];
+  if (want === undefined) return frame;
+
+  // `v` should point the way the item faces, so "the back" is always v = 0.
+  // Whichever edge is more aligned with the facing becomes v, flipped if it
+  // currently points the other way.
+  const [wx, wy] = want;
+  const alongU = frame.ux * wx + frame.uy * wy;
+  const alongV = frame.vx * wx + frame.vy * wy;
+  if (Math.abs(alongU) > Math.abs(alongV)) {
+    frame = {
+      ox: frame.ox,
+      oy: frame.oy,
+      ux: frame.vx,
+      uy: frame.vy,
+      vx: frame.ux,
+      vy: frame.uy,
+    };
+  }
+  const facingAlignment = frame.vx * wx + frame.vy * wy;
+  if (facingAlignment < 0) {
+    // Move the origin to the opposite corner and reverse v, so v = 0 stays the
+    // back edge rather than becoming a point outside the footprint.
+    return {
+      ox: frame.ox + frame.vx,
+      oy: frame.oy + frame.vy,
+      ux: frame.ux,
+      uy: frame.uy,
+      vx: -frame.vx,
+      vy: -frame.vy,
+    };
+  }
+  return frame;
+}
+
+/** A point in the footprint's frame, where u and v both run 0 to 1. */
+function local(frame: LocalFrame, u: number, v: number): WorldPoint {
+  return worldPoint(frame.ox + frame.ux * u + frame.vx * v, frame.oy + frame.uy * u + frame.vy * v);
+}
+
+/** An ellipse inscribed in the given local rectangle, as a closed ring. */
+function localEllipse(
+  frame: LocalFrame,
+  u0: number,
+  v0: number,
+  u1: number,
+  v1: number,
+  segments = 16,
+): readonly WorldPoint[] {
+  const cu = (u0 + u1) / 2;
+  const cv = (v0 + v1) / 2;
+  const ru = (u1 - u0) / 2;
+  const rv = (v1 - v0) / 2;
+  const points: WorldPoint[] = [];
+  for (let step = 0; step < segments; step += 1) {
+    const angle = (step / segments) * Math.PI * 2;
+    points.push(local(frame, cu + ru * Math.cos(angle), cv + rv * Math.sin(angle)));
+  }
+  return points;
+}
+
+function localRing(
+  frame: LocalFrame,
+  u0: number,
+  v0: number,
+  u1: number,
+  v1: number,
+): readonly WorldPoint[] {
+  return [local(frame, u0, v0), local(frame, u1, v0), local(frame, u1, v1), local(frame, u0, v1)];
+}
+
+/**
+ * The glyph for one furnishing kind, in its own frame, or nothing for a kind
+ * with no conventional symbol.
+ *
+ * `v = 0` is the back - against the wall, the head of the bed, the taps.
+ */
+function kindGlyph(
+  kind: string,
+  frame: LocalFrame,
+  id: string,
+): readonly PlanPrimitiveInput<string>[] {
+  const ring = (name: string, ...box: [number, number, number, number]) => ({
+    kind: 'polygon' as const,
+    elementId: `${id}-${name}`,
+    points: localRing(frame, ...box),
+  });
+  const ellipse = (
+    name: string,
+    u0: number,
+    v0: number,
+    u1: number,
+    v1: number,
+    segments?: number,
+  ) => ({
+    kind: 'polygon' as const,
+    elementId: `${id}-${name}`,
+    points: localEllipse(frame, u0, v0, u1, v1, segments),
+  });
+  const line = (name: string, from: [number, number], to: [number, number]) => ({
+    kind: 'line' as const,
+    elementId: `${id}-${name}`,
+    points: [local(frame, from[0], from[1]), local(frame, to[0], to[1])],
+  });
+
+  switch (kind) {
+    case 'toilet':
+      // Cistern across the back, pan as an ellipse in front of it.
+      return [ring('cistern', 0.1, 0, 0.9, 0.28), ellipse('pan', 0.2, 0.3, 0.8, 0.98)];
+    case 'basin':
+    case 'vanity':
+      return [ellipse('bowl', 0.28, 0.18, 0.72, 0.85), line('tap', [0.5, 0.06], [0.5, 0.16])];
+    case 'double-vanity':
+      return [
+        ellipse('bowl-a', 0.06, 0.18, 0.44, 0.85),
+        ellipse('bowl-b', 0.56, 0.18, 0.94, 0.85),
+        line('tap-a', [0.25, 0.06], [0.25, 0.16]),
+        line('tap-b', [0.75, 0.06], [0.75, 0.16]),
+      ];
+    case 'kitchen-sink':
+    case 'prep-sink':
+    case 'utility-sink':
+    case 'outdoor-sink':
+      return [ring('bowl', 0.12, 0.2, 0.88, 0.88), line('tap', [0.5, 0.06], [0.5, 0.16])];
+    case 'shower':
+      // Tray, and the diagonals that mark the fall to the drain.
+      return [
+        ring('tray', 0.06, 0.06, 0.94, 0.94),
+        line('fall-a', [0.06, 0.06], [0.94, 0.94]),
+        line('fall-b', [0.94, 0.06], [0.06, 0.94]),
+      ];
+    case 'bathtub':
+      return [ellipse('tub', 0.08, 0.12, 0.92, 0.92), ellipse('waste', 0.44, 0.16, 0.56, 0.3, 8)];
+    case 'bed-single':
+    case 'bed-queen':
+    case 'bed-king':
+    case 'daybed':
+      // Pillows at the head, and the turn-down line across the foot.
+      return [ring('pillow', 0.08, 0.04, 0.92, 0.22), line('turn-down', [0, 0.42], [1, 0.42])];
+    case 'hob':
+      return [
+        ellipse('burner-a', 0.08, 0.1, 0.44, 0.46, 10),
+        ellipse('burner-b', 0.56, 0.1, 0.92, 0.46, 10),
+        ellipse('burner-c', 0.08, 0.54, 0.44, 0.9, 10),
+        ellipse('burner-d', 0.56, 0.54, 0.92, 0.9, 10),
+      ];
+    case 'sofa':
+    case 'sofa-chaise':
+    case 'outdoor-sofa':
+      // Back along v = 0, arms down each side, seat cushion between them.
+      return [
+        ring('back', 0, 0, 1, 0.22),
+        ring('arm-a', 0, 0.22, 0.14, 1),
+        ring('arm-b', 0.86, 0.22, 1, 1),
+      ];
+    default:
+      return [];
+  }
+}
+
+/**
+ * The detail inside a furnishing, for the kinds that have a conventional
+ * symbol. Returns nothing for the rest, which keep their filled body.
+ */
+export function furnishingDetailPrimitives(
+  furnishing: PlanFurnishingInput & {
+    readonly kind?: string | null;
+    readonly facingDirection?: string | null;
+  },
+): readonly PlanPrimitiveInput<string>[] {
+  const kind = furnishing.kind;
+  if (kind === null || kind === undefined) return [];
+  const frame = localFrame(furnishing.footprint, furnishing.facingDirection ?? null);
+  if (frame === null) return [];
+  return kindGlyph(kind, frame, furnishing.id);
+}
