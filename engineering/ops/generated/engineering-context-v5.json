@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "98000f888c46ee742e5dec2f7a786ea3563615e6ada6ab5c8bdb38b7f9169b0e",
+  "source_hash": "e74dbdef69766f6bd4517563dcd9c612e42892dd619ac77eaf6a919a844c7977",
   "source_records": [
     {
       "scope": "package",
@@ -204,7 +204,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/App.tsx",
-      "sha256": "526425d5a1d6525f1f2be66fe261ed1f743b159f3a6a74a3935ae908b8559bf4"
+      "sha256": "096125ae82caf0a9ce7e87c95e519a32f582c936813729be647dd9b8252b812f"
     },
     {
       "scope": "repository",
@@ -219,12 +219,12 @@
     {
       "scope": "repository",
       "path": "apps/web/src/ModelCanvas.tsx",
-      "sha256": "af4676bd00a581fe741bdf3b9d5ee7e5efbf378365bfc2e0fc94460040164a6f"
+      "sha256": "0e7602ec11cf856c270a99e86102c282f4448135787df553351df9bfb65d3c8f"
     },
     {
       "scope": "repository",
       "path": "apps/web/src/PlanCanvas.tsx",
-      "sha256": "a42126dfbc1bdf5dc269c47e8d17be59145d1df3d78629acb497d73eb78928cb"
+      "sha256": "00aa54a3812e4e784d33df984599dda1f3da1c7356b4582ebec7bccce8a10506"
     },
     {
       "scope": "repository",
@@ -394,7 +394,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "f0a4472621653628e9ecabf7576fa73e0ef9a44cd2833cefa4e49fe24eb039f0"
+      "sha256": "58c2d1e9ff56fd415ac3cc5b46862fc15cf0c7ee2e4a8ecce8ae500ec11dff90"
     },
     {
       "scope": "repository",
