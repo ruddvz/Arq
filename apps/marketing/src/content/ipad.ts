@@ -68,6 +68,7 @@ export const ipadPage: Page = {
       },
       {
         title: 'What ARQ will not claim about capture',
+        kind: 'limit',
         body: html`
           <p>
             Consumer LiDAR is useful and imprecise at the same time. ARQ will never describe a phone

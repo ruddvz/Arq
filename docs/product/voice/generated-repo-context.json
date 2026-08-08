@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "902d378da04bb93fac8e2840153b498ffbd66419aeeb7992a448c9e3a75f9a98",
+  "sourceSetDigest": "d4c0b81f61fa4d172a8ae0599b09c0b005a314d68d8dd99acce71403958faa8e",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -564,12 +564,12 @@
       "id": "marketing-content",
       "kind": "directory",
       "path": "apps/marketing/src/content",
-      "sha256": "3ed2d95cd5f2fa4246528ca8be63614aebab551ae7110d757f5f7dd330a5b558",
+      "sha256": "e34693010376b888ddfa461988167af6b056ba3c9cc6dfbcfed29572f427ac7a",
       "files": [
         {
           "rel": "apps/marketing/src/content/ai.ts",
-          "sha256": "a4ddf4a24f3475dcdd43e8059cea1b079b0f332d224c22185387f3a4c57b616a",
-          "bytes": 4746
+          "sha256": "a0894ae36582ddae7d6c5487e607ad02d0f255f5e35b69f9b9d940769c2d7ddf",
+          "bytes": 4769
         },
         {
           "rel": "apps/marketing/src/content/architects.ts",
@@ -598,7 +598,7 @@
         },
         {
           "rel": "apps/marketing/src/content/home.ts",
-          "sha256": "675e8e059dc9a4aadb17382ba81dab7b7ea19f5557e92af8b5f87c5f27c8517d",
+          "sha256": "91d1793fbe2dcfdd648b77a9d9aba79ac95a75d5fcff93fd503a023b56dc3cab",
           "bytes": 4712
         },
         {
@@ -608,8 +608,8 @@
         },
         {
           "rel": "apps/marketing/src/content/ipad.ts",
-          "sha256": "a3e5d5051db55dc766206f07467ccae810190fd84eaa55973d14775662d0f837",
-          "bytes": 4198
+          "sha256": "720c88074ac57202265ef918c900ff7f15faa7925309ed97b23b7c3fe9d52603",
+          "bytes": 4221
         },
         {
           "rel": "apps/marketing/src/content/not-found.ts",
@@ -638,8 +638,8 @@
         },
         {
           "rel": "apps/marketing/src/content/security.ts",
-          "sha256": "1758272253f96c4a76c56d7111575642a8217bda2981a46a73bb14f8132f8f5d",
-          "bytes": 4800
+          "sha256": "a9aa27adf3d9551db846078de0154688b68326948254cd13f1cce594905f3dd5",
+          "bytes": 4921
         },
         {
           "rel": "apps/marketing/src/content/status.ts",
@@ -648,8 +648,8 @@
         },
         {
           "rel": "apps/marketing/src/content/students.ts",
-          "sha256": "5d87d78b5a237fef754c3ed4806a6ac0dca9f502b6d4eb5d0a77ccc9f1eb8364",
-          "bytes": 3303
+          "sha256": "e17231372d9223b6cb4c5283c29d5e2d4c4a82e34b9e569fc8378afeca491341",
+          "bytes": 3326
         },
         {
           "rel": "apps/marketing/src/content/terms.ts",

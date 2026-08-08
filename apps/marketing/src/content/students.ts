@@ -45,6 +45,7 @@ export const studentsPage: Page = {
       },
       {
         title: 'What it will not teach you',
+        kind: 'limit',
         body: html`
           <p>
             ARQ is not the industry's incumbent software and does not emulate it. If your course

@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "98000f888c46ee742e5dec2f7a786ea3563615e6ada6ab5c8bdb38b7f9169b0e",
+  "source_hash": "10bd0576ed907bc26529f4a7c88f05d54070513fc54f9571099aa3908a68df01",
   "source_records": [
     {
       "scope": "package",
@@ -109,7 +109,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/ai.ts",
-      "sha256": "a4ddf4a24f3475dcdd43e8059cea1b079b0f332d224c22185387f3a4c57b616a"
+      "sha256": "a0894ae36582ddae7d6c5487e607ad02d0f255f5e35b69f9b9d940769c2d7ddf"
     },
     {
       "scope": "repository",
@@ -139,7 +139,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/home.ts",
-      "sha256": "675e8e059dc9a4aadb17382ba81dab7b7ea19f5557e92af8b5f87c5f27c8517d"
+      "sha256": "91d1793fbe2dcfdd648b77a9d9aba79ac95a75d5fcff93fd503a023b56dc3cab"
     },
     {
       "scope": "repository",
@@ -149,7 +149,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/ipad.ts",
-      "sha256": "a3e5d5051db55dc766206f07467ccae810190fd84eaa55973d14775662d0f837"
+      "sha256": "720c88074ac57202265ef918c900ff7f15faa7925309ed97b23b7c3fe9d52603"
     },
     {
       "scope": "repository",
@@ -179,7 +179,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/security.ts",
-      "sha256": "1758272253f96c4a76c56d7111575642a8217bda2981a46a73bb14f8132f8f5d"
+      "sha256": "a9aa27adf3d9551db846078de0154688b68326948254cd13f1cce594905f3dd5"
     },
     {
       "scope": "repository",
@@ -189,7 +189,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/students.ts",
-      "sha256": "5d87d78b5a237fef754c3ed4806a6ac0dca9f502b6d4eb5d0a77ccc9f1eb8364"
+      "sha256": "e17231372d9223b6cb4c5283c29d5e2d4c4a82e34b9e569fc8378afeca491341"
     },
     {
       "scope": "repository",

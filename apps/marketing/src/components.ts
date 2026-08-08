@@ -55,25 +55,34 @@ export function hero(options: HeroOptions): SafeHtml {
 export interface Note {
   readonly title: string;
   readonly body: SafeHtml;
+  /**
+   * Marks this note as a limitation or caution rather than an ordinary
+   * narrative note: it gets a "LIMIT" marker instead of a sequence number
+   * and a rule down its left edge, so a warning cannot be mistaken for a
+   * feature description at a glance. Does not consume a sequence number,
+   * so the numbered notes around it stay contiguous (01, 02, 03 …).
+   */
+  readonly kind?: 'limit';
 }
 
 /** Numbered general notes: 01, 02, 03 … generated from array order. */
 export function notes(entries: readonly Note[]): SafeHtml {
+  let sequence = 0;
   return html`
     <div class="measure">
-      ${entries.map(
-        (entry, index) => html`
-          <section class="note">
+      ${entries.map((entry) => {
+        const isLimit = entry.kind === 'limit';
+        const marker = isLimit ? 'LIMIT' : String((sequence += 1)).padStart(2, '0');
+        return html`
+          <section class="${isLimit ? 'note note--limit' : 'note'}">
             <h2>
-              <span class="note-number" aria-hidden="true"
-                >${String(index + 1).padStart(2, '0')}</span
-              >
+              <span class="note-number" aria-hidden="true">${marker}</span>
               ${entry.title}
             </h2>
             <div class="note-body">${entry.body}</div>
           </section>
-        `,
-      )}
+        `;
+      })}
     </div>
   `;
 }

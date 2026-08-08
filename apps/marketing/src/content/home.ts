@@ -34,6 +34,17 @@ export const homePage: Page = {
     })}
     ${notes([
       {
+        title: 'Precision is the product',
+        body: html`
+          <p>
+            ARQ works in real units at millimetre precision. The status bar reads out world
+            coordinates, and dimensions are measurements rather than decorations. Where the software
+            cannot be precise, it says so: an error in ARQ names what happened, why, what was
+            affected and what remains safe.
+          </p>
+        `,
+      },
+      {
         title: 'Where your work is kept',
         body: html`
           <p>
@@ -47,17 +58,6 @@ export const homePage: Page = {
             journal in your browser's local storage and replayed when you return. That journal is a
             local record on your device. It does not write to a portable <code>.arq</code> file, and
             nothing is uploaded.
-          </p>
-        `,
-      },
-      {
-        title: 'Precision is the product',
-        body: html`
-          <p>
-            ARQ works in real units at millimetre precision. The status bar reads out world
-            coordinates, and dimensions are measurements rather than decorations. Where the software
-            cannot be precise, it says so: an error in ARQ names what happened, why, what was
-            affected and what remains safe.
           </p>
         `,
       },

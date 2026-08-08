@@ -78,6 +78,7 @@ export const aiPage: Page = {
       },
       {
         title: 'What AI in ARQ will not claim',
+        kind: 'limit',
         body: html`
           <p>
             Generated geometry is not accurate until you have checked it. ARQ's AI will not produce
