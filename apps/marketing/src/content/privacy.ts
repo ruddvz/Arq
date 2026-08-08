@@ -27,6 +27,16 @@ export const privacyPage: Page = {
       heading: 'No formal notice yet. Here is what can be stated.',
       lede: 'A lawyer-reviewed privacy notice is published before any hosted service launches. This page is not that notice. It is a plain-language account of the practices in force at the revision it was built from.',
     })}
+    <div class="measure">
+      <div class="title-block" aria-label="Document status">
+        <div><span class="tb-label">Document</span><span>Privacy notice</span></div>
+        <div>
+          <span class="tb-label">Status</span><span>Not published: description, not a notice</span>
+        </div>
+        <div><span class="tb-label">Legal review</span><span>None conducted</span></div>
+        <div><span class="tb-label">Changes</span><span>Dated in the changelog</span></div>
+      </div>
+    </div>
     ${notes([
       {
         title: 'This website',

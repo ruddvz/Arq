@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "d4c0b81f61fa4d172a8ae0599b09c0b005a314d68d8dd99acce71403958faa8e",
+  "sourceSetDigest": "bed0487ed3be0bf1ade907878d272f31caa33a2bd9cb06ac0d3581773b665283",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -564,7 +564,7 @@
       "id": "marketing-content",
       "kind": "directory",
       "path": "apps/marketing/src/content",
-      "sha256": "e34693010376b888ddfa461988167af6b056ba3c9cc6dfbcfed29572f427ac7a",
+      "sha256": "613030e598faf7a82e214a4dce7a2c41d9e6adece77190c322f8d761e4da5398",
       "files": [
         {
           "rel": "apps/marketing/src/content/ai.ts",
@@ -578,8 +578,8 @@
         },
         {
           "rel": "apps/marketing/src/content/changelog.ts",
-          "sha256": "45c3762a39d002ebebd65f4efc52a9fc44fa5d061bfd428b3e11432242b3f2a3",
-          "bytes": 8632
+          "sha256": "de1f06fcb276fca0d2c290f414a12fc62702edbc5cc428f12a38070da83bd3f3",
+          "bytes": 9009
         },
         {
           "rel": "apps/marketing/src/content/collaboration.ts",
@@ -588,8 +588,8 @@
         },
         {
           "rel": "apps/marketing/src/content/contact.ts",
-          "sha256": "ef24a37f6e8900886773ca017554173a4aa916ce8a609692c950edf73e5c7f04",
-          "bytes": 2931
+          "sha256": "3eee191db8f0cc6a250ab1144cf8db0578a05edfa31eb98feac1c62a04613b58",
+          "bytes": 3935
         },
         {
           "rel": "apps/marketing/src/content/docs-index.ts",
@@ -603,8 +603,8 @@
         },
         {
           "rel": "apps/marketing/src/content/interoperability.ts",
-          "sha256": "914a85d043713342e500377b76233bd2e8ec4a9e1e0ee46deea450cd64a64294",
-          "bytes": 4550
+          "sha256": "ea585d796748d176c7d4c0482a136f0029e76cc8450a4df9f4dca097de1b2076",
+          "bytes": 6306
         },
         {
           "rel": "apps/marketing/src/content/ipad.ts",
@@ -628,8 +628,8 @@
         },
         {
           "rel": "apps/marketing/src/content/privacy.ts",
-          "sha256": "2afcf61a2711732c8640c011170bb1f76dd48b0a0e51f383f0825a29fdd9e162",
-          "bytes": 4018
+          "sha256": "cd896458cfcd797c56503ff716d7d1008d7007738b7a95264591010f9702b19a",
+          "bytes": 4524
         },
         {
           "rel": "apps/marketing/src/content/product.ts",
@@ -653,8 +653,8 @@
         },
         {
           "rel": "apps/marketing/src/content/terms.ts",
-          "sha256": "5c0b235d27abb39d4daf3ce9d880612a6856fc290639f3c7e7ba760ca82bd9ba",
-          "bytes": 2965
+          "sha256": "ac4835ace4241bcf6995f2b14d67f4280f0e0b9ba7becffdd19d08866f01177c",
+          "bytes": 3477
         }
       ]
     },

@@ -2,6 +2,12 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "generatedAt": "2026-08-08T20:27:23.467Z",
+      "sourceSetDigest": "bed0487ed3be0bf1ade907878d272f31caa33a2bd9cb06ac0d3581773b665283",
+      "previousSourceSetDigest": "d4c0b81f61fa4d172a8ae0599b09c0b005a314d68d8dd99acce71403958faa8e",
+      "changedSourceSets": ["marketing-content"]
+    },
+    {
       "generatedAt": "2026-08-08T19:45:59.625Z",
       "sourceSetDigest": "d4c0b81f61fa4d172a8ae0599b09c0b005a314d68d8dd99acce71403958faa8e",
       "previousSourceSetDigest": "902d378da04bb93fac8e2840153b498ffbd66419aeeb7992a448c9e3a75f9a98",

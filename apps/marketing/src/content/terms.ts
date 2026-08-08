@@ -25,6 +25,17 @@ export const termsPage: Page = {
       heading: 'No published terms yet.',
       lede: 'Formal product terms need a lawyer and a service worth governing, and neither exists. Nothing on this page has had legal review, and none of it is an agreement.',
     })}
+    <div class="measure">
+      <div class="title-block" aria-label="Document status">
+        <div><span class="tb-label">Document</span><span>Terms</span></div>
+        <div>
+          <span class="tb-label">Status</span
+          ><span>Not published: description, not an agreement</span>
+        </div>
+        <div><span class="tb-label">Legal review</span><span>None conducted</span></div>
+        <div><span class="tb-label">Changes</span><span>Dated in the changelog</span></div>
+      </div>
+    </div>
     ${notes([
       {
         title: 'Using the pre-release build',

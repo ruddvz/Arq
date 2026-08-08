@@ -444,13 +444,76 @@ h1 {
   margin-block: 0.375rem;
 }
 
+/* ------------------------------------------------------------------ */
+/* Changelog timeline                                                  */
+/* ------------------------------------------------------------------ */
+
 /*
- * Changelog entries carry the repository paths or checks they rest on. It reads
- * as a reference line rather than prose, so it takes the mono face and the
- * secondary ink, like a drawing's reference note.
+ * A changelog entry is a dated record, not a narrative note: no note number,
+ * a compact meta line (date and category) instead of a heading badge, and
+ * its evidence collapsed behind a native disclosure so a reader scans dates
+ * and titles first and opens the repository paths only when they want them.
  */
-.note-body .entry-evidence {
-  margin-top: 0.5rem;
+.changelog-timeline {
+  padding-block: var(--space-4) var(--space-6);
+}
+
+.changelog-entry {
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--hairline);
+}
+
+.changelog-entry:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.changelog-meta {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+}
+
+.changelog-category {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid var(--hairline);
+  padding: 0.0625rem 0.4375rem;
+}
+
+.changelog-entry h2 {
+  font-size: clamp(1.0625rem, 2vw, 1.25rem);
+  font-weight: 640;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-2);
+}
+
+.changelog-summary {
+  max-width: 62ch;
+  color: var(--ink);
+  margin: 0 0 var(--space-2);
+}
+
+.changelog-evidence summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.02em;
+}
+
+.changelog-evidence summary:hover {
+  color: var(--accent);
+}
+
+.changelog-evidence p {
+  margin: 0.5rem 0 0;
+  max-width: 62ch;
   font-family: var(--font-mono);
   font-size: 0.8125rem;
   line-height: 1.5;
