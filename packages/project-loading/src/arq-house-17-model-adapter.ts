@@ -440,8 +440,33 @@ export function adaptArqHouse17Model(raw: unknown): ArqHouse17AdaptResult {
   const adaptedDoors = doors.map((door) => {
     const next = { ...door };
     const direction = door.swingDirection;
+    /*
+     * `hand` is set from the fixture's own drawings, not from a reading of what
+     * the word ought to mean.
+     *
+     * `hand: 'start'` first became `left`, which is the natural-looking guess.
+     * Rendered and compared against the package's own A101 - generated from
+     * this same model, so it is the model's statement of intent - the front
+     * door came out hinged on the opposite jamb from the one the drawing shows.
+     * The drawing hinges it at the right-hand jamb and swings it inward into
+     * the entrance vestibule, which is also the only sensible way for a house's
+     * front door to open. So `start` is `right`.
+     *
+     * `side` keeps its original polarity, and the reason is worth writing down
+     * because it is not what the field name suggests. `plan-openings.ts` applies
+     * `side` as a rotation from the *closed leaf direction*, and the closed leaf
+     * points away from whichever jamb `hand` chose - so the same `side` value
+     * opens a door in opposite directions depending on its hand. For this door,
+     * hinged at the end of a wall running +X, the closed leaf points -X and
+     * `side: 'right'` is what rotates it to +Y, into the house. `left` would put
+     * it out on the street.
+     *
+     * Both are pinned by `door-swing-matches-fixture.test.ts` against the doors
+     * the drawings show, because nothing about `start`, `1`, or `side` makes the
+     * correct answer self-evident to the next reader either.
+     */
     next.side = direction === -1 ? 'left' : 'right';
-    next.hand = door.hand === 'end' ? 'right' : 'left';
+    next.hand = door.hand === 'end' ? 'left' : 'right';
     const operation =
       typeof door.typeId === 'string' ? operationByDoorType.get(door.typeId) : undefined;
     next.swingAngle = operation === 'swing' ? 90 : 0;

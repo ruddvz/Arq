@@ -351,12 +351,19 @@ describe('adaptArqHouse17Model', () => {
     expect(parsed.model.doors.find((door) => door.id === 'd-slide')!.side).toBe('left');
   });
 
+  /**
+   * `start` is `right`, which is the opposite of what the words suggest and was
+   * asserted the other way round here until the drawings settled it. See
+   * `door-swing-matches-fixture.test.ts`: rendered against the package's own
+   * A101, `start` → `left` hinged the front door on the wrong jamb. This test
+   * pins the mapping; that one pins the reason.
+   */
   it('reads a door hand from the wall end the file hinges it on', () => {
     const parsed = parseNativeProjectModel(adaptOrThrow(house17Model()).model);
     if (parsed.status !== 'parsed') throw new Error('rejected');
 
-    expect(parsed.model.doors.find((door) => door.id === 'd-entry')!.hand).toBe('left');
-    expect(parsed.model.doors.find((door) => door.id === 'd-pocket')!.hand).toBe('right');
+    expect(parsed.model.doors.find((door) => door.id === 'd-entry')!.hand).toBe('right');
+    expect(parsed.model.doors.find((door) => door.id === 'd-pocket')!.hand).toBe('left');
   });
 
   /** A leaf that slides sweeps no arc, and drawing one at 90 degrees would be a fiction. */
