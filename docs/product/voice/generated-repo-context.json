@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "bed0487ed3be0bf1ade907878d272f31caa33a2bd9cb06ac0d3581773b665283",
+  "sourceSetDigest": "4dd51e345aaab926da3b73cf720071be26de2b5bb65826ec8535787eee31303b",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -564,52 +564,52 @@
       "id": "marketing-content",
       "kind": "directory",
       "path": "apps/marketing/src/content",
-      "sha256": "613030e598faf7a82e214a4dce7a2c41d9e6adece77190c322f8d761e4da5398",
+      "sha256": "bc9160094869ed26ec06d94bd7fd1261145859da8ea5aa7eee50ac415ebcfd4e",
       "files": [
         {
           "rel": "apps/marketing/src/content/ai.ts",
-          "sha256": "a0894ae36582ddae7d6c5487e607ad02d0f255f5e35b69f9b9d940769c2d7ddf",
-          "bytes": 4769
+          "sha256": "b1d4d260381a1d6d6468be39fe457434e9d7f400f4055a824fc924d691dbba54",
+          "bytes": 4818
         },
         {
           "rel": "apps/marketing/src/content/architects.ts",
-          "sha256": "1614e3cffdc4423e56fea5f1af5709bd678c5ad6ea8f8f1489f778e8defd4f20",
-          "bytes": 4476
+          "sha256": "e6d826f8b6238d9e2191d1d6907b32f025ea19c979e6a97587cfad1ce13742a9",
+          "bytes": 4497
         },
         {
           "rel": "apps/marketing/src/content/changelog.ts",
-          "sha256": "de1f06fcb276fca0d2c290f414a12fc62702edbc5cc428f12a38070da83bd3f3",
-          "bytes": 9009
+          "sha256": "59c28f3d19f4a5200956d95d17fda9b9547dee44d9b728a420211b7fae3ea258",
+          "bytes": 9036
         },
         {
           "rel": "apps/marketing/src/content/collaboration.ts",
-          "sha256": "d56fd6419fffed4ff910028ecc976444ec22b053f5ef4d4f19a2dc0b2ecf8ed9",
-          "bytes": 3818
+          "sha256": "f36f9f31a9aad79ad8f48e95cd52b35262177a46152529636fa38c2ec4cb43a0",
+          "bytes": 3867
         },
         {
           "rel": "apps/marketing/src/content/contact.ts",
-          "sha256": "3eee191db8f0cc6a250ab1144cf8db0578a05edfa31eb98feac1c62a04613b58",
-          "bytes": 3935
+          "sha256": "9f80065e6275691e4334d51e4f2ff6dd934e90530b390751458686c0cec980ae",
+          "bytes": 3962
         },
         {
           "rel": "apps/marketing/src/content/docs-index.ts",
-          "sha256": "0488803fb2042569a16f90e3819084ed26428ed038972ace3ec74f238635137c",
-          "bytes": 3878
+          "sha256": "5a2acb534dbeb14df702d2d9e1d08d832d4799f086d736cd84de70ddfe48afa6",
+          "bytes": 3600
         },
         {
           "rel": "apps/marketing/src/content/home.ts",
-          "sha256": "91d1793fbe2dcfdd648b77a9d9aba79ac95a75d5fcff93fd503a023b56dc3cab",
-          "bytes": 4712
+          "sha256": "22cf260a2af8dcb6dffac26f66c847d812f0aa5ca8ab590f1e82c6dc83ea08e0",
+          "bytes": 4733
         },
         {
           "rel": "apps/marketing/src/content/interoperability.ts",
-          "sha256": "ea585d796748d176c7d4c0482a136f0029e76cc8450a4df9f4dca097de1b2076",
-          "bytes": 6306
+          "sha256": "dbdcd508b269461a46560d2801e2efc4508dddfdb36ce1532851da9943efb4aa",
+          "bytes": 6332
         },
         {
           "rel": "apps/marketing/src/content/ipad.ts",
-          "sha256": "720c88074ac57202265ef918c900ff7f15faa7925309ed97b23b7c3fe9d52603",
-          "bytes": 4221
+          "sha256": "1aef4607796239e61f301ec106bcaf1968dbc312e464086248f48cf94d617182",
+          "bytes": 4270
         },
         {
           "rel": "apps/marketing/src/content/not-found.ts",
@@ -618,43 +618,43 @@
         },
         {
           "rel": "apps/marketing/src/content/open-source.ts",
-          "sha256": "bfb7598dfb87a5dfb1da35a8623046d69248bcf3c088ed1c5ef85e16e81ada5b",
-          "bytes": 2818
+          "sha256": "326f1f7d70021e1eba9a0e9d3dc3899d14a11a4dea1275f18e98de850c54b94a",
+          "bytes": 2845
         },
         {
           "rel": "apps/marketing/src/content/pricing.ts",
-          "sha256": "6e0189dfac24380a94f7c898a923e2caab8a35ed41d76956a9de966a89bee83a",
-          "bytes": 3504
+          "sha256": "1752737f9e5437acc283d1c708d5e08f10f99fb4068ed356e39edc60a923d715",
+          "bytes": 3531
         },
         {
           "rel": "apps/marketing/src/content/privacy.ts",
-          "sha256": "cd896458cfcd797c56503ff716d7d1008d7007738b7a95264591010f9702b19a",
-          "bytes": 4524
+          "sha256": "11a67160b835d92c9f9c5b738ffea2a4263f52a3b7b17ecfcdff6ddc5d7a124a",
+          "bytes": 4549
         },
         {
           "rel": "apps/marketing/src/content/product.ts",
-          "sha256": "20c96db9b8044029e5a44f33a64fee40722a2c3a43c57274b312dc7fd85ec7ca",
-          "bytes": 5597
+          "sha256": "1c30591184295c64d134d71542c3ccded4bd6b5bbf9a60a2a9f54b49b9e6724d",
+          "bytes": 5618
         },
         {
           "rel": "apps/marketing/src/content/security.ts",
-          "sha256": "a9aa27adf3d9551db846078de0154688b68326948254cd13f1cce594905f3dd5",
-          "bytes": 4921
+          "sha256": "ec33b6e48bcf18026eeec21e47e38b4c3d02b3a60319bdaf124235bf47c570bd",
+          "bytes": 4970
         },
         {
           "rel": "apps/marketing/src/content/status.ts",
-          "sha256": "1b8db997f258b16f058c568da786b1357f7e65762ab78638c76c5155800ca733",
-          "bytes": 3106
+          "sha256": "8b32c88502fa58a5f785e348bf2685b14856b914d0748e44c5e67b671d6a210e",
+          "bytes": 3133
         },
         {
           "rel": "apps/marketing/src/content/students.ts",
-          "sha256": "e17231372d9223b6cb4c5283c29d5e2d4c4a82e34b9e569fc8378afeca491341",
-          "bytes": 3326
+          "sha256": "64b55f53e81101669f3314c2a6fc7bc30e38712c54cc4f1f0794433b5a49f318",
+          "bytes": 3347
         },
         {
           "rel": "apps/marketing/src/content/terms.ts",
-          "sha256": "ac4835ace4241bcf6995f2b14d67f4280f0e0b9ba7becffdd19d08866f01177c",
-          "bytes": 3477
+          "sha256": "a1ace292c136170f801d5ccabf4f8135e31d2d05eb56b80badc5a21f468ad91c",
+          "bytes": 3502
         }
       ]
     },
@@ -676,8 +676,8 @@
       "id": "marketing-claims-tests",
       "kind": "file",
       "path": "apps/marketing/src/pages.test.ts",
-      "sha256": "2b315f98ff1c810aef2c83db18ac086eddb5508336a3d36ef8628db9eb15fe01",
-      "bytes": 12361
+      "sha256": "e69abb8190ea9cd5a896a72a2037f4f03dfda2bcb2f06790116a48fa17193fea",
+      "bytes": 12383
     },
     "marketing-deployment": {
       "id": "marketing-deployment",

@@ -52,17 +52,31 @@ export function hero(options: HeroOptions): SafeHtml {
   `;
 }
 
+/** Markers for notes that carry a distinct semantic role instead of a plain sequence number. */
+const NOTE_KIND_MARKERS = {
+  /**
+   * A limitation or caution: gets a "LIMIT" marker and a rule down its left
+   * edge, so a warning cannot be mistaken for a feature description at a
+   * glance.
+   */
+  limit: 'LIMIT',
+  /**
+   * The immediate, current-state answer to "can I do this today?" - gets a
+   * "NOW" marker in the brand accent, so a page's capability state is
+   * visible before a reader has read a sentence of prose.
+   */
+  state: 'NOW',
+} as const;
+
 export interface Note {
   readonly title: string;
   readonly body: SafeHtml;
   /**
-   * Marks this note as a limitation or caution rather than an ordinary
-   * narrative note: it gets a "LIMIT" marker instead of a sequence number
-   * and a rule down its left edge, so a warning cannot be mistaken for a
-   * feature description at a glance. Does not consume a sequence number,
-   * so the numbered notes around it stay contiguous (01, 02, 03 …).
+   * Marks this note with a distinct role instead of an ordinary narrative
+   * note. A kinded note never consumes a sequence number, so the plain
+   * numbered notes around it stay contiguous (01, 02, 03 …).
    */
-  readonly kind?: 'limit';
+  readonly kind?: keyof typeof NOTE_KIND_MARKERS;
 }
 
 /** Numbered general notes: 01, 02, 03 … generated from array order. */
@@ -71,10 +85,12 @@ export function notes(entries: readonly Note[]): SafeHtml {
   return html`
     <div class="measure">
       ${entries.map((entry) => {
-        const isLimit = entry.kind === 'limit';
-        const marker = isLimit ? 'LIMIT' : String((sequence += 1)).padStart(2, '0');
+        const marker = entry.kind
+          ? NOTE_KIND_MARKERS[entry.kind]
+          : String((sequence += 1)).padStart(2, '0');
+        const sectionClass = entry.kind ? `note note--${entry.kind}` : 'note';
         return html`
-          <section class="${isLimit ? 'note note--limit' : 'note'}">
+          <section class="${sectionClass}">
             <h2>
               <span class="note-number" aria-hidden="true">${marker}</span>
               ${entry.title}

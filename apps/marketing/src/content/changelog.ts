@@ -90,6 +90,7 @@ export const changelogPage: Page = {
     id: 'PUB-012',
     route: '/changelog',
     title: 'Changelog',
+    family: 'operational',
     description:
       'The ARQ development log: dated entries describing merged work, each citing the repository paths or checks behind it. No public release has shipped yet.',
   },

@@ -17,6 +17,7 @@ export const pricingPage: Page = {
     id: 'PUB-009',
     route: '/pricing',
     title: 'Pricing',
+    family: 'operational',
     description:
       'ARQ pricing has not been set. The development build is currently available without a paid plan. This page states what is decided, what is being researched, and what is still open.',
   },

@@ -25,6 +25,7 @@ export const contactPage: Page = {
     id: 'PUB-014',
     route: '/contact',
     title: 'Contact',
+    family: 'operational',
     documentTitle: 'Contact and support · ARQ',
     description:
       'How to reach the ARQ project while it is pre-release: repository issues for product questions, and a private repository security advisory for vulnerabilities. No response time is committed.',

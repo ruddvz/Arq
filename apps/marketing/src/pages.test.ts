@@ -81,7 +81,7 @@ describe('per-page acceptance criteria', () => {
 
       it('has the skip link first and a main landmark it targets', () => {
         expect(document.html).toContain('class="skip-link" href="#content"');
-        expect(document.html).toContain('<main id="content">');
+        expect(document.html).toMatch(/<main\s+id="content"(?:\s+class="family-\w+")?\s*>/);
       });
 
       it('has header, nav and footer landmarks', () => {

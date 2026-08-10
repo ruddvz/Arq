@@ -22,6 +22,14 @@ export interface PageMeta {
   readonly description: string;
   /** Exclude utility and error routes from search indexing. */
   readonly noIndex?: boolean;
+  /**
+   * Which of the four public page families this sheet belongs to. Drives a
+   * class on <main> (site.css, ".family-*") that adjusts hero weight and
+   * closing treatment - the components stay the same everywhere, only the
+   * emphasis changes. Omitted for the 404 utility sheet, which stays
+   * unclassified and minimal.
+   */
+  readonly family?: 'story' | 'capability' | 'operational' | 'reference';
 }
 
 export interface Page {

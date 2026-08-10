@@ -17,6 +17,7 @@ export const studentsPage: Page = {
     id: 'PUB-004',
     route: '/students',
     title: 'For students',
+    family: 'story',
     description:
       'ARQ for architecture students: a modelling tool with real units that runs in a browser and keeps projects in a local file format. Pricing is not set and the build is pre-release.',
   },

@@ -18,6 +18,7 @@ export const homePage: Page = {
     id: 'PUB-001',
     route: '/',
     title: 'Home',
+    family: 'story',
     documentTitle: 'ARQ · pre-release architectural workspace',
     description:
       'ARQ is pre-release architectural design software. The current development build draws walls in a plan with real units and records those edits in a local journal on your device.',

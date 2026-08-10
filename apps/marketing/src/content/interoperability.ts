@@ -23,6 +23,7 @@ export const interoperabilityPage: Page = {
     id: 'PUB-007',
     route: '/interoperability',
     title: 'Interoperability',
+    family: 'capability',
     description:
       'ARQ format support, published as scope: .arq native, PDF and image underlay, vector PDF export, DXF exchange and IFC viewing, with DWG and RVT not committed. Adapters are tested as libraries.',
   },

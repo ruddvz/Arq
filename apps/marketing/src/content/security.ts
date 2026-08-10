@@ -17,6 +17,7 @@ export const securityPage: Page = {
     id: 'PUB-010',
     route: '/security',
     title: 'Security',
+    family: 'capability',
     description:
       'How ARQ treats your work: projects held on your device, a published security baseline, sandboxed imports by design, and no certifications claimed that have not been earned.',
   },
@@ -28,6 +29,7 @@ export const securityPage: Page = {
     ${notes([
       {
         title: 'What the current architecture means',
+        kind: 'state',
         body: html`
           <p>
             The development build has no account system, no ARQ backend and no sync transport. It

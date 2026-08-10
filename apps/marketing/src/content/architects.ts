@@ -18,6 +18,7 @@ export const architectsPage: Page = {
     id: 'PUB-003',
     route: '/architects',
     title: 'For architects',
+    family: 'story',
     description:
       'ARQ is being developed for residential projects and small practices: measured plans, a documented local project format, and a development build whose current state is published rather than implied.',
   },

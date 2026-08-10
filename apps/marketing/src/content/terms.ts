@@ -16,6 +16,7 @@ export const termsPage: Page = {
     id: 'PUB-016',
     route: '/legal/terms',
     title: 'Terms',
+    family: 'reference',
     documentTitle: 'Terms · ARQ',
     description:
       'ARQ has published no product terms. This page describes the basis on which the pre-release build is offered and is not a legal agreement. Formal terms require legal review.',

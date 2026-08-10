@@ -18,6 +18,7 @@ export const privacyPage: Page = {
     id: 'PUB-015',
     route: '/legal/privacy',
     title: 'Privacy',
+    family: 'reference',
     documentTitle: 'Privacy notice · ARQ',
     description:
       'ARQ has not published a formal privacy notice. This page states the practices that the current build and deployment checks can substantiate, and what still needs legal review.',

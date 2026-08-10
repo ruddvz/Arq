@@ -21,6 +21,7 @@ export const productPage: Page = {
     id: 'PUB-002',
     route: '/product',
     title: 'Product',
+    family: 'story',
     description:
       'What ARQ is, what each release is scoped to contain, and what is deliberately out of scope. A plan-first architectural editor with real units and a local project file.',
   },

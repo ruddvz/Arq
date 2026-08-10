@@ -18,6 +18,7 @@ export const aiPage: Page = {
     id: 'PUB-006',
     route: '/ai',
     title: 'AI',
+    family: 'capability',
     description:
       'ARQ has a tested MCP proposal boundary in the repository, but no AI authoring is connected to the product. Any future capability must use typed operations, validation, review and undo.',
   },
@@ -29,6 +30,7 @@ export const aiPage: Page = {
     ${notes([
       {
         title: 'What exists in the repository',
+        kind: 'state',
         body: html`
           <p>
             <code>packages/mcp-server</code> implements the boundary described by ADR-0027. It

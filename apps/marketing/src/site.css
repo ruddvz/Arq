@@ -537,6 +537,24 @@ h1 {
   text-align: center;
 }
 
+/*
+ * A state note is the opposite move for the opposite reason: it answers
+ * "can I do this today?" before a reader has read a sentence of prose, so it
+ * gets the brand accent - the one place this sheet uses green for anything
+ * other than a link, exactly because this is a controlled, high-confidence
+ * current-state statement rather than decoration.
+ */
+.note--state {
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--accent);
+}
+
+.note--state .note-number {
+  min-width: 3.75rem;
+  text-align: center;
+  color: var(--accent);
+}
+
 /* ------------------------------------------------------------------ */
 /* Notice list (open-source notices: package@version per licence group) */
 /* ------------------------------------------------------------------ */
@@ -767,6 +785,53 @@ h1 {
   color: var(--ink-muted);
   font-size: 0.875rem;
   max-width: 72ch;
+}
+
+/* ------------------------------------------------------------------ */
+/* Page families: same components, different emphasis                 */
+/* ------------------------------------------------------------------ */
+
+/*
+ * Four families, one vocabulary. Every page still composes from the same
+ * hero/note/spec-list/data-table/cta-band set; what changes between
+ * families is how much room the hero takes, whether the grid-paper
+ * background shows, and whether a page closes with a routing band at all.
+ * A family is an emphasis setting, not a second design system.
+ */
+
+/* Story (/, /product, /architects, /students): the strongest visual weight. */
+.family-story .hero {
+  padding-block: clamp(3.5rem, 10vw, 7rem) clamp(2.75rem, 7vw, 5.5rem);
+}
+
+/* Capability (/collaboration, /ai, /interoperability, /ipad, /security):
+   hero yields quickly to the current-state answer beneath it. */
+.family-capability .hero {
+  padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(2rem, 5vw, 3.25rem);
+}
+
+/* Operational truth (/pricing, /changelog, /status, /contact): flat and
+   utilitarian, no grid paper, no dimension ticks. */
+.family-operational .hero {
+  background-image: none;
+  padding-block: clamp(2rem, 5vw, 3.25rem) clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.family-operational .hero::before,
+.family-operational .hero::after {
+  display: none;
+}
+
+/* Reference (/docs, /legal/*): a focused reading page, not a routing page -
+   flat hero, no closing CTA band. */
+.family-reference .hero {
+  background-image: none;
+  padding-block: clamp(2rem, 5vw, 3.5rem) clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.family-reference .hero::before,
+.family-reference .hero::after {
+  display: none;
 }
 
 /* ------------------------------------------------------------------ */

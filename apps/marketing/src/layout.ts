@@ -48,6 +48,10 @@ export function renderDocument(meta: PageMeta, body: SafeHtml, sourceRevision?: 
   const documentTitle = meta.documentTitle ?? `${meta.title} · ARQ`;
   const robots =
     meta.noIndex === true ? html`<meta name="robots" content="noindex, nofollow" />` : '';
+  const mainAttrs =
+    meta.family === undefined
+      ? html`id="content"`
+      : html`id="content" class="family-${meta.family}"`;
   const page = html`<!doctype html>
     <html lang="en">
       <head>
@@ -89,7 +93,7 @@ export function renderDocument(meta: PageMeta, body: SafeHtml, sourceRevision?: 
             </details>
           </div>
         </header>
-        <main id="content">${body}</main>
+        <main ${mainAttrs}>${body}</main>
         <footer class="site-footer">
           <div class="measure">
             <div class="footer-grid">${footerIndex()}</div>
