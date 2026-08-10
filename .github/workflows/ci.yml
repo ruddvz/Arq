@@ -150,6 +150,14 @@ jobs:
       # that the project reaches the workspace, that authoring stays refused, that
       # Workers are released, and that the selected file's bytes do not change.
       - run: pnpm benchmark:native-open
+      # The public marketing site's UI/UX audit "Verification" section,
+      # asserted rather than claimed: every route at every named viewport for
+      # no horizontal overflow and exactly one h1; the skip link, focus
+      # visibility and both nav disclosures (desktop dropdown, mobile drawer)
+      # operable by keyboard alone; the hero heading's entrance animation
+      # actually gated behind prefers-reduced-motion; and the site's core
+      # colour-token pairs clearing WCAG AA contrast in light and dark.
+      - run: pnpm benchmark:marketing-viewport
       - uses: actions/upload-artifact@v4
         if: always()
         with:
