@@ -38,15 +38,61 @@ export interface Page {
   render(): SafeHtml;
 }
 
-/** Header navigation - the working set, small enough to scan. */
-export const PRIMARY_NAV: readonly { readonly route: string; readonly label: string }[] = [
-  { route: '/product', label: 'Product' },
-  { route: '/architects', label: 'Architects' },
-  { route: '/ai', label: 'AI' },
-  { route: '/interoperability', label: 'Interoperability' },
+export interface NavLink {
+  readonly route: string;
+  readonly label: string;
+}
+
+export interface NavGroup {
+  readonly heading: string;
+  readonly links: readonly NavLink[];
+}
+
+/**
+ * Header navigation, grouped by what a visitor is trying to do rather than
+ * exposing all 17 routes flat. Pricing and Contact stay direct links: each
+ * is one destination, so a dropdown would add a click without adding
+ * meaning.
+ */
+export const PRIMARY_NAV_GROUPS: readonly NavGroup[] = [
+  {
+    heading: 'Product',
+    links: [
+      { route: '/product', label: 'Product' },
+      { route: '/interoperability', label: 'Interoperability' },
+      { route: '/ai', label: 'AI' },
+      { route: '/ipad', label: 'iPad' },
+    ],
+  },
+  {
+    heading: 'Solutions',
+    links: [
+      { route: '/architects', label: 'Architects' },
+      { route: '/students', label: 'Students' },
+      { route: '/collaboration', label: 'Collaboration' },
+    ],
+  },
+  {
+    heading: 'Resources',
+    links: [
+      { route: '/docs', label: 'Docs' },
+      { route: '/changelog', label: 'Changelog' },
+      { route: '/status', label: 'Status' },
+      { route: '/security', label: 'Security' },
+    ],
+  },
+];
+
+/** Direct top-level links: single destinations that do not need a group. */
+export const PRIMARY_NAV_DIRECT: readonly NavLink[] = [
   { route: '/pricing', label: 'Pricing' },
-  { route: '/security', label: 'Security' },
-  { route: '/docs', label: 'Docs' },
+  { route: '/contact', label: 'Contact' },
+];
+
+/** Every route in the primary nav, flattened - the set a page's route is checked against. */
+export const PRIMARY_NAV: readonly NavLink[] = [
+  ...PRIMARY_NAV_GROUPS.flatMap((group) => group.links),
+  ...PRIMARY_NAV_DIRECT,
 ];
 
 /** Footer index - every public sheet in the set, grouped as the IA names them. */

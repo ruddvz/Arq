@@ -244,6 +244,74 @@ a:hover {
   border-bottom: 2px solid var(--accent);
 }
 
+/*
+ * A nav group is the same disclosure pattern as the mobile nav-drawer,
+ * repeated per section instead of once for the whole menu: native
+ * <details>, no script, a dropdown positioned under its own summary rather
+ * than the page corner.
+ */
+.nav-group {
+  position: relative;
+}
+
+.nav-group summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  list-style: none;
+  cursor: pointer;
+  padding-block: 0.25rem;
+}
+
+.nav-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.nav-group summary::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-inline: 0.3em solid transparent;
+  border-top: 0.35em solid currentcolor;
+}
+
+.nav-group summary:hover {
+  color: var(--accent);
+}
+
+.nav-group[open] summary,
+.nav-group--active summary {
+  color: var(--accent);
+}
+
+.nav-group nav {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: var(--space-1);
+  display: flex;
+  flex-direction: column;
+  min-width: 11rem;
+  background: var(--paper);
+  border: 1px solid var(--hairline-strong);
+  padding: var(--space-2) var(--space-3);
+  gap: var(--space-1);
+  z-index: 5;
+}
+
+.nav-drawer-heading {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.nav-drawer-heading:first-child {
+  margin-top: 0;
+}
+
 .nav-drawer {
   display: none;
   margin-left: auto;
