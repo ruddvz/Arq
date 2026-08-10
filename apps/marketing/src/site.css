@@ -301,11 +301,11 @@ a:hover {
   transform: rotate(180deg);
 }
 
-.nav-group nav {
+.nav-group-menu {
   position: absolute;
   left: 0;
   top: 100%;
-  margin-top: var(--space-1);
+  margin: var(--space-1) 0 0;
   display: flex;
   flex-direction: column;
   min-width: 11rem;
@@ -313,6 +313,7 @@ a:hover {
   border: 1px solid var(--hairline-strong);
   padding: var(--space-2) var(--space-3);
   gap: var(--space-1);
+  list-style: none;
   z-index: 5;
 }
 

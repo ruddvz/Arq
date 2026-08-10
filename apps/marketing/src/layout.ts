@@ -29,12 +29,14 @@ function revisionLabel(sourceRevision: string | undefined): string {
     : `REV B · 2026-08 · source ${shortRevision}`;
 }
 
+function navLink(item: NavLink, activeRoute: string): SafeHtml {
+  return item.route === activeRoute
+    ? html`<a href="${item.route}" aria-current="page">${item.label}</a>`
+    : html`<a href="${item.route}">${item.label}</a>`;
+}
+
 function navLinkList(links: readonly NavLink[], activeRoute: string): SafeHtml {
-  return html`${links.map((item) =>
-    item.route === activeRoute
-      ? html`<a href="${item.route}" aria-current="page">${item.label}</a>`
-      : html`<a href="${item.route}">${item.label}</a>`,
-  )}`;
+  return html`${links.map((item) => navLink(item, activeRoute))}`;
 }
 
 /**
@@ -42,6 +44,11 @@ function navLinkList(links: readonly NavLink[], activeRoute: string): SafeHtml {
  * JS-free like the mobile drawer this pattern is borrowed from. A group
  * containing the active route gets a class so its summary reads as "you
  * are in this section" without opening it.
+ *
+ * Each panel is a list rather than a nested <nav>, following the WAI
+ * disclosure-navigation pattern: the header already is one navigation
+ * landmark, so nesting three more inside it would add landmark noise, and
+ * a list tells a screen reader how many sheets the group holds.
  */
 function desktopNav(activeRoute: string): SafeHtml {
   return html`
@@ -50,7 +57,9 @@ function desktopNav(activeRoute: string): SafeHtml {
       return html`
         <details class="${isActiveGroup ? 'nav-group nav-group--active' : 'nav-group'}">
           <summary>${group.heading}</summary>
-          <nav aria-label="${group.heading}">${navLinkList(group.links, activeRoute)}</nav>
+          <ul class="nav-group-menu" aria-label="${group.heading}">
+            ${group.links.map((link) => html`<li>${navLink(link, activeRoute)}</li>`)}
+          </ul>
         </details>
       `;
     })}
