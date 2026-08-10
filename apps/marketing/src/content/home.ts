@@ -64,6 +64,7 @@ export const homePage: Page = {
       },
       {
         title: 'A small first release, stated plainly',
+        separation: 'chapter',
         body: html`
           <p>
             ARQ has not shipped. It is not a full CAD seat and does not replace Revit. Its scope is

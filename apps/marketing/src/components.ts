@@ -77,6 +77,14 @@ export interface Note {
    * numbered notes around it stay contiguous (01, 02, 03 …).
    */
   readonly kind?: keyof typeof NOTE_KIND_MARKERS;
+  /**
+   * How far this note sits from the one before it. Omitted is the default
+   * (a subsection: a new note, same chapter). 'related' tightens the gap for
+   * a note that is really a continuation of the note before it, split only
+   * for its own heading. 'chapter' widens the gap and adds a rule above it
+   * for a note that starts a genuinely new topic, not just a new heading.
+   */
+  readonly separation?: 'related' | 'chapter';
 }
 
 /** Numbered general notes: 01, 02, 03 … generated from array order. */
@@ -88,9 +96,11 @@ export function notes(entries: readonly Note[]): SafeHtml {
         const marker = entry.kind
           ? NOTE_KIND_MARKERS[entry.kind]
           : String((sequence += 1)).padStart(2, '0');
-        const sectionClass = entry.kind ? `note note--${entry.kind}` : 'note';
+        const classes = ['note'];
+        if (entry.kind) classes.push(`note--${entry.kind}`);
+        if (entry.separation) classes.push(`note--${entry.separation}`);
         return html`
-          <section class="${sectionClass}">
+          <section class="${classes.join(' ')}">
             <h2>
               <span class="note-number" aria-hidden="true">${marker}</span>
               ${entry.title}

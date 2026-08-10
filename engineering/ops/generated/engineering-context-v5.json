@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "d20a76b56029de858d419ad42d13c1cfc07083f9494e00a5756af46d59e0e9ab",
+  "source_hash": "ae995c4788685295514bfeb86bf46183765a30720b82ab53565614b9203f2efc",
   "source_records": [
     {
       "scope": "package",
@@ -119,7 +119,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/changelog.ts",
-      "sha256": "59c28f3d19f4a5200956d95d17fda9b9547dee44d9b728a420211b7fae3ea258"
+      "sha256": "ad2a127c230ef2766bdbb60451ad2e52c5bac9ef7fff3debe8ccf392d954cad1"
     },
     {
       "scope": "repository",
@@ -139,7 +139,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/home.ts",
-      "sha256": "22cf260a2af8dcb6dffac26f66c847d812f0aa5ca8ab590f1e82c6dc83ea08e0"
+      "sha256": "a40a0c9be8916cd3ed038460231258c58d33141189874e3905fdc4e27f3de5ee"
     },
     {
       "scope": "repository",
@@ -174,12 +174,12 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/product.ts",
-      "sha256": "1c30591184295c64d134d71542c3ccded4bd6b5bbf9a60a2a9f54b49b9e6724d"
+      "sha256": "05229247bcad4913f7734837f8e0b6f05e186799daebaf39b6f9aff7c2b927c9"
     },
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/security.ts",
-      "sha256": "ec33b6e48bcf18026eeec21e47e38b4c3d02b3a60319bdaf124235bf47c570bd"
+      "sha256": "261e5a449987452e40a1c0f0f8941341779bfd632f6aeeb79eb46e4c2420ccb6"
     },
     {
       "scope": "repository",

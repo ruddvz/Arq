@@ -80,6 +80,7 @@ export const productPage: Page = {
       },
       {
         title: 'Deliberately deferred',
+        separation: 'related',
         body: html`
           <p>
             Curved walls, complex roofs and stairs, a full family editor, photorealistic rendering,
@@ -91,6 +92,7 @@ export const productPage: Page = {
       },
       {
         title: 'What is running today',
+        separation: 'chapter',
         body: html`
           <p>
             The development build has a working workspace shell: panels, tool rail, tabs, inspector,

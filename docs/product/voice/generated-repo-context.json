@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "9b02682b064df56be9346f78968043613b24692f159790319b30b399c6a112ae",
+  "sourceSetDigest": "7318db711e6fe3f29cbbfc771275712982ed8dee1fa49d4e230debfe9063149a",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -564,7 +564,7 @@
       "id": "marketing-content",
       "kind": "directory",
       "path": "apps/marketing/src/content",
-      "sha256": "bc9160094869ed26ec06d94bd7fd1261145859da8ea5aa7eee50ac415ebcfd4e",
+      "sha256": "14d9a46d4f949c078326affa39ab6aa3ecc1812bd65256306d7537b6276ce5ac",
       "files": [
         {
           "rel": "apps/marketing/src/content/ai.ts",
@@ -578,8 +578,8 @@
         },
         {
           "rel": "apps/marketing/src/content/changelog.ts",
-          "sha256": "59c28f3d19f4a5200956d95d17fda9b9547dee44d9b728a420211b7fae3ea258",
-          "bytes": 9036
+          "sha256": "ad2a127c230ef2766bdbb60451ad2e52c5bac9ef7fff3debe8ccf392d954cad1",
+          "bytes": 9098
         },
         {
           "rel": "apps/marketing/src/content/collaboration.ts",
@@ -598,8 +598,8 @@
         },
         {
           "rel": "apps/marketing/src/content/home.ts",
-          "sha256": "22cf260a2af8dcb6dffac26f66c847d812f0aa5ca8ab590f1e82c6dc83ea08e0",
-          "bytes": 4733
+          "sha256": "a40a0c9be8916cd3ed038460231258c58d33141189874e3905fdc4e27f3de5ee",
+          "bytes": 4764
         },
         {
           "rel": "apps/marketing/src/content/interoperability.ts",
@@ -633,13 +633,13 @@
         },
         {
           "rel": "apps/marketing/src/content/product.ts",
-          "sha256": "1c30591184295c64d134d71542c3ccded4bd6b5bbf9a60a2a9f54b49b9e6724d",
-          "bytes": 5618
+          "sha256": "05229247bcad4913f7734837f8e0b6f05e186799daebaf39b6f9aff7c2b927c9",
+          "bytes": 5680
         },
         {
           "rel": "apps/marketing/src/content/security.ts",
-          "sha256": "ec33b6e48bcf18026eeec21e47e38b4c3d02b3a60319bdaf124235bf47c570bd",
-          "bytes": 4970
+          "sha256": "261e5a449987452e40a1c0f0f8941341779bfd632f6aeeb79eb46e4c2420ccb6",
+          "bytes": 5032
         },
         {
           "rel": "apps/marketing/src/content/status.ts",

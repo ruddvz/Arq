@@ -120,6 +120,7 @@ export const changelogPage: Page = {
     ${notes([
       {
         title: 'What a changelog entry can and cannot settle',
+        separation: 'chapter',
         body: html`
           <p>
             An entry records that work was merged. It does not by itself establish that a workflow
@@ -131,6 +132,7 @@ export const changelogPage: Page = {
       },
       {
         title: 'How releases will be published',
+        separation: 'related',
         body: html`
           <p>
             When Release 1 ships, entries here gain version numbers, upgrade notes and, where the

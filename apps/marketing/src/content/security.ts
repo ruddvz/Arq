@@ -40,6 +40,7 @@ export const securityPage: Page = {
       },
       {
         title: 'What has actually been observed',
+        separation: 'related',
         body: html`
           <p>
             The repository now includes a headless-browser observation check. It records every
@@ -101,6 +102,7 @@ export const securityPage: Page = {
       },
       {
         title: 'Reporting a vulnerability',
+        separation: 'chapter',
         body: html`
           <p>
             Please do not report unpatched vulnerabilities in public issues. Use a private security

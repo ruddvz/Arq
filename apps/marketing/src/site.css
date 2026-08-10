@@ -472,6 +472,22 @@ h1 {
   padding-bottom: var(--space-6);
 }
 
+/*
+ * Two more separation tiers around the default subsection gap above: a note
+ * that is really a continuation of the one before it (split only for its
+ * own heading) sits closer; a note that starts a genuinely new topic sits
+ * further apart and gets a rule marking the shift, scaling with viewport
+ * width the same way the hero does rather than a fixed breakpoint list.
+ */
+.note--related {
+  padding-top: var(--space-4);
+}
+
+.note--chapter {
+  padding-top: clamp(3.5rem, 8vw, 6rem);
+  border-top: 1px solid var(--hairline);
+}
+
 .note h2 {
   display: flex;
   align-items: baseline;
