@@ -779,7 +779,7 @@ h1 {
 }
 
 /* ------------------------------------------------------------------ */
-/* Footer: index plus title block                                     */
+/* Footer: index plus a compact provenance strip                      */
 /* ------------------------------------------------------------------ */
 
 .site-footer {
@@ -825,6 +825,27 @@ h1 {
   text-decoration: underline;
 }
 
+/*
+ * Sheet identity in the footer reads as a quiet, single-line strip rather
+ * than a bordered block, so it carries provenance without competing with
+ * the footer index above it for attention.
+ */
+.provenance-strip {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-3);
+  row-gap: 0.25rem;
+  margin: 0 0 var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
+}
+
+/* Legal document metadata (privacy/terms): a document benefits from the
+   clearer bordered treatment the footer no longer uses. */
 .title-block {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
