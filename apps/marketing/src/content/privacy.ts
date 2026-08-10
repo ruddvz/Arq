@@ -29,14 +29,24 @@ export const privacyPage: Page = {
       lede: 'A lawyer-reviewed privacy notice is published before any hosted service launches. This page is not that notice. It is a plain-language account of the practices in force at the revision it was built from.',
     })}
     <div class="measure">
-      <div class="title-block" aria-label="Document status">
-        <div><span class="tb-label">Document</span><span>Privacy notice</span></div>
+      <dl class="title-block" aria-label="Document status">
         <div>
-          <span class="tb-label">Status</span><span>Not published: description, not a notice</span>
+          <dt class="tb-label">Document</dt>
+          <dd>Privacy notice</dd>
         </div>
-        <div><span class="tb-label">Legal review</span><span>None conducted</span></div>
-        <div><span class="tb-label">Changes</span><span>Dated in the changelog</span></div>
-      </div>
+        <div>
+          <dt class="tb-label">Status</dt>
+          <dd>Not published: description, not a notice</dd>
+        </div>
+        <div>
+          <dt class="tb-label">Legal review</dt>
+          <dd>None conducted</dd>
+        </div>
+        <div>
+          <dt class="tb-label">Changes</dt>
+          <dd>Dated in the changelog</dd>
+        </div>
+      </dl>
     </div>
     ${notes([
       {

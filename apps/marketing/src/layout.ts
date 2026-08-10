@@ -138,11 +138,11 @@ export function renderDocument(meta: PageMeta, body: SafeHtml, sourceRevision?: 
         <footer class="site-footer">
           <div class="measure">
             <div class="footer-grid">${footerIndex()}</div>
-            <p class="provenance-strip" aria-label="Sheet information">
-              <span>Sheet ${meta.id} · ${meta.title}</span>
-              <span>${revisionLabel(sourceRevision)}</span>
-              <span>Pre-release, in development</span>
-            </p>
+            <ul class="provenance-strip" aria-label="Sheet information">
+              <li>Sheet ${meta.id} · ${meta.title}</li>
+              <li>${revisionLabel(sourceRevision)}</li>
+              <li>Pre-release, in development</li>
+            </ul>
             <p class="footer-fineprint">
               ARQ is in development and has not shipped. The
               <a href="/changelog">changelog</a> records what exists today.

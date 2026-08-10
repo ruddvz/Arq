@@ -222,7 +222,14 @@ a:hover {
   flex-wrap: wrap;
 }
 
+/*
+ * Every top-level item in the header reads as one row of the same index,
+ * whether it opens a group or goes straight to a sheet: a group summary
+ * takes the same mono face, size, tracking and case as a direct link, so
+ * the disclosure triangle is the only thing that distinguishes them.
+ */
 .site-nav a,
+.site-nav .nav-group summary,
 .nav-drawer nav a {
   font-family: var(--font-mono);
   font-size: 0.8125rem;
@@ -282,6 +289,16 @@ a:hover {
 .nav-group[open] summary,
 .nav-group--active summary {
   color: var(--accent);
+}
+
+/*
+ * Open and "you are in this section" both tint the summary, so open state
+ * needs a second, non-colour signal: the triangle turns to point at the
+ * panel it opened. A static transform, not an animation, so there is
+ * nothing for reduced-motion to suppress.
+ */
+.nav-group[open] summary::after {
+  transform: rotate(180deg);
 }
 
 .nav-group nav {
@@ -844,7 +861,9 @@ h1 {
 /*
  * Sheet identity in the footer reads as a quiet, single-line strip rather
  * than a bordered block, so it carries provenance without competing with
- * the footer index above it for attention.
+ * the footer index above it for attention. It is a list because it is
+ * three discrete facts: that keeps them separate items to a screen reader
+ * instead of one run-on sentence, and lets the strip carry a name.
  */
 .provenance-strip {
   display: flex;
@@ -852,8 +871,9 @@ h1 {
   column-gap: var(--space-3);
   row-gap: 0.25rem;
   margin: 0 0 var(--space-3);
-  padding-top: var(--space-2);
+  padding: var(--space-2) 0 0;
   border-top: 1px solid var(--hairline);
+  list-style: none;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.02em;
@@ -861,12 +881,14 @@ h1 {
 }
 
 /* Legal document metadata (privacy/terms): a document benefits from the
-   clearer bordered treatment the footer no longer uses. */
+   clearer bordered treatment the footer no longer uses. It is a description
+   list because each cell is a term and its value, which is what a reader
+   using a screen reader needs to hear them as. */
 .title-block {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   border: 1px solid var(--hairline-strong);
-  margin-bottom: var(--space-3);
+  margin: 0 0 var(--space-3);
 }
 
 .title-block > div {
@@ -876,6 +898,10 @@ h1 {
   padding: var(--space-2) var(--space-3);
   border-right: 1px solid var(--hairline);
   border-bottom: 1px solid var(--hairline);
+}
+
+.title-block dd {
+  margin: 0;
 }
 
 .tb-label {
@@ -954,5 +980,23 @@ h1 {
   body {
     background: #fff;
     color: #000;
+  }
+
+  /*
+   * Anything collapsed behind a disclosure still belongs on paper. This
+   * matters most on the changelog, where the evidence line naming the
+   * repository paths behind an entry is the reason the entry is allowed to
+   * make its claim at all: a printed entry without it would be the bare
+   * summary prose the claim binding forbids. Both declarations are needed,
+   * because browsers hide closed details either by not rendering the slot
+   * (::details-content) or by hiding the children directly.
+   */
+  details > *:not(summary) {
+    display: block;
+  }
+
+  details::details-content {
+    content-visibility: visible;
+    block-size: auto;
   }
 }

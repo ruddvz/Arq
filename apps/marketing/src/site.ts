@@ -58,7 +58,9 @@ export const PRIMARY_NAV_GROUPS: readonly NavGroup[] = [
   {
     heading: 'Product',
     links: [
-      { route: '/product', label: 'Product' },
+      // "Overview", not "Product": the group is already called Product, and
+      // the footer index names this same sheet "Product overview".
+      { route: '/product', label: 'Overview' },
       { route: '/interoperability', label: 'Interoperability' },
       { route: '/ai', label: 'AI' },
       { route: '/ipad', label: 'iPad' },
