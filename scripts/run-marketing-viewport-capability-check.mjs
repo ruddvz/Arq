@@ -28,7 +28,13 @@
  *   accent/paper, accent-contrast/accent) clear WCAG AA contrast in both
  *   light and dark `prefers-color-scheme`, checked as tokens rather than
  *   per-element because every text colour on this site comes from this
- *   small, finite set of custom properties.
+ *   small, finite set of custom properties;
+ * - generated site size stays within a stated budget: total build,
+ *   stylesheet, fonts and the largest single page. The audit's Verification
+ *   section asks that public-site performance be measured separately from
+ *   the editor bundle - this is that measurement, on disk rather than
+ *   through a synthetic Lighthouse run this environment cannot serve over a
+ *   real network to.
  *
  * Usage: node scripts/run-marketing-viewport-capability-check.mjs
  */
@@ -349,6 +355,77 @@ async function checkReducedMotion(browser, origin) {
   return failures;
 }
 
+/** Public-site size budget in bytes. Generous but real: this site ships no JavaScript at all. */
+const SIZE_BUDGET = {
+  totalDist: 2 * 1024 * 1024,
+  css: 100 * 1024,
+  fontsTotal: 500 * 1024,
+  largestPageHtml: 60 * 1024,
+};
+
+function directorySize(dir) {
+  let total = 0;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    total += entry.isDirectory() ? directorySize(full) : statSync(full).size;
+  }
+  return total;
+}
+
+function checkSizeBudget() {
+  const failures = [];
+  const totalDist = directorySize(distDir);
+  const cssPath = path.join(distDir, 'assets', 'site.css');
+  const cssSize = existsSync(cssPath) ? statSync(cssPath).size : 0;
+  const fontsDir = path.join(marketingDir, 'assets', 'fonts');
+  const fontsTotal = existsSync(fontsDir)
+    ? readdirSync(fontsDir)
+        .filter((name) => name.endsWith('.woff2'))
+        .reduce((sum, name) => sum + statSync(path.join(fontsDir, name)).size, 0)
+    : 0;
+
+  let largestPage = { route: null, size: 0 };
+  function walkHtml(dir, routePrefix) {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walkHtml(full, `${routePrefix}/${entry.name}`);
+      } else if (entry.name.endsWith('.html')) {
+        const size = statSync(full).size;
+        if (size > largestPage.size) largestPage = { route: `${routePrefix}/${entry.name}`, size };
+      }
+    }
+  }
+  walkHtml(distDir, '');
+
+  const measurement = { totalDist, cssSize, fontsTotal, largestPage };
+
+  if (totalDist > SIZE_BUDGET.totalDist) {
+    failures.push(
+      `total dist/ is ${(totalDist / 1024).toFixed(0)}KB, over the ${SIZE_BUDGET.totalDist / 1024}KB budget`,
+    );
+  }
+  if (cssSize > SIZE_BUDGET.css) {
+    failures.push(
+      `site.css is ${(cssSize / 1024).toFixed(0)}KB, over the ${SIZE_BUDGET.css / 1024}KB budget`,
+    );
+  }
+  if (fontsTotal > SIZE_BUDGET.fontsTotal) {
+    failures.push(
+      `fonts total ${(fontsTotal / 1024).toFixed(0)}KB, over the ${SIZE_BUDGET.fontsTotal / 1024}KB budget`,
+    );
+  }
+  if (largestPage.size > SIZE_BUDGET.largestPageHtml) {
+    failures.push(
+      `largest page (${largestPage.route}) is ${(largestPage.size / 1024).toFixed(0)}KB, over the ${SIZE_BUDGET.largestPageHtml / 1024}KB budget`,
+    );
+  }
+  console.log(
+    `  total dist/ ${(totalDist / 1024).toFixed(0)}KB, site.css ${(cssSize / 1024).toFixed(0)}KB, fonts ${(fontsTotal / 1024).toFixed(0)}KB, largest page ${largestPage.route} ${(largestPage.size / 1024).toFixed(0)}KB`,
+  );
+  return { measurement, failures };
+}
+
 async function main() {
   buildSite();
   const server = startServer();
@@ -410,6 +487,12 @@ async function main() {
   if (contrastFailures.length === 0) console.log('  PASS');
   failed += contrastFailures.length;
 
+  console.log('\nPublic-site size budget:');
+  const { measurement: sizeMeasurement, failures: sizeFailures } = checkSizeBudget();
+  for (const failure of sizeFailures) console.log(`  FAIL - ${failure}`);
+  if (sizeFailures.length === 0) console.log('  PASS');
+  failed += sizeFailures.length;
+
   await browser.close();
   server.close();
 
@@ -429,6 +512,8 @@ async function main() {
         keyboardFailures,
         motionFailures,
         contrastFailures,
+        sizeMeasurement,
+        sizeFailures,
       },
       null,
       2,

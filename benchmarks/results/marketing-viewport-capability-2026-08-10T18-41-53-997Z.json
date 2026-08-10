@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T18:36:22.734Z",
+  "generatedAt": "2026-08-10T18:41:53.998Z",
   "routes": [
     "/",
     "/404",
@@ -1474,5 +1474,15 @@
   ],
   "keyboardFailures": [],
   "motionFailures": [],
-  "contrastFailures": []
+  "contrastFailures": [],
+  "sizeMeasurement": {
+    "totalDist": 407938,
+    "cssSize": 21603,
+    "fontsTotal": 140316,
+    "largestPage": {
+      "route": "/legal/open-source/index.html",
+      "size": 23284
+    }
+  },
+  "sizeFailures": []
 }
