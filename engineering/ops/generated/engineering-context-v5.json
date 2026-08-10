@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "ae995c4788685295514bfeb86bf46183765a30720b82ab53565614b9203f2efc",
+  "source_hash": "1b8c74555d6c7ed739dbd293b9f33a1b6a2b3df2d79cfa46ff05a71b2859b970",
   "source_records": [
     {
       "scope": "package",
@@ -144,7 +144,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/interoperability.ts",
-      "sha256": "dbdcd508b269461a46560d2801e2efc4508dddfdb36ce1532851da9943efb4aa"
+      "sha256": "486e586d49d3641fe5436d1e8c7ab6b96c8a91446eca1543086845b4c3ef8975"
     },
     {
       "scope": "repository",

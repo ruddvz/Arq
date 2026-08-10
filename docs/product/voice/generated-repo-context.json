@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "7318db711e6fe3f29cbbfc771275712982ed8dee1fa49d4e230debfe9063149a",
+  "sourceSetDigest": "25b7205f976a7ba1baeda1a04df062d0d2cdecf0b98c03dc07a4115245003345",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -564,7 +564,7 @@
       "id": "marketing-content",
       "kind": "directory",
       "path": "apps/marketing/src/content",
-      "sha256": "14d9a46d4f949c078326affa39ab6aa3ecc1812bd65256306d7537b6276ce5ac",
+      "sha256": "866243a96a27227a2abff07cbdffba2097569804dab39bd202745e221fab1865",
       "files": [
         {
           "rel": "apps/marketing/src/content/ai.ts",
@@ -603,8 +603,8 @@
         },
         {
           "rel": "apps/marketing/src/content/interoperability.ts",
-          "sha256": "dbdcd508b269461a46560d2801e2efc4508dddfdb36ce1532851da9943efb4aa",
-          "bytes": 6332
+          "sha256": "486e586d49d3641fe5436d1e8c7ab6b96c8a91446eca1543086845b4c3ef8975",
+          "bytes": 6355
         },
         {
           "rel": "apps/marketing/src/content/ipad.ts",

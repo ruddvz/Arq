@@ -35,6 +35,7 @@ export const interoperabilityPage: Page = {
     ${notes([
       {
         title: 'The support matrix',
+        kind: 'state',
         body: html`
           <p>
             The scope column is release scope. It states when a format is planned to become usable
