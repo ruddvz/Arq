@@ -7,11 +7,15 @@ import type { Page } from '../site.js';
  * sheet prohibits "works for every project".
  *
  * Claim bindings: pub-architects-wall-workflow (current-wall-authoring,
- * CURRENT), pub-architects-lifetime (lifetime-local-access, PROHIBITED) and
+ * CURRENT), pub-architects-file-reachability (native-arq-open, CURRENT),
+ * pub-architects-lifetime (lifetime-local-access, PROHIBITED) and
  * pub-architects-model-integrity (semantic-model-integrity, LIBRARY_ONLY).
- * Present-tense workflow language stays on the tested wall path; the archive
- * paragraph describes the format and says what has not been decided instead of
- * guaranteeing future access.
+ * Present-tense workflow language stays on the tested wall and open paths; the
+ * archive paragraph describes the format and says what has not been decided
+ * instead of guaranteeing future access.
+ *
+ * The file paragraph used to state a negative and so needed no binding. It now
+ * states an open, which is a current-state claim, so it carries one.
  */
 export const architectsPage: Page = {
   meta: {
@@ -48,9 +52,11 @@ export const architectsPage: Page = {
         body: html`
           <p>
             An ARQ project is one file on your disk, in a documented format built on SQLite, with
-            journalled changes and a recovery path designed before any cloud feature. The format
-            layer is built and tested. Reading an existing <code>.arq</code> file back into a live
-            browser project is not wired yet.
+            journalled changes and a recovery path designed before any cloud feature. An existing
+            <code>.arq</code> file reads back into a live browser project: the build copies it to a
+            working copy on your machine and opens that, so your archived file is left exactly as it
+            was. Nothing is written back to it yet either, which is the same fact seen from the
+            other side.
           </p>
           <p>
             What ARQ can commit to today is the shape of the format and the fact that it is

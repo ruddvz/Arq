@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "8b0bcd105b1b85e9764060b6314611ea4aa5fb9f57ef6cfcade8cfb346acb4cc",
+  "source_hash": "e092f1ada11c5c3c8da84f4282f127a95163e8e35fa2599dc3a05fa758d9ff36",
   "source_records": [
     {
       "scope": "package",
@@ -54,7 +54,7 @@
     {
       "scope": "package",
       "path": "ops/change-map.v5.json",
-      "sha256": "5ce22f915b78d97013b85237bd50a14f0b13c4fd4e20dda701e8cd0f96a22f64"
+      "sha256": "ea96b705d02f6930d43e727244c52cb788bc3f76fe72820dce385f511f065456"
     },
     {
       "scope": "package",
@@ -74,7 +74,7 @@
     {
       "scope": "package",
       "path": "ops/evidence-catalog.v5.json",
-      "sha256": "b044212096de1ac77f32734095bf188244e7e7ebd881acd035cefbd5ba849220"
+      "sha256": "21b34b6b834746d5b980536548f13e483eb6cb4fe0d4709a93ff4cf4bc8b3b80"
     },
     {
       "scope": "package",
@@ -89,7 +89,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "7b3b1e70d090b3b40e53f82382c528c1124e70243b603fbfb3735e02f07cfe56"
+      "sha256": "d0f15626801406a690e0ce3356701888e35d1b6aab36469ced6f7d28de97266f"
     },
     {
       "scope": "repository",
@@ -114,12 +114,12 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/architects.ts",
-      "sha256": "e6d826f8b6238d9e2191d1d6907b32f025ea19c979e6a97587cfad1ce13742a9"
+      "sha256": "e6901441c26f09c23342e2115cfd393f8d3144c075d31a5638e2683612d14a0c"
     },
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/changelog.ts",
-      "sha256": "ad2a127c230ef2766bdbb60451ad2e52c5bac9ef7fff3debe8ccf392d954cad1"
+      "sha256": "005e01a56fceada9621d8f04b46d06e6fc44530923fd9099f6ef04112a433138"
     },
     {
       "scope": "repository",
@@ -139,7 +139,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/home.ts",
-      "sha256": "a40a0c9be8916cd3ed038460231258c58d33141189874e3905fdc4e27f3de5ee"
+      "sha256": "fb5edf7e54263f9a93729145ec6203e43b35212a024a2c9e8c7b83e3f8e96e47"
     },
     {
       "scope": "repository",
@@ -149,7 +149,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/ipad.ts",
-      "sha256": "1aef4607796239e61f301ec106bcaf1968dbc312e464086248f48cf94d617182"
+      "sha256": "d2db1567da6b72d3461dcbe61592d14ff0f3fe1ac363f64476bb3bb55e8c4a3c"
     },
     {
       "scope": "repository",
@@ -174,7 +174,7 @@
     {
       "scope": "repository",
       "path": "apps/marketing/src/content/product.ts",
-      "sha256": "05229247bcad4913f7734837f8e0b6f05e186799daebaf39b6f9aff7c2b927c9"
+      "sha256": "2d1523046eec6d6f8489a2c3f52b7921838221612c95cc2793dc3d992bdc6e0c"
     },
     {
       "scope": "repository",
@@ -204,7 +204,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/App.tsx",
-      "sha256": "fc8f5e224c386f57e618a754c0854eb0cc3946ffb580c2c40323eb6f4f766453"
+      "sha256": "e430b27a51ad73abfe9d382be9605d176dcf40f8ac0c1961d31b284a5d77f0ac"
     },
     {
       "scope": "repository",
@@ -394,7 +394,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "7df7b5b947ed3c366009a887fd122c4627a2fd27081e0e75742132af914d8c26"
+      "sha256": "f188165781b288018ee358ce89d29b9d39ee38e70c3219d88b03855e523b26b0"
     },
     {
       "scope": "repository",
@@ -839,7 +839,7 @@
     {
       "scope": "repository",
       "path": "STATUS.md",
-      "sha256": "ab25c4c8fe47c0acd07baf3a375fbce2abec18b1ae4887b2a2d3b975bd1742a8"
+      "sha256": "48a474a71d3f010808cc0ec442ff5ed76443e92c33585eddc1f965f5956ce9fb"
     },
     {
       "scope": "repository",

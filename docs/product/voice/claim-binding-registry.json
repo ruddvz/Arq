@@ -16,8 +16,8 @@
       "surface": "public",
       "sourcePath": "apps/marketing/src/content/home.ts",
       "claimId": "native-arq-open",
-      "assertionMode": "must-qualify",
-      "requiredRepair": "Use compatibility and preflight language until an opening pipeline is tested."
+      "assertionMode": "current",
+      "requiredRepair": "State the open and its limit together: the project opens into a local working copy on the device, and the chosen file is not written to. Never let the open imply a save."
     },
     {
       "id": "pub-home-local-persistence",
@@ -43,6 +43,14 @@
       "assertionMode": "current"
     },
     {
+      "id": "pub-product-file-reachability",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/product.ts",
+      "claimId": "native-arq-open",
+      "assertionMode": "current",
+      "requiredRepair": "The \"what is running today\" note states an open, so it is bound. Keep the no-save limit inside the same note rather than deferring it to another page."
+    },
+    {
       "id": "pub-product-volatile-count",
       "surface": "public",
       "sourcePath": "apps/marketing/src/content/product.ts",
@@ -57,6 +65,14 @@
       "claimId": "current-wall-authoring",
       "assertionMode": "current",
       "requiredRepair": "Keep current workflow language limited to the tested wall-authoring path."
+    },
+    {
+      "id": "pub-architects-file-reachability",
+      "surface": "public",
+      "sourcePath": "apps/marketing/src/content/architects.ts",
+      "claimId": "native-arq-open",
+      "assertionMode": "current",
+      "requiredRepair": "The page's file paragraph states an open, so it is bound to the open claim rather than left unbound. Keep the no-save limit in the same paragraph."
     },
     {
       "id": "pub-architects-lifetime",
@@ -167,8 +183,8 @@
       "surface": "public",
       "sourcePath": "apps/marketing/src/content/ipad.ts",
       "claimId": "native-arq-open",
-      "assertionMode": "must-qualify",
-      "requiredRepair": "Do not state that the same project file opens across devices until the opening path is tested."
+      "assertionMode": "current",
+      "requiredRepair": "The open is verified in Chromium only. State it as the browser build's behaviour, not as a proven iPad or cross-device property, and keep the no-save limit attached."
     },
     {
       "id": "pub-pricing-status",
@@ -230,8 +246,8 @@
       "surface": "public",
       "sourcePath": "apps/marketing/src/content/changelog.ts",
       "claimId": "native-arq-open",
-      "assertionMode": "must-qualify",
-      "requiredRepair": "Describe file compatibility and preflight separately from an opened working project."
+      "assertionMode": "current",
+      "requiredRepair": "Each entry stays true to its own date. An older entry recording that the panel stopped at preflight is history and stays; the entry that supersedes it must name the check that proved the open."
     },
     {
       "id": "pub-status-hosted-service",

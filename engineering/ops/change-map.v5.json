@@ -149,11 +149,18 @@
         "packages/dxf-adapter/**",
         "packages/ifc-adapter/**",
         "packages/pdf-export/**",
-        "packages/roomplan-adapter/**"
+        "packages/roomplan-adapter/**",
+        "apps/web/src/sheets/**"
       ],
       "minLane": "L4",
       "impacts": ["import_export", "document", "security", "worker_wasm", "performance"],
-      "evidence": ["unit", "browser_file_open", "e2e_import_export", "protected_l4_approval"]
+      "evidence": [
+        "unit",
+        "browser_file_open",
+        "browser_sheet_export",
+        "e2e_import_export",
+        "protected_l4_approval"
+      ]
     },
     {
       "id": "worker-and-rust-core",

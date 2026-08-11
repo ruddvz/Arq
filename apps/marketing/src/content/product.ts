@@ -101,6 +101,14 @@ export const productPage: Page = {
             is committed, and journals the result locally.
           </p>
           <p>
+            It also opens a real project. Choosing an <code>.arq</code> file copies it into a
+            working copy on your device and puts that project in the workspace, with its levels, its
+            walls and rooms, and its 3D view. A headless-browser check drives that path on every
+            change and confirms the chosen file's bytes are identical afterwards. What it does not
+            do is save: nothing is written back to your file yet, and until that exists an opened
+            project is something you can read and work in, not somewhere your work is kept.
+          </p>
+          <p>
             The development build also has a working 3D view: opening the 3D tab renders the model,
             and selecting an element on the plan highlights the same element in 3D. That behaviour
             is verified by a headless-browser check in the repository's own quality gates, the same

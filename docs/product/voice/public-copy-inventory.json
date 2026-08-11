@@ -31,7 +31,11 @@
       "route": "/product",
       "sourcePath": "apps/marketing/src/content/product.ts",
       "classification": "claim-bearing",
-      "claimBindingIds": ["pub-product-3d", "pub-product-volatile-count"],
+      "claimBindingIds": [
+        "pub-product-3d",
+        "pub-product-file-reachability",
+        "pub-product-volatile-count"
+      ],
       "owner": "marketing and product",
       "reviewTriggers": ["source-change", "claim-state-change", "3d-surface-change", "release"],
       "risk": "Current 3D reachability and volatile implementation metrics."
@@ -44,6 +48,7 @@
       "classification": "claim-bearing",
       "claimBindingIds": [
         "pub-architects-wall-workflow",
+        "pub-architects-file-reachability",
         "pub-architects-lifetime",
         "pub-architects-model-integrity"
       ],

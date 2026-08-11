@@ -135,7 +135,19 @@ import { openingInfillsForWall, plateSolids, stairFlightSolids } from '@arq/geom
 import type { ModelPlacedSolid, WallSolidDimensions } from './ModelCanvas';
 import type { PlanRoom } from './canvas/canvas-interaction';
 import { roomLabelText, type PlanOpeningInput, type PlanScene } from '@arq/plan-renderer';
-import { exportPlanSheet, PAPER_SIZES } from './sheets/sheet-export';
+/**
+ * Sheet export carries pdf-lib and its fontkit and text-encoding tables, which
+ * after the 3D split are the largest remaining contributor to the start-up
+ * bundle. Nothing renders it: it is reached only by invoking the export command,
+ * so it is fetched at that moment instead of on first paint. Every reader paid
+ * for a PDF writer to draw a wall.
+ *
+ * Imported for its types only at module scope - `import type` is erased, so it
+ * cannot drag the implementation back into the entry chunk. The one value this
+ * module needs eagerly would be PAPER_SIZES, and it does not need it eagerly:
+ * the only read is inside the export handler, which is already async.
+ */
+import type { SheetExportResult } from './sheets/sheet-export';
 import type { ModelOpeningSpan } from './ModelCanvas';
 
 /**
@@ -1293,7 +1305,8 @@ export function App(): JSX.Element {
     setExportingSheet(true);
     try {
       const active = tabs.tabs.find((tab) => tab.id === tabs.activeId);
-      const result = await exportPlanSheet({
+      const { exportPlanSheet, PAPER_SIZES } = await import('./sheets/sheet-export');
+      const result: SheetExportResult = await exportPlanSheet({
         scene: { primitives: scene.primitives },
         projectName,
         sheetNumber: 'A101',

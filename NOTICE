@@ -1,18 +1,61 @@
-Arq — third-party notices
+ARQ — third-party notices
 
-Arq itself is proprietary (see LICENSE). It may incorporate or link against
-third-party open-source components, each governed by its own license. This file
-will be kept up to date as dependencies are added, per the licensing policy in
-docs/product/ARQ-MASTER-PRODUCT-PLAN-v0.1.md §19.
+ARQ itself is proprietary (see LICENSE). It incorporates and links against
+third-party open-source components, each governed by its own licence. The
+dependency licensing policy, including the allow-list and the review rule for
+weak-copyleft licences, is docs/product/DEPENDENCY-AND-LICENCE-POLICY.md.
 
-No third-party code has been incorporated into this repository yet — it currently
-contains planning documentation only. Once implementation begins, an automated
-software bill of materials (SBOM) and license scan (per §19.1) should populate and
-maintain the table below rather than hand-editing it.
+## Where the complete list lives
 
-| Component | License | Used for |
-|---|---|---|
-| _(none yet)_ | | |
+This file deliberately does not restate every dependency. The per-package list
+is generated, because a hand-maintained second copy is the one that goes stale:
+this file spent the repository's whole implementation history asserting that no
+third-party code had been incorporated, while the build depended on hundreds of
+packages and the public site listed them correctly.
 
-Do not assume the Arq repository license covers model weights, datasets, fonts,
+- `dependency-sbom.json` carries the name, version and licence of every
+  installed package. It is written by `pnpm check:dependency-licences`, which
+  also enforces the policy allow-list, and is published as a CI artifact.
+- The published /legal/open-source page renders that same bill of materials for
+  the deployed build, grouped by licence.
+
+`pnpm check:notice-attribution` binds this file to that data. It fails if this
+file denies incorporating third-party code while the bill of materials reports
+packages, if a licence family present in the build is not listed below, or if a
+package under a reviewed-exception licence is not named below. A new licence
+family appearing in the build is therefore a review event, not a silent addition.
+
+## Licence families in the current build
+
+Counts and versions are deliberately omitted; they change on every dependency
+bump and the bill of materials is the accurate source for both.
+
+| Licence                            | Notes                                       |
+| ---------------------------------- | ------------------------------------------- |
+| MIT                                | Permissive; the large majority of the tree. |
+| Apache-2.0                         | Permissive, with a patent grant.            |
+| ISC                                | Permissive.                                 |
+| BSD-2-Clause                       | Permissive.                                 |
+| BSD-3-Clause                       | Permissive, with a non-endorsement clause.  |
+| 0BSD                               | Public-domain-equivalent.                   |
+| BlueOak-1.0.0                      | Permissive.                                 |
+| MPL-2.0                            | Weak copyleft; reviewed exception below.    |
+| CC-BY-4.0                          | Attribution required; reviewed exception.   |
+| (MIT AND Zlib)                     | Both apply; both are permissive.            |
+| (MIT OR WTFPL)                     | Choice of licence; MIT is the one taken.    |
+| (BSD-2-Clause OR MIT OR Apache-2.0) | Choice of licence; all branches permissive. |
+
+## Reviewed exceptions
+
+These are not blanket-allowed by the policy and carry obligations beyond
+attribution, so they are named here rather than left to a generated list. The
+reasoning for each is recorded in the policy document's "Reviewed exceptions"
+table and must stay in agreement with it.
+
+| Package        | Licence   | Obligation ARQ accepts                                                                                                                                            |
+| -------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `web-ifc`      | MPL-2.0   | Consumed as a compiled library through its published API and never forked or patched in-tree. MPL-2.0's copyleft covers modifications to its own source files; ARQ makes none. If ARQ ever patches it, the patched files must be published under MPL-2.0. |
+| `caniuse-lite` | CC-BY-4.0 | Browser-compatibility data reached as a build-time transitive dependency, not linked into the product bundle. Attribution is carried by this entry and by the generated bill of materials. |
+
+Do not assume the ARQ repository licence covers model weights, datasets, fonts,
 icons, or downloaded sample files — check each of those independently.
