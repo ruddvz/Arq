@@ -26,10 +26,6 @@
       "type": "object"
     }
   },
-  "required": [
-    "base_revision",
-    "operations",
-    "preconditions"
-  ],
+  "required": ["base_revision", "operations", "preconditions"],
   "type": "object"
 }

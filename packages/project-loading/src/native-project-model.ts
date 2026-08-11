@@ -42,6 +42,15 @@ import type {
   ProjectUnitsPreference,
 } from '@arq/bim-core';
 import { worldPoint, type WorldPoint } from '@arq/geometry-2d';
+import {
+  parsePlacedContent,
+  type NativeFurnishing,
+  type NativeSlab,
+  type NativeStair,
+  type NativeServicePoint,
+  type NativePathway,
+  type PlacedContent,
+} from './placed-content';
 
 /**
  * The model-schema tags this reader understands. A tag may carry a `+suffix`
@@ -62,6 +71,18 @@ export interface NativeProjectSummary {
   readonly modelSchema: string;
   /** The repository revision recorded by whatever wrote the model, when it recorded one. */
   readonly sourceRepositoryRevision: string | null;
+  /**
+   * Which way is north, as a bearing in degrees clockwise from the model's +Y
+   * axis, or null when the file does not say.
+   *
+   * Null and zero are different answers and both are real. Zero is "north is up
+   * the page", which most projects are and which a file can state. Null is "this
+   * file does not say", and a drawing that assumes zero for it has invented an
+   * orientation - so a surface can draw the arrow for one and omit it for the
+   * other, which is the difference between a plan that is oriented and a plan
+   * that merely looks oriented.
+   */
+  readonly northBearingDegrees: number | null;
 }
 
 /** A view the file declares, and whether this build can present it. */
@@ -101,6 +122,22 @@ export interface NativeProjectModel {
   readonly doors: readonly Door[];
   readonly windows: readonly Window[];
   readonly rooms: readonly Room[];
+  /**
+   * What stands on the levels besides walls: furniture and fixed equipment, the
+   * floor and roof plates, and the stairs between them. Optional in the file and
+   * empty for a project this build wrote; see `placed-content.ts` for why these
+   * are footprints rather than semantic Furniture/Slab/Stair records.
+   */
+  readonly furnishings: readonly NativeFurnishing[];
+  readonly slabs: readonly NativeSlab[];
+  readonly stairs: readonly NativeStair[];
+  /**
+   * Building services - luminaires, outlets, sanitary fittings and plant - and
+   * the walkable routes between them. Both carry real coordinates in the file
+   * and were being counted as unread content until they were drawn.
+   */
+  readonly servicePoints: readonly NativeServicePoint[];
+  readonly pathways: readonly NativePathway[];
   readonly views: readonly NativeProjectView[];
   readonly unsupported: readonly NativeUnsupportedContent[];
 }
@@ -110,7 +147,24 @@ export type NativeProjectModelResult =
   | { readonly status: 'rejected'; readonly reason: string };
 
 /** The view kinds this build has a surface for. Everything else is declared unsupported by name. */
-const SUPPORTED_VIEW_KINDS: readonly string[] = ['plan', '3d'];
+const SUPPORTED_VIEW_KINDS: readonly string[] = ['plan', '3d', 'analysis'];
+
+/**
+ * View kinds that are a drawing *of a level* and cannot be presented without
+ * knowing which one.
+ *
+ * `analysis` joined the supported kinds once the walkable routes were being
+ * drawn - an analysis view of this fixture is its plan with the routes shown,
+ * and the app now has both halves. But this fixture's two analysis views name no
+ * level, and a flow drawing of an unspecified storey is not something a reader
+ * can be shown; guessing from the view id (`view-ground-flow`) would be reading
+ * a label as data.
+ *
+ * So the kind is supported and the individual view is not, which is a more
+ * useful thing to tell someone than "this build has no analysis surface" - that
+ * sentence stopped being true and would have sent them to the wrong place.
+ */
+const VIEW_KINDS_NEEDING_A_LEVEL: readonly string[] = ['plan', 'analysis'];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -209,6 +263,60 @@ function countUnsupported(
     return null;
   }
   return { section, count: value.length, reason };
+}
+
+/**
+ * Unsupported content the model declares about itself.
+ *
+ * Malformed entries are skipped rather than rejected. This list is a courtesy -
+ * it says what a build cannot show - and refusing to open a project because its
+ * apology is badly formed would turn a warning into an outage.
+ */
+function parseDeclaredUnsupported(value: unknown): readonly NativeUnsupportedContent[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  const entries: NativeUnsupportedContent[] = [];
+  for (const entry of value) {
+    if (!isRecord(entry)) continue;
+    const section = nonEmptyString(entry.section);
+    const reason = nonEmptyString(entry.reason);
+    const count = finiteNumber(entry.count);
+    if (section === null || reason === null || count === null || count <= 0) continue;
+    entries.push({ section, count: Math.floor(count), reason });
+  }
+  return entries;
+}
+
+/**
+ * The project's north, as a bearing clockwise from +Y.
+ *
+ * The file states it as an axis name - `"+Y"`, `"-X"` - rather than as an
+ * angle, which is how a generator that only ever produces axis-aligned north
+ * would write it. Both spellings are read, and a numeric bearing wins where a
+ * file gives one, so a project surveyed at 23 degrees is not rounded to the
+ * nearest axis.
+ *
+ * Anything else is null rather than a guess. A wrongly oriented plan is worse
+ * than an unoriented one: a reader trusts an arrow.
+ */
+const NORTH_AXIS_BEARINGS: Readonly<Record<string, number>> = {
+  '+y': 0,
+  '+x': 90,
+  '-y': 180,
+  '-x': 270,
+};
+
+function parseNorthBearing(value: unknown): number | null {
+  if (!isRecord(value)) return null;
+  const numeric = finiteNumber(value.northBearingDegrees ?? value.northDegrees);
+  if (numeric !== null) {
+    // Normalised into [0, 360) so a surface never has to. A file may state -90.
+    return ((numeric % 360) + 360) % 360;
+  }
+  const axis = nonEmptyString(value.north);
+  if (axis === null) return null;
+  return NORTH_AXIS_BEARINGS[axis.toLowerCase().replace(/\s+/g, '')] ?? null;
 }
 
 function parseLevels(raw: readonly unknown[]): readonly Level[] {
@@ -534,6 +642,88 @@ function assertUniqueIds(model: ModelParts): void {
   }
 }
 
+/**
+ * Placed content points at the same levels and rooms everything else does.
+ *
+ * Separate from `assertReferencesResolve` because it runs on a separate parse:
+ * these three sections are optional and a project this build wrote has none of
+ * them, so folding them into `ModelParts` would make every existing caller
+ * carry three empty lists to say nothing.
+ *
+ * An unresolved `roomId` is rejected rather than nulled. The file is asserting
+ * that this desk is in the study; if the study is not there, the assertion is
+ * about a different model than the one being opened, and quietly dropping the
+ * link would leave a desk in no room with nothing to say it ever claimed one.
+ */
+function assertPlacedContentResolves(content: PlacedContent, model: ModelParts): void {
+  const levelIds = new Set(model.levels.map((level) => level.id as string));
+  const roomIds = new Set(model.rooms.map((room) => room.id as string));
+  const seen = new Set<string>();
+  const claim = (section: string, id: string): void => {
+    if (seen.has(id)) {
+      reject(`model.json contains a duplicate id in ${section}: ${id}`);
+    }
+    seen.add(id);
+  };
+
+  for (const furnishing of content.furnishings) {
+    claim('furnishings', furnishing.id);
+    if (!levelIds.has(furnishing.levelId)) {
+      reject(
+        `model.json furnishing ${furnishing.id} references level ${furnishing.levelId}, which is not defined`,
+      );
+    }
+    if (furnishing.roomId !== null && !roomIds.has(furnishing.roomId)) {
+      reject(
+        `model.json furnishing ${furnishing.id} references room ${furnishing.roomId}, which is not defined`,
+      );
+    }
+  }
+  for (const slab of content.slabs) {
+    claim('slabs', slab.id);
+    if (!levelIds.has(slab.levelId)) {
+      reject(`model.json slab ${slab.id} references level ${slab.levelId}, which is not defined`);
+    }
+  }
+  for (const stair of content.stairs) {
+    claim('stairs', stair.id);
+    for (const flight of stair.flights) claim('stairs', flight.id);
+    for (const landing of stair.landings) claim('stairs', landing.id);
+  }
+  for (const point of content.servicePoints) {
+    claim('servicePoints', point.id);
+    if (!levelIds.has(point.levelId)) {
+      reject(
+        `model.json service point ${point.id} references level ${point.levelId}, which is not defined`,
+      );
+    }
+    /*
+     * An unresolved `roomId` is rejected on a furnishing and tolerated here.
+     *
+     * The difference is what the field is doing. A desk claims to be in the
+     * study, and a study that is not there means the claim is about a different
+     * model. A services point's room is a schedule grouping - which room's
+     * lighting circuit this belongs to - and the point still has a position,
+     * still draws in the right place, and is still the fitting the file says it
+     * is. Refusing to open a house because one roof drain is filed under the
+     * wrong roof room would be a validator with no sense of proportion.
+     *
+     * This fixture has four such points, and they are recorded in
+     * `validation/arq-house-17/FIXTURE_DEFECTS_17_0.md` rather than silently
+     * accepted: three roof drains at the roof corners filed under whichever
+     * room was nearest to hand, one of them 11.4 metres from it.
+     */
+  }
+  for (const pathway of content.pathways) {
+    claim('pathways', pathway.id);
+    if (!levelIds.has(pathway.levelId)) {
+      reject(
+        `model.json pathway ${pathway.id} references level ${pathway.levelId}, which is not defined`,
+      );
+    }
+  }
+}
+
 function assertReferencesResolve(model: ModelParts): void {
   const levelIds = new Set(model.levels.map((level) => level.id as string));
   const wallTypeIds = new Set(model.wallTypes.map((type) => type.id as string));
@@ -644,17 +834,20 @@ export function parseNativeProjectViews(raw: unknown): readonly NativeProjectVie
     // no surface in this build, and a view the file itself says was never
     // rendered. Collapsing them would tell a user their section view is
     // unsupported when the file says it was only ever proposed.
+    const viewLevelId = optionalString(entry.levelId);
     const unsupportedReason =
       declaredState !== null && declaredState !== 'current'
         ? `The project records this view as "${declaredState}" rather than current.`
-        : SUPPORTED_VIEW_KINDS.includes(kind)
-          ? null
-          : `This build has no ${kind} surface yet.`;
+        : !SUPPORTED_VIEW_KINDS.includes(kind)
+          ? `This build has no ${kind} surface yet.`
+          : VIEW_KINDS_NEEDING_A_LEVEL.includes(kind) && viewLevelId === null
+            ? `This ${kind} view names no level, so there is no storey to draw it on.`
+            : null;
     views.push({
       id,
       name,
       kind,
-      levelId: optionalString(entry.levelId),
+      levelId: viewLevelId,
       scale: optionalString(entry.scale),
       supported: unsupportedReason === null,
       unsupportedReason,
@@ -726,6 +919,18 @@ export function parseNativeProjectModel(
     assertReferencesResolve(parts);
 
     /*
+     * Furnishings, slabs and stairs. Parsed after the walls and rooms so their
+     * level and room references can be checked against real levels and rooms:
+     * a wardrobe on a level that does not exist would draw on whichever storey
+     * happened to be on show, which is worse than not drawing it.
+     */
+    const placed = parsePlacedContent(raw);
+    if (placed.status === 'rejected') {
+      reject(placed.reason);
+    }
+    assertPlacedContentResolves(placed.content, parts);
+
+    /*
      * What is left unsupported, and nothing more.
      *
      * Openings, doors and windows used to be counted here with the message
@@ -745,6 +950,16 @@ export function parseNativeProjectModel(
         'linearDimensions',
         'Dimensions are recorded but not drawn in plan yet.',
       ),
+      /*
+       * Content the file declares that this reader has no field for at all.
+       *
+       * Counted here from `unsupportedContent` rather than discovered, because
+       * discovery would mean this module knowing every vocabulary any file might
+       * use. Whatever adapts a foreign model knows what it left behind and is the
+       * only thing that can say so honestly; this carries the declaration through
+       * to a surface that can show it.
+       */
+      ...parseDeclaredUnsupported(raw.unsupportedContent),
     ].filter((entry): entry is NativeUnsupportedContent => entry !== null);
 
     return {
@@ -757,6 +972,7 @@ export function parseNativeProjectModel(
           revision,
           modelSchema,
           sourceRepositoryRevision: optionalString(raw.sourceRepositoryRevision),
+          northBearingDegrees: parseNorthBearing(raw.coordinateSystem),
         },
         levels,
         wallTypes,
@@ -765,6 +981,11 @@ export function parseNativeProjectModel(
         doors,
         windows,
         rooms,
+        furnishings: placed.content.furnishings,
+        slabs: placed.content.slabs,
+        stairs: placed.content.stairs,
+        servicePoints: placed.content.servicePoints,
+        pathways: placed.content.pathways,
         views,
         unsupported,
       },

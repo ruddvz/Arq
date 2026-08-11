@@ -11,6 +11,7 @@ function createFakeTarget(): Canvas2dPaintTarget & { readonly calls: RecordedCal
     strokeStyle: '',
     fillStyle: '',
     lineWidth: 0,
+    lineJoin: 'miter',
     font: '',
     beginPath: () => void calls.push(['beginPath']),
     moveTo: (x: number, y: number) => void calls.push(['moveTo', x, y]),
@@ -19,6 +20,7 @@ function createFakeTarget(): Canvas2dPaintTarget & { readonly calls: RecordedCal
     stroke: () => void calls.push(['stroke']),
     fill: () => void calls.push(['fill']),
     fillText: (text: string, x: number, y: number) => void calls.push(['fillText', text, x, y]),
+    strokeText: (text: string, x: number, y: number) => void calls.push(['strokeText', text, x, y]),
     arc: (x: number, y: number, radius: number, start: number, end: number) =>
       void calls.push(['arc', x, y, radius, start, end]),
     setLineDash: (segments: readonly number[]) => void calls.push(['setLineDash', segments]),
@@ -139,6 +141,78 @@ describe('paintPlanScene', () => {
     };
     paintPlanScene(target, identityViewport, 1, scene);
     expect(target.calls).toContainEqual(['fillText', 'Room', 50, 50]);
+  });
+
+  /**
+   * The halo is what lets a room name sit on a plan that carries furniture.
+   * Before it, "Kitchen 35.3 m²" printed struck through by the kitchen island;
+   * the label and the island were each legible alone and neither together.
+   *
+   * Stroked first and filled over, so the knockout goes behind the glyphs
+   * rather than on top of them - the reverse order paints the label out.
+   */
+  it('knocks label text out of what is behind it, stroking before filling', () => {
+    const target = createFakeTarget();
+    const scene: PlanScene<string> = {
+      primitives: [
+        {
+          kind: 'text',
+          elementId: 'a',
+          anchor: worldPoint(0, 0),
+          text: 'Kitchen',
+          styleToken: 'default',
+        },
+      ],
+    };
+    paintPlanScene(target, identityViewport, 1, scene);
+    const strokeIndex = target.calls.findIndex((call) => call[0] === 'strokeText');
+    const fillIndex = target.calls.findIndex((call) => call[0] === 'fillText');
+    expect(strokeIndex).toBeGreaterThanOrEqual(0);
+    expect(strokeIndex).toBeLessThan(fillIndex);
+    expect(target.calls[strokeIndex]).toEqual(['strokeText', 'Kitchen', 50, 50]);
+  });
+
+  /**
+   * The halo is the paper colour, not white. Under a dark appearance the
+   * surface behind the drawing is dark, and a white halo would be the
+   * brightest thing on the page.
+   */
+  it('draws the halo in the palette’s paper colour', () => {
+    const target = createFakeTarget();
+    const scene: PlanScene<string> = {
+      primitives: [
+        {
+          kind: 'text',
+          elementId: 'a',
+          anchor: worldPoint(0, 0),
+          text: 'Kitchen',
+          styleToken: 'default',
+        },
+      ],
+    };
+    paintPlanScene(target, identityViewport, 1, scene, {
+      ...DEFAULT_PLAN_PALETTE,
+      paper: '#101010',
+    });
+    expect(target.strokeStyle).toBe('#101010');
+  });
+
+  /** Both lines of a two-line room label are knocked out, not only the first. */
+  it('haloes every line of a multi-line label', () => {
+    const target = createFakeTarget();
+    const scene: PlanScene<string> = {
+      primitives: [
+        {
+          kind: 'text',
+          elementId: 'a',
+          anchor: worldPoint(0, 0),
+          text: 'Kitchen\n35.3 m²',
+          styleToken: 'default',
+        },
+      ],
+    };
+    paintPlanScene(target, identityViewport, 1, scene);
+    expect(target.calls.filter((call) => call[0] === 'strokeText')).toHaveLength(2);
   });
 
   it('draws handle primitives as a white-fill, black-border circle regardless of styleToken', () => {

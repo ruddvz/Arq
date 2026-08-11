@@ -1,0 +1,319 @@
+# ARQ House 17.0 — live application hydration check
+
+Closes the open item the Version 17.0 package recorded for itself:
+
+> The live ARQ application still needs to be tested opening and hydrating every
+> Version 17 semantic element.
+
+The package was honest about this. Its own `validation/VALIDATION_REPORT_17_0.json`
+carries `evidenceBoundary.productionARQWorkspaceHydrationVerified: false`. This
+report is that verification, run against this repository at the current revision.
+
+**Result: the container is sound and the live reader does not hydrate the file.**
+`house.arq` passes every container gate, and `parseNativeProjectModel`
+(`packages/project-loading/src/native-project-model.ts`) refuses it at the first
+field. Fourteen blocking contract divergences separate the file from a project
+this build can open, plus one that would be read past and silently lost.
+
+Reproduce with:
+
+```
+pnpm check:arq-hydration <path-to>/house.arq --json out.json
+```
+
+Machine-readable evidence: [`HYDRATION_CHECK_17_0.json`](./HYDRATION_CHECK_17_0.json).
+
+## What was verified independently
+
+Package integrity was re-checked from the shipped ZIP rather than taken from the
+package's own report. All four published SHA-256 values match:
+
+| Artifact       | SHA-256                                                            | Matches |
+| -------------- | ------------------------------------------------------------------ | ------- |
+| Version 17 ZIP | `89fd58c4f4f2e4176f9c79650b21583cfeb36bb4e5b7cfa9344745d587768bf6` | yes     |
+| `house.arq`    | `9db3c8b78aface94f13a21101514300ae89f07ac8d5ea807d147cfc1ab0a5c37` | yes     |
+| 38-page PDF    | `6257754e5496d782a92cc732468cd1e5a75fe70bc8f2d1569d0dd57404724550` | yes     |
+| `house.glb`    | `2c172ce8852bb677f3b484df89fad7cf14c92bc9dc7361d748c6a867ee5d052c` | yes     |
+
+`unzip -t` reports no errors, and the package's own `CHECKSUMS.sha256` verifies
+with zero mismatches across all 67 files.
+
+## Container: passes
+
+Read directly from the file, read-only:
+
+| Check                      | Value                                        | Verdict                                                                               |
+| -------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `application_id`           | `1095913777` (`0x41525131`, `ARQ1`)          | matches `ARQ_APPLICATION_ID`                                                          |
+| `user_version`             | `2`                                          | matches `ARQFS_SCHEMA_VERSION_V2`                                                     |
+| `PRAGMA integrity_check`   | `ok`                                         | pass                                                                                  |
+| `PRAGMA foreign_key_check` | 0 violations                                 | pass                                                                                  |
+| arqfs v1 + v2 tables       | all 12 present                               | pass                                                                                  |
+| `arqfs_meta`               | major 1, minor 0, min reader major 1         | readable by this build                                                                |
+| `archive_entry` rows       | 68                                           | includes `manifest.json`, `model.json`, `views.json`, `sheets.json`, `checksums.json` |
+| `manifest.json`            | `schemaVersion: 0`, all four required fields | parses                                                                                |
+
+One observation, not a defect: the schema-v2 **named indexes** that
+`migrateArqfsSchemaV1ToV2` creates (`idx_source_document_sha256`,
+`idx_source_object_map_arq_element`, `idx_import_session_status`,
+`idx_import_issue_severity`, `idx_resource_reference_owner`) are absent — only
+SQLite's own autoindexes exist. The v2 _tables_ are all present. So the file
+declares schema 2 and carries schema 2's shape, but was not produced by this
+repository's own migration path. That affects lookup cost, not semantics.
+
+## Hydration: refused
+
+`views.json` parses cleanly — 6 views, 4 presentable (the two `analysis` views
+are correctly reported as having no surface in this build). `model.json` is where
+it stops.
+
+The reader's verdict, verbatim:
+
+```
+model.json does not declare a modelSchema
+```
+
+That is the first gate only. Because the product reader is deliberately
+fail-fast, it names one reason where fifteen apply. The full set, from
+`checkArqModelConformance`:
+
+| Section · field           | Found in 17.0                                                   | Reader requires                                                                           | Entries | Severity  |
+| ------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------: | --------- |
+| `model.modelSchema`       | absent                                                          | base `arq-bim-core-reference-v0`                                                          |       1 | blocking  |
+| `model.project`           | absent; `id`, `name`, `revision`, `units` are flat at top level | a nested `project` record                                                                 |       1 | blocking  |
+| `wallTypes.thickness`     | absent (a bare `width: 300`)                                    | `{ value, unit }` length                                                                  |       5 | blocking  |
+| `wallTypes.defaultHeight` | absent                                                          | `{ value, unit }` length                                                                  |       5 | blocking  |
+| `wallTypes.function`      | absent                                                          | `exterior` or `interior`                                                                  |       5 | blocking  |
+| `walls.alignment`         | absent on 3 walls                                               | `centre` \| `interior` \| `exterior`                                                      |       3 | blocking  |
+| `walls.joinStart`         | `union-solid`                                                   | `auto` \| `butt` \| `mitre` \| `disallow`                                                 |      68 | blocking  |
+| `walls.joinEnd`           | `union-solid`                                                   | `auto` \| `butt` \| `mitre` \| `disallow`                                                 |      68 | blocking  |
+| `walls.height`            | bare `3000`, `1100`, `2800`, `1600`                             | `heightOverride` as a length                                                              |      65 | **lossy** |
+| `openings.kind`           | `sliding-door`, `pocket-door`, `opening`                        | `door` \| `window` \| `void`                                                              |      28 | blocking  |
+| `doors.side`              | `configured`                                                    | `left` \| `right`                                                                         |      26 | blocking  |
+| `doors.hand`              | `start`                                                         | `left` \| `right`                                                                         |      26 | blocking  |
+| `doors.swingAngle`        | absent (a `swingDirection: 1` instead)                          | 0–180 degrees                                                                             |      26 | blocking  |
+| `windows.side`            | `configured`                                                    | `left` \| `right`                                                                         |      13 | blocking  |
+| `rooms.status`            | `coordinated-design-development`, `coordinated-17.0`            | `valid` \| `not-enclosed` \| `overlapping` \| `too-small` \| `invalid-polygon` \| `stale` |      48 | blocking  |
+
+The `walls.height` row is the one to watch. It does not block opening, and that
+is exactly why it is the dangerous one: were the blocking rows fixed and this one
+left, all 65 walls would draw at their wall type's default height instead of the
+height the file specifies, with nothing reported.
+
+## Why the file diverges
+
+The model records `repositoryContract.compatibilityRevision: 62c5e5cf7d9c…`.
+That commit is real and is in this repository's history — _"Record the owner
+decisions and enforce the identifiers they depend on"_. But
+`packages/project-loading/src/native-project-model.ts` does not exist at that
+revision: the native reader landed separately, in `d867e6a` (_"Make a native .arq
+project openable, read-only, from the product"_), and neither commit is an
+ancestor of the other.
+
+So the 17.0 model was authored against a repository state that had no native
+project-model reader to conform to. This is a divergence of two vocabularies
+that were developed in parallel, not a regression and not a false claim.
+
+The two vocabularies are visibly different in kind. 17.0 speaks in construction
+terms — `union-solid` joins, `pocket-door` openings, `coordinated-17.0` room
+status, `semanticRole`, `material`, `joinStartNodeId`. The reader speaks in the
+closed sets `@arq/bim-core` defines and both renderers rely on. The repository's
+own `fixtures/ARQ_Courtyard_House_Golden_Fixture_v2.arq` is the reference for
+what the reader accepts, and it hydrates fully: 3 levels, 2 wall types, 79 walls,
+30 openings, 14 doors, 16 windows, 34 rooms.
+
+## What 17.0 carries that a reader would get
+
+Counted from the file even though it does not hydrate — the content is there and
+is being refused, not missing:
+
+|    Section | Declared |
+| ---------: | -------- |
+|     levels | 3        |
+| wall types | 5        |
+|      walls | 68       |
+|   openings | 47       |
+|      doors | 26       |
+|    windows | 13       |
+|      rooms | 48       |
+
+## Claims and their evidence state
+
+| Claim                                                                      | State                                                                                    |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| ZIP, `house.arq`, PDF and GLB SHA-256 match the published values           | verified                                                                                 |
+| ZIP integrity and the package's own 67-file checksum manifest pass         | verified                                                                                 |
+| `house.arq` is a structurally valid arqfs v2 container                     | verified                                                                                 |
+| `manifest.json` parses under `@arq/project-format`                         | verified                                                                                 |
+| `views.json` hydrates — 6 views, 4 presentable                             | verified                                                                                 |
+| The live application hydrates every 17.0 semantic element **as shipped**   | **failed** — refused at `modelSchema`; 14 blocking divergences                           |
+| The live application hydrates every 17.0 semantic element **once adapted** | verified — 3 levels, 5 wall types, 68 walls, 47 openings, 26 doors, 13 windows, 48 rooms |
+| The adapter preserves all 65 stated wall heights and all element ids       | verified                                                                                 |
+| The adapter leaves wall geometry unchanged                                 | verified — 0 endpoint changes                                                            |
+| The 6 assumed translations reflect this project's drawing intent           | assumed — conventions applied, each with a stated rationale, owner review open           |
+| 65 wall heights would be silently lost even once opening succeeds          | verified                                                                                 |
+| Schema-v2 named indexes are absent from the container                      | verified                                                                                 |
+| The 17.0 model's geometry is architecturally correct                       | not inspected — outside this gate                                                        |
+| Structural, electrical, plumbing, HVAC and construction approval           | not inspected — separate professional gates, unchanged                                   |
+
+## Second artifact: the slimmed container
+
+A second `house.arq` was submitted separately —
+SHA-256 `c4fce9bf51a1e030bb018dbaf387ea4d9ba2f103c5e6b7b4291e6b3cff3e85a9`,
+21.4 MB against the packaged file's 34.7 MB. Evidence:
+[`HYDRATION_CHECK_SLIMMED_CONTAINER.json`](./HYDRATION_CHECK_SLIMMED_CONTAINER.json).
+
+It is the same project with a cleaner container, and the container work is
+genuinely good:
+
+|                           | Packaged 17.0 | Slimmed |
+| ------------------------- | ------------: | ------: |
+| size                      |       34.7 MB | 21.4 MB |
+| archive entries           |            68 |      65 |
+| resources                 |            72 |      64 |
+| resource references       |            67 |      65 |
+| **orphaned resources**    |         **7** |   **0** |
+| checksum records verified |       67 / 67 | 64 / 64 |
+
+Three redundant entries were dropped — `model/canonical-model-17.0.json` (a byte
+duplicate of `model.json`), its pretty-printed twin, and the QA contact sheet —
+`checksums.json` was regenerated to match, and the seven orphaned resource rows
+the packaged file carried are gone. Every remaining checksum and every resource
+chunk hash verifies, with no dangling references.
+
+**It changes nothing about hydration.** `model.json`, `views.json`,
+`manifest.json` and `sheets.json` are byte-identical to the packaged file, so the
+same 15 divergences apply at the same counts, and the reader still refuses at
+`model.json does not declare a modelSchema`. The schema-v2 named indexes are
+still absent from both.
+
+So this is container housekeeping, not a fix for the gate above. The blocking
+work remains the model vocabulary.
+
+## The adapter: the file now hydrates
+
+`adaptArqHouse17Model` (`@arq/project-loading`) translates the 17.0 vocabulary
+into the reader's, and with it the file opens. Run it with:
+
+```
+pnpm check:arq-hydration <path-to>/house.arq --adapt --json out.json
+```
+
+Evidence: [`HYDRATION_CHECK_ADAPTED.json`](./HYDRATION_CHECK_ADAPTED.json).
+
+**Every element hydrates, and nothing is lost:**
+
+|            | Declared in file | Hydrated |
+| ---------- | ---------------: | -------: |
+| levels     |                3 |        3 |
+| wall types |                5 |        5 |
+| walls      |               68 |       68 |
+| openings   |               47 |       47 |
+| doors      |               26 |       26 |
+| windows    |               13 |       13 |
+| rooms      |               48 |       48 |
+
+Zero remaining divergences, zero unsupported content. Verified additionally:
+all **65 stated wall heights** survive exactly (57 matching their wall type's
+derived default, 8 carried as explicit `heightOverride`), every element id
+survives, and **no wall endpoint moves** — the geometry is untouched.
+
+### Sixteen translations, and which are which
+
+The adapter reports every translation with a `basis`, because the difference
+matters: **10 derived** (computed from what the file already states — a second
+reader would compute the same) and **6 assumed** (the file does not carry it and
+a convention was applied).
+
+| Translation                                                              | Entries | Basis       |
+| ------------------------------------------------------------------------ | ------: | ----------- |
+| `wallTypes.thickness` — bare `width` → `{ value, unit }` mm              |       5 | derived     |
+| `wallTypes.defaultHeight` — from the walls using each type               |       5 | derived     |
+| `wallTypes.function` — from the walls' `semanticRole`                    |       5 | derived     |
+| `walls.joinStart/joinEnd` — `union-solid` → `auto`                       |     130 | derived     |
+| `walls.height` → `heightOverride` where it differs from the type default |       8 | derived     |
+| `openings.kind` — sliding/pocket → `door`, plain → `void`                |      28 | derived     |
+| `doors.side` — from the file's own `swingDirection`                      |      26 | derived     |
+| `rooms.status` — `coordinated-*` → `valid`                               |      48 | derived     |
+| `model.project` — flat → nested                                          |       1 | derived     |
+| `project.units` — `mm` → `metric`                                        |       1 | derived     |
+| `model.modelSchema` — tagged `+arq-house-17`                             |       1 | **assumed** |
+| `walls.alignment` — absent → `centre`                                    |       3 | **assumed** |
+| `walls.joinStart/joinEnd` — absent → `auto`                              |       6 | **assumed** |
+| `doors.hand` — `start`/`end` → `left`/`right`                            |      26 | **assumed** |
+| `doors.swingAngle` — absent → 90° swing, 0° sliding/pocket               |      26 | **assumed** |
+| `windows.side` — `configured` → `left`                                   |      13 | **assumed** |
+
+The `derived` ones are safe to rely on. The six `assumed` ones are conventions,
+and each carries a written rationale in the translation record so a reviewer can
+weigh it rather than discover it. Two are worth an owner's explicit view:
+
+- **`doors.hand`** — the file hinges by wall end (`start`/`end`); the adapter
+  reads `start` as the left edge looking along the wall. If that convention is
+  backwards for this project, 26 doors read mirrored on plan.
+- **`doors.swingAngle`** — plans draw a swing at 90°, and a sliding or pocket
+  leaf is given 0° because it sweeps no arc. Drawing one at 90° would be a
+  fiction; if a different drawing standard applies, this is where to set it.
+
+### What the adapter deliberately does not do
+
+It does not write to the file. It takes a decoded `model.json` and returns a new
+one, so `house.arq` keeps its SHA-256 and stays the artifact that was
+checksummed. Persisting an adapted model into a `.arq` is a separate decision
+with its own review.
+
+It also refuses to run on anything that is not this vocabulary
+(`status: 'not-applicable'`), so it can never quietly rewrite an unrelated
+project that merely happens to be missing a field.
+
+## Why the file appeared not to open — it was never the size
+
+The project history records the Version 17 upload failing because `house.arq`
+was too large, with roughly 30 MB believed to be the ceiling, and the compact
+rebuild (34.69 MB → 21.43 MB) was made to get under it.
+
+**No such limit exists in this codebase, and there is no upload.** Read from the
+source:
+
+| Gate                                 |       Limit | Where                                              |
+| ------------------------------------ | ----------: | -------------------------------------------------- |
+| `preflightArqfsBytes` `maxFileBytes` |   **8 GiB** | `packages/arqfs/src/arqfs-preflight.ts`            |
+| `MAX_ARCHIVE_TOTAL_BYTES`            |   **1 GiB** | `packages/project-format/src/complexity-limits.ts` |
+| `MAX_ENTRY_BYTES`                    | **500 MiB** | `packages/project-format/src/archive.ts`           |
+
+The 34.69 MB file was roughly 250× under the smallest gate that applies to it.
+
+And opening is entirely client-side: `FileOpenPanel` reads the chosen file with
+`file.arrayBuffer()` from an `<input type="file">`, and `apps/api` has no route
+for `.arq` at all. Nothing is transmitted, so no request-body limit — Vercel's
+or anyone's — can be reached. There was no upload to be too large for.
+
+The real cause is the one this report documents above, fixed in
+`apps/web/src/project/native-project-model.ts`: the app **did** accept the file,
+took the flat decode path on its root `projectName`, and opened it as 68 bare
+wall centrelines with `document: null` — no levels, no rooms, no openings, no
+doors, no windows, no wall thickness, and no message saying so. A user opening
+their coordinated house and being shown a stick figure of it would reasonably
+report that the upload "did not work".
+
+That also explains why compaction did not help: it changed the container, and
+the fault was in the decode path, which is identical for both files — their
+`model.json` is byte-identical.
+
+The compaction remains worth keeping. It removed two duplicate copies of the
+model, a redundant contact sheet and seven orphaned resource rows, and it
+regenerated `checksums.json` consistently. It was good hygiene applied to the
+wrong diagnosis.
+
+`house.arq` was opened read-only and is byte-identical after every check; its
+SHA-256 is unchanged, and nothing in the shipped package was modified.
+
+The adapter changes what this build can _read_, not what the file _is_. As
+shipped, `house.arq` still does not hydrate, and any claim that it opens has to
+carry "once adapted" with it — the two are different statements and the tooling
+keeps them apart on purpose.
+
+The six assumed translations remain open for owner review. They are conventions
+this report applies and states, not facts the file supplies, and the two that
+affect how the building reads on plan — door hand and swing angle — are named
+above so they can be confirmed or overridden rather than inherited silently.

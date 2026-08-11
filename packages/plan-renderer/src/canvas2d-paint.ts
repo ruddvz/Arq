@@ -28,11 +28,15 @@ export type Canvas2dPaintTarget = Pick<
   | 'stroke'
   | 'fill'
   | 'fillText'
+  // `strokeText` and `lineJoin` are here only for the halo behind label text -
+  // see `paintTextWithHalo`. Nothing else in this backend strokes text.
+  | 'strokeText'
   | 'arc'
   | 'setLineDash'
   | 'strokeStyle'
   | 'fillStyle'
   | 'lineWidth'
+  | 'lineJoin'
   | 'font'
 >;
 
@@ -47,6 +51,55 @@ const HANDLE_RADIUS_CSS_PX = 4;
  * are passed in rather than measured.
  */
 const TEXT_LINE_HEIGHT_PX = 12;
+
+/**
+ * Width of the paper-coloured halo drawn behind label text, in CSS pixels.
+ *
+ * A drawn plan does not move a room's name off its furniture; it knocks the
+ * furniture out from behind the name. Until the plan carried furniture there
+ * was nothing to knock out, and "Kitchen 35.3 m²" printed over the kitchen
+ * island the moment there was one - the label and the island both legible
+ * alone, neither legible together.
+ *
+ * Three pixels a side. Two was enough against linework alone and not against a
+ * filled body: once furniture is drawn as solid material rather than outline,
+ * the halo is separating text from a field of colour rather than from a few
+ * strokes. More than three starts eating the drawing around short labels, which
+ * trades one unreadable thing for another.
+ */
+const TEXT_HALO_CSS_PX = 3;
+
+/**
+ * One line of label text, knocked out of whatever is behind it.
+ *
+ * The halo is a stroke of the same glyphs in the paper colour, drawn first and
+ * filled over - the standard way a drawing puts text on top of linework without
+ * a rectangle around it. A rectangle would be simpler and worse: it clears the
+ * label's whole bounding box, including the corners the letters never reach, so
+ * a two-word room name punches a visible white slab out of the plan.
+ *
+ * `lineJoin` is round because the default mitre spikes on the sharp interior
+ * angles of letterforms - a capital A grows horns at this stroke width.
+ *
+ * The paper colour rather than white: under a dark appearance the surface
+ * behind the drawing is dark, and a white halo would be the brightest thing on
+ * the page.
+ */
+function paintTextWithHalo(
+  target: Canvas2dPaintTarget,
+  text: string,
+  x: number,
+  y: number,
+  haloColor: string,
+  haloWidth: number,
+): void {
+  target.strokeStyle = haloColor;
+  target.lineWidth = haloWidth;
+  target.lineJoin = 'round';
+  target.strokeText(text, x, y);
+  target.lineJoin = 'miter';
+  target.fillText(text, x, y);
+}
 
 /**
  * The two colours the plan is drawn in, and the one it is drawn on.
@@ -91,6 +144,22 @@ export interface PlanPalette {
    * one wash instead of several, which is what this looked like before.
    */
   readonly roomFills?: Readonly<Record<string, string>>;
+  /**
+   * A tint per furnishing material, keyed by the material name the model
+   * states - `wood`, `fabric`, `stone`, `glass` and the rest.
+   *
+   * Keyed by the file's own vocabulary rather than by a closed set this package
+   * defines, for the same reason `NativeFurnishing.kind` is: a project may name
+   * a material nothing here has heard of, and the honest response is to draw it
+   * as an outline rather than to collapse it into "other" and colour it as
+   * something it is not. An absent key means exactly that.
+   */
+  readonly materialFills?: Readonly<Record<string, string>>;
+  /**
+   * The glass in a window opening. Absent draws the pane unfilled, which is
+   * what a window looked like before it had one - a hairline across a gap.
+   */
+  readonly glazing?: string;
   /**
    * Tints whose rooms are hatched as well as filled, keyed by `RoomTint`, with
    * the colour to draw the hatching in.
@@ -236,9 +305,22 @@ function paintPrimitive<TId>(
         const colour =
           primitive.fill === 'poche'
             ? palette.poche
-            : primitive.fillTint === undefined
-              ? palette.roomFill
-              : (palette.roomFills?.[primitive.fillTint] ?? palette.roomFill);
+            : primitive.fill === 'glazing'
+              ? palette.glazing
+              : primitive.fill === 'furnishing'
+                ? /*
+                   * A furnishing whose material the palette does not name is left
+                   * unfilled rather than given the generic tint. An outline is an
+                   * honest "a thing is here"; a wrong colour claims a material the
+                   * file did not state, and the whole point of tinting these is
+                   * that the colour means something.
+                   */
+                  primitive.fillTint === undefined
+                  ? undefined
+                  : palette.materialFills?.[primitive.fillTint]
+                : primitive.fillTint === undefined
+                  ? palette.roomFill
+                  : (palette.roomFills?.[primitive.fillTint] ?? palette.roomFill);
         if (colour !== undefined) {
           target.setLineDash([]);
           target.fillStyle = colour;
@@ -287,14 +369,23 @@ function paintPrimitive<TId>(
        * it was anchored to rather than hanging below it.
        */
       const lines = primitive.text.split('\n');
+      const haloColor = palette.paper;
+      const haloWidth = TEXT_HALO_CSS_PX * 2 * devicePixelRatio;
       if (lines.length === 1) {
-        target.fillText(primitive.text, screen.x, screen.y);
+        paintTextWithHalo(target, primitive.text, screen.x, screen.y, haloColor, haloWidth);
         break;
       }
       const lineHeight = TEXT_LINE_HEIGHT_PX * devicePixelRatio;
       const firstOffset = -((lines.length - 1) * lineHeight) / 2;
       lines.forEach((line, index) => {
-        target.fillText(line, screen.x, screen.y + firstOffset + index * lineHeight);
+        paintTextWithHalo(
+          target,
+          line,
+          screen.x,
+          screen.y + firstOffset + index * lineHeight,
+          haloColor,
+          haloWidth,
+        );
       });
       break;
     }

@@ -109,6 +109,7 @@ describe('parseNativeProjectModel', () => {
       units: 'metric',
       revision: 7,
       modelSchema: 'arq-bim-core-reference-v0',
+      northBearingDegrees: null,
       sourceRepositoryRevision: 'abc123',
     });
     // Declared in metres in the file, consumed in millimetres, so no caller has
@@ -392,10 +393,127 @@ describe('parseNativeProjectViews', () => {
     ]);
   });
 
+  /**
+   * The fixture's two analysis views used to report "This build has no analysis
+   * surface yet", which stopped being true once the walkability pathways were
+   * drawn - the app draws exactly what those views describe. What actually stops
+   * them being shown is narrower and is the file's own doing: neither names a
+   * level, and a plan-like view with no storey has nothing to be drawn on.
+   *
+   * Worth separating because the two sentences send a reader to different
+   * places. The old one says wait for a later build; the true one says the view
+   * record is incomplete, which is something the file's author can fix.
+   */
+  it('reports an analysis view with no level as missing a level, not as unsupported', () => {
+    const views = parseNativeProjectViews({
+      views: [
+        { id: 'v-flow', name: 'Ground flow', kind: 'analysis', state: 'current' },
+        {
+          id: 'v-flow-2',
+          name: 'Upper flow',
+          kind: 'analysis',
+          levelId: 'lvl-2',
+          state: 'current',
+        },
+      ],
+    });
+
+    expect(views.map((view) => [view.id, view.supported, view.unsupportedReason])).toEqual([
+      ['v-flow', false, 'This analysis view names no level, so there is no storey to draw it on.'],
+      ['v-flow-2', true, null],
+    ]);
+  });
+
+  /** A 3D view is of the whole model, so it is the one kind that needs no level. */
+  it('does not ask a 3D view for a level', () => {
+    const [view] = parseNativeProjectViews({
+      views: [{ id: 'v-3d', name: 'Axonometric', kind: '3d', state: 'current' }],
+    });
+    expect([view?.supported, view?.unsupportedReason]).toEqual([true, null]);
+  });
+
+  /**
+   * State first: a view the file never rendered is not shown because the file
+   * says so, whatever else is missing from the record.
+   */
+  it('reports a stale view by its state even when it also names no level', () => {
+    const [view] = parseNativeProjectViews({
+      views: [{ id: 'v-old', name: 'Old flow', kind: 'analysis', state: 'superseded' }],
+    });
+    expect(view?.unsupportedReason).toBe(
+      'The project records this view as "superseded" rather than current.',
+    );
+  });
+
   it('treats missing or malformed view records as no views rather than a failure', () => {
     expect(parseNativeProjectViews(undefined)).toEqual([]);
     expect(parseNativeProjectViews({ views: 'nope' })).toEqual([]);
     // An entry with no id cannot be addressed, so it is skipped, not guessed at.
     expect(parseNativeProjectViews({ views: [{ kind: 'plan' }, 3, null] })).toEqual([]);
+  });
+});
+
+/**
+ * The project's north.
+ *
+ * Null and zero are different answers and both are real: zero is "north is up
+ * the page", which a file can state; null is "this file does not say". A
+ * drawing that assumes zero for null has invented an orientation, and a reader
+ * trusts an arrow.
+ */
+describe('parseNativeProjectModel - north', () => {
+  function withCoordinateSystem(coordinateSystem: unknown): unknown {
+    return {
+      modelSchema: 'arq-bim-core-reference-v0',
+      project: {
+        id: 'proj-1',
+        name: 'Test project',
+        units: 'metric',
+        revision: 1,
+        levelIds: ['level-1'],
+      },
+      levels: [{ id: 'level-1', name: 'Ground', elevation: 0 }],
+      wallTypes: [
+        {
+          id: 'wt-1',
+          name: 'Wall',
+          thickness: { value: 100, unit: 'mm' },
+          defaultHeight: { value: 2400, unit: 'mm' },
+          function: 'interior',
+        },
+      ],
+      walls: [],
+      rooms: [],
+      coordinateSystem,
+    };
+  }
+
+  function bearing(coordinateSystem: unknown): number | null {
+    const parsed = parseNativeProjectModel(withCoordinateSystem(coordinateSystem), []);
+    if (parsed.status !== 'parsed') throw new Error(parsed.reason);
+    return parsed.model.summary.northBearingDegrees;
+  }
+
+  it('reads the axis spelling a generator writes', () => {
+    expect(bearing({ north: '+Y' })).toBe(0);
+    expect(bearing({ north: '+X' })).toBe(90);
+    expect(bearing({ north: '-Y' })).toBe(180);
+    expect(bearing({ north: '-x' })).toBe(270);
+  });
+
+  /** A project surveyed at an angle must not be rounded to the nearest axis. */
+  it('prefers a stated bearing over an axis name', () => {
+    expect(bearing({ north: '+Y', northBearingDegrees: 23.5 })).toBe(23.5);
+  });
+
+  it('normalises a negative or over-turned bearing into [0, 360)', () => {
+    expect(bearing({ northBearingDegrees: -90 })).toBe(270);
+    expect(bearing({ northBearingDegrees: 450 })).toBe(90);
+  });
+
+  it('says nothing rather than guessing when the file does not state north', () => {
+    expect(bearing(undefined)).toBeNull();
+    expect(bearing({})).toBeNull();
+    expect(bearing({ north: 'magnetic' })).toBeNull();
   });
 });

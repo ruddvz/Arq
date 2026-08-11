@@ -93,8 +93,8 @@ import {
   type WorkspaceProjectContext,
   type WorkspaceViewKind,
 } from '@arq/workspace';
-import { FitIcon, InspectIcon, Model3dIcon, PlanIcon, SheetIcon } from '@arq/icons';
-import type { WorldPoint } from '@arq/geometry-2d';
+import { FitIcon, InspectIcon, Model3dIcon, PlanIcon, SheetIcon, ViewStyleIcon } from '@arq/icons';
+import { worldPoint, type WorldPoint } from '@arq/geometry-2d';
 import { createUndoStack, hasErrors, type ValidationMessage } from '@arq/operations';
 import { validateUniqueElementIds, validateWallSegments } from '@arq/validation';
 import {
@@ -124,9 +124,15 @@ import {
   roomsOnLevel,
   wallTypeFor,
   wallsOnLevel,
+  type NativeFurnishing,
+  type NativeSlab,
+  type NativeStair,
+  type NativeServicePoint,
+  type NativePathway,
   type NativeProjectModel as NativeProjectDocument,
 } from '@arq/project-loading';
-import type { WallSolidDimensions } from './ModelCanvas';
+import { openingInfillsForWall, plateSolids, stairFlightSolids } from '@arq/geometry-3d';
+import type { ModelPlacedSolid, WallSolidDimensions } from './ModelCanvas';
 import type { PlanRoom } from './canvas/canvas-interaction';
 import { roomLabelText, type PlanOpeningInput, type PlanScene } from '@arq/plan-renderer';
 import { exportPlanSheet, PAPER_SIZES } from './sheets/sheet-export';
@@ -253,6 +259,219 @@ function wallOpeningsForLevel(
  * has to agree with what the inspector and schedules say, and two independent
  * area calculations is how they stop agreeing.
  */
+/** One level's furniture, floor plates and stairs, as the surfaces draw them. */
+interface LevelPlacedContent {
+  readonly furnishings: readonly NativeFurnishing[];
+  readonly slabs: readonly NativeSlab[];
+  readonly stairs: readonly NativeStair[];
+  readonly servicePoints: readonly NativeServicePoint[];
+  readonly pathways: readonly NativePathway[];
+}
+
+/**
+ * What a level with no project open, or a project that carries none of this,
+ * shows. A shared constant so every reset points at the same empty value and no
+ * render is handed a fresh object that changed nothing.
+ */
+const EMPTY_LEVEL_CONTENT: LevelPlacedContent = {
+  furnishings: [],
+  slabs: [],
+  stairs: [],
+  servicePoints: [],
+  pathways: [],
+};
+
+/**
+ * What a plate is drawn as in 3D. Mirrors ModelCanvas's own reserved material
+ * name; a plate is a solid like any other and differs only in what it is made
+ * of.
+ */
+const SLAB_MATERIAL = 'slab';
+
+/**
+ * What a door leaf and a window pane are made of, for the purpose of colouring
+ * them.
+ *
+ * The file records no material for either - a `Door` carries its side, hand and
+ * swing and nothing about its construction - so these are the defaults, not a
+ * reading. Wood and glass because those are what an internal door and a window
+ * are unless something says otherwise, and because the two have to differ:
+ * telling a glazed opening from a leaf is the whole reason the solids exist.
+ */
+const LEAF_MATERIAL = 'wood';
+const GLAZING_MATERIAL = 'glass';
+
+/**
+ * A landing's own thickness, in millimetres, when the stair has no flight to
+ * take one from. Only reachable for a stair recorded as landings alone, which
+ * is not a stair - but a zero-thickness plate disappears edge-on, and the view
+ * a person has of a landing they are about to step onto is edge-on.
+ */
+const LANDING_THICKNESS_MM = 180;
+
+/** Stable empty, so a render with no project open does not rebuild the 3D scene. */
+const EMPTY_PLACED_SOLIDS: readonly ModelPlacedSolid[] = [];
+
+/** The same, for the services overlay when it is switched off. */
+const EMPTY_SERVICE_POINTS: readonly NativeServicePoint[] = [];
+const EMPTY_PATHWAYS: readonly NativePathway[] = [];
+
+/**
+ * Everything on a level that is not a wall, a room or an opening: the
+ * furniture, the floor plate and the stairs rising from it.
+ *
+ * One derivation returning all three rather than three beside the existing
+ * per-level functions, because they are read together, drawn together and have
+ * one question to answer between them - "what else is on this storey?".
+ *
+ * A stair is placed by elevation rather than by a level id, because the file
+ * does not give it one and could not sensibly: a flight spans two levels and its
+ * mid-landing belongs to neither. It is shown on the storey it rises *from*,
+ * which is where a plan draws it - a stair appears on the lower floor going up,
+ * with the floor above showing the void it arrives through. That void is the
+ * slab's, and the slab already carries it.
+ */
+function placedContentForLevel(
+  document: NativeProjectDocument,
+  levelId: string,
+): LevelPlacedContent {
+  const level = document.levels.find((entry) => (entry.id as string) === levelId) ?? null;
+  const elevation = level?.elevation ?? null;
+  // The next level up, if there is one. A stair belongs to this storey when it
+  // starts at or above this level's datum and below the next one's.
+  const above = document.levels
+    .map((entry) => entry.elevation)
+    .filter((value) => elevation !== null && value > elevation)
+    .sort((a, b) => a - b)[0];
+
+  return {
+    furnishings: document.furnishings.filter((entry) => entry.levelId === levelId),
+    slabs: document.slabs.filter((entry) => entry.levelId === levelId),
+    servicePoints: document.servicePoints.filter((entry) => entry.levelId === levelId),
+    pathways: document.pathways.filter((entry) => entry.levelId === levelId),
+    stairs:
+      elevation === null
+        ? []
+        : document.stairs.filter((stair) => {
+            const bases = stair.flights.map((flight) => flight.baseElevation);
+            if (bases.length === 0) return false;
+            const foot = Math.min(...bases);
+            return foot >= elevation && (above === undefined || foot < above);
+          }),
+  };
+}
+
+/**
+ * The level's furniture, floor plate and stairs, as solids for the 3D view.
+ *
+ * The three become one list because 3D does not care which is which - it
+ * extrudes an outline between two heights - and keeping them apart would only
+ * mean three props saying the same thing three ways.
+ *
+ * Heights are absolute here, where the plan's are not. A plan is a horizontal
+ * cut and a chair's height is nothing to it; a model has to know that the chair
+ * stands on the upper floor and not on the ground. So the level's elevation is
+ * added once, at the point the two views stop sharing an answer.
+ */
+function placedSolidsForLevel(
+  document: NativeProjectDocument,
+  levelId: string,
+  content: LevelPlacedContent,
+): readonly ModelPlacedSolid[] {
+  const elevation =
+    document.levels.find((level) => (level.id as string) === levelId)?.elevation ?? 0;
+  const solids: ModelPlacedSolid[] = [];
+
+  for (const slab of content.slabs) {
+    for (const piece of plateSolids(
+      slab.id,
+      slab.outline,
+      slab.voids,
+      elevation,
+      slab.thicknessMillimetres,
+    )) {
+      solids.push({ ...piece, elementId: slab.id, material: SLAB_MATERIAL });
+    }
+  }
+
+  for (const furnishing of content.furnishings) {
+    solids.push({
+      id: furnishing.id,
+      elementId: furnishing.id,
+      outline: furnishing.footprint,
+      // Furniture stands on the finished floor, which is the level datum.
+      baseElevation: elevation,
+      height: furnishing.heightMillimetres,
+      material: furnishing.material,
+    });
+  }
+
+  for (const stair of content.stairs) {
+    for (const flight of stair.flights) {
+      for (const tread of stairFlightSolids(flight)) {
+        solids.push({ ...tread, elementId: stair.id, material: null });
+      }
+    }
+    /*
+     * Landings are flat plates at their own height, given the same thickness a
+     * tread has at the top of its flight. A landing drawn as a zero-thickness
+     * surface disappears edge-on, which is exactly the view a person has of the
+     * one they are about to step onto.
+     */
+    for (const landing of stair.landings) {
+      const thickness = stair.flights[0]
+        ? (stair.flights[0].topElevation - stair.flights[0].baseElevation) /
+          Math.max(1, stair.flights[0].treadCount)
+        : LANDING_THICKNESS_MM;
+      solids.push({
+        id: landing.id,
+        elementId: stair.id,
+        outline: landing.footprint,
+        baseElevation: landing.elevation - thickness,
+        height: thickness,
+        material: null,
+      });
+    }
+  }
+
+  /*
+   * The leaves and panes standing in the level's openings.
+   *
+   * The wall solids stop at the hole - `generateWallOpeningMeshes` cuts it and
+   * puts nothing in it, which is all a wall can contribute to a doorway. Without
+   * this the fixture's 26 doors and 13 windows were 39 identical voids, and the
+   * 3D view could not tell a glazed opening from a door from a structural gap.
+   *
+   * Read from the same `wallOpeningsForLevel` the plan surface is given, so the
+   * two views place an opening from one derivation rather than two.
+   */
+  const openingsByWall = wallOpeningsForLevel(document, levelId);
+  const dimensionsByWall = wallDimensionsForLevel(document, levelId);
+  for (const wall of wallsOnLevel(document, levelId)) {
+    const openings = openingsByWall.get(wall.id as string);
+    const dimensions = dimensionsByWall.get(wall.id as string);
+    if (openings === undefined || dimensions === undefined) continue;
+    for (const infill of openingInfillsForWall(
+      { start: wall.start, end: wall.end },
+      dimensions.thicknessMm,
+      openings,
+      elevation,
+    )) {
+      solids.push({
+        id: infill.id,
+        // The opening, not the leaf: picking a door's leaf selects the door,
+        // the same rule a wall's several panels already follow.
+        elementId: infill.openingId,
+        outline: infill.outline,
+        baseElevation: infill.baseElevation,
+        height: infill.height,
+        material: infill.part === 'pane' ? GLAZING_MATERIAL : LEAF_MATERIAL,
+      });
+    }
+  }
+  return solids;
+}
+
 function roomsForLevel(document: NativeProjectDocument, levelId: string): readonly PlanRoom[] {
   return roomsOnLevel(document, levelId).map((room) => ({
     id: room.id,
@@ -440,6 +659,23 @@ const INITIAL_PROBE: ViewportProbe = { widthPx: 1536, heightPx: 864, coarsePoint
 const SHEET_CHROME_INSET_PX = 12;
 
 /**
+ * The smallest gap the sheet's chrome may leave against the viewport edge, in
+ * CSS pixels - `--arq-space-compact`, the gutter every other surface in the
+ * shell already uses.
+ *
+ * The clamp that keeps this chrome on screen used to bottom out at `0`, which
+ * kept it visible and put it flush against the edge. Measured across levels
+ * that showed as an inconsistency rather than a nicety: on the ground floor the
+ * title and tools sat 17px inside the viewport, and on the upper floor - whose
+ * sheet fits closer to the top - they sat at exactly 0, touching it, while
+ * every other card on screen held an 8px gutter. Clamping to the gutter instead
+ * of to the edge keeps the guarantee the original clamp was written for and
+ * stops the chrome breaking the shell's rhythm when a drawing happens to fit
+ * tall.
+ */
+const SHEET_CHROME_MIN_GUTTER_PX = 8;
+
+/**
  * How far the chrome rides above the page's top edge, in CSS pixels.
  *
  * Roughly half its own height, so it straddles the edge the way a tab on a
@@ -501,6 +737,17 @@ export function App(): JSX.Element {
   const [wallDimensions, setWallDimensions] = useState<ReadonlyMap<string, WallSolidDimensions>>(
     new Map(),
   );
+  /**
+   * The furniture, floor plates and stairs on the level being drawn.
+   *
+   * One record rather than three states because they are always set together
+   * from one derivation, and three setters is three chances for a level switch
+   * to leave one of them still showing the previous storey.
+   */
+  const [levelPlacedContent, setLevelPlacedContent] =
+    useState<LevelPlacedContent>(EMPTY_LEVEL_CONTENT);
+  /** Whether the services-and-routes overlay is on. Off until a reader asks for it. */
+  const [servicesShown, setServicesShown] = useState(false);
 
   /*
    * Real local persistence: the journal is opened once, recovery replays it
@@ -652,6 +899,11 @@ export function App(): JSX.Element {
           ? wallOpeningsForLevel(opened.snapshot.document, initialLevelId)
           : new Map(),
       );
+      setLevelPlacedContent(
+        opened.snapshot.document !== null && initialLevelId !== null
+          ? placedContentForLevel(opened.snapshot.document, initialLevelId)
+          : EMPTY_LEVEL_CONTENT,
+      );
       wallIdCounterRef.current = highestWallIdSuffix(shown);
       setProjectName(opened.snapshot.displayName);
       // Read from the working copy, not written to it yet: "opened" is not
@@ -712,6 +964,25 @@ export function App(): JSX.Element {
     readonly project: OpenNativeProject;
   } | null>(null);
   const [activeNativeLevelId, setActiveNativeLevelId] = useState<string | null>(null);
+  /*
+   * The same content the plan draws, reduced to 3D solids.
+   *
+   * Derived rather than stored beside it: one source means the two views cannot
+   * come to describe different furniture, which is the disagreement neither
+   * view can show. Memoised because the reduction cuts a plate into rectangles
+   * and a flight into treads, and a repaint is not a reason to redo it.
+   */
+  const placedSolids = useMemo(
+    () =>
+      openNativeProject === null || activeNativeLevelId === null
+        ? EMPTY_PLACED_SOLIDS
+        : placedSolidsForLevel(
+            openNativeProject.project.model,
+            activeNativeLevelId,
+            levelPlacedContent,
+          ),
+    [openNativeProject, activeNativeLevelId, levelPlacedContent],
+  );
   const [modeState, setModeState] = useState(() =>
     initialModeState({
       projectId: 'demo-project',
@@ -1551,6 +1822,7 @@ export function App(): JSX.Element {
       setProjectRooms(roomsForLevel(openNativeProject.project.model, levelId));
       setWallDimensions(wallDimensionsForLevel(openNativeProject.project.model, levelId));
       setWallOpenings(wallOpeningsForLevel(openNativeProject.project.model, levelId));
+      setLevelPlacedContent(placedContentForLevel(openNativeProject.project.model, levelId));
       // The selection is a wall id, and a wall on another level is not on
       // screen. Keeping it would leave the inspector describing something the
       // reader cannot see.
@@ -1573,6 +1845,7 @@ export function App(): JSX.Element {
     setProjectRooms(null);
     setWallDimensions(new Map());
     setWallOpenings(new Map());
+    setLevelPlacedContent(EMPTY_LEVEL_CONTENT);
     setActiveWorkingCopyId(null);
     setDrawnWalls([]);
     drawnWallsRef.current = [];
@@ -1681,6 +1954,50 @@ export function App(): JSX.Element {
    * pixelsPerUnit). The label moves when the reader zooms, which is the only
    * way it can stay true.
    */
+  /**
+   * The page every level of the open project is drawn on.
+   *
+   * One extent across all levels, not one per level. The floors of a building
+   * are vertically aligned and are drawn at one scale on one sheet so a reader
+   * can compare them - a stair landing over a stair, a wall running through.
+   * Sizing the page from the level on show instead gave each floor its own,
+   * and switching level then resized and moved the sheet under a drawing that
+   * had not moved: measured on house.arq, the ground floor's page ended 53px
+   * short of the upper floor's, and the title and view tools, placed against
+   * the page, jumped with it.
+   *
+   * Every level's walls and rooms, because a level's extent is not only its
+   * walls: a roof terrace's boundary can reach past the storey below it.
+   *
+   * Null when no project is open - the scratch surface has a single level's
+   * worth of content and nothing to reconcile it against, so the canvas keeps
+   * sizing the page from what is on it.
+   */
+  const projectSheetBounds = useMemo(() => {
+    if (openNativeProject === null) return null;
+    const model = openNativeProject.project.model;
+    const points: WorldPoint[] = [];
+    for (const level of model.levels) {
+      for (const wall of wallsOnLevel(model, level.id)) points.push(wall.start, wall.end);
+      for (const room of roomsOnLevel(model, level.id)) points.push(...room.calculatedBoundary);
+    }
+    if (points.length === 0) return null;
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    for (const point of points) {
+      if (point.x < minX) minX = point.x;
+      if (point.y < minY) minY = point.y;
+      if (point.x > maxX) maxX = point.x;
+      if (point.y > maxY) maxY = point.y;
+    }
+    // A project whose every point coincides has no extent to fit; the canvas's
+    // own fallback handles that better than a zero-sized page would.
+    if (!(maxX > minX) || !(maxY > minY)) return null;
+    return { min: worldPoint(minX, minY), max: worldPoint(maxX, maxY) };
+  }, [openNativeProject]);
+
   /** What this project is, for under its name in the bar: revision and units. */
   const projectSubtitle =
     openNativeProject === null
@@ -1751,9 +2068,9 @@ export function App(): JSX.Element {
      * both unreadable and unclickable. The lift is a nicety; staying on screen
      * is not.
      */
-    const top = Math.max(0, sheetRect.y - SHEET_CHROME_LIFT_PX);
+    const top = Math.max(SHEET_CHROME_MIN_GUTTER_PX, sheetRect.y - SHEET_CHROME_LIFT_PX);
     return side === 'start'
-      ? { left: Math.max(0, sheetRect.x + SHEET_CHROME_INSET_PX), top }
+      ? { left: Math.max(SHEET_CHROME_MIN_GUTTER_PX, sheetRect.x + SHEET_CHROME_INSET_PX), top }
       : {
           left: sheetRect.x + sheetRect.width - SHEET_CHROME_INSET_PX,
           top,
@@ -1782,6 +2099,14 @@ export function App(): JSX.Element {
    * whether it belongs here: the grid toggles the plan's own grid, and search
    * opens the command palette. Nothing here is a placeholder.
    */
+  /*
+   * The toggle appears only when there is something for it to reveal. A control
+   * that does nothing on a project carrying no services is a control a reader
+   * has to try in order to learn it is empty.
+   */
+  const hasServicesOverlay =
+    levelPlacedContent.servicePoints.length > 0 || levelPlacedContent.pathways.length > 0;
+
   const viewTools =
     activeTab === null || sheetRect === null ? null : (
       <div
@@ -1796,6 +2121,36 @@ export function App(): JSX.Element {
         >
           <FitIcon width={16} height={16} />
         </button>
+        {/*
+          Building services and walkable routes, off by default.
+
+          A general arrangement plan does not carry 136 fittings. The fixture's
+          own drawing set puts them on their own sheets - A111 electrical, A121
+          plumbing and HVAC, E111 reflected ceiling - precisely because drawing
+          them over the floor plan buries the floor plan, which is what happened
+          when they were first drawn here: three room names went unreadable
+          under the sockets.
+
+          Arq has no sheet-per-discipline surface yet, so this is the honest
+          middle: the content is in the model, it is one control away, and the
+          drawing underneath stays readable. It is not a substitute for
+          discipline sheets and should not become one.
+        */}
+        {hasServicesOverlay && (
+          <button
+            type="button"
+            className="arq-shell-button"
+            aria-pressed={servicesShown}
+            aria-label={
+              servicesShown
+                ? 'Hide building services and routes'
+                : 'Show building services and routes'
+            }
+            onClick={() => setServicesShown((shown) => !shown)}
+          >
+            <ViewStyleIcon width={16} height={16} />
+          </button>
+        )}
         <button
           type="button"
           className="arq-shell-button"
@@ -1823,6 +2178,7 @@ export function App(): JSX.Element {
           // project's own wall types reached the plan and not the model.
           wallDimensions={wallDimensions}
           wallOpenings={wallOpenings}
+          placedSolids={placedSolids}
           selection={modelSelection}
           onSelectElement={(elementId) =>
             setModelSelection({ primary: elementId, secondary: new Set() })
@@ -1843,7 +2199,14 @@ export function App(): JSX.Element {
         <PlanCanvas
           activeToolId={toolState.activeToolId}
           walls={drawnWalls}
+          sheetBounds={projectSheetBounds}
           {...(projectRooms === null ? {} : { rooms: projectRooms })}
+          furnishings={levelPlacedContent.furnishings}
+          slabs={levelPlacedContent.slabs}
+          stairs={levelPlacedContent.stairs}
+          servicePoints={servicesShown ? levelPlacedContent.servicePoints : EMPTY_SERVICE_POINTS}
+          pathways={servicesShown ? levelPlacedContent.pathways : EMPTY_PATHWAYS}
+          northBearingDegrees={openNativeProject?.project.model.summary.northBearingDegrees ?? null}
           wallDimensions={wallDimensions}
           wallOpenings={wallOpenings}
           onSceneBuilt={(scene) => {

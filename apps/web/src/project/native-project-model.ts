@@ -19,6 +19,7 @@
  */
 import { worldPoint, type WorldPoint } from '@arq/geometry-2d';
 import {
+  adaptArqHouse17Model,
   parseNativeProjectModel,
   parseNativeProjectViews,
   type NativeProjectModel as NativeProjectDocument,
@@ -110,6 +111,25 @@ export function decodeNativeProjectModel(
   // than this build actually uses.
   if (typeof projectName !== 'string') {
     return decodeReferenceModel(value, viewsValue);
+  }
+  /*
+   * A root `projectName` is not proof of the flat shape. ARQ House 17.0 carries
+   * one *and* a full reference model - 3 levels, 5 wall types, 47 openings, 26
+   * doors, 13 windows, 48 rooms - in a vocabulary this build did not yet read.
+   * Dispatching on `projectName` alone opened that project as 68 bare wall
+   * centrelines with `document: null`, silently dropping everything else: no
+   * thickness, no rooms, no openings, no doors, no windows, and no warning. A
+   * user would see their house as a stick drawing and have no way to tell that
+   * the rest had been discarded rather than never drawn.
+   *
+   * So the richer shape is tried first. `adaptArqHouse17Model` recognises that
+   * vocabulary strictly - it requires the absent modelSchema, the flat project
+   * record and the bare wall-type widths together - and declines everything
+   * else, so a genuinely flat file this build wrote still takes the path below.
+   */
+  const adapted = adaptArqHouse17Model(value);
+  if (adapted.status === 'adapted') {
+    return decodeReferenceModel(adapted.model, viewsValue);
   }
   if (!Array.isArray(walls)) {
     return { status: 'rejected', reason: 'model.json has no wall list' };

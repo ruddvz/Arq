@@ -32,9 +32,9 @@ A candidate binary file format ("AOGRP" — ARQ Object Graph and Revision
 Pack) as a possible eventual alternative to `.arq`-as-SQLite. **Correction
 to this document's earlier framing**: an independent architecture review
 (below) found that the package's own normative text does not actually
-propose AOGRP as a *complement* sitting alongside SQLite — `03_ARQ_NOT_A_
+propose AOGRP as a _complement_ sitting alongside SQLite — `03_ARQ_NOT_A_
 SQLITE_WRAPPER.md` and `05_SQLITE_AND_OTHER_ENGINE_BOUNDARIES.md` assign
-AOGRP *canonical* status and demote SQLite to a disposable working-copy
+AOGRP _canonical_ status and demote SQLite to a disposable working-copy
 cache. That is a proposed successor to ADR-0019's canonical-tier decision,
 not a complement to it, and should be evaluated as such. The design itself:
 content-addressed objects, a dual-superblock recovery header, append-only
@@ -54,7 +54,7 @@ The package's prose is written in a confident, promotional style ("verified,"
 independently re-checked rather than summarized:
 
 - **The 21 reference tests genuinely pass** — `python3 -m unittest discover
-  -s reference-v6/tests -v` → `Ran 21 tests ... OK` — but only after
+-s reference-v6/tests -v` → `Ran 21 tests ... OK` — but only after
   installing `jsonschema` and `pyyaml`; the package ships no
   `requirements.txt` or vendored deps, so "21 passing tests" is conditional
   on that environment setup, not self-contained.
@@ -70,7 +70,7 @@ independently re-checked rather than summarized:
 - **No red flags**: no hardcoded secrets, no network calls, no `eval`/`exec`/
   `pickle`, and a targeted search for prompt-injection patterns ("ignore
   previous instructions," "skip review," "already approved," "bypass") found
-  only *prohibitive* uses (e.g. "MUST NOT bypass validation") — never an
+  only _prohibitive_ uses (e.g. "MUST NOT bypass validation") — never an
   instruction telling an agent to actually do those things.
 - **Code quality**: the Python reference (`reference-v6/arq6/`, ~250 lines)
   is a competent narrow demo — real struct-packed dual superblocks with
@@ -130,20 +130,20 @@ three read the actual code and specs, not the summary. Ranked by severity:
 1. **Dual-root recovery has no fallback path (reproduced).**
    `format.py`'s `open_manifest()` picks the highest-generation root and
    reads its manifest segment uncaught. If that root's superblock struct is
-   intact but the segment *content* it points to is corrupted, the reader
+   intact but the segment _content_ it points to is corrupted, the reader
    throws instead of falling back to the older, still-valid root —
    defeating the entire point of dual-root recovery. Reproduced directly:
    corrupting only the newer root's manifest payload (leaving the older
    root, and the newer root's own superblock checksum, untouched) makes
    `open_manifest` fail outright. Every existing fixture only corrupts the
-   *older* slot's superblock struct; the adversarial case (newer root's
-   *content* corrupt, older root sound) is untested and unhandled.
+   _older_ slot's superblock struct; the adversarial case (newer root's
+   _content_ corrupt, older root sound) is untested and unhandled.
 2. **MCP approval replay bug.** `mcp.py`'s `approve()` can be called
    repeatedly on one proposal, minting multiple live tokens; `consume()`
    never checks the proposal's status before returning operations. A
    second still-valid token from an earlier `approve()` call replays the
    same operations after the first has already committed. The included
-   test only reuses the *same* token, never a second one.
+   test only reuses the _same_ token, never a second one.
 3. **Approval isn't bound to a live "current head" check (TOCTOU).** The
    exact-digest binding covers the proposal payload only; nothing re-checks
    that `base_revision` still equals the file's actual current revision
@@ -224,20 +224,20 @@ three read the actual code and specs, not the summary. Ranked by severity:
 
 **Pass 2 — findings 8–15, addressed as far as each one honestly can be:**
 
-| # | Finding | Resolution |
-|---|---|---|
-| 5 | Package succeeds ADR-0019, doesn't complement it | Documented above (framing correction, not a code fix) |
-| 6 | Second content-addressed ID scheme, no mapping to Arq's `ElementId`/resource-chunk hashing | **Not completable here** — see "What can't be completed by this triage" below |
-| 7 | Second, competing operation/revision model vs `@arq/operations` + `@arq/sync-protocol` | **Not completable here** — see below |
-| 8 | Storage-adapter recovery contract asserted, not defined | **Fixed (doc)** — `normative-v6/10_STORAGE_ADAPTER_ABI.md` now has a concrete four-point contract (detect-before-visibility, no-replace-on-failure, three explicit host actions, exactly-two-states-after-crash), modeled on `packages/arqfs/src/arqfs-node-atomic-swap.ts`'s real, tested behavior without copying it wholesale |
-| 9 | Hash-agility claimed (citing Git), not built | **Fixed (doc correction)** — `research-v6/07_MERKLE_DAG_AND_HASH_AGILITY.md` and `normative-v6/05_DETERMINISTIC_ENCODING_AND_HASHES.md` corrected: the false "hash references include algorithm and profile IDs" claim is removed, and the actual mechanism (profile-level version gating via the boot header, not per-object dual-hash coexistence) is now accurately described, with the honest reasoning for why Git's model doesn't fit a single-writer mutable file |
-| 10 | Garbage collection entirely unimplemented | **Fixed (code)** — `format.py`'s new `gc_repack()` is a real, history-preserving compaction (see below) with 4 new tests |
-| 11 | Capability claims not cross-validated against segment content | **Fixed (code)** — `open_manifest()` now cross-checks declared `required_capabilities`/`optional_capabilities` against the segment types the manifest actually lists, rejecting under-declaration, with 2 new tests |
-| 12 | Envelope spec gives no overflow-safety requirement | **Fixed (doc)** — `normative-v6/01_AOGRP_BINARY_ENVELOPE.md` now explicitly requires checked/saturating arithmetic for offset+length validation in any conforming (non-Python) implementation |
-| 13 | Encryption/signing claim misleading in isolation | **Fixed (doc)** — `normative-v6/19_SECURITY_LIMITS_ENCRYPTION_SIGNING.md` now has an implementation-status banner co-located with the claim itself |
-| 14 | SQLite migration is unimplemented prose | **Fixed (bounded code)** — new `reference-v6/arq6/migrate.py` implements read-only inspection and row-to-object translation for real, against a synthetic schema (not Arq's actual `.arq` schema — see below), with 6 new tests including a proof that the source file is byte-for-byte unchanged after inspection |
-| 15 | Shallow open doesn't certify segment integrity, verdict looks identical to deep | **Fixed (code)** — `open_manifest()`/`deep_validate()` now return an explicit `content_verified` field (`False`/`True`), surfaced through `cli.py`'s output, with 1 new test |
-| 16 | CRDT/merge conflicts named but unresolved | **Left open, honestly** — see below; not fabricated |
+| #   | Finding                                                                                    | Resolution                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| --- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 5   | Package succeeds ADR-0019, doesn't complement it                                           | Documented above (framing correction, not a code fix)                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 6   | Second content-addressed ID scheme, no mapping to Arq's `ElementId`/resource-chunk hashing | **Not completable here** — see "What can't be completed by this triage" below                                                                                                                                                                                                                                                                                                                                                                                            |
+| 7   | Second, competing operation/revision model vs `@arq/operations` + `@arq/sync-protocol`     | **Not completable here** — see below                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 8   | Storage-adapter recovery contract asserted, not defined                                    | **Fixed (doc)** — `normative-v6/10_STORAGE_ADAPTER_ABI.md` now has a concrete four-point contract (detect-before-visibility, no-replace-on-failure, three explicit host actions, exactly-two-states-after-crash), modeled on `packages/arqfs/src/arqfs-node-atomic-swap.ts`'s real, tested behavior without copying it wholesale                                                                                                                                         |
+| 9   | Hash-agility claimed (citing Git), not built                                               | **Fixed (doc correction)** — `research-v6/07_MERKLE_DAG_AND_HASH_AGILITY.md` and `normative-v6/05_DETERMINISTIC_ENCODING_AND_HASHES.md` corrected: the false "hash references include algorithm and profile IDs" claim is removed, and the actual mechanism (profile-level version gating via the boot header, not per-object dual-hash coexistence) is now accurately described, with the honest reasoning for why Git's model doesn't fit a single-writer mutable file |
+| 10  | Garbage collection entirely unimplemented                                                  | **Fixed (code)** — `format.py`'s new `gc_repack()` is a real, history-preserving compaction (see below) with 4 new tests                                                                                                                                                                                                                                                                                                                                                 |
+| 11  | Capability claims not cross-validated against segment content                              | **Fixed (code)** — `open_manifest()` now cross-checks declared `required_capabilities`/`optional_capabilities` against the segment types the manifest actually lists, rejecting under-declaration, with 2 new tests                                                                                                                                                                                                                                                      |
+| 12  | Envelope spec gives no overflow-safety requirement                                         | **Fixed (doc)** — `normative-v6/01_AOGRP_BINARY_ENVELOPE.md` now explicitly requires checked/saturating arithmetic for offset+length validation in any conforming (non-Python) implementation                                                                                                                                                                                                                                                                            |
+| 13  | Encryption/signing claim misleading in isolation                                           | **Fixed (doc)** — `normative-v6/19_SECURITY_LIMITS_ENCRYPTION_SIGNING.md` now has an implementation-status banner co-located with the claim itself                                                                                                                                                                                                                                                                                                                       |
+| 14  | SQLite migration is unimplemented prose                                                    | **Fixed (bounded code)** — new `reference-v6/arq6/migrate.py` implements read-only inspection and row-to-object translation for real, against a synthetic schema (not Arq's actual `.arq` schema — see below), with 6 new tests including a proof that the source file is byte-for-byte unchanged after inspection                                                                                                                                                       |
+| 15  | Shallow open doesn't certify segment integrity, verdict looks identical to deep            | **Fixed (code)** — `open_manifest()`/`deep_validate()` now return an explicit `content_verified` field (`False`/`True`), surfaced through `cli.py`'s output, with 1 new test                                                                                                                                                                                                                                                                                             |
+| 16  | CRDT/merge conflicts named but unresolved                                                  | **Left open, honestly** — see below; not fabricated                                                                                                                                                                                                                                                                                                                                                                                                                      |
 
 Ten new regression tests from findings 10/11/15, plus 6 from finding 14's
 migration module, plus the original 6 from findings 1–4: **40 tests total,
@@ -266,7 +266,7 @@ owner, not something this triage should decide by editing a document:
    boundaries. Lowest risk, closest to what `03_ARQ_NOT_A_SQLITE_WRAPPER.md`
    claims to want (despite the framing correction in finding 5) — but this
    is a genuine constraint AOGRP's own normative docs don't currently state.
-2. **`ElementId` is redefined to *be* (or be derived from) an AOGRP content
+2. **`ElementId` is redefined to _be_ (or be derived from) an AOGRP content
    ID**, unifying identity but requiring every existing `ElementId`
    reference in the shipped codebase to either migrate or gain a
    translation shim — a real, cross-cutting, hard-to-reverse change.
@@ -307,7 +307,7 @@ merge-semantics-for-geometry research question, which remains open.
 
 **`MANIFEST_SHA256.txt` and `PACKAGE_INVENTORY.json` are stale by design**
 for every file touched across both fix passes — they record hashes for the
-*original, unmodified upload*. That's an intentional, disclosed divergence:
+_original, unmodified upload_. That's an intentional, disclosed divergence:
 this file is the record of what changed and why.
 
 ## Recommendation
