@@ -209,10 +209,18 @@ async function openFixture(page, label = 'open') {
     // that passes or fails on render ordering. It passed locally and failed on
     // CI for exactly that reason. The project panel's header is durable: it is
     // there for as long as the project is.
+    //
+    // The two surfaces disagree on case, and that disagreement is what kept
+    // this a race after the wait was moved off the dialog. The durable project
+    // bar renders "Revision 191 · metric" (App.tsx, capital R); only the
+    // dialog headline is lowercase (describe-file-flow-state.ts). Matching the
+    // lowercase form therefore still waited on the dialog, so the check passed
+    // only when its first poll happened to land before adoption tore that line
+    // down. Match without regard to case, so the durable bar satisfies it.
     await page.waitForFunction(
       () => {
         const text = document.body.textContent ?? '';
-        return text.includes('Courtyard House Reference') && text.includes('revision 191');
+        return text.includes('Courtyard House Reference') && /revision 191/i.test(text);
       },
       undefined,
       { timeout: 120_000 },
