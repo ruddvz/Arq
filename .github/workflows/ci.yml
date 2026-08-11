@@ -226,6 +226,14 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm check:dependency-licences
+      # NOTICE is the attribution file LICENSE points at, and it drifted for the
+      # whole implementation history: it denied incorporating any third-party
+      # code while the build carried hundreds of packages, and named neither
+      # reviewed exception. It runs here rather than in its own job because it
+      # reads the bill of materials the previous step writes, and that artifact
+      # is not tracked in git.
+      - run: pnpm check:notice-attribution:test
+      - run: pnpm check:notice-attribution
       - uses: actions/upload-artifact@v4
         with:
           name: dependency-sbom
