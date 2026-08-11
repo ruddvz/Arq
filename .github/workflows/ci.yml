@@ -170,7 +170,7 @@ jobs:
       # checks both halves - that the chunk is absent until the command runs,
       # and that running it produces a PDF with drawn geometry.
       - run: pnpm benchmark:sheet-export
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: browser-capability-check-results
@@ -242,7 +242,7 @@ jobs:
       # is not tracked in git.
       - run: pnpm check:notice-attribution:test
       - run: pnpm check:notice-attribution
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dependency-sbom
           path: dependency-sbom.json
