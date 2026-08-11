@@ -8,10 +8,16 @@ import type { Page } from '../site.js';
  *
  * Claim bindings: pub-ipad-touch-layout (ipad-touch-layout, CURRENT),
  * pub-ipad-native-features (ipad-native-features, PLANNED) and
- * pub-ipad-file-reachability (native-arq-open, LIBRARY_ONLY). The touch layout
- * is the one current claim here, and it is bound to the repository's viewport
- * capability check. "The same file opens on both devices" is removed: the
- * opening path is not wired on either.
+ * pub-ipad-file-reachability (native-arq-open, CURRENT). Two current claims
+ * here, each bound to its own check: the touch layout to the viewport capability
+ * check, the open to benchmark:native-open.
+ *
+ * "The same file opens on both devices" stays out, and the reason has changed.
+ * It is no longer that the opening path is unwired - it is that the open is
+ * verified in Chromium on a desktop runner and nowhere else. The page may say
+ * the browser build opens a project; it may not turn a desktop Chromium result
+ * into a claim about Safari on an iPad, which is the browser most readers of
+ * this page would actually use.
  */
 export const ipadPage: Page = {
   meta: {
@@ -80,13 +86,15 @@ export const ipadPage: Page = {
         `,
       },
       {
-        title: 'One format, once the opening path exists',
+        title: 'One format, not yet one proof',
         body: html`
           <p>
             The design intent is a single project format that behaves the same at the studio desk
-            and the site desk. Today neither the browser build nor a native build opens an existing
-            <code>.arq</code> file into a working project, so this page does not claim that a file
-            moves between devices. See <a href="/">how files are handled today</a>.
+            and the site desk. The browser build does now open an existing <code>.arq</code> file
+            into a working project - but that is measured in Chromium on a desktop, and this page is
+            read by people holding an iPad. Safari on iPadOS is a different engine with different
+            storage behaviour, and until the check runs there, ARQ will not tell you your file opens
+            on your tablet. See <a href="/">how files are handled today</a>.
           </p>
         `,
       },

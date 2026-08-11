@@ -133,11 +133,12 @@
     },
     {
       "id": "native-arq-open",
-      "state": "LIBRARY_ONLY",
+      "state": "CURRENT",
       "patterns": ["open .arq project", "opens in your browser"],
-      "evidenceSourceIds": ["file-open-ui", "status", "code-tests"],
+      "evidenceSourceIds": ["file-open-ui", "status", "code-tests", "benchmarks"],
       "assertionClass": "file-reachability",
-      "note": "Compatibility preflight is current; the full browser opening pipeline is not established as user-reachable."
+      "conflictIds": ["DRIFT-NATIVE-OPEN-MARKETING"],
+      "note": "Opening is browser-verified current behaviour (benchmark:native-open): a chosen .arq file is copied into a project-scoped OPFS working copy in an ARQ-owned Worker and adopted into the workspace, with the chosen file's SHA-256 identical before and after. Opening only. Writing anything back is portable-arq-publication, which stays LIBRARY_ONLY, so copy that states an open must state in the same breath that the chosen file is not written to."
     },
     {
       "id": "3d-current",

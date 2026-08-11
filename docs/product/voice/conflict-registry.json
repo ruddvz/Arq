@@ -36,40 +36,51 @@
     },
     {
       "id": "DECISION-PERSISTENCE-TIERS",
-      "status": "unresolved-decision",
+      "status": "evidence-insufficient",
       "severity": "critical",
       "domain": "files-storage-recovery",
-      "summary": "The repository records unresolved overlap between the SQLite-WASM/OPFS native direction and the tested Dexie/IndexedDB implementation used by the demo journal.",
+      "summary": "The tier overlap is decided and the read half is proven; the write half is neither. ADR-0028 (accepted 2026-08-04) gives canonical local working state to SQLite in an ARQ-owned Worker over OPFS and bounds IndexedDB to recovery bridging and replaceable caches, and ADR-0030 records the working-copy and recovery tiers. Opening a portable file into that working copy is browser-verified. Nothing checkpoints the working copy back out to a portable .arq file, so portable-arq-publication still has no tested write flow. This is no longer an undecided architecture question; it is a missing implementation with missing evidence, and it stays blocking until both exist.",
       "sourceIds": ["status", "plan-journal", "local-storage", "adr"],
       "affectedClaimIds": ["portable-arq-publication"],
       "blockedSurfaces": ["public", "support", "product-ai", "files"],
-      "downstreamRule": "Name the concrete persistence tier. A journal write never implies portable-file publication.",
+      "downstreamRule": "Name the concrete persistence tier. Neither a journal append nor an opened working copy implies portable-file publication.",
       "resolution": {
         "requires": [
-          "An ADR resolving the persistence relationship.",
-          "A tested open/write flow for the chosen portable-file claim.",
-          "Updated status and message adapters."
+          "A tested write flow that checkpoints the working copy back to a portable .arq file.",
+          "Reopen-after-write evidence proving the written file is a complete, sidecar-free project.",
+          "Status and message adapters updated for the write and publication states."
         ],
-        "cannotAutoResolve": true
+        "cannotAutoResolve": true,
+        "satisfied": [
+          "An ADR resolving the persistence relationship: ADR-0028 accepted 2026-08-04, ADR-0030 accepted.",
+          "The read half of the open/write flow: benchmarks/results/native-open-capability-2026-08-11T07-34-26-854Z.json."
+        ]
       }
     },
     {
       "id": "DRIFT-NATIVE-OPEN-MARKETING",
-      "status": "dependent-copy-drift",
+      "status": "resolved",
       "severity": "critical",
       "domain": "files-storage-recovery",
-      "summary": "Public home copy describes a local .arq file that opens in the browser, while FileOpenPanel deliberately stops at compatibility preflight.",
+      "summary": "Resolved, and in the opposite direction to the one first recorded. The drift began as public copy promising an open the product could not do; it ended as public copy denying an open the product had shipped. The file panel no longer stops at compatibility preflight: it copies the chosen file into a project-scoped OPFS working copy in an ARQ-owned Worker and adopts the project into the workspace. The public pages now say that, and they carry the limit with it - opening is current, writing back to the chosen file is not - asserted by rendered tests rather than left to prose.",
       "sourceIds": ["marketing", "file-open-ui", "status"],
       "affectedClaimIds": ["native-arq-open"],
       "blockedSurfaces": ["public", "support", "documentation"],
-      "downstreamRule": "Use compatible/preflight wording until a live open pipeline is user-reachable.",
+      "downstreamRule": "State the open and its limit in the same breath: the chosen file is not written to. A described open never implies portable-arq-publication.",
       "resolution": {
         "requires": [
           "Correct rendered public copy.",
           "Add the rendered claim-binding test.",
           "Promote only after a browser opening-path test."
         ],
-        "cannotAutoResolve": false
+        "cannotAutoResolve": false,
+        "resolvedAt": "2026-08-11",
+        "resolvedBy": "ruddvz",
+        "evidence": [
+          "scripts/run-native-open-capability-check.mjs, re-run on this revision rather than inherited",
+          "benchmarks/results/native-open-capability-2026-08-11T07-34-26-854Z.json (ok, no failures, fixture SHA-256 unchanged, no off-origin requests)",
+          "apps/marketing/src/pages.test.ts (rendered claim-binding tests for the open and for its no-save limit)"
+        ]
       }
     },
     {

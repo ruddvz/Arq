@@ -305,4 +305,84 @@ describe('language system 4.1 claim gates', () => {
       expect(text).not.toMatch(/\bno 3d (view|tab|surface)\b[^.]{0,40}\bexists\b/);
     }
   });
+
+  /**
+   * DRIFT-NATIVE-OPEN-MARKETING, the mirror of the 3D case above. That conflict
+   * began as copy promising an open the product could not do, and ended as copy
+   * denying an open it had shipped, so both directions are pinned here: the
+   * pages must state the open, and they must not state a save.
+   *
+   * The no-save assertion is the load-bearing one. "It opens" is the sentence a
+   * reader remembers, and a reader who remembers only that will assume their
+   * work is going back into the file they picked. It is not, and every page
+   * that says the first thing has to say the second.
+   */
+  describe('native .arq open', () => {
+    const OPEN_STATED = ['PUB-001', 'PUB-002', 'PUB-003'];
+
+    it('records the open conflict as resolved and the claim as current', () => {
+      const activeStatuses = new Set(conflictRegistry.activeStatuses);
+      const drift = conflictRegistry.conflicts.find(
+        (conflict) => conflict.id === 'DRIFT-NATIVE-OPEN-MARKETING',
+      );
+      expect(drift?.status).toBe('resolved');
+      expect(activeStatuses.has(drift?.status ?? '')).toBe(false);
+      const claim = claimRegistry.claims.find((entry) => entry.id === 'native-arq-open');
+      expect(claim?.state).toBe('CURRENT');
+    });
+
+    it('keeps writing back to the chosen file a blocked claim', () => {
+      // The open is current; publication is not, and nothing about promoting
+      // the first may quietly promote the second.
+      const claim = claimRegistry.claims.find((entry) => entry.id === 'portable-arq-publication');
+      expect(claim?.state).toBe('LIBRARY_ONLY');
+    });
+
+    it('no longer denies that a project opens', () => {
+      for (const document of documents) {
+        const text = textOf(document.html);
+        expect(text, `${document.meta.id} must not deny the shipped open`).not.toMatch(
+          /\b(open|opening|reading)\b[^.]{0,90}\bnot wired\b/,
+        );
+        expect(text, `${document.meta.id} must not deny the shipped open`).not.toMatch(
+          /neither the browser build nor a native build opens/,
+        );
+      }
+    });
+
+    it('states the open on the pages bound to the claim', () => {
+      for (const id of OPEN_STATED) {
+        const document = documents.find((entry) => entry.meta.id === id);
+        expect(document, `${id} is rendered`).toBeDefined();
+        const text = textOf(document?.html ?? '');
+        // The window has to admit full stops: the token being matched is
+        // ".arq", so a class excluding "." can never reach it.
+        expect(text, `${id} states that an .arq project opens`).toMatch(
+          /\.arq\b.{0,160}?\bopens?\b|\bopens?\b.{0,160}?\.arq\b/,
+        );
+      }
+    });
+
+    it('carries the no-save limit wherever it states the open', () => {
+      for (const id of OPEN_STATED) {
+        const document = documents.find((entry) => entry.meta.id === id);
+        const text = textOf(document?.html ?? '');
+        expect(text, `${id} says the chosen file is not written to`).toMatch(
+          /\bnot (?:be )?written (?:back )?to\b|\bdoes not (?:yet )?save\b|\bcannot yet be written back\b|\bnothing is written back\b/,
+        );
+      }
+    });
+
+    it('never claims work is saved into the chosen .arq file', () => {
+      for (const document of documents) {
+        const text = textOf(document.html);
+        expect(text, `${document.meta.id} must not claim a portable save`).not.toMatch(
+          /\bsaved? (?:your work )?(?:back )?(?:in)?to (?:your |the |a )?(?:portable )?\.arq\b/,
+        );
+        expect(text, `${document.meta.id} must not claim a portable save`).not.toMatch(
+          /\bportable \.arq file (?:is )?updated\b/,
+        );
+      }
+    });
+  });
 });

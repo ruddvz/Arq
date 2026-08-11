@@ -9,10 +9,17 @@ import type { Page } from '../site.js';
  *
  * Claim bindings: pub-changelog-evidence (development-changelog-status,
  * VOLATILE), pub-changelog-3d (3d-current, CURRENT) and
- * pub-changelog-native-open (native-arq-open, LIBRARY_ONLY). Every entry
- * carries an `evidence` line naming the repository paths or checks it rests
- * on, because the binding forbids summary prose from promoting a claim on its
- * own. The 3D entry records the browser evidence that resolved the conflict.
+ * pub-changelog-native-open (native-arq-open, CURRENT). Every entry carries an
+ * `evidence` line naming the repository paths or checks it rests on, because
+ * the binding forbids summary prose from promoting a claim on its own. The 3D
+ * entry records the browser evidence that resolved that conflict.
+ *
+ * Entries are history and are not rewritten when the product moves past them.
+ * The 24 July entry still says the file panel stopped at a safety verdict,
+ * because on 24 July it did; the 11 August entry says where that changed, and
+ * the older one points forward to it. Editing the old entry to match today
+ * would make the log agree with itself by destroying the only record of what
+ * was true when.
  */
 const ENTRIES: readonly {
   readonly date: string;
@@ -21,6 +28,14 @@ const ENTRIES: readonly {
   readonly body: string;
   readonly evidence: string;
 }[] = [
+  {
+    date: '2026-08-11',
+    title: 'A chosen .arq project opens in the browser',
+    category: 'Files & projects',
+    body: 'Choosing an .arq file now ends in an open project rather than a compatibility verdict. The bytes are copied into a project-scoped OPFS working copy inside an ARQ-owned Worker and adopted into the workspace, so the file you chose is read and never written: its SHA-256 is identical before and after. An opened project brings its own levels, wall types, rooms and views; switching level changes what the plan draws, and a wall picked in the model tree highlights in 3D. This is the entry that supersedes the 24 July note below, which recorded the panel stopping at its safety verdict. It does not add saving. Nothing checkpoints the working copy back to the file, so an opened project is somewhere to read and work, not yet somewhere your work is kept.',
+    evidence:
+      'apps/web/src/project/; workers/arqfs-worker/; packages/project-loading/; docs/adr/0030-browser-working-copy-and-recovery-tiers.md; scripts/run-native-open-capability-check.mjs; benchmarks/results/native-open-capability-2026-08-11T07-34-26-854Z.json; conflict DRIFT-NATIVE-OPEN-MARKETING in docs/product/voice/conflict-registry.json.',
+  },
   {
     date: '2026-08-02',
     title: 'MCP proposal boundary added and existing trust defects repaired',
@@ -65,7 +80,7 @@ const ENTRIES: readonly {
     date: '2026-07-24',
     title: '.arq foundation hardened; file preflight in the app; CI gates',
     category: 'File format',
-    body: 'The .arq SQLite container gained capability-gated open, byte preflight, copy-on-write migration verified by reopen and integrity check, recovery reporting and fuzz tests. The application gained a file panel that checks a chosen file and reports whether it is a compatible ARQ project. That panel stops at its safety verdict; it does not open a working project, and the OPFS worker is still not constructed. Continuous integration began running the full test suite plus headless-browser capability checks.',
+    body: 'The .arq SQLite container gained capability-gated open, byte preflight, copy-on-write migration verified by reopen and integrity check, recovery reporting and fuzz tests. The application gained a file panel that checks a chosen file and reports whether it is a compatible ARQ project. That panel stops at its safety verdict; it does not open a working project, and the OPFS worker is still not constructed. The 11 August entry records where that changed. Continuous integration began running the full test suite plus headless-browser capability checks.',
     evidence:
       'packages/arqfs/; apps/web/src/file-handling/; workers/arqfs-worker/ (present, not constructed by apps/web).',
   },

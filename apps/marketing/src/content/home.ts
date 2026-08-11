@@ -7,11 +7,18 @@ import type { Page } from '../site.js';
  * pricing and the changelog.
  *
  * Claim bindings (docs/product/voice/claim-binding-registry.json):
- * pub-home-native-file (native-arq-open, LIBRARY_ONLY, must qualify),
- * pub-home-local-persistence (local-journal-persistence, CURRENT) and
- * pub-home-semantic-tools (current-door-window-room-authoring, LIBRARY_ONLY,
- * must qualify). Present-tense sentences here are limited to what those
- * bindings allow; the release ladder is labelled as scope, not availability.
+ * pub-home-native-file (native-arq-open, CURRENT), pub-home-local-persistence
+ * (local-journal-persistence, CURRENT) and pub-home-semantic-tools
+ * (current-door-window-room-authoring, LIBRARY_ONLY, must qualify).
+ * Present-tense sentences here are limited to what those bindings allow; the
+ * release ladder is labelled as scope, not availability.
+ *
+ * native-arq-open is CURRENT as of benchmark:native-open, so this page states
+ * the open plainly instead of denying it. The binding requires the limit in the
+ * same breath, and there is a reason it is a limit and not a footnote: a reader
+ * told a project opens will assume it saves. It does not. The file the reader
+ * chose is never written to, and the "Where your work is kept" note has to
+ * leave with that understood.
  */
 export const homePage: Page = {
   meta: {
@@ -21,13 +28,13 @@ export const homePage: Page = {
     family: 'story',
     documentTitle: 'ARQ · pre-release architectural workspace',
     description:
-      'ARQ is pre-release architectural design software. The current development build draws walls in a plan with real units and records those edits in a local journal on your device.',
+      'ARQ is pre-release architectural design software. The current development build opens an .arq project in the browser and draws walls in a plan with real units, keeping your work on your own device. It does not save back to the file yet.',
   },
   render: () => html`
     ${hero({
       eyebrow: 'ARQ · architectural workspace · pre-release',
       heading: 'Plans made of building elements, not lines.',
-      lede: 'ARQ is architectural design software in open development. A wall in ARQ is a wall, with a thickness and a length in millimetres, and the current development build lets you draw walls in a plan and keeps those edits on your own device.',
+      lede: 'ARQ is architectural design software in open development. A wall in ARQ is a wall, with a thickness and a length in millimetres. The current development build opens an .arq project from your disk, draws walls in a plan, and keeps the work on your own device.',
       actions: [
         { href: '/product', label: 'See the product' },
         { href: '/changelog', label: 'What exists today' },
@@ -50,9 +57,15 @@ export const homePage: Page = {
         body: html`
           <p>
             The ARQ project format is a single <code>.arq</code> file: a versioned SQLite database
-            you hold on your own disk. Choosing an <code>.arq</code> file in the current build
-            checks it and reports whether it is a compatible ARQ project. Opening it as a working
-            project in the browser is not wired yet.
+            you hold on your own disk. The current build opens one. Choosing an
+            <code>.arq</code> file checks it, copies it into a working copy on your device, and puts
+            that project in the workspace - its levels, its walls and rooms, its plan and its 3D
+            view.
+          </p>
+          <p>
+            It opens; it does not yet save. ARQ works on the copy and never writes to the file you
+            chose, which is the safe half of that arrangement and also the unfinished half: nothing
+            you do in the browser goes back into your <code>.arq</code> file yet.
           </p>
           <p>
             What the current build does persist is its own demo plan. Every edit is appended to a
