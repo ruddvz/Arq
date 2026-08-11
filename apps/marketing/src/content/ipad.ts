@@ -18,6 +18,7 @@ export const ipadPage: Page = {
     id: 'PUB-008',
     route: '/ipad',
     title: 'iPad',
+    family: 'capability',
     description:
       'ARQ on iPad: the browser build has a touch layout checked across the repository’s viewport set. Native Files, Pencil and RoomPlan integration is Release 4 scope.',
   },
@@ -29,6 +30,7 @@ export const ipadPage: Page = {
     ${notes([
       {
         title: 'In the browser now',
+        kind: 'state',
         body: html`
           <p>
             The development build's workspace detects a coarse pointer and re-composes: a phone dock
@@ -68,6 +70,7 @@ export const ipadPage: Page = {
       },
       {
         title: 'What ARQ will not claim about capture',
+        kind: 'limit',
         body: html`
           <p>
             Consumer LiDAR is useful and imprecise at the same time. ARQ will never describe a phone

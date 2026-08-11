@@ -15,6 +15,7 @@ export const collaborationPage: Page = {
     id: 'PUB-005',
     route: '/collaboration',
     title: 'Collaboration',
+    family: 'capability',
     description:
       'How collaboration is scoped to arrive in ARQ: share links and review first, comments and issues next, co-authoring later. The current build has no sharing backend.',
   },
@@ -26,6 +27,7 @@ export const collaborationPage: Page = {
     ${notes([
       {
         title: 'The order of arrival',
+        kind: 'state',
         body: html`
           <p>
             Everything in this list is release scope. None of it is available in the current

@@ -92,6 +92,18 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: npx playwright install --with-deps chromium
+      # The public marketing site's UI/UX audit "Verification" section,
+      # asserted rather than claimed: every route at every named viewport for
+      # no horizontal overflow and exactly one h1; the skip link, focus
+      # visibility and both nav disclosures (desktop dropdown, mobile drawer)
+      # operable by keyboard alone; the hero heading's entrance animation
+      # actually gated behind prefers-reduced-motion; the site's core
+      # colour-token pairs clearing WCAG AA contrast in light and dark; and a
+      # public-site size budget. Runs first in this job: apps/marketing has
+      # no dependency on apps/web, so it should not sit behind (and be
+      # silently skipped by) an unrelated apps/web check failing earlier in
+      # the sequence.
+      - run: pnpm benchmark:marketing-viewport
       # Real headless-Chromium evidence for the claims this repository makes
       # about OPFS persistence, single-writer coordination, cross-project
       # isolation, and the overlay/file-open UI - the same checks used to

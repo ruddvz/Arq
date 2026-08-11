@@ -21,6 +21,7 @@ export function openSourcePage(sbom: Sbom): Page {
       id: 'PUB-017',
       route: '/legal/open-source',
       title: 'Open-source notices',
+      family: 'reference',
       documentTitle: 'Open-source notices · ARQ',
       description:
         'Third-party open-source software used to build ARQ, generated from the repository’s software bill of materials for this deployed build and grouped by licence.',

@@ -18,6 +18,7 @@ export const homePage: Page = {
     id: 'PUB-001',
     route: '/',
     title: 'Home',
+    family: 'story',
     documentTitle: 'ARQ · pre-release architectural workspace',
     description:
       'ARQ is pre-release architectural design software. The current development build draws walls in a plan with real units and records those edits in a local journal on your device.',
@@ -33,6 +34,17 @@ export const homePage: Page = {
       ],
     })}
     ${notes([
+      {
+        title: 'Precision is the product',
+        body: html`
+          <p>
+            ARQ works in real units at millimetre precision. The status bar reads out world
+            coordinates, and dimensions are measurements rather than decorations. Where the software
+            cannot be precise, it says so: an error in ARQ names what happened, why, what was
+            affected and what remains safe.
+          </p>
+        `,
+      },
       {
         title: 'Where your work is kept',
         body: html`
@@ -51,18 +63,8 @@ export const homePage: Page = {
         `,
       },
       {
-        title: 'Precision is the product',
-        body: html`
-          <p>
-            ARQ works in real units at millimetre precision. The status bar reads out world
-            coordinates, and dimensions are measurements rather than decorations. Where the software
-            cannot be precise, it says so: an error in ARQ names what happened, why, what was
-            affected and what remains safe.
-          </p>
-        `,
-      },
-      {
         title: 'A small first release, stated plainly',
+        separation: 'chapter',
         body: html`
           <p>
             ARQ has not shipped. It is not a full CAD seat and does not replace Revit. Its scope is

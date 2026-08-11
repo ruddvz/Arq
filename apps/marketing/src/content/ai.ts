@@ -18,6 +18,7 @@ export const aiPage: Page = {
     id: 'PUB-006',
     route: '/ai',
     title: 'AI',
+    family: 'capability',
     description:
       'ARQ has a tested MCP proposal boundary in the repository, but no AI authoring is connected to the product. Any future capability must use typed operations, validation, review and undo.',
   },
@@ -29,6 +30,7 @@ export const aiPage: Page = {
     ${notes([
       {
         title: 'What exists in the repository',
+        kind: 'state',
         body: html`
           <p>
             <code>packages/mcp-server</code> implements the boundary described by ADR-0027. It
@@ -78,6 +80,7 @@ export const aiPage: Page = {
       },
       {
         title: 'What AI in ARQ will not claim',
+        kind: 'limit',
         body: html`
           <p>
             Generated geometry is not accurate until you have checked it. ARQ's AI will not produce

@@ -1,5 +1,11 @@
 import { html, raw, type SafeHtml } from './html.js';
-import { FOOTER_INDEX, PRIMARY_NAV, type PageMeta } from './site.js';
+import {
+  FOOTER_INDEX,
+  PRIMARY_NAV_DIRECT,
+  PRIMARY_NAV_GROUPS,
+  type NavLink,
+  type PageMeta,
+} from './site.js';
 
 /**
  * One document shell for every sheet in the set.
@@ -23,12 +29,56 @@ function revisionLabel(sourceRevision: string | undefined): string {
     : `REV B · 2026-08 · source ${shortRevision}`;
 }
 
-function navLinks(activeRoute: string): SafeHtml {
-  return html`${PRIMARY_NAV.map((item) =>
-    item.route === activeRoute
-      ? html`<a href="${item.route}" aria-current="page">${item.label}</a>`
-      : html`<a href="${item.route}">${item.label}</a>`,
-  )}`;
+function navLink(item: NavLink, activeRoute: string): SafeHtml {
+  return item.route === activeRoute
+    ? html`<a href="${item.route}" aria-current="page">${item.label}</a>`
+    : html`<a href="${item.route}">${item.label}</a>`;
+}
+
+function navLinkList(links: readonly NavLink[], activeRoute: string): SafeHtml {
+  return html`${links.map((item) => navLink(item, activeRoute))}`;
+}
+
+/**
+ * Desktop primary nav: one <details> dropdown per group, native and
+ * JS-free like the mobile drawer this pattern is borrowed from. A group
+ * containing the active route gets a class so its summary reads as "you
+ * are in this section" without opening it.
+ *
+ * Each panel is a list rather than a nested <nav>, following the WAI
+ * disclosure-navigation pattern: the header already is one navigation
+ * landmark, so nesting three more inside it would add landmark noise, and
+ * a list tells a screen reader how many sheets the group holds.
+ */
+function desktopNav(activeRoute: string): SafeHtml {
+  return html`
+    ${PRIMARY_NAV_GROUPS.map((group) => {
+      const isActiveGroup = group.links.some((link) => link.route === activeRoute);
+      return html`
+        <details class="${isActiveGroup ? 'nav-group nav-group--active' : 'nav-group'}">
+          <summary>${group.heading}</summary>
+          <ul class="nav-group-menu" aria-label="${group.heading}">
+            ${group.links.map((link) => html`<li>${navLink(link, activeRoute)}</li>`)}
+          </ul>
+        </details>
+      `;
+    })}
+    ${navLinkList(PRIMARY_NAV_DIRECT, activeRoute)}
+  `;
+}
+
+/** Mobile drawer: the same groups as headings in one flat disclosure, not nested dropdowns. */
+function mobileNav(activeRoute: string): SafeHtml {
+  return html`
+    ${PRIMARY_NAV_GROUPS.map(
+      (group) => html`
+        <p class="nav-drawer-heading">${group.heading}</p>
+        ${navLinkList(group.links, activeRoute)}
+      `,
+    )}
+    <p class="nav-drawer-heading">More</p>
+    ${navLinkList(PRIMARY_NAV_DIRECT, activeRoute)}
+  `;
 }
 
 function footerIndex(): SafeHtml {
@@ -48,6 +98,10 @@ export function renderDocument(meta: PageMeta, body: SafeHtml, sourceRevision?: 
   const documentTitle = meta.documentTitle ?? `${meta.title} · ARQ`;
   const robots =
     meta.noIndex === true ? html`<meta name="robots" content="noindex, nofollow" />` : '';
+  const mainAttrs =
+    meta.family === undefined
+      ? html`id="content"`
+      : html`id="content" class="family-${meta.family}"`;
   const page = html`<!doctype html>
     <html lang="en">
       <head>
@@ -82,29 +136,22 @@ export function renderDocument(meta: PageMeta, body: SafeHtml, sourceRevision?: 
                 <img src="/assets/brand/ARQ_Wordmark_Black.svg" alt="ARQ" width="76" height="28" />
               </picture>
             </a>
-            <nav class="site-nav" aria-label="Primary">${navLinks(meta.route)}</nav>
+            <nav class="site-nav" aria-label="Primary">${desktopNav(meta.route)}</nav>
             <details class="nav-drawer">
               <summary aria-label="Menu">Menu</summary>
-              <nav aria-label="Primary, compact">${navLinks(meta.route)}</nav>
+              <nav aria-label="Primary, compact">${mobileNav(meta.route)}</nav>
             </details>
           </div>
         </header>
-        <main id="content">${body}</main>
+        <main ${mainAttrs}>${body}</main>
         <footer class="site-footer">
           <div class="measure">
             <div class="footer-grid">${footerIndex()}</div>
-            <div class="title-block" aria-label="Sheet information">
-              <div>
-                <span class="tb-label">Project</span><span>ARQ (architectural workspace)</span>
-              </div>
-              <div><span class="tb-label">Sheet</span><span>${meta.id} · ${meta.title}</span></div>
-              <div>
-                <span class="tb-label">Revision</span><span>${revisionLabel(sourceRevision)}</span>
-              </div>
-              <div>
-                <span class="tb-label">Status</span><span>Pre-release, in development</span>
-              </div>
-            </div>
+            <ul class="provenance-strip" aria-label="Sheet information">
+              <li>Sheet ${meta.id} · ${meta.title}</li>
+              <li>${revisionLabel(sourceRevision)}</li>
+              <li>Pre-release, in development</li>
+            </ul>
             <p class="footer-fineprint">
               ARQ is in development and has not shipped. The
               <a href="/changelog">changelog</a> records what exists today.

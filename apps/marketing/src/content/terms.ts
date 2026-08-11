@@ -16,6 +16,7 @@ export const termsPage: Page = {
     id: 'PUB-016',
     route: '/legal/terms',
     title: 'Terms',
+    family: 'reference',
     documentTitle: 'Terms · ARQ',
     description:
       'ARQ has published no product terms. This page describes the basis on which the pre-release build is offered and is not a legal agreement. Formal terms require legal review.',
@@ -25,6 +26,26 @@ export const termsPage: Page = {
       heading: 'No published terms yet.',
       lede: 'Formal product terms need a lawyer and a service worth governing, and neither exists. Nothing on this page has had legal review, and none of it is an agreement.',
     })}
+    <div class="measure">
+      <dl class="title-block" aria-label="Document status">
+        <div>
+          <dt class="tb-label">Document</dt>
+          <dd>Terms</dd>
+        </div>
+        <div>
+          <dt class="tb-label">Status</dt>
+          <dd>Not published: description, not an agreement</dd>
+        </div>
+        <div>
+          <dt class="tb-label">Legal review</dt>
+          <dd>None conducted</dd>
+        </div>
+        <div>
+          <dt class="tb-label">Changes</dt>
+          <dd>Dated in the changelog</dd>
+        </div>
+      </dl>
+    </div>
     ${notes([
       {
         title: 'Using the pre-release build',

@@ -52,28 +52,63 @@ export function hero(options: HeroOptions): SafeHtml {
   `;
 }
 
+/** Markers for notes that carry a distinct semantic role instead of a plain sequence number. */
+const NOTE_KIND_MARKERS = {
+  /**
+   * A limitation or caution: gets a "LIMIT" marker and a rule down its left
+   * edge, so a warning cannot be mistaken for a feature description at a
+   * glance.
+   */
+  limit: 'LIMIT',
+  /**
+   * The immediate, current-state answer to "can I do this today?" - gets a
+   * "NOW" marker in the brand accent, so a page's capability state is
+   * visible before a reader has read a sentence of prose.
+   */
+  state: 'NOW',
+} as const;
+
 export interface Note {
   readonly title: string;
   readonly body: SafeHtml;
+  /**
+   * Marks this note with a distinct role instead of an ordinary narrative
+   * note. A kinded note never consumes a sequence number, so the plain
+   * numbered notes around it stay contiguous (01, 02, 03 …).
+   */
+  readonly kind?: keyof typeof NOTE_KIND_MARKERS;
+  /**
+   * How far this note sits from the one before it. Omitted is the default
+   * (a subsection: a new note, same chapter). 'related' tightens the gap for
+   * a note that is really a continuation of the note before it, split only
+   * for its own heading. 'chapter' widens the gap and adds a rule above it
+   * for a note that starts a genuinely new topic, not just a new heading.
+   */
+  readonly separation?: 'related' | 'chapter';
 }
 
 /** Numbered general notes: 01, 02, 03 … generated from array order. */
 export function notes(entries: readonly Note[]): SafeHtml {
+  let sequence = 0;
   return html`
     <div class="measure">
-      ${entries.map(
-        (entry, index) => html`
-          <section class="note">
+      ${entries.map((entry) => {
+        const marker = entry.kind
+          ? NOTE_KIND_MARKERS[entry.kind]
+          : String((sequence += 1)).padStart(2, '0');
+        const classes = ['note'];
+        if (entry.kind) classes.push(`note--${entry.kind}`);
+        if (entry.separation) classes.push(`note--${entry.separation}`);
+        return html`
+          <section class="${classes.join(' ')}">
             <h2>
-              <span class="note-number" aria-hidden="true"
-                >${String(index + 1).padStart(2, '0')}</span
-              >
+              <span class="note-number" aria-hidden="true">${marker}</span>
               ${entry.title}
             </h2>
             <div class="note-body">${entry.body}</div>
           </section>
-        `,
-      )}
+        `;
+      })}
     </div>
   `;
 }

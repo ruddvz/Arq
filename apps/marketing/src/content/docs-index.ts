@@ -1,4 +1,4 @@
-import { ctaBand, hero, notes, specList } from '../components.js';
+import { hero, notes, specList } from '../components.js';
 import { html } from '../html.js';
 import type { Page } from '../site.js';
 
@@ -17,6 +17,7 @@ export const docsIndexPage: Page = {
     id: 'PUB-011',
     route: '/docs',
     title: 'Docs',
+    family: 'reference',
     documentTitle: 'Documentation · ARQ',
     description:
       'Where ARQ documentation lives today: the engineering blueprint, architecture decision records, format plans and page specifications in the repository. A hosted help centre is planned.',
@@ -84,13 +85,5 @@ export const docsIndexPage: Page = {
         `,
       },
     ])}
-    ${ctaBand(
-      'The changelog is documentation too.',
-      'Each entry describes work merged into the repository, with the evidence it rests on.',
-      [
-        { href: '/changelog', label: 'Read the changelog' },
-        { href: '/contact', label: 'Ask a question' },
-      ],
-    )}
   `,
 };

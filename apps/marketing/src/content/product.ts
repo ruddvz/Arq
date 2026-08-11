@@ -21,6 +21,7 @@ export const productPage: Page = {
     id: 'PUB-002',
     route: '/product',
     title: 'Product',
+    family: 'story',
     description:
       'What ARQ is, what each release is scoped to contain, and what is deliberately out of scope. A plan-first architectural editor with real units and a local project file.',
   },
@@ -79,6 +80,7 @@ export const productPage: Page = {
       },
       {
         title: 'Deliberately deferred',
+        separation: 'related',
         body: html`
           <p>
             Curved walls, complex roofs and stairs, a full family editor, photorealistic rendering,
@@ -90,6 +92,7 @@ export const productPage: Page = {
       },
       {
         title: 'What is running today',
+        separation: 'chapter',
         body: html`
           <p>
             The development build has a working workspace shell: panels, tool rail, tabs, inspector,

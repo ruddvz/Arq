@@ -17,6 +17,7 @@ export const securityPage: Page = {
     id: 'PUB-010',
     route: '/security',
     title: 'Security',
+    family: 'capability',
     description:
       'How ARQ treats your work: projects held on your device, a published security baseline, sandboxed imports by design, and no certifications claimed that have not been earned.',
   },
@@ -28,12 +29,19 @@ export const securityPage: Page = {
     ${notes([
       {
         title: 'What the current architecture means',
+        kind: 'state',
         body: html`
           <p>
             The development build has no account system, no ARQ backend and no sync transport. It
             stores its work on your device, in browser storage or in files you choose. There is no
             server on ARQ's side to breach because there is no server.
           </p>
+        `,
+      },
+      {
+        title: 'What has actually been observed',
+        separation: 'related',
+        body: html`
           <p>
             The repository now includes a headless-browser observation check. It records every
             request attempted while the built application draws a wall, opens the 3D view and
@@ -82,6 +90,7 @@ export const securityPage: Page = {
       },
       {
         title: 'What ARQ does not claim',
+        kind: 'limit',
         body: html`
           <p>
             No compliance certification has been obtained, and this page will not imply one. ARQ
@@ -93,6 +102,7 @@ export const securityPage: Page = {
       },
       {
         title: 'Reporting a vulnerability',
+        separation: 'chapter',
         body: html`
           <p>
             Please do not report unpatched vulnerabilities in public issues. Use a private security

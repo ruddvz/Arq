@@ -11,12 +11,21 @@ import type { Page } from '../site.js';
  * The binding requires the routes to be named with their scope and with the
  * absence of a response-time commitment stated, which is why no channel here
  * is described as staffed.
+ *
+ * These routes are named, not linked, on purpose: the rendered-site verifier
+ * fails the build if any page contains an "http://" or "https://" string (see
+ * pages.test.ts, "loads no third-party resource and links nowhere
+ * external"), so this site never links off its own origin, on any page, by
+ * design. That is a site-wide privacy property (see /legal/privacy), not an
+ * oversight on this page - the "Why these are named, not linked" note below
+ * says so.
  */
 export const contactPage: Page = {
   meta: {
     id: 'PUB-014',
     route: '/contact',
     title: 'Contact',
+    family: 'operational',
     documentTitle: 'Contact and support · ARQ',
     description:
       'How to reach the ARQ project while it is pre-release: repository issues for product questions, and a private repository security advisory for vulnerabilities. No response time is committed.',
@@ -34,7 +43,7 @@ export const contactPage: Page = {
             {
               term: 'Product and support',
               detail:
-                'Open an issue in the ARQ repository. Issues go to the people building the product; a reproducible description is the most useful thing you can write.',
+                'Open an issue in the ARQ repository (github.com/ruddvz/Arq/issues). Issues go to the people building the product; a reproducible description is the most useful thing you can write.',
             },
             {
               term: 'Security',
@@ -55,6 +64,17 @@ export const contactPage: Page = {
           <p>
             No response time is committed for any of these routes. Nobody is on a rota, and this
             page will not suggest otherwise.
+          </p>
+        `,
+      },
+      {
+        title: 'Why these are named, not linked',
+        body: html`
+          <p>
+            This site links nowhere off its own origin, on any page. That is the same rule that lets
+            <a href="/legal/privacy">the privacy page</a> say this site loads no third-party
+            resource: it is checked on every build. The repository is real and reachable at
+            <strong>github.com/ruddvz/Arq</strong>, typed rather than clicked, on purpose.
           </p>
         `,
       },

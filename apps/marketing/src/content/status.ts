@@ -17,6 +17,7 @@ export const statusPage: Page = {
     id: 'PUB-013',
     route: '/status',
     title: 'Status',
+    family: 'operational',
     description:
       'ARQ service status: no hosted ARQ service is documented, and this website is served as static files. Incident history begins when hosting does.',
   },
