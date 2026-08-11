@@ -33,6 +33,14 @@ jobs:
       # here we only prove the rendered output exists and is non-trivial.
       - run: test -f apps/marketing/dist/index.html && test -f apps/marketing/dist/404.html
       - run: test -f apps/web/dist/index.html
+      # A start-up budget for apps/web, and a check that the code splits it
+      # relies on still hold. The 3D split made once in 4c31107 had silently
+      # come undone by the time anything measured again: the entry chunk was
+      # back to 1,762kB raw / 743kB gzipped, larger than the figure that
+      # prompted the original work. The self-test runs first, because a guard
+      # that cannot fail would report a clean bundle either way.
+      - run: pnpm check:web-bundle-budget:test
+      - run: pnpm check:web-bundle-budget
       - run: test -f packages/mcp-server/dist/arq-mcp-stdio.mjs
       # The MCP package's own tests drive the protocol in-process, which
       # proves dispatch and nothing about whether the server can be launched

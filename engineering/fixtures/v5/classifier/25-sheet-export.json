@@ -1,0 +1,9 @@
+{
+  "_comment": "apps/web/src/sheets/** matched no rule at all and fell through to the default, so a change to how a sheet is composed or exported selected neither browser_sheet_export nor the import/export lane. The gap was reachable: moving the exporter behind a dynamic import - which is what put a run-time failure mode where a build-time one had been - touched only App.tsx and this directory. The directory now sits with packages/pdf-export/** in the import-export rule that already owns the PDF writer.",
+  "files": ["apps/web/src/sheets/sheet-export.ts", "packages/pdf-export/src/pdf-sheet-export.ts"],
+  "expected": {
+    "lane": "L4",
+    "impactsInclude": ["import_export", "document", "security"],
+    "evidenceInclude": ["browser_sheet_export", "protected_l4_approval"]
+  }
+}

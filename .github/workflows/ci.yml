@@ -162,6 +162,14 @@ jobs:
       # that the project reaches the workspace, that authoring stays refused, that
       # Workers are released, and that the selected file's bytes do not change.
       - run: pnpm benchmark:native-open
+      # Sheet export sits behind a dynamic import so that pdf-lib and its font
+      # and encoding tables stay out of the start-up chunk. That trades a
+      # build-time guarantee for a run-time one: a broken static import fails
+      # the build, a broken dynamic import fails when a user clicks Export.
+      # This drives the real command palette against the built bundle and
+      # checks both halves - that the chunk is absent until the command runs,
+      # and that running it produces a PDF with drawn geometry.
+      - run: pnpm benchmark:sheet-export
       - uses: actions/upload-artifact@v4
         if: always()
         with:

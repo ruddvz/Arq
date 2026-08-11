@@ -75,6 +75,7 @@ const COMMANDS = Object.freeze({
   browser_network_observation: [['pnpm', ['benchmark:network-observation']]],
   e2e_arq_open: [['pnpm', ['benchmark:e2e-arq-open']]],
   browser_native_open: [['pnpm', ['benchmark:native-open']]],
+  browser_sheet_export: [['pnpm', ['benchmark:sheet-export']]],
 });
 
 /**

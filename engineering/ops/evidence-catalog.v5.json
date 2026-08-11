@@ -189,6 +189,15 @@
       "doesNotProve": "Editing, saving, publishing, migration or import of an opened project, and any behaviour in a browser engine other than Chromium."
     },
     {
+      "id": "browser_sheet_export",
+      "kind": "command",
+      "command": "pnpm benchmark:sheet-export",
+      "packageScript": "benchmark:sheet-export",
+      "state": "available",
+      "proves": "A user exporting a sheet through the built apps/web bundle in headless Chromium: the deferred sheet-export chunk is not fetched during load or while drawing, invoking the real command palette entry fetches it and produces a download, and that download is a PDF with a page object, painted path operators and its sheet number carried in the document metadata, with no console error and no request leaving the origin.",
+      "doesNotProve": "The sheet's visual fidelity, line weights, paper size, scale accuracy or title block, which sheet-export.test.ts and SHEET_EXPORT_LIMITATIONS cover, and any behaviour in a browser engine other than Chromium."
+    },
+    {
       "id": "browser_model_canvas",
       "kind": "command",
       "command": "pnpm benchmark:model-canvas",
