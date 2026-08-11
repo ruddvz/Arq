@@ -136,21 +136,29 @@ export interface NativeStair {
 }
 
 /**
- * The four building-services disciplines this reads.
+ * The building-services disciplines this reads.
  *
  * A closed set, unlike `kind` and `material`, because the discipline decides
  * which drawing a point belongs on and how it is symbolised - a reflected
- * ceiling plan shows luminaires and not waste stacks. A file naming a fifth
- * discipline is left uncounted rather than folded into one of these, which the
- * unsupported-content inventory then reports by name.
+ * ceiling plan shows luminaires and not waste stacks. A file naming a discipline
+ * outside this set is left uncounted rather than folded into one of these, which
+ * the unsupported-content inventory then reports by name.
+ *
+ * `fire-safety` and `controls` joined the first four once it was clear they are
+ * the same shape - a kind, a level, a room and a point - and differ only in what
+ * they are. A smoke alarm is not a luminaire and must not be drawn as one; a
+ * plan that cannot tell them apart is worse than one that omits both.
  */
-export type ServiceDiscipline = 'lighting' | 'electrical' | 'plumbing' | 'hvac';
+export type ServiceDiscipline =
+  'lighting' | 'electrical' | 'plumbing' | 'hvac' | 'fire-safety' | 'controls';
 
 export const SERVICE_DISCIPLINES: readonly ServiceDiscipline[] = [
   'lighting',
   'electrical',
   'plumbing',
   'hvac',
+  'fire-safety',
+  'controls',
 ];
 
 /** One luminaire, outlet, fitting or unit, at a point. */

@@ -347,8 +347,13 @@ describe('adaptArqHouse17Model', () => {
     const parsed = parseNativeProjectModel(adaptOrThrow(house17Model()).model);
     if (parsed.status !== 'parsed') throw new Error('rejected');
 
-    expect(parsed.model.doors.find((door) => door.id === 'd-entry')!.side).toBe('right');
-    expect(parsed.model.doors.find((door) => door.id === 'd-slide')!.side).toBe('left');
+    // +1 is the wall's left-hand normal, -1 its right. The polarity used to be
+    // the other way round, calibrated against a placement rule that decided the
+    // sweep's sign from `side` alone and so opened a door to the opposite face
+    // when its hand changed. Both were corrected together, and every door in the
+    // fixture - all of them one hand - swings exactly where it did before.
+    expect(parsed.model.doors.find((door) => door.id === 'd-entry')!.side).toBe('left');
+    expect(parsed.model.doors.find((door) => door.id === 'd-slide')!.side).toBe('right');
   });
 
   /**
@@ -544,10 +549,15 @@ describe('what the adapter leaves behind', () => {
   });
 
   /**
-   * The lifted set grew from three sections to nine when the four services
+   * The lifted set grew from three sections to eleven as the six services
    * disciplines and the pathways were drawn. This asserts the inventory tracks
    * that rather than reporting content the app now shows - a warning about
    * something a user can see is how warnings get ignored.
+   *
+   * `fireLifeSafety` and `controls` are here for a second reason: they are the
+   * two sections whose file name differs from the discipline name the reader
+   * uses (`fire-safety`, `controls`), so they are the two the section map can
+   * get wrong without anything else noticing.
    */
   it('does not report the sections it did lift', () => {
     const declared = inventory({
@@ -558,11 +568,53 @@ describe('what the adapter leaves behind', () => {
       electrical: [1],
       plumbing: [1],
       hvac: [1],
+      fireLifeSafety: [1],
+      controls: [1],
       pathways: [1],
       roomBoundaryLines: [1],
     });
     expect(declared.map((entry) => entry.section)).toEqual([
       'semanticExtensions.roomBoundaryLines',
+    ]);
+  });
+
+  /**
+   * Lifting a section is only half the job: the points have to arrive carrying a
+   * discipline the reader accepts. A section mapped to a name `SERVICE_DISCIPLINES`
+   * does not list rejects the entire project on open, which is a worse outcome
+   * than never having read the section at all.
+   */
+  it('gives every services section a discipline the reader accepts', () => {
+    const adapted = adaptArqHouse17Model(
+      modelWithExtensions({
+        lighting: [
+          { id: 'lt', kind: 'ceiling-light', levelId: 'level-ground', point: { x: 1, y: 2, z: 3 } },
+        ],
+        electrical: [
+          { id: 'el', kind: 'socket', levelId: 'level-ground', point: { x: 1, y: 2, z: 3 } },
+        ],
+        plumbing: [{ id: 'pl', kind: 'wc', levelId: 'level-ground', point: { x: 1, y: 2 } }],
+        hvac: [
+          { id: 'hv', kind: 'exhaust-fan', levelId: 'level-ground', point: { x: 1, y: 2, z: 3 } },
+        ],
+        fireLifeSafety: [
+          { id: 'fi', kind: 'smoke-alarm', levelId: 'level-ground', point: { x: 1, y: 2, z: 3 } },
+        ],
+        controls: [
+          { id: 'ct', kind: 'scene-keypad', levelId: 'level-ground', point: { x: 1, y: 2, z: 3 } },
+        ],
+      }),
+    );
+    if (adapted.status !== 'adapted') throw new Error('expected the model to adapt');
+    const parsed = parseNativeProjectModel(adapted.model);
+    if (parsed.status !== 'parsed') throw new Error(parsed.reason);
+    expect(parsed.model.servicePoints.map((entry) => entry.discipline)).toEqual([
+      'lighting',
+      'electrical',
+      'plumbing',
+      'hvac',
+      'fire-safety',
+      'controls',
     ]);
   });
 

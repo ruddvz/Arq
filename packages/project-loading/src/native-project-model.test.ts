@@ -393,6 +393,58 @@ describe('parseNativeProjectViews', () => {
     ]);
   });
 
+  /**
+   * The fixture's two analysis views used to report "This build has no analysis
+   * surface yet", which stopped being true once the walkability pathways were
+   * drawn - the app draws exactly what those views describe. What actually stops
+   * them being shown is narrower and is the file's own doing: neither names a
+   * level, and a plan-like view with no storey has nothing to be drawn on.
+   *
+   * Worth separating because the two sentences send a reader to different
+   * places. The old one says wait for a later build; the true one says the view
+   * record is incomplete, which is something the file's author can fix.
+   */
+  it('reports an analysis view with no level as missing a level, not as unsupported', () => {
+    const views = parseNativeProjectViews({
+      views: [
+        { id: 'v-flow', name: 'Ground flow', kind: 'analysis', state: 'current' },
+        {
+          id: 'v-flow-2',
+          name: 'Upper flow',
+          kind: 'analysis',
+          levelId: 'lvl-2',
+          state: 'current',
+        },
+      ],
+    });
+
+    expect(views.map((view) => [view.id, view.supported, view.unsupportedReason])).toEqual([
+      ['v-flow', false, 'This analysis view names no level, so there is no storey to draw it on.'],
+      ['v-flow-2', true, null],
+    ]);
+  });
+
+  /** A 3D view is of the whole model, so it is the one kind that needs no level. */
+  it('does not ask a 3D view for a level', () => {
+    const [view] = parseNativeProjectViews({
+      views: [{ id: 'v-3d', name: 'Axonometric', kind: '3d', state: 'current' }],
+    });
+    expect([view?.supported, view?.unsupportedReason]).toEqual([true, null]);
+  });
+
+  /**
+   * State first: a view the file never rendered is not shown because the file
+   * says so, whatever else is missing from the record.
+   */
+  it('reports a stale view by its state even when it also names no level', () => {
+    const [view] = parseNativeProjectViews({
+      views: [{ id: 'v-old', name: 'Old flow', kind: 'analysis', state: 'superseded' }],
+    });
+    expect(view?.unsupportedReason).toBe(
+      'The project records this view as "superseded" rather than current.',
+    );
+  });
+
   it('treats missing or malformed view records as no views rather than a failure', () => {
     expect(parseNativeProjectViews(undefined)).toEqual([]);
     expect(parseNativeProjectViews({ views: 'nope' })).toEqual([]);

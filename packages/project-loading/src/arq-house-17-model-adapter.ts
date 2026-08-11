@@ -44,8 +44,49 @@
  * (`status: 'not-applicable'`), so it can never quietly rewrite an unrelated
  * project that happens to be missing a field.
  */
-import { SERVICE_DISCIPLINES } from './placed-content';
+import type { ServiceDiscipline } from './placed-content';
 import type { NativeProjectView } from './native-project-model';
+
+/**
+ * The 17.0 sections that hold services points, and the discipline each one is.
+ *
+ * A map rather than a reuse of `SERVICE_DISCIPLINES`, because the file's section
+ * names and the model's discipline names are not the same words:
+ * `fireLifeSafety` is the `fire-safety` discipline. Deriving one from the other
+ * worked while all four names happened to match and silently read nothing the
+ * moment they stopped - the fire and control points were lifted into an empty
+ * list without a single error.
+ */
+const SERVICE_SECTIONS: Readonly<Record<string, ServiceDiscipline>> = {
+  lighting: 'lighting',
+  electrical: 'electrical',
+  plumbing: 'plumbing',
+  hvac: 'hvac',
+  fireLifeSafety: 'fire-safety',
+  controls: 'controls',
+};
+
+/**
+ * Why a particular section is left behind, where "not read by this build" would
+ * be misleading.
+ *
+ * The default reason promises a later build will read the section. That is right
+ * for most of them - the structural model, the ceiling plans - and wrong for
+ * `roomBoundaryLines`, which was measured against the rooms it describes rather
+ * than assumed: 47 of the 48 rooms have four lines each, and for 41 of them the
+ * rectangle those lines enclose is the room's own `calculatedBoundary` restated.
+ * Reading them would draw the boundary a second time.
+ *
+ * For the other six the two disagree, and the polygon is the one to believe:
+ * `calculatedArea` matches the polygon in every case, including for those six.
+ * So the section is not pending, it is redundant where it agrees and wrong where
+ * it does not - and saying "not read yet" would invite someone to read it.
+ * `validation/arq-house-17/FIXTURE_DEFECTS_17_0.md` lists the six.
+ */
+const UNSUPPORTED_REASONS: Readonly<Record<string, string>> = {
+  roomBoundaryLines:
+    'Not read: these restate each room’s own boundary, and where the two disagree the room polygon is the one its stated area matches.',
+};
 
 /** One vocabulary translation, at the granularity a reviewer would question it. */
 export interface ArqHouse17Translation {
@@ -453,20 +494,29 @@ export function adaptArqHouse17Model(raw: unknown): ArqHouse17AdaptResult {
      * the entrance vestibule, which is also the only sensible way for a house's
      * front door to open. So `start` is `right`.
      *
-     * `side` keeps its original polarity, and the reason is worth writing down
-     * because it is not what the field name suggests. `plan-openings.ts` applies
-     * `side` as a rotation from the *closed leaf direction*, and the closed leaf
-     * points away from whichever jamb `hand` chose - so the same `side` value
-     * opens a door in opposite directions depending on its hand. For this door,
-     * hinged at the end of a wall running +X, the closed leaf points -X and
-     * `side: 'right'` is what rotates it to +Y, into the house. `left` would put
-     * it out on the street.
+     * `side` is a statement about the wall, not about the leaf: `left` is the
+     * left-hand normal looking along the wall from its start, whichever jamb the
+     * door hangs from. `doorLeafPlacement` in `@arq/geometry-2d` is what makes
+     * that true, and it did not use to be - it decided the sweep's sign from
+     * `side` alone, so the same `side` opened a door in opposite directions
+     * depending on its hand, and this mapping was calibrated against that. The
+     * calibration and the defect cancelled: every door in 17.0 is `hand: 'start'`,
+     * so the file could not tell the two readings apart.
+     *
+     * With `side` fixed to mean the wall face, `swingDirection: 1` is the
+     * left-hand normal. For the entrance - hinged at the far jamb of a wall
+     * running +X, with the house on the +Y side - that rotates the leaf to +Y,
+     * into the entrance vestibule, which is where A101 draws it and the only
+     * sensible way for a front door to open. Every one of the fixture's 26 doors
+     * swings exactly where it swung before; what changed is that a door with the
+     * other hand will now swing to the face its `swingDirection` names rather
+     * than to the opposite one.
      *
      * Both are pinned by `door-swing-matches-fixture.test.ts` against the doors
      * the drawings show, because nothing about `start`, `1`, or `side` makes the
      * correct answer self-evident to the next reader either.
      */
-    next.side = direction === -1 ? 'left' : 'right';
+    next.side = direction === -1 ? 'right' : 'left';
     next.hand = door.hand === 'end' ? 'left' : 'right';
     const operation =
       typeof door.typeId === 'string' ? operationByDoorType.get(door.typeId) : undefined;
@@ -619,13 +669,13 @@ export function adaptArqHouse17Model(raw: unknown): ArqHouse17AdaptResult {
    * which section the point is filed under. That is `derived` and not
    * `assumed`: the section name is a statement, not a gap.
    */
-  const servicePoints = SERVICE_DISCIPLINES.flatMap((discipline) =>
-    records(extensions[discipline]).map((point) => ({ ...point, discipline })),
+  const servicePoints = Object.entries(SERVICE_SECTIONS).flatMap(([section, discipline]) =>
+    records(extensions[section]).map((point) => ({ ...point, discipline })),
   );
   record({
     section: 'servicePoints',
     field: 'discipline',
-    from: 'four separate semanticExtensions sections',
+    from: 'six separate semanticExtensions sections',
     to: 'one list, each point tagged with the section it came from',
     entries: servicePoints.length,
     basis: 'derived',
@@ -650,19 +700,19 @@ export function adaptArqHouse17Model(raw: unknown): ArqHouse17AdaptResult {
     'slabs',
     'stairs',
     'pathways',
-    ...SERVICE_DISCIPLINES,
+    ...Object.keys(SERVICE_SECTIONS),
   ]);
   const unsupportedContent = Object.entries(extensions)
     .filter(([name]) => !lifted.has(name))
     .map(([name, value]) => ({
       section: `semanticExtensions.${name}`,
       count: Array.isArray(value) ? value.length : 1,
-      reason: 'Recorded in the file and not read by this build.',
+      reason: UNSUPPORTED_REASONS[name] ?? 'Recorded in the file and not read by this build.',
     }))
     .filter((entry) => entry.count > 0)
-    // Largest omission first. Fifty-five entries is a long list, and a reader
-    // scanning it should meet the 188 room boundary lines before the one-line
-    // acoustic intent rather than after it.
+    // Largest omission first. It is a long list, and a reader scanning it should
+    // meet the 188 room boundary lines before the one-line acoustic intent
+    // rather than after it.
     .sort((a, b) => b.count - a.count || a.section.localeCompare(b.section));
 
   const model: Record<string, unknown> = {

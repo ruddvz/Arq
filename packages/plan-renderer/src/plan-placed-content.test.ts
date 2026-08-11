@@ -4,6 +4,7 @@ import {
   furnishingDetailPrimitives,
   furnishingPrimitives,
   pathwayPrimitives,
+  PLAN_SERVICE_DISCIPLINES,
   servicePointPrimitives,
   slabPrimitives,
   stairPrimitives,
@@ -214,20 +215,25 @@ describe('servicePointPrimitives', () => {
 
   /**
    * Shape, not colour, and not a label. Colour alone fails the design system's
-   * rule that status may not be carried by hue; a label at 126 points buries
-   * the plan. So the four disciplines have to be tellable apart by outline.
+   * rule that status may not be carried by hue; a label at 136 points buries
+   * the plan. So the six disciplines have to be tellable apart by outline.
+   *
+   * A set of the drawn shapes rather than six explicit assertions: what matters
+   * is that no two are the same, and adding a seventh discipline that happens to
+   * reuse the electrical square has to fail here rather than pass six times.
    */
   it('gives each discipline a distinguishable symbol', () => {
-    const shapes = (['lighting', 'electrical', 'plumbing', 'hvac'] as const).map((discipline) =>
+    const shapes = PLAN_SERVICE_DISCIPLINES.map((discipline) =>
       servicePointPrimitives({ id: 'p', discipline, position: at })
         .map((entry) => `${entry.kind}:${entry.kind === 'polygon' ? entry.points.length : 'n'}`)
         .join('|'),
     );
-    expect(new Set(shapes).size).toBe(4);
+    expect(shapes).toHaveLength(6);
+    expect(new Set(shapes).size).toBe(6);
   });
 
   it('centres every symbol on the point it describes', () => {
-    for (const discipline of ['lighting', 'electrical', 'plumbing', 'hvac'] as const) {
+    for (const discipline of PLAN_SERVICE_DISCIPLINES) {
       const [body] = servicePointPrimitives({ id: 'p', discipline, position: at });
       if (body?.kind !== 'polygon') throw new Error('expected a polygon body');
       const cx = body.points.reduce((sum, p) => sum + p.x, 0) / body.points.length;

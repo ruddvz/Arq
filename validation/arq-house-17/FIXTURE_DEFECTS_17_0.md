@@ -42,10 +42,41 @@ states which is authoritative.
 | y    | 300, 3500, 5000, **8500**, 11000, **12500**, 15700  | 300, 3500, 5000, **8000**, 11000, **13700**, 15700 |
 
 Any consumer — Arq, the PDF generator, a structural engineer — picks one and is
-right half the time. This is the only outright contradiction found in the model.
+right half the time.
 
 **Fix:** collapse to one grid, or state which is authoritative and what the other
 one is for.
+
+### 1.1b Six rooms are two different shapes
+
+`semanticExtensions.roomBoundaryLines` holds 188 lines — four per room for 47 of
+the 48 rooms. For 41 of those rooms the rectangle the four lines enclose is the
+room's own `calculatedBoundary` restated exactly. For six it is not:
+
+| Room           | Name                     | `calculatedBoundary`             | From its four boundary lines       | Area stated | Area from lines |
+| -------------- | ------------------------ | -------------------------------- | ---------------------------------- | ----------- | --------------- |
+| `rm-gf-powder` | Powder room              | x 12000–14000, y 300–2300        | x 12000–**13800**, y 300–2300      | 4.00 m²     | 3.60 m²         |
+| `rm-uf-shared` | Shared bathroom          | x 12000–14200, y 300–2800        | x 12000–**14000**, y 300–**2700**  | 5.50 m²     | 4.80 m²         |
+| `rm-uf-linen`  | Stair arrival and linen  | x 12000–14200, y 2800–5000       | x 12000–**14000**, y **2700**–5000 | 4.84 m²     | 4.60 m²         |
+| `rm-rf-garden` | Productive roof garden   | x 300–4500, y **12200**–15700    | x 300–4500, y **11200**–15700      | 14.70 m²    | 18.90 m²        |
+| `rm-rf-solar`  | Solar and maintenance    | x 4500–12000, y **12200**–15700  | x 4500–12000, y **11200**–15700    | 26.25 m²    | 33.75 m²        |
+| `rm-rf-mech`   | Screened mechanical zone | x 12000–17700, y **12200**–15700 | x 12000–17700, y **11200**–15700   | 19.95 m²    | 25.65 m²        |
+
+The three roof rooms are the clearest case: their boundary lines put the roof's
+southern edge a full **1 000 mm** further south than their polygons do, and all
+three are wrong by the same 1 000 mm, so this is one edit that reached the
+polygons and not the lines.
+
+`calculatedArea` matches the polygon in all six cases, so the polygon is the
+live shape and the lines are stale. Arq draws the polygon and reports the
+section as redundant rather than as pending, so nobody reads it later and gets
+six rooms of a different size.
+
+The 48th room, `rm-rf-maintenance`, has no boundary lines at all.
+
+**Fix:** regenerate `roomBoundaryLines` from the room polygons, or drop the
+section — it carries nothing the rooms do not already state, and it is the
+largest single block in the file that no consumer should read.
 
 ### 1.2 Four services points sit outside the room they are assigned to
 
@@ -60,13 +91,16 @@ The three roof drains are at the corners of the roof, which is where drains
 belong — their **positions** look right and their **room assignments** are wrong.
 They appear to have been given whichever roof room was nearest to hand.
 
-The solar isolator is a different case: 200 mm outside its room is a placement
-slip, not a labelling one.
+The solar isolator is a different case, and it corroborates 1.1b. It is 200 mm
+south of `rm-rf-mech`'s polygon — but `rm-rf-mech`'s own **boundary lines** run
+to y 11200, and the isolator at y 12000 sits comfortably inside those. It is not
+a placement slip; it is a fitting that was placed against the earlier roof
+geometry and left behind when the room polygons moved north by 1 000 mm.
 
-**Fix:** re-derive `roomId` from the point for all 126 services points, and
-either move the isolator inside `rm-rf-mech` or assign it to the room it is
-actually in. All 47 lighting and all 15 HVAC points already pass this test, so
-the rule is clearly intended.
+**Fix:** re-derive `roomId` from the point for all 136 services points once the
+roof rooms in 1.1b are settled — the isolator needs no move if the polygon was
+the thing that moved wrongly. All 47 lighting, all 15 HVAC, all 6 fire-safety
+and all 4 control points already pass this test, so the rule is clearly intended.
 
 ### 1.3 Three walls carry no height, alignment, join intent or role
 
@@ -96,6 +130,13 @@ Arq derives the door side from `swingDirection` and the hand from
 package's own A101, which draws the front door hinged at the right-hand jamb.
 The first reading hinged it on the wrong jamb; the second flipped both fields and
 swung it onto the street.
+
+It cost a third correction later, and that one is worth stating because the file
+made it undetectable: **all 26 doors are `hand: "start"`**. A file whose doors all
+hang the same way cannot distinguish a rule that reads `swingDirection` on its own
+from one that reads it together with the hand — so a defect in Arq's own placement
+rule sat behind this field, invisible, until it was found by reading rather than by
+testing. A fixture is also a test, and this one tests less than it appears to.
 
 **Fix:** replace `"configured"` with the real value on all 39, or remove the
 field entirely. An absent field makes a reader ask; a placeholder makes every
@@ -269,8 +310,9 @@ take, and it is worth knowing the file contains one.
 
 ## Priority
 
-1. **Reconcile the two structural grids** (1.1). The only contradiction in the
-   model, cheap at the source, impossible downstream.
+1. **Reconcile the two structural grids** (1.1) and **the six rooms that are two
+   different shapes** (1.1b). The model's two outright contradictions: cheap at
+   the source, impossible downstream.
 2. **De-duplicate the container** (3.1–3.4). ~17 MB, no data loss, and it is what
    makes the file awkward to move between devices.
 3. **Fix the four mis-assigned services points** (1.2) and state the three walls'

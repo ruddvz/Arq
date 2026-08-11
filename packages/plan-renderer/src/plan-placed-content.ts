@@ -214,7 +214,7 @@ function directionArrow(flight: PlanStairFlightInput): readonly PlanPrimitiveInp
  * Symbol radius for a services point, in world millimetres.
  *
  * 180mm is roughly the size a drawn luminaire symbol is at 1:100 - large enough
- * to tell one discipline's shape from another's, small enough that 126 of them
+ * to tell one discipline's shape from another's, small enough that 136 of them
  * annotate the plan rather than becoming it. In world units rather than screen
  * pixels because a symbol is part of the drawing: zoom in on a bathroom and the
  * WC symbol stays the size of the fitting, not the size of a cursor.
@@ -248,9 +248,33 @@ function square(centre: WorldPoint, half: number): readonly WorldPoint[] {
   ];
 }
 
+/**
+ * The disciplines this module draws a symbol for.
+ *
+ * A value rather than a bare union so a caller - and this package's own tests -
+ * can walk them. The rule "every discipline gets a symbol nothing else uses" is
+ * only checkable against a list, and stating the union twice is how one of the
+ * six ends up untested.
+ *
+ * Mirrors `SERVICE_DISCIPLINES` in `@arq/project-loading` rather than importing
+ * it: a renderer that depended on the loader would invert the layering every
+ * other module here keeps. `arq-house-17-model-adapter.test.ts` is what pins the
+ * two lists to the same six names.
+ */
+export const PLAN_SERVICE_DISCIPLINES = [
+  'lighting',
+  'electrical',
+  'plumbing',
+  'hvac',
+  'fire-safety',
+  'controls',
+] as const;
+
+export type PlanServiceDiscipline = (typeof PLAN_SERVICE_DISCIPLINES)[number];
+
 export interface PlanServicePointInput {
   readonly id: string;
-  readonly discipline: 'lighting' | 'electrical' | 'plumbing' | 'hvac';
+  readonly discipline: PlanServiceDiscipline;
   readonly position: WorldPoint;
 }
 
@@ -259,17 +283,20 @@ export interface PlanServicePointInput {
  *
  * Shape rather than colour, and shape rather than a label. Colour alone fails
  * the design system's own rule that status may not be carried by hue; a label
- * at 126 points would bury the plan under text. So each discipline gets a
+ * at 136 points would bury the plan under text. So each discipline gets a
  * distinguishable outline a reader learns once:
  *
  * - lighting: a circle crossed through, the drafting convention for a luminaire
  * - electrical: a circle with a single radial stem, as an outlet is drawn
  * - plumbing: a circle within a circle, reading as a fitting with a waste
  * - hvac: a square crossed through, since plant is not a point fitting
+ * - fire-safety: a triangle, the one shape nothing else here uses, because a
+ *   detector is the symbol a reader most needs to find in a hurry
+ * - controls: a small square with a dot, reading as a plate on a wall
  *
  * These are recognisable rather than standards-conformant. A real symbol
  * library is per-jurisdiction and per-discipline and is a much larger piece of
- * work; this is enough to tell four disciplines apart on one drawing, which is
+ * work; this is enough to tell six disciplines apart on one drawing, which is
  * what the plan needs before it needs anything else.
  */
 export function servicePointPrimitives(
@@ -319,6 +346,25 @@ export function servicePointPrimitives(
           elementId: `${id}-cross-b`,
           points: [worldPoint(at.x - r, at.y + r), worldPoint(at.x + r, at.y - r)],
         },
+      ];
+    case 'fire-safety':
+      // A triangle: the only shape in this set that is neither round nor square,
+      // so a detector is findable at a glance on a plan carrying 136 symbols.
+      return [
+        {
+          kind: 'polygon',
+          elementId: id,
+          points: [
+            worldPoint(at.x, at.y + r),
+            worldPoint(at.x + r * 0.87, at.y - r * 0.5),
+            worldPoint(at.x - r * 0.87, at.y - r * 0.5),
+          ],
+        },
+      ];
+    case 'controls':
+      return [
+        { kind: 'polygon', elementId: id, points: square(at, r * 0.75) },
+        { kind: 'polygon', elementId: `${id}-dot`, points: circle(at, r * 0.22, 8) },
       ];
   }
 }

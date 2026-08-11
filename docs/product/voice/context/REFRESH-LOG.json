@@ -2,6 +2,12 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "generatedAt": "2026-08-11T02:07:12.951Z",
+      "sourceSetDigest": "0fc92d437d0624df764f5470b9d2c9484131435236799044806d50bb04a9fb75",
+      "previousSourceSetDigest": "87d69b21a57ec8e9a1be0f4675a9180fd668b32204d2fa26f15b7ea2c228690e",
+      "changedSourceSets": ["model-canvas", "web-app"]
+    },
+    {
       "generatedAt": "2026-08-08T20:02:14.740Z",
       "sourceSetDigest": "87d69b21a57ec8e9a1be0f4675a9180fd668b32204d2fa26f15b7ea2c228690e",
       "previousSourceSetDigest": "902d378da04bb93fac8e2840153b498ffbd66419aeeb7992a448c9e3a75f9a98",

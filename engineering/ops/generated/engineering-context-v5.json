@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "e74dbdef69766f6bd4517563dcd9c612e42892dd619ac77eaf6a919a844c7977",
+  "source_hash": "8248a8cce19210ff07aca2f610d5ef6ef8f5eab8b9566a2b1ad09107a560a052",
   "source_records": [
     {
       "scope": "package",
@@ -204,7 +204,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/App.tsx",
-      "sha256": "096125ae82caf0a9ce7e87c95e519a32f582c936813729be647dd9b8252b812f"
+      "sha256": "fc8f5e224c386f57e618a754c0854eb0cc3946ffb580c2c40323eb6f4f766453"
     },
     {
       "scope": "repository",
@@ -219,7 +219,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/ModelCanvas.tsx",
-      "sha256": "0e7602ec11cf856c270a99e86102c282f4448135787df553351df9bfb65d3c8f"
+      "sha256": "033217396714c7deeaf6d3d7c42e79a82a9777a876f4277fff44556215aac1ee"
     },
     {
       "scope": "repository",

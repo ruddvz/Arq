@@ -147,7 +147,24 @@ export type NativeProjectModelResult =
   | { readonly status: 'rejected'; readonly reason: string };
 
 /** The view kinds this build has a surface for. Everything else is declared unsupported by name. */
-const SUPPORTED_VIEW_KINDS: readonly string[] = ['plan', '3d'];
+const SUPPORTED_VIEW_KINDS: readonly string[] = ['plan', '3d', 'analysis'];
+
+/**
+ * View kinds that are a drawing *of a level* and cannot be presented without
+ * knowing which one.
+ *
+ * `analysis` joined the supported kinds once the walkable routes were being
+ * drawn - an analysis view of this fixture is its plan with the routes shown,
+ * and the app now has both halves. But this fixture's two analysis views name no
+ * level, and a flow drawing of an unspecified storey is not something a reader
+ * can be shown; guessing from the view id (`view-ground-flow`) would be reading
+ * a label as data.
+ *
+ * So the kind is supported and the individual view is not, which is a more
+ * useful thing to tell someone than "this build has no analysis surface" - that
+ * sentence stopped being true and would have sent them to the wrong place.
+ */
+const VIEW_KINDS_NEEDING_A_LEVEL: readonly string[] = ['plan', 'analysis'];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -817,17 +834,20 @@ export function parseNativeProjectViews(raw: unknown): readonly NativeProjectVie
     // no surface in this build, and a view the file itself says was never
     // rendered. Collapsing them would tell a user their section view is
     // unsupported when the file says it was only ever proposed.
+    const viewLevelId = optionalString(entry.levelId);
     const unsupportedReason =
       declaredState !== null && declaredState !== 'current'
         ? `The project records this view as "${declaredState}" rather than current.`
-        : SUPPORTED_VIEW_KINDS.includes(kind)
-          ? null
-          : `This build has no ${kind} surface yet.`;
+        : !SUPPORTED_VIEW_KINDS.includes(kind)
+          ? `This build has no ${kind} surface yet.`
+          : VIEW_KINDS_NEEDING_A_LEVEL.includes(kind) && viewLevelId === null
+            ? `This ${kind} view names no level, so there is no storey to draw it on.`
+            : null;
     views.push({
       id,
       name,
       kind,
-      levelId: optionalString(entry.levelId),
+      levelId: viewLevelId,
       scale: optionalString(entry.scale),
       supported: unsupportedReason === null,
       unsupportedReason,

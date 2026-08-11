@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { doorLeafPlacement, worldPoint } from '@arq/geometry-2d';
 import { adaptArqHouse17Model } from './arq-house-17-model-adapter';
 
 /**
@@ -16,12 +17,19 @@ import { adaptArqHouse17Model } from './arq-house-17-model-adapter';
  * it means. It draws the entrance hinged at the right-hand jamb, opening inward
  * into the entrance vestibule.
  *
- * Asserting the resolved geometry rather than the two enum values is deliberate.
- * `left`/`right` are not absolute: `plan-openings.ts` rotates the leaf from its
- * *closed* direction, which points away from whichever jamb `hand` selected, so
- * the same `side` opens a door opposite ways depending on its hand. A test on
- * the enums alone would pass while the door swung through the front wall. This
- * computes where the leaf actually ends up and asserts it is inside the house.
+ * Asserting the resolved geometry rather than the two enum values is deliberate:
+ * a test on the enums alone would pass while the door swung through the front
+ * wall. This runs the real placement rule and asserts the leaf ends up inside
+ * the house.
+ *
+ * The rule used to be reproduced here, because `project-loading` does not depend
+ * on `plan-renderer` and that is where the rule lived. It does not live there any
+ * more - `doorLeafPlacement` is in `@arq/geometry-2d`, which this package already
+ * depends on - and the move mattered: while the copy existed, this test measured
+ * its own arithmetic rather than the renderer's, so it went on passing through a
+ * defect in the real rule that flipped which face a door opened to whenever its
+ * hand changed. Every door in 17.0 shares one hand, so the fixture could not
+ * catch it either. Import the rule; do not copy it.
  */
 
 /** The real entrance: a south wall running +X, its door hinged at the far jamb. */
@@ -80,26 +88,8 @@ function entranceModel(): Record<string, unknown> {
   };
 }
 
-/**
- * `plan-openings.ts`'s own rule, reproduced so this test measures what the
- * renderer will actually draw. Reproduced rather than imported because
- * `project-loading` does not depend on `plan-renderer`; the drift risk is
- * covered by this test failing loudly if the drawn result stops matching.
- */
-function leafOpenDirection(
-  wall: { readonly dx: number; readonly dy: number },
-  door: { readonly hand: string; readonly side: string },
-): { readonly x: number; readonly y: number } {
-  const length = Math.hypot(wall.dx, wall.dy);
-  const ux = wall.dx / length;
-  const uy = wall.dy / length;
-  const hingeAtStart = door.hand === 'left';
-  // Closed, the leaf lies along the wall pointing from the hinge to the far jamb.
-  const closedAngle = Math.atan2(hingeAtStart ? uy : -uy, hingeAtStart ? ux : -ux);
-  const sweep = Math.PI / 2;
-  const openAngle = closedAngle + (door.side === 'left' ? sweep : -sweep);
-  return { x: Math.cos(openAngle), y: Math.sin(openAngle) };
-}
+/** The entrance wall itself, as both surfaces are given it. */
+const ENTRANCE_WALL = { start: worldPoint(150, 150), end: worldPoint(17_850, 150) };
 
 describe('the ARQ House 17.0 entrance door, against the fixture drawing', () => {
   const adapted = adaptArqHouse17Model(entranceModel());
@@ -117,19 +107,30 @@ describe('the ARQ House 17.0 entrance door, against the fixture drawing', () => 
     expect(door.hand).toBe('right');
   });
 
+  it('reads swingDirection +1 as the wall’s left-hand normal', () => {
+    // `side` names a wall face and nothing else, so this mapping no longer has
+    // to be read together with the hand to know where the leaf ends up.
+    expect(door.side).toBe('left');
+  });
+
   /**
    * The assertion that actually matters. A house's front door opening onto the
    * street is the failure this exists to catch, and it is invisible in the enum
    * values alone.
    */
   it('opens inward, into the house rather than onto the street', () => {
-    const direction = leafOpenDirection(
-      { dx: 17_700, dy: 0 },
-      { hand: door.hand as string, side: door.side as string },
-    );
+    const placement = doorLeafPlacement(ENTRANCE_WALL, {
+      offsetFromWallStart: 7950,
+      width: 1800,
+      side: door.side as 'left' | 'right',
+      hand: door.hand as 'left' | 'right',
+      swingAngle: door.swingAngle as number,
+    });
+    if (placement === null) throw new Error('expected a placement');
 
-    // +Y is indoors for this wall. Comfortably positive, not merely non-negative.
-    expect(direction.y).toBeGreaterThan(0.9);
+    // +Y is indoors for this wall, and the leaf is 1800 long - so a leaf that
+    // opens inward ends most of its own length north of its hinge.
+    expect(placement.tip.y - placement.hinge.y).toBeGreaterThan(1700);
   });
 
   it('keeps a swing door’s 90 degree arc', () => {

@@ -97,6 +97,20 @@ const MATERIAL_COLORS: Readonly<Record<string, number>> = {
 /** What a solid whose material nothing names is drawn as - the same grey as a wall. */
 const DEFAULT_SOLID_COLOR = 0x9a9a9a;
 
+/**
+ * How opaque glass is drawn.
+ *
+ * Glass is the one material in the palette whose defining property is that you
+ * can see through it. Drawn solid, a window pane reads as a light blue board
+ * filling the opening - which is less informative than the empty void it
+ * replaced, because at least a void let you see the room behind. Half-opaque is
+ * enough to read as a surface from outside and to see through from inside.
+ */
+const GLASS_OPACITY = 0.45;
+
+/** The material key that is drawn as glass. */
+const GLASS_MATERIAL = 'glass';
+
 /** Floor and roof plates. Concrete-grey, and distinct from the walls standing on them. */
 const SLAB_COLOR = 0xb4b4b4;
 
@@ -516,13 +530,15 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
           : solid.material === null
             ? DEFAULT_SOLID_COLOR
             : (MATERIAL_COLORS[solid.material] ?? DEFAULT_SOLID_COLOR);
+      const opacity = solid.material === GLASS_MATERIAL ? GLASS_OPACITY : 1;
       const mesh = new THREE.Mesh(
         toGeometry(mesh3d),
-        new THREE.MeshLambertMaterial({ color: colour }),
+        new THREE.MeshLambertMaterial({ color: colour, opacity, transparent: opacity < 1 }),
       );
       mesh.name = solid.id;
       mesh.userData['elementId'] = solid.elementId;
       mesh.userData['baseColor'] = colour;
+      mesh.userData['baseOpacity'] = opacity;
       refs.wallGroup.add(mesh);
       if (!byId.has(solid.elementId)) byId.set(solid.elementId, mesh);
     }
@@ -548,9 +564,13 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
        * deselecting never brought their materials back.
        */
       const base = (object.userData['baseColor'] as number | undefined) ?? DEFAULT_WALL_COLOR;
+      // Its own transparency for the same reason as its own colour: a pane of
+      // glass restyled back to fully opaque on deselection would stop being
+      // glass the first time anything in the model was clicked.
+      const baseOpacity = (object.userData['baseOpacity'] as number | undefined) ?? 1;
       material.color.setHex(treatment?.color ?? base);
-      material.opacity = treatment?.opacity ?? 1;
-      material.transparent = (treatment?.opacity ?? 1) < 1;
+      material.opacity = treatment?.opacity ?? baseOpacity;
+      material.transparent = material.opacity < 1;
     }
     renderNow();
   }, [walls, selection, dimensionsFor, wallOpenings, placedSolids, renderNow]);

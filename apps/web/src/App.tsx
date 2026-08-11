@@ -131,7 +131,7 @@ import {
   type NativePathway,
   type NativeProjectModel as NativeProjectDocument,
 } from '@arq/project-loading';
-import { plateSolids, stairFlightSolids } from '@arq/geometry-3d';
+import { openingInfillsForWall, plateSolids, stairFlightSolids } from '@arq/geometry-3d';
 import type { ModelPlacedSolid, WallSolidDimensions } from './ModelCanvas';
 import type { PlanRoom } from './canvas/canvas-interaction';
 import { roomLabelText, type PlanOpeningInput, type PlanScene } from '@arq/plan-renderer';
@@ -289,6 +289,19 @@ const EMPTY_LEVEL_CONTENT: LevelPlacedContent = {
 const SLAB_MATERIAL = 'slab';
 
 /**
+ * What a door leaf and a window pane are made of, for the purpose of colouring
+ * them.
+ *
+ * The file records no material for either - a `Door` carries its side, hand and
+ * swing and nothing about its construction - so these are the defaults, not a
+ * reading. Wood and glass because those are what an internal door and a window
+ * are unless something says otherwise, and because the two have to differ:
+ * telling a glazed opening from a leaf is the whole reason the solids exist.
+ */
+const LEAF_MATERIAL = 'wood';
+const GLAZING_MATERIAL = 'glass';
+
+/**
  * A landing's own thickness, in millimetres, when the stair has no flight to
  * take one from. Only reachable for a stair recorded as landings alone, which
  * is not a stair - but a zero-thickness plate disappears edge-on, and the view
@@ -417,6 +430,42 @@ function placedSolidsForLevel(
         baseElevation: landing.elevation - thickness,
         height: thickness,
         material: null,
+      });
+    }
+  }
+
+  /*
+   * The leaves and panes standing in the level's openings.
+   *
+   * The wall solids stop at the hole - `generateWallOpeningMeshes` cuts it and
+   * puts nothing in it, which is all a wall can contribute to a doorway. Without
+   * this the fixture's 26 doors and 13 windows were 39 identical voids, and the
+   * 3D view could not tell a glazed opening from a door from a structural gap.
+   *
+   * Read from the same `wallOpeningsForLevel` the plan surface is given, so the
+   * two views place an opening from one derivation rather than two.
+   */
+  const openingsByWall = wallOpeningsForLevel(document, levelId);
+  const dimensionsByWall = wallDimensionsForLevel(document, levelId);
+  for (const wall of wallsOnLevel(document, levelId)) {
+    const openings = openingsByWall.get(wall.id as string);
+    const dimensions = dimensionsByWall.get(wall.id as string);
+    if (openings === undefined || dimensions === undefined) continue;
+    for (const infill of openingInfillsForWall(
+      { start: wall.start, end: wall.end },
+      dimensions.thicknessMm,
+      openings,
+      elevation,
+    )) {
+      solids.push({
+        id: infill.id,
+        // The opening, not the leaf: picking a door's leaf selects the door,
+        // the same rule a wall's several panels already follow.
+        elementId: infill.openingId,
+        outline: infill.outline,
+        baseElevation: infill.baseElevation,
+        height: infill.height,
+        material: infill.part === 'pane' ? GLAZING_MATERIAL : LEAF_MATERIAL,
       });
     }
   }
@@ -2075,7 +2124,7 @@ export function App(): JSX.Element {
         {/*
           Building services and walkable routes, off by default.
 
-          A general arrangement plan does not carry 126 fittings. The fixture's
+          A general arrangement plan does not carry 136 fittings. The fixture's
           own drawing set puts them on their own sheets - A111 electrical, A121
           plumbing and HVAC, E111 reflected ceiling - precisely because drawing
           them over the floor plan buries the floor plan, which is what happened

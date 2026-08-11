@@ -130,6 +130,20 @@ describe('planOpening', () => {
       close(opening.swing.centre.x, 1900);
     });
 
+    it('keeps the side it opens to when only the hand flips', () => {
+      // Which jamb a leaf hangs from and which face it opens to are separate
+      // statements, and this was the one case the tests above never crossed: a
+      // far-jamb leaf starts pointing back down the wall, so the sweep that
+      // carried a near-jamb leaf to +y carried this one to -y. Both of these
+      // doors say "left"; both have to end up on the left-hand normal.
+      const nearJamb = planOpening(EAST_WALL, { ...door, hand: 'left' });
+      const farJamb = planOpening(EAST_WALL, { ...door, hand: 'right' });
+      if (nearJamb?.leaf === undefined || farJamb?.leaf === undefined)
+        throw new Error('expected leaves');
+      expect(Math.sign(nearJamb!.leaf!.end.y)).toBe(1);
+      expect(Math.sign(farJamb!.leaf!.end.y)).toBe(1);
+    });
+
     it('measures the side from the wall direction, not from the page', () => {
       // The same stretch of wall, reached from each end.
       const east = planOpening(EAST_WALL, door);

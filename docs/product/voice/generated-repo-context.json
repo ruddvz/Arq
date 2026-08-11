@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "87d69b21a57ec8e9a1be0f4675a9180fd668b32204d2fa26f15b7ea2c228690e",
+  "sourceSetDigest": "0fc92d437d0624df764f5470b9d2c9484131435236799044806d50bb04a9fb75",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -430,8 +430,8 @@
       "id": "web-app",
       "kind": "file",
       "path": "apps/web/src/App.tsx",
-      "sha256": "096125ae82caf0a9ce7e87c95e519a32f582c936813729be647dd9b8252b812f",
-      "bytes": 103264
+      "sha256": "fc8f5e224c386f57e618a754c0854eb0cc3946ffb580c2c40323eb6f4f766453",
+      "bytes": 105380
     },
     "plan-canvas": {
       "id": "plan-canvas",
@@ -444,8 +444,8 @@
       "id": "model-canvas",
       "kind": "file",
       "path": "apps/web/src/ModelCanvas.tsx",
-      "sha256": "0e7602ec11cf856c270a99e86102c282f4448135787df553351df9bfb65d3c8f",
-      "bytes": 25509
+      "sha256": "033217396714c7deeaf6d3d7c42e79a82a9777a876f4277fff44556215aac1ee",
+      "bytes": 26516
     },
     "local-storage": {
       "id": "local-storage",

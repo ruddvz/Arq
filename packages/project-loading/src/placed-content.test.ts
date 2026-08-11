@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parsePlacedContent } from './placed-content';
+import { parsePlacedContent, SERVICE_DISCIPLINES } from './placed-content';
 
 /**
  * The sections that used to be dropped on open.
@@ -319,6 +319,38 @@ describe('parsePlacedContent - service points', () => {
     expect(result.status).toBe('rejected');
     if (result.status !== 'rejected') return;
     expect(result.reason).toContain('sprinkler');
+  });
+
+  /**
+   * Every discipline the reader accepts, read through it - because "rejects a
+   * discipline it has no symbol for" is only a safe rule while the accepted set
+   * is actually accepted. Fire-safety and controls were added to
+   * `SERVICE_DISCIPLINES` and to the adapter's section map at the same time, and
+   * a name spelled differently in either place would have turned the fixture's
+   * ten alarm, extinguisher and keypad points into a parse failure for the whole
+   * project rather than into ten symbols.
+   */
+  it('reads every discipline it lists as supported', () => {
+    for (const discipline of SERVICE_DISCIPLINES) {
+      const result = parsePlacedContent({
+        servicePoints: [{ ...point, id: `sp-${discipline}`, discipline }],
+      });
+      if (result.status !== 'parsed') throw new Error(`${discipline}: ${result.reason}`);
+      expect(result.content.servicePoints[0]!.discipline).toBe(discipline);
+    }
+  });
+
+  it('covers the six disciplines 17.0 records, and names them', () => {
+    // Pinned as a set rather than a count: adding a seventh is a decision, and
+    // renaming one of these six silently breaks the adapter's section map.
+    expect([...SERVICE_DISCIPLINES]).toEqual([
+      'lighting',
+      'electrical',
+      'plumbing',
+      'hvac',
+      'fire-safety',
+      'controls',
+    ]);
   });
 });
 

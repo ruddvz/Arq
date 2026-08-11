@@ -1,4 +1,4 @@
-import { worldPoint, type WorldPoint } from '@arq/geometry-2d';
+import { doorLeafPlacement, worldPoint, type WorldPoint } from '@arq/geometry-2d';
 
 /**
  * Where a hosted opening lands on a plan, in world coordinates.
@@ -133,8 +133,38 @@ export function planOpening(host: PlanWallHost, opening: PlanOpeningInput): Plan
   ];
 
   if (opening.kind === 'door') {
-    const { leaf, swing } = doorLeaf(opening, { at, ux, uy, nx, ny, a0, a1 });
-    return { id: opening.id, kind: 'door', reveal, jambs, leaf, swing, glazing: [], pane: null };
+    const placement = doorLeafPlacement({ start: host.start, end: host.end }, opening);
+    // Null only for the degenerate wall and opening already refused above, so
+    // this is unreachable rather than a real fallback - a door with no leaf is
+    // still a door-shaped hole with its jambs, which is more honest than a
+    // thrown error losing the whole drawing.
+    return placement === null
+      ? {
+          id: opening.id,
+          kind: 'door',
+          reveal,
+          jambs,
+          leaf: null,
+          swing: null,
+          glazing: [],
+          pane: null,
+        }
+      : {
+          id: opening.id,
+          kind: 'door',
+          reveal,
+          jambs,
+          leaf: { start: placement.hinge, end: placement.tip },
+          swing: {
+            centre: placement.hinge,
+            radius: opening.width,
+            startAngle: placement.closedAngle,
+            endAngle: placement.openAngle,
+            clockwise: placement.clockwise,
+          },
+          glazing: [],
+          pane: null,
+        };
   }
 
   if (opening.kind === 'window') {
@@ -169,56 +199,6 @@ export function planOpening(host: PlanWallHost, opening: PlanOpeningInput): Plan
     swing: null,
     glazing: [],
     pane: null,
-  };
-}
-
-function doorLeaf(
-  opening: PlanOpeningInput,
-  frame: {
-    readonly at: (along: number, across: number) => WorldPoint;
-    readonly ux: number;
-    readonly uy: number;
-    readonly nx: number;
-    readonly ny: number;
-    readonly a0: number;
-    readonly a1: number;
-  },
-): { readonly leaf: PlanSegment; readonly swing: PlanSwingArc } {
-  // The hinge sits at one end of the reveal, on the wall centreline. Drawing it
-  // on a face instead would put the leaf half a wall thickness away from where
-  // it turns.
-  const hingeAtStart = (opening.hand ?? 'right') === 'left';
-  const hinge = frame.at(hingeAtStart ? frame.a0 : frame.a1, 0);
-  const radius = opening.width;
-
-  // Closed, the leaf lies along the wall pointing from the hinge to the other
-  // jamb. That is the zero of the sweep, and the angle is measured from it.
-  const closedX = hingeAtStart ? frame.ux : -frame.ux;
-  const closedY = hingeAtStart ? frame.uy : -frame.uy;
-  const closedAngle = Math.atan2(closedY, closedX);
-
-  // `side` is which way the leaf opens, looking along the wall from its start.
-  // Left is towards the left-hand normal, which is a positive rotation.
-  const openingLeft = (opening.side ?? 'right') === 'left';
-  const sweep = ((opening.swingAngle ?? 90) * Math.PI) / 180;
-  const signedSweep = openingLeft ? sweep : -sweep;
-  const openAngle = closedAngle + signedSweep;
-
-  return {
-    leaf: {
-      start: hinge,
-      end: worldPoint(
-        hinge.x + Math.cos(openAngle) * radius,
-        hinge.y + Math.sin(openAngle) * radius,
-      ),
-    },
-    swing: {
-      centre: hinge,
-      radius,
-      startAngle: closedAngle,
-      endAngle: openAngle,
-      clockwise: signedSweep < 0,
-    },
   };
 }
 
