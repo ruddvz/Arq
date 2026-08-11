@@ -1,0 +1,190 @@
+{
+  "file": "house.arq (slimmed container variant)",
+  "container": {
+    "applicationId": 1095913777,
+    "userVersion": 2,
+    "integrity": "ok",
+    "foreignKeyViolations": 0,
+    "archiveEntries": 65,
+    "missingTables": [],
+    "meta": {
+      "format_major": "1",
+      "format_minor": "0",
+      "min_reader_major": "1",
+      "min_writer_major": "1"
+    }
+  },
+  "hydration": {
+    "conformance": {
+      "readerVerdict": "rejected",
+      "readerReason": "model.json does not declare a modelSchema",
+      "hydrates": false,
+      "findings": [
+        {
+          "section": "model",
+          "field": "modelSchema",
+          "found": "(absent)",
+          "expected": "a model schema whose base is one of: arq-bim-core-reference-v0",
+          "affectedEntries": 1,
+          "severity": "blocking"
+        },
+        {
+          "section": "model",
+          "field": "project",
+          "found": "absent; id, name, revision, units are declared at the top level instead",
+          "expected": "a nested project record carrying id, name, revision and units",
+          "affectedEntries": 1,
+          "severity": "blocking"
+        },
+        {
+          "section": "wallTypes",
+          "field": "thickness",
+          "found": "(absent)",
+          "expected": "a { value, unit } length",
+          "affectedEntries": 5,
+          "severity": "blocking"
+        },
+        {
+          "section": "wallTypes",
+          "field": "defaultHeight",
+          "found": "(absent)",
+          "expected": "a { value, unit } length",
+          "affectedEntries": 5,
+          "severity": "blocking"
+        },
+        {
+          "section": "wallTypes",
+          "field": "function",
+          "found": "(absent)",
+          "expected": "either exterior or interior",
+          "affectedEntries": 5,
+          "severity": "blocking"
+        },
+        {
+          "section": "walls",
+          "field": "alignment",
+          "found": "(absent)",
+          "expected": "one of: centre, interior, exterior",
+          "affectedEntries": 3,
+          "severity": "blocking"
+        },
+        {
+          "section": "walls",
+          "field": "joinStart",
+          "found": "\"union-solid\", (absent)",
+          "expected": "a join intent, one of: auto, butt, mitre, disallow",
+          "affectedEntries": 68,
+          "severity": "blocking"
+        },
+        {
+          "section": "walls",
+          "field": "joinEnd",
+          "found": "\"union-solid\", (absent)",
+          "expected": "a join intent, one of: auto, butt, mitre, disallow",
+          "affectedEntries": 68,
+          "severity": "blocking"
+        },
+        {
+          "section": "walls",
+          "field": "height",
+          "found": "3000, 1100, 2800, 1600",
+          "expected": "heightOverride as a { value, unit } length; a bare height is not read",
+          "affectedEntries": 65,
+          "severity": "lossy"
+        },
+        {
+          "section": "openings",
+          "field": "kind",
+          "found": "\"sliding-door\", \"pocket-door\", \"opening\"",
+          "expected": "one of: door, window, void",
+          "affectedEntries": 28,
+          "severity": "blocking"
+        },
+        {
+          "section": "doors",
+          "field": "side",
+          "found": "\"configured\"",
+          "expected": "one of: left, right",
+          "affectedEntries": 26,
+          "severity": "blocking"
+        },
+        {
+          "section": "doors",
+          "field": "hand",
+          "found": "\"start\"",
+          "expected": "one of: left, right",
+          "affectedEntries": 26,
+          "severity": "blocking"
+        },
+        {
+          "section": "doors",
+          "field": "swingAngle",
+          "found": "(absent)",
+          "expected": "a swing angle from 0 to 180 degrees",
+          "affectedEntries": 26,
+          "severity": "blocking"
+        },
+        {
+          "section": "windows",
+          "field": "side",
+          "found": "\"configured\"",
+          "expected": "one of: left, right",
+          "affectedEntries": 13,
+          "severity": "blocking"
+        },
+        {
+          "section": "rooms",
+          "field": "status",
+          "found": "\"coordinated-design-development\", \"coordinated-17.0\"",
+          "expected": "one of: valid, not-enclosed, overlapping, too-small, invalid-polygon, stale",
+          "affectedEntries": 48,
+          "severity": "blocking"
+        }
+      ],
+      "declaredCounts": {
+        "levels": 3,
+        "wallTypes": 5,
+        "walls": 68,
+        "rooms": 48,
+        "openings": 47,
+        "doors": 26,
+        "windows": 13
+      },
+      "consistentWithReader": true
+    },
+    "views": [
+      {
+        "id": "view-ground",
+        "kind": "plan",
+        "supported": true
+      },
+      {
+        "id": "view-upper",
+        "kind": "plan",
+        "supported": true
+      },
+      {
+        "id": "view-roof",
+        "kind": "plan",
+        "supported": true
+      },
+      {
+        "id": "view-ground-flow",
+        "kind": "analysis",
+        "supported": false
+      },
+      {
+        "id": "view-upper-flow",
+        "kind": "analysis",
+        "supported": false
+      },
+      {
+        "id": "view-3d",
+        "kind": "3d",
+        "supported": true
+      }
+    ],
+    "hydrated": null
+  },
+  "sha256": "c4fce9bf51a1e030bb018dbaf387ea4d9ba2f103c5e6b7b4291e6b3cff3e85a9"
+}

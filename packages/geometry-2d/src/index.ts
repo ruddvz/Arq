@@ -7,6 +7,7 @@ export * from './nearest-point';
 export * from './polygon-area';
 export * from './adversarial-fixtures';
 export * from './wall-face-line';
+export * from './door-leaf-line';
 export * from './wall-outline';
 export * from './line-intersection';
 export * from './butt-join';

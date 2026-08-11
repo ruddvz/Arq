@@ -61,6 +61,43 @@
   --arq-plan-room-fill: #f4f6f7;
 
   /*
+   * Glass in a window opening.
+   *
+   * The window symbol was a single hairline across the reveal, which is the
+   * drafting convention and is nearly invisible at a domestic plan scale - a
+   * reader could not tell a window from a doorway without counting jambs. The
+   * fixture's own coordinated drawings give the glass a visible band.
+   *
+   * Cooler and lighter than the glazed-furniture tint below, because a pane
+   * sits inside the wall's own poché and has to read against that rather than
+   * against a room wash.
+   */
+  --arq-plan-glazing: #cfe6f0;
+
+  /*
+   * A tint per furnishing material.
+   *
+   * Furniture was drawn as outline only, on the reasoning that a filled plan
+   * hides the drawing underneath it. The fixture's own coordinated drawings
+   * fill it, and they are the more readable of the two: a filled body separates
+   * a wardrobe from the wall it stands against, and the colour carries the one
+   * thing the outline cannot say - a glazed shower screen and a stone counter
+   * are the same rectangle.
+   *
+   * Stronger than the room washes below and deliberately so. These are objects
+   * standing on the floor, not the floor; a furniture tint as faint as a room
+   * tint would disappear into the room it sits in.
+   */
+  --arq-plan-material-wood: #cfa877;
+  --arq-plan-material-stone: #d8d5cd;
+  --arq-plan-material-fabric: #c9c6c2;
+  --arq-plan-material-metal: #c3cace;
+  --arq-plan-material-glass: #b6dcea;
+  --arq-plan-material-white: #eef1f2;
+  --arq-plan-material-green: #b6ceac;
+  --arq-plan-material-solar: #93a3b2;
+
+  /*
    * A wash per room category, so a plan can be read before a label is. Kept
    * barely-there on purpose: these sit under the linework that actually defines
    * the building, and a plan whose colours compete with its walls is a diagram,
@@ -272,6 +309,20 @@
     --arq-plan-room-fill: #1b1f22;
     /* Dark: the same relationships, an order of magnitude quieter, because a
        wash that reads gently on paper shouts on a near-black page. */
+    /* Dark: the same eight materials, darkened to sit on a near-black page
+       while keeping their hue relationships - wood warm, glass cool, greenery
+       green - because the colour is the information. */
+    --arq-plan-glazing: #2b4d59;
+
+    --arq-plan-material-wood: #6a5334;
+    --arq-plan-material-stone: #57554f;
+    --arq-plan-material-fabric: #4f4d4a;
+    --arq-plan-material-metal: #4a5257;
+    --arq-plan-material-glass: #2f5c6c;
+    --arq-plan-material-white: #5b6165;
+    --arq-plan-material-green: #435339;
+    --arq-plan-material-solar: #3b4653;
+
     --arq-plan-room-living: #1a2027;
     --arq-plan-room-cooking: #232019;
     --arq-plan-room-dining: #201c24;

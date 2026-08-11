@@ -48,6 +48,18 @@ import {
   roomLabelAnchors,
   roomLabelFits,
   roomTint,
+  furnishingPrimitives,
+  furnishingDetailPrimitives,
+  slabPrimitives,
+  stairPrimitives,
+  servicePointPrimitives,
+  pathwayPrimitives,
+  northArrowPrimitives,
+  type PlanFurnishingInput,
+  type PlanSlabInput,
+  type PlanStairInput,
+  type PlanServicePointInput,
+  type PlanPathwayInput,
   type RoomLabelObstacle,
   type PlanScene,
 } from '@arq/plan-renderer';
@@ -87,6 +99,36 @@ import type { PlanRoom } from './canvas/canvas-interaction';
  * user draws.
  */
 const NO_ROOMS: readonly PlanRoom[] = [];
+
+/**
+ * The same for the content that stands on a level. Stable module constants
+ * rather than fresh `[]` literals, so a surface that passes none of them does
+ * not rebuild the scene on every render.
+ */
+/**
+ * The furnishing materials the appearance carries a tint for.
+ *
+ * A list rather than a scan of the stylesheet because `getComputedStyle` can
+ * only be asked about a property by name. A project naming a material outside
+ * this list is not an error - `canvas2d-paint` draws it as an outline, which is
+ * the honest answer for a material nobody has chosen a colour for.
+ */
+const FURNISHING_MATERIALS: readonly string[] = [
+  'wood',
+  'stone',
+  'fabric',
+  'metal',
+  'glass',
+  'white',
+  'green',
+  'solar',
+];
+
+const NO_FURNISHINGS: readonly PlanFurnishingInput[] = [];
+const NO_SLABS: readonly PlanSlabInput[] = [];
+const NO_STAIRS: readonly PlanStairInput[] = [];
+const NO_SERVICE_POINTS: readonly PlanServicePointInput[] = [];
+const NO_PATHWAYS: readonly PlanPathwayInput[] = [];
 
 /**
  * The view an empty surface opens at, since there is nothing to fit to.
@@ -355,6 +397,28 @@ const EMPTY_SET: ReadonlySet<string> = new Set<string>();
 export interface PlanCanvasProps {
   /** The workspace's active tool id - the canvas responds to select/wall/pan/fit. */
   readonly activeToolId: string | null;
+  /**
+   * The extent the page is drawn around and fitted to, when it should be
+   * something other than what is on screen.
+   *
+   * The page used to be sized from the level on show, which gave every floor of
+   * one building its own page. Switching level then resized and moved the sheet
+   * under a drawing that had not moved at all - the ground floor's page ended
+   * 53px short of the upper floor's, and the title and view tools, which are
+   * placed against the page, jumped with it.
+   *
+   * That is not how a set of floor plans works. The floors of a building are
+   * vertically aligned, and they are drawn at one scale on one sheet precisely
+   * so a reader can compare them: a stair that lands over a stair, a wall that
+   * runs through. Re-fitting per level throws that away and makes the building
+   * appear to shift between storeys.
+   *
+   * So a project passes the extent of all its levels together and every floor
+   * is drawn on that one page. Omitted - the workspace's own scratch surface,
+   * which has no levels to reconcile - the page falls back to what is on
+   * screen, which for a single surface is the same thing.
+   */
+  readonly sheetBounds?: { readonly min: WorldPoint; readonly max: WorldPoint } | null;
   /** The walls to draw - the workspace's own drawn walls, or an opened project's walls for the level on show. */
   readonly walls: readonly DrawnWall[];
   /**
@@ -362,6 +426,42 @@ export interface PlanCanvasProps {
    * opened project passes its own rooms, and passing an empty list draws none.
    */
   readonly rooms?: readonly PlanRoom[];
+  /**
+   * The furniture, sanitary fittings and fixed equipment on the level, drawn as
+   * footprint outlines beneath the walls.
+   *
+   * Outlines rather than fills, and beneath rather than over, because furniture
+   * describes how a room is used and the room, its dimensions and its walls are
+   * what it is describing. A hundred and forty filled blocks would hide the plan
+   * they annotate.
+   */
+  readonly furnishings?: readonly PlanFurnishingInput[];
+  /**
+   * The floor or roof plates on the level. Their voids are the point: a
+   * courtyard or a stairwell is a hole a person can fall through, and a plan
+   * that leaves it out describes a floor that is not there.
+   */
+  readonly slabs?: readonly PlanSlabInput[];
+  /** The stairs rising from the level, with their flights, nosings and direction of travel. */
+  readonly stairs?: readonly PlanStairInput[];
+  /**
+   * Building services on the level - luminaires, outlets, sanitary fittings and
+   * plant - drawn as a symbol per discipline.
+   *
+   * Drawn on the floor plan rather than on their own discipline sheets, which
+   * is where a set of drawings would put them. Arq has no sheet-per-discipline
+   * surface yet, and a hundred and twenty-six fittings a user cannot see at all
+   * is a worse answer than a hundred and twenty-six they can see all at once.
+   */
+  readonly servicePoints?: readonly PlanServicePointInput[];
+  /** The walkable routes through the level, as centrelines. */
+  readonly pathways?: readonly PlanPathwayInput[];
+  /**
+   * Which way north runs, clockwise from +Y, or null when the project does not
+   * say. Omitted draws no arrow: a plan with an invented orientation is worse
+   * than one with none, because a reader trusts an arrow.
+   */
+  readonly northBearingDegrees?: number | null;
   /** True when the canvas must refuse to author - an opened .arq project is inspected, not edited. */
   readonly readOnly?: boolean;
   /** Current selection, shared with the model panel and inspector. */
@@ -442,6 +542,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     activeToolId: requestedToolId,
     readOnly = false,
     walls,
+    sheetBounds = null,
     selection,
     onSelectElement,
     onSelectMany,
@@ -510,6 +611,12 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   } | null>(null);
 
   const rooms = props.rooms ?? NO_ROOMS;
+  const furnishings = props.furnishings ?? NO_FURNISHINGS;
+  const slabs = props.slabs ?? NO_SLABS;
+  const stairs = props.stairs ?? NO_STAIRS;
+  const servicePoints = props.servicePoints ?? NO_SERVICE_POINTS;
+  const pathways = props.pathways ?? NO_PATHWAYS;
+  const northBearingDegrees = props.northBearingDegrees ?? null;
   const content: PlanContent = useMemo(() => ({ rooms, walls }), [rooms, walls]);
 
   /* ------------------------------------------------------------------ */
@@ -555,6 +662,21 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         roomFill: value('--arq-plan-room-fill', 'transparent'),
         roomFills: Object.fromEntries(
           ROOM_TINTS.map((tint) => [tint, value(`--arq-plan-${tint}`, 'transparent')]),
+        ),
+        /*
+         * Read the same way as the room washes, and read at all only for the
+         * materials the appearance names. A material the tokens do not carry is
+         * left out of this map entirely rather than mapped to `transparent`, so
+         * `canvas2d-paint` can tell "no colour for this material" from "this
+         * material is deliberately clear" - the first draws an outline, and the
+         * second would be a claim the file never made.
+         */
+        glazing: value('--arq-plan-glazing', 'transparent'),
+        materialFills: Object.fromEntries(
+          FURNISHING_MATERIALS.map((material) => [
+            material,
+            value(`--arq-plan-material-${material}`, ''),
+          ]).filter(([, colour]) => colour !== ''),
         ),
         /*
          * Only outdoor rooms are hatched, and only when the appearance names a
@@ -635,8 +757,10 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     let sheetRect: SheetRect | null = null;
     if (rooms.length > 0 || walls.length > 0) {
       // The same inflation the fit uses, from the same helper, so the page that
-      // is drawn is exactly the page that was made to fit.
-      const page = inflateToSheet(contentBounds(content));
+      // is drawn is exactly the page that was made to fit. `sheetBounds` when a
+      // project supplies one, so every level of it is drawn on one page rather
+      // than each floor getting its own.
+      const page = inflateToSheet(sheetBounds ?? contentBounds(content));
       const topLeft = worldToScreen(currentViewport, worldPoint(page.min.x, page.max.y));
       const bottomRight = worldToScreen(currentViewport, worldPoint(page.max.x, page.min.y));
       const radius = SHEET_RADIUS_CSS_PX * devicePixelRatio;
@@ -716,6 +840,39 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
      * to know any of it was there.
      */
     const labelObstacles: RoomLabelObstacle[] = [];
+    /*
+     * Furniture is something a room label has to clear.
+     *
+     * The first attempt left it out, on the reasoning that a drawn plan does
+     * print room names over furniture. It does - but only over a rug or a
+     * bedside table, never over a kitchen island or a dining table and its six
+     * chairs, and this fixture has both. Rendered, "Kitchen 35.3 m²" came out
+     * struck through by the island's outline and the room could not be read at
+     * all. Every position the label search offers is inside its own room, so
+     * with the furniture in hand the label lands on clear floor instead.
+     *
+     * Zero clearance rather than a margin: a name may sit right up against a
+     * wardrobe without becoming unreadable, and demanding a gap around every one
+     * of 140 items is what would leave rooms unnamed.
+     *
+     * Held apart from `labelObstacles` because it is a softer constraint than
+     * the rest. A label struck through by a wall is wrong; a label over a
+     * bedside table in a room with nowhere else to go is only untidy, and the
+     * paper halo behind the text keeps it legible. So the search below tries to
+     * clear the furniture and, failing that, prints the name anyway rather than
+     * leaving a small crowded room with no name at all.
+     */
+    const furnishingObstacles: RoomLabelObstacle[] = [];
+    for (const furnishing of furnishings) {
+      const outline = furnishing.footprint;
+      for (let index = 0; index < outline.length; index += 1) {
+        furnishingObstacles.push({
+          start: outline[index]!,
+          end: outline[(index + 1) % outline.length]!,
+          clearance: 0,
+        });
+      }
+    }
     const wallPrimitives: PlanPrimitiveInput<string>[] = [];
     for (const wall of walls) {
       /*
@@ -795,6 +952,20 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
             points: [jamb.start, jamb.end],
           });
         }
+        /*
+         * The glass first, then the centreline over it. The pane is what makes
+         * a window read as a window at plan scale; the line is the drafting
+         * convention and stays because it is what survives when the drawing is
+         * printed without colour.
+         */
+        if (opening.pane !== null) {
+          wallPrimitives.push({
+            kind: 'polygon',
+            elementId: `${opening.id}-pane`,
+            points: opening.pane,
+            fill: 'glazing',
+          });
+        }
         for (const glazing of opening.glazing) {
           wallPrimitives.push({
             kind: 'line',
@@ -833,6 +1004,12 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
     }
 
     const inputs: PlanPrimitiveInput<string>[] = [
+      /*
+       * The plates first, under everything. A slab's edge and its voids are the
+       * ground the rest of the drawing sits on, and drawing them last would put
+       * the courtyard's outline over the rooms that look into it.
+       */
+      ...slabs.flatMap(slabPrimitives),
       ...rooms.map((room): PlanPrimitiveInput<string> => ({
         kind: 'polygon',
         // Tinted so an enclosed area reads as a room rather than as four walls
@@ -879,57 +1056,104 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
         const nearby = labelObstacles.filter((obstacle) =>
           segmentNearBounds(obstacle, bounds, maxWallThicknessMm),
         );
+        const nearbyFurniture = furnishingObstacles.filter((obstacle) =>
+          segmentNearBounds(obstacle, bounds, maxWallThicknessMm),
+        );
+
+        /*
+         * Two passes, hardest constraint first: clear of the furniture as well
+         * as the linework, then clear of the linework alone. Both text lengths
+         * are tried within each pass, so a room drops its area before it gives
+         * up on standing clear of the dining table - the area is the part a
+         * reader can get from the schedule.
+         */
+        const obstacleSets =
+          nearbyFurniture.length === 0 ? [nearby] : [[...nearby, ...nearbyFurniture], nearby];
 
         const halfWallMm = maxWallThicknessMm / 2;
-        for (const lines of textCandidates) {
-          /*
-           * Measured in world units against the room's own shape.
-           *
-           * The text is measured on the canvas, at the size it will be painted,
-           * because legibility is a screen-pixel question; it is then divided
-           * by the scale, because containment is a question about the room.
-           */
-          const labelWidth =
-            Math.max(...lines.map((line) => ctx.measureText(line).width)) /
-            currentViewport.pixelsPerUnit;
-          const labelHeight =
-            (lines.length * ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio) /
-            currentViewport.pixelsPerUnit;
-          for (const anchor of roomLabelAnchors(room.polygon)) {
-            if (
-              !roomLabelFits({
-                polygon: room.polygon,
-                anchor,
-                labelWidth,
-                labelHeight,
-                // Half the thickest wall on the level: a room's boundary runs
-                // to the wall centrelines, so that much of the ring is poché
-                // rather than floor. The thickest is conservative and needs no
-                // per-room lookup; the piers below hold each wall at its own
-                // real thickness anyway.
-                wallInset: halfWallMm,
-                obstacles: nearby,
-              })
-            ) {
-              continue;
-            }
+        for (const obstacles of obstacleSets)
+          for (const lines of textCandidates) {
             /*
-             * A placed label becomes something the next one has to clear.
-             * Without this two rooms whose rings overlap - which the golden
-             * fixture has, its "Linen" ring reaching into "South gallery" -
-             * can each be told they fit and print on top of each other.
+             * Measured in world units against the room's own shape.
+             *
+             * The text is measured on the canvas, at the size it will be painted,
+             * because legibility is a screen-pixel question; it is then divided
+             * by the scale, because containment is a question about the room.
              */
-            for (const edge of labelKeepOut(anchor, labelWidth, labelHeight)) {
-              labelObstacles.push(edge);
+            const labelWidth =
+              Math.max(...lines.map((line) => ctx.measureText(line).width)) /
+              currentViewport.pixelsPerUnit;
+            const labelHeight =
+              (lines.length * ROOM_LABEL_LINE_HEIGHT_PX * devicePixelRatio) /
+              currentViewport.pixelsPerUnit;
+            for (const anchor of roomLabelAnchors(room.polygon)) {
+              if (
+                !roomLabelFits({
+                  polygon: room.polygon,
+                  anchor,
+                  labelWidth,
+                  labelHeight,
+                  // Half the thickest wall on the level: a room's boundary runs
+                  // to the wall centrelines, so that much of the ring is poché
+                  // rather than floor. The thickest is conservative and needs no
+                  // per-room lookup; the piers below hold each wall at its own
+                  // real thickness anyway.
+                  wallInset: halfWallMm,
+                  obstacles,
+                })
+              ) {
+                continue;
+              }
+              /*
+               * A placed label becomes something the next one has to clear.
+               * Without this two rooms whose rings overlap - which the golden
+               * fixture has, its "Linen" ring reaching into "South gallery" -
+               * can each be told they fit and print on top of each other.
+               */
+              for (const edge of labelKeepOut(anchor, labelWidth, labelHeight)) {
+                labelObstacles.push(edge);
+              }
+              return [
+                { kind: 'text', elementId: `${room.id}-label`, anchor, text: lines.join('\n') },
+              ];
             }
-            return [
-              { kind: 'text', elementId: `${room.id}-label`, anchor, text: lines.join('\n') },
-            ];
           }
-        }
         return [];
       }),
+      /*
+       * Furniture and stairs between the rooms and the walls: over the room
+       * tint they sit on, under the walls that contain them. A wardrobe drawn
+       * over the wall it stands against would read as passing through it.
+       *
+       * The furnishings were added to `labelObstacles` above, before the walls,
+       * so a room name lands on clear floor rather than across a dining table.
+       */
+      /*
+       * The body first, then the detail over it. A WC's pan has to sit on top
+       * of the fill it is cut out of, and both belong to the same element - so
+       * a glyph carries its furnishing's id with a suffix, the same rule the
+       * wall panels and the stair treads already follow.
+       */
+      ...furnishings.flatMap(furnishingPrimitives),
+      ...furnishings.flatMap(furnishingDetailPrimitives),
+      ...stairs.flatMap(stairPrimitives),
+      /*
+       * Routes under the services, and both over the furniture they thread
+       * between. A route is a property of the floor; a fitting sits on or above
+       * it, and a socket hidden behind a walking line would be the one thing on
+       * the drawing a reader is trying to find.
+       */
+      ...pathways.flatMap(pathwayPrimitives),
+      ...servicePoints.flatMap(servicePointPrimitives),
       ...wallPrimitives,
+      /*
+       * North last, so nothing is drawn over it. It sits outside the building
+       * on the page, so it collides with nothing - but it is the one mark on a
+       * drawing whose meaning is destroyed by being half-covered.
+       */
+      ...(northBearingDegrees === null || sheetBounds === null || sheetBounds === undefined
+        ? []
+        : northArrowPrimitives(sheetBounds, northBearingDegrees)),
     ];
 
     const scene = buildPlanScene(inputs, EMPTY_SET, selection, EMPTY_SET);
@@ -1007,6 +1231,12 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
   }, [
     viewport,
     rooms,
+    furnishings,
+    slabs,
+    stairs,
+    servicePoints,
+    pathways,
+    northBearingDegrees,
     walls,
     selection,
     draftPoints,
@@ -1075,7 +1305,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
           // that is the project, and for an empty surface that is nothing, which
           // is a starting extent rather than a fit.
           const fitted = fitContent(
-            emptyContentBounds({ rooms, walls }) ?? contentBounds({ rooms, walls }),
+            sheetBounds ?? emptyContentBounds({ rooms, walls }) ?? contentBounds({ rooms, walls }),
             rect,
           );
           onViewportPixelsPerUnitChange?.(fitted.pixelsPerUnit);
@@ -1258,7 +1488,13 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       const devicePixelRatio = devicePixelRatioRef.current;
       // Fit on an empty surface returns to the starting extent rather than to
       // NaN - the same guard as the first paint, for the same reason.
-      const fitted = fitContent(emptyContentBounds(content) ?? contentBounds(content), rect);
+      // Fit means "show me the page", and the page is the whole project's when
+      // one is open - so Fit lands on the same framing on every level instead
+      // of zooming to whichever floor happens to be on screen.
+      const fitted = fitContent(
+        sheetBounds ?? emptyContentBounds(content) ?? contentBounds(content),
+        rect,
+      );
       updateViewport({
         ...fitted,
         screenWidth: canvas.width,
@@ -1267,7 +1503,7 @@ export function PlanCanvas(props: PlanCanvasProps): JSX.Element {
       });
     }
     onFitCompleted();
-  }, [activeToolId, content, onFitCompleted, updateViewport]);
+  }, [activeToolId, content, sheetBounds, onFitCompleted, updateViewport]);
 
   // Escape cancels an in-progress marquee before anything else - the
   // region-selection contract's own rule - on capture, so the shell's

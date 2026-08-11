@@ -43,6 +43,8 @@
     "rust:build-wasm": "node scripts/build-arq-core-wasm.mjs",
     "rust:verify-wasm-parity": "node scripts/verify-arq-core-wasm-parity.mjs",
     "benchmark:arq-core-worker": "node scripts/run-arq-core-worker-capability-check.mjs",
+    "check:arq-hydration": "node scripts/run-arq-hydration-capability-check.mjs",
+    "check:house-17-open": "node scripts/run-house-17-open-capability-check.mjs",
     "check:dependency-licences": "node scripts/check-dependency-licences.mjs",
     "check:workspace-registries": "node scripts/check-workspace-registries.mjs",
     "check:editor-dependency-boundaries": "node scripts/check-editor-dependency-boundaries.mjs",

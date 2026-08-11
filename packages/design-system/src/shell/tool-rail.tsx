@@ -95,12 +95,27 @@ export const TOOL_RAIL_WIDTH_PX = 200;
 /**
  * The rail's width once every category has a glyph.
  *
- * 48px is the Version 12 tool-dock width, and it still clears the 44px touch
- * minimum because the button fills the column. The labelled rail keeps its
- * 200px: the number is a property of what the rail is showing, not of the
- * window.
+ * Must equal `MODE_RAIL_WIDTH_PX`. When the tool rail is a dock it is stacked
+ * directly beneath the mode rail inside one card, and `workspace-shell.css`
+ * says what that card is meant to be: "the reference gives the edge a single
+ * 56px column". Two widths cannot make one column.
+ *
+ * This was 48 - the Version 12 tool-dock width, carried forward after the rails
+ * were stacked, when it had been chosen for a rail that stood on its own.
+ * Measured in the running product the mismatch showed up twice over: the tool
+ * rail card came out 48px wide inside a 58px dock, so its right edge stopped
+ * 8px short of the mode rail's, and its glyphs, filling that narrower column,
+ * centred 4.5px left of the mode rail's. One column of icons on two axes, and
+ * a seam that did not line up with the card it was drawn in.
+ *
+ * Not imported from `mode-rail.tsx`: `shell/` does not depend on `workspace/`,
+ * and inverting that for a number would be the wrong trade. The equality is
+ * held by a test instead, so the two cannot drift apart in silence.
+ *
+ * The labelled rail keeps its 200px: that number is a property of what the rail
+ * is showing, not of the window, and a labelled rail is not stacked in a dock.
  */
-export const TOOL_RAIL_DOCK_WIDTH_PX = 48;
+export const TOOL_RAIL_DOCK_WIDTH_PX = 56;
 
 export function ToolRail(props: ToolRailProps): JSX.Element {
   const {

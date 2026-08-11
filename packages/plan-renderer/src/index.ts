@@ -6,6 +6,7 @@ export * from './snap-glyph-rendering';
 export * from './visibility-state';
 export * from './room-label';
 export * from './plan-openings';
+export * from './plan-placed-content';
 export * from './room-tint';
 export * from './sheet-viewport';
 export * from './benchmark-regression';

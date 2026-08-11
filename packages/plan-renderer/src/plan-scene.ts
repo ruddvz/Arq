@@ -80,10 +80,15 @@ export interface PlanLinePrimitive<TId> {
  * Named by meaning, not by colour. `poche` is the cut-through solid a plan
  * shows where the section plane passes through a wall; `room` is the tint that
  * makes an enclosed area read as a room rather than as four walls that happen
- * to meet. The palette decides what either looks like, so both survive a change
- * of appearance.
+ * to meet. `furnishing` is the body of a piece of furniture or fixed equipment,
+ * tinted by the material the model states for it - which is how a reader tells
+ * a glazed shower screen from a stone counter without a legend. The palette
+ * decides what any of them look like, so all of them survive a change of
+ * appearance. `glazing` is the glass in a window opening - the same idea as a
+ * furnishing tint, but the glass is part of the building rather than something
+ * standing in it, so it is named for what it is instead of borrowing a material.
  */
-export type PlanFill = 'poche' | 'room';
+export type PlanFill = 'poche' | 'room' | 'furnishing' | 'glazing';
 
 export interface PlanPolygonPrimitive<TId> {
   readonly kind: 'polygon';

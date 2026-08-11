@@ -75,6 +75,58 @@ const TOKEN_TREATMENT: Readonly<
 const DEFAULT_WALL_COLOR = 0x8a8a8a;
 
 /**
+ * Solid colours per furnishing material, matching the plan's own material
+ * tints so the two views describe the same building in the same terms.
+ *
+ * Deeper than the plan tints on purpose. A plan tint is a wash seen flat under
+ * linework; a 3D solid is lit, and a lambert surface under ambient plus one
+ * directional light loses most of its saturation to the light before it reaches
+ * the eye. The same hex in both would read as two different materials.
+ */
+const MATERIAL_COLORS: Readonly<Record<string, number>> = {
+  wood: 0xb08a55,
+  stone: 0xb9b5ab,
+  fabric: 0xa9a6a1,
+  metal: 0xa3adb3,
+  glass: 0x8ec6da,
+  white: 0xdfe4e6,
+  green: 0x8fae82,
+  solar: 0x6b7d8e,
+};
+
+/** What a solid whose material nothing names is drawn as - the same grey as a wall. */
+const DEFAULT_SOLID_COLOR = 0x9a9a9a;
+
+/**
+ * How opaque glass is drawn.
+ *
+ * Glass is the one material in the palette whose defining property is that you
+ * can see through it. Drawn solid, a window pane reads as a light blue board
+ * filling the opening - which is less informative than the empty void it
+ * replaced, because at least a void let you see the room behind. Half-opaque is
+ * enough to read as a surface from outside and to see through from inside.
+ */
+const GLASS_OPACITY = 0.45;
+
+/** The material key that is drawn as glass. */
+const GLASS_MATERIAL = 'glass';
+
+/** Floor and roof plates. Concrete-grey, and distinct from the walls standing on them. */
+const SLAB_COLOR = 0xb4b4b4;
+
+/** Stable empty, so a surface passing none does not rebuild the scene each render. */
+const NO_PLACED_SOLIDS: readonly ModelPlacedSolid[] = [];
+
+/**
+ * The material key a floor or roof plate carries.
+ *
+ * A reserved name rather than a boolean or a separate list: the plate is a
+ * solid like any other and differs only in what it is made of, so it travels
+ * the same path and picks its colour the same way.
+ */
+const SLAB_MATERIAL = 'slab';
+
+/**
  * One opening's span through a wall, in the plain-number shape
  * `generateWallOpeningMeshes` takes. Elevation matters here and does not in
  * plan, which is why this is not the plan's opening record: a window that stops
@@ -112,6 +164,34 @@ export interface ModelCanvasProps {
    * rectangle drawn on its face.
    */
   readonly wallOpenings?: ReadonlyMap<string, readonly ModelOpeningSpan[]>;
+  /**
+   * Everything on the level that is not a wall, already reduced to solids:
+   * furniture, the floor plate's pieces and the stair's treads.
+   *
+   * Reduced by the caller rather than here because the reductions are geometry,
+   * not rendering - a plate with a courtyard cut out of it becomes several
+   * rectangles, and a flight becomes one solid per tread - and both are the
+   * kind of rule that has to be testable without a WebGL context.
+   * `@arq/geometry-3d`'s `plateSolids` and `stairFlightSolids` are where they
+   * live.
+   *
+   * `elementId` is the model element the solid belongs to, not the solid
+   * itself, so a raycast onto one tread selects the stair - the same rule the
+   * wall panels already follow.
+   */
+  readonly placedSolids?: readonly ModelPlacedSolid[];
+}
+
+/** One solid to extrude, and what it belongs to. */
+export interface ModelPlacedSolid {
+  readonly id: string;
+  /** The model element this is part of; several solids may share one. */
+  readonly elementId: string;
+  readonly outline: readonly WorldPoint[];
+  readonly baseElevation: number;
+  readonly height: number;
+  /** A key into the material colours, or null for the neutral solid. */
+  readonly material: string | null;
 }
 
 interface ModelRefs {
@@ -283,6 +363,7 @@ function readAppearanceColours(element: HTMLElement): {
 
 export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
   const { walls, selection, onSelectElement, wallDimensions, wallOpenings } = props;
+  const placedSolids = props.placedSolids ?? NO_PLACED_SOLIDS;
   const dimensionsFor = useCallback(
     (wallId: string): WallSolidDimensions =>
       wallDimensions?.get(wallId) ?? {
@@ -423,12 +504,43 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
         );
         mesh.name = wall.id;
         mesh.userData['elementId'] = wall.id;
+        mesh.userData['baseColor'] = DEFAULT_WALL_COLOR;
         refs.wallGroup.add(mesh);
         // The first panel is the one selection styling reads and writes; the
         // rest follow it below. Keyed by wall id either way, so nothing
         // downstream learns that a wall can be more than one mesh.
         if (!byId.has(wall.id)) byId.set(wall.id, mesh);
       }
+    }
+
+    /*
+     * The rest of the storey. Extruded into the same group as the walls so it
+     * shares their disposal, their raycast and their selection - a house whose
+     * furniture could not be picked would be the plan's shortcomings inverted.
+     *
+     * Each solid carries its owning element's id, so the several treads of a
+     * flight or the several rectangles of a plate select as one thing.
+     */
+    for (const solid of placedSolids) {
+      const mesh3d = extrudePolygonMesh(solid.outline, solid.baseElevation, solid.height);
+      if (mesh3d === null) continue;
+      const colour =
+        solid.material === SLAB_MATERIAL
+          ? SLAB_COLOR
+          : solid.material === null
+            ? DEFAULT_SOLID_COLOR
+            : (MATERIAL_COLORS[solid.material] ?? DEFAULT_SOLID_COLOR);
+      const opacity = solid.material === GLASS_MATERIAL ? GLASS_OPACITY : 1;
+      const mesh = new THREE.Mesh(
+        toGeometry(mesh3d),
+        new THREE.MeshLambertMaterial({ color: colour, opacity, transparent: opacity < 1 }),
+      );
+      mesh.name = solid.id;
+      mesh.userData['elementId'] = solid.elementId;
+      mesh.userData['baseColor'] = colour;
+      mesh.userData['baseOpacity'] = opacity;
+      refs.wallGroup.add(mesh);
+      if (!byId.has(solid.elementId)) byId.set(solid.elementId, mesh);
     }
     applySharedSelection(byId, new Set<string>(), selection, new Set<string>());
     // Resolved once per wall, then applied to every panel of it. Styling only
@@ -444,12 +556,24 @@ export function ModelCanvas(props: ModelCanvasProps): JSX.Element {
       const wallId = object.userData['elementId'] as string | undefined;
       const treatment = wallId === undefined ? undefined : treatmentByWall.get(wallId);
       const material = object.material as THREE.MeshLambertMaterial;
-      material.color.setHex(treatment?.color ?? DEFAULT_WALL_COLOR);
-      material.opacity = treatment?.opacity ?? 1;
-      material.transparent = (treatment?.opacity ?? 1) < 1;
+      /*
+       * Back to the mesh's *own* colour when it carries no treatment, not to
+       * the wall grey. This reset to a single constant, which was right while
+       * every solid in the group was a wall and wrong the moment furniture
+       * joined them: selecting anything repainted all 140 items grey, and
+       * deselecting never brought their materials back.
+       */
+      const base = (object.userData['baseColor'] as number | undefined) ?? DEFAULT_WALL_COLOR;
+      // Its own transparency for the same reason as its own colour: a pane of
+      // glass restyled back to fully opaque on deselection would stop being
+      // glass the first time anything in the model was clicked.
+      const baseOpacity = (object.userData['baseOpacity'] as number | undefined) ?? 1;
+      material.color.setHex(treatment?.color ?? base);
+      material.opacity = treatment?.opacity ?? baseOpacity;
+      material.transparent = material.opacity < 1;
     }
     renderNow();
-  }, [walls, selection, dimensionsFor, wallOpenings, renderNow]);
+  }, [walls, selection, dimensionsFor, wallOpenings, placedSolids, renderNow]);
 
   /* Orbit / pan / zoom / pick. */
   function handlePointerDown(event: ReactPointerEvent<HTMLCanvasElement>): void {
