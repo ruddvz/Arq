@@ -94,14 +94,14 @@
   },
   "devDependencies": {
     "canvaskit-wasm": "^0.41.1",
-    "eslint": "^10.8.0",
+    "eslint": "^10.8.1",
     "fast-check": "^3",
     "pixi.js": "^8.19.0",
-    "playwright": "^1.61.1",
+    "playwright": "^1.62.1",
     "prettier": "^3.3.0",
-    "turbo": "^2.1.0",
+    "turbo": "^2.10.9",
     "typescript": "^5.5.0",
-    "typescript-eslint": "^8.65.0",
+    "typescript-eslint": "^8.67.0",
     "vitest": "^2"
   }
 }
