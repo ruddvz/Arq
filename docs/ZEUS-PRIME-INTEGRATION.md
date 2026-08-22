@@ -474,6 +474,35 @@ for the wrong reason. Both tests now assert their own premise: `expect(compile(t
 .modules).toContain('ui-visual')` before relying on it. That assertion is what surfaced
 the routing defect above.
 
+## 5e. Round 5: checked by everyone the diff calls for
+
+One passing review was the bar, and it is the wrong shape. A change that touches
+persistence **and** security needs both specialists, and a count cannot express that.
+
+The rule now derives from the diff. When the changed paths resolve to reviewers through
+`.zeus/impact-map.json` and `.zeus/module-manifest.json`, **every one of them must have a
+passing `review:<agent>` gate at the current workspace fingerprint**. A review of an older
+tree does not count toward it.
+
+Where the paths resolve to no reviewer, a count applies instead, from
+`.zeus/config.json` `gates.reviewQuorumWhenUnmatched`: one at low and moderate risk, **two
+independent reviews at high and critical**, each a distinct dispatchable agent. That
+fallback is where "checked twice" lives for work whose paths no pattern covers.
+
+This is strictly stronger than a quorum everywhere, because it is derived rather than
+chosen: two reviews by the wrong two specialists satisfy a count and do not satisfy this.
+
+Three tests pin it, and all three fail against the un-fixed module: one review satisfying
+a multi-reviewer diff, the quorum collapsing to one, and a stale review counting toward
+the requirement.
+
+Two older tests failed on the new rule because they encoded the old bar at high risk with
+a single review. They were about different properties, so they now sit at moderate risk
+with a review-requiring radius rather than being weakened.
+
+**Measured on this pull request:** it calls for `arq-architecture-reviewer`,
+`arq-release-reviewer` and `arq-security-ai-reviewer`. All three, not one of them.
+
 ## 6. What is NOT done
 
 None of these is solved. Partial must never read as green.

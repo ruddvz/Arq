@@ -96,6 +96,9 @@ if (config) {
       fail(`.zeus/config.json plan.${key} is not a positive integer`);
   if (!Array.isArray(config.gates?.repositoryGates) || !config.gates.repositoryGates.length)
     fail('.zeus/config.json gates.repositoryGates is empty, so ship could infer nothing');
+  for (const risk of ['low', 'moderate', 'high', 'critical'])
+    if (!Number.isInteger(config.gates?.reviewQuorumWhenUnmatched?.[risk]))
+      fail(`.zeus/config.json gates.reviewQuorumWhenUnmatched.${risk} is not an integer`);
   for (const r of config.gates?.reviewRequiredAtRisk ?? [])
     if (!['low', 'moderate', 'high', 'critical'].includes(r))
       fail(`.zeus/config.json gates.reviewRequiredAtRisk names unknown risk ${r}`);

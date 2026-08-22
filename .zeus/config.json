@@ -71,7 +71,13 @@
   "gates": {
     "store": ".zeus/gates/current.json",
     "repositoryGates": ["format:check", "lint", "typecheck", "test", "build"],
-    "reviewRequiredAtRisk": ["high", "critical"]
+    "reviewRequiredAtRisk": ["high", "critical"],
+    "reviewQuorumWhenUnmatched": {
+      "low": 1,
+      "moderate": 1,
+      "high": 2,
+      "critical": 2
+    }
   },
   "status": ["green", "partial", "blocked", "failed", "rolled_back"],
   "evidenceStates": [

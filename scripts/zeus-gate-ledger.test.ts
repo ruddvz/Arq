@@ -354,7 +354,11 @@ describe('the review gate', () => {
   const base = {
     config,
     radii: reviewRequiringRadii(),
-    reviewers: new Set(['arq-file-integrity-reviewer', 'arq-geometry-reviewer']),
+    reviewers: new Set([
+      'arq-file-integrity-reviewer',
+      'arq-geometry-reviewer',
+      'arq-security-ai-reviewer',
+    ]),
   };
   const unmatched = {
     ...base,
@@ -411,7 +415,9 @@ describe('the review gate', () => {
   });
 
   it('accepts a passing review by a dispatchable agent when no match can be computed', () => {
-    const ledger = withGates(open({ risk: 'high' }), [
+    // Moderate risk with a review-requiring radius, where the unmatched quorum
+    // is one. At high risk it is two, which is a different property tested below.
+    const ledger = withGates(open({ risk: 'moderate', blastRadius: 'product' }), [
       ...floor(),
       { gate: 'review:arq-geometry-reviewer' },
     ]);
@@ -429,6 +435,87 @@ describe('the review gate', () => {
     expect(ready).toBe(false);
     expect(problems.join(' ')).toContain('not one the changed paths call for');
     expect(problems.join(' ')).toContain('arq-file-integrity-reviewer');
+  });
+
+  it('requires EVERY reviewer the changed paths call for, not merely one', () => {
+    // One passing review was the old bar and it is the wrong shape: a change
+    // touching persistence and security needs both specialists, and a count
+    // cannot express that.
+    const twoNeeded = {
+      ...base,
+      reviewers: new Set([
+        'arq-file-integrity-reviewer',
+        'arq-security-ai-reviewer',
+        'arq-geometry-reviewer',
+      ]),
+      match: {
+        matched: true,
+        required: ['arq-file-integrity-reviewer', 'arq-security-ai-reviewer'],
+        reason: 'changed paths route to arqfs, security',
+        modules: ['arqfs', 'security'],
+      },
+    };
+    const oneOfTwo = withGates(open({ risk: 'high' }), [
+      ...floor(),
+      { gate: 'review:arq-file-integrity-reviewer' },
+    ]);
+    const { ready, problems } = shipReadiness(oneOfTwo, SIG, twoNeeded);
+    expect(ready).toBe(false);
+    expect(problems.join(' ')).toContain('arq-security-ai-reviewer');
+    expect(problems.join(' ')).toContain('have not passed at this workspace');
+
+    const bothPassed = withGates(open({ risk: 'high' }), [
+      ...floor(),
+      { gate: 'review:arq-file-integrity-reviewer' },
+      { gate: 'review:arq-security-ai-reviewer' },
+    ]);
+    expect(shipReadiness(bothPassed, SIG, twoNeeded)).toEqual({ ready: true, problems: [] });
+  });
+
+  it('does not count a required review that was passed against an older tree', () => {
+    const needed = {
+      ...base,
+      match: {
+        matched: true,
+        required: ['arq-geometry-reviewer'],
+        reason: 'changed paths route to geometry',
+        modules: ['geometry'],
+      },
+    };
+    const stale = withGates(open({ risk: 'high' }), [
+      ...floor(),
+      { gate: 'review:arq-geometry-reviewer', signature: OTHER },
+    ]);
+    expect(shipReadiness(stale, SIG, needed).problems.join(' ')).toContain(
+      'have not passed at this workspace',
+    );
+  });
+
+  it('needs two independent reviews at high risk when the diff cannot be resolved', () => {
+    // The fallback. Where the changed paths name no reviewer, the count is what
+    // "checked twice" rests on, and the two must be different agents.
+    const oneReview = withGates(open({ risk: 'high' }), [
+      ...floor(),
+      { gate: 'review:arq-geometry-reviewer' },
+    ]);
+    const { ready, problems } = shipReadiness(oneReview, SIG, unmatched);
+    expect(ready).toBe(false);
+    expect(problems.join(' ')).toContain('needs 2 independent review(s) and 1 passed');
+
+    const twoReviews = withGates(open({ risk: 'high' }), [
+      ...floor(),
+      { gate: 'review:arq-geometry-reviewer' },
+      { gate: 'review:arq-file-integrity-reviewer' },
+    ]);
+    expect(shipReadiness(twoReviews, SIG, unmatched)).toEqual({ ready: true, problems: [] });
+  });
+
+  it('needs only one unmatched review at moderate risk, where the radius requires review', () => {
+    const moderate = withGates(open({ risk: 'moderate', blastRadius: 'product' }), [
+      ...floor(),
+      { gate: 'review:arq-geometry-reviewer' },
+    ]);
+    expect(shipReadiness(moderate, SIG, unmatched)).toEqual({ ready: true, problems: [] });
   });
 
   it('accepts the reviewer the changed paths do call for', () => {
@@ -452,7 +539,7 @@ describe('the review gate', () => {
     // Gates dedupe by name, so a bad row cannot be removed; reporting every
     // unrecognised reviewer unconditionally bricked the ledger for good, and
     // the only escape discarded the genuine review too.
-    const ledger = withGates(open({ risk: 'high' }), [
+    const ledger = withGates(open({ risk: 'moderate', blastRadius: 'product' }), [
       ...floor(),
       { gate: 'review:arq-geometry-reviewr' },
       { gate: 'review:arq-geometry-reviewer' },

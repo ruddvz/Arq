@@ -129,8 +129,10 @@ pipeline. The plan ledger says what the WORK ITEMS are and which are proven.
   A failed gate is never skippable. Rounds are bounded by the tier repair budget.
   `ship` exits 0 only when every gate in `.zeus/config.json` `gates.repositoryGates`
   passed at the current fingerprint and, where risk or blast radius requires review, a
-  `review:<agent>` gate passed naming an agent that exists in `.claude/agents/` and
-  that the changed paths call for. It records a claim about a check, never the check.
+  `review:<agent>` gate passed for **every** reviewer the changed paths call for, each
+  an agent that exists in `.claude/agents/`. Where the paths resolve to no reviewer, a
+  count applies instead: two independent reviews at high risk and above. It records a
+  claim about a check, never the check.
 - **Continual harness:** `pnpm zeus:harness list|format|add|apply|rollback`, proposed
   by `/zeus-refine`. Supplemental learned state, injected into every turn by the hook
   within a character budget. Evidence is mandatory on every entry, every mutation is

@@ -52,9 +52,10 @@ at which tree (`zeus:gate`), where the work sits in the delivery pipeline
   it was recorded at, so any edit makes it stale; a failed gate is never skippable;
   rounds are bounded by the tier repair budget in `.zeus/config.json`; and `ship` refuses
   until every gate in `gates.repositoryGates` passed at the current fingerprint and,
-  where risk or blast radius requires review, a `review:<agent>` gate passed naming an
-  agent that exists in `.claude/agents/` and that the changed paths actually call for
-  (`.zeus/impact-map.json` to `.zeus/module-manifest.json`). It records a claim about a
+  where risk or blast radius requires review, a passing `review:<agent>` gate for every
+  reviewer the changed paths call for, resolved through `.zeus/impact-map.json` to
+  `.zeus/module-manifest.json`; where they resolve to none, two independent reviews at
+  high risk and above. It records a claim about a
   check, not the check itself.
 - **Continual harness** (`pnpm zeus:harness`, proposed by `/zeus-refine`): supplemental
   learned state, injected into every turn by the hook within a character budget. Evidence

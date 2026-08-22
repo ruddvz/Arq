@@ -88,6 +88,15 @@ export function gateConfig(root = packageRoot) {
   for (const r of g.reviewRequiredAtRisk) {
     if (!RISK_SET.has(r)) throw new Error(`gates.reviewRequiredAtRisk names unknown risk "${r}"`);
   }
+  const quorum = g.reviewQuorumWhenUnmatched;
+  if (!quorum || typeof quorum !== 'object') {
+    throw new Error('.zeus/config.json gates.reviewQuorumWhenUnmatched is missing');
+  }
+  for (const risk of RISKS) {
+    if (!Number.isInteger(quorum[risk]) || quorum[risk] < 1) {
+      throw new Error(`gates.reviewQuorumWhenUnmatched.${risk} is not a positive integer`);
+    }
+  }
   if (typeof g.store !== 'string' || !g.store.trim()) {
     throw new Error('.zeus/config.json gates.store is not a path');
   }
@@ -423,6 +432,38 @@ export function shipReadiness(ledger, signature, deps = {}) {
       named.find((g) => g.outcome === 'pass' && g.signature === signature) ??
       named.find((g) => g.outcome === 'pass') ??
       named[0];
+
+    // Checked by everyone the diff calls for, not merely by somebody.
+    //
+    // One passing review was the old bar, and it is the wrong shape: a change
+    // that touches persistence AND security needs both specialists, and a count
+    // cannot express that. When the changed paths resolve to reviewers, EVERY one
+    // of them must have passed at the current tree. The count below is only the
+    // fallback for when they cannot be resolved, and it is where "checked twice"
+    // lives for work whose paths no pattern covers.
+    const passedNow = new Set(
+      reviews
+        .filter((g) => g.outcome === 'pass' && g.signature === signature)
+        .map(nameOf)
+        .filter((n) => known.has(n)),
+    );
+    if (match.matched) {
+      const absent = match.required.filter((r) => !passedNow.has(r));
+      if (absent.length) {
+        problems.push(
+          `these reviewers have not passed at this workspace: ${absent.join(', ')} - ` +
+            `the changed paths call for all of ${match.required.join(', ')} (${match.reason})`,
+        );
+      }
+    } else {
+      const need = config.reviewQuorumWhenUnmatched[ledger.risk] ?? 1;
+      if (passedNow.size < need) {
+        problems.push(
+          `${ledger.risk} risk needs ${need} independent review(s) and ${passedNow.size} passed at this workspace - ` +
+            `the changed paths could not be resolved to reviewers (${match.reason}), so the count applies instead`,
+        );
+      }
+    }
 
     // Only complain about an unrecognised reviewer when no real review carried
     // the work. Reporting every bogus row unconditionally means one typo'd name
