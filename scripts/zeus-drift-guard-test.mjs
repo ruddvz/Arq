@@ -15,7 +15,7 @@
 //
 // Run: node scripts/zeus-drift-guard-test.mjs (also runs in scripts/test-zeus-system.sh)
 
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -23,12 +23,17 @@ import { spawnSync } from 'node:child_process';
 const packageRoot = dirname(dirname(new URL(import.meta.url).pathname));
 
 /** Only what the guards read. Copying node_modules would cost minutes per case. */
-const COPY = ['.zeus', '.claude', 'scripts', 'CLAUDE.md', 'package.json'];
+// `.github/workflows` is copied because the reachability guard reads CI steps:
+// without it the fixture reports scripts as orphans that the real repository
+// runs on every pull request, and the baseline case fails for a reason that
+// exists only in the fixture.
+const COPY = ['.zeus', '.claude', 'scripts', '.github/workflows', 'CLAUDE.md', 'package.json'];
 const SKIP = /(^|\/)(cache|runs|backups|node_modules)(\/|$)/;
 
 function fixture() {
   const dir = mkdtempSync(join(tmpdir(), 'zeus-drift-'));
   for (const rel of COPY) {
+    mkdirSync(dirname(join(dir, rel)), { recursive: true });
     cpSync(join(packageRoot, rel), join(dir, rel), {
       recursive: true,
       filter: (src) => !SKIP.test(src.slice(packageRoot.length)),
@@ -57,6 +62,19 @@ const run = (dir) =>
 // Source fragments from the renderer. Written as template literals with escaped
 // `\${` so they carry the real text without eslint reading them as a template
 // string someone forgot to backtick.
+/**
+ * The probe filename is assembled at runtime and never written out whole, in
+ * this comment included.
+ *
+ * The reachability guard treats a filename mentioned by any reachable script as
+ * reached, and that is correct: a script a test runs IS in use. This file is
+ * reachable, so writing the probe's name here in one piece would make the probe
+ * look reached and the case would pass while proving nothing. The first attempt
+ * at this comment did exactly that, and the case went green against a guard that
+ * had not fired.
+ */
+const PROBE = `zeus-${'orphan'}-probe.mjs`;
+
 const READING_LINE = `\`**Zeus reads this as** \${i.as}.\`,`;
 const CLASSIFICATION_LINE = `    \`**Mode / risk / tier / stop:** \${c.mode} / \${c.risk} / \${c.tier} / \${c.deliveryStop}\`,`;
 
@@ -230,6 +248,26 @@ const CASES = [
       edit(dir, '.zeus/FAST-KERNEL.md', (s) =>
         s.replace('Show the reading before the work', 'Show the reading\nbefore the work'),
       ),
+    expectExit: 0,
+    expect: /drift guards passed/,
+  },
+  {
+    name: 'a Zeus script is added that nothing can run',
+    // Dead code in an operating system reads as capability the system does not
+    // have. Measured before this guard: 7 of 39 Zeus scripts were unreachable,
+    // including the whole delivery pipeline in zeus-run-state.mjs.
+    break: (dir) => writeFileSync(join(dir, 'scripts', PROBE), '#!/usr/bin/env node\n'),
+    expect: new RegExp(`${PROBE.replace('.', '\\.')} can be run by nothing`),
+  },
+  {
+    name: 'a Zeus library reached only by an importer is not called an orphan',
+    // Reachability is transitive. A guard that demanded a CLI verb per file
+    // would force every shared module into the command surface, which is how a
+    // guard gets deleted rather than obeyed.
+    break: (dir) => {
+      writeFileSync(join(dir, 'scripts', PROBE), 'export const probe = 1;\n');
+      edit(dir, 'scripts/zeus-drift-guard.mjs', (s) => `${s}\n// imports ${PROBE}\n`);
+    },
     expectExit: 0,
     expect: /drift guards passed/,
   },

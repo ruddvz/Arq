@@ -225,6 +225,56 @@ const hook = read(HOOK);
   }
 }
 
+/* ------------------------------------------------------------------ guard 5b */
+// Every Zeus script is reachable by something.
+//
+// Measured before this guard existed: 7 of 39 scripts could be run by nothing at
+// all. Not the CLI, not a package script, not the hook, not CI, not a document.
+// Among them was zeus-run-state.mjs, which carries the entire delivery pipeline
+// Zeus documents in .zeus/TASK-STATE-MACHINE.md, and zeus-role-plan.mjs, which
+// assigns the owning role for a task. Dead code in an operating system is worse
+// than dead code in a feature: it reads as capability the system does not have.
+//
+// Reachability is transitive, because a library is legitimately reached only by
+// its importers.
+{
+  const scriptDir = join(ROOT, 'scripts');
+  if (existsSync(scriptDir)) {
+    const scripts = readdirSync(scriptDir).filter((f) => /^zeus-.*\.(mjs|sh)$/.test(f));
+    const bodies = Object.fromEntries(scripts.map((f) => [f, read(`scripts/${f}`)]));
+    const entryText = [
+      read('scripts/zeus.mjs'),
+      read('package.json'),
+      read('scripts/zeus-hook.sh'),
+      read('scripts/test-zeus-system.sh'),
+      ...(existsSync(join(ROOT, '.github/workflows'))
+        ? readdirSync(join(ROOT, '.github/workflows')).map((f) => read(`.github/workflows/${f}`))
+        : []),
+    ].join('\n');
+
+    const reachable = new Set(scripts.filter((f) => entryText.includes(f)));
+    for (let changed = true; changed;) {
+      changed = false;
+      for (const f of scripts) {
+        if (reachable.has(f)) continue;
+        if (
+          scripts.some((other) => other !== f && reachable.has(other) && bodies[other].includes(f))
+        ) {
+          reachable.add(f);
+          changed = true;
+        }
+      }
+    }
+    for (const f of scripts) {
+      if (!reachable.has(f)) {
+        errors.push(
+          `scripts/${f} can be run by nothing: no CLI verb in scripts/zeus.mjs, no package script, no hook, no CI step, and no other Zeus script imports it`,
+        );
+      }
+    }
+  }
+}
+
 /* ------------------------------------------------------------------ guard 6 */
 // The compiled contract still SHOWS its reading, and shows it first.
 //

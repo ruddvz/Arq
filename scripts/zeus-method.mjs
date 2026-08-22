@@ -27,7 +27,7 @@ if (a.includes('--list')) {
   process.exit(0);
 }
 
-const task = (val('task') ?? readFileSync(0, 'utf8')).trim();
+const task = (val('task') ?? (process.stdin.isTTY ? '' : readFileSync(0, 'utf8'))).trim();
 if (!task) {
   console.error(
     'Usage: zeus method --task "..." [--format json] | zeus method --list [--family think]',

@@ -10,6 +10,7 @@ const config = read('config.json');
 const manifest = read('module-manifest.json');
 const methodRegistry = read('method-registry.json');
 const blastRadius = read('blast-radius.json');
+const roleRegistry = read('role-registry.json');
 
 /* ------------------------------------------------------------------ *
  * Matching
@@ -628,21 +629,18 @@ export function selectMethods(task, routed) {
  * Contract compilation
  * ------------------------------------------------------------------ */
 
-const roleMap = {
-  architecture: 'product-architecture',
-  geometry: 'geometry-bim',
-  'editor-input': 'editor-interaction',
-  arqfs: 'arqfs-recovery',
-  rendering: 'rendering-performance',
-  'ui-visual': 'ui-visual',
-  accessibility: 'accessibility',
-  security: 'security',
-  'github-cicd': 'delivery-reliability',
-  'release-production': 'delivery-reliability',
-  ai: 'ai-arqscript',
-  interoperability: 'interoperability',
-  incident: 'incident-commander',
-};
+/**
+ * Who owns what, read from `.zeus/role-registry.json`.
+ *
+ * This mapping used to be a literal here while the registry was read by nothing
+ * at all, so Arq carried two org charts: the one that decided every contract,
+ * and the one a human would open to find out who owns a module. They could not
+ * disagree loudly, only quietly. `scripts/zeus-validate.mjs` now asserts that
+ * every module has an owner and every owner is a role that exists.
+ */
+const roleMap = roleRegistry.moduleOwners ?? {};
+const modeOwners = roleRegistry.modeOwners ?? {};
+const defaultOwner = roleRegistry.defaultOwner ?? 'executor';
 
 export function compile(task) {
   const r = route(task);
@@ -651,15 +649,13 @@ export function compile(task) {
   const level = RADIUS_LEVEL[r.blastRadius];
   const methods = selectMethods(task, r);
 
-  const owner =
-    roleMap[ids[0]] ??
-    (r.mode === 'release' || r.mode === 'incident' ? 'delivery-reliability' : 'executor');
+  const owner = roleMap[ids[0]] ?? modeOwners[r.mode] ?? defaultOwner;
 
   const reviewers = [];
   if (RISK_RANK[r.risk] >= RISK_RANK.high || level.requiresReview) {
-    reviewers.push('qa-release');
+    reviewers.push(roleRegistry.reviewRoles?.always ?? 'qa-release');
     if (!ids.includes('security') && RADIUS_RANK[r.blastRadius] >= RADIUS_RANK.persistent)
-      reviewers.push('security');
+      reviewers.push(roleRegistry.reviewRoles?.persistentOrWider ?? 'security');
   }
 
   const agentLimit = r.tier === 'deep' ? 4 : r.tier === 'standard' ? 2 : 0;
@@ -762,4 +758,4 @@ export function markdown(c) {
   ].join('\n');
 }
 
-export { config, manifest, methodRegistry, blastRadius };
+export { config, manifest, methodRegistry, blastRadius, roleRegistry };

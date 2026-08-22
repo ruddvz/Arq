@@ -171,6 +171,39 @@ if (registry) {
   }
 }
 
+/* -------------------------------------------------------- 4b. role registry */
+
+// The org chart. Until 2026-08-22 this file was read by nothing at all while
+// scripts/lib/zeus-engine.mjs carried its own copy of the module-to-role map, so
+// Arq had two org charts: the one that decided every contract, and the one a
+// human would open to find out who owns a module.
+const roles = readJson('.zeus/role-registry.json');
+if (roles) {
+  if (roles.version !== EXPECTED_VERSION)
+    fail(`.zeus/role-registry.json version is ${roles.version}, expected ${EXPECTED_VERSION}`);
+  const roleIds = new Set((roles.roles ?? []).map((r) => r.id));
+  if (!roleIds.size) fail('.zeus/role-registry.json defines no roles');
+  const accountable = (roles.roles ?? []).filter((r) => r.accountable);
+  if (accountable.length !== 1)
+    fail(
+      `.zeus/role-registry.json must name exactly one accountable role, found ${accountable.length}`,
+    );
+  for (const [id, role] of Object.entries(roles.moduleOwners ?? {})) {
+    if (!roleIds.has(role)) fail(`role registry: module ${id} is owned by unknown role ${role}`);
+  }
+  for (const [mode, role] of Object.entries(roles.modeOwners ?? {})) {
+    if (!roleIds.has(role)) fail(`role registry: mode ${mode} is owned by unknown role ${role}`);
+  }
+  for (const role of Object.values(roles.reviewRoles ?? {}))
+    if (!roleIds.has(role)) fail(`role registry: review role ${role} is not a known role`);
+  if (roles.defaultOwner && !roleIds.has(roles.defaultOwner))
+    fail(`role registry: defaultOwner ${roles.defaultOwner} is not a known role`);
+  // Every routable module must have a named owner, or a contract silently falls
+  // back to the default and nobody is accountable for a whole domain.
+  for (const m of manifest?.modules ?? [])
+    if (!roles.moduleOwners?.[m.id]) fail(`role registry: module ${m.id} has no owning role`);
+}
+
 /* --------------------------------------------------------- 5. blast radius */
 
 if (blast) {
