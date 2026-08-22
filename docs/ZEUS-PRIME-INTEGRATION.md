@@ -70,7 +70,7 @@ Six guards, each derived from disk wherever the set can grow:
 | `scripts/zeus-agent-registry.mjs`     | The single definition of "dispatchable", shared by three callers                           |
 | `scripts/zeus-reviewer-match.mjs`     | Which reviewer the changed paths actually call for                                         |
 | `scripts/zeus-gate-ledger.test.ts`    | 40 tests                                                                                   |
-| `scripts/zeus-reviewer-match.test.ts` | 12 tests                                                                                   |
+| `scripts/zeus-reviewer-match.test.ts` | 14 tests                                                                                   |
 | `.zeus/config.json` `gates`           | Store path, the unconditional gate set, the review risk threshold                          |
 
 Nothing was reinvented. The workspace signature is `scripts/zeus-fingerprint.mjs`. The
@@ -92,7 +92,7 @@ Every row is a command that was run, with its real output.
 
 | Command                                  | Result                                                                              | Pass |
 | ---------------------------------------- | ----------------------------------------------------------------------------------- | ---- |
-| `pnpm test`                              | 355 files, 3991 tests passed (baseline 352 / 3907; +3 files, +84 tests, 0 failures) | yes  |
+| `pnpm test`                              | 355 files, 3993 tests passed (baseline 352 / 3907; +3 files, +86 tests, 0 failures) | yes  |
 | `pnpm typecheck`                         | 37 tasks successful, 37 total                                                       | yes  |
 | `pnpm lint`                              | `eslint .`, no output                                                               | yes  |
 | `pnpm format:check`                      | All matched files use Prettier code style                                           | yes  |
@@ -139,6 +139,15 @@ copy and asserts both the non-zero exit and the message. The two that matter mos
   A literal-space regex fails the baseline case, so the whitespace-tolerant match is
   proven necessary rather than assumed.
 
+One defect in this work was found by dogfooding it, after the branch was pushed:
+`resolveBase` preferred `@{upstream}`, and on a pushed feature branch the upstream is
+`origin/<that same branch>`, so `base...HEAD` is empty and every changed path vanishes
+the moment the branch is pushed. That is the same fail-open the function exists to
+prevent, one step later. It now prefers `origin/HEAD`, refuses a tracking ref that is
+the branch's own remote copy, and reports the path set as incomplete rather than empty.
+Two tests build a real two-branch repository to pin it, and both fail against the
+previous ordering.
+
 Two further guards were broken outside that file:
 
 - The installer's state exclusion: with `.zeus/harness/probe.json` and
@@ -150,22 +159,24 @@ Two further guards were broken outside that file:
 
 ## 4. Tests proven against un-fixed code
 
-Ten tests were run against a deliberately un-fixed copy of the module they cover, and
-all ten failed as they should. A test that passes either way pins nothing, and two of
+Twelve tests were run against a deliberately un-fixed copy of the module they cover, and
+all twelve failed as they should. A test that passes either way pins nothing, and two of
 the reference implementation's tests were exactly that.
 
-| Un-fix applied                                       | Test that caught it                                    |
-| ---------------------------------------------------- | ------------------------------------------------------ |
-| snapshot taken after restoring                       | rolls back a rollback                                  |
-| edits mutate the live entry array                    | leaves the store byte-identical                        |
-| the nothing-fits notice ignores the budget           | never exceeds the budget, at any budget value          |
-| strict sort by kind instead of round robin           | does not starve the other kinds                        |
-| no shape validation on load                          | names the entry and the field                          |
-| no unconditional gate floor                          | will not let a recorded review stand in                |
-| bound indexed without validating the tier            | falls to the strictest bound, not to unbounded         |
-| `outcome === 'fail'` instead of `!== 'pass'`         | refuses an outcome that is not exactly "pass"          |
-| every unrecognised reviewer reported unconditionally | does not let one typo bury a genuine review            |
-| any dispatchable agent accepted                      | refuses a real agent the changed paths do not call for |
+| Un-fix applied                                       | Test that caught it                                                     |
+| ---------------------------------------------------- | ----------------------------------------------------------------------- |
+| snapshot taken after restoring                       | rolls back a rollback                                                   |
+| edits mutate the live entry array                    | leaves the store byte-identical                                         |
+| the nothing-fits notice ignores the budget           | never exceeds the budget, at any budget value                           |
+| strict sort by kind instead of round robin           | does not starve the other kinds                                         |
+| no shape validation on load                          | names the entry and the field                                           |
+| no unconditional gate floor                          | will not let a recorded review stand in                                 |
+| bound indexed without validating the tier            | falls to the strictest bound, not to unbounded                          |
+| `outcome === 'fail'` instead of `!== 'pass'`         | refuses an outcome that is not exactly "pass"                           |
+| every unrecognised reviewer reported unconditionally | does not let one typo bury a genuine review                             |
+| any dispatchable agent accepted                      | refuses a real agent the changed paths do not call for                  |
+| `@{upstream}` preferred over `origin/HEAD`           | refuses a tracking branch that is the branch's own remote copy          |
+| `@{upstream}` preferred over `origin/HEAD`           | prefers origin/HEAD, so a pushed feature branch still measures its diff |
 
 ## 5. Checked against all 23 known defects
 
@@ -210,13 +221,17 @@ that executes commands, and anything from prime-agent's runtime.
 
 ## 7. Open questions for the repository owner
 
-1. **Zeus's own operating surface has no blast radius rule.** `.zeus/blast-radius.json`
-   `pathRules` covers no path under `.zeus/`, `scripts/` or `.claude/`, so
-   `node scripts/zeus-impact.mjs` classifies a change to the always-on hook as `local`
-   from paths and `package` overall. A fault there degrades every future turn rather
-   than one feature. Adding a rule would raise the tier for all Zeus edits, and none of
-   the six existing levels is an obvious fit for "the agent operating system itself", so
-   this is a vocabulary decision rather than a fix to make unilaterally.
+1. **Zeus's own operating surface is unclassified, by both maps.** `.zeus/impact-map.json`
+   has no pattern for `.zeus/`, `scripts/` or `.claude/`, and `.zeus/blast-radius.json`
+   `pathRules` has no rule for them either. Measured on this very diff:
+   `pnpm zeus:gate reviewers` returns `matched: false`, "changed paths match no module
+   that names a reviewer", for a change that rewrites the always-on hook, and
+   `node scripts/zeus-impact.mjs` classifies it as `local` from paths and `package`
+   overall. A fault there degrades every future turn rather than one feature. Adding
+   rules would raise the tier and name a reviewer for every Zeus edit, but none of the
+   six blast radius levels is an obvious fit for "the agent operating system itself", so
+   this is a vocabulary decision rather than a fix to make unilaterally. It is the
+   single highest-value follow-up in this list.
 2. **Should the drift guards run in CI?** Adding `pnpm zeus:drift` and
    `pnpm zeus:validate` to the `lint-and-typecheck` job would convert limit 3 from
    convention into enforcement. Both are deterministic, dependency-free and fast. The

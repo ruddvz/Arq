@@ -9,7 +9,14 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { requiredReviewers, resolveBase, reviewersForPaths } from './zeus-reviewer-match.mjs';
+import { spawnSync } from 'node:child_process';
+
+import {
+  changedPaths,
+  requiredReviewers,
+  resolveBase,
+  reviewersForPaths,
+} from './zeus-reviewer-match.mjs';
 import { agentRegistry } from './zeus-agent-registry.mjs';
 
 describe('against this repository', () => {
@@ -123,6 +130,30 @@ describe('against a fixture repository', () => {
 });
 
 describe('base resolution', () => {
+  const git = (root: string, args: string[]) =>
+    spawnSync('git', ['-C', root, ...args], { encoding: 'utf8' });
+
+  let repo: string;
+
+  beforeEach(() => {
+    // A real two-branch repository, because the bug this pins is about what
+    // `git rev-parse @{upstream}` returns and no stub would reproduce it.
+    repo = mkdtempSync(join(tmpdir(), 'zeus-base-'));
+    const origin = join(repo, 'origin.git');
+    const work = join(repo, 'work');
+    git(repo, ['init', '--quiet', '--bare', origin]);
+    git(repo, ['clone', '--quiet', origin, work]);
+    git(work, ['config', 'user.email', 'zeus@example.invalid']);
+    git(work, ['config', 'user.name', 'Zeus']);
+    writeFileSync(join(work, 'README.md'), '# fixture\n');
+    git(work, ['add', '.']);
+    git(work, ['commit', '--quiet', '-m', 'init']);
+    git(work, ['push', '--quiet', '-u', 'origin', 'HEAD:refs/heads/main']);
+    git(work, ['branch', '--set-upstream-to=origin/main']);
+  });
+
+  afterEach(() => rmSync(repo, { recursive: true, force: true }));
+
   it('refuses a base that does not resolve to a commit', () => {
     const { base, reason } = resolveBase(process.cwd(), 'not-a-real-ref-xyz');
     expect(base).toBeNull();
@@ -131,5 +162,43 @@ describe('base resolution', () => {
 
   it('accepts a base that does resolve', () => {
     expect(resolveBase(process.cwd(), 'HEAD').base).toBe('HEAD');
+  });
+
+  it("refuses a tracking branch that is the branch's own remote copy", () => {
+    // On a pushed feature branch the upstream is origin/<that same branch>, so
+    // `base...HEAD` is empty and every changed path vanishes the moment the
+    // branch is pushed: the same fail-open, one step later.
+    const work = join(repo, 'work');
+    git(work, ['checkout', '--quiet', '-b', 'feature']);
+    writeFileSync(join(work, 'feature.md'), '# feature\n');
+    git(work, ['add', '.']);
+    git(work, ['commit', '--quiet', '-m', 'feature work']);
+    git(work, ['push', '--quiet', '-u', 'origin', 'feature']);
+
+    const { base, reason } = resolveBase(work);
+    expect(base).toBeNull();
+    expect(reason).toContain("this branch's own remote copy");
+
+    // And the caller is told the path set is incomplete rather than empty, so it
+    // must demand a reviewer anyway.
+    const result = requiredReviewers({ root: work });
+    expect(result.matched).toBe(false);
+    expect(result.reason).toContain('incomplete');
+  });
+
+  it('prefers origin/HEAD, so a pushed feature branch still measures its diff', () => {
+    const work = join(repo, 'work');
+    git(work, ['symbolic-ref', 'refs/remotes/origin/HEAD', 'refs/remotes/origin/main']);
+    git(work, ['checkout', '--quiet', '-b', 'feature']);
+    writeFileSync(join(work, 'feature.md'), '# feature\n');
+    git(work, ['add', '.']);
+    git(work, ['commit', '--quiet', '-m', 'feature work']);
+    git(work, ['push', '--quiet', '-u', 'origin', 'feature']);
+
+    const { base, reason } = resolveBase(work);
+    expect(base).toBe('origin/main');
+    expect(reason).toContain('default branch');
+    // The committed file is still in the changed set after the push.
+    expect(changedPaths(work).paths).toContain('feature.md');
   });
 });

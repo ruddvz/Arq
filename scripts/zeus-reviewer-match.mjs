@@ -31,10 +31,18 @@ const git = (root, args) =>
   spawnSync('git', ['-C', root, ...args], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
 
 /**
- * The base this branch is measured against. Committing work must not empty the
- * changed-path set: a ledger that only ever looked at the working tree would
- * require no reviewer at all the moment the author ran `git commit`, which is
- * the fail-open this whole module exists to avoid.
+ * The base this branch is measured against: the branch the work will merge INTO,
+ * not the branch it was pushed to. Committing work must not empty the
+ * changed-path set, because a check that only ever looked at the working tree
+ * would require no reviewer at all the moment the author ran `git commit`.
+ *
+ * The ordering matters and was got wrong once. Preferring `@{upstream}` looks
+ * right and is not: on a pushed feature branch the upstream is
+ * `origin/<that same branch>`, so `base...HEAD` is EMPTY and every changed path
+ * disappears the moment the branch is pushed. That is the same fail-open one
+ * step later. A tracking ref that is this branch's own remote copy is therefore
+ * refused as a base.
+ *
  * @returns {{base: string|null, reason: string}}
  */
 export function resolveBase(root = process.cwd(), explicit = null) {
@@ -43,15 +51,24 @@ export function resolveBase(root = process.cwd(), explicit = null) {
     if (ok.status === 0) return { base: explicit, reason: 'base given explicitly' };
     return { base: null, reason: `base "${explicit}" does not resolve to a commit` };
   }
-  const upstream = git(root, ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}']);
-  if (upstream.status === 0 && upstream.stdout.trim()) {
-    return { base: upstream.stdout.trim(), reason: 'tracking branch' };
-  }
   const originHead = git(root, ['symbolic-ref', '--short', '--quiet', 'refs/remotes/origin/HEAD']);
   if (originHead.status === 0 && originHead.stdout.trim()) {
-    return { base: originHead.stdout.trim(), reason: 'origin/HEAD' };
+    return { base: originHead.stdout.trim(), reason: 'origin/HEAD, the default branch' };
   }
-  return { base: null, reason: 'no tracking branch and no origin/HEAD' };
+  const upstream = git(root, ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}']);
+  const branch = git(root, ['rev-parse', '--abbrev-ref', 'HEAD']);
+  if (upstream.status === 0 && upstream.stdout.trim()) {
+    const ref = upstream.stdout.trim();
+    const own = branch.status === 0 ? branch.stdout.trim() : null;
+    if (own && ref.endsWith(`/${own}`)) {
+      return {
+        base: null,
+        reason: `the tracking branch is this branch's own remote copy (${ref}), which measures nothing, and origin/HEAD is not set`,
+      };
+    }
+    return { base: ref, reason: 'tracking branch' };
+  }
+  return { base: null, reason: 'no usable base: no origin/HEAD and no tracking branch' };
 }
 
 /**
