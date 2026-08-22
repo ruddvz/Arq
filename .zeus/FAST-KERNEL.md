@@ -73,7 +73,7 @@ neither restates it. The ones that decide the most cases:
 
 ## Context economy
 
-This kernel is the always-on read and is over 85% smaller than the full `.zeus/`
+This kernel is the always-on read and is over 80% smaller than the full `.zeus/`
 doctrine set it compresses. Read it INSTEAD of that set, never in addition: reading
 both costs more than not splitting at all. Open a module or a specification document
 when the tier allows it, when a gate fails, or when a domain invariant matters in
@@ -104,10 +104,20 @@ A retry without new evidence is not progress. Diagnose the first wrong state, fi
 root cause, invalidate affected cache entries and rerun the smallest proving check.
 Stop after the tier's repair budget and report what is still failing.
 
-## Recorded gates and learned state
+## Recorded plan, gates and learned state
 
-Two records exist so that "verified" is a fact rather than a memory. Neither replaces
-the evidence ledger; they answer questions it does not.
+Four records answer four different questions, and none replaces another. The evidence
+ledger says what each CLAIM rests on. The gate ledger says which CHECKS passed and at
+which tree. `node scripts/zeus.mjs state` says where the work is in the DELIVERY
+pipeline. The plan ledger says what the WORK ITEMS are and which are proven.
+
+- **Plan ledger:** `pnpm zeus:plan open|add|next|start|done|block|status|close`. Open one
+  for any request carrying more than a single item. Every item names an owning role from
+  `.zeus/role-registry.json` and states its own acceptance. An item is done only with a
+  command and a zero exit code. **`close` refuses while any item is pending, active or
+  blocked, and names each one.** Do not report work finished until it exits 0, or say
+  plainly which items are not done and why. `next` gives the next workable item, so a
+  resumed session continues rather than restarts.
 
 - **Gate ledger:** `pnpm zeus:gate start|record|can-skip|round|ship`. A gate result
   belongs to the workspace fingerprint it was recorded at, so any edit makes it stale.

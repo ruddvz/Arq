@@ -36,6 +36,7 @@ const map = {
   stats: 'zeus-eval-stats.mjs',
   record: 'zeus-eval-record.mjs',
   gate: 'zeus-gate-ledger.mjs',
+  plan: 'zeus-plan-ledger.mjs',
   harness: 'zeus-harness-state.mjs',
   drift: 'zeus-drift-guard.mjs',
 };

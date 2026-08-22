@@ -163,6 +163,11 @@ const hook = read(HOOK);
         /never\s+rewrites?\s+it\s+into\s+different\s+words/i,
       ],
       ['show every delegated prompt in full', /show\s+every\s+delegated\s+prompt\s+in\s+full/i],
+      // The loop. Without this line in the always-on read, the plan ledger is a
+      // command nobody is told to run, which is how the seven orphans happened.
+      // Anchored on the sentence, not on the word `close`, which the kernel
+      // writes inside backticks: `close\s+refuses` cannot match "`close` refuses".
+      ['close refuses while an item is unfinished', /refuses\s+while\s+any\s+item\s+is\s+pending/i],
     ];
     for (const [label, pattern] of SAFETY) {
       if (!pattern.test(kernel)) errors.push(`${KERNEL} no longer states: ${label}`);
@@ -319,7 +324,7 @@ const hook = read(HOOK);
       );
     }
   }
-  for (const script of ['zeus:harness', 'zeus:gate', 'zeus:drift']) {
+  for (const script of ['zeus:harness', 'zeus:gate', 'zeus:drift', 'zeus:plan']) {
     if (!pkg?.scripts?.[script]) errors.push(`package.json has no "${script}" script`);
   }
 }

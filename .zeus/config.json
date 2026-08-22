@@ -99,5 +99,11 @@
   "gate": {
     "authority": "engineering-os-5",
     "note": "Zeus classifies, routes and produces local evidence. It may raise a lane or add impacts. It may never lower a lane, mark missing evidence as passed, or stand in for the engineering-gate workflow."
+  },
+  "plan": {
+    "store": ".zeus/plans/current.json",
+    "maxItems": 60,
+    "maxTitleChars": 120,
+    "maxAcceptanceChars": 400
   }
 }

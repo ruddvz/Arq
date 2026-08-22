@@ -90,6 +90,10 @@ if (config) {
       fail(`.zeus/config.json harness.${key} is not a positive integer`);
   if (!config.harness?.store) fail('.zeus/config.json harness.store is not a path');
   if (!config.gates?.store) fail('.zeus/config.json gates.store is not a path');
+  if (!config.plan?.store) fail('.zeus/config.json plan.store is not a path');
+  for (const key of ['maxItems', 'maxTitleChars', 'maxAcceptanceChars'])
+    if (!Number.isInteger(config.plan?.[key]) || config.plan[key] < 1)
+      fail(`.zeus/config.json plan.${key} is not a positive integer`);
   if (!Array.isArray(config.gates?.repositoryGates) || !config.gates.repositoryGates.length)
     fail('.zeus/config.json gates.repositoryGates is empty, so ship could infer nothing');
   for (const r of config.gates?.reviewRequiredAtRisk ?? [])

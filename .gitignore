@@ -59,3 +59,4 @@ workers/arqfs-worker/.e2e-open-bundle/
 # and human-committed, and a lesson nobody can review is the failure it exists
 # to fix.
 .zeus/gates/
+.zeus/plans/

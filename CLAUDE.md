@@ -36,8 +36,17 @@ destructive commands, secret access and edits to real project containers (ArqScr
 blocks a completion claim made with no tool evidence at all. Both are pinned by
 `node scripts/zeus-guard-test.mjs`.
 
-Two records keep "verified" a fact rather than a memory, and both are additive to the
-five steps above rather than a replacement for them:
+Four records keep "verified" and "finished" facts rather than memories, and all are
+additive to the five steps above rather than a replacement for them. They answer four
+different questions: what each claim rests on (`zeus evidence`), which checks passed and
+at which tree (`zeus:gate`), where the work sits in the delivery pipeline
+(`zeus state`), and what the work items are and which are proven (`zeus:plan`).
+
+- **Plan ledger** (`pnpm zeus:plan`): every item names an owning role from
+  `.zeus/role-registry.json` and its own acceptance; an item is done only with a command
+  and a zero exit; and `close` refuses while any item is pending, active or blocked,
+  naming each one. That refusal is the loop, and it is what stops a six-item request
+  being reported finished after four.
 
 - **Gate ledger** (`pnpm zeus:gate`): a gate result belongs to the workspace fingerprint
   it was recorded at, so any edit makes it stale; a failed gate is never skippable;

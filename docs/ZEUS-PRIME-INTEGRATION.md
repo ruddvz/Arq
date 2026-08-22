@@ -328,6 +328,86 @@ cannot fail would report a clean repository either way.
 `pnpm zeus:test` is deliberately still not in CI. It asserts a p95 compile time under
 20 ms, which is timing-sensitive on a shared runner and would flake.
 
+## 5c. Round 3: the loop, and seven scripts nothing could run
+
+### What already existed, and could not be reached
+
+An audit of what can actually be run found **7 of 39 Zeus scripts reachable by nothing**:
+no CLI verb, no package script, no hook, no CI step, and no other script importing them.
+They were not minor:
+
+| Script                                  | What it does                                                                                                                                                                                                                        | Was         |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `zeus-run-state.mjs`                    | The whole delivery pipeline: intake, compiled, planned, implementing, local_green, review_green, pr_open, ci_running, ci_green, merge_authorized, merged, deployment_running, production_verified, with invalid transitions refused | unreachable |
+| `zeus-role-plan.mjs`                    | The accountable role and the review waves for a task                                                                                                                                                                                | unreachable |
+| `zeus-merge-guard.mjs`                  | Refuses a merge whose head moved, whose checks are red or pending, or whose review is missing                                                                                                                                       | unreachable |
+| `zeus-release-watch.mjs`                | Watches a deployment to a verified state                                                                                                                                                                                            | unreachable |
+| `zeus-visual-contract-lint.mjs`         | Checks a UI spec carries roles, fixtures, a responsive matrix, complete states, keyboard and focus                                                                                                                                  | unreachable |
+| `zeus-cache.mjs`, `zeus-eval-stats.mjs` | Check cache, evaluation statistics                                                                                                                                                                                                  | unreachable |
+
+Dead code in an operating system is worse than dead code in a feature: it reads as
+capability the system does not have. All are now CLI verbs. `zeus-compile.mjs` was
+deleted rather than wired, because it was a two-line alias of a verb that already exists.
+
+Four of them blocked for ever on `readFileSync(0)` when run with no arguments. Harmless
+while nothing could reach them; they print usage now.
+
+**A guard now fails when any Zeus script becomes unreachable**, computed transitively so
+a library reached only by its importer is not called an orphan.
+
+### The org chart was the same failure
+
+`.zeus/role-registry.json` defined 14 roles and was read by nothing, while
+`scripts/lib/zeus-engine.mjs` carried its own copy of the module-to-role map. Arq had two
+org charts: the one that decided every contract, and the one a human would open to find
+out who owns a module. They could not disagree loudly, only quietly.
+
+The registry now owns `moduleOwners`, `modeOwners`, `defaultOwner` and `reviewRoles`, the
+engine reads it, its version matches everything else at 5.0.0, and `zeus-validate.mjs`
+asserts every module has an owner, every owner is a real role, and exactly one role is
+accountable.
+
+### The plan ledger: the loop
+
+Zeus answered three questions and not the fourth. The evidence ledger says what each
+CLAIM rests on. The gate ledger says which CHECKS passed and at which tree. `zeus state`
+says where the work sits in the DELIVERY pipeline. Nothing held **the work items**, so
+"the plan is implemented" was a memory in exactly the way "verified" used to be: an
+operator who asks for six things and is given four has no artifact that says so.
+
+`scripts/zeus-plan-ledger.mjs` holds them. Four rules carry the weight:
+
+1. **An item is done only with a command and a zero exit code.** A done item with no
+   command is refused; so is one whose command exited non-zero, which is the most
+   tempting lie in the system.
+2. **`close` refuses while any item is pending, active or blocked, and names each one.**
+   That refusal is the loop. It is what keeps work going until the plan is finished
+   rather than until the agent feels finished.
+3. **Every item names an owning role that exists in the registry**, so the org chart
+   reaches the work instead of describing it.
+4. **Evidence carries the workspace fingerprint**, so an item proven against an older
+   tree is reported rather than silently counted.
+
+`next` returns the next workable item, honouring dependencies, so a resumed session
+continues rather than restarts. 30 tests; eight were run against deliberately un-fixed
+copies and all eight failed as they should.
+
+Its honest limit is the same as the gate ledger's: it records a claim about an item, not
+the item. It does not execute anything.
+
+### Two more tautologies caught the same way
+
+The dependency test placed the independent item first in the array, so it passed with the
+dependency filter removed. It now reverses the array, and fails against the un-fixed
+module. And the reachability guard's own probe case named the probe file in a comment,
+which made the probe look reachable and the case pass against a guard that had not fired.
+
+### The published saving is now 80%, because it stopped being 85%
+
+The kernel grew from 4,871 to 7,994 bytes across these three rounds. The drift guard
+caught the claim going false at 84.3% against a published floor of 85% and refused. The
+floor is now 80%. That is the guard doing exactly what it was written for, on its author.
+
 ## 6. What is NOT done
 
 None of these is solved. Partial must never read as green.
