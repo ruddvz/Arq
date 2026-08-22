@@ -105,6 +105,14 @@ Every row is a command that was run, with its real output.
 | `node scripts/zeus-guard-test.mjs`       | 23 cases (unchanged)                                                                | yes  |
 
 Pre-existing failures in files not touched: **zero, before and after.** The baseline was
+
+The first CI round failed `preflight` and, downstream of it, `engineering-gate`.
+Root cause, reproduced locally: Engineering OS hashes a fixed set of
+repository-scope files, and the three new `zeus:*` scripts changed `package.json`,
+so `engineering/ops/generated/engineering-context-v5.json` went stale. Regenerated
+with `pnpm engineering:context:build`; the only field that moved was the
+`package.json` hash. The rule that would have prevented it is now a harness entry,
+which is what the refine gate is for.
 recorded before the first edit and is in `docs/ZEUS-PRIME-INVENTORY.md`.
 
 Acceptance criteria, each proven by a command:
