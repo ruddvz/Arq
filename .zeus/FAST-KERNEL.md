@@ -111,6 +111,11 @@ ledger says what each CLAIM rests on. The gate ledger says which CHECKS passed a
 which tree. `node scripts/zeus.mjs state` says where the work is in the DELIVERY
 pipeline. The plan ledger says what the WORK ITEMS are and which are proven.
 
+- **Spec compiler:** `node scripts/zeus.mjs spec --task "..."`. Turns a request into a
+  specification: the routed modules' own requirements, the acceptance criteria, the
+  owning role, the checks, and a `TODO` for every question it cannot answer.
+  `spec --check` refuses the file while one remains, and never invents intent. Use it
+  when the request is loose, or before any standard or deep implementation.
 - **Plan ledger:** `pnpm zeus:plan open|add|next|start|done|block|status|close`. Open one
   for any request carrying more than a single item. Every item names an owning role from
   `.zeus/role-registry.json` and states its own acceptance. An item is done only with a

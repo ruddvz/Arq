@@ -408,6 +408,72 @@ The kernel grew from 4,871 to 7,994 bytes across these three rounds. The drift g
 caught the claim going false at 84.3% against a published floor of 85% and refused. The
 floor is now 80%. That is the guard doing exactly what it was written for, on its author.
 
+## 5d. Round 4: the spec compiler, and a routing defect worth more than it
+
+### 8 of 10 plainly-UI requests reached no visual module
+
+Found while testing the spec compiler, not by looking for it. Measured on ten requests
+that are obviously about the interface:
+
+| Request                                               | Routed to (before) |
+| ----------------------------------------------------- | ------------------ |
+| Change the hover colour on the marketing pricing card | `editor-input`     |
+| Redesign the project sidebar with states              | nothing            |
+| Make the settings dialog look better                  | nothing            |
+| The pricing page looks wrong on mobile                | nothing            |
+| Add a dark mode to the toolbar                        | nothing            |
+| Update the landing page hero                          | nothing            |
+| Restyle the primary button                            | nothing            |
+| Improve the onboarding screen                         | nothing            |
+
+A request that misses `ui-visual` gets no visual domain requirements, no UI contract
+section in its spec, no visual acceptance criterion, and no `arq-ux-accessibility-reviewer`.
+The module's vocabulary was 13 tokens of design-system language (`pixel`, `typography`,
+`responsive`) and none of the words people actually type.
+
+It now carries 45 tokens and 16 phrases. **10 of 10 hit, and 0 of 10 control cases
+over-match** (`.arq` migration, wall tolerance, WebGL frame budget, IFC unit mapping,
+journal replay, geometry booleans). Deliberately excluded: `page`, because SQLite pages
+are an `.arq` invariant; `transition`, because state machines use it; `view`, because of
+the 3D view; `state` and `light`, as too generic to carry a domain.
+
+Thirteen cases were added to `quality/fixtures/zeus-classification-cases.json`, eight
+positive and five negative, and **8 of the 29 fail against the old vocabulary**, so the
+fixture pins the fix rather than describing it.
+
+This is worth more than the spec compiler it was found by. Routing is upstream of
+everything: the module requirements, the reviewer, the acceptance criteria and the
+checks all follow from it, so a miss degrades all of them silently.
+
+### The spec compiler
+
+`node scripts/zeus.mjs spec --task "..."` turns a request into something precise enough
+to implement. It fills in what the repository already knows: the routed modules' own
+requirement prose (not a paraphrase of it), the acceptance criteria the contract
+computes, the owning role from the registry, the checks the impact map selects.
+
+**It never invents intent.** Everything it cannot derive is emitted as a `TODO`, and
+`spec --check` refuses the file while one remains. The open questions are derived: an
+assumed delivery stop, the domain questions of each routed module (`arqfs`: which schema
+version, how a half-written file is recovered; `security`: which trust boundary;
+`geometry`: which tolerance and which degenerate inputs), a rollback on high risk, a
+compensating action when a revert is not enough.
+
+**The generator must not defeat the checker it feeds.** `zeus visual-contract` requires
+twelve dimensions of a UI spec, and it existed with no producer. A skeleton carrying
+those twelve headings passes that lint while saying nothing, so the compiler emits each
+one as a question. Demonstrated: on a generated skeleton `visual-contract` exits 0 and
+`spec --check` exits 1 with fourteen unanswered questions. Answer them and both pass.
+Shape, then substance.
+
+### A test that asserted nothing, again
+
+The spec check test used "Redesign the project sidebar with states", which routes to no
+module, so it produced two questions rather than fourteen and the count assertion passed
+for the wrong reason. Both tests now assert their own premise: `expect(compile(task)
+.modules).toContain('ui-visual')` before relying on it. That assertion is what surfaced
+the routing defect above.
+
 ## 6. What is NOT done
 
 None of these is solved. Partial must never read as green.

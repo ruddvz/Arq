@@ -168,6 +168,10 @@ const hook = read(HOOK);
       // Anchored on the sentence, not on the word `close`, which the kernel
       // writes inside backticks: `close\s+refuses` cannot match "`close` refuses".
       ['close refuses while an item is unfinished', /refuses\s+while\s+any\s+item\s+is\s+pending/i],
+      // The spec compiler's one load-bearing promise. A generator that invented
+      // intent would be worse than no generator, because its output reads as
+      // derived fact.
+      ['the spec compiler never invents intent', /never\s+invents?\s+intent/i],
     ];
     for (const [label, pattern] of SAFETY) {
       if (!pattern.test(kernel)) errors.push(`${KERNEL} no longer states: ${label}`);

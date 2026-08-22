@@ -2,25 +2,37 @@
   {
     "name": "Zeus 4 defect: 'ui' inside 'build' routed the visual module, and 'build' defeated the question branch",
     "task": "explain how the build works",
-    "expect": { "mode": "answer", "deliveryStop": "answer" },
+    "expect": {
+      "mode": "answer",
+      "deliveryStop": "answer"
+    },
     "modulesExclude": ["ui-visual"]
   },
   {
     "name": "Zeus 4 defect: 'wall' inside 'wallpaper' routed geometry",
     "task": "improve the wallpaper documentation typo",
-    "expect": { "tier": "fast" },
+    "expect": {
+      "tier": "fast"
+    },
     "modulesExclude": ["geometry"]
   },
   {
     "name": "Zeus 4 defect: 'ui' inside 'guide' routed the visual module",
     "task": "rename a variable in the parser guide",
-    "expect": { "tier": "fast", "blastRadius": "package" },
+    "expect": {
+      "tier": "fast",
+      "blastRadius": "package"
+    },
     "modulesExclude": ["ui-visual"]
   },
   {
     "name": "Zeus 4 defect: a question about releasing compiled a production deployment stop",
     "task": "explain the release process",
-    "expect": { "mode": "answer", "deliveryStop": "answer", "risk": "moderate" },
+    "expect": {
+      "mode": "answer",
+      "deliveryStop": "answer",
+      "risk": "moderate"
+    },
     "tierAtMost": "standard"
   },
   {
@@ -46,7 +58,9 @@
   {
     "name": "fast lane stays small and cheap",
     "task": "Fix a README typo",
-    "expect": { "tier": "fast" },
+    "expect": {
+      "tier": "fast"
+    },
     "maxModules": 1,
     "maxContractChars": 4000
   },
@@ -69,19 +83,28 @@
   {
     "name": "irreversible language raises risk and demands operator confirmation",
     "task": "Delete the old project files and overwrite the original",
-    "expect": { "reversibility": "irreversible", "risk": "critical", "tier": "deep" },
+    "expect": {
+      "reversibility": "irreversible",
+      "risk": "critical",
+      "tier": "deep"
+    },
     "acceptanceIncludes": ["irreversible step confirmed with the operator before execution"]
   },
   {
     "name": "a failing pipeline is an incident, not a release",
     "task": "the ci is failing on main and the deployment is broken",
-    "expect": { "mode": "incident" },
+    "expect": {
+      "mode": "incident"
+    },
     "modulesInclude": ["incident"]
   },
   {
     "name": "a technology question is answered, not implemented",
     "task": "should we use webgl or webgpu for the 3d view?",
-    "expect": { "mode": "answer", "deliveryStop": "answer" }
+    "expect": {
+      "mode": "answer",
+      "deliveryStop": "answer"
+    }
   },
   {
     "name": "scope gating keeps marketing methods away from a geometry defect",
@@ -92,5 +115,75 @@
     "name": "high risk mandates risk methods",
     "task": "harden the sqlite migration path against interruption",
     "methodsInclude": ["RISKMAP", "SECONDORDER"]
+  },
+  {
+    "name": "UI vocabulary must reach the visual module: measured at 8 of 10 plainly-UI requests routing nowhere before 2026-08-22",
+    "task": "Change the hover colour on the marketing pricing card",
+    "modulesInclude": ["ui-visual"]
+  },
+  {
+    "name": "UI vocabulary must reach the visual module: measured at 8 of 10 plainly-UI requests routing nowhere before 2026-08-22",
+    "task": "Redesign the project sidebar with states",
+    "modulesInclude": ["ui-visual"]
+  },
+  {
+    "name": "UI vocabulary must reach the visual module: measured at 8 of 10 plainly-UI requests routing nowhere before 2026-08-22",
+    "task": "Make the settings dialog look better",
+    "modulesInclude": ["ui-visual"]
+  },
+  {
+    "name": "UI vocabulary must reach the visual module: measured at 8 of 10 plainly-UI requests routing nowhere before 2026-08-22",
+    "task": "The pricing page looks wrong on mobile",
+    "modulesInclude": ["ui-visual"]
+  },
+  {
+    "name": "UI vocabulary must reach the visual module: measured at 8 of 10 plainly-UI requests routing nowhere before 2026-08-22",
+    "task": "Add a dark mode to the toolbar",
+    "modulesInclude": ["ui-visual"]
+  },
+  {
+    "name": "UI vocabulary must reach the visual module: measured at 8 of 10 plainly-UI requests routing nowhere before 2026-08-22",
+    "task": "Update the landing page hero",
+    "modulesInclude": ["ui-visual"]
+  },
+  {
+    "name": "UI vocabulary must reach the visual module: measured at 8 of 10 plainly-UI requests routing nowhere before 2026-08-22",
+    "task": "Restyle the primary button",
+    "modulesInclude": ["ui-visual"]
+  },
+  {
+    "name": "UI vocabulary must reach the visual module: measured at 8 of 10 plainly-UI requests routing nowhere before 2026-08-22",
+    "task": "Improve the onboarding screen",
+    "modulesInclude": ["ui-visual"]
+  },
+  {
+    "name": "the widened UI vocabulary must not swallow arqfs work",
+    "task": "Fix the .arq migration recovery path",
+    "modulesInclude": ["arqfs"],
+    "modulesExclude": ["ui-visual"]
+  },
+  {
+    "name": "the widened UI vocabulary must not swallow geometry work",
+    "task": "Add a wall join tolerance test",
+    "modulesInclude": ["geometry"],
+    "modulesExclude": ["ui-visual"]
+  },
+  {
+    "name": "the widened UI vocabulary must not swallow rendering work",
+    "task": "Speed up the WebGL frame budget",
+    "modulesInclude": ["rendering"],
+    "modulesExclude": ["ui-visual"]
+  },
+  {
+    "name": "the widened UI vocabulary must not swallow arqfs work",
+    "task": "Explain how the journal replay works",
+    "modulesInclude": ["arqfs"],
+    "modulesExclude": ["ui-visual"]
+  },
+  {
+    "name": "the widened UI vocabulary must not swallow geometry work",
+    "task": "Refactor the geometry kernel boolean operations",
+    "modulesInclude": ["geometry"],
+    "modulesExclude": ["ui-visual"]
   }
 ]
