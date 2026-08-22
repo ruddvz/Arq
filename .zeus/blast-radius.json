@@ -152,6 +152,41 @@
       "reversibility": "reversible"
     },
     {
+      "glob": ".zeus/**",
+      "blastRadius": "product",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": "scripts/zeus-*",
+      "blastRadius": "product",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": "scripts/lib/zeus-*",
+      "blastRadius": "product",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": ".claude/hooks/**",
+      "blastRadius": "product",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": ".claude/agents/**",
+      "blastRadius": "product",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": ".claude/commands/**",
+      "blastRadius": "product",
+      "reversibility": "reversible"
+    },
+    {
+      "glob": ".claude/settings.json",
+      "blastRadius": "product",
+      "reversibility": "reversible"
+    },
+    {
       "glob": "packages/**",
       "blastRadius": "package",
       "reversibility": "reversible"

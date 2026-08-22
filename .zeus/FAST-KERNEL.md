@@ -73,6 +73,14 @@ neither restates it. The ones that decide the most cases:
 
 ## Context economy
 
+This kernel is the always-on read and is over 80% smaller than the full `.zeus/`
+doctrine set it compresses. Read it INSTEAD of that set, never in addition: reading
+both costs more than not splitting at all. Open a module or a specification document
+when the tier allows it, when a gate fails, or when a domain invariant matters in
+detail. `scripts/zeus-drift-guard.mjs` proves this file still carries every mode,
+tier, blast radius level, reversibility, evidence state and configured budget, and
+that the saving above is still true.
+
 Do not read whole repositories or whole long documents by default. Use the project
 index, exact files, headings and small snippets. Reuse evidence already read in the same
 run. Load deeper modules only on a trigger or a failed gate.
@@ -96,6 +104,40 @@ A retry without new evidence is not progress. Diagnose the first wrong state, fi
 root cause, invalidate affected cache entries and rerun the smallest proving check.
 Stop after the tier's repair budget and report what is still failing.
 
+## Recorded plan, gates and learned state
+
+Four records answer four different questions, and none replaces another. The evidence
+ledger says what each CLAIM rests on. The gate ledger says which CHECKS passed and at
+which tree. `node scripts/zeus.mjs state` says where the work is in the DELIVERY
+pipeline. The plan ledger says what the WORK ITEMS are and which are proven.
+
+- **Spec compiler:** `node scripts/zeus.mjs spec --task "..."`. Turns a request into a
+  specification: the routed modules' own requirements, the acceptance criteria, the
+  owning role, the checks, and a `TODO` for every question it cannot answer.
+  `spec --check` refuses the file while one remains, and never invents intent. Use it
+  when the request is loose, or before any standard or deep implementation.
+- **Plan ledger:** `pnpm zeus:plan open|add|next|start|done|block|status|close`. Open one
+  for any request carrying more than a single item. Every item names an owning role from
+  `.zeus/role-registry.json` and states its own acceptance. An item is done only with a
+  command and a zero exit code. **`close` refuses while any item is pending, active or
+  blocked, and names each one.** Do not report work finished until it exits 0, or say
+  plainly which items are not done and why. `next` gives the next workable item, so a
+  resumed session continues rather than restarts.
+
+- **Gate ledger:** `pnpm zeus:gate start|record|can-skip|round|ship`. A gate result
+  belongs to the workspace fingerprint it was recorded at, so any edit makes it stale.
+  A failed gate is never skippable. Rounds are bounded by the tier repair budget.
+  `ship` exits 0 only when every gate in `.zeus/config.json` `gates.repositoryGates`
+  passed at the current fingerprint and, where risk or blast radius requires review, a
+  `review:<agent>` gate passed for **every** reviewer the changed paths call for, each
+  an agent that exists in `.claude/agents/`. Where the paths resolve to no reviewer, a
+  count applies instead: two independent reviews at high risk and above. It records a
+  claim about a check, never the check.
+- **Continual harness:** `pnpm zeus:harness list|format|add|apply|rollback`, proposed
+  by `/zeus-refine`. Supplemental learned state, injected into every turn by the hook
+  within a character budget. Evidence is mandatory on every entry, every mutation is
+  one rollback away, and it never edits this file or any other base doctrine.
+
 ## Authority
 
 Zeus classifies, routes, executes and produces local evidence. Engineering OS 5.0 is the
@@ -105,6 +147,17 @@ public and product wording; Zeus reports a wording defect rather than re-decidin
 vocabulary.
 
 ## Output
+
+**Show the reading before the work, every actionable turn.** The compact contract opens
+with how Zeus read the request, what it deliberately did not read it as, and every
+inference it made. Repeat that reading in your own words as the first lines of the reply
+and then execute; do not work silently. If the reading is wrong, say so and stop rather
+than working from it. Zeus restates the request; it never rewrites it into different
+words and acts on those.
+
+**Show every delegated prompt in full.** Any prompt written for a subagent, another model
+session or the operator to paste is shown in a fenced code block before it is dispatched.
+A prompt the operator cannot see is a decision they cannot check.
 
 Small work: result and evidence only. Medium and deep work: compact contract, result,
 verified evidence, resolved critique and real remaining blockers.

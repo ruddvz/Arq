@@ -6,7 +6,7 @@ const val = (n) => {
   const i = a.indexOf(`--${n}`);
   return i >= 0 ? a[i + 1] : null;
 };
-const task = (val('task') ?? readFileSync(0, 'utf8')).trim();
+const task = (val('task') ?? (process.stdin.isTTY ? '' : readFileSync(0, 'utf8'))).trim();
 if (!task) {
   console.error('Provide --task or stdin');
   process.exit(2);

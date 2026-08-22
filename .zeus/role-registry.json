@@ -1,5 +1,5 @@
 {
-  "version": "4.0.0",
+  "version": "5.0.0",
   "project": "Arq",
   "roles": [
     {
@@ -68,5 +68,29 @@
       "id": "delivery-reliability",
       "capabilities": ["PR", "CI", "logs", "merge", "deploy", "incident"]
     }
-  ]
+  ],
+  "moduleOwners": {
+    "architecture": "product-architecture",
+    "geometry": "geometry-bim",
+    "editor-input": "editor-interaction",
+    "arqfs": "arqfs-recovery",
+    "rendering": "rendering-performance",
+    "ui-visual": "ui-visual",
+    "accessibility": "accessibility",
+    "security": "security",
+    "github-cicd": "delivery-reliability",
+    "release-production": "delivery-reliability",
+    "ai": "ai-arqscript",
+    "interoperability": "interoperability",
+    "incident": "incident-commander"
+  },
+  "modeOwners": {
+    "release": "delivery-reliability",
+    "incident": "delivery-reliability"
+  },
+  "defaultOwner": "executor",
+  "reviewRoles": {
+    "always": "qa-release",
+    "persistentOrWider": "security"
+  }
 }

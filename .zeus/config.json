@@ -29,6 +29,15 @@
       "supportingMethods": 8
     }
   },
+  "harness": {
+    "store": ".zeus/harness/state.json",
+    "promptCharBudget": 1200,
+    "maxActiveEntries": 40,
+    "maxTitleChars": 90,
+    "maxContentChars": 600,
+    "maxEvidenceChars": 300,
+    "rollbackWindow": 5
+  },
   "cache": {
     "directory": ".zeus/cache",
     "indexTtlSeconds": 86400,
@@ -59,6 +68,17 @@
     "build": 600000,
     "ciPoll": 900000
   },
+  "gates": {
+    "store": ".zeus/gates/current.json",
+    "repositoryGates": ["format:check", "lint", "typecheck", "test", "build"],
+    "reviewRequiredAtRisk": ["high", "critical"],
+    "reviewQuorumWhenUnmatched": {
+      "low": 1,
+      "moderate": 1,
+      "high": 2,
+      "critical": 2
+    }
+  },
   "status": ["green", "partial", "blocked", "failed", "rolled_back"],
   "evidenceStates": [
     "verified",
@@ -85,5 +105,11 @@
   "gate": {
     "authority": "engineering-os-5",
     "note": "Zeus classifies, routes and produces local evidence. It may raise a lane or add impacts. It may never lower a lane, mark missing evidence as passed, or stand in for the engineering-gate workflow."
+  },
+  "plan": {
+    "store": ".zeus/plans/current.json",
+    "maxItems": 60,
+    "maxTitleChars": 120,
+    "maxAcceptanceChars": 400
   }
 }

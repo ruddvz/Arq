@@ -36,9 +36,40 @@ destructive commands, secret access and edits to real project containers (ArqScr
 blocks a completion claim made with no tool evidence at all. Both are pinned by
 `node scripts/zeus-guard-test.mjs`.
 
+Four records keep "verified" and "finished" facts rather than memories, and all are
+additive to the five steps above rather than a replacement for them. They answer four
+different questions: what each claim rests on (`zeus evidence`), which checks passed and
+at which tree (`zeus:gate`), where the work sits in the delivery pipeline
+(`zeus state`), and what the work items are and which are proven (`zeus:plan`).
+
+- **Plan ledger** (`pnpm zeus:plan`): every item names an owning role from
+  `.zeus/role-registry.json` and its own acceptance; an item is done only with a command
+  and a zero exit; and `close` refuses while any item is pending, active or blocked,
+  naming each one. That refusal is the loop, and it is what stops a six-item request
+  being reported finished after four.
+
+- **Gate ledger** (`pnpm zeus:gate`): a gate result belongs to the workspace fingerprint
+  it was recorded at, so any edit makes it stale; a failed gate is never skippable;
+  rounds are bounded by the tier repair budget in `.zeus/config.json`; and `ship` refuses
+  until every gate in `gates.repositoryGates` passed at the current fingerprint and,
+  where risk or blast radius requires review, a passing `review:<agent>` gate for every
+  reviewer the changed paths call for, resolved through `.zeus/impact-map.json` to
+  `.zeus/module-manifest.json`; where they resolve to none, two independent reviews at
+  high risk and above. It records a claim about a
+  check, not the check itself.
+- **Continual harness** (`pnpm zeus:harness`, proposed by `/zeus-refine`): supplemental
+  learned state, injected into every turn by the hook within a character budget. Evidence
+  is mandatory on every entry and every mutation is one rollback away. It is supplemental
+  only: it never edits this file, `AGENTS.md` or anything under `.zeus/`, and doctrine
+  wins on any conflict with an entry.
+
+`pnpm zeus:drift` proves the kernel still carries every mode, tier, blast radius level,
+reversibility, evidence state and configured budget, that the hook still injects learned
+state, and that the published saving is still true.
+
 Full specification: `.zeus/ZEUS.md`. What changed from Zeus 4: `.zeus/UPGRADE-4-TO-5.md`.
 Slash commands: `/zeus`, `/zeus-audit`, `/zeus-handoff`, `/zeus-design`,
-`/zeus-incident`, `/zeus-release`.
+`/zeus-incident`, `/zeus-release`, `/zeus-refine`.
 
 **Zeus is advisory, not merge authority.** Deterministic change classification,
 evidence selection, and approval gating belong to Engineering OS 5.0

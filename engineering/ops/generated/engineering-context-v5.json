@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "e092f1ada11c5c3c8da84f4282f127a95163e8e35fa2599dc3a05fa758d9ff36",
+  "source_hash": "6a8906a79245b6acf40442cf68a2ddb25dad57cf056ff12e0f00e9af8a2ca1b5",
   "source_records": [
     {
       "scope": "package",
@@ -89,7 +89,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "d0f15626801406a690e0ce3356701888e35d1b6aab36469ced6f7d28de97266f"
+      "sha256": "3320f61ef48c89f63f182f663bf5a07ee128649a995e297dc004d6dcd5074b67"
     },
     {
       "scope": "repository",
@@ -394,7 +394,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "f188165781b288018ee358ce89d29b9d39ee38e70c3219d88b03855e523b26b0"
+      "sha256": "3d6a258b589ce2c6ca53ccefbc571d85c6cf7771a22c6c94bb79b5bb855069ff"
     },
     {
       "scope": "repository",

@@ -22,6 +22,24 @@ const map = {
   ci: 'zeus-ci-triage.mjs',
   deploy: 'zeus-deploy-status.mjs',
   smoke: 'zeus-production-smoke.mjs',
+  // Wired 2026-08-22. These seven existed and were reachable by nothing: not the
+  // CLI, not a package script, not the hook, not CI, not a document. The whole
+  // end-to-end pipeline Zeus documents in .zeus/TASK-STATE-MACHINE.md lived in
+  // zeus-run-state.mjs, and no path in the repository could run it.
+  // scripts/zeus-drift-guard.mjs now fails when a Zeus script is unreachable.
+  state: 'zeus-run-state.mjs',
+  roles: 'zeus-role-plan.mjs',
+  merge: 'zeus-merge-guard.mjs',
+  watch: 'zeus-release-watch.mjs',
+  'visual-contract': 'zeus-visual-contract-lint.mjs',
+  cache: 'zeus-cache.mjs',
+  stats: 'zeus-eval-stats.mjs',
+  record: 'zeus-eval-record.mjs',
+  gate: 'zeus-gate-ledger.mjs',
+  plan: 'zeus-plan-ledger.mjs',
+  spec: 'zeus-spec.mjs',
+  harness: 'zeus-harness-state.mjs',
+  drift: 'zeus-drift-guard.mjs',
 };
 if (!map[cmd]) {
   console.error('Usage: zeus ' + Object.keys(map).join('|'));
