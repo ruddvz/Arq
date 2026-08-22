@@ -10,6 +10,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import {
+  allRadii,
   canSkip,
   emptyLedger,
   gateConfig,
@@ -20,9 +21,11 @@ import {
   requiredSlot,
   reviewRequired,
   reviewRequiringRadii,
+  repositoryRoot,
   saveLedger,
   shipReadiness,
   startTask,
+  workspaceSignature,
 } from './zeus-gate-ledger.mjs';
 
 const config = gateConfig();
@@ -51,6 +54,30 @@ const open = (over: Record<string, unknown> = {}) => ({
     bounds,
   }),
   ...over,
+});
+
+describe('the workspace signature describes the repository, not the shell', () => {
+  it('is identical whichever directory the ledger is run from', () => {
+    // zeus-fingerprint.mjs hashes `git ls-files --others` relative to the root it
+    // is given, so a cwd-rooted signature differed between the repository root
+    // and packages/. Every gate recorded from one directory then read as stale
+    // from the other, and a ledger that goes stale for no reason stops being run.
+    //
+    // The chdir is the whole test. Comparing two calls made from the repository
+    // root passes against the cwd-rooted version too, because there cwd IS the
+    // root: that version of this test pinned nothing and was caught by running
+    // it against the un-fixed module.
+    const root = repositoryRoot();
+    const fromRoot = workspaceSignature();
+    const previous = process.cwd();
+    try {
+      process.chdir(join(root, 'packages'));
+      expect(process.cwd()).not.toBe(root);
+      expect(workspaceSignature()).toBe(fromRoot);
+    } finally {
+      process.chdir(previous);
+    }
+  });
 });
 
 const withGates = (ledger: Record<string, unknown>, rows: Record<string, unknown>[]) => ({
@@ -96,19 +123,74 @@ describe('configuration is read off disk, not hardcoded', () => {
 describe('opening a task', () => {
   it('refuses a risk or tier outside Zeus vocabulary', () => {
     expect(() =>
-      startTask(emptyLedger(), { task: 't', risk: 'medium', tier: 'fast', bounds }),
+      startTask(emptyLedger(), {
+        task: 't',
+        risk: 'medium',
+        tier: 'fast',
+        blastRadius: 'local',
+        bounds,
+      }),
     ).toThrow(/risk must be one of/);
     expect(() =>
-      startTask(emptyLedger(), { task: 't', risk: 'moderate', tier: 'quick', bounds }),
+      startTask(emptyLedger(), {
+        task: 't',
+        risk: 'moderate',
+        tier: 'quick',
+        blastRadius: 'local',
+        bounds,
+      }),
     ).toThrow(/tier must be one of/);
     expect(() => startTask(emptyLedger(), { task: '', risk: 'low', tier: 'fast', bounds })).toThrow(
       /start requires/,
     );
   });
 
+  it('refuses a ledger with no blast radius, because that waives review', () => {
+    // `start --risk moderate --tier standard` with no radius produced a ledger
+    // that required no reviewer at all: an unrecorded axis read as a benign one.
+    expect(() =>
+      startTask(emptyLedger(), { task: 't', risk: 'moderate', tier: 'standard', bounds }),
+    ).toThrow(/blast radius must be one of/);
+    expect(() =>
+      startTask(emptyLedger(), {
+        task: 't',
+        risk: 'moderate',
+        tier: 'standard',
+        blastRadius: 'invented',
+        bounds,
+      }),
+    ).toThrow(/blast radius must be one of/);
+  });
+
+  it('accepts every blast radius the repository actually defines', () => {
+    for (const id of allRadii()) {
+      expect(
+        startTask(emptyLedger(), {
+          task: 't',
+          risk: 'low',
+          tier: 'fast',
+          blastRadius: id,
+          bounds,
+        }).blastRadius,
+      ).toBe(id);
+    }
+  });
+
   it('binds the round bound to the tier', () => {
-    const fast = startTask(emptyLedger(), { task: 't', risk: 'low', tier: 'fast', bounds });
-    const deep = startTask(emptyLedger(), { task: 't', risk: 'high', tier: 'deep', bounds });
+    const fast = startTask(emptyLedger(), {
+      task: 't',
+      risk: 'low',
+      tier: 'fast',
+      blastRadius: 'local',
+      bounds,
+    });
+    const deep = startTask(emptyLedger(), {
+      task: 't',
+      risk: 'high',
+      tier: 'deep',
+      blastRadius: 'persistent',
+      bounds,
+    });
     expect(fast.bound).toBe(bounds.fast);
     expect(deep.bound).toBe(bounds.deep);
     expect(deep.round).toBe(1);
@@ -302,6 +384,13 @@ describe('the review gate', () => {
     expect(reviewRequired({ risk: 'low', blastRadius: 'local' }, { ...base, radii: null })).toBe(
       true,
     );
+  });
+
+  it('fails closed when the ledger carries no blast radius at all', () => {
+    // start refuses to create one, but the ledger is plain hand-editable JSON,
+    // and "the axis is absent" is not evidence that the axis is safe.
+    expect(reviewRequired({ risk: 'moderate', blastRadius: null }, base)).toBe(true);
+    expect(reviewRequired({ risk: 'low' }, base)).toBe(true);
   });
 
   it('refuses when review is required and none was recorded', () => {

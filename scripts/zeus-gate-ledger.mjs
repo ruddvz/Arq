@@ -116,6 +116,16 @@ export function loopBounds(root = packageRoot) {
   return bounds;
 }
 
+/** Every blast radius level on disk, so `start` cannot accept an invented one. */
+export function allRadii(root = packageRoot) {
+  try {
+    const blast = JSON.parse(readFileSync(join(root, '.zeus', 'blast-radius.json'), 'utf8'));
+    return new Set((blast.levels ?? []).map((l) => l.id));
+  } catch (error) {
+    throw new Error(`cannot read .zeus/blast-radius.json - ${error.message}`);
+  }
+}
+
 /** Blast radius levels that require independent review, read off disk. */
 export function reviewRequiringRadii(root = packageRoot) {
   try {
@@ -133,8 +143,22 @@ export function ledgerPath(root = packageRoot) {
   return override || join(root, gateConfig(root).store);
 }
 
-/** The workspace signature, from Zeus's existing fingerprint script. */
-export function workspaceSignature(root = process.cwd()) {
+/**
+ * The workspace signature, from Zeus's existing fingerprint script.
+ *
+ * Rooted at the REPOSITORY, never at `process.cwd()`. zeus-fingerprint.mjs
+ * hashes `git ls-files --others` relative to the root it is given, so running
+ * from a subdirectory produces a different signature for an identical tree.
+ * Measured: the repository root and `packages/` disagreed, which would report
+ * every gate recorded from one directory as stale from the other, and a ledger
+ * that goes stale for no reason is a ledger people stop running.
+ */
+export function repositoryRoot(from = packageRoot) {
+  const r = spawnSync('git', ['-C', from, 'rev-parse', '--show-toplevel'], { encoding: 'utf8' });
+  return r.status === 0 && r.stdout.trim() ? r.stdout.trim() : from;
+}
+
+export function workspaceSignature(root = repositoryRoot()) {
   const r = spawnSync(
     process.execPath,
     [join(packageRoot, 'scripts', 'zeus-fingerprint.mjs'), '--root', root],
@@ -189,10 +213,21 @@ export function saveLedger(ledger, path = ledgerPath()) {
   return ledger;
 }
 
-export function startTask(ledger, { task, risk, tier, blastRadius = null, bounds }) {
+export function startTask(ledger, { task, risk, tier, blastRadius, bounds, radii = null }) {
   if (!task) throw new Error('start requires --task "<name>"');
   if (!RISK_SET.has(risk)) throw new Error(`risk must be one of ${RISKS.join('|')}`);
   if (!TIERS.has(tier)) throw new Error(`tier must be one of ${[...TIERS].join('|')}`);
+  // Required, not optional. Blast radius is half the review rule, so an omitted
+  // one silently waived review for everything below high risk: `start --risk
+  // moderate` with no radius produced a ledger that shipped with no reviewer at
+  // all. An unrecorded axis must never read as a benign one.
+  const known = radii ?? allRadii();
+  if (!known.has(blastRadius)) {
+    throw new Error(
+      `blast radius must be one of ${[...known].join('|')} (from .zeus/blast-radius.json). ` +
+        'It is half the review rule, so it cannot be left unrecorded.',
+    );
+  }
   return {
     ...emptyLedger(),
     task,
@@ -298,7 +333,11 @@ export function reviewRequired(
   // A radius table that could not be read means every radius is treated as
   // review-requiring: an unreadable rule must not become a waiver.
   if (radii === null) return true;
-  return Boolean(ledger.blastRadius) && radii.has(ledger.blastRadius);
+  // Nor may a MISSING radius. `start` refuses to open a ledger without one, but
+  // this file is plain JSON and hand-editable, and "the axis is absent" is not
+  // evidence that the axis is safe.
+  if (!ledger.blastRadius) return true;
+  return radii.has(ledger.blastRadius);
 }
 
 /**
@@ -437,7 +476,7 @@ function arg(args, name, fallback) {
 const USAGE = `Zeus gate ledger - loop bounds and gate results, recorded rather than claimed.
 
 Usage:
-  pnpm zeus:gate start --task "<name>" --risk <low|moderate|high|critical> --tier <fast|standard|deep> [--blast-radius <id>]
+  pnpm zeus:gate start --task "<name>" --risk <low|moderate|high|critical> --tier <fast|standard|deep> --blast-radius <id>
   pnpm zeus:gate record --gate <name> --outcome <pass|fail> --evidence "<proof>"
   pnpm zeus:gate can-skip --gate <name>   exit 0 only if it passed and nothing changed
   pnpm zeus:gate round                    next repair round; refuses past the tier budget
@@ -490,7 +529,7 @@ export function main(argv) {
         task: arg(args, 'task'),
         risk: arg(args, 'risk'),
         tier: arg(args, 'tier'),
-        blastRadius: arg(args, 'blast-radius', null),
+        blastRadius: arg(args, 'blast-radius'),
         bounds: loopBounds(),
       });
       saveLedger(next);

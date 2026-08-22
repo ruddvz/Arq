@@ -6,6 +6,7 @@
   "required": [
     "version",
     "intent",
+    "interpretation",
     "mode",
     "risk",
     "tier",
@@ -26,6 +27,29 @@
     "intent": {
       "type": "string",
       "maxLength": 320
+    },
+    "interpretation": {
+      "type": "object",
+      "description": "How the compiler read the request, shown to the operator before execution so a misread is caught in the first line rather than after the work.",
+      "required": ["as", "not", "assumptions", "words"],
+      "properties": {
+        "as": {
+          "type": "string"
+        },
+        "not": {
+          "type": "string"
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "words": {
+          "type": "string",
+          "maxLength": 240
+        }
+      }
     },
     "mode": {
       "enum": ["answer", "plan", "audit", "implement", "release", "incident"]
@@ -69,10 +93,27 @@
       "type": "object",
       "required": ["primary", "supporting", "formatting", "scopes"],
       "properties": {
-        "primary": { "type": "string" },
-        "supporting": { "type": "array", "items": { "type": "string" } },
-        "formatting": { "type": "array", "items": { "type": "string" } },
-        "scopes": { "type": "array", "items": { "type": "string" } }
+        "primary": {
+          "type": "string"
+        },
+        "supporting": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "formatting": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "owner": {

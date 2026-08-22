@@ -84,6 +84,7 @@ if (config) {
     'maxTitleChars',
     'maxContentChars',
     'maxEvidenceChars',
+    'rollbackWindow',
   ])
     if (!Number.isInteger(config.harness?.[key]) || config.harness[key] < 1)
       fail(`.zeus/config.json harness.${key} is not a positive integer`);

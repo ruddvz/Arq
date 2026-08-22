@@ -35,7 +35,8 @@
     "maxActiveEntries": 40,
     "maxTitleChars": 90,
     "maxContentChars": 600,
-    "maxEvidenceChars": 300
+    "maxEvidenceChars": 300,
+    "rollbackWindow": 5
   },
   "cache": {
     "directory": ".zeus/cache",

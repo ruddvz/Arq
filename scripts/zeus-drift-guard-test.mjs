@@ -54,6 +54,12 @@ const run = (dir) =>
     encoding: 'utf8',
   });
 
+// Source fragments from the renderer. Written as template literals with escaped
+// `\${` so they carry the real text without eslint reading them as a template
+// string someone forgot to backtick.
+const READING_LINE = `\`**Zeus reads this as** \${i.as}.\`,`;
+const CLASSIFICATION_LINE = `    \`**Mode / risk / tier / stop:** \${c.mode} / \${c.risk} / \${c.tier} / \${c.deliveryStop}\`,`;
+
 const CASES = [
   {
     name: 'baseline: an unmodified copy passes',
@@ -173,6 +179,56 @@ const CASES = [
           /Do not load\s+the rest of `\.zeus\/` by default\./,
           'Do not load the rest of `.zeus/` by default.',
         ),
+      ),
+    expectExit: 0,
+    expect: /drift guards passed/,
+  },
+  {
+    name: 'the contract stops carrying its reading of the request',
+    break: (dir) =>
+      edit(dir, 'scripts/lib/zeus-engine.mjs', (s) =>
+        s.replace('    interpretation: r.interpretation,\n', ''),
+      ),
+    expect: /carries no usable interpretation|no longer shows how Zeus read the request/,
+  },
+  {
+    name: 'the contract stops rendering its reading',
+    break: (dir) => edit(dir, 'scripts/lib/zeus-engine.mjs', (s) => s.replace(READING_LINE, "'',")),
+    expect: /no longer shows how Zeus read the request/,
+  },
+  {
+    name: 'the reading is rendered after the classification instead of before it',
+    break: (dir) =>
+      edit(dir, 'scripts/lib/zeus-engine.mjs', (s) =>
+        // Move the reading block below the classification line, which is what a
+        // well-meant tidy-up of the renderer would do.
+        s
+          .replace(CLASSIFICATION_LINE, `${CLASSIFICATION_LINE}\n    ${READING_LINE}`)
+          .replace(`      ? [\n          ${READING_LINE}`, '      ? ['),
+      ),
+    expect: /shows its classification before its reading/,
+  },
+  {
+    name: 'the kernel loses the show-the-reading rule',
+    break: (dir) =>
+      edit(dir, '.zeus/FAST-KERNEL.md', (s) =>
+        s.replace('Show the reading before the work', 'Report the outcome'),
+      ),
+    expect: /no longer states: show the reading before the work/,
+  },
+  {
+    name: 'the kernel loses the show-delegated-prompts rule',
+    break: (dir) =>
+      edit(dir, '.zeus/FAST-KERNEL.md', (s) =>
+        s.replace('Show every delegated prompt in full', 'Delegate as needed'),
+      ),
+    expect: /no longer states: show every delegated prompt in full/,
+  },
+  {
+    name: 'the show-the-reading rule survives being rewrapped across lines',
+    break: (dir) =>
+      edit(dir, '.zeus/FAST-KERNEL.md', (s) =>
+        s.replace('Show the reading before the work', 'Show the reading\nbefore the work'),
       ),
     expectExit: 0,
     expect: /drift guards passed/,

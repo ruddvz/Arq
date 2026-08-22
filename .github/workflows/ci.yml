@@ -62,6 +62,19 @@ jobs:
       # hijacking, duplicate accessibility foundations, and parallel
       # state/animation frameworks fail the build in editor-critical paths.
       - run: pnpm check:editor-dependency-boundaries
+      # Zeus 5 operating-system self-checks. Deterministic, dependency-free and
+      # a few seconds in total. Until now no Zeus check ran in CI at all, so the
+      # drift guards were convention: nothing would have stopped the always-on
+      # hook losing its harness call, the kernel drifting from the budgets it
+      # publishes, or a new slash command the hook does not skip. The guard test
+      # runs first, on the same principle as check:decision-ids:test above - a
+      # verifier that cannot fail would report a clean repository either way.
+      #
+      # `pnpm zeus:test` is deliberately NOT here: it asserts a p95 compile time
+      # under 20ms, which is timing-sensitive on a shared runner and would flake.
+      - run: node scripts/zeus-drift-guard-test.mjs
+      - run: pnpm zeus:drift
+      - run: pnpm zeus:validate
 
   test:
     runs-on: ubuntu-latest

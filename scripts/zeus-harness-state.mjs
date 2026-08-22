@@ -55,6 +55,7 @@ export function harnessConfig(root = packageRoot) {
     'maxTitleChars',
     'maxContentChars',
     'maxEvidenceChars',
+    'rollbackWindow',
   ];
   for (const key of numbers) {
     if (!Number.isInteger(h[key]) || h[key] < 1) {
@@ -337,7 +338,35 @@ export function applyRefinement(state, { trigger, rationale = '', expectedOutcom
     snapshotBefore: before,
   };
   state.refinements.push(event);
+  pruneSnapshots(state);
   return { state, event };
+}
+
+/**
+ * Keeps a full before-snapshot only for the most recent `rollbackWindow`
+ * refinements, and drops the snapshot (never the event) from older ones.
+ *
+ * Measured on a store filled to its own 40-entry cap: 40 seed refinements
+ * produced an 811 KB file, and 40 ordinary edits took it to 2,385 KB. That is
+ * 100x the 24 KB it actually injects, in a file that is committed, reviewed and
+ * merge-conflict-prone, because every refinement stored a complete copy of every
+ * entry. Snapshot growth is quadratic in a store designed to be edited often.
+ *
+ * The deep history is not lost: this file is tracked, so git holds every prior
+ * version. The in-store window covers the case the window is for, undoing a
+ * refinement you have just made and can still see.
+ */
+export function pruneSnapshots(state, window = harnessConfig().rollbackWindow) {
+  const cut = state.refinements.length - window;
+  for (let i = 0; i < cut; i += 1) {
+    const event = state.refinements[i];
+    if (event.snapshotBefore === undefined) continue;
+    delete event.snapshotBefore;
+    // Recorded, not implied. `rollback` refuses these by name rather than
+    // failing on an absent field, so the reason reaches a human.
+    event.snapshotDropped = true;
+  }
+  return state;
 }
 
 /**
@@ -373,6 +402,13 @@ export function applyProposal(state, proposal, { dryRun = false } = {}) {
 export function rollback(state, refinementId) {
   const index = state.refinements.findIndex((r) => r.id === refinementId);
   if (index === -1) throw new Error(`no refinement "${refinementId}"`);
+  if (state.refinements[index].snapshotDropped) {
+    throw new Error(
+      `"${refinementId}" is older than the ${harnessConfig().rollbackWindow}-refinement rollback window, ` +
+        'so its before-snapshot was dropped to keep the tracked store small. ' +
+        'This file is committed, so recover that state from git history instead.',
+    );
+  }
   // Snapshot BEFORE restoring. Taking it afterwards records the post-rollback
   // entries, which makes the rollback itself irreversible: rolling back an
   // accidental rollback would restore the state it had just produced and the
@@ -389,6 +425,7 @@ export function rollback(state, refinementId) {
     createdAt: now(),
     snapshotBefore,
   });
+  pruneSnapshots(state);
   return state;
 }
 

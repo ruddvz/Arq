@@ -384,6 +384,71 @@ describe('slug', () => {
   });
 });
 
+describe('the tracked store stays small enough to review', () => {
+  it('keeps a before-snapshot only inside the rollback window', () => {
+    const state = emptyState();
+    for (let i = 0; i < config.rollbackWindow + 3; i += 1) {
+      applyRefinement(state, { trigger: `edit ${i}`, edits: [entry({ title: `entry ${i}` })] });
+    }
+    const withSnapshot = state.refinements.filter(
+      (r: { snapshotBefore?: unknown }) => r.snapshotBefore !== undefined,
+    );
+    expect(withSnapshot).toHaveLength(config.rollbackWindow);
+    // The EVENTS all survive. Only the snapshots age out, so the history of what
+    // changed stays complete and reviewable.
+    expect(state.refinements).toHaveLength(config.rollbackWindow + 3);
+    expect(state.refinements[0].changes).toHaveLength(1);
+    expect(state.refinements[0].snapshotDropped).toBe(true);
+  });
+
+  it('refuses a rollback past the window by name instead of failing obscurely', () => {
+    const state = emptyState();
+    for (let i = 0; i < config.rollbackWindow + 2; i += 1) {
+      applyRefinement(state, { trigger: `edit ${i}`, edits: [entry({ title: `entry ${i}` })] });
+    }
+    const oldest = state.refinements[0].id;
+    expect(() => rollback(state, oldest)).toThrow(/older than the .* rollback window/);
+    expect(() => rollback(state, oldest)).toThrow(/from git history/);
+  });
+
+  it('still rolls back anything inside the window', () => {
+    const state = emptyState();
+    for (let i = 0; i < config.rollbackWindow + 2; i += 1) {
+      applyRefinement(state, { trigger: `edit ${i}`, edits: [entry({ title: `entry ${i}` })] });
+    }
+    const newest = state.refinements[state.refinements.length - 1].id;
+    const before = state.entries.length;
+    rollback(state, newest);
+    expect(state.entries).toHaveLength(before - 1);
+  });
+
+  it('does not grow without bound as the store is edited', () => {
+    // Measured before the window existed: a store at its own entry cap reached
+    // 2,385 KB after 80 ordinary refinements, carrying 24 KB of actual state,
+    // in a file that is committed and reviewed. Snapshot growth is quadratic.
+    const state = emptyState();
+    const body = 'x'.repeat(config.maxContentChars - 1);
+    for (let i = 0; i < config.maxActiveEntries; i += 1) {
+      applyRefinement(state, {
+        trigger: `seed ${i}`,
+        edits: [entry({ title: `entry ${i}`, content: body })],
+      });
+    }
+    for (let i = 0; i < 40; i += 1) {
+      applyRefinement(state, {
+        trigger: `edit ${i}`,
+        edits: [
+          { action: 'update', id: state.entries[0].id, content: `${body.slice(0, 500)}${i}` },
+        ],
+      });
+    }
+    saveState(state, store);
+    const bytes = readFileSync(store, 'utf8').length;
+    const injected = config.maxActiveEntries * config.maxContentChars;
+    expect(bytes).toBeLessThan(injected * 12);
+  });
+});
+
 describe('the harness never edits base doctrine', () => {
   it('writes only inside its own store path', () => {
     const doctrine = join(dir, 'doctrine');

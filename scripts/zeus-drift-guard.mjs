@@ -22,6 +22,7 @@
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { compile, markdown } from './lib/zeus-engine.mjs';
 
 const ROOT = process.cwd();
 const packageRoot = dirname(dirname(new URL(import.meta.url).pathname));
@@ -150,6 +151,18 @@ const hook = read(HOOK);
       ['no merge or deploy without authority', /without authority and current-head evidence/i],
       ['engineering gate is the merge authority', /merge authority/i],
       ['the invariant register has one home', /INVARIANTS\.md/],
+      // The two visibility rules. Without them Zeus can classify a request
+      // correctly and still work from a reading the operator never saw, and can
+      // dispatch a subagent with a prompt nobody read.
+      // `\s+` between every word: this file wraps at 90 columns, so a literal
+      // space skips in silence the moment a sentence is reflowed. That is the
+      // drift these guards exist to catch, and it has now caught it twice.
+      ['show the reading before the work', /show\s+the\s+reading\s+before\s+the\s+work/i],
+      [
+        'never rewrite the request and act on that',
+        /never\s+rewrites?\s+it\s+into\s+different\s+words/i,
+      ],
+      ['show every delegated prompt in full', /show\s+every\s+delegated\s+prompt\s+in\s+full/i],
     ];
     for (const [label, pattern] of SAFETY) {
       if (!pattern.test(kernel)) errors.push(`${KERNEL} no longer states: ${label}`);
@@ -213,6 +226,38 @@ const hook = read(HOOK);
 }
 
 /* ------------------------------------------------------------------ guard 6 */
+// The compiled contract still SHOWS its reading, and shows it first.
+//
+// Behavioural, not textual: it compiles a real task and reads the rendered
+// output, because a guard that greps the renderer stays green when the field
+// stops being populated, and a guard that checks the field stays green when the
+// renderer stops printing it. The operator only ever sees the rendered form.
+{
+  try {
+    const contract = compile('Add a door tool to the plan canvas and open a pull request');
+    const i = contract.interpretation;
+    if (!i || !i.as || !i.not || !Array.isArray(i.assumptions) || !i.words) {
+      errors.push('the compiled contract carries no usable interpretation of the request');
+    }
+    const rendered = markdown(contract);
+    const readingAt = rendered.indexOf('Zeus reads this as');
+    const classificationAt = rendered.indexOf('Mode / risk / tier / stop');
+    if (readingAt === -1) {
+      errors.push('the rendered contract no longer shows how Zeus read the request');
+    } else if (classificationAt !== -1 && readingAt > classificationAt) {
+      errors.push(
+        'the rendered contract shows its classification before its reading; the reading is the line that catches a misread and must come first',
+      );
+    }
+    if (!rendered.includes(i?.words ?? '\u0000')) {
+      errors.push('the rendered contract no longer quotes the operator back to themselves');
+    }
+  } catch (error) {
+    errors.push(`cannot compile a contract to check the reading: ${error.message}`);
+  }
+}
+
+/* ------------------------------------------------------------------ guard 7 */
 // The gate ledger's configuration still points at things that exist.
 {
   const config = readJson('.zeus/config.json');

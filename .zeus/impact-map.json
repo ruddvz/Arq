@@ -77,6 +77,48 @@
       "modules": ["interoperability"],
       "checks": ["typecheck", "test"],
       "risk": "high"
+    },
+    {
+      "glob": ".zeus/**",
+      "modules": ["architecture"],
+      "checks": ["test"],
+      "risk": "high"
+    },
+    {
+      "glob": "scripts/zeus-*",
+      "modules": ["architecture"],
+      "checks": ["test"],
+      "risk": "high"
+    },
+    {
+      "glob": "scripts/lib/zeus-*",
+      "modules": ["architecture"],
+      "checks": ["test"],
+      "risk": "high"
+    },
+    {
+      "glob": ".claude/hooks/**",
+      "modules": ["architecture", "security"],
+      "checks": ["test"],
+      "risk": "high"
+    },
+    {
+      "glob": ".claude/agents/**",
+      "modules": ["architecture"],
+      "checks": ["test"],
+      "risk": "high"
+    },
+    {
+      "glob": ".claude/commands/**",
+      "modules": ["architecture"],
+      "checks": ["test"],
+      "risk": "high"
+    },
+    {
+      "glob": ".claude/settings.json",
+      "modules": ["architecture", "security"],
+      "checks": ["test"],
+      "risk": "high"
     }
   ]
 }

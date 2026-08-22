@@ -275,6 +275,107 @@ const SCOPE_SIGNALS = {
   learn: compileSignals(['teach', 'quiz', 'flashcard', 'coach', 'tutorial']),
 };
 
+/**
+ * What each mode MEANS, in the operator's language, and what it deliberately
+ * does not mean. The negative half is the load-bearing one: a misread is far
+ * easier to spot from "not read as an instruction to change anything" than from
+ * the word `answer` in a field.
+ */
+const READINGS = {
+  answer: {
+    as: 'a question to answer from current evidence',
+    not: 'an instruction to change anything',
+  },
+  plan: {
+    as: 'a request for a plan',
+    not: 'authorisation to implement that plan',
+  },
+  audit: {
+    as: 'a request to inspect and critique what already exists',
+    not: 'authorisation to change it',
+  },
+  implement: {
+    as: 'an instruction to change the repository and verify the change',
+    not: 'a request for a plan or a discussion',
+  },
+  release: {
+    as: 'an instruction to deliver through the release path',
+    not: 'a local-only change',
+  },
+  incident: {
+    as: 'an instruction to stabilise a live failure before anything else',
+    not: 'routine improvement work',
+  },
+};
+
+/**
+ * The compiler's reading of the request, in plain words, with every inference
+ * it made named. Deterministic and offline by design: this runs in the
+ * `UserPromptSubmit` hook on every actionable prompt, so it cannot call a model,
+ * and a restatement that needed one would be exactly the thing it is meant to
+ * let the operator check.
+ *
+ * It restates rather than paraphrases. Zeus does not rewrite the operator's
+ * words into a new prompt and then act on that: it says how it read the words
+ * it was given, so a wrong reading is caught in the first line of the reply
+ * rather than after the work is done.
+ *
+ * @param {string} task the operator's own words
+ * @param {object} facts pre- and post-adjustment classification values
+ */
+export function interpret(task, facts) {
+  const reading = READINGS[facts.mode] ?? READINGS.implement;
+  const assumptions = [];
+
+  if (facts.stopSource === 'assumed') {
+    assumptions.push(
+      `no delivery stop was stated, so Zeus stops at ${facts.deliveryStop} and goes no further`,
+    );
+  } else if (facts.stopSource === 'mode') {
+    assumptions.push(`delivery stops at ${facts.deliveryStop} because of how the request reads`);
+  } else {
+    assumptions.push(`delivery stop ${facts.deliveryStop} was taken from your words`);
+  }
+
+  // Reading about a risky area is not changing it. Saying so stops the opposite
+  // worry: that Zeus failed to notice the topic was sensitive.
+  if (facts.riskHeldForQuestion) {
+    assumptions.push(
+      'risk held at moderate: this reads as a question or a plan, and reading about a risky area is not changing it',
+    );
+  }
+  if (facts.riskRaisedBy) {
+    assumptions.push(`risk raised to ${facts.risk} because the work is ${facts.riskRaisedBy}`);
+  }
+  if (facts.tierRaisedByRadius) {
+    assumptions.push(
+      `tier raised to ${facts.tier} by a ${facts.blastRadius} blast radius, not by the size of the change`,
+    );
+  }
+  if (!facts.modules.length) {
+    assumptions.push('no domain module matched, so only the kernel and its invariants apply');
+  }
+  // Said on every change-mode turn, because it is always true and the operator
+  // cannot otherwise tell how thin the input was. Measured: "Rename a variable
+  // in packages/arqfs/src/open.ts" classifies low / package / fast from words
+  // alone, while `zeus impact` puts the same file at high / persistent once it
+  // is a real changed path. Reading a tier off the prompt and trusting it is a
+  // mistake the compiler can warn about rather than one the operator has to know.
+  if (facts.mode !== 'answer' && facts.mode !== 'plan') {
+    assumptions.push(
+      'classified from your words alone; run `node scripts/zeus.mjs impact` once files change, because paths can raise this',
+    );
+  }
+
+  const words = task.trim().replace(/\s+/g, ' ');
+  return {
+    as: reading.as,
+    not: reading.not,
+    assumptions,
+    words: words.length > 240 ? `${words.slice(0, 237)}...` : words,
+  };
+}
+
 export function classify(task) {
   const s = normalise(task);
   const act = speechAct(task);
@@ -292,6 +393,9 @@ export function classify(task) {
   if (anyMatch(s, CRITICAL_SIGNALS)) risk = 'critical';
   else if (anyMatch(s, HIGH_SIGNALS)) risk = 'high';
   else if (anyMatch(s, LOW_SIGNALS)) risk = 'low';
+  // Kept so the interpretation can say the topic WAS read as sensitive, rather
+  // than leaving the operator to wonder whether Zeus noticed at all.
+  const rawRisk = risk;
 
   // Reading about a risky area is not the same as changing it.
   if ((mode === 'answer' || mode === 'plan') && RISK_RANK[risk] > RISK_RANK.moderate)
@@ -302,7 +406,7 @@ export function classify(task) {
   else if (anyMatch(s, COMPENSABLE_SIGNALS)) reversibility = 'compensable';
   if (mode === 'answer' || mode === 'plan') reversibility = 'reversible';
 
-  return { mode, risk, reversibility, speechAct: act };
+  return { mode, risk, rawRisk, reversibility, speechAct: act };
 }
 
 export function globToRe(glob) {
@@ -336,18 +440,33 @@ export function classifyPaths(files = []) {
  * Routing
  * ------------------------------------------------------------------ */
 
-function resolveStop(s, mode) {
-  if (mode === 'answer') return 'answer';
-  if (mode === 'plan') return 'plan';
-  if (mode === 'audit') return 'answer';
+/**
+ * Where delivery stops, and WHY it stops there. The source matters as much as
+ * the value: an assumed stop is the single most common way a compiler and an
+ * operator quietly disagree, and it is invisible unless it is said out loud.
+ */
+function resolveStopWithSource(s, mode) {
+  if (mode === 'answer') return { stop: 'answer', source: 'mode' };
+  if (mode === 'plan') return { stop: 'plan', source: 'mode' };
+  if (mode === 'audit') return { stop: 'answer', source: 'mode' };
 
   let stop = 'local-green';
+  let source = 'assumed';
   for (const [candidate, matchers] of STOP_SIGNALS) {
-    if (anyMatch(s, matchers) && STOP_RANK[candidate] > STOP_RANK[stop]) stop = candidate;
+    if (anyMatch(s, matchers) && STOP_RANK[candidate] > STOP_RANK[stop]) {
+      stop = candidate;
+      source = 'stated';
+    }
   }
-  if (mode === 'release' && STOP_RANK[stop] < STOP_RANK['production-verified'])
+  if (mode === 'release' && STOP_RANK[stop] < STOP_RANK['production-verified']) {
     stop = 'production-verified';
-  return stop;
+    source = 'mode';
+  }
+  return { stop, source };
+}
+
+function resolveStop(s, mode) {
+  return resolveStopWithSource(s, mode).stop;
 }
 
 export function route(task, forcedTier = null) {
@@ -392,28 +511,53 @@ export function route(task, forcedTier = null) {
   if (c.mode === 'answer' || c.mode === 'plan') radius = 'local';
 
   let risk = c.risk;
-  if (RADIUS_RANK[radius] >= RADIUS_RANK.persistent && RISK_RANK[risk] < RISK_RANK.high)
+  let riskRaisedBy = null;
+  if (RADIUS_RANK[radius] >= RADIUS_RANK.persistent && RISK_RANK[risk] < RISK_RANK.high) {
     risk = 'high';
-  if (c.reversibility === 'irreversible' && RISK_RANK[risk] < RISK_RANK.high) risk = 'high';
+    riskRaisedBy = `reaching ${radius} data`;
+  }
+  if (c.reversibility === 'irreversible' && RISK_RANK[risk] < RISK_RANK.high) {
+    risk = 'high';
+    riskRaisedBy = 'irreversible';
+  }
 
   const riskTier = risk === 'low' ? 'fast' : risk === 'moderate' ? 'standard' : 'deep';
   const radiusTier = RADIUS_LEVEL[radius]?.minimumTier ?? 'fast';
+  const tierRaisedByRadius = TIER_RANK[radiusTier] > TIER_RANK[riskTier];
   let tier = forcedTier ?? TIER_BY_RANK[Math.max(TIER_RANK[riskTier], TIER_RANK[radiusTier])];
   // A question or a plan never buys a deep execution budget on topic alone.
   if ((c.mode === 'answer' || c.mode === 'plan') && !forcedTier)
     tier = TIER_BY_RANK[Math.min(TIER_RANK[tier], TIER_RANK.standard)];
 
   const limit = config.budgets[tier].modules;
+  const modules = scored.slice(0, limit);
+  const { stop, source } = resolveStopWithSource(s, c.mode);
 
   return {
     mode: c.mode,
     risk,
     tier,
-    deliveryStop: resolveStop(s, c.mode),
+    deliveryStop: stop,
     blastRadius: radius,
     reversibility: c.reversibility,
-    modules: scored.slice(0, limit),
+    modules,
     droppedModules: scored.slice(limit).map((x) => x.id),
+    interpretation: interpret(task, {
+      mode: c.mode,
+      risk,
+      tier,
+      deliveryStop: stop,
+      stopSource: source,
+      blastRadius: radius,
+      modules,
+      // classify() lowers risk for a question or a plan, so the raw signals said
+      // one thing and the reading said another. That disagreement is worth
+      // surfacing rather than hiding behind the final value.
+      riskHeldForQuestion:
+        (c.mode === 'answer' || c.mode === 'plan') && RISK_RANK[c.rawRisk] > RISK_RANK.moderate,
+      riskRaisedBy,
+      tierRaisedByRadius: tierRaisedByRadius && !forcedTier,
+    }),
   };
 }
 
@@ -550,6 +694,7 @@ export function compile(task) {
   return {
     version: '5.0.0',
     intent: task.trim().slice(0, 320),
+    interpretation: r.interpretation,
     mode: r.mode,
     risk: r.risk,
     tier: r.tier,
@@ -583,9 +728,25 @@ export function markdown(c) {
     ...c.methods.supporting,
     ...(c.methods.formatting.length ? [`then ${c.methods.formatting.join(', ')}`] : []),
   ].join(' + ');
+  const i = c.interpretation;
   return [
     '# Zeus 5 Compact Contract',
     '',
+    // The reading comes FIRST, before any classification field. It is the line
+    // that catches a misread in one glance, and a field the operator has to
+    // decode is not that line. Zeus restates how it read the request; it never
+    // rewrites the request into different words and then acts on those.
+    ...(i
+      ? [
+          `**Zeus reads this as** ${i.as}.`,
+          `**Not as** ${i.not}.`,
+          ...(i.assumptions.length ? [`**Assumed:** ${i.assumptions.join('; ')}.`] : []),
+          `**Your words:** "${i.words}"`,
+          '',
+          'If that reading is wrong, say so before anything else; do not work from it.',
+          '',
+        ]
+      : []),
     `**Mode / risk / tier / stop:** ${c.mode} / ${c.risk} / ${c.tier} / ${c.deliveryStop}`,
     `**Blast radius / reversibility:** ${c.blastRadius} / ${c.reversibility}`,
     `**Owner:** ${c.owner}${c.reviewers.length ? ` · Review: ${c.reviewers.join(', ')}` : ''}${c.reviewAgents.length ? ` · Agents: ${c.reviewAgents.join(', ')}` : ''}`,
