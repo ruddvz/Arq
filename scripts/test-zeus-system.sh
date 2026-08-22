@@ -5,6 +5,7 @@ node scripts/zeus-verify.mjs;bash scripts/test-zeus-hook.sh
 node scripts/zeus-validate.mjs
 node scripts/zeus-classification-test.mjs
 node scripts/zeus-guard-test.mjs
+node scripts/zeus-drift-guard.mjs
 node scripts/zeus.mjs evidence init --root "$TMP" --task 'system test' >/dev/null
 node scripts/zeus.mjs evidence add --root "$TMP" --claim 'checks ran' --state verified --command 'true' --exit 0 >/dev/null
 node scripts/zeus.mjs evidence report --root "$TMP" >/dev/null

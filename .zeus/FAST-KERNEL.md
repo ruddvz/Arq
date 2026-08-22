@@ -73,6 +73,14 @@ neither restates it. The ones that decide the most cases:
 
 ## Context economy
 
+This kernel is the always-on read and is over 85% smaller than the full `.zeus/`
+doctrine set it compresses. Read it INSTEAD of that set, never in addition: reading
+both costs more than not splitting at all. Open a module or a specification document
+when the tier allows it, when a gate fails, or when a domain invariant matters in
+detail. `scripts/zeus-drift-guard.mjs` proves this file still carries every mode,
+tier, blast radius level, reversibility, evidence state and configured budget, and
+that the saving above is still true.
+
 Do not read whole repositories or whole long documents by default. Use the project
 index, exact files, headings and small snippets. Reuse evidence already read in the same
 run. Load deeper modules only on a trigger or a failed gate.
@@ -95,6 +103,23 @@ accepted. Record claims with `node scripts/zeus.mjs evidence`.
 A retry without new evidence is not progress. Diagnose the first wrong state, fix the
 root cause, invalidate affected cache entries and rerun the smallest proving check.
 Stop after the tier's repair budget and report what is still failing.
+
+## Recorded gates and learned state
+
+Two records exist so that "verified" is a fact rather than a memory. Neither replaces
+the evidence ledger; they answer questions it does not.
+
+- **Gate ledger:** `pnpm zeus:gate start|record|can-skip|round|ship`. A gate result
+  belongs to the workspace fingerprint it was recorded at, so any edit makes it stale.
+  A failed gate is never skippable. Rounds are bounded by the tier repair budget.
+  `ship` exits 0 only when every gate in `.zeus/config.json` `gates.repositoryGates`
+  passed at the current fingerprint and, where risk or blast radius requires review, a
+  `review:<agent>` gate passed naming an agent that exists in `.claude/agents/` and
+  that the changed paths call for. It records a claim about a check, never the check.
+- **Continual harness:** `pnpm zeus:harness list|format|add|apply|rollback`, proposed
+  by `/zeus-refine`. Supplemental learned state, injected into every turn by the hook
+  within a character budget. Evidence is mandatory on every entry, every mutation is
+  one rollback away, and it never edits this file or any other base doctrine.
 
 ## Authority
 

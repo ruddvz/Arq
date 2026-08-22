@@ -51,3 +51,11 @@ rust/target/
 # so a run that dies in between does not leave an untracked build artifact
 # looking like a source change.
 workers/arqfs-worker/.e2e-open-bundle/
+
+# Zeus 5 gate ledger. Per-task, per-workspace state: a recorded gate belongs to
+# the fingerprint it was taken at, so it means nothing in another checkout and
+# would only ever arrive stale. The continual harness store under
+# .zeus/harness/ is deliberately NOT ignored: learned state is agent-proposed
+# and human-committed, and a lesson nobody can review is the failure it exists
+# to fix.
+.zeus/gates/

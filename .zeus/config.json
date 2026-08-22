@@ -29,6 +29,14 @@
       "supportingMethods": 8
     }
   },
+  "harness": {
+    "store": ".zeus/harness/state.json",
+    "promptCharBudget": 1200,
+    "maxActiveEntries": 40,
+    "maxTitleChars": 90,
+    "maxContentChars": 600,
+    "maxEvidenceChars": 300
+  },
   "cache": {
     "directory": ".zeus/cache",
     "indexTtlSeconds": 86400,
@@ -58,6 +66,11 @@
     "package": 300000,
     "build": 600000,
     "ciPoll": 900000
+  },
+  "gates": {
+    "store": ".zeus/gates/current.json",
+    "repositoryGates": ["format:check", "lint", "typecheck", "test", "build"],
+    "reviewRequiredAtRisk": ["high", "critical"]
   },
   "status": ["green", "partial", "blocked", "failed", "rolled_back"],
   "evidenceStates": [

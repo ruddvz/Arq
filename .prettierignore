@@ -74,3 +74,12 @@ packages/*/wasm/
 # local `pnpm format:check` should not fail on them.
 .zeus/cache/
 .zeus/runs/
+
+# Zeus 5 operating-system state, written by scripts/zeus-harness-state.mjs and
+# scripts/zeus-gate-ledger.mjs with JSON.stringify. This is the oscillation case
+# described above: the next refinement or recorded gate writes its own style
+# back, so a Prettier pass over it is undone immediately. Verified: retiring one
+# entry shortens a `changes` array enough for Prettier to collapse it onto one
+# line, which failed `pnpm format:check` on a file no human edits.
+.zeus/harness/
+.zeus/gates/

@@ -1,0 +1,165 @@
+{
+  "version": 1,
+  "project": "Arq",
+  "entries": [
+    {
+      "id": "prompt-break-a-new-guard-on-purpose-before-trusting-it",
+      "kind": "prompt",
+      "title": "Break a new guard on purpose before trusting it",
+      "content": "After writing any guard, introduce the fault it targets, confirm the non-zero exit AND the exact message, then restore. Match the invocation, never a filename that a bystander line also mentions, and tolerate line wrapping in prose matches. Add the case to scripts/zeus-drift-guard-test.mjs so it stays proven.",
+      "evidence": "Weakening HARNESS_INVOCATION to a filename match made 2 of 16 cases in scripts/zeus-drift-guard-test.mjs fail; a literal-space CLAUDE.md regex failed the baseline case.",
+      "lane": "general",
+      "status": "active",
+      "source": "agent",
+      "createdAt": "2026-08-22T00:53:33.334Z",
+      "updatedAt": "2026-08-22T00:53:33.334Z",
+      "version": 1
+    },
+    {
+      "id": "memory-no-zeus-self-check-runs-in-ci-only-pnpm-test-does",
+      "kind": "memory",
+      "title": "No Zeus self-check runs in CI; only pnpm test does",
+      "content": "zeus:test, zeus:validate and zeus:drift are wired into no workflow. A new Zeus check is enforced only if it is a vitest suite collected by vitest.config.ts, which pnpm test runs in .github/workflows/ci.yml. Anything else is convention, so say so rather than calling it a gate.",
+      "evidence": "grep -rn zeus .github/workflows/ returns nothing; ci.yml job test runs pnpm test",
+      "lane": "github-cicd",
+      "status": "active",
+      "source": "agent",
+      "createdAt": "2026-08-22T00:53:33.335Z",
+      "updatedAt": "2026-08-22T00:53:33.335Z",
+      "version": 1
+    },
+    {
+      "id": "skill-find-the-reviewer-a-diff-actually-requires",
+      "kind": "skill",
+      "title": "Find the reviewer a diff actually requires",
+      "content": "Do not guess which reviewer agent to dispatch. Run the command in reference: it maps the changed paths through .zeus/impact-map.json to module ids and through .zeus/module-manifest.json to reviewer agents, and reports matched false rather than an empty set when it cannot tell.",
+      "evidence": "pnpm zeus:gate reviewers on packages/arqfs paths returns arq-file-integrity-reviewer and arq-security-ai-reviewer",
+      "lane": "general",
+      "reference": "pnpm zeus:gate reviewers",
+      "status": "active",
+      "source": "agent",
+      "createdAt": "2026-08-22T00:53:33.335Z",
+      "updatedAt": "2026-08-22T00:53:33.335Z",
+      "version": 1
+    }
+  ],
+  "refinements": [
+    {
+      "id": "ref-1-record-the-three-durable-lessons-the-prime-agent-integration",
+      "trigger": "record the three durable lessons the prime-agent integration proved",
+      "rationale": "Each is backed by a command run in this session, not by recollection: the guard-mutation probes, a grep over the workflows, and the reviewer match output itself.",
+      "expectedOutcome": "A later turn stops writing guards that match bystander strings, stops assuming a Zeus check is enforced, and knows how to find the reviewer a diff requires. Validate with: pnpm zeus:harness format",
+      "changes": [
+        "create prompt:prompt-break-a-new-guard-on-purpose-before-trusting-it",
+        "create memory:memory-no-zeus-self-check-runs-in-ci-only-pnpm-test-does",
+        "create skill:skill-find-the-reviewer-a-diff-actually-requires"
+      ],
+      "createdAt": "2026-08-22T00:53:33.335Z",
+      "snapshotBefore": []
+    },
+    {
+      "id": "ref-2-retire-via-cli",
+      "trigger": "retire via cli",
+      "rationale": "",
+      "expectedOutcome": "",
+      "changes": [
+        "retire skill:skill-find-the-reviewer-a-diff-actually-requires"
+      ],
+      "createdAt": "2026-08-22T00:54:44.374Z",
+      "snapshotBefore": [
+        {
+          "id": "prompt-break-a-new-guard-on-purpose-before-trusting-it",
+          "kind": "prompt",
+          "title": "Break a new guard on purpose before trusting it",
+          "content": "After writing any guard, introduce the fault it targets, confirm the non-zero exit AND the exact message, then restore. Match the invocation, never a filename that a bystander line also mentions, and tolerate line wrapping in prose matches. Add the case to scripts/zeus-drift-guard-test.mjs so it stays proven.",
+          "evidence": "Weakening HARNESS_INVOCATION to a filename match made 2 of 16 cases in scripts/zeus-drift-guard-test.mjs fail; a literal-space CLAUDE.md regex failed the baseline case.",
+          "lane": "general",
+          "status": "active",
+          "source": "agent",
+          "createdAt": "2026-08-22T00:53:33.334Z",
+          "updatedAt": "2026-08-22T00:53:33.334Z",
+          "version": 1
+        },
+        {
+          "id": "memory-no-zeus-self-check-runs-in-ci-only-pnpm-test-does",
+          "kind": "memory",
+          "title": "No Zeus self-check runs in CI; only pnpm test does",
+          "content": "zeus:test, zeus:validate and zeus:drift are wired into no workflow. A new Zeus check is enforced only if it is a vitest suite collected by vitest.config.ts, which pnpm test runs in .github/workflows/ci.yml. Anything else is convention, so say so rather than calling it a gate.",
+          "evidence": "grep -rn zeus .github/workflows/ returns nothing; ci.yml job test runs pnpm test",
+          "lane": "github-cicd",
+          "status": "active",
+          "source": "agent",
+          "createdAt": "2026-08-22T00:53:33.335Z",
+          "updatedAt": "2026-08-22T00:53:33.335Z",
+          "version": 1
+        },
+        {
+          "id": "skill-find-the-reviewer-a-diff-actually-requires",
+          "kind": "skill",
+          "title": "Find the reviewer a diff actually requires",
+          "content": "Do not guess which reviewer agent to dispatch. Run the command in reference: it maps the changed paths through .zeus/impact-map.json to module ids and through .zeus/module-manifest.json to reviewer agents, and reports matched false rather than an empty set when it cannot tell.",
+          "evidence": "pnpm zeus:gate reviewers on packages/arqfs paths returns arq-file-integrity-reviewer and arq-security-ai-reviewer",
+          "lane": "general",
+          "reference": "pnpm zeus:gate reviewers",
+          "status": "active",
+          "source": "agent",
+          "createdAt": "2026-08-22T00:53:33.335Z",
+          "updatedAt": "2026-08-22T00:53:33.335Z",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "id": "ref-3-rollback",
+      "trigger": "rollback of ref-2-retire-via-cli",
+      "rationale": "reverted to the snapshot recorded before that refinement",
+      "expectedOutcome": "",
+      "changes": [
+        "rollback ref-2-retire-via-cli"
+      ],
+      "createdAt": "2026-08-22T00:55:08.637Z",
+      "snapshotBefore": [
+        {
+          "id": "prompt-break-a-new-guard-on-purpose-before-trusting-it",
+          "kind": "prompt",
+          "title": "Break a new guard on purpose before trusting it",
+          "content": "After writing any guard, introduce the fault it targets, confirm the non-zero exit AND the exact message, then restore. Match the invocation, never a filename that a bystander line also mentions, and tolerate line wrapping in prose matches. Add the case to scripts/zeus-drift-guard-test.mjs so it stays proven.",
+          "evidence": "Weakening HARNESS_INVOCATION to a filename match made 2 of 16 cases in scripts/zeus-drift-guard-test.mjs fail; a literal-space CLAUDE.md regex failed the baseline case.",
+          "lane": "general",
+          "status": "active",
+          "source": "agent",
+          "createdAt": "2026-08-22T00:53:33.334Z",
+          "updatedAt": "2026-08-22T00:53:33.334Z",
+          "version": 1
+        },
+        {
+          "id": "memory-no-zeus-self-check-runs-in-ci-only-pnpm-test-does",
+          "kind": "memory",
+          "title": "No Zeus self-check runs in CI; only pnpm test does",
+          "content": "zeus:test, zeus:validate and zeus:drift are wired into no workflow. A new Zeus check is enforced only if it is a vitest suite collected by vitest.config.ts, which pnpm test runs in .github/workflows/ci.yml. Anything else is convention, so say so rather than calling it a gate.",
+          "evidence": "grep -rn zeus .github/workflows/ returns nothing; ci.yml job test runs pnpm test",
+          "lane": "github-cicd",
+          "status": "active",
+          "source": "agent",
+          "createdAt": "2026-08-22T00:53:33.335Z",
+          "updatedAt": "2026-08-22T00:53:33.335Z",
+          "version": 1
+        },
+        {
+          "id": "skill-find-the-reviewer-a-diff-actually-requires",
+          "kind": "skill",
+          "title": "Find the reviewer a diff actually requires",
+          "content": "Do not guess which reviewer agent to dispatch. Run the command in reference: it maps the changed paths through .zeus/impact-map.json to module ids and through .zeus/module-manifest.json to reviewer agents, and reports matched false rather than an empty set when it cannot tell.",
+          "evidence": "pnpm zeus:gate reviewers on packages/arqfs paths returns arq-file-integrity-reviewer and arq-security-ai-reviewer",
+          "lane": "general",
+          "reference": "pnpm zeus:gate reviewers",
+          "status": "retired",
+          "source": "agent",
+          "createdAt": "2026-08-22T00:53:33.335Z",
+          "updatedAt": "2026-08-22T00:54:44.374Z",
+          "version": 1
+        }
+      ]
+    }
+  ]
+}

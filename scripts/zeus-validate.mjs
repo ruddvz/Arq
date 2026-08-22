@@ -12,6 +12,7 @@
 // legitimate internal prose.
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { agentRegistry } from './zeus-agent-registry.mjs';
 
 const root = process.cwd();
 const errors = [];
@@ -47,6 +48,11 @@ const REQUIRED = [
   'scripts/zeus-method.mjs',
   'scripts/zeus-evidence.mjs',
   'scripts/zeus-hook.sh',
+  'scripts/zeus-agent-registry.mjs',
+  'scripts/zeus-harness-state.mjs',
+  'scripts/zeus-gate-ledger.mjs',
+  'scripts/zeus-reviewer-match.mjs',
+  'scripts/zeus-drift-guard.mjs',
 ];
 for (const f of REQUIRED) if (!existsSync(join(root, f))) fail(`missing ${f}`);
 
@@ -69,6 +75,25 @@ if (config) {
     if (!config.evidenceStates.includes(s)) fail(`green evidence state ${s} is not a known state`);
   if (config.gate?.authority !== 'engineering-os-5')
     fail('.zeus/config.json must record Engineering OS 5.0 as the merge authority');
+  // The continual harness and the gate ledger read their budgets here rather
+  // than hardcoding them, so a missing block silently disables a feature the
+  // kernel advertises.
+  for (const key of [
+    'promptCharBudget',
+    'maxActiveEntries',
+    'maxTitleChars',
+    'maxContentChars',
+    'maxEvidenceChars',
+  ])
+    if (!Number.isInteger(config.harness?.[key]) || config.harness[key] < 1)
+      fail(`.zeus/config.json harness.${key} is not a positive integer`);
+  if (!config.harness?.store) fail('.zeus/config.json harness.store is not a path');
+  if (!config.gates?.store) fail('.zeus/config.json gates.store is not a path');
+  if (!Array.isArray(config.gates?.repositoryGates) || !config.gates.repositoryGates.length)
+    fail('.zeus/config.json gates.repositoryGates is empty, so ship could infer nothing');
+  for (const r of config.gates?.reviewRequiredAtRisk ?? [])
+    if (!['low', 'moderate', 'high', 'critical'].includes(r))
+      fail(`.zeus/config.json gates.reviewRequiredAtRisk names unknown risk ${r}`);
 }
 
 /* ------------------------------------------------------- 3. module manifest */
@@ -77,13 +102,12 @@ const manifest = readJson('.zeus/module-manifest.json');
 const blast = readJson('.zeus/blast-radius.json');
 const levelIds = new Set((blast?.levels ?? []).map((l) => l.id));
 const agentDir = join(root, '.claude/agents');
-const agentNames = new Set(
-  existsSync(agentDir)
-    ? readdirSync(agentDir)
-        .filter((f) => f.endsWith('.md'))
-        .map((f) => f.replace(/\.md$/, ''))
-    : [],
-);
+// One definition of "dispatchable", shared with the gate ledger. Two copies of
+// this rule disagree on the next edit, and both sit behind guards that assume
+// they agree.
+const agents = agentRegistry(agentDir);
+const agentNames = agents.dispatchable;
+const agentFiles = new Set([...agents.dispatchable, ...agents.roleDocs]);
 
 if (manifest) {
   if (manifest.version !== EXPECTED_VERSION)
@@ -203,7 +227,10 @@ if (zeusSkills < 30) fail(`expected at least 30 Zeus skills, found ${zeusSkills}
 
 if (!agentNames.size) fail('no reviewer agents installed under .claude/agents');
 if (agentNames.size < 6) fail(`expected at least 6 reviewer agents, found ${agentNames.size}`);
-for (const name of agentNames) {
+// Every file, not only the dispatchable ones: an agent Claude Code cannot
+// register is exactly the case worth reporting, and iterating the dispatchable
+// set alone would skip it in silence.
+for (const name of agentFiles) {
   const text = readFileSync(join(agentDir, `${name}.md`), 'utf8');
   const m = text.match(/^---\r?\nname:\s*([^\n]+)\r?\ndescription:\s*([^\n]+)\r?\n/);
   if (!m) {
@@ -255,7 +282,11 @@ const walk = (dir) => {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const p = join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name === 'cache' || entry.name === 'runs' || entry.name === 'backups') continue;
+      // Generated state, not authored Zeus assets. `harness` and `gates` hold
+      // agent-written entries and verbatim command output, and house style is
+      // enforced on those at write time by scripts/zeus-harness-state.mjs
+      // instead, where the message can name the entry.
+      if (['cache', 'runs', 'backups', 'harness', 'gates'].includes(entry.name)) continue;
       walk(p);
     } else if (/\.(md|json|cjs|mjs|sh)$/.test(entry.name)) {
       if (readFileSync(p, 'utf8').includes(EM_DASH))
