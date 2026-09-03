@@ -7,7 +7,7 @@
     "fast": {
       "modules": 1,
       "sources": 4,
-      "contextChars": 8000,
+      "contextChars": 4000,
       "contractChars": 900,
       "repairRounds": 2,
       "supportingMethods": 2
@@ -15,7 +15,7 @@
     "standard": {
       "modules": 4,
       "sources": 10,
-      "contextChars": 28000,
+      "contextChars": 12000,
       "contractChars": 1800,
       "repairRounds": 3,
       "supportingMethods": 4
@@ -23,7 +23,7 @@
     "deep": {
       "modules": 8,
       "sources": 24,
-      "contextChars": 80000,
+      "contextChars": 32000,
       "contractChars": 3200,
       "repairRounds": 5,
       "supportingMethods": 8
@@ -31,7 +31,7 @@
   },
   "harness": {
     "store": ".zeus/harness/state.json",
-    "promptCharBudget": 1200,
+    "promptCharBudget": 600,
     "maxActiveEntries": 40,
     "maxTitleChars": 90,
     "maxContentChars": 600,
@@ -60,6 +60,25 @@
       "vendor",
       ".zeus/cache",
       ".zeus/runs"
+    ]
+  },
+  "context": {
+    "sourceCaps": {
+      "fast": 3,
+      "standard": 6,
+      "deep": 12
+    },
+    "snippetChars": 1200,
+    "maxReturnedHeadings": 4,
+    "coldPathHints": [
+      "all-contents.md",
+      "implementation_ledger",
+      "implementation-ledger",
+      "/archive/",
+      "/archives/",
+      "/historical/",
+      "/history/",
+      "changelog"
     ]
   },
   "timeoutsMs": {
