@@ -16,6 +16,10 @@ export function loadConfigs() {
   }
 }
 
+function normalize(value) {
+  return String(value ?? '').toLowerCase().replace(/\s+/g, ' ').trim()
+}
+
 export function validateAdaptiveConfig({ core, adaptive } = loadConfigs()) {
   const errors = []
   if (core.mode !== adaptive.requiredCoreMode) errors.push(`core mode must be ${adaptive.requiredCoreMode}`)
@@ -95,6 +99,93 @@ export function adviseExpansion({ tier, category, used, expectedDecisionValue, p
     reevaluate: false,
     reasonRequired: false,
     reason: 'additional work has positive expected decision value and remains below the tier ceiling'
+  }
+}
+
+export function operationFingerprint({ kind, target = '', sourceFingerprint = '', purpose = '' }) {
+  return [kind, target, sourceFingerprint, purpose].map(normalize).join('|')
+}
+
+export function shouldReuseOperation({ seen = new Set(), key, protectedEvidence = false, stateChanged = false }) {
+  if (!key) throw new Error('operation key is required')
+  if (protectedEvidence) return { reuse: false, reason: 'protected Zeus evidence requires current proof' }
+  if (stateChanged) return { reuse: false, reason: 'workspace/source fingerprint changed' }
+  if (seen.has(key)) return { reuse: true, reason: 'fingerprint-valid evidence already exists for this operation' }
+  return { reuse: false, reason: 'no current reusable operation found' }
+}
+
+export function selectCapabilityClass({ tier = 'fast', deterministic = false, independentReview = false, visualAcceptance = false, highUncertainty = false }) {
+  if (deterministic) return 'deterministic-local'
+  if (independentReview) return 'independent-review'
+  if (visualAcceptance) return 'visual-browser-verification'
+  if (tier === 'deep' || highUncertainty) return 'architecture-high-uncertainty'
+  return 'routine-coding-reasoning'
+}
+
+export function shouldParallelize({ independent, sharedDecision = false, sharedMutation = false, duplicatedContext = false, decisiveEvidenceAlreadyFound = false }) {
+  if (decisiveEvidenceAlreadyFound) return { parallel: false, reason: 'cancel redundant lane because decisive evidence already exists' }
+  if (!independent) return { parallel: false, reason: 'work is not independently verifiable' }
+  if (sharedDecision) return { parallel: false, reason: 'lanes depend on the same unresolved decision' }
+  if (sharedMutation) return { parallel: false, reason: 'semantic state mutation remains one owned lane' }
+  if (duplicatedContext) return { parallel: false, reason: 'parallelism would duplicate context loading rather than reduce work' }
+  return { parallel: true, reason: 'independent bounded work can converge safely' }
+}
+
+export function evaluateRunEfficiency({ tier, usage = {}, requiredCurrentHeadProof = false, configs = loadConfigs() }) {
+  const budget = mergedBudget(tier, configs)
+  const limits = {
+    modules: budget.modules,
+    sources: budget.sources,
+    contextChars: budget.contextChars,
+    supportingMethods: budget.supportingMethods,
+    toolCalls: budget.toolCallsBeforeReevaluation,
+    externalResearchQueries: budget.externalResearchQueries,
+    readOnlyAgents: budget.parallelReadOnlyAgents,
+    mutationLanes: budget.parallelMutationLanes,
+    repairRounds: budget.repairRounds,
+    reviewers: budget.reviewerFanoutSoftCeiling
+  }
+  const actual = {
+    modules: usage.modules ?? 0,
+    sources: usage.sources ?? 0,
+    contextChars: usage.contextChars ?? 0,
+    supportingMethods: usage.supportingMethods ?? 0,
+    toolCalls: usage.toolCalls ?? 0,
+    externalResearchQueries: usage.externalResearchQueries ?? 0,
+    readOnlyAgents: usage.readOnlyAgents ?? 0,
+    mutationLanes: usage.mutationLanes ?? 0,
+    repairRounds: usage.repairRounds ?? 0,
+    reviewers: usage.reviewers ?? 0,
+    duplicateOperationsSuppressed: usage.duplicateOperationsSuppressed ?? 0,
+    duplicateOperationsExecuted: usage.duplicateOperationsExecuted ?? 0
+  }
+  const exceeded = Object.entries(limits)
+    .filter(([key, limit]) => Number.isFinite(limit) && actual[key] > limit)
+    .map(([key]) => key)
+  const qualityGreen = usage.requiredGatesPassed === true
+    && usage.requiredReviewPassed !== false
+    && usage.unresolvedHighRiskFinding !== true
+    && usage.evidenceState === 'verified'
+    && (!requiredCurrentHeadProof || usage.currentHeadProofPassed === true)
+  const duplicateWaste = actual.duplicateOperationsExecuted > 0
+  const acceptanceProven = usage.acceptanceProven === true
+
+  return {
+    tier,
+    limits,
+    actual,
+    exceeded,
+    within_budget: exceeded.length === 0,
+    quality_green: qualityGreen,
+    duplicate_waste_detected: duplicateWaste,
+    efficient: qualityGreen && exceeded.length === 0 && !duplicateWaste,
+    decision: acceptanceProven && qualityGreen
+      ? 'stop-success'
+      : exceeded.length > 0
+        ? 're-evaluate-tier-or-strategy'
+        : qualityGreen
+          ? 'continue-only-if-acceptance-not-yet-proven'
+          : 'repair-review-or-block'
   }
 }
 
