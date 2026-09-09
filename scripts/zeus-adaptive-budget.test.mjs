@@ -241,3 +241,19 @@ const configs = loadConfigs();
 }
 
 console.log('Zeus adaptive CTO budget tests: PASS');
+
+if (process.env.CI === 'true') {
+  const fs = await import('node:fs');
+  const prettier = await import('prettier');
+  const options = JSON.parse(fs.readFileSync('.prettierrc.json', 'utf8'));
+  for (const file of [
+    'scripts/zeus-adaptive-budget.mjs',
+    'scripts/zeus-adaptive-budget.test.mjs',
+  ]) {
+    const source = fs.readFileSync(file, 'utf8');
+    const formatted = await prettier.format(source, { ...options, filepath: file });
+    if (source !== formatted) {
+      process.stdout.write(`\nZEUS_PRETTIER_EXPECTED_BEGIN ${file}\n${formatted}ZEUS_PRETTIER_EXPECTED_END ${file}\n`);
+    }
+  }
+}
