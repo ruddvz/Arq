@@ -2,6 +2,12 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "generatedAt": "2026-09-09T21:31:56.739Z",
+      "sourceSetDigest": "c3e0400708328f35ad39b681124a3de91a37773d2dd6980ea9871d755c554555",
+      "previousSourceSetDigest": "59dca8b30564318a2e6d298c00a99fbbcbff181ef530261f3fd450f1b5968f76",
+      "changedSourceSets": ["marketing-deployment"]
+    },
+    {
       "generatedAt": "2026-08-11T08:39:16.829Z",
       "sourceSetDigest": "59dca8b30564318a2e6d298c00a99fbbcbff181ef530261f3fd450f1b5968f76",
       "previousSourceSetDigest": "2acf915dcee5ee60155769c59910f6864bf2858b25fb25a78e62620adfb7096e",

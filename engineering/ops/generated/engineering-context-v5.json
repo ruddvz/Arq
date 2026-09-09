@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "6a8906a79245b6acf40442cf68a2ddb25dad57cf056ff12e0f00e9af8a2ca1b5",
+  "source_hash": "a69546e23e086ad392fbaf26addfb09629db17f6d6e8a6c07bd3e2da5dd96ec1",
   "source_records": [
     {
       "scope": "package",
@@ -94,7 +94,7 @@
     {
       "scope": "repository",
       "path": ".github/workflows/deploy-pages.yml",
-      "sha256": "799f4aba03f23b60d51e9d201d2f897bd9ed1512ef548b34c4dca05bdd88bd9d"
+      "sha256": "d76cafc585a32391650c3be10777eded7e6198951b183f47bb4b28e5424fcece"
     },
     {
       "scope": "repository",
