@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "coreConfig": ".zeus/config.json",
+  "requiredCoreMode": "adaptive-fast",
+  "principle": "Core tier budgets are ceilings, not targets. Consume additional work only when it has positive expected decision or proof value.",
+  "uncertaintyStates": ["known", "resolvable", "assumption-bound", "blocked"],
+  "deliveryStops": ["answer", "plan", "local-implementation", "pull-request", "merge", "deployment", "production-verification"],
+  "budgetExtensions": {
+    "fast": {
+      "toolCallsBeforeReevaluation": 8,
+      "externalResearchQueries": 2,
+      "browserInteractions": 0,
+      "parallelReadOnlyAgents": 1,
+      "parallelMutationLanes": 1,
+      "reviewerFanoutSoftCeiling": 1
+    },
+    "standard": {
+      "toolCallsBeforeReevaluation": 20,
+      "externalResearchQueries": 6,
+      "browserInteractions": 4,
+      "parallelReadOnlyAgents": 2,
+      "parallelMutationLanes": 1,
+      "reviewerFanoutSoftCeiling": 2
+    },
+    "deep": {
+      "toolCallsBeforeReevaluation": 40,
+      "externalResearchQueries": 12,
+      "browserInteractions": 10,
+      "parallelReadOnlyAgents": 3,
+      "parallelMutationLanes": 1,
+      "reviewerFanoutSoftCeiling": 3
+    }
+  },
+  "valueOfInformation": {
+    "requiredBeforeExpansion": true,
+    "question": "Can this additional source, module, method, tool call or agent plausibly change implementation, risk, acceptance, verification, evidence state or delivery decision?",
+    "protectedProofOverridesOrdinaryCeiling": true,
+    "expansionReasonRequiredAtCeiling": true
+  },
+  "contextRanking": [
+    "authority",
+    "direct-relevance",
+    "freshness",
+    "expected-decision-value",
+    "size-cost"
+  ],
+  "capabilityClasses": [
+    "deterministic-local",
+    "routine-coding-reasoning",
+    "architecture-high-uncertainty",
+    "independent-review",
+    "visual-browser-verification"
+  ],
+  "continualHarnessLifecycle": {
+    "requireApplicabilityTrigger": true,
+    "requireExclusion": true,
+    "requireConfidence": true,
+    "requireLastValidated": true,
+    "requireSupersessionState": true,
+    "archiveLowValueEntries": true,
+    "storeHiddenReasoning": false
+  },
+  "telemetry": {
+    "rawPrompt": false,
+    "hiddenReasoning": false,
+    "aggregateOnly": true,
+    "fields": [
+      "mode",
+      "tier",
+      "risk",
+      "blastRadius",
+      "reversibility",
+      "uncertainty",
+      "deliveryStop",
+      "contextCharsUsed",
+      "modulesUsed",
+      "sourcesUsed",
+      "methodsUsed",
+      "toolCallsByClass",
+      "cacheHits",
+      "cacheInvalidations",
+      "agentCount",
+      "checksRun",
+      "repairRounds",
+      "escalationReasons",
+      "finalEvidenceState"
+    ]
+  }
+}
