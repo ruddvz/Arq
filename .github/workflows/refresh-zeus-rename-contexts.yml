@@ -1,0 +1,43 @@
+name: Refresh ZEUS rename contexts
+
+on:
+  push:
+    branches:
+      - chore/repository-rename-zeus
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-zeus-rename-contexts
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: chore/repository-rename-zeus
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Remove temporary helper before generating contexts
+        run: rm .github/workflows/refresh-zeus-rename-contexts.yml
+      - name: Refresh governed contexts against final intended tree
+        run: |
+          pnpm arq:language:refresh
+          pnpm engineering:context:build
+      - name: Commit refreshed contexts and helper removal
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: refresh rename-governed contexts"
+          git push origin HEAD:chore/repository-rename-zeus
