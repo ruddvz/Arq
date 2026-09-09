@@ -28,3 +28,9 @@ test, push, merge, deployment or production claim without evidence.
 Engineering OS 5.0 is the merge authority and the Arq Language System 4.1 is the
 language authority. Zeus may raise a lane or report a wording defect. It may never lower
 a lane, pass missing evidence, or re-decide governed vocabulary.
+
+For harness federation, graph-protocol adoption, cross-repository learning or changes
+that could make ZEUS depend on another harness, additionally read `.zeus/AUTONOMY.md`
+and `.zeus/autonomy.json`. They are conditional boundary documents, not ordinary
+always-on context. Arq execution must continue correctly when sibling repositories are
+unavailable.
