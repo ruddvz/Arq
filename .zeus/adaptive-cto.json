@@ -4,7 +4,15 @@
   "requiredCoreMode": "adaptive-fast",
   "principle": "Core tier budgets are ceilings, not targets. Consume additional work only when it has positive expected decision or proof value.",
   "uncertaintyStates": ["known", "resolvable", "assumption-bound", "blocked"],
-  "deliveryStops": ["answer", "plan", "local-implementation", "pull-request", "merge", "deployment", "production-verification"],
+  "deliveryStops": [
+    "answer",
+    "plan",
+    "local-implementation",
+    "pull-request",
+    "merge",
+    "deployment",
+    "production-verification"
+  ],
   "budgetExtensions": {
     "fast": {
       "toolCallsBeforeReevaluation": 8,
