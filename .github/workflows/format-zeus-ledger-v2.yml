@@ -1,0 +1,56 @@
+name: Format ZEUS repository ledger v2
+
+on:
+  push:
+    branches:
+      - codex/zeus-repository-intelligence-ledgers-v2
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/zeus-repository-intelligence-ledgers-v2
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Apply repository Prettier
+        run: |
+          pnpm exec prettier --write \
+            scripts/lib/zeus-repository-ledger.mjs \
+            scripts/zeus-evidence.mjs \
+            scripts/zeus-gate.mjs \
+            scripts/zeus-repository-intelligence-ledgers.test.mjs \
+            scripts/zeus.mjs \
+            package.json \
+            .github/workflows/zeus-repository-intelligence-ledgers.yml
+      - name: Commit formatting when needed
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo 'No formatting changes needed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            scripts/lib/zeus-repository-ledger.mjs \
+            scripts/zeus-evidence.mjs \
+            scripts/zeus-gate.mjs \
+            scripts/zeus-repository-intelligence-ledgers.test.mjs \
+            scripts/zeus.mjs \
+            package.json \
+            .github/workflows/zeus-repository-intelligence-ledgers.yml
+          git commit -m 'style(zeus): format repository ledger integration'
+          git push origin HEAD:codex/zeus-repository-intelligence-ledgers-v2
