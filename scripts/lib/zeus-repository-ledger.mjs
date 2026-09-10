@@ -28,13 +28,12 @@ export function graphLedgerState(graph, tier = 'standard') {
   const impactTruncated = Boolean(graph?.impact?.truncated);
   const uncertainty = Boolean(graph?.uncertainty);
   const fresh = Boolean(graph?.fresh);
-  const complete =
-    fresh &&
-    !uncertainty &&
-    unresolved.length === 0 &&
-    Object.keys(ambiguous).length === 0 &&
-    !contextTruncated &&
-    !impactTruncated;
+  const completeness =
+    !fresh || uncertainty || unresolved.length || Object.keys(ambiguous).length
+      ? 'unresolved'
+      : contextTruncated || impactTruncated
+        ? 'truncated'
+        : 'complete';
 
   return {
     protocol: 'zeus-repository-ledger/v1',
@@ -45,10 +44,10 @@ export function graphLedgerState(graph, tier = 'standard') {
     fingerprint: graph?.fingerprint ?? null,
     sourceRevision: graph?.source_revision ?? graph?.source?.source_revision ?? null,
     branch: graph?.branch ?? graph?.source?.branch ?? null,
-    query: { seeds: requested },
+    query: { kind: 'seed', seeds: requested },
     resolution: { resolved, unresolved, ambiguous },
+    completeness,
     truncation: { context: contextTruncated, impact: impactTruncated },
-    complete,
     provenance: graphProvenance(graph),
     verification: {
       level: graph?.verification?.level ?? 'unknown',
@@ -62,28 +61,34 @@ export function graphLedgerState(graph, tier = 'standard') {
 export function graphStateProblems(
   state,
   allowedProvenance = [],
-  { protectedOnly = false } = {},
+  { protectedOnly = false, recordedFingerprint = null } = {},
 ) {
   const protectedGraph = state?.verification?.level === 'protected';
   if (protectedOnly && !protectedGraph) return [];
 
   const problems = [];
-  if (!state?.fresh) problems.push(`repository graph is stale or missing (${state?.reason ?? 'unknown'})`);
+  if (!state?.fresh) {
+    problems.push(`repository graph is stale or missing (${state?.reason ?? 'unknown'})`);
+  }
+  if (recordedFingerprint && state?.fingerprint !== recordedFingerprint) {
+    problems.push('repository graph fingerprint changed since the gate/evidence record');
+  }
 
   const unresolved = state?.resolution?.unresolved ?? [];
   const ambiguous = Object.keys(state?.resolution?.ambiguous ?? {});
   if (unresolved.length) problems.push(`repository graph has unresolved seed(s): ${unresolved.join(', ')}`);
   if (ambiguous.length) problems.push(`repository graph has ambiguous seed(s): ${ambiguous.join(', ')}`);
-  if (state?.truncation?.context || state?.truncation?.impact) {
+  if (state?.completeness === 'truncated') {
     problems.push('repository graph evidence is truncated and cannot prove a protected gate');
   }
 
   const allowed = new Set(allowedProvenance);
-  const disallowed = (state?.provenance ?? []).filter((value) => !allowed.has(value));
-  if (disallowed.length) {
+  const provenance = state?.provenance ?? [];
+  const disallowed = provenance.filter((value) => !allowed.has(value));
+  if (protectedGraph && disallowed.length) {
     problems.push(`repository graph uses non-hard-gate provenance: ${unique(disallowed).join(', ')}`);
   }
-  if (protectedGraph && (state?.provenance ?? []).length === 0) {
+  if (protectedGraph && provenance.length === 0) {
     problems.push('repository graph has no hard-gate provenance for protected evidence');
   }
 
