@@ -1,0 +1,30 @@
+name: ZEUS context retrieval
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/zeus-context.mjs'
+      - 'scripts/zeus-context-retrieval.test.mjs'
+      - '.github/workflows/zeus-context-retrieval.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zeus-context-retrieval-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  context-retrieval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax-check context retrieval
+        run: node --check scripts/zeus-context.mjs
+      - name: Run context retrieval regressions
+        run: node scripts/zeus-context-retrieval.test.mjs
