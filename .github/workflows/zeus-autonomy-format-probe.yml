@@ -1,0 +1,31 @@
+name: ZEUS autonomy format probe
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/zeus-autonomy-verify.mjs'
+      - '.github/workflows/zeus-autonomy-format-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  format-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Print canonical Prettier diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm exec prettier --write scripts/zeus-autonomy-verify.mjs
+          git diff -- scripts/zeus-autonomy-verify.mjs
