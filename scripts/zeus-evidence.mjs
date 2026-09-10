@@ -105,8 +105,6 @@ if (sub === 'init') {
   const output = val('output');
   if (command) entry.command = command;
   if (exit !== null) {
-    // `--exit` with no value, or a non-numeric one, must not become NaN and pass for
-    // a real exit code.
     if (!Number.isInteger(Number(exit))) {
       console.error(`--exit expects an integer, got "${exit}".`);
       process.exit(2);
@@ -141,7 +139,9 @@ if (sub === 'init') {
       process.exit(2);
     }
     const binding = graphBinding(graphSeeds, tier);
-    const graphProblems = graphStateProblems(binding.state, binding.allowedProvenance);
+    const graphProblems = graphStateProblems(binding.state, binding.allowedProvenance, {
+      requireHardProvenance: entry.state === 'verified',
+    });
     if (entry.state === 'verified' && graphProblems.length) {
       console.error(`Cannot record graph-derived verified evidence: ${graphProblems.join('; ')}.`);
       process.exit(2);
@@ -179,6 +179,7 @@ if (sub === 'init') {
     const binding = graphBinding(seeds, recorded.tier ?? 'standard');
     const problems = graphStateProblems(binding.state, binding.allowedProvenance, {
       recordedFingerprint: recorded.fingerprint,
+      requireHardProvenance: true,
     });
     for (const problem of problems) graphProblems.push(`${entry.claim}: ${problem}`);
   }
