@@ -9,6 +9,60 @@ const root = path.resolve(__dirname, '..');
 const coreConfigPath = path.join(root, '.zeus/config.json');
 const adaptiveConfigPath = path.join(root, '.zeus/adaptive-cto.json');
 
+const REQUIRED_CAPABILITY_CLASSES = [
+  'deterministic-local',
+  'routine-coding-reasoning',
+  'architecture-high-uncertainty',
+  'independent-review',
+  'visual-browser-verification',
+];
+const REQUIRED_LIFECYCLE_FLAGS = [
+  'requireApplicabilityTrigger',
+  'requireExclusion',
+  'requireConfidence',
+  'requireLastUsed',
+  'requireLastValidated',
+  'requireSupersessionState',
+  'requireArchivalOrExpiryReview',
+  'deduplicateSemanticEquivalents',
+  'archiveLowValueEntries',
+];
+const REQUIRED_TELEMETRY_FIELDS = [
+  'mode',
+  'tier',
+  'risk',
+  'blastRadius',
+  'reversibility',
+  'uncertainty',
+  'deliveryStop',
+  'contextCharsUsed',
+  'contextCharsCeiling',
+  'modulesUsed',
+  'modulesCeiling',
+  'sourcesUsed',
+  'sourcesCeiling',
+  'methodsUsed',
+  'methodsCeiling',
+  'toolCallsByClass',
+  'toolCallCeilingsByClass',
+  'browserInteractions',
+  'cacheHits',
+  'cacheMisses',
+  'cacheBypasses',
+  'cacheBypassReasons',
+  'cacheInvalidations',
+  'duplicateQueriesSuppressed',
+  'unnecessaryCacheMisses',
+  'agentCount',
+  'reviewerCount',
+  'checksRun',
+  'repairRounds',
+  'escalationReasons',
+  'finalEvidenceState',
+  'reviewerFindings',
+  'regressionFindings',
+];
+
 export function loadConfigs() {
   return {
     core: JSON.parse(fs.readFileSync(coreConfigPath, 'utf8')),
@@ -75,11 +129,57 @@ export function validateAdaptiveConfig({ core, adaptive } = loadConfigs()) {
   if (adaptive.valueOfInformation?.protectedProofOverridesOrdinaryCeiling !== true) {
     errors.push('protected proof must be allowed to exceed ordinary soft ceilings');
   }
+
+  const capabilityClasses = new Set(adaptive.capabilityClasses ?? []);
+  for (const capabilityClass of REQUIRED_CAPABILITY_CLASSES) {
+    if (!capabilityClasses.has(capabilityClass)) {
+      errors.push(`missing provider-neutral capability class: ${capabilityClass}`);
+    }
+  }
+
+  for (const flag of REQUIRED_LIFECYCLE_FLAGS) {
+    if (adaptive.continualHarnessLifecycle?.[flag] !== true) {
+      errors.push(`continualHarnessLifecycle.${flag} must remain true`);
+    }
+  }
   if (adaptive.continualHarnessLifecycle?.storeHiddenReasoning !== false) {
     errors.push('continual harness must not store hidden reasoning');
   }
+  if (!Number.isFinite(core.harness?.promptCharBudget) || core.harness.promptCharBudget < 1) {
+    errors.push('continual harness promptCharBudget must be a positive finite ceiling');
+  }
+  if (!Number.isFinite(core.harness?.maxActiveEntries) || core.harness.maxActiveEntries < 1) {
+    errors.push('continual harness maxActiveEntries must be a positive finite ceiling');
+  }
+
+  if (adaptive.adaptiveRepair?.retryWithoutNewEvidenceCountsAsProgress !== false) {
+    errors.push('retry without new diagnosis/evidence must not count as repair progress');
+  }
+  if (adaptive.adaptiveRepair?.repeatedFailureRequiresStrategyChange !== true) {
+    errors.push('repeated failure signatures must require strategy change or stop');
+  }
+  if (adaptive.adaptiveRepair?.invalidateOnlyDependentEvidence !== true) {
+    errors.push('focused repair must invalidate only dependent evidence');
+  }
+  if (adaptive.deEscalation?.requiresCurrentDeterministicEvidence !== true) {
+    errors.push('de-escalation must require current deterministic evidence');
+  }
+  if (adaptive.deEscalation?.preserveProtectedMinimums !== true) {
+    errors.push('de-escalation must preserve protected Engineering OS/risk minimums');
+  }
+  if (adaptive.deEscalation?.recordReason !== true) {
+    errors.push('de-escalation must record its reason');
+  }
+
   if (adaptive.telemetry?.rawPrompt !== false || adaptive.telemetry?.hiddenReasoning !== false) {
     errors.push('telemetry must not retain raw prompts or hidden reasoning');
+  }
+  if (adaptive.telemetry?.aggregateOnly !== true) {
+    errors.push('telemetry must remain aggregate-only');
+  }
+  const telemetryFields = new Set(adaptive.telemetry?.fields ?? []);
+  for (const field of REQUIRED_TELEMETRY_FIELDS) {
+    if (!telemetryFields.has(field)) errors.push(`telemetry field is required: ${field}`);
   }
 
   return { ok: errors.length === 0, errors };
