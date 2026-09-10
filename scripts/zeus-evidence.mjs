@@ -32,8 +32,8 @@ const usage = () => {
   console.error(
     [
       'Usage:',
-      '  zeus evidence init --task "..." [--stop local-green] [--tier <tier>] [--graph-seed <seed> ...]',
-      '  zeus evidence add --claim "..." --state <state> [--command "..."] [--exit 0] [--reason "..."] [--sources a,b]',
+      '  zeus evidence init --task "..." [--stop local-green]',
+      '  zeus evidence add --claim "..." --state <state> [--command "..."] [--exit 0] [--reason "..."] [--sources a,b] [--graph-seed <seed> ...] [--graph-tier <tier>]',
       '  zeus evidence conflict --claim "..." --sources a,b [--owner name] [--registry-id ID]',
       '  zeus evidence report [--format json]',
       '',
@@ -57,11 +57,13 @@ const save = (ledger) => {
   writeFileSync(file, JSON.stringify(ledger, null, 2) + '\n');
 };
 
-const currentGraph = (ledger) => {
-  const recorded = ledger.repositoryIntelligence;
-  const seeds = recorded?.query?.seeds ?? [];
-  if (!recorded || !seeds.length) return null;
-  return repositoryEvidence(root, seeds, recorded.tier ?? 'standard');
+const graphBinding = (seeds, tier) => {
+  const graph = repositoryEvidence(root, seeds, tier);
+  return {
+    graph,
+    state: graphLedgerState(graph, tier),
+    allowedProvenance: graph.source?.provenance ?? [],
+  };
 };
 
 const grade = (ledger, graphProblems = []) => {
@@ -81,15 +83,11 @@ const grade = (ledger, graphProblems = []) => {
 if (sub === 'init') {
   const task = val('task');
   if (!task) usage();
-  const tier = val('tier', 'standard');
-  const graphSeeds = values('graph-seed');
-  const graph = graphSeeds.length ? repositoryEvidence(root, graphSeeds, tier) : null;
   save({
     version: '5.0.0',
     task,
     startedAt: new Date().toISOString(),
     deliveryStop: val('stop', 'local-green'),
-    repositoryIntelligence: graph ? graphLedgerState(graph, tier) : null,
     entries: [],
     openConflicts: [],
   });
@@ -107,6 +105,8 @@ if (sub === 'init') {
   const output = val('output');
   if (command) entry.command = command;
   if (exit !== null) {
+    // `--exit` with no value, or a non-numeric one, must not become NaN and pass for
+    // a real exit code.
     if (!Number.isInteger(Number(exit))) {
       console.error(`--exit expects an integer, got "${exit}".`);
       process.exit(2);
@@ -133,20 +133,20 @@ if (sub === 'init') {
     entry.reason = 'cached result downgraded: critical evidence is never cached';
   }
 
-  const graph = currentGraph(ledger);
-  if (graph) {
-    const tier = ledger.repositoryIntelligence.tier ?? 'standard';
-    const graphState = graphLedgerState(graph, tier);
-    const allowedProvenance = graph.source?.provenance ?? [];
-    const graphProblems = graphStateProblems(graphState, allowedProvenance, {
-      protectedOnly: true,
-    });
+  const graphSeeds = values('graph-seed');
+  if (graphSeeds.length) {
+    const tier = val('graph-tier', 'standard');
+    if (!config.budgets[tier]) {
+      console.error(`--graph-tier must be one of ${Object.keys(config.budgets).join('|')}.`);
+      process.exit(2);
+    }
+    const binding = graphBinding(graphSeeds, tier);
+    const graphProblems = graphStateProblems(binding.state, binding.allowedProvenance);
     if (entry.state === 'verified' && graphProblems.length) {
       console.error(`Cannot record graph-derived verified evidence: ${graphProblems.join('; ')}.`);
       process.exit(2);
     }
-    ledger.repositoryIntelligence = graphState;
-    entry.repositoryGraph = graphState;
+    entry.repositoryGraph = binding.state;
   }
 
   ledger.entries.push(entry);
@@ -166,27 +166,21 @@ if (sub === 'init') {
   console.log(`Recorded conflict: ${claim}`);
 } else if (sub === 'report') {
   const ledger = load();
-  const graph = currentGraph(ledger);
   const graphProblems = [];
-  if (graph) {
-    const tier = ledger.repositoryIntelligence.tier ?? 'standard';
-    const graphState = graphLedgerState(graph, tier);
-    const allowedProvenance = graph.source?.provenance ?? [];
-    graphProblems.push(
-      ...graphStateProblems(graphState, allowedProvenance, {
-        protectedOnly: true,
-      }),
-    );
-    for (const entry of ledger.entries.filter((item) => item.state === 'verified')) {
-      if (!entry.repositoryGraph) {
-        graphProblems.push(`verified claim has no repository graph binding: ${entry.claim}`);
-      } else if (entry.repositoryGraph.fingerprint !== graphState.fingerprint) {
-        graphProblems.push(`verified claim is bound to an older graph: ${entry.claim}`);
-      } else if (!entry.repositoryGraph.complete && graphState.verification.level === 'protected') {
-        graphProblems.push(`verified claim used incomplete protected graph evidence: ${entry.claim}`);
-      }
+  for (const entry of ledger.entries.filter(
+    (item) => item.state === 'verified' && item.repositoryGraph,
+  )) {
+    const recorded = entry.repositoryGraph;
+    const seeds = recorded.query?.seeds ?? [];
+    if (!seeds.length) {
+      graphProblems.push(`graph-derived verified claim has no recorded seed query: ${entry.claim}`);
+      continue;
     }
-    ledger.repositoryIntelligence = graphState;
+    const binding = graphBinding(seeds, recorded.tier ?? 'standard');
+    const problems = graphStateProblems(binding.state, binding.allowedProvenance, {
+      recordedFingerprint: recorded.fingerprint,
+    });
+    for (const problem of problems) graphProblems.push(`${entry.claim}: ${problem}`);
   }
 
   const { status, counts } = grade(ledger, graphProblems);
