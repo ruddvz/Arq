@@ -27,6 +27,40 @@ const configs = loadConfigs();
 }
 
 {
+  const broken = structuredClone(configs);
+  broken.adaptive.continualHarnessLifecycle.requireLastUsed = false;
+  const result = validateAdaptiveConfig(broken);
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join('\n'), /requireLastUsed must remain true/);
+}
+
+{
+  const broken = structuredClone(configs);
+  broken.adaptive.telemetry.fields = broken.adaptive.telemetry.fields.filter(
+    (field) => field !== 'cacheMisses',
+  );
+  const result = validateAdaptiveConfig(broken);
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join('\n'), /telemetry field is required: cacheMisses/);
+}
+
+{
+  const broken = structuredClone(configs);
+  broken.adaptive.adaptiveRepair.retryWithoutNewEvidenceCountsAsProgress = true;
+  const result = validateAdaptiveConfig(broken);
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join('\n'), /must not count as repair progress/);
+}
+
+{
+  const broken = structuredClone(configs);
+  broken.adaptive.deEscalation.preserveProtectedMinimums = false;
+  const result = validateAdaptiveConfig(broken);
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join('\n'), /must preserve protected Engineering OS\/risk minimums/);
+}
+
+{
   const budget = mergedBudget('fast', configs);
   assert.equal(budget.sources, 4);
   assert.equal(budget.contextChars, 8000);
@@ -97,8 +131,12 @@ const configs = loadConfigs();
 {
   assert.equal(configs.core.cache.criticalEvidenceCache, false);
   assert.equal(configs.adaptive.continualHarnessLifecycle.storeHiddenReasoning, false);
+  assert.equal(configs.adaptive.continualHarnessLifecycle.requireLastUsed, true);
+  assert.equal(configs.adaptive.continualHarnessLifecycle.requireArchivalOrExpiryReview, true);
+  assert.equal(configs.adaptive.continualHarnessLifecycle.deduplicateSemanticEquivalents, true);
   assert.equal(configs.adaptive.telemetry.rawPrompt, false);
   assert.equal(configs.adaptive.telemetry.hiddenReasoning, false);
+  assert.equal(configs.adaptive.telemetry.aggregateOnly, true);
 }
 
 {
