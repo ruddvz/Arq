@@ -10,6 +10,7 @@ const map = {
   evidence: 'zeus-evidence.mjs',
   index: 'zeus-index.mjs',
   context: 'zeus-context.mjs',
+  graph: 'zeus-repository-intelligence.mjs',
   impact: 'zeus-impact.mjs',
   check: 'zeus-check.mjs',
   validate: 'zeus-validate.mjs',
