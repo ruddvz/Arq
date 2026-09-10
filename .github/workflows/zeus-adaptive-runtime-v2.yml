@@ -1,0 +1,41 @@
+name: ZEUS adaptive runtime v2
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/zeus-adaptive-runtime.mjs'
+      - 'scripts/zeus-adaptive-runtime.test.mjs'
+      - 'scripts/zeus-adaptive-budget.mjs'
+      - '.zeus/adaptive-cto.json'
+      - '.github/workflows/zeus-adaptive-runtime-v2.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  runtime-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+          run_install: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check runtime formatting
+        run: pnpm exec prettier --check scripts/zeus-adaptive-runtime.mjs scripts/zeus-adaptive-runtime.test.mjs
+
+      - name: Run ZEUS adaptive runtime regression suite
+        run: node scripts/zeus-adaptive-runtime.test.mjs
