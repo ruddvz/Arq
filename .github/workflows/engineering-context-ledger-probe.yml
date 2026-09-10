@@ -1,0 +1,19 @@
+name: Engineering context ledger probe
+
+on:
+  push:
+    branches:
+      - codex/zeus-repository-intelligence-ledgers-v3
+
+permissions:
+  contents: read
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regenerate Engineering OS context and print diff
+        run: |
+          node engineering/tools/engineering/build-engineering-context.mjs --root engineering --repo-root .
+          git diff -- engineering/ops/generated/engineering-context-v5.json
