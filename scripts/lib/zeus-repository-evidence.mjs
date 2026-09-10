@@ -7,6 +7,7 @@ import {
 } from '../zeus-repository-intelligence.mjs';
 
 const RISK_RANK = { low: 0, moderate: 1, high: 2, critical: 3 };
+const TIER_RANK = { fast: 0, standard: 1, deep: 2 };
 const TIER_NODE_CAPS = { fast: 64, standard: 160, deep: 240 };
 const TIER_DEPTH_CAPS = { fast: 2, standard: 4, deep: 4 };
 
@@ -89,18 +90,24 @@ export function repositoryEvidence(root, seeds, tier = 'standard') {
   };
 }
 
-export function applyGraphEscalation({ risk, checks }, evidence) {
+export function applyGraphEscalation({ risk, tier = 'standard', checks }, evidence) {
   const nextChecks = new Set(checks ?? []);
   for (const check of verificationCommandsToChecks(evidence?.verification?.commands)) {
     nextChecks.add(check);
   }
 
+  const protectedOrUncertain =
+    evidence?.verification?.level === 'protected' || Boolean(evidence?.uncertainty);
   let nextRisk = risk;
-  if (evidence?.verification?.level === 'protected' && RISK_RANK[nextRisk] < RISK_RANK.high) {
+  let nextTier = tier;
+  if (protectedOrUncertain && RISK_RANK[nextRisk] < RISK_RANK.high) {
     nextRisk = 'high';
   }
+  if (protectedOrUncertain && TIER_RANK[nextTier] < TIER_RANK.deep) {
+    nextTier = 'deep';
+  }
 
-  return { risk: nextRisk, checks: [...nextChecks] };
+  return { risk: nextRisk, tier: nextTier, checks: [...nextChecks] };
 }
 
 export function graphMarkdown(evidence) {
