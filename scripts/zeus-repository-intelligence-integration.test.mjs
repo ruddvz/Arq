@@ -34,6 +34,23 @@ function run(...args) {
   assert.equal(compiled.repositoryIntelligence.fresh, true);
   assert.equal(compiled.repositoryIntelligence.verification.level, 'protected');
   assert(compiled.repositoryIntelligence.seeds.resolved.length > 0);
+  assert.equal(compiled.repositoryIntelligence.source.rank, 1);
+  assert.deepEqual(compiled.repositoryIntelligence.source.provenance, ['deterministic', 'declared']);
+}
+
+{
+  const compiled = run(
+    'compile',
+    '--task',
+    'Fix a README typo',
+    '--format',
+    'json',
+    '--graph-seed',
+    'packages/bim-core',
+  );
+  assert.equal(compiled.tier, 'fast');
+  assert.equal(compiled.repositoryIntelligence.context_budget.max_context_chars, 8000);
+  assert(JSON.stringify(compiled.repositoryIntelligence.context).length <= 8000);
 }
 
 {
