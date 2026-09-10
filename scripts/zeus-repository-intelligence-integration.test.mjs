@@ -135,7 +135,7 @@ try {
 
 const probe = path.join(root, 'scripts', '__zeus_graph_stale_probe__.mjs');
 try {
-  writeFileSync(probe, "export const graphStaleProbe = true;\n");
+  writeFileSync(probe, 'export const graphStaleProbe = true;\n');
 
   const impact = run('impact', '--files', 'packages/bim-core/package.json');
   assert.equal(impact.graph.fresh, false);
