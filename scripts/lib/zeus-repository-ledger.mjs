@@ -61,7 +61,7 @@ export function graphLedgerState(graph, tier = 'standard') {
 export function graphStateProblems(
   state,
   allowedProvenance = [],
-  { protectedOnly = false, recordedFingerprint = null } = {},
+  { protectedOnly = false, recordedFingerprint = null, requireHardProvenance = false } = {},
 ) {
   const protectedGraph = state?.verification?.level === 'protected';
   if (protectedOnly && !protectedGraph) return [];
@@ -79,17 +79,18 @@ export function graphStateProblems(
   if (unresolved.length) problems.push(`repository graph has unresolved seed(s): ${unresolved.join(', ')}`);
   if (ambiguous.length) problems.push(`repository graph has ambiguous seed(s): ${ambiguous.join(', ')}`);
   if (state?.completeness === 'truncated') {
-    problems.push('repository graph evidence is truncated and cannot prove a protected gate');
+    problems.push('repository graph evidence is truncated and cannot prove a verified claim or protected gate');
   }
 
   const allowed = new Set(allowedProvenance);
   const provenance = state?.provenance ?? [];
+  const mustUseHardProvenance = protectedGraph || requireHardProvenance;
   const disallowed = provenance.filter((value) => !allowed.has(value));
-  if (protectedGraph && disallowed.length) {
+  if (mustUseHardProvenance && disallowed.length) {
     problems.push(`repository graph uses non-hard-gate provenance: ${unique(disallowed).join(', ')}`);
   }
-  if (protectedGraph && provenance.length === 0) {
-    problems.push('repository graph has no hard-gate provenance for protected evidence');
+  if (mustUseHardProvenance && provenance.length === 0) {
+    problems.push('repository graph has no hard-gate provenance for verified evidence');
   }
 
   return unique(problems);
@@ -105,13 +106,14 @@ function gateMatchesCheck(gate, check) {
   return aliases.includes(value);
 }
 
-export function missingGraphChecks(gates, checks, signature) {
+export function missingGraphChecks(gates, checks, signature, graphFingerprint = null) {
   return checks.filter(
     (check) =>
       !(gates ?? []).some(
         (gate) =>
           gate.outcome === 'pass' &&
           gate.signature === signature &&
+          (!graphFingerprint || gate.repositoryGraph?.fingerprint === graphFingerprint) &&
           gateMatchesCheck(gate.gate, check),
       ),
   );
