@@ -19,7 +19,9 @@ if (!task) {
 
 const contract = compile(task);
 const graphSeeds = values('graph-seed');
-const graph = graphSeeds.length ? repositoryEvidence(val('root') ?? process.cwd(), graphSeeds) : null;
+const graph = graphSeeds.length
+  ? repositoryEvidence(val('root') ?? process.cwd(), graphSeeds, contract.tier)
+  : null;
 if (graph) contract.repositoryIntelligence = graph;
 
 const out =
