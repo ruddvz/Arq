@@ -1,0 +1,47 @@
+name: Refresh PR 350 engineering context
+
+on:
+  push:
+    branches:
+      - codex/zeus-engineering-context-refresh-350
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/zeus-repository-intelligence-ledgers-v6
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Rebuild governed engineering context
+        run: pnpm engineering:context:build
+      - name: Commit only the generated context
+        shell: bash
+        run: |
+          changed="$(git diff --name-only)"
+          if [ -z "$changed" ]; then
+            echo 'Engineering context already current.'
+            exit 0
+          fi
+          if [ "$changed" != 'engineering/ops/generated/engineering-context-v5.json' ]; then
+            echo 'Unexpected generated changes:'
+            printf '%s\n' "$changed"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add engineering/ops/generated/engineering-context-v5.json
+          git commit -m 'chore(engineering): refresh context for repository ledger integration'
+          git push origin HEAD:codex/zeus-repository-intelligence-ledgers-v6
