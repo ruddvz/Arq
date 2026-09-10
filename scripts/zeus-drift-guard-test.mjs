@@ -27,7 +27,15 @@ const packageRoot = dirname(dirname(new URL(import.meta.url).pathname));
 // without it the fixture reports scripts as orphans that the real repository
 // runs on every pull request, and the baseline case fails for a reason that
 // exists only in the fixture.
-const COPY = ['.zeus', '.claude', 'scripts', '.github/workflows', 'CLAUDE.md', 'package.json'];
+const COPY = [
+  '.zeus',
+  '.claude',
+  'scripts',
+  '.github/workflows',
+  'AGENTS.md',
+  'CLAUDE.md',
+  'package.json',
+];
 const SKIP = /(^|\/)(cache|runs|backups|node_modules)(\/|$)/;
 
 function fixture() {
@@ -97,8 +105,6 @@ const CASES = [
     name: 'the hook mentions the harness but never runs it (bystander string)',
     break: (dir) =>
       edit(dir, 'scripts/zeus-hook.sh', (s) =>
-        // The filename survives in the file-exists test, so a guard matching the
-        // NAME rather than the INVOCATION would stay green here.
         s.replace(
           /node "\$DIR\/zeus-harness-state\.mjs" format/,
           'cat "$DIR/zeus-harness-state.mjs"',
@@ -189,8 +195,6 @@ const CASES = [
   },
   {
     name: 'the read-instead-of rule survives being rewrapped across lines',
-    // The opposite failure: a guard so literal that reflowing a paragraph makes
-    // it skip in silence. Rewrapping must NOT fail the guard.
     break: (dir) =>
       edit(dir, 'CLAUDE.md', (s) =>
         s.replace(
@@ -218,8 +222,6 @@ const CASES = [
     name: 'the reading is rendered after the classification instead of before it',
     break: (dir) =>
       edit(dir, 'scripts/lib/zeus-engine.mjs', (s) =>
-        // Move the reading block below the classification line, which is what a
-        // well-meant tidy-up of the renderer would do.
         s
           .replace(CLASSIFICATION_LINE, `${CLASSIFICATION_LINE}\n    ${READING_LINE}`)
           .replace(`      ? [\n          ${READING_LINE}`, '      ? ['),
@@ -253,17 +255,11 @@ const CASES = [
   },
   {
     name: 'a Zeus script is added that nothing can run',
-    // Dead code in an operating system reads as capability the system does not
-    // have. Measured before this guard: 7 of 39 Zeus scripts were unreachable,
-    // including the whole delivery pipeline in zeus-run-state.mjs.
     break: (dir) => writeFileSync(join(dir, 'scripts', PROBE), '#!/usr/bin/env node\n'),
     expect: new RegExp(`${PROBE.replace('.', '\\.')} can be run by nothing`),
   },
   {
     name: 'a Zeus library reached only by an importer is not called an orphan',
-    // Reachability is transitive. A guard that demanded a CLI verb per file
-    // would force every shared module into the command surface, which is how a
-    // guard gets deleted rather than obeyed.
     break: (dir) => {
       writeFileSync(join(dir, 'scripts', PROBE), 'export const probe = 1;\n');
       edit(dir, 'scripts/zeus-drift-guard.mjs', (s) => `${s}\n// imports ${PROBE}\n`);
