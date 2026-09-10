@@ -27,14 +27,17 @@ const REQUIRED_FORBIDDEN = [
 
 export function validateAutonomy(value) {
   const errors = [];
-  if (value?.protocol !== 'harness-autonomy/v1') errors.push('protocol must be harness-autonomy/v1');
+  if (value?.protocol !== 'harness-autonomy/v1')
+    errors.push('protocol must be harness-autonomy/v1');
   if (value?.harness !== 'ZEUS') errors.push('harness must be ZEUS');
   if (value?.project !== 'Arq') errors.push('project must be Arq');
-  if (value?.repository !== 'ruddvz/Arq') errors.push('repository must be ruddvz/Arq');
+  if (value?.repository !== 'ruddvz/Arq')
+    errors.push('repository must be ruddvz/Arq');
   if (value?.runtimeDependenciesOnPeers !== false) {
     errors.push('runtimeDependenciesOnPeers must remain false');
   }
-  if (value?.sharedMutableState !== false) errors.push('sharedMutableState must remain false');
+  if (value?.sharedMutableState !== false)
+    errors.push('sharedMutableState must remain false');
   if (value?.federation?.mode !== 'reviewed-knowledge-only') {
     errors.push('federation mode must remain reviewed-knowledge-only');
   }
@@ -64,7 +67,9 @@ export function validateAutonomyFiles(root = process.cwd()) {
   if (errors.length) return errors;
   try {
     errors.push(
-      ...validateAutonomy(JSON.parse(readFileSync(join(root, '.zeus/autonomy.json'), 'utf8'))),
+      ...validateAutonomy(
+        JSON.parse(readFileSync(join(root, '.zeus/autonomy.json'), 'utf8')),
+      ),
     );
   } catch (error) {
     errors.push(`autonomy.json parse failed: ${error.message}`);
@@ -73,7 +78,9 @@ export function validateAutonomyFiles(root = process.cwd()) {
     ? readFileSync(join(root, 'AGENTS.md'), 'utf8')
     : '';
   if (!agents.includes('.zeus/AUTONOMY.md')) {
-    errors.push('AGENTS.md must conditionally route federation work through .zeus/AUTONOMY.md');
+    errors.push(
+      'AGENTS.md must conditionally route federation work through .zeus/AUTONOMY.md',
+    );
   }
   return errors;
 }
@@ -81,7 +88,9 @@ export function validateAutonomyFiles(root = process.cwd()) {
 function main() {
   const errors = validateAutonomyFiles();
   if (errors.length) {
-    console.error('ZEUS autonomy verify failed:\n' + errors.map((x) => `- ${x}`).join('\n'));
+    console.error(
+      'ZEUS autonomy verify failed:\n' + errors.map((x) => `- ${x}`).join('\n'),
+    );
     process.exit(1);
   }
   console.log('ZEUS autonomy verification passed.');
