@@ -3,10 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { route, classifyPaths, globToRe, blastRadius } from './lib/zeus-engine.mjs';
-import {
-  applyGraphEscalation,
-  repositoryEvidence,
-} from './lib/zeus-repository-evidence.mjs';
+import { applyGraphEscalation, repositoryEvidence } from './lib/zeus-repository-evidence.mjs';
 
 const a = process.argv.slice(2);
 const val = (n) => {
