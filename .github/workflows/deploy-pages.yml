@@ -1,8 +1,10 @@
 # Deploys the public website (apps/marketing) to GitHub Pages.
 #
-# The site builds with SITE_BASE_PATH=/Arq because a project Pages site is
-# served under https://<owner>.github.io/Arq/ - every internal URL is
-# prefixed at build time (see apps/marketing/src/build.ts's applyBasePath).
+# The site derives SITE_BASE_PATH from the live GitHub repository name because
+# project Pages sites are served under https://<owner>.github.io/<repo>/.
+# This keeps the deployment valid across a repository rename without changing
+# the ARQ product identity. Internal URLs are prefixed at build time (see
+# apps/marketing/src/build.ts's applyBasePath).
 # SITE_ORIGIN enables sitemap.xml, the robots Sitemap line and absolute
 # Open Graph URLs.
 #
@@ -68,8 +70,8 @@ jobs:
           pnpm arq:language:routes:verify
       - run: pnpm --filter @arq/marketing build
         env:
-          SITE_BASE_PATH: /Arq
-          SITE_ORIGIN: https://ruddvz.github.io
+          SITE_BASE_PATH: /${{ github.event.repository.name }}
+          SITE_ORIGIN: https://${{ github.repository_owner }}.github.io
           SITE_REVISION: ${{ github.sha }}
       # Audits the rendered HTML, not the TypeScript source, then writes
       # arq-language-site-proof.json (this exact SHA plus a sha256 per route)
