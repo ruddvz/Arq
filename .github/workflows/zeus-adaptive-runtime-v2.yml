@@ -10,17 +10,14 @@ on:
       - '.github/workflows/zeus-adaptive-runtime-v2.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   runtime-regression:
-    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
-      - name: Check out PR head
+      - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
@@ -37,24 +34,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Apply pinned Prettier and run runtime regression
-        shell: bash
-        run: |
-          set -euo pipefail
-          pnpm exec prettier --write scripts/zeus-adaptive-runtime.mjs scripts/zeus-adaptive-runtime.test.mjs
-          pnpm exec prettier --check scripts/zeus-adaptive-runtime.mjs scripts/zeus-adaptive-runtime.test.mjs
-          node scripts/zeus-adaptive-runtime.test.mjs
+      - name: Check runtime formatting
+        run: pnpm exec prettier --check scripts/zeus-adaptive-runtime.mjs scripts/zeus-adaptive-runtime.test.mjs
 
-      - name: Commit exact formatter output
-        shell: bash
-        run: |
-          set -euo pipefail
-          git add scripts/zeus-adaptive-runtime.mjs scripts/zeus-adaptive-runtime.test.mjs
-          if git diff --cached --quiet; then
-            echo 'No formatter changes remain.'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'style(zeus): apply pinned runtime formatting'
-          git push origin HEAD:${{ github.head_ref }}
+      - name: Run ZEUS adaptive runtime regression suite
+        run: node scripts/zeus-adaptive-runtime.test.mjs
