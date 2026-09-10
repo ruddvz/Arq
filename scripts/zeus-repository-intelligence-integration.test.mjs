@@ -93,14 +93,18 @@ try {
   mkdirSync(path.dirname(runtimeStateProbe), { recursive: true });
   writeFileSync(runtimeStateProbe, '{"runtimeState":true}\n');
   const status = run('graph', '--json', 'status');
-  assert.equal(status.fresh, true, 'runtime ledger writes must not stale repository graph evidence');
+  assert.equal(
+    status.fresh,
+    true,
+    'runtime ledger writes must not stale repository graph evidence',
+  );
 } finally {
   rmSync(runtimeStateProbe, { force: true });
 }
 
 const probe = path.join(root, 'scripts', '__zeus_graph_stale_probe__.mjs');
 try {
-  writeFileSync(probe, "export const graphStaleProbe = true;\n");
+  writeFileSync(probe, 'export const graphStaleProbe = true;\n');
 
   const impact = run('impact', '--files', 'packages/bim-core/package.json');
   assert.equal(impact.graph.fresh, false);
@@ -121,10 +125,7 @@ try {
   assert.equal(compiled.repositoryIntelligence.uncertainty, true);
   assert.equal(compiled.risk, 'high');
   assert.equal(compiled.tier, 'deep');
-  assert.equal(
-    compiled.repositoryEscalation.reason,
-    'protected-or-uncertain-repository-impact',
-  );
+  assert.equal(compiled.repositoryEscalation.reason, 'protected-or-uncertain-repository-impact');
 } finally {
   rmSync(probe, { force: true });
 }
