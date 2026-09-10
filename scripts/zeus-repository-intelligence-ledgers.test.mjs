@@ -142,17 +142,19 @@ const protectedLedger = {
   const truncated = graphLedgerState(
     {
       ...protectedGraph,
+      uncertainty: true,
       context: { ...protectedGraph.context, truncated: true },
+      verification: { ...protectedGraph.verification, uncertain: true },
     },
     'deep',
   );
   assert.equal(truncated.complete, false);
   assert.equal(truncated.truncation.context, true);
-  assert.equal(
-    graphStateProblems(truncated, allowedProvenance, { protectedOnly: true }).length,
-    0,
-    'truncation must be recorded without pretending it is inferred or stale evidence',
-  );
+  const problems = graphStateProblems(truncated, allowedProvenance, { protectedOnly: true });
+  assert(problems.some((problem) => problem.includes('coverage is uncertain')));
+  assert(problems.some((problem) => problem.includes('traversal is truncated')));
+  const result = graphAwareShipReadiness(protectedLedger, signature, truncated, gateDeps);
+  assert.equal(result.ready, false, 'uncertain protected graph coverage must never certify ship');
 }
 
 {
