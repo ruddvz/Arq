@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { validateAutonomyFiles } from './zeus-autonomy-verify.mjs';
+
 const root = process.cwd();
 const required = [
   '.zeus/FAST-KERNEL.md',
   '.zeus/ZEUS.md',
+  '.zeus/AUTONOMY.md',
+  '.zeus/autonomy.json',
   '.zeus/module-manifest.json',
   '.zeus/config.json',
   '.zeus/compact-contract.schema.json',
@@ -22,6 +26,7 @@ const required = [
   'scripts/zeus-method.mjs',
   'scripts/zeus-evidence.mjs',
   'scripts/zeus-validate.mjs',
+  'scripts/zeus-autonomy-verify.mjs',
   'scripts/zeus-hook.sh',
   'scripts/zeus-agent-registry.mjs',
   'scripts/zeus-harness-state.mjs',
@@ -77,6 +82,7 @@ const cursorRule = existsSync(join(root, '.cursor/rules/zeus-always-on.mdc'))
   : '';
 if (!/alwaysApply:\s*true/.test(cursorRule))
   errors.push('.cursor/rules/zeus-always-on.mdc is missing alwaysApply: true');
+errors.push(...validateAutonomyFiles(root));
 if (errors.length) {
   console.error('Zeus verify failed:\n' + errors.map((x) => '- ' + x).join('\n'));
   process.exit(1);
