@@ -11,6 +11,7 @@ const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const signature = 'workspace-current';
 const allowedProvenance = ['deterministic', 'declared'];
 const repositoryGates = ['format:check', 'lint', 'typecheck', 'test', 'build'];
+const protectedSeed = 'contracts/performance.ts';
 const pass = (gate) => ({
   gate,
   outcome: 'pass',
@@ -44,8 +45,8 @@ const protectedGraph = {
   source_revision: 'head-sha',
   branch: 'feature',
   seeds: {
-    requested: ['packages/bim-core'],
-    resolved: ['package:packages/bim-core'],
+    requested: [protectedSeed],
+    resolved: [`file:${protectedSeed}`],
     unresolved: [],
     ambiguous: {},
   },
@@ -60,7 +61,7 @@ const protectedGraph = {
   verification: {
     level: 'protected',
     uncertain: false,
-    domains: ['semantic_model'],
+    domains: ['contract'],
     commands: [
       'pnpm format:check',
       'pnpm lint',
@@ -73,7 +74,7 @@ const protectedGraph = {
 };
 
 const protectedState = graphLedgerState(protectedGraph, 'deep');
-assert.deepEqual(protectedState.query.seeds, ['packages/bim-core']);
+assert.deepEqual(protectedState.query.seeds, [protectedSeed]);
 assert.deepEqual(protectedState.resolution.unresolved, []);
 assert.deepEqual(protectedState.provenance, ['declared', 'deterministic']);
 assert.equal(protectedState.complete, true);
@@ -212,7 +213,7 @@ try {
     '--tier',
     'deep',
     '--graph-seed',
-    'packages/bim-core',
+    protectedSeed,
     '--file',
     evidenceFile,
   ]);
@@ -236,7 +237,7 @@ try {
   const evidence = JSON.parse(readFileSync(evidenceFile, 'utf8'));
   const graphBinding = evidence.entries[0].repositoryGraph;
   assert.equal(graphBinding.fingerprint, evidence.repositoryIntelligence.fingerprint);
-  assert.deepEqual(graphBinding.query.seeds, ['packages/bim-core']);
+  assert.deepEqual(graphBinding.query.seeds, [protectedSeed]);
   assert(Array.isArray(graphBinding.provenance));
   assert.equal(typeof graphBinding.complete, 'boolean');
   assert.equal(typeof graphBinding.truncation.context, 'boolean');
@@ -255,7 +256,7 @@ try {
       '--blast-radius',
       'local',
       '--graph-seed',
-      'packages/bim-core',
+      protectedSeed,
     ],
     { ...process.env, ZEUS_GATE_LEDGER: gateFile },
   );
@@ -263,7 +264,7 @@ try {
   const gate = JSON.parse(readFileSync(gateFile, 'utf8'));
   assert.equal(gate.risk, 'high');
   assert.equal(gate.tier, 'deep');
-  assert.deepEqual(gate.repositoryIntelligence.query.seeds, ['packages/bim-core']);
+  assert.deepEqual(gate.repositoryIntelligence.query.seeds, [protectedSeed]);
 
   writeFileSync(probe, 'export const repositoryLedgerStaleProbe = true;\n');
   const staleAdd = run('scripts/zeus-evidence.mjs', [
