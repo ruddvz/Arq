@@ -62,10 +62,14 @@ fail((v) => {
   v.localAuthority.engineeringOsReleaseAuthority = false;
 }, /engineeringOsReleaseAuthority must remain true/);
 fail((v) => {
-  v.federation.forbidden = v.federation.forbidden.filter((x) => x !== 'risk-classifications');
+  v.federation.forbidden = v.federation.forbidden.filter(
+    (x) => x !== 'risk-classifications',
+  );
 }, /must forbid risk-classifications/);
 fail((v) => {
-  v.federation.forbidden = v.federation.forbidden.filter((x) => x !== 'release-authority');
+  v.federation.forbidden = v.federation.forbidden.filter(
+    (x) => x !== 'release-authority',
+  );
 }, /must forbid release-authority/);
 fail((v) => {
   v.graph.dynamicOrInferredEdgesAreAdvisory = false;
