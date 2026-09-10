@@ -57,7 +57,7 @@ export function graphAwareShipReadiness(ledger, signature, graphState, deps = {}
       },
       {
         verification: graphState.verification,
-        uncertainty: graphState.uncertainty || !graphState.complete,
+        uncertainty: graphState.uncertainty || graphState.completeness !== 'complete',
       },
     );
     effectiveLedger.risk = higher(effectiveLedger.risk, escalated.risk, RISK_RANK);
@@ -71,11 +71,17 @@ export function graphAwareShipReadiness(ledger, signature, graphState, deps = {}
     problems.push(
       ...graphStateProblems(graphState, deps.allowedProvenance ?? [], {
         protectedOnly: true,
+        recordedFingerprint: ledger.repositoryIntelligence?.fingerprint ?? null,
       }),
     );
-    const missing = missingGraphChecks(ledger.gates, requiredGraphChecks(graphState), signature);
+    const missing = missingGraphChecks(
+      ledger.gates,
+      requiredGraphChecks(graphState),
+      signature,
+      graphState.fingerprint,
+    );
     if (missing.length) {
-      problems.push(`repository graph requires current passing gate(s): ${missing.join(', ')}`);
+      problems.push(`repository graph requires current graph-bound passing gate(s): ${missing.join(', ')}`);
     }
   }
 
@@ -112,6 +118,10 @@ function currentGraphState(ledger) {
   return graphLedgerState(graph, ledger.tier ?? 'standard');
 }
 
+function graphConfig() {
+  return loadConfig(repositoryRoot());
+}
+
 export function main(argv) {
   const [command, ...args] = argv;
 
@@ -127,9 +137,39 @@ export function main(argv) {
     const ledger = loadLedger();
     saveLedger({ ...ledger, repositoryIntelligence: graph.state });
     console.log(
-      `repository graph: ${graph.state.complete ? 'complete' : 'conservative'}; ` +
+      `repository graph: ${graph.state.completeness}; ` +
         `frontier ${graph.state.verification.level}; ${graph.state.query.seeds.length} seed(s)`,
     );
+    return 0;
+  }
+
+  if (command === 'record') {
+    const ledger = loadLedger();
+    if (!ledger.repositoryIntelligence) return ledgerMain(argv);
+
+    const graphState = currentGraphState(ledger);
+    const allowedProvenance = graphConfig().hard_gate_provenance ?? [];
+    const outcome = arg(args, 'outcome');
+    if (outcome === 'pass') {
+      const graphProblems = graphStateProblems(graphState, allowedProvenance, {
+        protectedOnly: true,
+      });
+      if (graphProblems.length) {
+        console.error(`cannot record a passing graph-bound gate: ${graphProblems.join('; ')}`);
+        return 1;
+      }
+    }
+
+    const result = ledgerMain(argv);
+    if (result !== 0) return result;
+
+    const gate = arg(args, 'gate');
+    if (!gate) return result;
+    const next = loadLedger();
+    const gates = next.gates.map((entry) =>
+      entry.gate === gate ? { ...entry, repositoryGraph: graphState } : entry,
+    );
+    saveLedger({ ...next, repositoryIntelligence: graphState, gates });
     return 0;
   }
 
@@ -139,14 +179,13 @@ export function main(argv) {
 
     const signature = workspaceSignature();
     const graphState = currentGraphState(ledger);
-    const root = repositoryRoot();
-    const graphConfig = loadConfig(root);
+    const config = graphConfig();
     const { ready, problems, effectiveLedger } = graphAwareShipReadiness(
       ledger,
       signature,
       graphState,
       {
-        allowedProvenance: graphConfig.hard_gate_provenance ?? [],
+        allowedProvenance: config.hard_gate_provenance ?? [],
       },
     );
 
