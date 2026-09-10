@@ -99,7 +99,7 @@ function graphForStart(args) {
     escalated.tier === tier ? initial : repositoryEvidence(root, seeds, escalated.tier);
 
   return {
-    state: graphLedgerState(finalGraph, escalated.tier),
+    state: graphLedgerState(finalGraph, escalated.tier, seeds),
     risk: higher(risk, escalated.risk, RISK_RANK),
     tier: higher(tier, escalated.tier, TIER_RANK),
   };
@@ -110,7 +110,7 @@ function currentGraphState(ledger) {
   if (!seeds.length) return null;
   const root = repositoryRoot();
   const graph = repositoryEvidence(root, seeds, ledger.tier ?? 'standard');
-  return graphLedgerState(graph, ledger.tier ?? 'standard');
+  return graphLedgerState(graph, ledger.tier ?? 'standard', seeds);
 }
 
 export function main(argv) {
