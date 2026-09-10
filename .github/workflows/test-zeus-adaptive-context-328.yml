@@ -1,0 +1,45 @@
+name: Test ZEUS adaptive context 328
+
+on:
+  push:
+    branches:
+      - codex/zeus-adaptive-context-quality-v1
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Check focused formatting
+        run: pnpm exec prettier --check scripts/zeus-context.mjs scripts/zeus-context-retrieval.test.mjs
+      - name: Run context regressions
+        run: node scripts/zeus-context-retrieval.test.mjs
+      - name: Build current project index
+        run: node scripts/zeus-index.mjs --root .
+      - name: Measure adaptive fast and standard retrieval
+        shell: bash
+        run: |
+          set -euo pipefail
+          fast="$(node scripts/zeus.mjs context --query 'README typo documentation' --tier fast --snippets --adaptive)"
+          standard="$(node scripts/zeus.mjs context --query 'editor wall selection hover affordance' --tier standard --snippets --adaptive)"
+          deep="$(node scripts/zeus.mjs context --query 'arq project format recovery migration' --tier deep --snippets --adaptive)"
+          jq -n --argjson fast "$fast" --argjson standard "$standard" --argjson deep "$deep" '{
+            fast: {sources: ($fast.results|length), sourceCeiling: $fast.budget.sources, contextChars: $fast.usedContextChars, contextCeiling: $fast.budget.contextChars, selection: $fast.selection},
+            standard: {sources: ($standard.results|length), sourceCeiling: $standard.budget.sources, contextChars: $standard.usedContextChars, contextCeiling: $standard.budget.contextChars, selection: $standard.selection},
+            deep: {sources: ($deep.results|length), sourceCeiling: $deep.budget.sources, contextChars: $deep.usedContextChars, contextCeiling: $deep.budget.contextChars, selection: $deep.selection}
+          }'
+          test "$(jq -r '.results|length' <<<"$fast")" -lt "$(jq -r '.budget.sources' <<<"$fast")"
+          test "$(jq -r '.results|length' <<<"$standard")" -lt "$(jq -r '.budget.sources' <<<"$standard")"
+          test "$(jq -r '.selection.policy' <<<"$deep")" = 'deep-retains-ranked-ceiling'
