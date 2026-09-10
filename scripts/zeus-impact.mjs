@@ -3,6 +3,10 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { route, classifyPaths, globToRe, blastRadius } from './lib/zeus-engine.mjs';
+import {
+  applyGraphEscalation,
+  repositoryEvidence,
+} from './lib/zeus-repository-evidence.mjs';
 
 const a = process.argv.slice(2);
 const val = (n) => {
@@ -60,13 +64,24 @@ if (task) {
   for (const m of r.modules) modules.add(m.id);
   if (rank[r.risk] > rank[risk]) risk = r.risk;
   if (radiusRank[r.blastRadius] > radiusRank[blast]) blast = r.blastRadius;
-  if (reversibilityRank[r.reversibility] > reversibilityRank[reversibility])
+  if (reversibilityRank[r.reversibility] > reversibilityRank[reversibility]) {
     reversibility = r.reversibility;
+  }
 }
 
 // Blast radius can raise risk. It never lowers it.
 if (radiusRank[blast] >= radiusRank.persistent && rank[risk] < rank.high) risk = 'high';
 if (reversibility === 'irreversible' && rank[risk] < rank.high) risk = 'high';
+
+// Repository intelligence is additive. A protected or uncertain graph result
+// may raise risk and add checks, but graph sparsity never lowers an existing
+// path/task classification or removes an existing check.
+const graph = files.length ? repositoryEvidence(root, files) : null;
+if (graph) {
+  const escalated = applyGraphEscalation({ risk, checks: [...checks] }, graph);
+  risk = escalated.risk;
+  for (const check of escalated.checks) checks.add(check);
+}
 
 console.log(
   JSON.stringify(
@@ -79,6 +94,7 @@ console.log(
       reversibility,
       fromPaths,
       fromTask,
+      graph,
     },
     null,
     2,
