@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "a69546e23e086ad392fbaf26addfb09629db17f6d6e8a6c07bd3e2da5dd96ec1",
+  "source_hash": "18920373b71be76f79acca276c8e581f79a94567044a1c3b0c9a6f5635e61517",
   "source_records": [
     {
       "scope": "package",
@@ -394,7 +394,7 @@
     {
       "scope": "repository",
       "path": "package.json",
-      "sha256": "3d6a258b589ce2c6ca53ccefbc571d85c6cf7771a22c6c94bb79b5bb855069ff"
+      "sha256": "997df3cb761f2c1fd717f99d7feeac56296b89f5e44653933fb669a222f9d9ad"
     },
     {
       "scope": "repository",
