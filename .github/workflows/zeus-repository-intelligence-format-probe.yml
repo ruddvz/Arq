@@ -1,0 +1,27 @@
+name: ZEUS repository intelligence format probe
+
+on:
+  push:
+    branches:
+      - codex/zeus-repository-intelligence-integration-v1
+
+permissions:
+  contents: read
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Print canonical Prettier diff
+        run: |
+          pnpm exec prettier --write scripts/zeus-impact.mjs scripts/zeus-repository-intelligence-integration.test.mjs
+          git diff -- scripts/zeus-impact.mjs scripts/zeus-repository-intelligence-integration.test.mjs
