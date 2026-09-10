@@ -17,7 +17,10 @@ export function loadConfigs() {
 }
 
 function normalize(value) {
-  return String(value ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+  return String(value ?? '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 export function validateAdaptiveConfig({ core, adaptive } = loadConfigs()) {
@@ -41,13 +44,7 @@ export function validateAdaptiveConfig({ core, adaptive } = loadConfigs()) {
       continue;
     }
 
-    for (const key of [
-      'modules',
-      'sources',
-      'contextChars',
-      'repairRounds',
-      'supportingMethods',
-    ]) {
+    for (const key of ['modules', 'sources', 'contextChars', 'repairRounds', 'supportingMethods']) {
       if (!Number.isFinite(base[key]) || base[key] < 1) {
         errors.push(`${tier}.${key} must be a positive finite ceiling`);
       }
@@ -134,7 +131,8 @@ export function adviseExpansion(
       allowed: false,
       reevaluate: true,
       reasonRequired: true,
-      reason: 'ceiling reached: re-evaluate tier, strategy and expansion reason before consuming more work',
+      reason:
+        'ceiling reached: re-evaluate tier, strategy and expansion reason before consuming more work',
     };
   }
 
@@ -142,16 +140,12 @@ export function adviseExpansion(
     allowed: true,
     reevaluate: false,
     reasonRequired: false,
-    reason: 'additional work has positive expected decision value and remains below the tier ceiling',
+    reason:
+      'additional work has positive expected decision value and remains below the tier ceiling',
   };
 }
 
-export function operationFingerprint({
-  kind,
-  target = '',
-  sourceFingerprint = '',
-  purpose = '',
-}) {
+export function operationFingerprint({ kind, target = '', sourceFingerprint = '', purpose = '' }) {
   return [kind, target, sourceFingerprint, purpose].map(normalize).join('|');
 }
 
