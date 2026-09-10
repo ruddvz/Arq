@@ -52,6 +52,7 @@ export function validateAdaptiveConfig({ core, adaptive } = loadConfigs()) {
     for (const key of [
       'toolCallsBeforeReevaluation',
       'externalResearchQueries',
+      'browserInteractions',
       'parallelReadOnlyAgents',
       'parallelMutationLanes',
       'reviewerFanoutSoftCeiling',
@@ -230,6 +231,7 @@ export function evaluateRunEfficiency({
     supportingMethods: budget.supportingMethods,
     toolCalls: budget.toolCallsBeforeReevaluation,
     externalResearchQueries: budget.externalResearchQueries,
+    browserInteractions: budget.browserInteractions,
     readOnlyAgents: budget.parallelReadOnlyAgents,
     mutationLanes: budget.parallelMutationLanes,
     repairRounds: budget.repairRounds,
@@ -242,6 +244,7 @@ export function evaluateRunEfficiency({
     supportingMethods: usage.supportingMethods ?? 0,
     toolCalls: usage.toolCalls ?? 0,
     externalResearchQueries: usage.externalResearchQueries ?? 0,
+    browserInteractions: usage.browserInteractions ?? 0,
     readOnlyAgents: usage.readOnlyAgents ?? 0,
     mutationLanes: usage.mutationLanes ?? 0,
     repairRounds: usage.repairRounds ?? 0,
