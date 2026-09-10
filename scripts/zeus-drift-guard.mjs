@@ -263,7 +263,7 @@ const hook = read(HOOK);
     ].join('\n');
 
     const reachable = new Set(scripts.filter((f) => entryText.includes(f)));
-    for (let changed = true; changed; ) {
+    for (let changed = true; changed;) {
       changed = false;
       for (const f of scripts) {
         if (reachable.has(f)) continue;
