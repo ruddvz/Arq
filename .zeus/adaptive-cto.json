@@ -59,12 +59,25 @@
     "independent-review",
     "visual-browser-verification"
   ],
+  "adaptiveRepair": {
+    "retryWithoutNewEvidenceCountsAsProgress": false,
+    "repeatedFailureRequiresStrategyChange": true,
+    "invalidateOnlyDependentEvidence": true
+  },
+  "deEscalation": {
+    "requiresCurrentDeterministicEvidence": true,
+    "preserveProtectedMinimums": true,
+    "recordReason": true
+  },
   "continualHarnessLifecycle": {
     "requireApplicabilityTrigger": true,
     "requireExclusion": true,
     "requireConfidence": true,
+    "requireLastUsed": true,
     "requireLastValidated": true,
     "requireSupersessionState": true,
+    "requireArchivalOrExpiryReview": true,
+    "deduplicateSemanticEquivalents": true,
     "archiveLowValueEntries": true,
     "storeHiddenReasoning": false
   },
@@ -81,17 +94,31 @@
       "uncertainty",
       "deliveryStop",
       "contextCharsUsed",
+      "contextCharsCeiling",
       "modulesUsed",
+      "modulesCeiling",
       "sourcesUsed",
+      "sourcesCeiling",
       "methodsUsed",
+      "methodsCeiling",
       "toolCallsByClass",
+      "toolCallCeilingsByClass",
+      "browserInteractions",
       "cacheHits",
+      "cacheMisses",
+      "cacheBypasses",
+      "cacheBypassReasons",
       "cacheInvalidations",
+      "duplicateQueriesSuppressed",
+      "unnecessaryCacheMisses",
       "agentCount",
+      "reviewerCount",
       "checksRun",
       "repairRounds",
       "escalationReasons",
-      "finalEvidenceState"
+      "finalEvidenceState",
+      "reviewerFindings",
+      "regressionFindings"
     ]
   }
 }
