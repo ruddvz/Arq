@@ -89,7 +89,7 @@ if (sub === 'init') {
     task,
     startedAt: new Date().toISOString(),
     deliveryStop: val('stop', 'local-green'),
-    repositoryIntelligence: graph ? graphLedgerState(graph, tier) : null,
+    repositoryIntelligence: graph ? graphLedgerState(graph, tier, graphSeeds) : null,
     entries: [],
     openConflicts: [],
   });
@@ -138,7 +138,8 @@ if (sub === 'init') {
   const graph = currentGraph(ledger);
   if (graph) {
     const tier = ledger.repositoryIntelligence.tier ?? 'standard';
-    const graphState = graphLedgerState(graph, tier);
+    const graphSeeds = ledger.repositoryIntelligence.query.seeds;
+    const graphState = graphLedgerState(graph, tier, graphSeeds);
     const allowedProvenance = graph.source?.provenance ?? [];
     const graphProblems = graphStateProblems(graphState, allowedProvenance, {
       protectedOnly: true,
@@ -172,7 +173,8 @@ if (sub === 'init') {
   const graphProblems = [];
   if (graph) {
     const tier = ledger.repositoryIntelligence.tier ?? 'standard';
-    const graphState = graphLedgerState(graph, tier);
+    const graphSeeds = ledger.repositoryIntelligence.query.seeds;
+    const graphState = graphLedgerState(graph, tier, graphSeeds);
     const allowedProvenance = graph.source?.provenance ?? [];
     graphProblems.push(
       ...graphStateProblems(graphState, allowedProvenance, {
