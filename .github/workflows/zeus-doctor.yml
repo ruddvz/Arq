@@ -1,0 +1,48 @@
+name: ZEUS doctor
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/zeus-doctor.mjs'
+      - 'scripts/zeus-doctor.test.mjs'
+      - '.github/workflows/zeus-doctor.yml'
+      - '.zeus/config.json'
+      - '.zeus/impact-map.json'
+      - '.zeus/repository-graph.json'
+      - 'scripts/zeus-gate-ledger.mjs'
+      - 'scripts/zeus-plan-ledger.mjs'
+      - 'scripts/zeus-reviewer-match.mjs'
+      - 'scripts/zeus-repository-intelligence.mjs'
+      - 'scripts/lib/zeus-engine.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zeus-doctor-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  doctor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Check doctor syntax
+        run: node --check scripts/zeus-doctor.mjs
+      - name: Run doctor status snapshots
+        run: node scripts/zeus-doctor.test.mjs
+      - name: Verify ZEUS drift guard
+        run: node scripts/zeus-drift-guard-test.mjs
+      - name: Verify ZEUS configuration
+        run: pnpm zeus:validate
