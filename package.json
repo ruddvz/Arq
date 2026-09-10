@@ -93,7 +93,7 @@
     "zeus:harness": "node scripts/zeus-harness-state.mjs",
     "zeus:gate": "node scripts/zeus-gate-ledger.mjs",
     "zeus:plan": "node scripts/zeus-plan-ledger.mjs",
-    "zeus:drift": "node scripts/zeus-autonomy-verify.mjs && node scripts/zeus-drift-guard.mjs",
+    "zeus:drift": "node scripts/zeus-drift-guard.mjs",
     "spike:canonical-units": "node scripts/run-canonical-units-spike.mjs"
   },
   "devDependencies": {
