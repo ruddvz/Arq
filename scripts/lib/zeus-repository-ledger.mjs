@@ -19,8 +19,12 @@ export function graphProvenance(graph) {
   return unique(provenance);
 }
 
-export function graphLedgerState(graph, tier = 'standard') {
-  const requested = [...(graph?.seeds?.requested ?? [])];
+export function graphLedgerState(
+  graph,
+  tier = 'standard',
+  requestedSeeds = graph?.seeds?.requested ?? [],
+) {
+  const requested = [...requestedSeeds];
   const resolved = [...(graph?.seeds?.resolved ?? [])];
   const unresolved = [...(graph?.seeds?.unresolved ?? [])];
   const ambiguous = { ...(graph?.seeds?.ambiguous ?? {}) };
