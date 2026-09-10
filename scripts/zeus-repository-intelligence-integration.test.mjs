@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -61,6 +61,16 @@ function run(...args) {
   for (const check of ['zeus:validate', 'lint', 'typecheck', 'test', 'build']) {
     assert(impact.checks.includes(check), `protected graph impact must require ${check}`);
   }
+}
+
+const runtimeStateProbe = path.join(root, '.zeus', 'gates', '__graph_state_probe__.json');
+try {
+  mkdirSync(path.dirname(runtimeStateProbe), { recursive: true });
+  writeFileSync(runtimeStateProbe, '{"runtimeState":true}\n');
+  const status = run('graph', '--json', 'status');
+  assert.equal(status.fresh, true, 'runtime ledger writes must not stale repository graph evidence');
+} finally {
+  rmSync(runtimeStateProbe, { force: true });
 }
 
 const probe = path.join(root, 'scripts', '__zeus_graph_stale_probe__.mjs');
