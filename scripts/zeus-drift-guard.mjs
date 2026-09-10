@@ -23,6 +23,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { compile, markdown } from './lib/zeus-engine.mjs';
+import { validateAutonomyFiles } from './zeus-autonomy-verify.mjs';
 
 const ROOT = process.cwd();
 const packageRoot = dirname(dirname(new URL(import.meta.url).pathname));
@@ -123,7 +124,7 @@ const hook = read(HOOK);
     // enforces. One source of truth, checked rather than trusted.
     for (const [tier, budget] of Object.entries(config?.budgets ?? {})) {
       const heading = new RegExp(
-        `\\*\\*${tier}[^*]*\\*\\*:?([^\\n]*(?:\\n(?!- \\*\\*)[^\\n]*)*)`,
+        `\\*\\*${tier}[^*]*\\*\\*:?([^\n]*(?:\n(?!- \\*\\*)[^\n]*)*)`,
         'i',
       );
       const section = heading.exec(kernel)?.[1] ?? '';
@@ -262,7 +263,7 @@ const hook = read(HOOK);
     ].join('\n');
 
     const reachable = new Set(scripts.filter((f) => entryText.includes(f)));
-    for (let changed = true; changed;) {
+    for (let changed = true; changed; ) {
       changed = false;
       for (const f of scripts) {
         if (reachable.has(f)) continue;
@@ -332,6 +333,10 @@ const hook = read(HOOK);
     if (!pkg?.scripts?.[script]) errors.push(`package.json has no "${script}" script`);
   }
 }
+
+// Project-local autonomy is part of canonical drift state. A weakened autonomy
+// contract must fail the normal `zeus:drift` command, not only a focused helper.
+errors.push(...validateAutonomyFiles(ROOT));
 
 if (packageRoot !== ROOT) {
   console.error(`drift guards must run from the repository root (got ${ROOT})`);
