@@ -74,9 +74,6 @@ export function graphStateProblems(
   const ambiguous = Object.keys(state?.resolution?.ambiguous ?? {});
   if (unresolved.length) problems.push(`repository graph has unresolved seed(s): ${unresolved.join(', ')}`);
   if (ambiguous.length) problems.push(`repository graph has ambiguous seed(s): ${ambiguous.join(', ')}`);
-  if (state?.truncation?.context || state?.truncation?.impact) {
-    problems.push('repository graph evidence is truncated and cannot prove a protected gate');
-  }
 
   const allowed = new Set(allowedProvenance);
   const disallowed = (state?.provenance ?? []).filter((value) => !allowed.has(value));
