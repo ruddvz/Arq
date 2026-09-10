@@ -47,7 +47,13 @@ for (let i = 0; i < 6; i += 1) {
 const files = [
   {
     path: 'src/wall.ts',
-    headings: ['Heading one', 'Heading two', 'Heading three', 'Heading four', 'Heading five'],
+    headings: [
+      'Heading one',
+      'Heading two',
+      'Heading three',
+      'Heading four',
+      'Heading five',
+    ],
     keywords: ['wall', 'precisiontarget'],
   },
   {
@@ -68,14 +74,20 @@ writeFileSync(cache, `${JSON.stringify({ fingerprint: 'fixture', files }, null, 
   const wall = result.results.find((item) => item.path === 'src/wall.ts');
   assert(wall, 'expected wall source in context results');
   assert.match(wall.snippet, /precisiontarget/);
-  assert(wall.snippetStart > 0, 'expected query-centred snippet instead of file prefix');
+  assert(
+    wall.snippetStart > 0,
+    'expected query-centred snippet instead of file prefix',
+  );
   assert(wall.headings.length <= 4, 'expected bounded heading output');
   assert(result.usedContextChars <= result.budget.contextChars);
 }
 
 {
   const result = run(root, cache, '--query', 'legacytoken implementation ledger', '--snippets');
-  assert.equal(result.results.some((item) => item.path.includes('IMPLEMENTATION_LEDGER')), false);
+  assert.equal(
+    result.results.some((item) => item.path.includes('IMPLEMENTATION_LEDGER')),
+    false,
+  );
   assert.equal(result.coldSourcesExcluded, 1);
 }
 
@@ -88,13 +100,19 @@ writeFileSync(cache, `${JSON.stringify({ fingerprint: 'fixture', files }, null, 
     '--snippets',
     '--include-cold',
   );
-  assert.equal(result.results.some((item) => item.path.includes('IMPLEMENTATION_LEDGER')), true);
+  assert.equal(
+    result.results.some((item) => item.path.includes('IMPLEMENTATION_LEDGER')),
+    true,
+  );
   assert.equal(result.coldSourcesExcluded, 0);
 }
 
 {
   const result = run(root, cache, '--query', 'wall', '--limit', '999');
-  assert(result.results.length <= 4, 'fast retrieval must not exceed the existing source ceiling');
+  assert(
+    result.results.length <= 4,
+    'fast retrieval must not exceed the existing source ceiling',
+  );
   assert.equal(result.budget.sources, 4);
 }
 
