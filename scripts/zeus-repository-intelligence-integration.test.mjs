@@ -35,7 +35,10 @@ function run(...args) {
   assert.equal(compiled.repositoryIntelligence.verification.level, 'protected');
   assert(compiled.repositoryIntelligence.seeds.resolved.length > 0);
   assert.equal(compiled.repositoryIntelligence.source.rank, 1);
-  assert.deepEqual(compiled.repositoryIntelligence.source.provenance, ['deterministic', 'declared']);
+  assert.deepEqual(compiled.repositoryIntelligence.source.provenance, [
+    'deterministic',
+    'declared',
+  ]);
 }
 
 {
@@ -48,9 +51,31 @@ function run(...args) {
     '--graph-seed',
     'packages/bim-core',
   );
-  assert.equal(compiled.tier, 'fast');
+  assert.equal(compiled.repositoryEscalation.from.tier, 'fast');
+  assert.equal(compiled.repositoryEscalation.to.tier, 'deep');
+  assert.equal(compiled.repositoryEscalation.from.risk, 'low');
+  assert.equal(compiled.risk, 'high');
+  assert.equal(compiled.tier, 'deep');
   assert.equal(compiled.repositoryIntelligence.context_budget.max_context_chars, 8000);
   assert(JSON.stringify(compiled.repositoryIntelligence.context).length <= 8000);
+  for (const check of ['zeus:validate', 'lint', 'typecheck', 'test', 'build']) {
+    assert(compiled.checks.includes(check), `protected graph compile must require ${check}`);
+  }
+  assert(compiled.reviewers.length > 0, 'protected graph compile must require review');
+}
+
+{
+  const compiled = run(
+    'compile',
+    '--task',
+    'Fix .arq recovery',
+    '--format',
+    'json',
+    '--graph-seed',
+    'apps/web',
+  );
+  assert.equal(compiled.risk, 'high', 'graph evidence must not lower task risk');
+  assert.equal(compiled.tier, 'deep', 'graph evidence must not lower the task tier');
 }
 
 {
@@ -94,6 +119,12 @@ try {
   );
   assert.equal(compiled.repositoryIntelligence.fresh, false);
   assert.equal(compiled.repositoryIntelligence.uncertainty, true);
+  assert.equal(compiled.risk, 'high');
+  assert.equal(compiled.tier, 'deep');
+  assert.equal(
+    compiled.repositoryEscalation.reason,
+    'protected-or-uncertain-repository-impact',
+  );
 } finally {
   rmSync(probe, { force: true });
 }
