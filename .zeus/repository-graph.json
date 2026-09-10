@@ -1,0 +1,51 @@
+{
+  "protocol": "zeus-repository-intelligence/v1",
+  "schema_version": 1,
+  "extractor_version": "1.0.0",
+  "hard_gate_provenance": ["deterministic", "declared"],
+  "declarations": [".zeus/repository-graph-declarations.json"],
+  "exclude_prefixes": [
+    ".git/",
+    ".turbo/",
+    "node_modules/",
+    "coverage/",
+    "dist/",
+    "build/",
+    "out/",
+    "target/"
+  ],
+  "source_extensions": [
+    ".js",
+    ".jsx",
+    ".mjs",
+    ".cjs",
+    ".ts",
+    ".tsx",
+    ".json",
+    ".py",
+    ".rs",
+    ".toml",
+    ".md",
+    ".yml",
+    ".yaml"
+  ],
+  "budgets": {
+    "max_nodes": 240,
+    "max_depth": 4,
+    "max_context_chars": 28000
+  },
+  "protected_domains": [
+    "semantic_model",
+    "operations",
+    "ai_operations",
+    "persistence",
+    "geometry_units",
+    "contract"
+  ],
+  "verification_frontiers": {
+    "harness": ["node scripts/zeus-drift-guard-test.mjs", "pnpm zeus:drift", "pnpm zeus:validate"],
+    "renderer_ui": ["pnpm lint", "pnpm test", "pnpm build"],
+    "public_adapter": ["pnpm lint", "pnpm test", "pnpm build"],
+    "protected": ["pnpm zeus:validate", "pnpm lint", "pnpm typecheck", "pnpm test", "pnpm build"]
+  }
+}

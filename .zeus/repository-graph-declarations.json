@@ -1,0 +1,68 @@
+{
+  "protocol": "zeus-repository-intelligence/v1",
+  "edges": [
+    {
+      "source": "package:packages/operations",
+      "target": "package:packages/bim-core",
+      "relation": "ACTS_ON",
+      "provenance": "declared",
+      "authority": "typed-operation-boundary"
+    },
+    {
+      "source": "package:packages/plan-renderer",
+      "target": "package:packages/bim-core",
+      "relation": "RENDERS",
+      "provenance": "declared",
+      "authority": "derived-projection-boundary"
+    },
+    {
+      "source": "package:packages/model-renderer",
+      "target": "package:packages/bim-core",
+      "relation": "RENDERS",
+      "provenance": "declared",
+      "authority": "derived-projection-boundary"
+    },
+    {
+      "source": "package:packages/arqfs",
+      "target": "package:packages/bim-core",
+      "relation": "PERSISTS",
+      "provenance": "declared",
+      "authority": "native-project-persistence"
+    },
+    {
+      "source": "package:packages/project-format",
+      "target": "package:packages/bim-core",
+      "relation": "PERSISTS",
+      "provenance": "declared",
+      "authority": "native-project-format"
+    },
+    {
+      "source": "package:packages/local-storage",
+      "target": "package:packages/arqfs",
+      "relation": "DEPENDS_ON",
+      "provenance": "declared",
+      "authority": "browser-local-persistence"
+    },
+    {
+      "source": "package:packages/derived-cache",
+      "target": "package:packages/bim-core",
+      "relation": "GENERATED_FROM",
+      "provenance": "declared",
+      "authority": "disposable-derived-state"
+    },
+    {
+      "source": "package:packages/validation",
+      "target": "package:packages/bim-core",
+      "relation": "VALIDATES",
+      "provenance": "declared",
+      "authority": "deterministic-validation"
+    },
+    {
+      "source": "package:packages/validation",
+      "target": "package:packages/operations",
+      "relation": "VALIDATES",
+      "provenance": "declared",
+      "authority": "deterministic-validation"
+    }
+  ]
+}

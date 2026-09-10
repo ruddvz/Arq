@@ -1,0 +1,74 @@
+name: ZEUS repository intelligence
+
+on:
+  pull_request:
+    paths:
+      - '.zeus/repository-graph.json'
+      - '.zeus/repository-graph-declarations.json'
+      - 'scripts/zeus-repository-intelligence.mjs'
+      - 'scripts/zeus-repository-intelligence.test.mjs'
+      - '.github/workflows/zeus-repository-intelligence.yml'
+      - 'packages/**'
+      - 'apps/web/**'
+      - 'contracts/**'
+      - 'rust/arq-core/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zeus-repository-intelligence-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  graph-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Prove literal pull-request head checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha }}"
+          printf 'actual=%s\nexpected=%s\n' "$actual" "$expected"
+          test "$actual" = "$expected"
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Check repository intelligence syntax
+        run: node --check scripts/zeus-repository-intelligence.mjs
+
+      - name: Run repository intelligence regressions
+        run: node --test scripts/zeus-repository-intelligence.test.mjs
+
+      - name: Build fresh repository graph
+        run: node scripts/zeus-repository-intelligence.mjs --json build
+
+      - name: Require fresh repository graph
+        run: node scripts/zeus-repository-intelligence.mjs --json status
+
+      - name: Preflight canonical semantic model
+        run: node scripts/zeus-repository-intelligence.mjs --json preflight packages/bim-core
+
+      - name: Inspect pull-request diff impact
+        run: node scripts/zeus-repository-intelligence.mjs --json diff-impact --base "origin/${{ github.base_ref }}"
+
+      - name: Verify ZEUS drift guard itself
+        run: node scripts/zeus-drift-guard-test.mjs
+
+      - name: Verify ZEUS drift state
+        run: pnpm zeus:drift
+
+      - name: Validate ZEUS operating system
+        run: pnpm zeus:validate
+
+      - name: Verify editor dependency boundaries
+        run: pnpm check:editor-dependency-boundaries
