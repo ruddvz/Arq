@@ -1,8 +1,5 @@
 import assert from 'node:assert/strict';
-import {
-  runtimeReceipt,
-  startReceipt,
-} from './zeus-adaptive-runtime.mjs';
+import { runtimeReceipt, startReceipt } from './zeus-adaptive-runtime.mjs';
 
 const baseUsage = {
   modules: 1,

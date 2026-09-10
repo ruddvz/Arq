@@ -156,7 +156,9 @@ export function runtimeReceipt({
   });
   const states = normaliseVerification(frontier, verification);
   const failed = frontier.filter((check) => states[check] === 'failed');
-  const unavailable = frontier.filter((check) => ['not-executed', 'skipped'].includes(states[check]));
+  const unavailable = frontier.filter((check) =>
+    ['not-executed', 'skipped'].includes(states[check]),
+  );
   const allPassed = frontier.every((check) => states[check] === 'passed');
 
   const baseUsage = {
@@ -192,7 +194,11 @@ export function runtimeReceipt({
   let decision;
   if (authorityViolation || evidencePromotedWithoutBasis || failed.length) decision = 'repair';
   else if (unavailable.length) decision = 'block-external-evidence';
-  else if (expansionState.reasonCodes.length || efficiency.exceeded.length || duplicateExecuted > 0) {
+  else if (
+    expansionState.reasonCodes.length ||
+    efficiency.exceeded.length ||
+    duplicateExecuted > 0
+  ) {
     decision = 're-evaluate-tier-or-evidence-plan';
   } else if (phase === 'finish' && acceptanceProven && efficiency.quality_green) {
     decision = 'stop-success';
