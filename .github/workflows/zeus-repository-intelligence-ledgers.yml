@@ -1,0 +1,42 @@
+name: ZEUS repository intelligence ledgers
+
+on:
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'scripts/zeus.mjs'
+      - 'scripts/zeus-evidence.mjs'
+      - 'scripts/zeus-gate.mjs'
+      - 'scripts/zeus-gate-ledger.mjs'
+      - 'scripts/lib/zeus-repository-evidence.mjs'
+      - 'scripts/lib/zeus-repository-ledger.mjs'
+      - 'scripts/zeus-repository-intelligence-ledgers.test.mjs'
+      - '.github/workflows/zeus-repository-intelligence-ledgers.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zeus-repository-intelligence-ledgers-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build repository graph
+        run: node scripts/zeus-repository-intelligence.mjs build --json
+      - name: Check ledger scripts
+        run: |
+          node --check scripts/lib/zeus-repository-ledger.mjs
+          node --check scripts/zeus-evidence.mjs
+          node --check scripts/zeus-gate.mjs
+          node --check scripts/zeus-repository-intelligence-ledgers.test.mjs
+      - name: Run graph-aware ledger regressions
+        run: node scripts/zeus-repository-intelligence-ledgers.test.mjs
