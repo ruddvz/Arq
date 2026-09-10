@@ -1,0 +1,54 @@
+name: ZEUS adaptive measurement probe 328
+
+on:
+  push:
+    branches:
+      - codex/zeus-adaptive-measurement-probe-328
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/arq-cad-platform-research-ba8rav
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build project index
+        run: node scripts/zeus-index.mjs --root .
+      - name: Measure representative contracts and context
+        shell: bash
+        run: |
+          set -euo pipefail
+          measure() {
+            local name="$1"
+            local task="$2"
+            local query="$3"
+            echo "=== $name ==="
+            node scripts/zeus.mjs compile --task "$task" --format json > "/tmp/${name}-contract.json"
+            jq '{mode,risk,tier,deliveryStop,blastRadius,reversibility,modules,methods,reviewers,reviewAgents,budget,cachePolicy}' "/tmp/${name}-contract.json"
+            local tier
+            tier="$(jq -r '.tier' "/tmp/${name}-contract.json")"
+            echo "-- context default --"
+            node scripts/zeus.mjs context --query "$query" --tier "$tier" --snippets | jq '{tier,budget,usedContextChars,coldSourcesExcluded,sourceCount:(.results|length),results:(.results|map({path,score,snippetChars:(.snippet|length)}))}'
+            for limit in 1 2 3 4; do
+              echo "-- context limit=$limit --"
+              node scripts/zeus.mjs context --query "$query" --tier "$tier" --snippets --limit "$limit" | jq '{tier,budget,usedContextChars,sourceCount:(.results|length),results:(.results|map({path,score,snippetChars:(.snippet|length)}))}'
+            done
+          }
+
+          measure fast_readme 'Fix a README typo and stop after local implementation' 'README typo documentation'
+          measure standard_hover 'Improve editor hover affordance for wall selection and stop after local implementation' 'editor wall selection hover affordance'
+          measure deep_arq 'Migrate the .arq project format recovery path and stop after local implementation' 'arq project format recovery migration'
+          measure deep_geometry 'Change canonical geometry units in wall operations and stop after local implementation' 'canonical geometry units wall operations'
