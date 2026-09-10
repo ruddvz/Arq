@@ -18,6 +18,6 @@
     "react": "^18"
   },
   "devDependencies": {
-    "@types/react": "^18"
+    "@types/react": "^19"
   }
 }
