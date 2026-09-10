@@ -1,43 +1,10 @@
 #!/usr/bin/env node
 // Zeus 5 gate ledger: loop bounds and gate results recorded rather than claimed.
 //
-// `.zeus/FAST-KERNEL.md` states a repair budget per tier and a verification
-// ladder, then trusts the model to honour both. `scripts/zeus-evidence.mjs`
-// records what each CLAIM rests on, which is the other half, but nothing
-// recorded which GATE had actually run, at which round, or against which
-// version of the working tree. "Verified" was therefore a memory, which is the
-// exact failure `.zeus/EVIDENCE-STATES.md` exists to prevent.
-//
-// Ported in spirit from prime-agent's autonomous-mode quality gates (MIT,
-// inspected at f8f0222), which bound continuations in the host and refuse to
-// rerun a gate when the workspace has not changed.
-//
-// Everything it needs already exists in this repository and is reused rather
-// than reinvented, per `.zeus/INVARIANTS.md` (search for an existing system
-// before creating another):
-//   scripts/zeus-fingerprint.mjs  the workspace signature
-//   .zeus/config.json budgets     repairRounds per tier, the loop bound
-//   .zeus/config.json gates       the unconditional repository gate set
-//   .zeus/blast-radius.json       which radii require independent review
-//   scripts/zeus-reviewer-match   which reviewer the changed paths call for
-//
-// Five rules carry the weight:
-//   1. A gate result belongs to the fingerprint it was recorded at. Edit
-//      anything and it goes stale, because it no longer describes this tree.
-//   2. A FAILED gate is never skippable, even at the same fingerprint. Fix it;
-//      do not re-declare it.
-//   3. Rounds are bounded by the tier's repairRounds, so the ledger and the
-//      kernel cannot drift apart.
-//   4. The repository gate set is unconditional. Requiring only that RECORDED
-//      gates passed means recording one gate and nothing else is green.
-//   5. Independent review is a gate. Where risk or blast radius requires it,
-//      ship refuses without a passing review by an agent that exists on disk
-//      AND that the changed paths actually call for.
-//
-// What it does NOT prove, stated plainly: recording `typecheck --outcome pass`
-// does not run `tsc`. The ledger records a claim about a check, not the check.
-// It converts a silent assumption into an auditable, falsifiable, deliberately
-// made statement, which is a real gain and less than enforcement.
+// The evidence ledger records what each claim rests on. This ledger records
+// which gates actually ran, at which round and workspace fingerprint. Repository
+// intelligence may add obligations here, but it never replaces the repository
+// gate set, reviewer matching or Engineering OS merge authority.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync, renameSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -45,13 +12,22 @@ import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { agentRegistry } from './zeus-agent-registry.mjs';
 import { requiredReviewers } from './zeus-reviewer-match.mjs';
+import { applyGraphEscalation, repositoryEvidence } from './lib/zeus-repository-evidence.mjs';
+import {
+  graphLedgerState,
+  graphStateProblems,
+  missingGraphChecks,
+  requiredGraphChecks,
+} from './lib/zeus-repository-ledger.mjs';
 
 const packageRoot = dirname(dirname(new URL(import.meta.url).pathname));
 
 /** Zeus's own risk vocabulary. `moderate`, not the reference system's `medium`. */
 const RISKS = ['low', 'moderate', 'high', 'critical'];
 const RISK_SET = new Set(RISKS);
+const RISK_RANK = { low: 0, moderate: 1, high: 2, critical: 3 };
 const TIERS = new Set(['fast', 'standard', 'deep']);
+const TIER_RANK = { fast: 0, standard: 1, deep: 2 };
 const OUTCOMES = new Set(['pass', 'fail']);
 const REVIEW_PREFIX = 'review:';
 
@@ -67,6 +43,12 @@ const ALIASES = {
   test: ['test', 'tests', 'vitest', 'suite'],
   build: ['build'],
 };
+
+function higher(current, candidate, rank) {
+  if (!(candidate in rank)) return current;
+  if (!(current in rank)) return candidate;
+  return rank[candidate] > rank[current] ? candidate : current;
+}
 
 export function gateConfig(root = packageRoot) {
   let raw;
@@ -154,13 +136,7 @@ export function ledgerPath(root = packageRoot) {
 
 /**
  * The workspace signature, from Zeus's existing fingerprint script.
- *
- * Rooted at the REPOSITORY, never at `process.cwd()`. zeus-fingerprint.mjs
- * hashes `git ls-files --others` relative to the root it is given, so running
- * from a subdirectory produces a different signature for an identical tree.
- * Measured: the repository root and `packages/` disagreed, which would report
- * every gate recorded from one directory as stale from the other, and a ledger
- * that goes stale for no reason is a ledger people stop running.
+ * Rooted at the repository, never process.cwd().
  */
 export function repositoryRoot(from = packageRoot) {
   const r = spawnSync('git', ['-C', from, 'rev-parse', '--show-toplevel'], { encoding: 'utf8' });
@@ -213,23 +189,19 @@ export function loadLedger(path = ledgerPath()) {
 
 export function saveLedger(ledger, path = ledgerPath()) {
   mkdirSync(dirname(path), { recursive: true });
-  // Write-then-rename: an interrupted in-place write leaves a truncated ledger,
-  // which loadLedger then rejects as "not a Zeus gate ledger", losing every
-  // recorded gate for the task. Rename is atomic on one filesystem.
   const tmp = `${path}.${process.pid}.tmp`;
   writeFileSync(tmp, `${JSON.stringify(ledger, null, 2)}\n`, 'utf8');
   renameSync(tmp, path);
   return ledger;
 }
 
-export function startTask(ledger, { task, risk, tier, blastRadius, bounds, radii = null }) {
+export function startTask(
+  ledger,
+  { task, risk, tier, blastRadius, bounds, radii = null, repositoryIntelligence = null },
+) {
   if (!task) throw new Error('start requires --task "<name>"');
   if (!RISK_SET.has(risk)) throw new Error(`risk must be one of ${RISKS.join('|')}`);
   if (!TIERS.has(tier)) throw new Error(`tier must be one of ${[...TIERS].join('|')}`);
-  // Required, not optional. Blast radius is half the review rule, so an omitted
-  // one silently waived review for everything below high risk: `start --risk
-  // moderate` with no radius produced a ledger that shipped with no reviewer at
-  // all. An unrecorded axis must never read as a benign one.
   const known = radii ?? allRadii();
   if (!known.has(blastRadius)) {
     throw new Error(
@@ -237,7 +209,7 @@ export function startTask(ledger, { task, risk, tier, blastRadius, bounds, radii
         'It is half the review rule, so it cannot be left unrecorded.',
     );
   }
-  return {
+  const next = {
     ...emptyLedger(),
     task,
     risk,
@@ -247,6 +219,8 @@ export function startTask(ledger, { task, risk, tier, blastRadius, bounds, radii
     bound: bounds[tier],
     startedAt: now(),
   };
+  if (repositoryIntelligence) next.repositoryIntelligence = repositoryIntelligence;
+  return next;
 }
 
 export function recordGate(ledger, { gate, outcome, evidence, signature }) {
@@ -255,8 +229,6 @@ export function recordGate(ledger, { gate, outcome, evidence, signature }) {
   }
   if (!gate) throw new Error('record requires --gate <name>');
   if (!OUTCOMES.has(outcome)) throw new Error(`outcome must be ${[...OUTCOMES].join('|')}`);
-  // A passing gate with no evidence is exactly the claim-without-a-check this
-  // ledger exists to stop.
   if (outcome === 'pass' && !evidence) {
     throw new Error(
       'a passing gate requires --evidence (the command output or result that proves it)',
@@ -270,17 +242,13 @@ export function recordGate(ledger, { gate, outcome, evidence, signature }) {
     signature,
     recordedAt: now(),
   };
-  // One row per gate: the latest result replaces the previous one, and history
-  // lives in the round number rather than in duplicate rows.
   const gates = ledger.gates.filter((g) => g.gate !== gate);
   gates.push(entry);
   return { ledger: { ...ledger, gates }, entry };
 }
 
 /**
- * A gate may be skipped only if it PASSED at the current signature. A failed
- * gate is never skippable, and a stale one describes a tree that no longer
- * exists.
+ * A gate may be skipped only if it passed at the current signature.
  */
 export function canSkip(ledger, gate, signature) {
   const found = ledger.gates.find((g) => g.gate === gate);
@@ -306,16 +274,6 @@ export function canSkip(ledger, gate, signature) {
 export function nextRound(ledger, bounds = loopBounds()) {
   if (!ledger.task) throw new Error('no task open');
   const next = ledger.round + 1;
-  // A ledger written by hand, or by an older version, can carry bound null.
-  // `2 > null` is true, so a naive guard throws an unfixable stop. Treating a
-  // null bound as UNBOUNDED is the opposite mistake and drops rule 3 on exactly
-  // the ledger that had lost it, so re-derive the bound from the tier instead.
-  //
-  // TIERS.has, not a truthiness check: `bounds` is a plain object built from
-  // JSON and carries Object.prototype, so indexing it with an unvalidated tier
-  // string reaches inherited members. `tier: "constructor"` yields a FUNCTION,
-  // `next > <function>` is NaN-false so nothing ever bounds, and JSON.stringify
-  // then drops the key, leaving the ledger permanently unbounded.
   const bound =
     ledger.bound ??
     (TIERS.has(ledger.tier) ? bounds[ledger.tier] : Math.min(...Object.values(bounds)));
@@ -329,33 +287,36 @@ export function nextRound(ledger, bounds = loopBounds()) {
   return { ...ledger, round: next, bound };
 }
 
-/**
- * Whether this ledger's risk and blast radius require independent review.
- * Mirrors scripts/lib/zeus-engine.mjs: risk at the configured threshold, or a
- * blast radius level whose `requiresReview` flag is set.
- */
+/** Whether this ledger's risk and blast radius require independent review. */
 export function reviewRequired(
   ledger,
   { config = gateConfig(), radii = reviewRequiringRadii() } = {},
 ) {
   if (config.reviewRequiredAtRisk.includes(ledger.risk)) return true;
-  // A radius table that could not be read means every radius is treated as
-  // review-requiring: an unreadable rule must not become a waiver.
   if (radii === null) return true;
-  // Nor may a MISSING radius. `start` refuses to open a ledger without one, but
-  // this file is plain JSON and hand-editable, and "the axis is absent" is not
-  // evidence that the axis is safe.
   if (!ledger.blastRadius) return true;
   return radii.has(ledger.blastRadius);
 }
 
+function effectiveGraphLedger(ledger, graphState) {
+  if (!graphState) return ledger;
+  const escalated = applyGraphEscalation(
+    { risk: ledger.risk, tier: ledger.tier, checks: [] },
+    {
+      verification: graphState.verification,
+      uncertainty: graphState.uncertainty || graphState.completeness !== 'complete',
+    },
+  );
+  return {
+    ...ledger,
+    risk: higher(ledger.risk, escalated.risk, RISK_RANK),
+    tier: higher(ledger.tier, escalated.tier, TIER_RANK),
+  };
+}
+
 /**
- * Ship readiness. Green requires every recorded gate to have passed at the
- * current signature; anything else is partial or blocked, never green.
- *
- * @param {object} ledger
- * @param {string} signature
- * @param {{reviewers?: Set<string>, match?: object, config?: object, radii?: Set<string>|null}} [deps]
+ * Ship readiness. Repository gates are unconditional. Graph requirements are
+ * additive and may only make this result stricter.
  */
 export function shipReadiness(ledger, signature, deps = {}) {
   const problems = [];
@@ -363,15 +324,13 @@ export function shipReadiness(ledger, signature, deps = {}) {
 
   const config = deps.config ?? gateConfig();
   const slots = config.repositoryGates;
+  const graphState = deps.graphState ?? null;
+  const effectiveLedger = effectiveGraphLedger(ledger, graphState);
 
   if (ledger.gates.length === 0) {
     problems.push('no gate has run - "verified" would be a claim, not a fact');
   }
   for (const g of ledger.gates) {
-    // `!== 'pass'`, not `=== 'fail'`. The ledger is a plain JSON file and
-    // loadLedger validates only that `gates` is an array, so a hand-edited or
-    // foreign-written outcome of "PASS" or "ok" would otherwise satisfy every
-    // pass check by failing the fail check: a reject laundered into green.
     if (g.outcome !== 'pass') {
       problems.push(`${g.gate} is not passing (round ${g.round}, outcome "${g.outcome}")`);
     } else if (g.signature !== signature) {
@@ -379,7 +338,6 @@ export function shipReadiness(ledger, signature, deps = {}) {
     }
   }
 
-  // A named floor, so "green" cannot mean "the one gate I bothered to record".
   const satisfied = new Set(
     ledger.gates
       .filter((g) => g.outcome === 'pass' && g.signature === signature)
@@ -394,9 +352,37 @@ export function shipReadiness(ledger, signature, deps = {}) {
     );
   }
 
-  if (reviewRequired(ledger, { config, radii: deps.radii ?? reviewRequiringRadii() })) {
-    // Only read disk when the caller has not supplied the set: a test that
-    // injects reviewers must not silently depend on the real .claude/agents.
+  if (ledger.repositoryIntelligence) {
+    if (!graphState) {
+      problems.push('repository graph requirements were recorded at start but cannot be re-evaluated');
+    } else {
+      if (graphState.fingerprint !== ledger.repositoryIntelligence.fingerprint) {
+        problems.push('repository graph fingerprint changed since gate start - restart or re-evaluate the task');
+      }
+      problems.push(
+        ...graphStateProblems(graphState, deps.allowedGraphProvenance ?? [], {
+          protectedOnly: true,
+        }),
+      );
+      const graphMissing = missingGraphChecks(
+        ledger.gates,
+        requiredGraphChecks(graphState),
+        signature,
+      );
+      if (graphMissing.length) {
+        problems.push(
+          `repository graph requires current passing gate(s): ${graphMissing.join(', ')}`,
+        );
+      }
+    }
+  }
+
+  if (
+    reviewRequired(effectiveLedger, {
+      config,
+      radii: deps.radii ?? reviewRequiringRadii(),
+    })
+  ) {
     const registry = deps.reviewers ? null : agentRegistry();
     const known = deps.reviewers ?? registry.dispatchable;
     if (registry && !registry.exists) {
@@ -405,11 +391,6 @@ export function shipReadiness(ledger, signature, deps = {}) {
       );
     }
 
-    // The match check the reference implementation named as its largest gap.
-    // `required` is the reviewer set the CHANGED PATHS call for, via
-    // .zeus/impact-map.json and .zeus/module-manifest.json. When it cannot be
-    // computed, fall back to "any dispatchable agent" and SAY SO, rather than
-    // concluding that no review was needed.
     let match;
     try {
       match = deps.match ?? requiredReviewers({});
@@ -433,14 +414,6 @@ export function shipReadiness(ledger, signature, deps = {}) {
       named.find((g) => g.outcome === 'pass') ??
       named[0];
 
-    // Checked by everyone the diff calls for, not merely by somebody.
-    //
-    // One passing review was the old bar, and it is the wrong shape: a change
-    // that touches persistence AND security needs both specialists, and a count
-    // cannot express that. When the changed paths resolve to reviewers, EVERY one
-    // of them must have passed at the current tree. The count below is only the
-    // fallback for when they cannot be resolved, and it is where "checked twice"
-    // lives for work whose paths no pattern covers.
     const passedNow = new Set(
       reviews
         .filter((g) => g.outcome === 'pass' && g.signature === signature)
@@ -456,20 +429,15 @@ export function shipReadiness(ledger, signature, deps = {}) {
         );
       }
     } else {
-      const need = config.reviewQuorumWhenUnmatched[ledger.risk] ?? 1;
+      const need = config.reviewQuorumWhenUnmatched[effectiveLedger.risk] ?? 1;
       if (passedNow.size < need) {
         problems.push(
-          `${ledger.risk} risk needs ${need} independent review(s) and ${passedNow.size} passed at this workspace - ` +
+          `${effectiveLedger.risk} risk needs ${need} independent review(s) and ${passedNow.size} passed at this workspace - ` +
             `the changed paths could not be resolved to reviewers (${match.reason}), so the count applies instead`,
         );
       }
     }
 
-    // Only complain about an unrecognised reviewer when no real review carried
-    // the work. Reporting every bogus row unconditionally means one typo'd name
-    // bricks the ledger for good: gates dedupe by name so the row cannot be
-    // removed, and the only escape is `clear --yes`, which discards the genuine
-    // review too.
     if (!review || review.outcome !== 'pass') {
       for (const g of bogus) {
         problems.push(
@@ -489,7 +457,7 @@ export function shipReadiness(ledger, signature, deps = {}) {
         ? `the reviewer the changed paths call for (${match.required.join(', ')})`
         : `a dispatchable reviewer (${match.reason}, so any of: ${[...known].sort().join(', ')})`;
       problems.push(
-        `${ledger.risk} risk / ${ledger.blastRadius ?? 'unrecorded'} blast radius requires independent review and none was recorded - dispatch ${who}, then: ` +
+        `${effectiveLedger.risk} risk / ${effectiveLedger.blastRadius ?? 'unrecorded'} blast radius requires independent review and none was recorded - dispatch ${who}, then: ` +
           `pnpm zeus:gate record --gate ${REVIEW_PREFIX}<reviewer> --outcome pass --evidence "<what it found>"`,
       );
     } else if (review.outcome === 'pass' && review.signature !== signature) {
@@ -504,7 +472,7 @@ export function shipReadiness(ledger, signature, deps = {}) {
     }
   }
 
-  return { ready: problems.length === 0, problems };
+  return { ready: problems.length === 0, problems, effectiveLedger };
 }
 
 /* --------------------------------- CLI ---------------------------------- */
@@ -514,24 +482,61 @@ function arg(args, name, fallback) {
   return i >= 0 && args[i + 1] !== undefined ? args[i + 1] : fallback;
 }
 
+function values(args, name) {
+  return args.flatMap((value, index) =>
+    value === `--${name}` && args[index + 1] ? [args[index + 1]] : [],
+  );
+}
+
+function graphForStart(args) {
+  const seeds = values(args, 'graph-seed');
+  if (!seeds.length) return null;
+  const risk = arg(args, 'risk');
+  const tier = arg(args, 'tier');
+  if (!RISK_SET.has(risk) || !TIERS.has(tier)) return null;
+
+  const root = repositoryRoot();
+  const initial = repositoryEvidence(root, seeds, tier);
+  const escalated = applyGraphEscalation({ risk, tier, checks: [] }, initial);
+  const effectiveRisk = higher(risk, escalated.risk, RISK_RANK);
+  const effectiveTier = higher(tier, escalated.tier, TIER_RANK);
+  const finalGraph =
+    effectiveTier === tier ? initial : repositoryEvidence(root, seeds, effectiveTier);
+  return {
+    risk: effectiveRisk,
+    tier: effectiveTier,
+    state: graphLedgerState(finalGraph, effectiveTier),
+  };
+}
+
+function currentGraph(ledger) {
+  const recorded = ledger.repositoryIntelligence;
+  const seeds = recorded?.query?.seeds ?? [];
+  if (!recorded || !seeds.length) return null;
+  const root = repositoryRoot();
+  const graph = repositoryEvidence(root, seeds, ledger.tier ?? recorded.tier ?? 'standard');
+  return {
+    state: graphLedgerState(graph, ledger.tier ?? recorded.tier ?? 'standard'),
+    allowedProvenance: graph.source?.provenance ?? [],
+  };
+}
+
 const USAGE = `Zeus gate ledger - loop bounds and gate results, recorded rather than claimed.
 
 Usage:
-  pnpm zeus:gate start --task "<name>" --risk <low|moderate|high|critical> --tier <fast|standard|deep> --blast-radius <id>
+  pnpm zeus:gate start --task "<name>" --risk <low|moderate|high|critical> --tier <fast|standard|deep> --blast-radius <id> [--graph-seed <seed> ...]
   pnpm zeus:gate record --gate <name> --outcome <pass|fail> --evidence "<proof>"
   pnpm zeus:gate can-skip --gate <name>   exit 0 only if it passed and nothing changed
   pnpm zeus:gate round                    next repair round; refuses past the tier budget
-  pnpm zeus:gate ship                     exit 0 only when green (see below)
+  pnpm zeus:gate ship                     exit 0 only when green
   pnpm zeus:gate status
   pnpm zeus:gate reviewers                who the current changed paths call for
   pnpm zeus:gate clear --yes              discards every recorded gate
 
-ship is green only when ALL of these hold at the current workspace signature:
-  - every recorded gate passed;
-  - every gate in .zeus/config.json gates.repositoryGates was recorded passing;
-  - where risk or blast radius requires review, a review:<agent> gate passed,
-    naming an agent that exists in .claude/agents/ AND that the changed paths
-    call for through .zeus/impact-map.json and .zeus/module-manifest.json.
+Repository intelligence is additive. When start records --graph-seed values,
+ship re-runs that exact seed query, requires the current graph fingerprint and
+all graph verification checks, and fails closed for protected stale, unresolved,
+truncated or non-hard-gate provenance. It never removes repository gates.
 
 A gate result belongs to the workspace signature it was recorded at: edit
 anything and it goes stale. A failed gate is never skippable. Rounds are bounded
@@ -550,12 +555,6 @@ export function main(argv) {
 
   switch (command) {
     case 'start': {
-      // Same guard as `clear`, for the same reason. An unguarded `start` resets
-      // the ledger with no warning, so a recorded failure can be discarded in
-      // one command, and the author also picks the new risk and tier, which is
-      // how a deep critical task becomes a fast low one that needs no review.
-      // Guarding `clear` and leaving `start` open guards the door and leaves the
-      // window.
       if (ledger.gates.length && !args.includes('--yes')) {
         const passed = ledger.gates.filter((g) => g.outcome === 'pass').length;
         console.error(
@@ -566,17 +565,27 @@ export function main(argv) {
         );
         return 1;
       }
+      const graph = graphForStart(args);
+      const requestedRisk = arg(args, 'risk');
+      const requestedTier = arg(args, 'tier');
       const next = startTask(ledger, {
         task: arg(args, 'task'),
-        risk: arg(args, 'risk'),
-        tier: arg(args, 'tier'),
+        risk: graph?.risk ?? requestedRisk,
+        tier: graph?.tier ?? requestedTier,
         blastRadius: arg(args, 'blast-radius'),
         bounds: loopBounds(),
+        repositoryIntelligence: graph?.state ?? null,
       });
       saveLedger(next);
       console.log(
         `gate ledger open: "${next.task}" (${next.risk} risk, ${next.tier} tier, round 1 of ${next.bound})`,
       );
+      if (graph) {
+        console.log(
+          `repository graph: ${graph.state.completeness}; frontier ${graph.state.verification.level}; ` +
+            `${graph.state.query.seeds.length} seed(s)`,
+        );
+      }
       return 0;
     }
     case 'record': {
@@ -595,10 +604,6 @@ export function main(argv) {
           'recorded as failing - ship will refuse until it passes. Fix it; do not re-declare it.',
         );
       }
-      // Recording a failure is a SUCCESSFUL record. Exiting 1 here makes the
-      // package script fail with an error block and makes honest recording
-      // unusable under `set -e`, penalising the exact behaviour the ledger
-      // exists for. `ship` is where a red gate stops the work.
       return 0;
     }
     case 'can-skip': {
@@ -620,7 +625,11 @@ export function main(argv) {
       return 0;
     }
     case 'ship': {
-      const { ready, problems } = shipReadiness(ledger, workspaceSignature());
+      const graph = currentGraph(ledger);
+      const { ready, problems } = shipReadiness(ledger, workspaceSignature(), {
+        graphState: graph?.state ?? null,
+        allowedGraphProvenance: graph?.allowedProvenance ?? [],
+      });
       if (ready) {
         console.log(
           `green: ${ledger.gates.length} gate(s) passed at the current workspace signature.`,
@@ -639,11 +648,19 @@ export function main(argv) {
         return 0;
       }
       const signature = workspaceSignature();
+      const graph = currentGraph(ledger);
       console.log(`task:  ${ledger.task}`);
       console.log(
         `risk:  ${ledger.risk}   tier: ${ledger.tier}   round ${ledger.round} of ${ledger.bound}`,
       );
       console.log(`blast: ${ledger.blastRadius ?? 'unrecorded'}`);
+      if (ledger.repositoryIntelligence) {
+        console.log(
+          `graph: ${graph?.state?.fresh ? 'fresh' : 'stale/unavailable'}   ` +
+            `frontier: ${graph?.state?.verification?.level ?? 'unknown'}   ` +
+            `completeness: ${graph?.state?.completeness ?? 'unresolved'}`,
+        );
+      }
       if (ledger.gates.length === 0) console.log('gates: none recorded yet');
       for (const g of ledger.gates) {
         const state = g.outcome !== 'pass' ? 'FAIL' : g.signature === signature ? 'pass' : 'STALE';
@@ -651,13 +668,14 @@ export function main(argv) {
           `  [${state.padEnd(5)}] ${g.gate}  (round ${g.round})${g.evidence ? ` - ${g.evidence}` : ''}`,
         );
       }
-      const { ready, problems } = shipReadiness(ledger, signature);
+      const { ready, problems } = shipReadiness(ledger, signature, {
+        graphState: graph?.state ?? null,
+        allowedGraphProvenance: graph?.allowedProvenance ?? [],
+      });
       console.log(ready ? '\nship: green' : `\nship: blocked\n  - ${problems.join('\n  - ')}`);
       return 0;
     }
     case 'clear': {
-      // Guarded: clear discards every recorded gate, so an unguarded one-liner
-      // is a way to make a red ledger green by forgetting it. Name what is lost.
       if (!args.includes('--yes')) {
         const passed = ledger.gates.filter((g) => g.outcome === 'pass').length;
         const failed = ledger.gates.length - passed;
