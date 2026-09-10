@@ -1,3 +1,4 @@
+import { config as zeusConfig } from './zeus-engine.mjs';
 import {
   graphStatus,
   loadConfig,
@@ -6,6 +7,8 @@ import {
 } from '../zeus-repository-intelligence.mjs';
 
 const RISK_RANK = { low: 0, moderate: 1, high: 2, critical: 3 };
+const TIER_NODE_CAPS = { fast: 64, standard: 160, deep: 240 };
+const TIER_DEPTH_CAPS = { fast: 2, standard: 4, deep: 4 };
 
 export function verificationCommandsToChecks(commands = []) {
   const checks = new Set();
@@ -22,18 +25,44 @@ export function verificationCommandsToChecks(commands = []) {
   return [...checks];
 }
 
-export function repositoryEvidence(root, seeds) {
+export function graphBudgetsForTier(graphConfig, tier = 'standard') {
+  const graphBudget = graphConfig.budgets;
+  const zeusBudget = zeusConfig.budgets[tier] ?? zeusConfig.budgets.standard;
+  return {
+    max_nodes: Math.min(graphBudget.max_nodes, TIER_NODE_CAPS[tier] ?? TIER_NODE_CAPS.standard),
+    max_depth: Math.min(graphBudget.max_depth, TIER_DEPTH_CAPS[tier] ?? TIER_DEPTH_CAPS.standard),
+    max_context_chars: Math.min(graphBudget.max_context_chars, zeusBudget.contextChars),
+  };
+}
+
+function sourceMetadata(status, graphConfig) {
+  return {
+    id: 'repository-intelligence',
+    rank: 1,
+    protocol: graphConfig.protocol,
+    fingerprint: status.fingerprint,
+    source_revision: status.source_revision,
+    branch: status.branch,
+    provenance: [...(graphConfig.hard_gate_provenance ?? [])],
+  };
+}
+
+export function repositoryEvidence(root, seeds, tier = 'standard') {
   const config = loadConfig(root);
   const status = graphStatus(root, config);
+  const source = sourceMetadata(status, config);
+  const context_budget = graphBudgetsForTier(config, tier);
   if (!status.fresh) {
     const commands = [...(config.verification_frontiers?.protected ?? [])];
     return {
+      source,
       fresh: false,
       uncertainty: true,
       reason: status.reason,
       source_revision: status.source_revision,
       branch: status.branch,
       fingerprint: status.fingerprint,
+      context_budget,
       seeds: { requested: [...seeds], resolved: [], unresolved: [...seeds], ambiguous: {} },
       verification: {
         level: 'protected',
@@ -46,13 +75,16 @@ export function repositoryEvidence(root, seeds) {
   }
 
   const snapshot = readSnapshot(root);
-  const preflight = preflightFromGraph(snapshot.nodes, snapshot.edges, seeds, config);
+  const scopedConfig = { ...config, budgets: context_budget };
+  const preflight = preflightFromGraph(snapshot.nodes, snapshot.edges, seeds, scopedConfig);
   return {
+    source,
     fresh: true,
     reason: status.reason,
     source_revision: status.source_revision,
     branch: status.branch,
     fingerprint: status.fingerprint,
+    context_budget,
     ...preflight,
   };
 }
@@ -82,6 +114,9 @@ export function graphMarkdown(evidence) {
     `- Uncertainty: ${Boolean(evidence?.uncertainty)}`,
     `- Verification frontier: ${level}`,
     `- Seeds: ${resolved} resolved, ${unresolved} unresolved`,
+    evidence?.source?.provenance?.length
+      ? `- Provenance: ${evidence.source.provenance.join(', ')}`
+      : null,
     evidence?.fingerprint ? `- Fingerprint: ${evidence.fingerprint}` : null,
   ]
     .filter(Boolean)
