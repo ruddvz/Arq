@@ -1,0 +1,42 @@
+name: ZEUS adaptive format probe
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/zeus-adaptive-budget.mjs'
+      - 'scripts/zeus-adaptive-budget.test.mjs'
+      - '.github/workflows/zeus-adaptive-format-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  prettier-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+          run_install: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Ask pinned Prettier for the exact rewrite
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm exec prettier --write scripts/zeus-adaptive-budget.mjs scripts/zeus-adaptive-budget.test.mjs
+          echo 'ZEUS_PRETTIER_DIFF_BEGIN'
+          git --no-pager diff -- scripts/zeus-adaptive-budget.mjs scripts/zeus-adaptive-budget.test.mjs || true
+          echo 'ZEUS_PRETTIER_DIFF_END'
