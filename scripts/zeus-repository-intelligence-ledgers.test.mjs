@@ -4,10 +4,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-  graphLedgerState,
-  graphStateProblems,
-} from './lib/zeus-repository-ledger.mjs';
+import { graphLedgerState, graphStateProblems } from './lib/zeus-repository-ledger.mjs';
 import { graphAwareShipReadiness } from './zeus-gate.mjs';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -89,20 +86,11 @@ const protectedLedger = {
   blastRadius: 'local',
   round: 1,
   bound: 2,
-  gates: [
-    ...repositoryGates.map(pass),
-    pass('zeus:validate'),
-    pass('review:qa-release'),
-  ],
+  gates: [...repositoryGates.map(pass), pass('zeus:validate'), pass('review:qa-release')],
 };
 
 {
-  const result = graphAwareShipReadiness(
-    protectedLedger,
-    signature,
-    protectedState,
-    gateDeps,
-  );
+  const result = graphAwareShipReadiness(protectedLedger, signature, protectedState, gateDeps);
   assert.equal(result.ready, true, result.problems.join('\n'));
   assert.equal(result.effectiveLedger.risk, 'high');
   assert.equal(result.effectiveLedger.tier, 'deep');

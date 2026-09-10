@@ -59,26 +59,27 @@ export function graphLedgerState(graph, tier = 'standard') {
   };
 }
 
-export function graphStateProblems(
-  state,
-  allowedProvenance = [],
-  { protectedOnly = false } = {},
-) {
+export function graphStateProblems(state, allowedProvenance = [], { protectedOnly = false } = {}) {
   const protectedGraph = state?.verification?.level === 'protected';
   if (protectedOnly && !protectedGraph) return [];
 
   const problems = [];
-  if (!state?.fresh) problems.push(`repository graph is stale or missing (${state?.reason ?? 'unknown'})`);
+  if (!state?.fresh)
+    problems.push(`repository graph is stale or missing (${state?.reason ?? 'unknown'})`);
 
   const unresolved = state?.resolution?.unresolved ?? [];
   const ambiguous = Object.keys(state?.resolution?.ambiguous ?? {});
-  if (unresolved.length) problems.push(`repository graph has unresolved seed(s): ${unresolved.join(', ')}`);
-  if (ambiguous.length) problems.push(`repository graph has ambiguous seed(s): ${ambiguous.join(', ')}`);
+  if (unresolved.length)
+    problems.push(`repository graph has unresolved seed(s): ${unresolved.join(', ')}`);
+  if (ambiguous.length)
+    problems.push(`repository graph has ambiguous seed(s): ${ambiguous.join(', ')}`);
 
   const allowed = new Set(allowedProvenance);
   const disallowed = (state?.provenance ?? []).filter((value) => !allowed.has(value));
   if (disallowed.length) {
-    problems.push(`repository graph uses non-hard-gate provenance: ${unique(disallowed).join(', ')}`);
+    problems.push(
+      `repository graph uses non-hard-gate provenance: ${unique(disallowed).join(', ')}`,
+    );
   }
   if (protectedGraph && (state?.provenance ?? []).length === 0) {
     problems.push('repository graph has no hard-gate provenance for protected evidence');

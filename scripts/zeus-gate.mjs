@@ -1,10 +1,7 @@
 #!/usr/bin/env node
 
 import { pathToFileURL } from 'node:url';
-import {
-  applyGraphEscalation,
-  repositoryEvidence,
-} from './lib/zeus-repository-evidence.mjs';
+import { applyGraphEscalation, repositoryEvidence } from './lib/zeus-repository-evidence.mjs';
 import {
   graphLedgerState,
   graphStateProblems,
@@ -76,15 +73,9 @@ export function graphAwareShipReadiness(ledger, signature, graphState, deps = {}
         protectedOnly: true,
       }),
     );
-    const missing = missingGraphChecks(
-      ledger.gates,
-      requiredGraphChecks(graphState),
-      signature,
-    );
+    const missing = missingGraphChecks(ledger.gates, requiredGraphChecks(graphState), signature);
     if (missing.length) {
-      problems.push(
-        `repository graph requires current passing gate(s): ${missing.join(', ')}`,
-      );
+      problems.push(`repository graph requires current passing gate(s): ${missing.join(', ')}`);
     }
   }
 
@@ -104,7 +95,8 @@ function graphForStart(args) {
   const root = repositoryRoot();
   const initial = repositoryEvidence(root, seeds, tier);
   const escalated = applyGraphEscalation({ risk, tier, checks: [] }, initial);
-  const finalGraph = escalated.tier === tier ? initial : repositoryEvidence(root, seeds, escalated.tier);
+  const finalGraph =
+    escalated.tier === tier ? initial : repositoryEvidence(root, seeds, escalated.tier);
 
   return {
     state: graphLedgerState(finalGraph, escalated.tier),
@@ -169,10 +161,7 @@ export function main(argv) {
 
     console.error('not green:');
     for (const problem of problems) console.error(`  - ${problem}`);
-    if (
-      effectiveLedger.risk !== ledger.risk ||
-      effectiveLedger.tier !== ledger.tier
-    ) {
+    if (effectiveLedger.risk !== ledger.risk || effectiveLedger.tier !== ledger.tier) {
       console.error(
         `  - repository graph raises this gate to ${effectiveLedger.risk} risk / ` +
           `${effectiveLedger.tier} tier for ship evaluation`,

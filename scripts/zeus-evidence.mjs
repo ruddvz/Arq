@@ -9,10 +9,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { config } from './lib/zeus-engine.mjs';
 import { repositoryEvidence } from './lib/zeus-repository-evidence.mjs';
-import {
-  graphLedgerState,
-  graphStateProblems,
-} from './lib/zeus-repository-ledger.mjs';
+import { graphLedgerState, graphStateProblems } from './lib/zeus-repository-ledger.mjs';
 
 const a = process.argv.slice(2);
 const sub = a[0];
@@ -147,9 +144,7 @@ if (sub === 'init') {
       protectedOnly: true,
     });
     if (entry.state === 'verified' && graphProblems.length) {
-      console.error(
-        `Cannot record graph-derived verified evidence: ${graphProblems.join('; ')}.`,
-      );
+      console.error(`Cannot record graph-derived verified evidence: ${graphProblems.join('; ')}.`);
       process.exit(2);
     }
     ledger.repositoryIntelligence = graphState;
