@@ -1,0 +1,62 @@
+{
+  "protocol": "harness-autonomy/v1",
+  "harness": "ZEUS",
+  "project": "Arq",
+  "repository": "ruddvz/Arq",
+  "localAuthority": {
+    "fourAxisClassification": true,
+    "contextBudgets": true,
+    "invariants": true,
+    "sourceAuthority": true,
+    "evidenceStates": true,
+    "reviewAndGateSemantics": true,
+    "graphVocabulary": true,
+    "persistenceRules": true,
+    "engineeringOsReleaseAuthority": true
+  },
+  "runtimeDependenciesOnPeers": false,
+  "sharedMutableState": false,
+  "federation": {
+    "mode": "reviewed-knowledge-only",
+    "allowed": [
+      "graph-extractor-techniques",
+      "context-compiler-techniques",
+      "coordination-state-machines",
+      "failure-modes",
+      "benchmarks",
+      "test-strategies",
+      "operator-ux-patterns"
+    ],
+    "forbidden": [
+      "active-claims",
+      "locks",
+      "project-truth",
+      "evidence-conclusions",
+      "risk-classifications",
+      "release-authority",
+      "secrets",
+      "foreign-learned-project-doctrine"
+    ]
+  },
+  "graph": {
+    "ontology": [
+      "rust-crate",
+      "rust-symbol",
+      "geometry-kernel",
+      "constraint-solver",
+      "wasm-export",
+      "typescript-binding",
+      "command",
+      "tool",
+      "document-state",
+      "renderer",
+      "ui-surface",
+      "arq-persistence",
+      "benchmark",
+      "test",
+      "issue"
+    ],
+    "dynamicOrInferredEdgesAreAdvisory": true
+  },
+  "fallback": "canonical-zeus-engineering-os-workflow"
+}
