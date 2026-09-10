@@ -145,7 +145,8 @@ function adaptiveSelection(items, cap, selectedTier) {
     const coveredAllAvailable = [...availableTerms].every((term) => coveredTerms.has(term));
     const selectedCode = selected.filter((candidate) => CODE_PATH.test(candidate.path));
     const hasImplementationSource =
-      selectedCode.length === 0 || selectedCode.some((candidate) => !TEST_PATH.test(candidate.path));
+      selectedCode.length === 0 ||
+      selectedCode.some((candidate) => !TEST_PATH.test(candidate.path));
 
     if (selected.length >= minimum && coveredAllAvailable && hasImplementationSource) {
       stopReason = 'no-new-query-coverage-or-proof-pair-value';
@@ -176,7 +177,8 @@ const selection = adaptive
         policy: 'existing-ranked-source-cap',
         considered: candidates.length,
         selected: Math.min(candidates.length, limit),
-        stopReason: candidates.length > limit ? 'source-ceiling-reached' : 'ranked-candidates-exhausted',
+        stopReason:
+          candidates.length > limit ? 'source-ceiling-reached' : 'ranked-candidates-exhausted',
       },
     };
 const scored = selection.selected;

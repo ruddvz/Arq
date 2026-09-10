@@ -103,17 +103,14 @@ writeFileSync(cache, `${JSON.stringify({ fingerprint: 'fixture', files }, null, 
 }
 
 {
-  const result = run(
-    root,
-    cache,
-    '--query',
-    'wall precisiontarget',
-    '--snippets',
-    '--adaptive',
-  );
+  const result = run(root, cache, '--query', 'wall precisiontarget', '--snippets', '--adaptive');
   assert.equal(result.selection.mode, 'adaptive');
   assert.equal(result.selection.policy, 'query-coverage-plus-source-test-pair');
-  assert.equal(result.results.length, 1, 'fast adaptive retrieval should stop after decisive coverage');
+  assert.equal(
+    result.results.length,
+    1,
+    'fast adaptive retrieval should stop after decisive coverage',
+  );
   assert.equal(result.results[0].path, 'src/wall.ts');
   assert.deepEqual(result.selection.coveredTerms, ['precisiontarget', 'wall']);
   assert.equal(result.selection.stopReason, 'no-new-query-coverage-or-proof-pair-value');
@@ -123,8 +120,15 @@ writeFileSync(cache, `${JSON.stringify({ fingerprint: 'fixture', files }, null, 
 {
   const result = run(root, cache, '--query', 'wall', '--tier', 'standard', '--adaptive');
   assert.equal(result.budget.sources, 10);
-  assert.equal(result.results.length, 2, 'standard adaptive retrieval keeps a small initial evidence set');
-  assert(result.results.length < result.budget.sources, 'adaptive selection must treat the cap as a ceiling');
+  assert.equal(
+    result.results.length,
+    2,
+    'standard adaptive retrieval keeps a small initial evidence set',
+  );
+  assert(
+    result.results.length < result.budget.sources,
+    'adaptive selection must treat the cap as a ceiling',
+  );
 }
 
 {
