@@ -6,9 +6,9 @@ on:
       - '.zeus/AUTONOMY.md'
       - '.zeus/autonomy.json'
       - 'AGENTS.md'
-      - 'package.json'
       - 'scripts/zeus-autonomy-verify.mjs'
       - 'scripts/zeus-autonomy-verify.test.mjs'
+      - 'scripts/zeus-drift-guard.mjs'
       - 'scripts/zeus-verify.mjs'
       - '.github/workflows/zeus-autonomy.yml'
   workflow_dispatch:
