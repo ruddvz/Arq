@@ -68,15 +68,24 @@ export function graphStateProblems(state, allowedProvenance = [], { protectedOnl
   if (protectedOnly && !protectedGraph) return [];
 
   const problems = [];
-  if (!state?.fresh)
+  if (!state?.fresh) {
     problems.push(`repository graph is stale or missing (${state?.reason ?? 'unknown'})`);
+  }
+  if (state?.uncertainty || state?.verification?.uncertain) {
+    problems.push('repository graph coverage is uncertain and cannot certify protected evidence');
+  }
+  if (state?.truncation?.context || state?.truncation?.impact) {
+    problems.push('repository graph traversal is truncated and cannot certify protected evidence');
+  }
 
   const unresolved = state?.resolution?.unresolved ?? [];
   const ambiguous = Object.keys(state?.resolution?.ambiguous ?? {});
-  if (unresolved.length)
+  if (unresolved.length) {
     problems.push(`repository graph has unresolved seed(s): ${unresolved.join(', ')}`);
-  if (ambiguous.length)
+  }
+  if (ambiguous.length) {
     problems.push(`repository graph has ambiguous seed(s): ${ambiguous.join(', ')}`);
+  }
 
   const allowed = new Set(allowedProvenance);
   const disallowed = (state?.provenance ?? []).filter((value) => !allowed.has(value));
