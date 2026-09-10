@@ -19,10 +19,19 @@ const configs = loadConfigs();
 }
 
 {
+  const broken = structuredClone(configs);
+  broken.adaptive.budgetExtensions.standard.browserInteractions = -1;
+  const result = validateAdaptiveConfig(broken);
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join('\n'), /standard\.browserInteractions/);
+}
+
+{
   const budget = mergedBudget('fast', configs);
   assert.equal(budget.sources, 4);
   assert.equal(budget.contextChars, 8000);
   assert.equal(budget.toolCallsBeforeReevaluation, 8);
+  assert.equal(budget.browserInteractions, 0);
   assert.equal(budget.parallelMutationLanes, 1);
 }
 
@@ -141,6 +150,7 @@ const configs = loadConfigs();
       supportingMethods: 1,
       toolCalls: 5,
       externalResearchQueries: 0,
+      browserInteractions: 0,
       readOnlyAgents: 0,
       mutationLanes: 1,
       repairRounds: 1,
@@ -201,6 +211,29 @@ const configs = loadConfigs();
   });
   assert.equal(result.within_budget, false);
   assert.equal(result.exceeded.includes('sources'), true);
+  assert.equal(result.decision, 're-evaluate-tier-or-strategy');
+}
+
+{
+  const result = evaluateRunEfficiency({
+    tier: 'standard',
+    configs,
+    usage: {
+      modules: 1,
+      sources: 2,
+      contextChars: 4000,
+      supportingMethods: 1,
+      toolCalls: 3,
+      browserInteractions: 5,
+      mutationLanes: 1,
+      requiredGatesPassed: true,
+      requiredReviewPassed: true,
+      evidenceState: 'verified',
+      acceptanceProven: false,
+    },
+  });
+  assert.equal(result.within_budget, false);
+  assert.equal(result.exceeded.includes('browserInteractions'), true);
   assert.equal(result.decision, 're-evaluate-tier-or-strategy');
 }
 
