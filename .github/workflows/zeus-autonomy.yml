@@ -6,8 +6,10 @@ on:
       - '.zeus/AUTONOMY.md'
       - '.zeus/autonomy.json'
       - 'AGENTS.md'
+      - 'package.json'
       - 'scripts/zeus-autonomy-verify.mjs'
       - 'scripts/zeus-autonomy-verify.test.mjs'
+      - 'scripts/zeus-verify.mjs'
       - '.github/workflows/zeus-autonomy.yml'
   workflow_dispatch:
 
@@ -31,3 +33,31 @@ jobs:
         run: node scripts/zeus-autonomy-verify.mjs
       - name: Mutation-test autonomy boundaries
         run: node scripts/zeus-autonomy-verify.test.mjs
+      - name: Verify canonical ZEUS commands fail closed on weakened autonomy
+        shell: bash
+        run: |
+          backup="$RUNNER_TEMP/autonomy.json"
+          cp .zeus/autonomy.json "$backup"
+          trap 'cp "$backup" .zeus/autonomy.json' EXIT
+
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          const file = '.zeus/autonomy.json';
+          const autonomy = JSON.parse(readFileSync(file, 'utf8'));
+          autonomy.runtimeDependenciesOnPeers = true;
+          writeFileSync(file, `${JSON.stringify(autonomy, null, 2)}\n`);
+          NODE
+
+          if node scripts/zeus-verify.mjs; then
+            echo 'zeus:verify accepted weakened autonomy' >&2
+            exit 1
+          fi
+          if npm run --silent zeus:drift; then
+            echo 'zeus:drift accepted weakened autonomy' >&2
+            exit 1
+          fi
+
+          cp "$backup" .zeus/autonomy.json
+          trap - EXIT
+          node scripts/zeus-verify.mjs
+          npm run --silent zeus:drift
