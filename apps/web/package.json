@@ -38,7 +38,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/three": "^0.185.1",
-    "@vitejs/plugin-react": "^4",
+    "@vitejs/plugin-react": "^6",
     "fake-indexeddb": "^6.2.5",
     "vite": "^5"
   }
