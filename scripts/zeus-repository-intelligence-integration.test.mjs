@@ -3,6 +3,10 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  applyGraphEscalation,
+  normaliseGraphPreflight,
+} from './lib/zeus-repository-evidence.mjs';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
@@ -19,6 +23,33 @@ function run(...args) {
 {
   const status = run('graph', '--json', 'status');
   assert.equal(status.fresh, true, 'integration tests require a fresh repository graph');
+}
+
+{
+  const truncated = normaliseGraphPreflight(
+    {
+      uncertainty: false,
+      context: { truncated: true },
+      impact: { truncated: false },
+      verification: { level: 'renderer_ui', uncertain: false, commands: ['pnpm lint'] },
+    },
+    {
+      verification_frontiers: {
+        protected: ['pnpm zeus:validate', 'pnpm lint', 'pnpm typecheck', 'pnpm test', 'pnpm build'],
+      },
+    },
+  );
+  assert.equal(truncated.uncertainty, true, 'truncated graph coverage must be uncertain');
+  assert.equal(truncated.truncation_uncertainty, true);
+  assert.equal(truncated.verification.level, 'protected');
+  assert.equal(truncated.verification.uncertain, true);
+
+  const escalated = applyGraphEscalation({ risk: 'low', tier: 'fast', checks: [] }, truncated);
+  assert.equal(escalated.risk, 'high');
+  assert.equal(escalated.tier, 'deep');
+  for (const check of ['zeus:validate', 'lint', 'typecheck', 'test', 'build']) {
+    assert(escalated.checks.includes(check), `truncated graph evidence must require ${check}`);
+  }
 }
 
 {
