@@ -1,0 +1,36 @@
+name: Test ZEUS repository ledger v5
+
+on:
+  push:
+    branches:
+      - codex/zeus-repository-intelligence-ledgers-v5
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Check focused formatting
+        run: pnpm exec prettier --check scripts/lib/zeus-repository-ledger.mjs scripts/zeus-repository-intelligence-ledgers.test.mjs
+      - name: Build repository graph
+        run: node scripts/zeus-repository-intelligence.mjs build --json
+      - name: Check scripts
+        run: |
+          node --check scripts/lib/zeus-repository-ledger.mjs
+          node --check scripts/zeus-evidence.mjs
+          node --check scripts/zeus-gate.mjs
+          node --check scripts/zeus-repository-intelligence-ledgers.test.mjs
+      - name: Run ledger regressions
+        run: node scripts/zeus-repository-intelligence-ledgers.test.mjs
