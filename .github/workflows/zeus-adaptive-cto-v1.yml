@@ -1,0 +1,44 @@
+name: ZEUS adaptive CTO v1
+
+on:
+  pull_request:
+    paths:
+      - '.zeus/adaptive-cto.json'
+      - '.zeus/ADAPTIVE-CTO.md'
+      - 'scripts/zeus-adaptive-budget.mjs'
+      - 'scripts/zeus-adaptive-budget.test.mjs'
+      - '.github/workflows/zeus-adaptive-cto-v1.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  adaptive-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+          run_install: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check adaptive formatting
+        run: pnpm exec prettier --check scripts/zeus-adaptive-budget.mjs scripts/zeus-adaptive-budget.test.mjs
+
+      - name: Validate adaptive CTO config
+        run: node scripts/zeus-adaptive-budget.mjs --validate
+
+      - name: Run adaptive CTO regression suite
+        run: node scripts/zeus-adaptive-budget.test.mjs
