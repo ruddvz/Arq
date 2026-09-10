@@ -75,10 +75,7 @@ writeFileSync(cache, `${JSON.stringify({ fingerprint: 'fixture', files }, null, 
 
 {
   const result = run(root, cache, '--query', 'legacytoken implementation ledger', '--snippets');
-  assert.equal(
-    result.results.some((item) => item.path.includes('IMPLEMENTATION_LEDGER')),
-    false,
-  );
+  assert.equal(result.results.some((item) => item.path.includes('IMPLEMENTATION_LEDGER')), false);
   assert.equal(result.coldSourcesExcluded, 1);
 }
 
@@ -91,10 +88,7 @@ writeFileSync(cache, `${JSON.stringify({ fingerprint: 'fixture', files }, null, 
     '--snippets',
     '--include-cold',
   );
-  assert.equal(
-    result.results.some((item) => item.path.includes('IMPLEMENTATION_LEDGER')),
-    true,
-  );
+  assert.equal(result.results.some((item) => item.path.includes('IMPLEMENTATION_LEDGER')), true);
   assert.equal(result.coldSourcesExcluded, 0);
 }
 
