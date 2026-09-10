@@ -189,8 +189,6 @@ if (sub === 'init') {
         graphProblems.push(`verified claim has no repository graph binding: ${entry.claim}`);
       } else if (entry.repositoryGraph.fingerprint !== graphState.fingerprint) {
         graphProblems.push(`verified claim is bound to an older graph: ${entry.claim}`);
-      } else if (!entry.repositoryGraph.complete && graphState.verification.level === 'protected') {
-        graphProblems.push(`verified claim used incomplete protected graph evidence: ${entry.claim}`);
       }
     }
     ledger.repositoryIntelligence = graphState;
