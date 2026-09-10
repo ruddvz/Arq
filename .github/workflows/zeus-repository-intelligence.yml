@@ -5,13 +5,18 @@ on:
     paths:
       - '.zeus/repository-graph.json'
       - '.zeus/repository-graph-declarations.json'
+      - 'package.json'
       - 'scripts/zeus.mjs'
       - 'scripts/zeus-fast-compile.mjs'
       - 'scripts/zeus-impact.mjs'
+      - 'scripts/zeus-evidence.mjs'
+      - 'scripts/zeus-gate.mjs'
       - 'scripts/lib/zeus-repository-evidence.mjs'
+      - 'scripts/lib/zeus-repository-ledger.mjs'
       - 'scripts/zeus-repository-intelligence.mjs'
       - 'scripts/zeus-repository-intelligence.test.mjs'
       - 'scripts/zeus-repository-intelligence-integration.test.mjs'
+      - 'scripts/zeus-repository-intelligence-ledger.test.mjs'
       - '.github/workflows/zeus-repository-intelligence.yml'
       - 'packages/**'
       - 'apps/web/**'
@@ -52,8 +57,12 @@ jobs:
         run: |
           node --check scripts/zeus-repository-intelligence.mjs
           node --check scripts/lib/zeus-repository-evidence.mjs
+          node --check scripts/lib/zeus-repository-ledger.mjs
           node --check scripts/zeus-fast-compile.mjs
           node --check scripts/zeus-impact.mjs
+          node --check scripts/zeus-evidence.mjs
+          node --check scripts/zeus-gate.mjs
+          node --check scripts/zeus-repository-intelligence-ledger.test.mjs
 
       - name: Run repository intelligence regressions
         run: node --test scripts/zeus-repository-intelligence.test.mjs
@@ -66,6 +75,9 @@ jobs:
 
       - name: Run compile and impact integration regressions
         run: node scripts/zeus-repository-intelligence-integration.test.mjs
+
+      - name: Run evidence and gate ledger regressions
+        run: node scripts/zeus-repository-intelligence-ledger.test.mjs
 
       - name: Preflight canonical semantic model
         run: node scripts/zeus-repository-intelligence.mjs --json preflight packages/bim-core
