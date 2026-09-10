@@ -22,7 +22,11 @@ function run(...args) {
 
 {
   const status = run('graph', '--json', 'status');
-  assert.equal(status.fresh, true, 'integration tests require a fresh repository graph');
+  assert.equal(
+    status.fresh,
+    true,
+    'integration tests require a fresh repository graph',
+  );
 }
 
 {
@@ -31,24 +35,44 @@ function run(...args) {
       uncertainty: false,
       context: { truncated: true },
       impact: { truncated: false },
-      verification: { level: 'renderer_ui', uncertain: false, commands: ['pnpm lint'] },
+      verification: {
+        level: 'renderer_ui',
+        uncertain: false,
+        commands: ['pnpm lint'],
+      },
     },
     {
       verification_frontiers: {
-        protected: ['pnpm zeus:validate', 'pnpm lint', 'pnpm typecheck', 'pnpm test', 'pnpm build'],
+        protected: [
+          'pnpm zeus:validate',
+          'pnpm lint',
+          'pnpm typecheck',
+          'pnpm test',
+          'pnpm build',
+        ],
       },
     },
   );
-  assert.equal(truncated.uncertainty, true, 'truncated graph coverage must be uncertain');
+  assert.equal(
+    truncated.uncertainty,
+    true,
+    'truncated graph coverage must be uncertain',
+  );
   assert.equal(truncated.truncation_uncertainty, true);
   assert.equal(truncated.verification.level, 'protected');
   assert.equal(truncated.verification.uncertain, true);
 
-  const escalated = applyGraphEscalation({ risk: 'low', tier: 'fast', checks: [] }, truncated);
+  const escalated = applyGraphEscalation(
+    { risk: 'low', tier: 'fast', checks: [] },
+    truncated,
+  );
   assert.equal(escalated.risk, 'high');
   assert.equal(escalated.tier, 'deep');
   for (const check of ['zeus:validate', 'lint', 'typecheck', 'test', 'build']) {
-    assert(escalated.checks.includes(check), `truncated graph evidence must require ${check}`);
+    assert(
+      escalated.checks.includes(check),
+      `truncated graph evidence must require ${check}`,
+    );
   }
 }
 
@@ -87,12 +111,23 @@ function run(...args) {
   assert.equal(compiled.repositoryEscalation.from.risk, 'low');
   assert.equal(compiled.risk, 'high');
   assert.equal(compiled.tier, 'deep');
-  assert.equal(compiled.repositoryIntelligence.context_budget.max_context_chars, 8000);
-  assert(JSON.stringify(compiled.repositoryIntelligence.context).length <= 8000);
+  assert.equal(
+    compiled.repositoryIntelligence.context_budget.max_context_chars,
+    8000,
+  );
+  assert(
+    JSON.stringify(compiled.repositoryIntelligence.context).length <= 8000,
+  );
   for (const check of ['zeus:validate', 'lint', 'typecheck', 'test', 'build']) {
-    assert(compiled.checks.includes(check), `protected graph compile must require ${check}`);
+    assert(
+      compiled.checks.includes(check),
+      `protected graph compile must require ${check}`,
+    );
   }
-  assert(compiled.reviewers.length > 0, 'protected graph compile must require review');
+  assert(
+    compiled.reviewers.length > 0,
+    'protected graph compile must require review',
+  );
 }
 
 {
@@ -105,8 +140,16 @@ function run(...args) {
     '--graph-seed',
     'apps/web',
   );
-  assert.equal(compiled.risk, 'high', 'graph evidence must not lower task risk');
-  assert.equal(compiled.tier, 'deep', 'graph evidence must not lower the task tier');
+  assert.equal(
+    compiled.risk,
+    'high',
+    'graph evidence must not lower task risk',
+  );
+  assert.equal(
+    compiled.tier,
+    'deep',
+    'graph evidence must not lower the task tier',
+  );
 }
 
 {
@@ -115,11 +158,19 @@ function run(...args) {
   assert.equal(impact.graph.verification.level, 'protected');
   assert.equal(impact.risk, 'high');
   for (const check of ['zeus:validate', 'lint', 'typecheck', 'test', 'build']) {
-    assert(impact.checks.includes(check), `protected graph impact must require ${check}`);
+    assert(
+      impact.checks.includes(check),
+      `protected graph impact must require ${check}`,
+    );
   }
 }
 
-const runtimeStateProbe = path.join(root, '.zeus', 'gates', '__graph_state_probe__.json');
+const runtimeStateProbe = path.join(
+  root,
+  '.zeus',
+  'gates',
+  '__graph_state_probe__.json',
+);
 try {
   mkdirSync(path.dirname(runtimeStateProbe), { recursive: true });
   writeFileSync(runtimeStateProbe, '{"runtimeState":true}\n');
@@ -156,7 +207,10 @@ try {
   assert.equal(compiled.repositoryIntelligence.uncertainty, true);
   assert.equal(compiled.risk, 'high');
   assert.equal(compiled.tier, 'deep');
-  assert.equal(compiled.repositoryEscalation.reason, 'protected-or-uncertain-repository-impact');
+  assert.equal(
+    compiled.repositoryEscalation.reason,
+    'protected-or-uncertain-repository-impact',
+  );
 } finally {
   rmSync(probe, { force: true });
 }
