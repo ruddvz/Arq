@@ -14,7 +14,6 @@ const REQUIRED_LOCAL_AUTHORITIES = [
   'persistenceRules',
   'engineeringOsReleaseAuthority',
 ];
-
 const REQUIRED_FORBIDDEN = [
   'active-claims',
   'locks',
@@ -28,7 +27,6 @@ const REQUIRED_FORBIDDEN = [
 
 export function validateAutonomy(value) {
   const errors = [];
-
   if (value?.protocol !== 'harness-autonomy/v1') {
     errors.push('protocol must be harness-autonomy/v1');
   }
@@ -50,33 +48,28 @@ export function validateAutonomy(value) {
   if (value?.federation?.mode !== 'reviewed-knowledge-only') {
     errors.push('federation mode must remain reviewed-knowledge-only');
   }
-
   for (const key of REQUIRED_LOCAL_AUTHORITIES) {
     if (value?.localAuthority?.[key] !== true) {
       errors.push(`localAuthority.${key} must remain true`);
     }
   }
-
   const forbidden = new Set(value?.federation?.forbidden ?? []);
   for (const item of REQUIRED_FORBIDDEN) {
     if (!forbidden.has(item)) {
       errors.push(`federation must forbid ${item}`);
     }
   }
-
   if (value?.graph?.dynamicOrInferredEdgesAreAdvisory !== true) {
     errors.push('dynamic or inferred graph edges must remain advisory');
   }
   if (value?.fallback !== 'canonical-zeus-engineering-os-workflow') {
     errors.push('fallback must remain canonical-zeus-engineering-os-workflow');
   }
-
   return errors;
 }
 
 export function validateAutonomyFiles(root = process.cwd()) {
   const errors = [];
-
   for (const rel of ['.zeus/AUTONOMY.md', '.zeus/autonomy.json']) {
     if (!existsSync(join(root, rel))) {
       errors.push(`missing ${rel}`);
@@ -85,38 +78,27 @@ export function validateAutonomyFiles(root = process.cwd()) {
   if (errors.length) {
     return errors;
   }
-
   try {
-    errors.push(
-      ...validateAutonomy(
-        JSON.parse(readFileSync(join(root, '.zeus/autonomy.json'), 'utf8')),
-      ),
-    );
+    const autonomy = JSON.parse(readFileSync(join(root, '.zeus/autonomy.json'), 'utf8'));
+    errors.push(...validateAutonomy(autonomy));
   } catch (error) {
     errors.push(`autonomy.json parse failed: ${error.message}`);
   }
-
   const agents = existsSync(join(root, 'AGENTS.md'))
     ? readFileSync(join(root, 'AGENTS.md'), 'utf8')
     : '';
   if (!agents.includes('.zeus/AUTONOMY.md')) {
-    errors.push(
-      'AGENTS.md must conditionally route federation work through .zeus/AUTONOMY.md',
-    );
+    errors.push('AGENTS.md must conditionally route federation work through .zeus/AUTONOMY.md');
   }
-
   return errors;
 }
 
 function main() {
   const errors = validateAutonomyFiles();
   if (errors.length) {
-    console.error(
-      'ZEUS autonomy verify failed:\n' + errors.map((x) => `- ${x}`).join('\n'),
-    );
+    console.error('ZEUS autonomy verify failed:\n' + errors.map((x) => `- ${x}`).join('\n'));
     process.exit(1);
   }
-
   console.log('ZEUS autonomy verification passed.');
 }
 
