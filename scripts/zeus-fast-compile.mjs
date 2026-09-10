@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 import { readFileSync, writeFileSync } from 'node:fs';
-import { compile, markdown } from './lib/zeus-engine.mjs';
-import { graphMarkdown, repositoryEvidence } from './lib/zeus-repository-evidence.mjs';
+import { compile, config, markdown, roleRegistry } from './lib/zeus-engine.mjs';
+import {
+  applyGraphEscalation,
+  graphMarkdown,
+  repositoryEvidence,
+} from './lib/zeus-repository-evidence.mjs';
 
 const a = process.argv.slice(2);
 const val = (n) => {
@@ -22,7 +26,38 @@ const graphSeeds = values('graph-seed');
 const graph = graphSeeds.length
   ? repositoryEvidence(val('root') ?? process.cwd(), graphSeeds, contract.tier)
   : null;
-if (graph) contract.repositoryIntelligence = graph;
+if (graph) {
+  const before = { risk: contract.risk, tier: contract.tier };
+  const escalated = applyGraphEscalation(
+    { risk: contract.risk, tier: contract.tier, checks: contract.checks },
+    graph,
+  );
+  contract.risk = escalated.risk;
+  contract.tier = escalated.tier;
+  contract.checks = escalated.checks;
+  contract.budget = config.budgets[contract.tier];
+  if (contract.tier === 'deep') contract.cachePolicy = 'no critical gate cache';
+  if (contract.risk === 'high' || contract.risk === 'critical') {
+    const reviewer = roleRegistry.reviewRoles?.always ?? 'qa-release';
+    if (!contract.reviewers.includes(reviewer)) contract.reviewers.push(reviewer);
+  }
+  if (!graph.fresh || graph.uncertainty) {
+    contract.acceptance.push(
+      'repository graph refreshed and unresolved or ambiguous seeds cleared before protected completion',
+    );
+  } else {
+    contract.acceptance.push('repository graph fingerprint remains current through verification');
+  }
+  contract.repositoryEscalation = {
+    from: before,
+    to: { risk: contract.risk, tier: contract.tier },
+    reason:
+      graph.verification?.level === 'protected' || graph.uncertainty
+        ? 'protected-or-uncertain-repository-impact'
+        : 'additive-verification-only',
+  };
+  contract.repositoryIntelligence = graph;
+}
 
 const out =
   val('format') === 'json'
