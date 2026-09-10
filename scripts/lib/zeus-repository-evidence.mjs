@@ -48,6 +48,24 @@ function sourceMetadata(status, graphConfig) {
   };
 }
 
+export function normaliseGraphPreflight(preflight, graphConfig) {
+  const traversalTruncated = Boolean(preflight?.context?.truncated || preflight?.impact?.truncated);
+  const uncertainty = Boolean(preflight?.uncertainty || traversalTruncated);
+  if (!traversalTruncated) return { ...preflight, uncertainty };
+
+  return {
+    ...preflight,
+    uncertainty,
+    truncation_uncertainty: true,
+    verification: {
+      ...(preflight?.verification ?? {}),
+      level: 'protected',
+      uncertain: true,
+      commands: [...(graphConfig.verification_frontiers?.protected ?? [])],
+    },
+  };
+}
+
 export function repositoryEvidence(root, seeds, tier = 'standard') {
   const config = loadConfig(root);
   const status = graphStatus(root, config);
@@ -77,7 +95,10 @@ export function repositoryEvidence(root, seeds, tier = 'standard') {
 
   const snapshot = readSnapshot(root);
   const scopedConfig = { ...config, budgets: context_budget };
-  const preflight = preflightFromGraph(snapshot.nodes, snapshot.edges, seeds, scopedConfig);
+  const preflight = normaliseGraphPreflight(
+    preflightFromGraph(snapshot.nodes, snapshot.edges, seeds, scopedConfig),
+    config,
+  );
   return {
     source,
     fresh: true,
