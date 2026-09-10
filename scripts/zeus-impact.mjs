@@ -76,7 +76,7 @@ if (reversibility === 'irreversible' && rank[risk] < rank.high) risk = 'high';
 // Repository intelligence is additive. A protected or uncertain graph result
 // may raise risk and add checks, but graph sparsity never lowers an existing
 // path/task classification or removes an existing check.
-const graph = files.length ? repositoryEvidence(root, files) : null;
+const graph = files.length ? repositoryEvidence(root, files, fromTask?.tier ?? 'standard') : null;
 if (graph) {
   const escalated = applyGraphEscalation({ risk, checks: [...checks] }, graph);
   risk = escalated.risk;
