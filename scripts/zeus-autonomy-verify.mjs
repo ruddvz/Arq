@@ -27,17 +27,24 @@ const REQUIRED_FORBIDDEN = [
 
 export function validateAutonomy(value) {
   const errors = [];
-  if (value?.protocol !== 'harness-autonomy/v1')
+  if (value?.protocol !== 'harness-autonomy/v1') {
     errors.push('protocol must be harness-autonomy/v1');
-  if (value?.harness !== 'ZEUS') errors.push('harness must be ZEUS');
-  if (value?.project !== 'Arq') errors.push('project must be Arq');
-  if (value?.repository !== 'ruddvz/Arq')
+  }
+  if (value?.harness !== 'ZEUS') {
+    errors.push('harness must be ZEUS');
+  }
+  if (value?.project !== 'Arq') {
+    errors.push('project must be Arq');
+  }
+  if (value?.repository !== 'ruddvz/Arq') {
     errors.push('repository must be ruddvz/Arq');
+  }
   if (value?.runtimeDependenciesOnPeers !== false) {
     errors.push('runtimeDependenciesOnPeers must remain false');
   }
-  if (value?.sharedMutableState !== false)
+  if (value?.sharedMutableState !== false) {
     errors.push('sharedMutableState must remain false');
+  }
   if (value?.federation?.mode !== 'reviewed-knowledge-only') {
     errors.push('federation mode must remain reviewed-knowledge-only');
   }
@@ -48,7 +55,9 @@ export function validateAutonomy(value) {
   }
   const forbidden = new Set(value?.federation?.forbidden ?? []);
   for (const item of REQUIRED_FORBIDDEN) {
-    if (!forbidden.has(item)) errors.push(`federation must forbid ${item}`);
+    if (!forbidden.has(item)) {
+      errors.push(`federation must forbid ${item}`);
+    }
   }
   if (value?.graph?.dynamicOrInferredEdgesAreAdvisory !== true) {
     errors.push('dynamic or inferred graph edges must remain advisory');
@@ -62,15 +71,16 @@ export function validateAutonomy(value) {
 export function validateAutonomyFiles(root = process.cwd()) {
   const errors = [];
   for (const rel of ['.zeus/AUTONOMY.md', '.zeus/autonomy.json']) {
-    if (!existsSync(join(root, rel))) errors.push(`missing ${rel}`);
+    if (!existsSync(join(root, rel))) {
+      errors.push(`missing ${rel}`);
+    }
   }
-  if (errors.length) return errors;
+  if (errors.length) {
+    return errors;
+  }
   try {
-    errors.push(
-      ...validateAutonomy(
-        JSON.parse(readFileSync(join(root, '.zeus/autonomy.json'), 'utf8')),
-      ),
-    );
+    const autonomy = JSON.parse(readFileSync(join(root, '.zeus/autonomy.json'), 'utf8'));
+    errors.push(...validateAutonomy(autonomy));
   } catch (error) {
     errors.push(`autonomy.json parse failed: ${error.message}`);
   }
@@ -78,9 +88,7 @@ export function validateAutonomyFiles(root = process.cwd()) {
     ? readFileSync(join(root, 'AGENTS.md'), 'utf8')
     : '';
   if (!agents.includes('.zeus/AUTONOMY.md')) {
-    errors.push(
-      'AGENTS.md must conditionally route federation work through .zeus/AUTONOMY.md',
-    );
+    errors.push('AGENTS.md must conditionally route federation work through .zeus/AUTONOMY.md');
   }
   return errors;
 }
@@ -88,12 +96,12 @@ export function validateAutonomyFiles(root = process.cwd()) {
 function main() {
   const errors = validateAutonomyFiles();
   if (errors.length) {
-    console.error(
-      'ZEUS autonomy verify failed:\n' + errors.map((x) => `- ${x}`).join('\n'),
-    );
+    console.error('ZEUS autonomy verify failed:\n' + errors.map((x) => `- ${x}`).join('\n'));
     process.exit(1);
   }
   console.log('ZEUS autonomy verification passed.');
 }
 
-if (process.argv[1]?.endsWith('zeus-autonomy-verify.mjs')) main();
+if (process.argv[1]?.endsWith('zeus-autonomy-verify.mjs')) {
+  main();
+}
