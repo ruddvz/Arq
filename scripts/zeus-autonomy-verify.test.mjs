@@ -43,39 +43,49 @@ const fail = (mutate, pattern) => {
 };
 
 assert.deepEqual(validateAutonomy(valid()), []);
-fail((v) => {
-  v.runtimeDependenciesOnPeers = true;
+
+fail((value) => {
+  value.runtimeDependenciesOnPeers = true;
 }, /runtimeDependenciesOnPeers must remain false/);
-fail((v) => {
-  v.sharedMutableState = true;
+
+fail((value) => {
+  value.sharedMutableState = true;
 }, /sharedMutableState must remain false/);
-fail((v) => {
-  v.federation.mode = 'central-control';
+
+fail((value) => {
+  value.federation.mode = 'central-control';
 }, /reviewed-knowledge-only/);
-fail((v) => {
-  v.localAuthority.fourAxisClassification = false;
+
+fail((value) => {
+  value.localAuthority.fourAxisClassification = false;
 }, /fourAxisClassification must remain true/);
-fail((v) => {
-  v.localAuthority.evidenceStates = false;
+
+fail((value) => {
+  value.localAuthority.evidenceStates = false;
 }, /evidenceStates must remain true/);
-fail((v) => {
-  v.localAuthority.engineeringOsReleaseAuthority = false;
+
+fail((value) => {
+  value.localAuthority.engineeringOsReleaseAuthority = false;
 }, /engineeringOsReleaseAuthority must remain true/);
-fail((v) => {
-  v.federation.forbidden = v.federation.forbidden.filter(
-    (x) => x !== 'risk-classifications',
+
+fail((value) => {
+  value.federation.forbidden = value.federation.forbidden.filter(
+    (item) => item !== 'risk-classifications',
   );
 }, /must forbid risk-classifications/);
-fail((v) => {
-  v.federation.forbidden = v.federation.forbidden.filter(
-    (x) => x !== 'release-authority',
+
+fail((value) => {
+  value.federation.forbidden = value.federation.forbidden.filter(
+    (item) => item !== 'release-authority',
   );
 }, /must forbid release-authority/);
-fail((v) => {
-  v.graph.dynamicOrInferredEdgesAreAdvisory = false;
+
+fail((value) => {
+  value.graph.dynamicOrInferredEdgesAreAdvisory = false;
 }, /dynamic or inferred graph edges must remain advisory/);
-fail((v) => {
-  v.fallback = 'global-harness';
+
+fail((value) => {
+  value.fallback = 'global-harness';
 }, /fallback must remain canonical-zeus-engineering-os-workflow/);
 
 console.log('ZEUS autonomy mutation tests passed.');
