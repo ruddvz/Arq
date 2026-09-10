@@ -8,6 +8,7 @@ const baseUsage = {
   supportingMethods: 1,
   toolCalls: 3,
   externalResearchQueries: 0,
+  browserInteractions: 0,
   readOnlyAgents: 0,
   mutationLanes: 1,
   repairRounds: 0,
@@ -26,6 +27,12 @@ const baseUsage = {
   assert.equal(receipt.phase, 'start');
   assert.equal(receipt.decision, 'proceed');
   assert.deepEqual(receipt.verification_frontier, ['required-gates']);
+  assert.equal(receipt.limits.browserInteractions, 0);
+}
+
+{
+  const receipt = startReceipt({ tier: 'standard' });
+  assert.equal(receipt.limits.browserInteractions, 4);
 }
 
 {
@@ -61,6 +68,20 @@ const baseUsage = {
   });
   assert.equal(receipt.decision, 're-evaluate-tier-or-evidence-plan');
   assert.equal(receipt.reason_codes.includes('budget-ceiling-exceeded'), true);
+}
+
+{
+  const receipt = runtimeReceipt({
+    phase: 'finish',
+    tier: 'standard',
+    usage: { ...baseUsage, browserInteractions: 5 },
+    verification: { 'required-gates': 'passed' },
+    acceptanceProven: false,
+  });
+  assert.equal(receipt.decision, 're-evaluate-tier-or-evidence-plan');
+  assert.equal(receipt.reason_codes.includes('budget-ceiling-exceeded'), true);
+  assert.equal(receipt.actual.browserInteractions, 5);
+  assert.equal(receipt.limits.browserInteractions, 4);
 }
 
 {
