@@ -7,6 +7,12 @@
   "exclude_prefixes": [
     ".git/",
     ".turbo/",
+    ".zeus/cache/",
+    ".zeus/runs/",
+    ".zeus/harness/",
+    ".zeus/gates/",
+    ".zeus/plans/",
+    ".zeus/evidence-ledger.json",
     "node_modules/",
     "coverage/",
     "dist/",
