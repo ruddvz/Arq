@@ -121,7 +121,8 @@ export function relevantInvariants(files) {
   if (any(/sync|collab|concurren/)) sections.add('H. Sync, collaboration and concurrency');
   if (any(/import|export|ifc|dxf|dwg/)) sections.add('I. Import, export and interoperability');
   if (any(/security|auth|credential|ai/)) sections.add('J. Security, privacy and AI');
-  if (any(/^apps\/|ui|accessibility|language|copy/)) sections.add('K. UI, accessibility and language');
+  if (any(/^apps\/|ui|accessibility|language|copy/))
+    sections.add('K. UI, accessibility and language');
   return [...sections];
 }
 
@@ -247,7 +248,8 @@ export function chooseNextAction(facts) {
   if (facts.graph.uncertainty || facts.graph.truncated) {
     return { action: 'NARROW', reason: 'advisory graph impact is uncertain or truncated' };
   }
-  if (facts.planBlocked) return { action: 'FIX', reason: 'the active plan contains a blocked item' };
+  if (facts.planBlocked)
+    return { action: 'FIX', reason: 'the active plan contains a blocked item' };
   if (facts.staleEvidence.length) {
     return { action: 'TEST', reason: 'recorded evidence is stale for the current workspace' };
   }
@@ -255,7 +257,10 @@ export function chooseNextAction(facts) {
     return { action: 'WAIT', reason: `delivery state is ${delivery.replaceAll('_', ' ')}` };
   }
   const item = facts.planNext;
-  if (item && /benchmark|performance|latency|fps|throughput/i.test(`${item.title} ${item.acceptance}`)) {
+  if (
+    item &&
+    /benchmark|performance|latency|fps|throughput/i.test(`${item.title} ${item.acceptance}`)
+  ) {
     return {
       action: 'BENCHMARK',
       reason: `plan item ${item.id} requires measured performance evidence`,
@@ -286,7 +291,10 @@ export function chooseNextAction(facts) {
     return { action: 'OPEN PR', reason: 'local evidence is green on a non-canonical branch' };
   }
   if (facts.overallStatus === 'green') {
-    return { action: 'RELEASE', reason: 'recorded evidence is green at the canonical integration point' };
+    return {
+      action: 'RELEASE',
+      reason: 'recorded evidence is green at the canonical integration point',
+    };
   }
   return { action: 'INSPECT', reason: 'no safer deterministic next action is proven' };
 }
@@ -409,7 +417,9 @@ export function collectDoctorReport({ root = process.cwd(), base = null } = {}) 
         modules: reviewers.modules,
         paths: files,
         matched: git.diff.complete && files.length > 0 && reviewers.reviewers.length > 0,
-        reason: git.diff.complete ? 'reviewers derived from current changed paths' : git.diff.baseReason,
+        reason: git.diff.complete
+          ? 'reviewers derived from current changed paths'
+          : git.diff.baseReason,
         base: git.base,
         unknownReviewers: reviewers.unknownReviewers,
       },
@@ -551,7 +561,8 @@ export function formatHuman(report, { details = false } = {}) {
     if (report.diagnostics.advisories.length) {
       lines.push(`Advisories: ${report.diagnostics.advisories.join(' | ')}`);
     }
-    if (report.impact.arq.applies) lines.push(`.arq: ${report.impact.arq.requirements.join(' | ')}`);
+    if (report.impact.arq.applies)
+      lines.push(`.arq: ${report.impact.arq.requirements.join(' | ')}`);
   }
   return lines.join('\n');
 }

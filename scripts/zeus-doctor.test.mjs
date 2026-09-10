@@ -178,7 +178,11 @@ assert.deepEqual(
       'Next: OPEN PR - local evidence is green on a non-canonical branch',
     ].join('\n'),
   );
-  assert.equal(snapshot.match(/^Next:/gm)?.length, 1, 'human output must contain exactly one next action');
+  assert.equal(
+    snapshot.match(/^Next:/gm)?.length,
+    1,
+    'human output must contain exactly one next action',
+  );
   assert.equal(/\u001b\[/.test(snapshot), false, 'status meaning must not depend on ANSI colour');
 }
 
