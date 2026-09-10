@@ -54,6 +54,7 @@ function limits(tier, configs) {
     supportingMethods: budget.supportingMethods,
     toolCalls: budget.toolCallsBeforeReevaluation,
     externalResearchQueries: budget.externalResearchQueries,
+    browserInteractions: budget.browserInteractions,
     readOnlyAgents: budget.parallelReadOnlyAgents,
     mutationLanes: budget.parallelMutationLanes,
     repairRounds: budget.repairRounds,
