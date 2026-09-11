@@ -28,12 +28,15 @@ test('extracts TypeScript declarations, imports, reexports and namespace member 
   assert(
     facts.imports.some(
       (item) =>
-        item.source === '@arq/bim-core' && item.imported === 'modelRevision' && item.local === 'modelRevision',
+        item.source === '@arq/bim-core' &&
+        item.imported === 'modelRevision' &&
+        item.local === 'modelRevision',
     ),
   );
   assert(
     facts.imports.some(
-      (item) => item.source === '@arq/bim-core' && item.imported === 'ModelId' && item.local === 'ModelId',
+      (item) =>
+        item.source === '@arq/bim-core' && item.imported === 'ModelId' && item.local === 'ModelId',
     ),
   );
   assert(
@@ -74,14 +77,14 @@ test('extracts Rust public symbols, module dependencies, use paths and wasm-bind
 });
 
 test('resolves Rust crate, self and local module file candidates deterministically', () => {
-  assert.deepEqual(rustModuleCandidates('rust/arq-core/src/wasm_bindings.rs', 'crate::units::value'), [
-    'rust/arq-core/src/units.rs',
-    'rust/arq-core/src/units/mod.rs',
-  ]);
-  assert.deepEqual(rustModuleCandidates('rust/arq-core/src/nested/mod.rs', 'self::geometry::Point'), [
-    'rust/arq-core/src/nested/geometry.rs',
-    'rust/arq-core/src/nested/geometry/mod.rs',
-  ]);
+  assert.deepEqual(
+    rustModuleCandidates('rust/arq-core/src/wasm_bindings.rs', 'crate::units::value'),
+    ['rust/arq-core/src/units.rs', 'rust/arq-core/src/units/mod.rs'],
+  );
+  assert.deepEqual(
+    rustModuleCandidates('rust/arq-core/src/nested/mod.rs', 'self::geometry::Point'),
+    ['rust/arq-core/src/nested/geometry.rs', 'rust/arq-core/src/nested/geometry/mod.rs'],
+  );
   assert.deepEqual(localRustModuleCandidates('rust/arq-core/src/lib.rs', 'hashing'), [
     'rust/arq-core/src/hashing.rs',
     'rust/arq-core/src/hashing/mod.rs',

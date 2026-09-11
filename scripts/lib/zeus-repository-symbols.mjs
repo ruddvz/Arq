@@ -86,7 +86,12 @@ export function typescriptFacts(text) {
   for (const [local, source] of namespaceImports) {
     const property = new RegExp(`\\b${local}\\s*\\.\\s*(${IDENTIFIER})\\b`, 'g');
     while ((match = property.exec(text)) !== null) {
-      imports.push({ source, imported: match[1], local: `${local}.${match[1]}`, kind: 'namespace-member' });
+      imports.push({
+        source,
+        imported: match[1],
+        local: `${local}.${match[1]}`,
+        kind: 'namespace-member',
+      });
     }
   }
 
@@ -96,10 +101,7 @@ export function typescriptFacts(text) {
       imports,
       (item) => `${item.source}\0${item.imported}\0${item.local}\0${item.kind}`,
     ),
-    reexports: uniqueBy(
-      reexports,
-      (item) => `${item.source}\0${item.imported}\0${item.exported}`,
-    ),
+    reexports: uniqueBy(reexports, (item) => `${item.source}\0${item.imported}\0${item.exported}`),
   };
 }
 
