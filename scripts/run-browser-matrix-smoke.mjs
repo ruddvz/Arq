@@ -171,7 +171,15 @@ async function probe(engineName, origin) {
           : webglAvailable
             ? 'webgl-fallback-available'
             : 'no-gpu-rendering-api';
-      return { webgpuAvailable, webgl2Available, webglAvailable, renderingCapability };
+      const capabilityStatus =
+        renderingCapability === 'no-gpu-rendering-api' ? 'unavailable-in-runner' : 'available';
+      return {
+        webgpuAvailable,
+        webgl2Available,
+        webglAvailable,
+        renderingCapability,
+        capabilityStatus,
+      };
     });
 
     const failures = [];
@@ -182,11 +190,15 @@ async function probe(engineName, origin) {
     if (boot.title.trim().length === 0) failures.push('document title is empty');
     if (boot.horizontalOverflow) failures.push('document overflows horizontally at 1440x900');
     if (!keyboard.passed) failures.push(`keyboard focus smoke failed: ${JSON.stringify(keyboard)}`);
-    if (capability.renderingCapability === 'no-gpu-rendering-api') {
-      failures.push('neither WebGPU nor a WebGL fallback API is available');
-    }
     if (consoleErrors.length > 0) failures.push(`console errors: ${consoleErrors.join(' | ')}`);
     if (pageErrors.length > 0) failures.push(`page errors: ${pageErrors.join(' | ')}`);
+
+    const capabilityNotes = [];
+    if (capability.capabilityStatus === 'unavailable-in-runner') {
+      capabilityNotes.push(
+        'This headless runner exposed neither WebGPU nor WebGL. That is recorded as unavailable capability evidence, not converted into a browser-support claim.',
+      );
+    }
 
     return {
       engine: engineName,
@@ -196,6 +208,7 @@ async function probe(engineName, origin) {
       boot,
       keyboard,
       capability,
+      capabilityNotes,
       failures,
       evidenceBoundary:
         engineName === 'webkit'
@@ -222,11 +235,12 @@ try {
     const result = await probe(engineName, origin);
     results.push(result);
     console.log(
-      `[browser-matrix] ${result.engine} ${result.browserVersion}: ${result.status.toUpperCase()} | ${result.capability.renderingCapability}`,
+      `[browser-matrix] ${result.engine} ${result.browserVersion}: ${result.status.toUpperCase()} | ${result.capability.renderingCapability} (${result.capability.capabilityStatus})`,
     );
     console.log(`  UA: ${result.userAgent}`);
     console.log(`  keyboard: ${result.keyboard.passed ? 'pass' : 'fail'}`);
     console.log(`  evidence: ${result.evidenceBoundary}`);
+    for (const note of result.capabilityNotes) console.warn(`  capability: ${note}`);
     for (const failure of result.failures) console.error(`  failure: ${failure}`);
   }
 } finally {
