@@ -1,0 +1,49 @@
+name: Prove ARQFS migration over real Worker
+
+on:
+  push:
+    branches:
+      - codex/arqfs-cow-migration-v1
+
+permissions:
+  contents: write
+
+jobs:
+  prove-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/arqfs-cow-migration-v1
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Apply real-Worker migration evidence patch
+        run: node scripts/apply-arqfs-migration-e2e-temp.cjs
+      - name: Format evidence sources
+        run: |
+          pnpm exec prettier --write \
+            workers/arqfs-worker/benchmarks/e2e-arq-open.html \
+            workers/arqfs-worker/benchmarks/e2e-arq-open-seed-worker.js \
+            scripts/run-e2e-arq-open-capability-check.mjs
+      - name: Run real Worker and OPFS migration evidence
+        run: |
+          npx playwright install --with-deps chromium
+          pnpm benchmark:e2e-arq-open
+      - name: Check repository formatting and types
+        run: |
+          pnpm format:check
+          pnpm typecheck
+      - name: Commit verified evidence and remove temporary patch machinery
+        run: |
+          rm .github/workflows/arqfs-migration-e2e-temp.yml
+          rm scripts/apply-arqfs-migration-e2e-temp.cjs
+          rm -rf benchmarks/results workers/arqfs-worker/.e2e-open-bundle
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'test(arqfs): prove schema migration over real Worker and OPFS'
+          git push origin HEAD:codex/arqfs-cow-migration-v1
