@@ -246,7 +246,7 @@ describe('project lifecycle after preflight', () => {
     return [
       { type: 'stage-start' } as const,
       { type: 'stage-complete', projectId: 'p1' } as const,
-      { type: 'migration-verified' } as const,
+      { type: 'migration-verified', migrated: false } as const,
       { type: 'worker-opened', readOnlyReason } as const,
       { type: 'hydrate-start' } as const,
       { type: 'hydrated', facts: FACTS } as const,
@@ -271,7 +271,7 @@ describe('project lifecycle after preflight', () => {
       preflighted,
       { kind: 'staging', name: 'a', fraction: 0.5 },
       { kind: 'staged', name: 'a', projectId: 'p1' },
-      { kind: 'migration-verified', name: 'a', projectId: 'p1' },
+      { kind: 'migration-verified', name: 'a', projectId: 'p1', migrated: false },
       { kind: 'worker-open', name: 'a', projectId: 'p1', readOnlyReason: null },
       { kind: 'hydrating', name: 'a', projectId: 'p1', readOnlyReason: null },
     ];
@@ -317,6 +317,24 @@ describe('project lifecycle after preflight', () => {
     }
   });
 
+  it('uses a real migrating state before a schema upgrade can be called verified', () => {
+    const staged: FileFlowState = { kind: 'staged', name: 'house.arq', projectId: 'p1' };
+    const migrating = reduceFileFlow(staged, { type: 'migration-start' });
+    expect(migrating).toEqual({
+      kind: 'migrating',
+      name: 'house.arq',
+      projectId: 'p1',
+      fraction: 0,
+    });
+    const verified = reduceFileFlow(migrating, { type: 'migration-verified', migrated: true });
+    expect(verified).toEqual({
+      kind: 'migration-verified',
+      name: 'house.arq',
+      projectId: 'p1',
+      migrated: true,
+    });
+  });
+
   it('keeps the half-migrated copy when migration fails', () => {
     const quarantined = reduceFileFlow(
       { kind: 'staged', name: 'house.arq', projectId: 'p1' },
@@ -346,7 +364,7 @@ describe('project lifecycle after preflight', () => {
     const withRecovery = [
       { type: 'stage-start' } as const,
       { type: 'stage-complete', projectId: 'p1' } as const,
-      { type: 'migration-verified' } as const,
+      { type: 'migration-verified', migrated: false } as const,
       { type: 'worker-opened', readOnlyReason: null } as const,
       { type: 'recovery-found', journalledOperations: 3 } as const,
       { type: 'recover-start' } as const,
@@ -563,12 +581,12 @@ describe('V3-012 and V3-018: invariants across every state and event pair', () =
     { kind: 'import-options', name: 'a.dxf', formatId: 'dxf' },
     { kind: 'importing', name: 'a.dxf', requestId: 'r', fraction: 0.2 },
     { kind: 'staged-review', name: 'a.dxf', requestId: 'r' },
-    { kind: 'migrating', name: 'a.arq', fraction: 0.3 },
+    { kind: 'migrating', name: 'a.arq', projectId: 'p1', fraction: 0.3 },
     { kind: 'read-only-safe-mode', name: 'a.arq', reason: 'locked' },
     { kind: 'failed', name: 'a.arq', code: 'X', message: 'm' },
     { kind: 'staging', name: 'a.arq', fraction: 0.4 },
     { kind: 'staged', name: 'a.arq', projectId: 'p1' },
-    { kind: 'migration-verified', name: 'a.arq', projectId: 'p1' },
+    { kind: 'migration-verified', name: 'a.arq', projectId: 'p1', migrated: false },
     { kind: 'worker-open', name: 'a.arq', projectId: 'p1', readOnlyReason: null },
     { kind: 'hydrating', name: 'a.arq', projectId: 'p1', readOnlyReason: null },
     {
@@ -600,7 +618,7 @@ describe('V3-012 and V3-018: invariants across every state and event pair', () =
     { type: 'stage-start' },
     { type: 'stage-progress', fraction: 0.6 },
     { type: 'stage-complete', projectId: 'p2' },
-    { type: 'migration-verified' },
+    { type: 'migration-verified', migrated: false },
     { type: 'worker-opened', readOnlyReason: null },
     { type: 'hydrate-start' },
     {

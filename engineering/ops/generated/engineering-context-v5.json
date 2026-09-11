@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "25fdeba5e34d9e0e31b91ae7d8d346d611502aed292cb51c2cfe71676a4d30bb",
+  "source_hash": "df7f9b53a4f7674a653971ec89a491debba43421195ebf0cb1cede5adbeb7252",
   "source_records": [
     {
       "scope": "package",
@@ -214,7 +214,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
-      "sha256": "8686390a8697085ff4f5ff80142f93254d7125652eeb8714ffc1240766b06d0b"
+      "sha256": "88b11ca7afc3e99d15e979f8a8b97726c6a5500ef86c580c858a5ab1f2fef277"
     },
     {
       "scope": "repository",
@@ -689,22 +689,22 @@
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.test.ts",
-      "sha256": "c65ecba0ba43d49e293b718da6d167b87e82a4f267b6cbb331306cb231e6937a"
+      "sha256": "1e59d3dceed4154879a0be4e3d31aa0c946f245624865c05ff832d0c40a70223"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-handler.ts",
-      "sha256": "ef3478734ebdb0860eb647e36e5dd6bcfba77835dc14e05ca3040a3c8eb7d6b0"
+      "sha256": "d849502b6f334cb04faafde882677a5f9241925e446e9efa1028434d1c53ead5"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-protocol.test.ts",
-      "sha256": "d9195eaab0a96ead9b8c03ea163cfb4bf16ea7d4b3047a7cb12609cb617a3e16"
+      "sha256": "baf53ad87e9a31589f0079031d39b159ac0f0b003c2d6c3c8d416c2745a784a0"
     },
     {
       "scope": "repository",
       "path": "packages/arqfs/src/arqfs-worker-protocol.ts",
-      "sha256": "4dc447d1acb4e805a79e666ecb86f0e90080d9e91c107ce3056b9948d739f1b3"
+      "sha256": "af735c4efc21a764690efa007f7a329171c32fe7aa9cf362fe7f799ee3c33aa9"
     },
     {
       "scope": "repository",

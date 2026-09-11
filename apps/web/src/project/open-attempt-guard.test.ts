@@ -65,7 +65,7 @@ describe('a second file chosen while the first is still opening', () => {
     // has restarted the flow for a different file.
     let state = reduceFileFlow(started, { type: 'stage-start' });
     state = reduceFileFlow(state, { type: 'stage-complete', projectId: 'first-project' });
-    state = reduceFileFlow(state, { type: 'migration-verified' });
+    state = reduceFileFlow(state, { type: 'migration-verified', migrated: false });
     state = reduceFileFlow(state, { type: 'worker-opened', readOnlyReason: null });
     state = reduceFileFlow(state, { type: 'hydrate-start' });
     state = reduceFileFlow(state, { type: 'hydrated', facts: FACTS });

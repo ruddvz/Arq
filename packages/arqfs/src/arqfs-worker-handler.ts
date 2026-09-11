@@ -1,9 +1,17 @@
 import type { ArqfsDriver } from './arqfs-driver';
 import { createArqfsSchemaV1 } from './arqfs-schema';
-import { createArqfsSchemaLatest } from './arqfs-schema-v2';
+import {
+  ARQFS_SCHEMA_VERSION_V2,
+  createArqfsSchemaLatest,
+  migrateArqfsSchemaV1ToV2,
+} from './arqfs-schema-v2';
 import { openArqfs, type ArqfsOpenResult } from './arqfs-open';
 import { buildArqfsRecoveryReport } from './arqfs-recovery-report';
-import { conditionForcesReadOnly, resolveArqfsSafeModePlan } from './arqfs-safe-mode';
+import {
+  conditionForcesReadOnly,
+  resolveArqfsSafeModePlan,
+  type ArqfsSafeModePlan,
+} from './arqfs-safe-mode';
 import { applyDefensiveOpenPolicy } from './arqfs-defensive-open';
 import { checkArqfsIntegrity } from './arqfs-integrity';
 import { computeProjectSemanticHash } from './arqfs-semantic-hash';
@@ -33,10 +41,12 @@ import {
  */
 export interface ArqfsWorkerSession {
   openResult: ArqfsOpenResult | null;
+  /** The file-condition half of the last open verdict. Migration must not run across an interrupted or corrupt working copy even when the format version itself is writable. */
+  safeMode: ArqfsSafeModePlan | null;
 }
 
 export function createArqfsWorkerSession(): ArqfsWorkerSession {
-  return { openResult: null };
+  return { openResult: null, safeMode: null };
 }
 
 export interface ArqfsWorkerContext {
@@ -234,6 +244,7 @@ export async function handleArqfsWorkerRequest(
         // read or write - otherwise the gates would be measuring the imported
         // database against the outgoing one's verdict.
         context.session.openResult = null;
+        context.session.safeMode = null;
         // Awaited: the import must have actually landed in storage before this
         // response tells a caller it can now `open` the file it just sent.
         await context.importDatabase(request.bytes);
@@ -322,6 +333,7 @@ export async function handleArqfsWorkerRequest(
         const result = report.openResult;
         const safeMode = resolveArqfsSafeModePlan(report);
         context.session.openResult = result;
+        context.session.safeMode = safeMode;
 
         // The connection-level hardening arqfs-defensive-open.ts was written for.
         // Until this call existed it had no non-test caller at all, which meant
@@ -345,6 +357,91 @@ export async function handleArqfsWorkerRequest(
           projectId: context.projectId,
           ok: true,
           payload: { kind: 'open', result, safeMode, usedVfs: context.usedVfs },
+        };
+      }
+      case 'migrateSchemaV1ToV2': {
+        const current = context.session.openResult;
+        const safeMode = context.session.safeMode;
+        if (
+          current === null ||
+          current.status !== 'opened' ||
+          !current.capabilities.canRead ||
+          !current.capabilities.canWrite ||
+          !current.capabilities.canMigrate ||
+          current.capabilities.safeModeRequired ||
+          safeMode === null ||
+          conditionForcesReadOnly(safeMode)
+        ) {
+          return refuse(
+            context,
+            request.id,
+            ARQFS_WORKER_ERROR_CODES.migrationNotAllowed,
+            'This working copy is not eligible for schema migration. Nothing was migrated.',
+          );
+        }
+        if (current.header.schema !== 1) {
+          return refuse(
+            context,
+            request.id,
+            ARQFS_WORKER_ERROR_CODES.migrationNotAllowed,
+            `Schema v1 to v2 migration requires schema 1, found ${current.header.schema}. Nothing was migrated.`,
+          );
+        }
+
+        const migration = migrateArqfsSchemaV1ToV2(context.driver);
+        if (migration.status !== 'migrated') {
+          return refuse(
+            context,
+            request.id,
+            ARQFS_WORKER_ERROR_CODES.migrationFailed,
+            migration.status === 'already-current'
+              ? 'The working copy changed before migration could start.'
+              : `The working-copy migration failed: ${migration.reason}`,
+          );
+        }
+
+        const report = buildArqfsRecoveryReport(context.driver);
+        const result = report.openResult;
+        const nextSafeMode = resolveArqfsSafeModePlan(report);
+        context.session.openResult = result;
+        context.session.safeMode = nextSafeMode;
+        const writable =
+          result.status === 'opened' &&
+          result.capabilities.canWrite &&
+          !conditionForcesReadOnly(nextSafeMode);
+        applyDefensiveOpenPolicy(context.driver, { readOnly: !writable });
+
+        const integrity = checkArqfsIntegrity(context.driver);
+        if (
+          result.status !== 'opened' ||
+          result.header.schema !== ARQFS_SCHEMA_VERSION_V2 ||
+          !result.capabilities.canRead ||
+          !result.capabilities.canWrite ||
+          result.capabilities.canMigrate ||
+          result.capabilities.safeModeRequired ||
+          conditionForcesReadOnly(nextSafeMode) ||
+          !integrity.ok
+        ) {
+          return refuse(
+            context,
+            request.id,
+            ARQFS_WORKER_ERROR_CODES.migrationFailed,
+            'The migrated working copy did not reopen as a current healthy project.',
+          );
+        }
+
+        return {
+          id: request.id,
+          projectId: context.projectId,
+          ok: true,
+          payload: {
+            kind: 'migrateSchemaV1ToV2',
+            fromSchema: 1,
+            toSchema: 2,
+            result,
+            safeMode: nextSafeMode,
+            usedVfs: context.usedVfs,
+          },
         };
       }
       case 'putArchiveEntries': {

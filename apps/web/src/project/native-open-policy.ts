@@ -34,7 +34,7 @@ export interface NativeOpenCapabilities {
 
 export const NATIVE_OPEN_WARNINGS = {
   olderSchema:
-    'This project uses an older Arq format. It is open for reading only, because upgrading it needs a migration that keeps a recoverable copy of the original, and that is not available in this build yet.',
+    'This project uses an older Arq format. It is open for reading only in this window because migration of its local working copy could not run safely here.',
   futureWriter:
     'This project was saved by a newer version of Arq. It is open for reading only, because writing it with this version could discard information this version does not understand.',
   safeMode:
@@ -85,14 +85,10 @@ export function resolveNativeOpenCapabilities(result: ArqfsOpenResult): NativeOp
   if (!canWrite) {
     warnings.push(NATIVE_OPEN_WARNINGS.futureWriter);
   }
-  // `canMigrate` means the file is on an older schema this build *could* bring
-  // forward. It is deliberately treated as read-only rather than as permission
-  // to write. Copy-on-write migration exists as a library, but it is not
-  // reachable from the product and its recovery evidence has not been run
-  // end to end - so authoring against an old-schema file would write current
-  // semantics into a file still declaring the old schema. ADR-0028 records this
-  // as a decision, not an oversight; it lifts when migration is user-reachable
-  // and verified.
+  // `canMigrate` now remains true only when the product deliberately did not
+  // migrate this working copy, most commonly because another window owns the
+  // writer lease. A successfully migrated candidate is reopened before it reaches
+  // this policy and therefore arrives with `canMigrate: false`.
   else if (canMigrate) {
     warnings.push(NATIVE_OPEN_WARNINGS.olderSchema);
   }

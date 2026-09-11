@@ -219,12 +219,31 @@ describe('describeFileFlowState', () => {
     }
   });
 
+  it('only claims an upgrade when migration actually ran', () => {
+    const current = describeFileFlowState({
+      kind: 'migration-verified',
+      name: 'current.arq',
+      projectId: 'p1',
+      migrated: false,
+    });
+    const upgraded = describeFileFlowState({
+      kind: 'migration-verified',
+      name: 'old.arq',
+      projectId: 'p2',
+      migrated: true,
+    });
+
+    expect(current.headline).not.toMatch(/upgraded/i);
+    expect(upgraded.headline).toMatch(/upgraded/i);
+    expect(upgraded.detail).toMatch(/original file is not changed/i);
+  });
+
   it('describes every state kind without throwing (exhaustiveness)', () => {
     const states: readonly FileFlowState[] = [
       { kind: 'idle' },
       { kind: 'staging', name: 'a.arq', fraction: 0.25 },
       { kind: 'staged', name: 'a.arq', projectId: 'p1' },
-      { kind: 'migration-verified', name: 'a.arq', projectId: 'p1' },
+      { kind: 'migration-verified', name: 'a.arq', projectId: 'p1', migrated: false },
       { kind: 'worker-open', name: 'a.arq', projectId: 'p1', readOnlyReason: null },
       { kind: 'hydrating', name: 'a.arq', projectId: 'p1', readOnlyReason: null },
       { kind: 'quarantined', name: 'a.arq', quarantinePath: '/q/a.arq', lastKnownGood: null },
@@ -299,7 +318,7 @@ describe('describeFileFlowState', () => {
       { kind: 'import-options', name: 'a.dxf', formatId: 'dxf' },
       { kind: 'importing', name: 'a.dxf', requestId: 'r1', fraction: 0.5 },
       { kind: 'staged-review', name: 'a.dxf', requestId: 'r1' },
-      { kind: 'migrating', name: 'a.arq', fraction: 0.5 },
+      { kind: 'migrating', name: 'a.arq', projectId: 'p1', fraction: 0.5 },
       { kind: 'read-only-safe-mode', name: 'a.arq', reason: 'corrupt' },
       { kind: 'failed', code: 'X', message: 'y' },
     ];

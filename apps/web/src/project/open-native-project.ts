@@ -90,6 +90,10 @@ function manifestOf(value: unknown): ArqManifest | null {
  */
 export interface NativeOpenProgress {
   readonly onStaged: (projectId: string) => void;
+  /** Called only when this candidate actually needs an older-schema upgrade. */
+  readonly onMigrationStart?: () => void;
+  /** Reports whether an upgrade ran; false means the already-current working copy only needed verification. */
+  readonly onMigrationVerified?: (migrated: boolean) => void;
   readonly onWorkerOpened: (
     writable: boolean,
     /** Set when this context lost the writer lock, which is not the file's doing. */
@@ -163,7 +167,8 @@ export async function openNativeProject(
     if (openPayload.kind !== 'open') {
       return rejected('ARQ_OPEN_UNEXPECTED', 'The project did not report an open result.');
     }
-    const openResult: ArqfsOpenResult = openPayload.result;
+    let openResult: ArqfsOpenResult = openPayload.result;
+    let openSafeMode = openPayload.safeMode;
     if (openResult.status === 'rejected') {
       return rejected('ARQ_OPEN_REJECTED', openResult.reason);
     }
@@ -176,19 +181,13 @@ export async function openNativeProject(
      * committed to - destroying, at that moment, the only state a recovery
      * could have been built from.
      */
-    const conditionWarning = describeOpenCondition(openPayload.safeMode);
+    let conditionWarning = describeOpenCondition(openSafeMode);
     if (!openPayload.safeMode.canOpen && conditionWarning !== null) {
       return rejected('ARQ_OPEN_UNSOUND', conditionWarning);
     }
 
-    const capabilities = resolveNativeOpenCapabilities(openResult);
-    const readOnly = capabilities.readOnly || writerLocked || conditionWarning !== null;
-    const warnings = [
-      ...capabilities.warnings,
-      ...(conditionWarning === null ? [] : [conditionWarning]),
-      ...(writerLocked ? [describeReadOnlyReason(lease.reason)] : []),
-    ];
     if (!openResult.capabilities.canRead) {
+      const capabilities = resolveNativeOpenCapabilities(openResult);
       return rejected('ARQ_OPEN_NOT_READABLE', capabilities.warnings[0] ?? 'Not readable.');
     }
 
@@ -211,6 +210,46 @@ export async function openNativeProject(
     // The working copy exists and the database behind it opened. Reported here,
     // between the two facts, because that is where each becomes true.
     progress?.onStaged(workingCopyId);
+
+    let migrated = false;
+    if (openResult.capabilities.canMigrate && !writerLocked && conditionWarning === null) {
+      progress?.onMigrationStart?.();
+      let migrationPayload;
+      try {
+        migrationPayload = await handle.client.request({ type: 'migrateSchemaV1ToV2' });
+      } catch (error) {
+        return rejected(
+          'ARQ_MIGRATION_FAILED',
+          error instanceof Error ? error.message : 'The working-copy migration failed.',
+        );
+      }
+      if (migrationPayload.kind !== 'migrateSchemaV1ToV2') {
+        return rejected('ARQ_MIGRATION_FAILED', 'The project did not report a migration result.');
+      }
+      openResult = migrationPayload.result;
+      openSafeMode = migrationPayload.safeMode;
+      if (openResult.status === 'rejected') {
+        return rejected('ARQ_MIGRATION_FAILED', openResult.reason);
+      }
+      conditionWarning = describeOpenCondition(openSafeMode);
+      if (!openSafeMode.canOpen && conditionWarning !== null) {
+        return rejected('ARQ_MIGRATION_FAILED', conditionWarning);
+      }
+      migrated = true;
+    }
+    progress?.onMigrationVerified?.(migrated);
+
+    const capabilities = resolveNativeOpenCapabilities(openResult);
+    const readOnly = capabilities.readOnly || writerLocked || conditionWarning !== null;
+    const warnings = [
+      ...capabilities.warnings,
+      ...(conditionWarning === null ? [] : [conditionWarning]),
+      ...(writerLocked ? [describeReadOnlyReason(lease.reason)] : []),
+    ];
+    if (!openResult.capabilities.canRead) {
+      return rejected('ARQ_OPEN_NOT_READABLE', capabilities.warnings[0] ?? 'Not readable.');
+    }
+
     // Reports the whole truth about writability, which now has two independent
     // causes: the file's own writer-version floor, and whether this context won
     // the writer lock. Reporting only the first would announce a writable

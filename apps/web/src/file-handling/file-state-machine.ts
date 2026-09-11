@@ -141,7 +141,12 @@ export type FileFlowState =
       readonly fraction: number;
     }
   | { readonly kind: 'staged-review'; readonly name: string; readonly requestId: string }
-  | { readonly kind: 'migrating'; readonly name: string; readonly fraction: number }
+  | {
+      readonly kind: 'migrating';
+      readonly name: string;
+      readonly projectId: string;
+      readonly fraction: number;
+    }
   | { readonly kind: 'read-only-safe-mode'; readonly name: string; readonly reason: string }
   | {
       readonly kind: 'failed';
@@ -169,7 +174,12 @@ export type FileFlowState =
    */
   | { readonly kind: 'staging'; readonly name: string; readonly fraction: number }
   | { readonly kind: 'staged'; readonly name: string; readonly projectId: string }
-  | { readonly kind: 'migration-verified'; readonly name: string; readonly projectId: string }
+  | {
+      readonly kind: 'migration-verified';
+      readonly name: string;
+      readonly projectId: string;
+      readonly migrated: boolean;
+    }
   | {
       readonly kind: 'worker-open';
       readonly name: string;
@@ -306,7 +316,8 @@ export type FileFlowEvent =
   | { readonly type: 'stage-start' }
   | { readonly type: 'stage-progress'; readonly fraction: number }
   | { readonly type: 'stage-complete'; readonly projectId: string }
-  | { readonly type: 'migration-verified' }
+  | { readonly type: 'migration-start' }
+  | { readonly type: 'migration-verified'; readonly migrated: boolean }
   | { readonly type: 'worker-opened'; readonly readOnlyReason: ProjectReadOnlyReason | null }
   /**
    * The open this build actually performs: the Worker holds the selected bytes
@@ -524,8 +535,24 @@ export function reduceFileFlow(state: FileFlowState, event: FileFlowEvent): File
   if (state.kind === 'staging' && event.type === 'stage-complete') {
     return { kind: 'staged', name: state.name, projectId: event.projectId };
   }
+  if (state.kind === 'staged' && event.type === 'migration-start') {
+    return { kind: 'migrating', name: state.name, projectId: state.projectId, fraction: 0 };
+  }
   if (state.kind === 'staged' && event.type === 'migration-verified') {
-    return { kind: 'migration-verified', name: state.name, projectId: state.projectId };
+    return {
+      kind: 'migration-verified',
+      name: state.name,
+      projectId: state.projectId,
+      migrated: event.migrated,
+    };
+  }
+  if (state.kind === 'migrating' && event.type === 'migration-verified') {
+    return {
+      kind: 'migration-verified',
+      name: state.name,
+      projectId: state.projectId,
+      migrated: event.migrated,
+    };
   }
   if (state.kind === 'staged' && event.type === 'quarantine') {
     return {
