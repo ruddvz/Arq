@@ -95,7 +95,7 @@ jobs:
           node scripts/write-deployment-provenance.mjs
           --dist apps/marketing/dist
           --target github-pages
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: apps/marketing/dist
   deploy:
