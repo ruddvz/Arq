@@ -156,7 +156,7 @@ async function probe(engineName, origin) {
 
     const capability = await page.evaluate(() => {
       const canvas = document.createElement('canvas');
-      const webgpuAvailable = 'gpu' in navigator && navigator.gpu != null;
+      const webgpuAvailable = 'gpu' in navigator && navigator.gpu !== null;
       let webgl2Available = false;
       let webglAvailable = false;
       try {
