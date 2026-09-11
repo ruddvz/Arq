@@ -4,7 +4,7 @@ import {
   loadConfig,
   preflightFromGraph,
   readSnapshot,
-} from '../zeus-repository-intelligence.mjs';
+} from '../zeus-repository-cross-language.mjs';
 
 const RISK_RANK = { low: 0, moderate: 1, high: 2, critical: 3 };
 const TIER_RANK = { fast: 0, standard: 1, deep: 2 };
