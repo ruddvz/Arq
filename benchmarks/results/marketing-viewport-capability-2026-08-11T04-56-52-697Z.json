@@ -1,0 +1,1488 @@
+{
+  "generatedAt": "2026-08-11T04:56:52.698Z",
+  "routes": [
+    "/",
+    "/404",
+    "/ai",
+    "/architects",
+    "/changelog",
+    "/collaboration",
+    "/contact",
+    "/docs",
+    "/interoperability",
+    "/ipad",
+    "/legal/open-source",
+    "/legal/privacy",
+    "/legal/terms",
+    "/pricing",
+    "/product",
+    "/security",
+    "/status",
+    "/students"
+  ],
+  "viewports": [
+    "wide-desktop",
+    "1440-desktop",
+    "1280",
+    "1024",
+    "tablet-landscape",
+    "tablet-portrait",
+    "phone-portrait",
+    "phone-landscape"
+  ],
+  "matrix": [
+    {
+      "route": "/",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "ARQ · pre-release architectural workspace"
+      },
+      "failures": []
+    },
+    {
+      "route": "/",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "ARQ · pre-release architectural workspace"
+      },
+      "failures": []
+    },
+    {
+      "route": "/",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "ARQ · pre-release architectural workspace"
+      },
+      "failures": []
+    },
+    {
+      "route": "/",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "ARQ · pre-release architectural workspace"
+      },
+      "failures": []
+    },
+    {
+      "route": "/",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "ARQ · pre-release architectural workspace"
+      },
+      "failures": []
+    },
+    {
+      "route": "/",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "ARQ · pre-release architectural workspace"
+      },
+      "failures": []
+    },
+    {
+      "route": "/",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "ARQ · pre-release architectural workspace"
+      },
+      "failures": []
+    },
+    {
+      "route": "/",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "ARQ · pre-release architectural workspace"
+      },
+      "failures": []
+    },
+    {
+      "route": "/404",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Page not found · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/404",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Page not found · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/404",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Page not found · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/404",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Page not found · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/404",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Page not found · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/404",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Page not found · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/404",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Page not found · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/404",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Page not found · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ai",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "AI · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ai",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "AI · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ai",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "AI · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ai",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "AI · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ai",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "AI · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ai",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "AI · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ai",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "AI · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ai",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "AI · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/architects",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For architects · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/architects",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For architects · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/architects",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For architects · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/architects",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For architects · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/architects",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For architects · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/architects",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For architects · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/architects",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For architects · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/architects",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For architects · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/changelog",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Changelog · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/changelog",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Changelog · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/changelog",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Changelog · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/changelog",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Changelog · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/changelog",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Changelog · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/changelog",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Changelog · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/changelog",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Changelog · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/changelog",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Changelog · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/collaboration",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Collaboration · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/collaboration",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Collaboration · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/collaboration",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Collaboration · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/collaboration",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Collaboration · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/collaboration",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Collaboration · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/collaboration",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Collaboration · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/collaboration",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Collaboration · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/collaboration",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Collaboration · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/contact",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Contact and support · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/contact",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Contact and support · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/contact",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Contact and support · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/contact",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Contact and support · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/contact",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Contact and support · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/contact",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Contact and support · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/contact",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Contact and support · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/contact",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Contact and support · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/docs",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Documentation · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/docs",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Documentation · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/docs",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Documentation · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/docs",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Documentation · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/docs",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Documentation · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/docs",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Documentation · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/docs",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Documentation · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/docs",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Documentation · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/interoperability",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Interoperability · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/interoperability",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Interoperability · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/interoperability",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Interoperability · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/interoperability",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Interoperability · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/interoperability",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Interoperability · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/interoperability",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Interoperability · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/interoperability",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Interoperability · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/interoperability",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Interoperability · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ipad",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "iPad · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ipad",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "iPad · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ipad",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "iPad · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ipad",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "iPad · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ipad",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "iPad · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ipad",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "iPad · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ipad",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "iPad · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/ipad",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "iPad · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/open-source",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Open-source notices · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/open-source",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Open-source notices · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/open-source",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Open-source notices · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/open-source",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Open-source notices · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/open-source",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Open-source notices · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/open-source",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Open-source notices · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/open-source",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Open-source notices · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/open-source",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Open-source notices · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/privacy",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Privacy notice · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/privacy",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Privacy notice · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/privacy",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Privacy notice · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/privacy",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Privacy notice · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/privacy",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Privacy notice · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/privacy",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Privacy notice · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/privacy",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Privacy notice · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/privacy",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Privacy notice · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/terms",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Terms · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/terms",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Terms · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/terms",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Terms · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/terms",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Terms · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/terms",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Terms · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/terms",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Terms · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/terms",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Terms · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/legal/terms",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Terms · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/pricing",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Pricing · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/pricing",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Pricing · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/pricing",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Pricing · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/pricing",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Pricing · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/pricing",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Pricing · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/pricing",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Pricing · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/pricing",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Pricing · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/pricing",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Pricing · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/product",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Product · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/product",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Product · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/product",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Product · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/product",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Product · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/product",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Product · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/product",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Product · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/product",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Product · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/product",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Product · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/security",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Security · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/security",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Security · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/security",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Security · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/security",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Security · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/security",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Security · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/security",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Security · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/security",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Security · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/security",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Security · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/status",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Status · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/status",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Status · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/status",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Status · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/status",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Status · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/status",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Status · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/status",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Status · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/status",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Status · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/status",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "Status · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/students",
+      "viewport": "wide-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For students · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/students",
+      "viewport": "1440-desktop",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For students · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/students",
+      "viewport": "1280",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For students · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/students",
+      "viewport": "1024",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For students · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/students",
+      "viewport": "tablet-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For students · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/students",
+      "viewport": "tablet-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For students · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/students",
+      "viewport": "phone-portrait",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For students · ARQ"
+      },
+      "failures": []
+    },
+    {
+      "route": "/students",
+      "viewport": "phone-landscape",
+      "measurement": {
+        "horizontalOverflow": false,
+        "h1Count": 1,
+        "title": "For students · ARQ"
+      },
+      "failures": []
+    }
+  ],
+  "keyboardFailures": [],
+  "motionFailures": [],
+  "contrastFailures": [],
+  "sizeMeasurement": {
+    "totalDist": 414484,
+    "cssSize": 23841,
+    "fontsTotal": 140316,
+    "largestPage": {
+      "route": "/legal/open-source/index.html",
+      "size": 23510
+    }
+  },
+  "sizeFailures": []
+}

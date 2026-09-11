@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-08-01T05:57:08.718Z",
+  "environment": "headless Chromium 141.0.7390.37, two pages/same context (same origin) - real Web Locks API + BroadcastChannel, not a physical multi-tab user test",
+  "ok": true,
+  "queryWhileTabAHeldLock": {
+    "held": [
+      {
+        "clientId": "b66cfeea-ebdb-4f7c-bf1f-7d297b640114",
+        "mode": "exclusive",
+        "name": "arqfs-project-writer:house"
+      }
+    ],
+    "pending": [
+      {
+        "clientId": "bf649493-65ea-4c44-8ef8-07b30f4f9f62",
+        "mode": "exclusive",
+        "name": "arqfs-project-writer:house"
+      }
+    ]
+  },
+  "tabBBlockedWhileTabAHeldLock": true,
+  "tabBSawWriterAcquiredNotification": true,
+  "tabBSawWriterReleasedNotification": true,
+  "tabBAcquiredAfterTabAReleased": true,
+  "differentProjectAcquiredWhileFirstHeld": true,
+  "contendedRequestDegradedToReadOnly": true
+}

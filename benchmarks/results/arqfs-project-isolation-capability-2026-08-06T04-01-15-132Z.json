@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-08-06T04:01:15.132Z",
+  "environment": "headless Chromium 141.0.7390.37, sandboxed container - real sqlite-wasm + OPFS, two projects opened through project-scoped filenames exactly as arqfs-worker-entry.ts derives them",
+  "ok": true,
+  "libVersion": "3.53.0",
+  "readA": [
+    {
+      "id": 1,
+      "value": "value-belongs-to-project-a"
+    }
+  ],
+  "readB": [
+    {
+      "id": 1,
+      "value": "value-belongs-to-project-b"
+    }
+  ],
+  "projectASawOnlyItsOwnValue": true,
+  "projectBSawOnlyItsOwnValue": true,
+  "noCrossContamination": true,
+  "consoleErrors": []
+}

@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-07-22T20:54:49.398Z",
+  "environment": "headless Chromium, software WebGL (SwiftShader) in a sandboxed container (not a certified benchmark device - see docs/research/RENDERER-BENCHMARK-PIXIJS-WEBGL.md)",
+  "benchmarkModel": {
+    "levels": 2,
+    "walls": 150,
+    "doorsAndWindows": 80,
+    "rooms": 60,
+    "annotations": 200,
+    "underlays": 1,
+    "semanticObjectsApprox": 1000
+  },
+  "measuredObjectCounts": {
+    "walls": 150,
+    "rooms": 60,
+    "openings": 80,
+    "annotations": 200
+  },
+  "frameCount": 180,
+  "avgFrameMs": 61.01611111111112,
+  "avgFps": 16.38911398628777,
+  "p95FrameMs": 83.30000000000291,
+  "maxFrameMs": 83.40000000000146,
+  "panZoomFpsTarget": 60,
+  "meetsTarget": false
+}

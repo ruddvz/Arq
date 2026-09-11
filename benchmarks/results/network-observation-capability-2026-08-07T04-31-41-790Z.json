@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-08-07T04:31:41.790Z",
+  "environment": "headless Chromium 141.0.7390.37",
+  "evidenceId": "browser_network_observation",
+  "ok": true,
+  "claim": "no-network-data-transfer",
+  "conflict": "DRIFT-PRIVACY-TRANSPORT-ABSOLUTE",
+  "appOrigin": "http://127.0.0.1:38759",
+  "interactionsPerformed": [
+    "switched to the 3D view"
+  ],
+  "requestsObserved": 14,
+  "byDisposition": {
+    "same-origin": 11,
+    "in-memory": 3
+  },
+  "offDeviceRequests": [],
+  "webSocketsOpened": [],
+  "offDeviceWebSockets": [],
+  "consoleErrors": []
+}
