@@ -771,6 +771,8 @@ export function App(): JSX.Element {
    * the journal cannot take writes (quota, eviction, no IndexedDB).
    */
   const journalRef = useRef<PlanJournal | null>(null);
+  // Only the newest persistence attempt may settle the global save indicator.
+  const persistenceRevisionRef = useRef(0);
   const wallIdCounterRef = useRef(0);
   const [saveState, setSaveState] = useState<
     'no-project' | 'saved' | 'saving' | 'unsaved-changes' | 'recovered'
@@ -781,10 +783,11 @@ export function App(): JSX.Element {
     const journal = createPlanJournal();
     journalRef.current = journal;
     let cancelled = false;
+    const recoveryRevision = persistenceRevisionRef.current;
     journal
       .recover(PLAN_PROJECT_ID)
       .then(({ walls, recoveredOperationCount }) => {
-        if (cancelled) {
+        if (cancelled || recoveryRevision !== persistenceRevisionRef.current) {
           return;
         }
         setDrawnWalls(walls);
@@ -797,12 +800,14 @@ export function App(): JSX.Element {
         );
       })
       .catch(() => {
-        if (!cancelled) {
+        if (!cancelled && recoveryRevision === persistenceRevisionRef.current) {
           setSaveState('unsaved-changes');
           setJournalLabel('Journal unavailable');
         }
       });
     const unsubscribe = journal.onUnavailable(() => {
+      // The demo journal is not authoritative while a native project is open.
+      if (nativeSessionRef.current !== null) return;
       setSaveState('unsaved-changes');
       setJournalLabel('Journal unavailable');
     });
@@ -817,6 +822,7 @@ export function App(): JSX.Element {
   const persistOperation = useCallback(
     (operation: WorkspaceOperation, walls: readonly DrawnWall[]) => {
       if (operation.kind === 'note') return;
+      const revision = ++persistenceRevisionRef.current;
       setSaveState('saving');
       void persistWorkspaceOperation({
         nativeSession: nativeSessionRef.current,
@@ -825,6 +831,7 @@ export function App(): JSX.Element {
         operation,
         walls,
       }).then((result) => {
+        if (revision !== persistenceRevisionRef.current) return;
         if (result.status === 'skipped') return;
         if (result.status === 'saved') {
           setSaveState('saved');
@@ -893,6 +900,8 @@ export function App(): JSX.Element {
       readonly session: NativeProjectSession;
       readonly snapshot: NativeProjectSnapshot;
     }) => {
+      // Changing persistence authority invalidates completions from the old one.
+      persistenceRevisionRef.current += 1;
       const previous = nativeSessionRef.current;
       nativeSessionRef.current = opened.session;
       // Fire-and-forget, but never skipped: releasing the previous Worker is
@@ -934,13 +943,10 @@ export function App(): JSX.Element {
       );
       wallIdCounterRef.current = highestWallIdSuffix(shown);
       setProjectName(opened.snapshot.displayName);
-      // Read from the working copy, not written to it yet: "opened" is not
-      // "saved", and this build does not checkpoint edits back to the `.arq`
-      // file. Saying `saved` here would claim durability the product has not
-      // Opening establishes a committed working-copy baseline. Flat projects can
-      // continue through the native save path; reference projects remain readable
-      // but wall edits are blocked until their richer semantics can round-trip.
-      setSaveState('saved');
+      // A committed baseline is a saved/editable state only for the flat model
+      // this editor can round-trip without semantic loss.
+      const canPersistWallEdits = !opened.snapshot.readOnly && opened.snapshot.document === null;
+      setSaveState(canPersistWallEdits ? 'saved' : 'unsaved-changes');
       setJournalLabel(
         opened.snapshot.readOnly
           ? 'Open for reading only · changes cannot be saved'
