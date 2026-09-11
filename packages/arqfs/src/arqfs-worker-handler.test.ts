@@ -54,6 +54,43 @@ describe('handleArqfsWorkerRequest', () => {
     }
   });
 
+  it('migrates an eligible schema-v1 working copy to v2 and verifies the reopened result', async () => {
+    const ctx = freshContext();
+    createArqfsSchemaV1(ctx.driver);
+
+    const opened = await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+    expect(opened.ok).toBe(true);
+    if (!opened.ok || opened.payload.kind !== 'open' || opened.payload.result.status !== 'opened') {
+      throw new Error('expected an older schema to open');
+    }
+    expect(opened.payload.result.header.schema).toBe(1);
+    expect(opened.payload.result.capabilities.canMigrate).toBe(true);
+
+    const migrated = await handleArqfsWorkerRequest(ctx, { id: 2, type: 'migrateSchemaV1ToV2' });
+    expect(migrated.ok).toBe(true);
+    if (!migrated.ok || migrated.payload.kind !== 'migrateSchemaV1ToV2') {
+      throw new Error('expected a migration payload');
+    }
+    expect(migrated.payload).toMatchObject({ fromSchema: 1, toSchema: 2 });
+    expect(migrated.payload.result.status).toBe('opened');
+    if (migrated.payload.result.status === 'opened') {
+      expect(migrated.payload.result.header.schema).toBe(ARQFS_SCHEMA_VERSION_V2);
+      expect(migrated.payload.result.capabilities.canMigrate).toBe(false);
+      expect(migrated.payload.result.capabilities.canWrite).toBe(true);
+    }
+    expect(ctx.driver.pragma('user_version')).toBe(ARQFS_SCHEMA_VERSION_V2);
+  });
+
+  it('refuses migration when the current open does not require it', async () => {
+    const ctx = freshContext();
+    await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });
+
+    const response = await handleArqfsWorkerRequest(ctx, { id: 2, type: 'migrateSchemaV1ToV2' });
+
+    expect(response.ok).toBe(false);
+    if (!response.ok) expect(response.code).toBe('ARQFS_WORKER_MIGRATION_NOT_ALLOWED');
+  });
+
   it("'open' is idempotent - opening an already-initialised database again does not fail or re-create the schema", async () => {
     const ctx = freshContext();
     await handleArqfsWorkerRequest(ctx, { id: 1, type: 'open' });

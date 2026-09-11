@@ -409,22 +409,82 @@ describe('openNativeProject', () => {
     });
   });
 
-  it('opens an older-schema project read-only rather than editable', async () => {
+  it('migrates an older-schema working copy before adoption and leaves the selected bytes unchanged', async () => {
+    const older = {
+      ...WRITABLE,
+      header: { ...WRITABLE.header, schema: 1 },
+      capabilities: { ...WRITABLE.capabilities, canMigrate: true },
+    } as const;
     const fake = fakeWorker({
       open: async () => ({
         kind: 'open',
-        result: {
-          ...WRITABLE,
-          capabilities: { ...WRITABLE.capabilities, canMigrate: true },
-        },
+        result: older,
+        safeMode: HEALTHY_CONDITION,
+        usedVfs: 'opfs-sahpool',
+      }),
+      migrateSchemaV1ToV2: async () => ({
+        kind: 'migrateSchemaV1ToV2',
+        fromSchema: 1,
+        toSchema: 2,
+        result: WRITABLE,
         safeMode: HEALTHY_CONDITION,
         usedVfs: 'opfs-sahpool',
       }),
     });
     fake.setEntries(await archiveEntries());
+    const bytes = sqliteBytes();
+    const original = [...bytes];
+    const onMigrationStart = vi.fn();
+    const onMigrationVerified = vi.fn();
 
     const result = await openNativeProject(
-      sqliteBytes(),
+      bytes,
+      fake.factory,
+      'house.arq',
+      {
+        onStaged: vi.fn(),
+        onMigrationStart,
+        onMigrationVerified,
+        onWorkerOpened: vi.fn(),
+        onHydrateStart: vi.fn(),
+      },
+      null,
+      grantsWriterLock,
+    );
+
+    expect(result.status).toBe('opened');
+    if (result.status === 'opened') {
+      expect(result.snapshot.readOnly).toBe(false);
+      expect(result.snapshot.warnings).not.toContain(NATIVE_OPEN_WARNINGS.olderSchema);
+    }
+    expect(fake.seen).toContain('migrateSchemaV1ToV2');
+    expect(onMigrationStart).toHaveBeenCalledOnce();
+    expect(onMigrationVerified).toHaveBeenCalledWith(true);
+    expect([...bytes]).toEqual(original);
+  });
+
+  it('rejects a failed working-copy migration without changing the selected bytes', async () => {
+    const older = {
+      ...WRITABLE,
+      header: { ...WRITABLE.header, schema: 1 },
+      capabilities: { ...WRITABLE.capabilities, canMigrate: true },
+    } as const;
+    const fake = fakeWorker({
+      open: async () => ({
+        kind: 'open',
+        result: older,
+        safeMode: HEALTHY_CONDITION,
+        usedVfs: 'opfs-sahpool',
+      }),
+      migrateSchemaV1ToV2: async () => {
+        throw new Error('migration copy did not verify');
+      },
+    });
+    const bytes = sqliteBytes();
+    const original = [...bytes];
+
+    const result = await openNativeProject(
+      bytes,
       fake.factory,
       'house.arq',
       undefined,
@@ -432,11 +492,10 @@ describe('openNativeProject', () => {
       grantsWriterLock,
     );
 
-    expect(result.status).toBe('opened');
-    if (result.status === 'opened') {
-      expect(result.snapshot.readOnly).toBe(true);
-      expect(result.snapshot.warnings[0]).toMatch(/migration/i);
-    }
+    expect(result).toMatchObject({ status: 'rejected', code: 'ARQ_MIGRATION_FAILED' });
+    expect([...bytes]).toEqual(original);
+    expect(fake.terminate).toHaveBeenCalledOnce();
+    expect(fake.dispose).toHaveBeenCalledOnce();
   });
   /**
    * V3-038. The file records what its own entries should hash to, in

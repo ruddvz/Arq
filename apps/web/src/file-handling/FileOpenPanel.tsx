@@ -166,8 +166,9 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
       {
         onStaged: (projectId) => {
           emit({ type: 'stage-complete', projectId });
-          emit({ type: 'migration-verified' });
         },
+        onMigrationStart: () => emit({ type: 'migration-start' }),
+        onMigrationVerified: (migrated) => emit({ type: 'migration-verified', migrated }),
         onWorkerOpened: (writable, lockReason) =>
           emit({
             // Two independent causes, and they are not interchangeable. The
@@ -192,7 +193,11 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
     }
     if (opened.status === 'rejected') {
       const { code, reason } = opened;
-      emit({ type: 'fail', code, message: reason });
+      if (code === 'ARQ_MIGRATION_FAILED') {
+        emit({ type: 'project-fail', reason: 'migration-failed', detail: reason });
+      } else {
+        emit({ type: 'fail', code, message: reason });
+      }
       return;
     }
     if (!isCurrent()) {
@@ -239,7 +244,13 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
   }
 
   const description = describeFileFlowState(state);
-  const busy = state.kind === 'acquiring' || state.kind === 'detecting';
+  const busy =
+    state.kind === 'acquiring' ||
+    state.kind === 'detecting' ||
+    state.kind === 'staging' ||
+    state.kind === 'migrating' ||
+    state.kind === 'worker-open' ||
+    state.kind === 'hydrating';
 
   return (
     <ArqModalDialog

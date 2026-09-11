@@ -49,6 +49,7 @@ describe('parseArqfsWorkerRequest', () => {
 
   it.each([
     ['open', { id: 1, type: 'open' }],
+    ['migrateSchemaV1ToV2', { id: 9, type: 'migrateSchemaV1ToV2' }],
     ['listArchiveEntryPaths', { id: 2, type: 'listArchiveEntryPaths' }],
     ['readAllArchiveEntries', { id: 3, type: 'readAllArchiveEntries' }],
     ['close', { id: 4, type: 'close' }],

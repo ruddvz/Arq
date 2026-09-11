@@ -33,6 +33,8 @@ export type ArqfsWorkerRequest =
    */
   | { readonly id: number; readonly type: 'importDatabase'; readonly bytes: Uint8Array }
   | { readonly id: number; readonly type: 'open' }
+  /** Upgrade an already-open schema-v1 working copy to schema v2. The caller must only send this for a disposable copy, never the selected source file itself. */
+  | { readonly id: number; readonly type: 'migrateSchemaV1ToV2' }
   | {
       readonly id: number;
       readonly type: 'putArchiveEntries';
@@ -120,6 +122,14 @@ export type ArqfsWorkerResponsePayload =
       readonly safeMode: ArqfsSafeModePlan;
       readonly usedVfs: string;
     }
+  | {
+      readonly kind: 'migrateSchemaV1ToV2';
+      readonly fromSchema: 1;
+      readonly toSchema: 2;
+      readonly result: ArqfsOpenResult;
+      readonly safeMode: ArqfsSafeModePlan;
+      readonly usedVfs: string;
+    }
   | { readonly kind: 'checkIntegrity'; readonly report: ArqfsIntegrityReport }
   | { readonly kind: 'exportDatabase'; readonly bytes: Uint8Array }
   | { readonly kind: 'computeSemanticHash'; readonly hash: string }
@@ -161,6 +171,10 @@ export const ARQFS_WORKER_ERROR_CODES = {
   openRejected: 'ARQFS_WORKER_OPEN_REJECTED',
   /** This context has no way to hand back the working copy's raw bytes (e.g. the in-memory fallback used when OPFS is unavailable). */
   exportUnsupported: 'ARQFS_WORKER_EXPORT_UNSUPPORTED',
+  /** The current open verdict does not license a schema migration. */
+  migrationNotAllowed: 'ARQFS_WORKER_MIGRATION_NOT_ALLOWED',
+  /** A migration ran on the working copy but did not verify as a current healthy project. */
+  migrationFailed: 'ARQFS_WORKER_MIGRATION_FAILED',
   /** The request was not a shape this protocol defines, so nothing was attempted. */
   malformedRequest: 'ARQFS_WORKER_MALFORMED_REQUEST',
   /** This Worker has no way to publish - it is not backed by a VFS that can export and reopen a file. */
@@ -241,6 +255,8 @@ export function parseArqfsWorkerRequest(value: unknown): ArqfsWorkerRequest | nu
         : null;
     case 'open':
       return { id, type: 'open' };
+    case 'migrateSchemaV1ToV2':
+      return { id, type: 'migrateSchemaV1ToV2' };
     case 'exportDatabase':
       return { id, type: 'exportDatabase' };
     case 'computeSemanticHash':

@@ -104,11 +104,17 @@ export function describeFileFlowState(state: FileFlowState): FileFlowStateDescri
         tone: 'progress',
       };
     case 'migration-verified':
-      return {
-        headline: `${state.name} was upgraded and checked.`,
-        detail: 'The upgrade ran on the copy. Your original file is not changed.',
-        tone: 'progress',
-      };
+      return state.migrated
+        ? {
+            headline: `${state.name} was upgraded and checked.`,
+            detail: 'The upgrade ran on the local working copy. Your original file is not changed.',
+            tone: 'progress',
+          }
+        : {
+            headline: `${state.name} is copied and checked.`,
+            detail: 'No format upgrade was needed. Your original file is not changed.',
+            tone: 'progress',
+          };
     case 'worker-open':
       return {
         headline: `${state.name} is loading…`,
