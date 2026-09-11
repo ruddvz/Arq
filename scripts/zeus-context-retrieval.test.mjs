@@ -33,6 +33,8 @@ write(
   'src/wall.ts',
   `# Heading one\n# Heading two\n# Heading three\n# Heading four\n# Heading five\n${filler}\n// precisiontarget wall snapping evidence lives here\n`,
 );
+write(root, 'src/door.ts', 'export const door = () => "door implementation";\n');
+write(root, 'src/door.test.ts', 'import "./door";\n// door proof\n');
 write(
   root,
   'docs/ARQ_V13_IMPLEMENTATION_LEDGER.md',
@@ -47,6 +49,16 @@ const files = [
     path: 'src/wall.ts',
     headings: ['Heading one', 'Heading two', 'Heading three', 'Heading four', 'Heading five'],
     keywords: ['wall', 'precisiontarget'],
+  },
+  {
+    path: 'src/door.ts',
+    headings: [],
+    keywords: ['door'],
+  },
+  {
+    path: 'src/door.test.ts',
+    headings: [],
+    keywords: ['door', 'proof'],
   },
   {
     path: 'docs/ARQ_V13_IMPLEMENTATION_LEDGER.md',
@@ -109,12 +121,22 @@ writeFileSync(cache, `${JSON.stringify({ fingerprint: 'fixture', files }, null, 
   assert.equal(
     result.results.length,
     1,
-    'fast adaptive retrieval should stop after decisive coverage',
+    'fast adaptive retrieval should stop after decisive coverage when no proof pair exists',
   );
   assert.equal(result.results[0].path, 'src/wall.ts');
   assert.deepEqual(result.selection.coveredTerms, ['precisiontarget', 'wall']);
   assert.equal(result.selection.stopReason, 'no-new-query-coverage-or-proof-pair-value');
   assert(result.usedContextChars < result.budget.contextChars);
+}
+
+{
+  const result = run(root, cache, '--query', 'door', '--adaptive');
+  assert.deepEqual(
+    result.results.map((item) => item.path).sort(),
+    ['src/door.test.ts', 'src/door.ts'],
+    'fast adaptive retrieval should retain an available implementation-test proof pair',
+  );
+  assert.equal(result.selection.stopReason, 'no-new-query-coverage-or-proof-pair-value');
 }
 
 {
