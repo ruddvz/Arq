@@ -6,7 +6,7 @@ on:
       - codex/zeus-cross-language-graph-325-scratch
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify:
@@ -20,5 +20,13 @@ jobs:
           node-version: '22'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Format parser files
+        run: |
+          pnpm exec prettier --write scripts/lib/zeus-repository-symbols.mjs scripts/zeus-repository-symbols.test.mjs
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/lib/zeus-repository-symbols.mjs scripts/zeus-repository-symbols.test.mjs
+          git diff --cached --quiet || git commit -m "style(zeus): format cross-language graph parser"
+          git push
       - run: pnpm exec prettier --check scripts/lib/zeus-repository-symbols.mjs scripts/zeus-repository-symbols.test.mjs
       - run: node --test scripts/zeus-repository-symbols.test.mjs
