@@ -143,7 +143,11 @@ try {
   );
 
   const fast = measure('fast-readme', 'README typo documentation', 'fast');
-  const standard = measure('standard-editor', 'editor wall selection hover affordance', 'standard');
+  const standard = measure(
+    'standard-editor',
+    'editor wall selection hover affordance',
+    'standard',
+  );
   const deep = measure('deep-arq', 'arq project format recovery migration', 'deep');
 
   for (const sample of [fast, standard]) {
