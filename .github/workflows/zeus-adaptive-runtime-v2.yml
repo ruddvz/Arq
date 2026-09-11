@@ -36,11 +36,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Show pinned Prettier diff
-        run: |
-          pnpm exec prettier --write scripts/zeus-adaptive-eval.mjs scripts/zeus-adaptive-eval.test.mjs
-          git diff -- scripts/zeus-adaptive-eval.mjs scripts/zeus-adaptive-eval.test.mjs
-          test -z "$(git status --short -- scripts/zeus-adaptive-eval.mjs scripts/zeus-adaptive-eval.test.mjs)"
+      - name: Check runtime formatting
+        run: >-
+          pnpm exec prettier --check
+          scripts/zeus-adaptive-runtime.mjs
+          scripts/zeus-adaptive-runtime.test.mjs
+          scripts/zeus-adaptive-eval.mjs
+          scripts/zeus-adaptive-eval.test.mjs
 
       - name: Run ZEUS adaptive runtime regression suite
         run: node scripts/zeus-adaptive-runtime.test.mjs
