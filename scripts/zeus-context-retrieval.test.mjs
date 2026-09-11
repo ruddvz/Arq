@@ -102,4 +102,45 @@ writeFileSync(cache, `${JSON.stringify({ fingerprint: 'fixture', files }, null, 
   assert.equal(result.budget.sources, 4);
 }
 
+{
+  const result = run(root, cache, '--query', 'wall precisiontarget', '--snippets', '--adaptive');
+  assert.equal(result.selection.mode, 'adaptive');
+  assert.equal(result.selection.policy, 'query-coverage-plus-source-test-pair');
+  assert.equal(
+    result.results.length,
+    1,
+    'fast adaptive retrieval should stop after decisive coverage',
+  );
+  assert.equal(result.results[0].path, 'src/wall.ts');
+  assert.deepEqual(result.selection.coveredTerms, ['precisiontarget', 'wall']);
+  assert.equal(result.selection.stopReason, 'no-new-query-coverage-or-proof-pair-value');
+  assert(result.usedContextChars < result.budget.contextChars);
+}
+
+{
+  const result = run(root, cache, '--query', 'wall', '--tier', 'standard', '--adaptive');
+  assert.equal(result.budget.sources, 10);
+  assert.equal(
+    result.results.length,
+    2,
+    'standard adaptive retrieval keeps a small initial evidence set',
+  );
+  assert(
+    result.results.length < result.budget.sources,
+    'adaptive selection must treat the cap as a ceiling',
+  );
+}
+
+{
+  const ranked = run(root, cache, '--query', 'wall', '--tier', 'deep');
+  const adaptive = run(root, cache, '--query', 'wall', '--tier', 'deep', '--adaptive');
+  assert.equal(adaptive.selection.policy, 'deep-retains-ranked-ceiling');
+  assert.equal(adaptive.results.length, ranked.results.length);
+  assert.deepEqual(
+    adaptive.results.map((item) => item.path),
+    ranked.results.map((item) => item.path),
+    'deep adaptive mode must not prune protected work merely for economy',
+  );
+}
+
 console.log('ZEUS context retrieval regressions passed.');
