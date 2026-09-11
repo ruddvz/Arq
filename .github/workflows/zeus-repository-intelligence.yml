@@ -9,9 +9,14 @@ on:
       - 'scripts/zeus-fast-compile.mjs'
       - 'scripts/zeus-impact.mjs'
       - 'scripts/lib/zeus-repository-evidence.mjs'
+      - 'scripts/lib/zeus-rust-graph.mjs'
+      - 'scripts/lib/zeus-ts-alias-graph.mjs'
       - 'scripts/zeus-repository-intelligence.mjs'
       - 'scripts/zeus-repository-intelligence.test.mjs'
       - 'scripts/zeus-repository-intelligence-integration.test.mjs'
+      - 'scripts/zeus-repository-cross-language.mjs'
+      - 'scripts/zeus-repository-cross-language.test.mjs'
+      - 'scripts/zeus-repository-cross-language-performance.test.mjs'
       - '.github/workflows/zeus-repository-intelligence.yml'
       - 'packages/**'
       - 'apps/web/**'
@@ -51,27 +56,34 @@ jobs:
       - name: Check repository intelligence syntax
         run: |
           node --check scripts/zeus-repository-intelligence.mjs
+          node --check scripts/zeus-repository-cross-language.mjs
+          node --check scripts/lib/zeus-rust-graph.mjs
+          node --check scripts/lib/zeus-ts-alias-graph.mjs
           node --check scripts/lib/zeus-repository-evidence.mjs
           node --check scripts/zeus-fast-compile.mjs
           node --check scripts/zeus-impact.mjs
 
       - name: Run repository intelligence regressions
-        run: node --test scripts/zeus-repository-intelligence.test.mjs
+        run: |
+          node --test \
+            scripts/zeus-repository-intelligence.test.mjs \
+            scripts/zeus-repository-cross-language.test.mjs \
+            scripts/zeus-repository-cross-language-performance.test.mjs
 
       - name: Build fresh repository graph
-        run: node scripts/zeus-repository-intelligence.mjs --json build
+        run: node scripts/zeus.mjs graph --json build
 
       - name: Require fresh repository graph
-        run: node scripts/zeus-repository-intelligence.mjs --json status
+        run: node scripts/zeus.mjs graph --json status
 
       - name: Run compile and impact integration regressions
         run: node scripts/zeus-repository-intelligence-integration.test.mjs
 
       - name: Preflight canonical semantic model
-        run: node scripts/zeus-repository-intelligence.mjs --json preflight packages/bim-core
+        run: node scripts/zeus.mjs graph --json preflight packages/bim-core
 
       - name: Inspect pull-request diff impact
-        run: node scripts/zeus-repository-intelligence.mjs --json diff-impact --base "origin/${{ github.base_ref }}"
+        run: node scripts/zeus.mjs graph --json diff-impact --base "origin/${{ github.base_ref }}"
 
       - name: Verify ZEUS drift guard itself
         run: node scripts/zeus-drift-guard-test.mjs
