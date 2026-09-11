@@ -63,7 +63,10 @@ function startServer() {
     const url = new URL(req.url ?? '/', 'http://localhost');
     const relative = url.pathname === '/' ? '/index.html' : url.pathname;
     const filePath = path.resolve(distDir, `.${relative}`);
-    if (!filePath.startsWith(`${distDir}${path.sep}`) && filePath !== path.join(distDir, 'index.html')) {
+    if (
+      !filePath.startsWith(`${distDir}${path.sep}`) &&
+      filePath !== path.join(distDir, 'index.html')
+    ) {
       res.writeHead(403);
       res.end();
       return;
@@ -105,7 +108,9 @@ async function probe(engineName, origin) {
   try {
     const response = await page.goto(origin, { waitUntil: 'networkidle' });
     if (response === null || !response.ok()) {
-      throw new Error(`application navigation failed with HTTP ${response?.status() ?? 'no-response'}`);
+      throw new Error(
+        `application navigation failed with HTTP ${response?.status() ?? 'no-response'}`,
+      );
     }
 
     await page.locator('.arq-workspace').waitFor({ state: 'visible', timeout: 15_000 });
@@ -185,7 +190,9 @@ async function probe(engineName, origin) {
     const failures = [];
     if (!boot.workspacePresent) failures.push('workspace root did not render');
     if (boot.viewportWidth <= 0 || boot.viewportHeight <= 0) {
-      failures.push(`workspace viewport is not measurable (${boot.viewportWidth}x${boot.viewportHeight})`);
+      failures.push(
+        `workspace viewport is not measurable (${boot.viewportWidth}x${boot.viewportHeight})`,
+      );
     }
     if (boot.title.trim().length === 0) failures.push('document title is empty');
     if (boot.horizontalOverflow) failures.push('document overflows horizontally at 1440x900');
@@ -226,7 +233,8 @@ mkdirSync(resultsDir, { recursive: true });
 const server = startServer();
 await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
 const address = server.address();
-if (address === null || typeof address === 'string') throw new Error('could not resolve smoke server');
+if (address === null || typeof address === 'string')
+  throw new Error('could not resolve smoke server');
 const origin = `http://127.0.0.1:${address.port}`;
 
 const results = [];
@@ -244,7 +252,9 @@ try {
     for (const failure of result.failures) console.error(`  failure: ${failure}`);
   }
 } finally {
-  await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+  await new Promise((resolve, reject) =>
+    server.close((error) => (error ? reject(error) : resolve())),
+  );
 }
 
 const report = {
