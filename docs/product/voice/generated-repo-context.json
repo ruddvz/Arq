@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "6e7a9c396cc3141551582e7c93d47c876453c205684e61936083e65866420b48",
+  "sourceSetDigest": "f87139089e621b8273e5188b038916c9a2f4885295356cd8374cad2f6ff5ba4f",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -360,12 +360,12 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "8403b5d955241a09c62778ad039dd05df7e94b01dc4ddb968f55466315ebbf97",
+      "sha256": "ab06995af9e3b66837b9082ef973fc544285fa108337968c14f03d6720331e94",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
-          "sha256": "8686390a8697085ff4f5ff80142f93254d7125652eeb8714ffc1240766b06d0b",
-          "bytes": 14643
+          "sha256": "88b11ca7afc3e99d15e979f8a8b97726c6a5500ef86c580c858a5ab1f2fef277",
+          "bytes": 15051
         },
         {
           "rel": "apps/web/src/file-handling/create-arqfs-worker.ts",
@@ -374,13 +374,13 @@
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.test.ts",
-          "sha256": "621b7c990b40669497a68b510d944b4658ce23b64ce7862511539697c79d7230",
-          "bytes": 15630
+          "sha256": "db72b08c10e3aa209602003dc5eb1b8e64c2fc848f23772b6926c9520ccbafc6",
+          "bytes": 16230
         },
         {
           "rel": "apps/web/src/file-handling/describe-file-flow-state.ts",
-          "sha256": "b75f4748e94715c6200354751838c0ab97083fd4305126de6baad0ae32358f79",
-          "bytes": 12750
+          "sha256": "02eb377b64d9c31ada387024671cf2f645c572614abc41e5979aabdb076f2792",
+          "bytes": 13009
         },
         {
           "rel": "apps/web/src/file-handling/evaluate-selected-file.test.ts",
@@ -394,13 +394,13 @@
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.test.ts",
-          "sha256": "80097d2046543c7ed020b7c4744037afedb386eeaae9932b5eceace26101bf3c",
-          "bytes": 26065
+          "sha256": "c404f6aa3116c89cccc105b7f72b11cd61063ccbd094dcafe1753f583d24acef",
+          "bytes": 26801
         },
         {
           "rel": "apps/web/src/file-handling/file-state-machine.ts",
-          "sha256": "1583186831fd1b81a425e5d67a24e0e616e6141d4bb9c98c148d9442943fa6cd",
-          "bytes": 27444
+          "sha256": "d286ba83bcaf19a54d2191cb9b8f4899f85ea0ef4f9c570bd2795a46fee1333f",
+          "bytes": 28071
         },
         {
           "rel": "apps/web/src/file-handling/index.ts",
