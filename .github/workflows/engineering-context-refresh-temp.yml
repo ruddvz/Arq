@@ -1,0 +1,24 @@
+name: Engineering context refresh (temporary)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/engineering-context-refresh-temp.yml'
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/deploy-pages.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regenerate Engineering OS context
+        run: node engineering/tools/engineering/build-engineering-context.mjs --root engineering --repo-root .
+      - name: Print regenerated context for this exact head
+        run: |
+          echo '===ENGINEERING_CONTEXT_BEGIN==='
+          cat engineering/ops/generated/engineering-context-v5.json
+          echo '===ENGINEERING_CONTEXT_END==='
