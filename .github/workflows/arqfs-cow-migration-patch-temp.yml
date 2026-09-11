@@ -28,6 +28,9 @@ jobs:
           sed -i "s/import { conditionForcesReadOnly, resolveArqfsSafeModePlan } from '.\/arqfs-safe-mode';/import { conditionForcesReadOnly, resolveArqfsSafeModePlan, type ArqfsSafeModePlan } from '.\/arqfs-safe-mode';/" packages/arqfs/src/arqfs-worker-handler.ts
           sed -i "s/its local working copy could not be upgraded safely here./migration of its local working copy could not run safely here./" apps/web/src/project/native-open-policy.ts
           sed -i "s/openResult.capabilities.canMigrate && !writerLocked/openResult.capabilities.canMigrate \&\& !writerLocked \&\& conditionWarning === null/" apps/web/src/project/open-native-project.ts
+          sed -i "s/{ kind: 'migrating', name: 'a.arq', fraction: 0.3 }/{ kind: 'migrating', name: 'a.arq', projectId: 'p1', fraction: 0.3 }/" apps/web/src/file-handling/file-state-machine.test.ts
+          sed -i "s/{ kind: 'migration-verified', name: 'a.arq', projectId: 'p1' }/{ kind: 'migration-verified', name: 'a.arq', projectId: 'p1', migrated: false }/" apps/web/src/file-handling/file-state-machine.test.ts
+          sed -i "s/{ type: 'migration-verified' }/{ type: 'migration-verified', migrated: false }/" apps/web/src/project/open-attempt-guard.test.ts
       - name: Format changed sources
         run: |
           pnpm exec prettier --write \
@@ -38,6 +41,7 @@ jobs:
             apps/web/src/project/open-native-project.ts \
             apps/web/src/project/native-open-policy.ts \
             apps/web/src/project/open-native-project.test.ts \
+            apps/web/src/project/open-attempt-guard.test.ts \
             apps/web/src/file-handling/file-state-machine.ts \
             apps/web/src/file-handling/file-state-machine.test.ts \
             apps/web/src/file-handling/describe-file-flow-state.ts \
@@ -50,6 +54,7 @@ jobs:
             packages/arqfs/src/arqfs-worker-handler.test.ts \
             apps/web/src/project/open-native-project.test.ts \
             apps/web/src/project/native-open-policy.test.ts \
+            apps/web/src/project/open-attempt-guard.test.ts \
             apps/web/src/file-handling/file-state-machine.test.ts \
             apps/web/src/file-handling/describe-file-flow-state.test.ts \
             --coverage=false
