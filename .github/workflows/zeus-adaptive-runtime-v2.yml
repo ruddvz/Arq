@@ -6,6 +6,8 @@ on:
       - 'scripts/zeus-adaptive-runtime.mjs'
       - 'scripts/zeus-adaptive-runtime.test.mjs'
       - 'scripts/zeus-adaptive-budget.mjs'
+      - 'scripts/zeus-adaptive-eval.mjs'
+      - 'scripts/zeus-adaptive-eval.test.mjs'
       - '.zeus/adaptive-cto.json'
       - '.github/workflows/zeus-adaptive-runtime-v2.yml'
 
@@ -35,7 +37,18 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Check runtime formatting
-        run: pnpm exec prettier --check scripts/zeus-adaptive-runtime.mjs scripts/zeus-adaptive-runtime.test.mjs
+        run: >-
+          pnpm exec prettier --check
+          scripts/zeus-adaptive-runtime.mjs
+          scripts/zeus-adaptive-runtime.test.mjs
+          scripts/zeus-adaptive-eval.mjs
+          scripts/zeus-adaptive-eval.test.mjs
 
       - name: Run ZEUS adaptive runtime regression suite
         run: node scripts/zeus-adaptive-runtime.test.mjs
+
+      - name: Run representative quality-per-work regressions
+        run: node scripts/zeus-adaptive-eval.test.mjs
+
+      - name: Evaluate representative quality per work
+        run: node scripts/zeus-adaptive-eval.mjs --json
