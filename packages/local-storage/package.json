@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "dexie": "^4.4.4",
+    "dexie": "^4.4.5",
     "@arq/project-format": "workspace:*"
   },
   "devDependencies": {

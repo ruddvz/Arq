@@ -12,7 +12,7 @@
     "@arq/workspace": "workspace:*",
     "@floating-ui/react": "^0.27",
     "motion": "^12",
-    "react-aria-components": "^1.19.0"
+    "react-aria-components": "^1.21.1"
   },
   "peerDependencies": {
     "react": "^18"
