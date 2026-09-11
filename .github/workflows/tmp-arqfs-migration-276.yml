@@ -1,0 +1,591 @@
+name: ARQFS migration implementation 276 (temporary)
+
+on:
+  push:
+    branches:
+      - codex/arqfs-cow-migration-ui-276
+    paths:
+      - '.github/workflows/tmp-arqfs-migration-276.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  implement:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/arqfs-cow-migration-ui-276
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Implement reachable copy-on-write migration
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              text = p.read_text()
+              if old not in text:
+                  raise SystemExit(f'missing expected snippet in {path}: {old[:100]!r}')
+              p.write_text(text.replace(old, new, 1))
+
+          # Worker protocol: explicit migration RPC and stable result/error contract.
+          path = 'packages/arqfs/src/arqfs-worker-protocol.ts'
+          replace_once(path,
+          "import type { ArqfsSafeModePlan } from './arqfs-safe-mode';\n",
+          "import type { ArqfsSafeModePlan } from './arqfs-safe-mode';\nimport type { ArqfsMigrationResult } from './arqfs-migration';\n")
+          replace_once(path,
+          "  | { readonly id: number; readonly type: 'open' }\n",
+          "  | { readonly id: number; readonly type: 'open' }\n  /** Upgrade an older compatible working copy on a separate verified copy. */\n  | { readonly id: number; readonly type: 'migrateSchemaV1ToV2' }\n")
+          replace_once(path,
+          "  | { readonly kind: 'checkIntegrity'; readonly report: ArqfsIntegrityReport }\n",
+          "  | { readonly kind: 'checkIntegrity'; readonly report: ArqfsIntegrityReport }\n  | { readonly kind: 'migrateSchemaV1ToV2'; readonly result: ArqfsMigrationResult }\n")
+          replace_once(path,
+          "  publishUnavailable: 'ARQFS_WORKER_PUBLISH_UNAVAILABLE',\n",
+          "  publishUnavailable: 'ARQFS_WORKER_PUBLISH_UNAVAILABLE',\n  /** This file is not an older compatible schema that this build may migrate. */\n  notMigratable: 'ARQFS_WORKER_FILE_NOT_MIGRATABLE',\n  /** This Worker/VFS cannot create and verify a migration copy. */\n  migrationUnavailable: 'ARQFS_WORKER_MIGRATION_UNAVAILABLE',\n")
+          replace_once(path,
+          "    case 'open':\n      return { id, type: 'open' };\n",
+          "    case 'open':\n      return { id, type: 'open' };\n    case 'migrateSchemaV1ToV2':\n      return { id, type: 'migrateSchemaV1ToV2' };\n")
+
+          # Worker handler: migration is allowed only after a successful open verdict that explicitly says canMigrate.
+          path = 'packages/arqfs/src/arqfs-worker-handler.ts'
+          replace_once(path,
+          "import { checkArqfsIntegrity } from './arqfs-integrity';\n",
+          "import { checkArqfsIntegrity } from './arqfs-integrity';\nimport type { ArqfsMigrationResult } from './arqfs-migration';\n")
+          replace_once(path,
+          "  readonly exportDatabase?: () => Promise<Uint8Array>;\n",
+          "  readonly exportDatabase?: () => Promise<Uint8Array>;\n  /**\n   * Performs a schema upgrade on a separate candidate copy and replaces this\n   * Worker's working copy only after the candidate reopens and passes integrity.\n   * The browser Worker supplies this because only its OPFS pool can create a\n   * second database in the same VFS.\n   */\n  readonly migrateSchemaV1ToV2?: () => Promise<ArqfsMigrationResult>;\n")
+          marker = "      case 'exportDatabase': {\n"
+          migration_case = """      case 'migrateSchemaV1ToV2': {
+        const opened = context.session.openResult;
+        if (opened === null) {
+          return refuse(
+            context,
+            request.id,
+            ARQFS_WORKER_ERROR_CODES.notOpened,
+            'Open the file before asking to migrate it. Nothing was changed.',
+          );
+        }
+        if (opened.status === 'rejected' || !opened.capabilities.canRead || opened.capabilities.safeModeRequired) {
+          return refuse(
+            context,
+            request.id,
+            ARQFS_WORKER_ERROR_CODES.openRejected,
+            'This file did not open in a condition that may be migrated. Nothing was changed.',
+          );
+        }
+        if (!opened.capabilities.canMigrate) {
+          return refuse(
+            context,
+            request.id,
+            ARQFS_WORKER_ERROR_CODES.notMigratable,
+            'This file does not require a supported schema migration. Nothing was changed.',
+          );
+        }
+        if (context.migrateSchemaV1ToV2 === undefined) {
+          return refuse(
+            context,
+            request.id,
+            ARQFS_WORKER_ERROR_CODES.migrationUnavailable,
+            'This storage context cannot create and verify a migration copy. Nothing was changed.',
+          );
+        }
+        const result = await context.migrateSchemaV1ToV2();
+        // Any migration attempt invalidates the old open verdict. On success the
+        // bytes are different; on failure the caller must prove the working copy
+        // is still sound before doing anything else with it.
+        context.session.openResult = null;
+        return {
+          id: request.id,
+          projectId: context.projectId,
+          ok: true,
+          payload: { kind: 'migrateSchemaV1ToV2', result },
+        };
+      }
+"""
+          replace_once(path, marker, migration_case + marker)
+
+          # Browser Worker: use a unique OPFS candidate and the existing generic COW migration helper.
+          path = 'workers/arqfs-worker/src/arqfs-worker-entry.ts'
+          replace_once(path,
+          "import { createSqliteWasmArqfsDriver, type Sqlite3Oo1DatabaseLike } from './arqfs-opfs-driver';\n",
+          "import { createSqliteWasmArqfsDriver, type Sqlite3Oo1DatabaseLike } from './arqfs-opfs-driver';\nimport { migrateArqfsSchemaV1ToV2ViaCopy } from '@arq/arqfs/src/arqfs-schema-v2';\n")
+          replace_once(path,
+          "      exportDatabase: () => poolUtil.exportFile(databaseFilename),\n",
+          """      exportDatabase: () => poolUtil.exportFile(databaseFilename),
+      migrateSchemaV1ToV2: async () => {
+        // A unique candidate means a failed migration can stay behind as evidence
+        // without blocking a retry. The selected user file is not in this VFS at
+        // all; databaseFilename is already the content-addressed working copy.
+        const candidateName = `${databaseFilename}.migration-v2-${crypto.randomUUID()}`;
+        const result = migrateArqfsSchemaV1ToV2ViaCopy(
+          driver,
+          candidateName,
+          (name) =>
+            createSqliteWasmArqfsDriver(
+              new poolUtil.OpfsSAHPoolDb(name) as unknown as Sqlite3Oo1DatabaseLike,
+            ),
+          {
+            // The candidate is already a separate uniquely named file, so
+            // preserving it in place is the quarantine operation.
+            quarantineTarget: (name) => name,
+          },
+        );
+        if (result.status === 'rejected') return result;
+
+        let migratedBytes: Uint8Array;
+        try {
+          migratedBytes = await poolUtil.exportFile(candidateName);
+        } catch (error) {
+          return {
+            status: 'rejected',
+            reason: `Migrated copy could not be exported: ${error instanceof Error ? error.message : String(error)}`,
+            quarantinedAt: candidateName,
+          };
+        }
+
+        try {
+          db.close();
+          await poolUtil.importDb(databaseFilename, migratedBytes);
+          db = new poolUtil.OpfsSAHPoolDb(databaseFilename) as unknown as Sqlite3Oo1DatabaseLike;
+          driver = createSqliteWasmArqfsDriver(db);
+        } catch (error) {
+          return {
+            status: 'rejected',
+            reason: `Verified migrated copy could not replace the working copy: ${error instanceof Error ? error.message : String(error)}`,
+            quarantinedAt: candidateName,
+          };
+        }
+
+        // Cleanup is best effort after adoption. A failure here leaves an
+        // already-verified extra copy, not a corrupted working project.
+        try {
+          poolUtil.unlink(candidateName);
+        } catch {
+          // Intentionally ignored.
+        }
+        return { status: 'migrated' };
+      },
+""")
+
+          # Open pipeline: migrate only with the writer lock, reopen, then run the normal integrity/hydration path.
+          path = 'apps/web/src/project/open-native-project.ts'
+          replace_once(path,
+          "  | { readonly status: 'already-open'; readonly workingCopyId: string }\n  | { readonly status: 'rejected'; readonly code: string; readonly reason: string };\n\nfunction rejected(code: string, reason: string): NativeOpenResult {\n  return { status: 'rejected', code, reason };\n}\n",
+          "  | { readonly status: 'already-open'; readonly workingCopyId: string }\n  | {\n      readonly status: 'rejected';\n      readonly code: string;\n      readonly reason: string;\n      readonly quarantinePath?: string;\n    };\n\nfunction rejected(code: string, reason: string, quarantinePath?: string): NativeOpenResult {\n  return {\n    status: 'rejected',\n    code,\n    reason,\n    ...(quarantinePath === undefined ? {} : { quarantinePath }),\n  };\n}\n")
+          replace_once(path,
+          "  readonly onStaged: (projectId: string) => void;\n  readonly onWorkerOpened: (\n",
+          "  readonly onStaged: (projectId: string) => void;\n  readonly onMigrationStart: () => void;\n  readonly onMigrationVerified: () => void;\n  readonly onWorkerOpened: (\n")
+          old_block = """    const openPayload = await handle.client.request({ type: 'open' });
+    if (openPayload.kind !== 'open') {
+      return rejected('ARQ_OPEN_UNEXPECTED', 'The project did not report an open result.');
+    }
+    const openResult: ArqfsOpenResult = openPayload.result;
+    if (openResult.status === 'rejected') {
+      return rejected('ARQ_OPEN_REJECTED', openResult.reason);
+    }
+    /*
+     * The file's condition, which until now nothing asked for. `openArqfs`
+     * says what the format permits; it says nothing about whether the last
+     * local write reached commit or whether SQLite's own checks pass. So a
+     * working copy holding a half-written revision opened fully editable, and
+     * the first save committed on top of a revision the project never
+     * committed to - destroying, at that moment, the only state a recovery
+     * could have been built from.
+     */
+    const conditionWarning = describeOpenCondition(openPayload.safeMode);
+    if (!openPayload.safeMode.canOpen && conditionWarning !== null) {
+      return rejected('ARQ_OPEN_UNSOUND', conditionWarning);
+    }
+
+    const capabilities = resolveNativeOpenCapabilities(openResult);
+"""
+          new_block = """    let openPayload = await handle.client.request({ type: 'open' });
+    if (openPayload.kind !== 'open') {
+      return rejected('ARQ_OPEN_UNEXPECTED', 'The project did not report an open result.');
+    }
+    let openResult: ArqfsOpenResult = openPayload.result;
+    if (openResult.status === 'rejected') {
+      return rejected('ARQ_OPEN_REJECTED', openResult.reason);
+    }
+    /*
+     * The file's condition, which until now nothing asked for. `openArqfs`
+     * says what the format permits; it says nothing about whether the last
+     * local write reached commit or whether SQLite's own checks pass. So a
+     * working copy holding a half-written revision opened fully editable, and
+     * the first save committed on top of a revision the project never
+     * committed to - destroying, at that moment, the only state a recovery
+     * could have been built from.
+     */
+    let conditionWarning = describeOpenCondition(openPayload.safeMode);
+    if (!openPayload.safeMode.canOpen && conditionWarning !== null) {
+      return rejected('ARQ_OPEN_UNSOUND', conditionWarning);
+    }
+
+    progress?.onStaged(workingCopyId);
+
+    // Older compatible schemas are upgraded only when this context owns the
+    // writer lock and OPFS can create a second database. The migration RPC runs
+    // the existing copy-on-write helper on that second database, preserves a
+    // failed candidate for quarantine, and replaces this working copy only after
+    // the candidate has reopened and passed SQLite integrity.
+    if (
+      openResult.capabilities.canMigrate &&
+      !writerLocked &&
+      conditionWarning === null &&
+      openPayload.usedVfs === 'opfs-sahpool'
+    ) {
+      progress?.onMigrationStart();
+      const migrationPayload = await handle.client.request({ type: 'migrateSchemaV1ToV2' });
+      if (migrationPayload.kind !== 'migrateSchemaV1ToV2') {
+        return rejected('ARQ_MIGRATION_UNEXPECTED', 'The project did not report its migration result.');
+      }
+      if (migrationPayload.result.status === 'rejected') {
+        return rejected(
+          'ARQ_MIGRATION_FAILED',
+          migrationPayload.result.reason,
+          migrationPayload.result.quarantinedAt,
+        );
+      }
+
+      const reopenedPayload = await handle.client.request({ type: 'open' });
+      if (reopenedPayload.kind !== 'open') {
+        return rejected('ARQ_MIGRATION_REOPEN_UNEXPECTED', 'The upgraded project did not report an open result.');
+      }
+      if (reopenedPayload.result.status === 'rejected') {
+        return rejected('ARQ_MIGRATION_REOPEN_FAILED', reopenedPayload.result.reason);
+      }
+      openPayload = reopenedPayload;
+      openResult = reopenedPayload.result;
+      conditionWarning = describeOpenCondition(reopenedPayload.safeMode);
+      if (!reopenedPayload.safeMode.canOpen && conditionWarning !== null) {
+        return rejected('ARQ_MIGRATION_REOPEN_UNSOUND', conditionWarning);
+      }
+      if (openResult.capabilities.canMigrate) {
+        return rejected(
+          'ARQ_MIGRATION_INCOMPLETE',
+          'The upgraded copy still reports that it needs a schema migration.',
+        );
+      }
+    }
+
+    progress?.onMigrationVerified();
+    const capabilities = resolveNativeOpenCapabilities(openResult);
+"""
+          replace_once(path, old_block, new_block)
+          # onStaged is now emitted at the real staged boundary above, not after integrity.
+          replace_once(path,
+          "    progress?.onStaged(workingCopyId);\n    // Reports the whole truth about writability, which now has two independent\n",
+          "    // Reports the whole truth about writability, which now has two independent\n")
+
+          # Product fallback copy is now accurate when migration was unavailable because of lock/VFS, not build capability.
+          path = 'apps/web/src/project/native-open-policy.ts'
+          replace_once(path,
+          "    'This project uses an older Arq format. It is open for reading only, because upgrading it needs a migration that keeps a recoverable copy of the original, and that is not available in this build yet.',\n",
+          "    'This project uses an older Arq format. It is open for reading only because this session could not safely create and verify an upgraded working copy. Your original file has not been changed.',\n")
+          replace_once(path,
+          "  // forward. It is deliberately treated as read-only rather than as permission\n  // to write. Copy-on-write migration exists as a library, but it is not\n  // reachable from the product and its recovery evidence has not been run\n  // end to end - so authoring against an old-schema file would write current\n  // semantics into a file still declaring the old schema. ADR-0028 records this\n  // as a decision, not an oversight; it lifts when migration is user-reachable\n  // and verified.\n",
+          "  // forward. The ordinary OPFS open path now consumes that permission and\n  // migrates before it calls this policy. Reaching this branch means migration\n  // was intentionally unavailable for this session, such as another context\n  // holding the writer lock or OPFS not being available, so the safe fallback is\n  // still read-only rather than writing current semantics into an old schema.\n")
+
+          # File lifecycle: make the existing migrating state reachable and only mark migration verified after the pipeline says so.
+          path = 'apps/web/src/file-handling/file-state-machine.ts'
+          replace_once(path,
+          "  | { readonly type: 'stage-complete'; readonly projectId: string }\n  | { readonly type: 'migration-verified' }\n",
+          "  | { readonly type: 'stage-complete'; readonly projectId: string }\n  | { readonly type: 'migration-start' }\n  | { readonly type: 'migration-verified' }\n")
+          replace_once(path,
+          "  if (state.kind === 'staged' && event.type === 'migration-verified') {\n    return { kind: 'migration-verified', name: state.name, projectId: state.projectId };\n  }\n  if (state.kind === 'staged' && event.type === 'quarantine') {\n",
+          "  if (state.kind === 'staged' && event.type === 'migration-start') {\n    return { kind: 'migrating', name: state.name, fraction: 0 };\n  }\n  if (\n    (state.kind === 'staged' || state.kind === 'migrating') &&\n    event.type === 'migration-verified'\n  ) {\n    return { kind: 'migration-verified', name: state.name, projectId: state.kind === 'staged' ? state.projectId : state.projectId };\n  }\n  if ((state.kind === 'staged' || state.kind === 'migrating') && event.type === 'quarantine') {\n")
+          # migrating did not previously carry projectId; make it carry the staged copy identity.
+          replace_once(path,
+          "  | { readonly kind: 'migrating'; readonly name: string; readonly fraction: number }\n",
+          "  | { readonly kind: 'migrating'; readonly name: string; readonly projectId: string; readonly fraction: number }\n")
+          replace_once(path,
+          "    return { kind: 'migrating', name: state.name, fraction: 0 };\n",
+          "    return { kind: 'migrating', name: state.name, projectId: state.projectId, fraction: 0 };\n")
+
+          # UI wiring: staging is no longer allowed to impersonate migration verification.
+          path = 'apps/web/src/file-handling/FileOpenPanel.tsx'
+          replace_once(path,
+          "  const busy = state.kind === 'acquiring' || state.kind === 'detecting';\n",
+          "  const busy = describeFileFlowState(state).tone === 'progress';\n")
+          replace_once(path,
+          "        onStaged: (projectId) => {\n          emit({ type: 'stage-complete', projectId });\n          emit({ type: 'migration-verified' });\n        },\n",
+          "        onStaged: (projectId) => emit({ type: 'stage-complete', projectId }),\n        onMigrationStart: () => emit({ type: 'migration-start' }),\n        onMigrationVerified: () => emit({ type: 'migration-verified' }),\n")
+          replace_once(path,
+          "    if (opened.status === 'rejected') {\n      const { code, reason } = opened;\n      emit({ type: 'fail', code, message: reason });\n      return;\n    }\n",
+          "    if (opened.status === 'rejected') {\n      if (opened.quarantinePath !== undefined) {\n        emit({ type: 'quarantine', quarantinePath: opened.quarantinePath });\n        return;\n      }\n      const { code, reason } = opened;\n      emit({ type: 'fail', code, message: reason });\n      return;\n    }\n")
+
+          # Progress copy no longer invents a percent when migration is one atomic Worker operation.
+          path = 'apps/web/src/file-handling/describe-file-flow-state.ts'
+          replace_once(path,
+          "        headline: `Migrating ${state.name}… ${Math.round(state.fraction * 100)}%`,\n",
+          "        headline: `Upgrading ${state.name}…`,\n")
+
+          # Focused worker migration contract test.
+          Path('packages/arqfs/src/arqfs-worker-migration.test.ts').write_text(r'''import { describe, expect, it, vi } from 'vitest';
+import { createNodeArqfsDriver } from './arqfs-node-driver';
+import { createArqfsSchemaV1 } from './arqfs-schema';
+import {
+  createArqfsWorkerSession,
+  handleArqfsWorkerRequest,
+  type ArqfsWorkerContext,
+} from './arqfs-worker-handler';
+
+const PROJECT_ID = 'migration-test-project';
+
+describe('arqfs Worker schema migration RPC', () => {
+  it('only migrates an opened older compatible schema and invalidates the old open verdict', async () => {
+    const driver = createNodeArqfsDriver();
+    createArqfsSchemaV1(driver);
+    const migrateSchemaV1ToV2 = vi.fn(async () => ({ status: 'migrated' as const }));
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: PROJECT_ID,
+      session: createArqfsWorkerSession(),
+      migrateSchemaV1ToV2,
+    };
+
+    try {
+      const opened = await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+      expect(opened.ok).toBe(true);
+      if (!opened.ok || opened.payload.kind !== 'open' || opened.payload.result.status !== 'opened') {
+        throw new Error('expected an opened older schema');
+      }
+      expect(opened.payload.result.capabilities.canMigrate).toBe(true);
+
+      const migrated = await handleArqfsWorkerRequest(context, {
+        id: 2,
+        type: 'migrateSchemaV1ToV2',
+      });
+      expect(migrated).toMatchObject({
+        ok: true,
+        payload: { kind: 'migrateSchemaV1ToV2', result: { status: 'migrated' } },
+      });
+      expect(migrateSchemaV1ToV2).toHaveBeenCalledOnce();
+
+      const readBeforeReopen = await handleArqfsWorkerRequest(context, {
+        id: 3,
+        type: 'readAllArchiveEntries',
+      });
+      expect(readBeforeReopen).toMatchObject({
+        ok: false,
+        code: 'ARQFS_WORKER_NOT_OPENED',
+      });
+    } finally {
+      driver.close();
+    }
+  });
+
+  it('refuses migration when the open verdict does not grant canMigrate', async () => {
+    const driver = createNodeArqfsDriver();
+    const migrateSchemaV1ToV2 = vi.fn(async () => ({ status: 'migrated' as const }));
+    const context: ArqfsWorkerContext = {
+      driver,
+      usedVfs: 'test-node-driver',
+      projectId: PROJECT_ID,
+      session: createArqfsWorkerSession(),
+      migrateSchemaV1ToV2,
+    };
+    try {
+      await handleArqfsWorkerRequest(context, { id: 1, type: 'open' });
+      const response = await handleArqfsWorkerRequest(context, {
+        id: 2,
+        type: 'migrateSchemaV1ToV2',
+      });
+      expect(response).toMatchObject({
+        ok: false,
+        code: 'ARQFS_WORKER_FILE_NOT_MIGRATABLE',
+      });
+      expect(migrateSchemaV1ToV2).not.toHaveBeenCalled();
+    } finally {
+      driver.close();
+    }
+  });
+});
+''')
+
+          # Focused state-machine proof that migrating and quarantine are truthful/reachable.
+          Path('apps/web/src/file-handling/file-state-machine-migration.test.ts').write_text(r'''import { describe, expect, it } from 'vitest';
+import { reduceFileFlow, type FileFlowState } from './file-state-machine';
+
+function stagedState(): FileFlowState {
+  let state: FileFlowState = { kind: 'idle' };
+  state = reduceFileFlow(state, { type: 'acquire', name: 'older.arq' });
+  state = reduceFileFlow(state, { type: 'acquired' });
+  state = reduceFileFlow(state, { type: 'route-native', sidecarDependency: 'complete' });
+  state = reduceFileFlow(state, { type: 'stage-start' });
+  state = reduceFileFlow(state, { type: 'stage-complete', projectId: 'working-copy' });
+  return state;
+}
+
+describe('file-flow migration lifecycle', () => {
+  it('enters migrating before it may claim migration verification', () => {
+    const migrating = reduceFileFlow(stagedState(), { type: 'migration-start' });
+    expect(migrating).toMatchObject({
+      kind: 'migrating',
+      projectId: 'working-copy',
+    });
+    const verified = reduceFileFlow(migrating, { type: 'migration-verified' });
+    expect(verified).toEqual({
+      kind: 'migration-verified',
+      name: 'older.arq',
+      projectId: 'working-copy',
+    });
+  });
+
+  it('can quarantine a failed migration candidate from the migrating state', () => {
+    const migrating = reduceFileFlow(stagedState(), { type: 'migration-start' });
+    const quarantined = reduceFileFlow(migrating, {
+      type: 'quarantine',
+      quarantinePath: 'candidate.migration-v2',
+    });
+    expect(quarantined).toMatchObject({
+      kind: 'quarantined',
+      quarantinePath: 'candidate.migration-v2',
+    });
+  });
+});
+''')
+
+          # Replace the old product test that documented the now-obsolete forced read-only behaviour.
+          path = 'apps/web/src/project/open-native-project.test.ts'
+          old_test = """  it('opens an older-schema project read-only rather than editable', async () => {
+    const fake = fakeWorker({
+      open: async () => ({
+        kind: 'open',
+        result: {
+          ...WRITABLE,
+          capabilities: { ...WRITABLE.capabilities, canMigrate: true },
+        },
+        safeMode: HEALTHY_CONDITION,
+        usedVfs: 'opfs-sahpool',
+      }),
+    });
+    fake.setEntries(await archiveEntries());
+
+    const result = await openNativeProject(
+      sqliteBytes(),
+      fake.factory,
+      'house.arq',
+      undefined,
+      null,
+      grantsWriterLock,
+    );
+
+    expect(result.status).toBe('opened');
+    if (result.status === 'opened') {
+      expect(result.snapshot.readOnly).toBe(true);
+      expect(result.snapshot.warnings[0]).toMatch(/migration/i);
+    }
+  });
+"""
+          new_test = """  it('migrates an older compatible schema on a verified copy before hydration', async () => {
+    let openCount = 0;
+    const fake = fakeWorker({
+      open: async () => {
+        openCount += 1;
+        return {
+          kind: 'open',
+          result:
+            openCount === 1
+              ? {
+                  ...WRITABLE,
+                  header: { ...WRITABLE.header, schema: 1 },
+                  capabilities: { ...WRITABLE.capabilities, canMigrate: true },
+                }
+              : WRITABLE,
+          safeMode: HEALTHY_CONDITION,
+          usedVfs: 'opfs-sahpool',
+        };
+      },
+      migrateSchemaV1ToV2: async () => ({
+        kind: 'migrateSchemaV1ToV2',
+        result: { status: 'migrated' },
+      }),
+    });
+    fake.setEntries(await archiveEntries());
+
+    const result = await openNativeProject(
+      sqliteBytes(),
+      fake.factory,
+      'house.arq',
+      undefined,
+      null,
+      grantsWriterLock,
+    );
+
+    expect(result.status).toBe('opened');
+    if (result.status === 'opened') {
+      expect(result.snapshot.readOnly).toBe(false);
+      expect(result.snapshot.warnings).not.toContain(NATIVE_OPEN_WARNINGS.olderSchema);
+    }
+    expect(fake.seen.slice(0, 5)).toEqual([
+      'importDatabase',
+      'open',
+      'migrateSchemaV1ToV2',
+      'open',
+      'checkIntegrity',
+    ]);
+  });
+
+  it('preserves and reports a failed migration candidate for quarantine', async () => {
+    const fake = fakeWorker({
+      open: async () => ({
+        kind: 'open',
+        result: {
+          ...WRITABLE,
+          header: { ...WRITABLE.header, schema: 1 },
+          capabilities: { ...WRITABLE.capabilities, canMigrate: true },
+        },
+        safeMode: HEALTHY_CONDITION,
+        usedVfs: 'opfs-sahpool',
+      }),
+      migrateSchemaV1ToV2: async () => ({
+        kind: 'migrateSchemaV1ToV2',
+        result: {
+          status: 'rejected',
+          reason: 'migrated copy failed SQLite integrity checks',
+          quarantinedAt: 'candidate.migration-v2',
+        },
+      }),
+    });
+
+    const result = await openNativeProject(
+      sqliteBytes(),
+      fake.factory,
+      'house.arq',
+      undefined,
+      null,
+      grantsWriterLock,
+    );
+
+    expect(result).toMatchObject({
+      status: 'rejected',
+      code: 'ARQ_MIGRATION_FAILED',
+      quarantinePath: 'candidate.migration-v2',
+    });
+    expect(fake.terminate).toHaveBeenCalledOnce();
+  });
+"""
+          replace_once(path, old_test, new_test)
+          PY
+      - name: Format touched files
+        run: pnpm exec prettier --write packages/arqfs/src/arqfs-worker-protocol.ts packages/arqfs/src/arqfs-worker-handler.ts packages/arqfs/src/arqfs-worker-migration.test.ts workers/arqfs-worker/src/arqfs-worker-entry.ts apps/web/src/project/open-native-project.ts apps/web/src/project/native-open-policy.ts apps/web/src/project/open-native-project.test.ts apps/web/src/file-handling/file-state-machine.ts apps/web/src/file-handling/file-state-machine-migration.test.ts apps/web/src/file-handling/FileOpenPanel.tsx apps/web/src/file-handling/describe-file-flow-state.ts
+      - name: Run focused migration tests
+        run: pnpm test -- packages/arqfs/src/arqfs-worker-migration.test.ts apps/web/src/project/open-native-project.test.ts apps/web/src/file-handling/file-state-machine-migration.test.ts
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Commit implementation
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add packages/arqfs/src/arqfs-worker-protocol.ts packages/arqfs/src/arqfs-worker-handler.ts packages/arqfs/src/arqfs-worker-migration.test.ts workers/arqfs-worker/src/arqfs-worker-entry.ts apps/web/src/project/open-native-project.ts apps/web/src/project/native-open-policy.ts apps/web/src/project/open-native-project.test.ts apps/web/src/file-handling/file-state-machine.ts apps/web/src/file-handling/file-state-machine-migration.test.ts apps/web/src/file-handling/FileOpenPanel.tsx apps/web/src/file-handling/describe-file-flow-state.ts
+          git commit -m 'feat(arqfs): expose verified copy-on-write migration'
+          git push origin HEAD:codex/arqfs-cow-migration-ui-276
