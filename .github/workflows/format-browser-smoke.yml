@@ -1,0 +1,33 @@
+name: Format browser smoke harness
+
+on:
+  push:
+    branches:
+      - codex/browser-matrix-smoke-358
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/browser-matrix-smoke-358
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec prettier --write scripts/run-browser-matrix-smoke.mjs
+      - name: Commit formatter output and remove helper workflow
+        run: |
+          git config user.name "ARQ formatter"
+          git config user.email "actions@users.noreply.github.com"
+          git rm .github/workflows/format-browser-smoke.yml
+          git add scripts/run-browser-matrix-smoke.mjs
+          git commit -m "style(platform): format browser smoke harness"
+          git push origin HEAD:codex/browser-matrix-smoke-358
