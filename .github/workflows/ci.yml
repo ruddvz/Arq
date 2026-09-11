@@ -1,14 +1,14 @@
 name: CI
 
-# push covers the actual default branch (this repository's default is the
-# long-lived claude/arq-cad-platform-research-ba8rav branch, not main);
-# merge_group is present so a merge queue can be enabled later without a
-# coverage gap — see engineering/33_IMPLEMENTATION_HANDOFF.md Phase 2.
+# Push covers both the current canonical branch and the stable branch candidate
+# during the non-destructive default-branch cutover tracked by #332. Keep both
+# until the new default has exact-head CI/Pages proof and the rollback window
+# is complete; pull_request and merge_group remain branch-name independent.
 on:
   pull_request:
   merge_group:
   push:
-    branches: [claude/arq-cad-platform-research-ba8rav]
+    branches: [claude/arq-cad-platform-research-ba8rav, main]
 
 # This is the expensive workflow - eleven headless-Chromium capability checks,
 # the full test suite and the language ladder - and without a concurrency group
