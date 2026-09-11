@@ -1,14 +1,15 @@
 name: CI
 
-# push covers the actual default branch (this repository's default is the
-# long-lived claude/arq-cad-platform-research-ba8rav branch, not main);
+# During ADR-0029's reversible branch migration, pushes to both the current
+# integration branch and the future `main` branch must receive the same CI.
+# Keep both until `main` is the verified default and the rollback window closes.
 # merge_group is present so a merge queue can be enabled later without a
 # coverage gap — see engineering/33_IMPLEMENTATION_HANDOFF.md Phase 2.
 on:
   pull_request:
   merge_group:
   push:
-    branches: [claude/arq-cad-platform-research-ba8rav]
+    branches: [claude/arq-cad-platform-research-ba8rav, main]
 
 # This is the expensive workflow - eleven headless-Chromium capability checks,
 # the full test suite and the language ladder - and without a concurrency group
