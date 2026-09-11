@@ -28,17 +28,18 @@ node scripts/run-browser-matrix-smoke.mjs --browser webkit
 
 Reports are written to `benchmarks/results/browser-matrix-smoke*.json` and include the exact Playwright browser version, user agent, capability result and failures.
 
-## What counts as a pass
+## What counts as a smoke pass
 
 Each engine must:
 
 1. load the production `apps/web` build without page or console errors;
 2. render the workspace and a measurable primary viewport;
 3. accept real keyboard focus through `Tab` on a visible interactive control;
-4. avoid horizontal document overflow at the desktop smoke viewport;
-5. expose either WebGPU or a WebGL/WebGL2 fallback API.
+4. avoid horizontal document overflow at the desktop smoke viewport.
 
-WebGPU absence is not converted into a false failure when an explicit fallback API is available. The report records `webgpu-available`, `webgl2-fallback-available`, `webgl-fallback-available`, or `no-gpu-rendering-api` from runtime capability checks rather than browser-version assumptions.
+GPU capability is evidence, not the pass condition for this engine smoke. The report separately records `webgpu-available`, `webgl2-fallback-available`, `webgl-fallback-available`, or `no-gpu-rendering-api` from runtime capability checks rather than browser-version assumptions.
+
+If a headless CI runner exposes neither WebGPU nor WebGL, the engine smoke can still pass when the application shell and interaction checks pass. That result is recorded as `capabilityStatus: unavailable-in-runner`. It must not be relabelled as WebGPU support, fallback support, or a product browser-support decision. This distinction keeps unsupported or unavailable WebGPU honest without making the evidence harness itself a cross-browser support gate.
 
 ## Evidence boundary
 
