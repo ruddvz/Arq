@@ -100,6 +100,19 @@ export class NativeProjectReadOnlyError extends Error {
 }
 
 /**
+ * The flat wall encoder cannot preserve a reference-format project's levels,
+ * wall types, rooms, openings, hosted elements or views.
+ */
+export class NativeProjectUnsupportedEditError extends Error {
+  constructor() {
+    super(
+      'This reference-format project cannot persist wall edits until ARQ can preserve its full semantic model.',
+    );
+    this.name = 'NativeProjectUnsupportedEditError';
+  }
+}
+
+/**
  * What `prepareForPublication` hands to `publishNativeProject` once the working
  * copy is genuinely ready to be exported: everything drained, checkpointed and
  * read back, with nothing left for the caller to coordinate against this
@@ -132,6 +145,8 @@ export class NativeProjectSession {
    * `save` carries the failure; this tail only orders the next write.
    */
   #queue: Promise<void> = Promise.resolve();
+  /** Changes that became visible in the editor but whose Worker write failed. */
+  #pendingChanges: readonly NativeProjectChange[] = [];
   #lastWriteError: unknown = null;
   #closed = false;
 
@@ -177,6 +192,13 @@ export class NativeProjectSession {
       // cannot be bypassed; this one keeps a read-only project from queueing
       // work that was never going to land.
       return Promise.reject(new NativeProjectReadOnlyError());
+    }
+
+    if (this.#snapshot.document !== null) {
+      // The current wall operation carries centreline geometry only. Passing a
+      // reference project through the flat encoder would silently discard its
+      // richer canonical model, so this is a hard session-level boundary.
+      return Promise.reject(new NativeProjectUnsupportedEditError());
     }
 
     const run = (): Promise<void> => this.#commit(change);
@@ -254,17 +276,26 @@ export class NativeProjectSession {
   }
 
   async #commit(change: NativeProjectChange): Promise<void> {
-    // Built from the *committed* snapshot, read now rather than when `save` was
-    // called, so a queued write always extends what actually landed.
-    const committed = this.#snapshot;
-    const next: NativeProjectSnapshot = {
-      ...committed,
-      displayName: change.displayName ?? committed.displayName,
-      walls: change.walls ?? committed.walls,
-      journalSequence: change.journalSequence ?? committed.journalSequence,
-    };
-    const nextOperations =
-      change.operation === undefined ? this.#operations : [...this.#operations, change.operation];
+    // Reapply failed changes in order, then the newest state. A later full wall
+    // state therefore remains authoritative (including undo), while operation
+    // history from a transient failure is not silently dropped.
+    const pending = [...this.#pendingChanges, change];
+    let next = this.#snapshot;
+    let nextOperations = this.#operations;
+
+    for (const candidate of pending) {
+      next = {
+        ...next,
+        displayName: candidate.displayName ?? next.displayName,
+        walls: candidate.walls ?? next.walls,
+        journalSequence:
+          candidate.journalSequence ??
+          (candidate.operation === undefined ? next.journalSequence : next.journalSequence + 1),
+      };
+      if (candidate.operation !== undefined) {
+        nextOperations = [...nextOperations, candidate.operation];
+      }
+    }
 
     const entries = await exportArchive({
       manifest: this.#manifest,
@@ -278,15 +309,16 @@ export class NativeProjectSession {
         entries: [...entries],
       });
     } catch (error) {
-      // Rule 1: nothing above this line has touched #snapshot, and nothing
-      // below it runs. The project in memory is still exactly what the working
-      // copy holds.
+      // Canonical state remains the last Worker-acknowledged snapshot. Keep the
+      // intended changes only for the next save attempt.
+      this.#pendingChanges = pending;
       this.#lastWriteError = error;
       throw error;
     }
 
     this.#snapshot = next;
     this.#operations = nextOperations;
+    this.#pendingChanges = [];
     this.#lastWriteError = null;
   }
 
