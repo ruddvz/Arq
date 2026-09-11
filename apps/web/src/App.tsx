@@ -106,6 +106,7 @@ import {
 } from './canvas/plan-document';
 import { createPlanJournal, type PlanJournal } from './canvas/plan-journal';
 import type { NativeProjectSession, NativeProjectSnapshot } from './project/native-project-session';
+import { persistWorkspaceOperation } from './project/workspace-persistence';
 import {
   browserCopyDelivery,
   deliverPublishedCopy,
@@ -770,6 +771,8 @@ export function App(): JSX.Element {
    * the journal cannot take writes (quota, eviction, no IndexedDB).
    */
   const journalRef = useRef<PlanJournal | null>(null);
+  // Only the newest persistence attempt may settle the global save indicator.
+  const persistenceRevisionRef = useRef(0);
   const wallIdCounterRef = useRef(0);
   const [saveState, setSaveState] = useState<
     'no-project' | 'saved' | 'saving' | 'unsaved-changes' | 'recovered'
@@ -780,10 +783,11 @@ export function App(): JSX.Element {
     const journal = createPlanJournal();
     journalRef.current = journal;
     let cancelled = false;
+    const recoveryRevision = persistenceRevisionRef.current;
     journal
       .recover(PLAN_PROJECT_ID)
       .then(({ walls, recoveredOperationCount }) => {
-        if (cancelled) {
+        if (cancelled || recoveryRevision !== persistenceRevisionRef.current) {
           return;
         }
         setDrawnWalls(walls);
@@ -796,12 +800,14 @@ export function App(): JSX.Element {
         );
       })
       .catch(() => {
-        if (!cancelled) {
+        if (!cancelled && recoveryRevision === persistenceRevisionRef.current) {
           setSaveState('unsaved-changes');
           setJournalLabel('Journal unavailable');
         }
       });
     const unsubscribe = journal.onUnavailable(() => {
+      // The demo journal is not authoritative while a native project is open.
+      if (nativeSessionRef.current !== null) return;
       setSaveState('unsaved-changes');
       setJournalLabel('Journal unavailable');
     });
@@ -813,33 +819,50 @@ export function App(): JSX.Element {
     };
   }, []);
 
-  const journalOperation = useCallback((operation: WorkspaceOperation) => {
-    const journal = journalRef.current;
-    if (journal === null || operation.kind === 'note') {
-      return;
-    }
-    setSaveState('saving');
-    void journal.append(PLAN_PROJECT_ID, operation).then((state) => {
-      if (state.status === 'ready') {
-        setSaveState('saved');
-        setJournalLabel('Journal current');
-      } else {
+  const persistOperation = useCallback(
+    (operation: WorkspaceOperation, walls: readonly DrawnWall[]) => {
+      if (operation.kind === 'note') return;
+      const revision = ++persistenceRevisionRef.current;
+      setSaveState('saving');
+      void persistWorkspaceOperation({
+        nativeSession: nativeSessionRef.current,
+        journal: journalRef.current,
+        journalProjectId: PLAN_PROJECT_ID,
+        operation,
+        walls,
+      }).then((result) => {
+        if (revision !== persistenceRevisionRef.current) return;
+        if (result.status === 'skipped') return;
+        if (result.status === 'saved') {
+          setSaveState('saved');
+          setJournalLabel(
+            result.authority === 'native' ? 'Working copy current' : 'Journal current',
+          );
+          return;
+        }
+
         setSaveState('unsaved-changes');
-        // The journal already worked out why, and a full disk is the one
-        // failure the user can do something about. Collapsing every write
-        // failure to the same four words threw that away: it told someone
-        // their work was not being kept without telling them the reason they
-        // could act on.
+        if (result.status === 'blocked') {
+          setJournalLabel(
+            result.reason === 'read-only'
+              ? 'Project is read-only · changes are not saved'
+              : 'Reference project wall edits are not saved in this build',
+          );
+          return;
+        }
+        if (result.authority === 'native') {
+          setJournalLabel('Working copy write failed');
+          return;
+        }
         setJournalLabel(
-          state.status === 'unavailable'
-            ? 'Journal unavailable'
-            : state.cause === 'storage-full'
-              ? 'Journal write failed: device storage is full'
-              : 'Journal write failed',
+          result.cause === 'storage-full'
+            ? 'Journal write failed: device storage is full'
+            : 'Journal write failed',
         );
-      }
-    });
-  }, []);
+      });
+    },
+    [],
+  );
 
   const [projectName, setProjectName] = useState('Untitled project');
   /**
@@ -877,6 +900,8 @@ export function App(): JSX.Element {
       readonly session: NativeProjectSession;
       readonly snapshot: NativeProjectSnapshot;
     }) => {
+      // Changing persistence authority invalidates completions from the old one.
+      persistenceRevisionRef.current += 1;
       const previous = nativeSessionRef.current;
       nativeSessionRef.current = opened.session;
       // Fire-and-forget, but never skipped: releasing the previous Worker is
@@ -918,17 +943,18 @@ export function App(): JSX.Element {
       );
       wallIdCounterRef.current = highestWallIdSuffix(shown);
       setProjectName(opened.snapshot.displayName);
-      // Read from the working copy, not written to it yet: "opened" is not
-      // "saved", and this build does not checkpoint edits back to the `.arq`
-      // file. Saying `saved` here would claim durability the product has not
-      // earned.
-      setSaveState('unsaved-changes');
+      // A committed baseline is a saved/editable state only for the flat model
+      // this editor can round-trip without semantic loss.
+      const canPersistWallEdits = !opened.snapshot.readOnly && opened.snapshot.document === null;
+      setSaveState(canPersistWallEdits ? 'saved' : 'unsaved-changes');
       setJournalLabel(
         opened.snapshot.readOnly
-          ? 'Open for reading only · edits are not saved to this project'
-          : 'Open from a local working copy · edits are not saved to this project yet',
+          ? 'Open for reading only · changes cannot be saved'
+          : opened.snapshot.document !== null
+            ? 'Reference project open · wall edits are not persistable in this build'
+            : 'Working copy current',
       );
-      setNativeProjectAvailability({ open: true, writable: !opened.snapshot.readOnly });
+      setNativeProjectAvailability({ open: true, writable: canPersistWallEdits });
       // Kept so the project browser can show what the file contains beyond the
       // walls the plan draws - its levels, wall types and rooms. Null for a
       // project this build wrote, which carries none of that, and the panel is
@@ -944,7 +970,9 @@ export function App(): JSX.Element {
                 writeVerdict: opened.snapshot.readOnly ? 'read-only' : 'working-copy',
                 writeReason: opened.snapshot.readOnly
                   ? 'This project was written by a newer version of ARQ, so it can be read but not changed.'
-                  : 'Changes are kept in a local working copy on this device. Nothing is written back to the .arq file you chose.',
+                  : opened.snapshot.document !== null
+                    ? 'This project is open from a local working copy. Wall edits are not persisted until ARQ can preserve the full reference model.'
+                    : 'Changes are kept in a local working copy on this device. Nothing is written back to the .arq file you chose.',
                 conditions: opened.snapshot.warnings,
               },
             },
@@ -1122,7 +1150,7 @@ export function App(): JSX.Element {
     return null;
   };
 
-  /** Applies a typed operation to the plan document, records its real inverse, journals it. */
+  /** Applies a typed operation to the plan document, records its real inverse, and persists it. */
   const performOperation = useCallback(
     (operation: WorkspaceOperation) => {
       const current = drawnWallsRef.current;
@@ -1130,9 +1158,10 @@ export function App(): JSX.Element {
         forward: operation,
         inverse: invertOperation(current, operation),
       });
-      setDrawnWalls(applyOperation(current, operation));
+      const next = applyOperation(current, operation);
+      setDrawnWalls(next);
       setHistoryVersion((v) => v + 1);
-      journalOperation(operation);
+      persistOperation(operation, next);
       // Published after the model applied and the inverse is recorded - the
       // semantic commit is real. Persistence has its own honest channel
       // (the status bar's journal state), deliberately not conflated here.
@@ -1141,28 +1170,30 @@ export function App(): JSX.Element {
         feedbackStoreRef.current.publish('success', message, Date.now());
       }
     },
-    [journalOperation],
+    [persistOperation],
   );
 
   const handleUndo = useCallback(() => {
     const inverse = undoStackRef.current.undo();
     if (inverse !== null) {
-      setDrawnWalls(applyOperation(drawnWallsRef.current, inverse));
-      journalOperation(inverse);
+      const next = applyOperation(drawnWallsRef.current, inverse);
+      setDrawnWalls(next);
+      persistOperation(inverse, next);
       feedbackStoreRef.current.publish('info', 'Undone', Date.now());
     }
     setHistoryVersion((v) => v + 1);
-  }, [journalOperation]);
+  }, [persistOperation]);
 
   const handleRedo = useCallback(() => {
     const forward = undoStackRef.current.redo();
     if (forward !== null) {
-      setDrawnWalls(applyOperation(drawnWallsRef.current, forward));
-      journalOperation(forward);
+      const next = applyOperation(drawnWallsRef.current, forward);
+      setDrawnWalls(next);
+      persistOperation(forward, next);
       feedbackStoreRef.current.publish('info', 'Redone', Date.now());
     }
     setHistoryVersion((v) => v + 1);
-  }, [journalOperation]);
+  }, [persistOperation]);
 
   const recordDemoAction = useCallback(
     (label: string) => {
