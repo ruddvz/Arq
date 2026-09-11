@@ -17,14 +17,41 @@ A browser version is never sufficient proof that WebGPU or an input capability i
 
 ## Primary-source evidence
 
-| ID | Claim used by the matrix | Primary evidence |
-| --- | --- | --- |
-| BDM-E01 | Chrome shipped WebGPU initially in Chrome 113 on ChromeOS/Vulkan, Windows/D3D12 and macOS; Android followed in Chrome 121. Chrome's WebGPU release series records Linux support from Chrome 144 and expanded Linux NVIDIA support in 147-148. | Chrome for Developers: https://developer.chrome.com/docs/web-platform/webgpu/overview and https://developer.chrome.com/blog/new-in-webgpu-149-150 |
-| BDM-E02 | Microsoft documents WebGPU enabled by default from Edge 113 on Mac, Windows and ChromeOS. | Microsoft Open Source: https://opensource.microsoft.com/blog/2024/02/29/onnx-runtime-web-unleashes-generative-ai-in-the-browser-using-webgpu/ |
-| BDM-E03 | Safari 26.0 shipped WebGPU on macOS; Safari 26.6 shipped on 2026-07-27 and is the stable Safari evidence point used in this pass. | WebKit: https://webkit.org/blog/17333/webkit-features-in-safari-26-0/ and https://webkit.org/blog/18178/webkit-features-for-safari-26-6/ |
-| BDM-E04 | Safari 26.0 shipped WebGPU on iPadOS. Apple documents the exact iPad/Pencil combinations that support Apple Pencil hover; Pencil Pro requires iPadOS 17.5+ on its compatible devices. | WebKit: https://webkit.org/blog/17333/webkit-features-in-safari-26-0/ ; Apple Support: https://support.apple.com/en-ca/guide/ipad/-ipadc55b6c7a/ipados and https://support.apple.com/en-ca/108937 |
-| BDM-E05 | Firefox 141 shipped WebGPU on Windows. Firefox 147 enabled WebGPU on all supported macOS versions on Apple Silicon. Current Mozilla documentation keeps Linux and Intel macOS in Nightly/flag-enabled territory rather than stable default support. | Mozilla: https://www.mozilla.org/firefox/releasenotes/ ; MDN Firefox 141: https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/141 ; MDN Firefox 147: https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/147 ; MDN experimental features: https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features |
-| BDM-E06 | Safari 26.0 shipped WebGPU on iOS. This capability fact does not change ARQ's existing iPhone viewer/review-only product scope. | WebKit: https://webkit.org/blog/17333/webkit-features-in-safari-26-0/ |
+### BDM-E01
+
+Chrome shipped WebGPU initially in Chrome 113 on ChromeOS/Vulkan, Windows/D3D12 and macOS; Android followed in Chrome 121. Chrome's WebGPU release series records Linux support from Chrome 144 and expanded Linux NVIDIA support in 147-148.
+
+Primary evidence: https://developer.chrome.com/docs/web-platform/webgpu/overview and https://developer.chrome.com/blog/new-in-webgpu-149-150
+
+### BDM-E02
+
+Microsoft documents WebGPU enabled by default from Edge 113 on Mac, Windows and ChromeOS.
+
+Primary evidence: https://opensource.microsoft.com/blog/2024/02/29/onnx-runtime-web-unleashes-generative-ai-in-the-browser-using-webgpu/
+
+### BDM-E03
+
+Safari 26.0 shipped WebGPU on macOS; Safari 26.6 shipped on 2026-07-27 and is the stable Safari evidence point used in this pass.
+
+Primary evidence: https://webkit.org/blog/17333/webkit-features-in-safari-26-0/ and https://webkit.org/blog/18178/webkit-features-for-safari-26-6/
+
+### BDM-E04
+
+Safari 26.0 shipped WebGPU on iPadOS. Apple documents the exact iPad/Pencil combinations that support Apple Pencil hover; Pencil Pro requires iPadOS 17.5+ on its compatible devices.
+
+Primary evidence: https://webkit.org/blog/17333/webkit-features-in-safari-26-0/ ; https://support.apple.com/en-ca/guide/ipad/-ipadc55b6c7a/ipados ; https://support.apple.com/en-ca/108937
+
+### BDM-E05
+
+Firefox 141 shipped WebGPU on Windows. Firefox 147 enabled WebGPU on all supported macOS versions on Apple Silicon. Current Mozilla documentation keeps Linux and Intel macOS in Nightly/flag-enabled territory rather than stable default support.
+
+Primary evidence: https://www.mozilla.org/firefox/releasenotes/ ; https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/141 ; https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/147 ; https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features
+
+### BDM-E06
+
+Safari 26.0 shipped WebGPU on iOS. This capability fact does not change ARQ's existing iPhone viewer/review-only product scope.
+
+Primary evidence: https://webkit.org/blog/17333/webkit-features-in-safari-26-0/
 
 ## Repository evidence reviewed
 
