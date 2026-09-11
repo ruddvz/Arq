@@ -26,7 +26,7 @@ node scripts/run-browser-matrix-smoke.mjs --browser firefox
 node scripts/run-browser-matrix-smoke.mjs --browser webkit
 ```
 
-Reports are written to `benchmarks/results/browser-matrix-smoke*.json` and include the exact Playwright browser version, user agent, capability result and failures.
+Reports are written to `benchmarks/results/browser-matrix-smoke*.json` and include the exact Playwright browser version, user agent, capability result and failures. CI also uploads each engine's JSON report as a separate workflow artifact so the exact run evidence remains inspectable.
 
 ## What counts as a smoke pass
 
