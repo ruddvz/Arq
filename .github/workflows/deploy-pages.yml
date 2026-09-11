@@ -8,9 +8,10 @@
 # SITE_ORIGIN enables sitemap.xml, the robots Sitemap line and absolute
 # Open Graph URLs.
 #
-# Triggers: pushes that touch the site on the default branch, plus manual
-# dispatch. (The in-flight site branch triggers were trimmed after PRs #282
-# and #283 merged, as their own comments instructed.)
+# Triggers: pushes that touch the site on either the current canonical branch
+# or the stable branch candidate during the non-destructive #332 cutover, plus
+# manual dispatch. Keep both branches until the new default has live Pages
+# proof and the rollback window is complete.
 #
 # Language System 4.1 adds three gates around the existing build: route
 # coverage before the build, a rendered-copy audit that writes a commit-bound
@@ -25,6 +26,7 @@ on:
   push:
     branches:
       - claude/arq-cad-platform-research-ba8rav
+      - main
     paths:
       - 'apps/marketing/**'
       - 'brand/**'
