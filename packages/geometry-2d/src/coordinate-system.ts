@@ -6,14 +6,11 @@
  * conversion - that mistake is exactly how BUG-RISK-class hit-testing and
  * snapping bugs happen.
  *
- * - World space: project/model units, y-up, origin wherever the project's
- *   first level was authored. This is what gets stored - see
- *   docs/adr/0004-units-and-numeric-representation.md, which is still
- *   "Research required": the canonical unit (mm vs m, fixed vs floating
- *   point) is NOT decided. This module uses plain floating-point numbers
- *   as a provisional, easily-swappable choice consistent with
- *   contracts/model.ts's existing Point2 - it must not be read as that ADR
- *   having been resolved.
+ * - World space: millimetres, y-up, origin wherever the project's first level
+ *   was authored. Runtime geometry is IEEE-754 binary64 (`number`) as accepted
+ *   by docs/adr/0004-units-and-numeric-representation.md. This runtime value is
+ *   not the canonical persisted representation: linear geometry is quantised
+ *   to integer micrometres at the `.arq` persistence/semantic-hash boundary.
  * - Screen space: CSS pixels, y-down, origin at the canvas's top-left.
  */
 
@@ -40,7 +37,7 @@ export function screenPoint(x: number, y: number): ScreenPoint {
 /**
  * The camera/view transform: where world space currently sits relative to
  * the screen. `center` is the world point rendered at the centre of the
- * canvas; `pixelsPerUnit` is the current zoom level.
+ * canvas; `pixelsPerUnit` is the current zoom level in pixels per millimetre.
  */
 export interface Viewport {
   readonly center: WorldPoint;
