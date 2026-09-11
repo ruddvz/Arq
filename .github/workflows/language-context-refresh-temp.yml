@@ -1,0 +1,37 @@
+name: Language context refresh (temporary)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/language-context-refresh-temp.yml'
+      - '.github/workflows/deploy-pages.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Refresh canonical language context
+        run: pnpm arq:language:refresh
+      - name: Commit refreshed language context
+        run: |
+          if git diff --quiet -- docs/product/voice/generated-repo-context.json docs/product/voice/context/REFRESH-LOG.json; then
+            echo 'Language context already current.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/product/voice/generated-repo-context.json docs/product/voice/context/REFRESH-LOG.json
+          git commit -m 'chore(language): refresh source-hashed context'
+          git push origin HEAD:${{ github.head_ref }}
