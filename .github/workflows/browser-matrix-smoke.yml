@@ -1,0 +1,40 @@
+name: Browser matrix smoke
+
+on:
+  pull_request:
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - 'scripts/run-browser-matrix-smoke.mjs'
+      - '.github/workflows/browser-matrix-smoke.yml'
+      - 'pnpm-lock.yaml'
+      - 'package.json'
+  workflow_dispatch:
+
+jobs:
+  browser-engine-smoke:
+    name: ${{ matrix.browser }} engine smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install ${{ matrix.browser }} with runner dependencies
+        run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
+      - name: Run ${{ matrix.browser }} engine smoke
+        run: node scripts/run-browser-matrix-smoke.mjs --browser ${{ matrix.browser }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-matrix-${{ matrix.browser }}
+          path: benchmarks/results/browser-matrix-smoke-${{ matrix.browser }}.json
+          if-no-files-found: warn
