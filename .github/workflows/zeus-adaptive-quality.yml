@@ -24,9 +24,17 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: pnpm
+      - name: Install formatter
+        run: pnpm install --frozen-lockfile
+      - name: Print canonical Prettier output
+        run: pnpm exec prettier scripts/zeus-adaptive-quality-eval.mjs
       - name: Check adaptive scripts
         run: |
           node --check scripts/zeus-context.mjs
