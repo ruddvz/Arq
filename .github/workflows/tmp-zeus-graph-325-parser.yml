@@ -1,0 +1,24 @@
+name: tmp zeus graph 325 parser
+
+on:
+  push:
+    branches:
+      - codex/zeus-cross-language-graph-325-scratch
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec prettier --check scripts/lib/zeus-repository-symbols.mjs scripts/zeus-repository-symbols.test.mjs
+      - run: node --test scripts/zeus-repository-symbols.test.mjs
