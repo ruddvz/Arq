@@ -1,0 +1,40 @@
+name: Refresh ARQFS governed proofs
+
+on:
+  push:
+    branches:
+      - codex/arqfs-cow-migration-v1
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/arqfs-cow-migration-v1
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Remove temporary refresher from the tree being proven
+        run: rm .github/workflows/arqfs-proof-refresh-temp.yml
+      - name: Regenerate governed contexts from the final tree
+        run: |
+          pnpm engineering:context:build
+          pnpm arq:language:refresh
+      - name: Verify both regenerated proofs
+        run: |
+          pnpm engineering:context:verify
+          pnpm arq:language:context:verify
+      - name: Commit canonical proof refresh
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'chore(arqfs): refresh governed context proofs'
+          git push origin HEAD:codex/arqfs-cow-migration-v1
