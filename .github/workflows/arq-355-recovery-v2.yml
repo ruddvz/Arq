@@ -1,0 +1,46 @@
+name: ARQ 355 recovery validation v2
+
+on:
+  push:
+    branches:
+      - codex/arq-native-editor-persistence-355-recovery
+    paths:
+      - .github/workflows/arq-355-recovery-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/arq-native-editor-persistence-355-recovery
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Integrate native persistence into current main code
+        run: python3 scripts/arq-355-recovery.py
+      - name: Format scoped changes
+        run: pnpm exec prettier --write apps/web/src/App.tsx apps/web/src/project/native-project-session.ts apps/web/src/project/native-project-session.test.ts apps/web/src/project/workspace-persistence.ts apps/web/src/project/workspace-persistence.test.ts
+      - name: Run focused persistence tests
+        run: pnpm exec vitest run apps/web/src/project/native-project-session.test.ts apps/web/src/project/workspace-persistence.test.ts --coverage=false
+      - name: Typecheck web app
+        run: pnpm --filter @arq/web typecheck
+      - name: Run repository typecheck
+        run: pnpm typecheck
+      - name: Commit recovered implementation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/App.tsx apps/web/src/project/native-project-session.ts apps/web/src/project/native-project-session.test.ts apps/web/src/project/workspace-persistence.ts apps/web/src/project/workspace-persistence.test.ts
+          git commit -m "feat(arqfs): persist workspace edits through native sessions"
+          git push origin HEAD:codex/arq-native-editor-persistence-355-recovery
