@@ -39,7 +39,11 @@ function readSmallText(root, rel) {
 function moduleCandidates(base) {
   const clean = normalize(base);
   if (path.posix.extname(clean)) return [clean];
-  return [clean, ...MODULE_SUFFIXES.map((suffix) => `${clean}${suffix}`), ...MODULE_SUFFIXES.map((suffix) => `${clean}/index${suffix}`)];
+  return [
+    clean,
+    ...MODULE_SUFFIXES.map((suffix) => `${clean}${suffix}`),
+    ...MODULE_SUFFIXES.map((suffix) => `${clean}/index${suffix}`),
+  ];
 }
 function manifestEntrypoints(root, packagePath) {
   const text = readSmallText(root, `${packagePath}/package.json`);
@@ -94,9 +98,19 @@ function addPackageDependencyEdges(root, fileSet, nodes, edges) {
   for (const item of nodes.values()) {
     if (item.kind !== 'package' || !item.path) continue;
     const packagePath = normalize(item.path);
-    const entryIds = new Set(packageSurfaceCandidates(root, packagePath).filter((candidate) => fileSet.has(candidate)).map(fileNodeId));
+    const entryIds = new Set(
+      packageSurfaceCandidates(root, packagePath)
+        .filter((candidate) => fileSet.has(candidate))
+        .map(fileNodeId),
+    );
     for (const edge of existing) {
-      if (!entryIds.has(edge.source) || !['DEPENDS_ON', 'GENERATED_FROM'].includes(edge.relation)) continue;
+      if (
+        !entryIds.has(edge.source) ||
+        edge.provenance !== 'deterministic' ||
+        !['DEPENDS_ON', 'GENERATED_FROM'].includes(edge.relation)
+      ) {
+        continue;
+      }
       edges.push({
         source: item.id,
         target: edge.target,
@@ -116,7 +130,11 @@ function uniqueEdges(edges) {
     const key = [edge.source, edge.target, edge.relation, edge.provenance].join('\0');
     if (!unique.has(key)) unique.set(key, edge);
   }
-  return [...unique.values()].sort((a, b) => `${a.source}\0${a.target}\0${a.relation}`.localeCompare(`${b.source}\0${b.target}\0${b.relation}`));
+  return [...unique.values()].sort((a, b) =>
+    `${a.source}\0${a.target}\0${a.relation}`.localeCompare(
+      `${b.source}\0${b.target}\0${b.relation}`,
+    ),
+  );
 }
 
 export function augmentGraph(root, config, baseGraph = buildBaseGraph(root, config)) {
