@@ -1,0 +1,35 @@
+name: Engineering context refresh (temporary)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/engineering-context-refresh-temp.yml'
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  regenerate-and-clean-up:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'codex/zeus-main-migration-prep-332'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - name: Regenerate Engineering OS context
+        run: node engineering/tools/engineering/build-engineering-context.mjs --root engineering --repo-root .
+      - name: Remove temporary refresh workflow
+        run: rm .github/workflows/engineering-context-refresh-temp.yml
+      - name: Commit refreshed context and self-clean
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add engineering/ops/generated/engineering-context-v5.json .github/workflows/engineering-context-refresh-temp.yml
+          git diff --cached --quiet && exit 0
+          git commit -m 'chore(zeus): refresh engineering context for main migration'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
