@@ -297,13 +297,12 @@ export class NativeProjectSession {
       }
     }
 
-    const entries = await exportArchive({
-      manifest: this.#manifest,
-      model: encodeNativeProjectModel({ projectName: next.displayName, walls: next.walls }),
-      operations: nextOperations,
-    });
-
     try {
+      const entries = await exportArchive({
+        manifest: this.#manifest,
+        model: encodeNativeProjectModel({ projectName: next.displayName, walls: next.walls }),
+        operations: nextOperations,
+      });
       await this.#handle.client.request({
         type: 'putArchiveEntries',
         entries: [...entries],

@@ -954,7 +954,7 @@ export function App(): JSX.Element {
             ? 'Reference project open · wall edits are not persistable in this build'
             : 'Working copy current',
       );
-      setNativeProjectAvailability({ open: true, writable: !opened.snapshot.readOnly });
+      setNativeProjectAvailability({ open: true, writable: canPersistWallEdits });
       // Kept so the project browser can show what the file contains beyond the
       // walls the plan draws - its levels, wall types and rooms. Null for a
       // project this build wrote, which carries none of that, and the panel is
