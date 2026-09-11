@@ -1,0 +1,38 @@
+name: ZEUS adaptive quality
+
+on:
+  pull_request:
+    paths:
+      - '.zeus/adaptive-cto.json'
+      - '.zeus/config.json'
+      - 'scripts/zeus-context.mjs'
+      - 'scripts/zeus-context-retrieval.test.mjs'
+      - 'scripts/zeus-adaptive-quality-eval.mjs'
+      - '.github/workflows/zeus-adaptive-quality.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zeus-adaptive-quality-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check adaptive scripts
+        run: |
+          node --check scripts/zeus-context.mjs
+          node --check scripts/zeus-context-retrieval.test.mjs
+          node --check scripts/zeus-adaptive-quality-eval.mjs
+      - name: Run context retrieval regressions
+        run: node scripts/zeus-context-retrieval.test.mjs
+      - name: Prove adaptive quality per unit of work
+        run: node scripts/zeus-adaptive-quality-eval.mjs
