@@ -116,7 +116,7 @@ jobs:
       # paying that cost per run; rust:build-wasm still checks the version it
       # finds, so a stale restore reinstalls rather than producing bad glue.
       - name: Cache the wasm-bindgen CLI
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cargo/bin/wasm-bindgen
           key: wasm-bindgen-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock') }}
