@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "18920373b71be76f79acca276c8e581f79a94567044a1c3b0c9a6f5635e61517",
+  "source_hash": "25fdeba5e34d9e0e31b91ae7d8d346d611502aed292cb51c2cfe71676a4d30bb",
   "source_records": [
     {
       "scope": "package",
@@ -89,12 +89,12 @@
     {
       "scope": "repository",
       "path": ".github/workflows/ci.yml",
-      "sha256": "3320f61ef48c89f63f182f663bf5a07ee128649a995e297dc004d6dcd5074b67"
+      "sha256": "b161e0038bb1e3d8246994724293c486d3eeae0f2d03568284e497d937134423"
     },
     {
       "scope": "repository",
       "path": ".github/workflows/deploy-pages.yml",
-      "sha256": "d76cafc585a32391650c3be10777eded7e6198951b183f47bb4b28e5424fcece"
+      "sha256": "1f806d50467691c606d51b669d79852cee1b3e41a10c350253db20497b1190e3"
     },
     {
       "scope": "repository",
