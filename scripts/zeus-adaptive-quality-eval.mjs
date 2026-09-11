@@ -119,7 +119,10 @@ try {
   );
   assert(routes.deepArq.modules.includes('arqfs'), 'deep .arq routing should retain arqfs');
   for (const reviewer of ['qa-release', 'security']) {
-    assert(routes.deepArq.reviewers.includes(reviewer), `deep .arq routing should retain ${reviewer}`);
+    assert(
+      routes.deepArq.reviewers.includes(reviewer),
+      `deep .arq routing should retain ${reviewer}`,
+    );
   }
 
   expectSubset(
@@ -140,11 +143,7 @@ try {
   );
 
   const fast = measure('fast-readme', 'README typo documentation', 'fast');
-  const standard = measure(
-    'standard-editor',
-    'editor wall selection hover affordance',
-    'standard',
-  );
+  const standard = measure('standard-editor', 'editor wall selection hover affordance', 'standard');
   const deep = measure('deep-arq', 'arq project format recovery migration', 'deep');
 
   for (const sample of [fast, standard]) {
@@ -234,12 +233,10 @@ try {
     fastStandardAverage: {
       rankedSourceReads: totals.rankedSourceReads / cheap.length,
       adaptiveSourceReads: totals.adaptiveSourceReads / cheap.length,
-      sourceReadReductionFraction:
-        1 - totals.adaptiveSourceReads / totals.rankedSourceReads,
+      sourceReadReductionFraction: 1 - totals.adaptiveSourceReads / totals.rankedSourceReads,
       rankedContextChars: totals.rankedContextChars / cheap.length,
       adaptiveContextChars: totals.adaptiveContextChars / cheap.length,
-      contextCharReductionFraction:
-        1 - totals.adaptiveContextChars / totals.rankedContextChars,
+      contextCharReductionFraction: 1 - totals.adaptiveContextChars / totals.rankedContextChars,
     },
     deepProtected: {
       rankedSourceReads: deep.metrics.rankedSourceReads,
