@@ -1,0 +1,93 @@
+name: ARQ 355 final safety validation
+
+on:
+  push:
+    branches:
+      - codex/arq-native-editor-persistence-355-recovery
+    paths:
+      - .github/workflows/arq-355-final-safety.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/arq-native-editor-persistence-355-recovery
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Retain serialization failures and disable reference publication
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: Path, old: str, new: str, label: str) -> None:
+              text = path.read_text()
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected one match, found {count}')
+              path.write_text(text.replace(old, new, 1))
+
+          session = Path('apps/web/src/project/native-project-session.ts')
+          replace_once(
+              session,
+              """    const entries = await exportArchive({
+                manifest: this.#manifest,
+                model: encodeNativeProjectModel({ projectName: next.displayName, walls: next.walls }),
+                operations: nextOperations,
+              });
+
+              try {
+                await this.#handle.client.request({
+                  type: 'putArchiveEntries',
+                  entries: [...entries],
+                });
+              } catch (error) {""",
+              """    try {
+                const entries = await exportArchive({
+                  manifest: this.#manifest,
+                  model: encodeNativeProjectModel({ projectName: next.displayName, walls: next.walls }),
+                  operations: nextOperations,
+                });
+                await this.#handle.client.request({
+                  type: 'putArchiveEntries',
+                  entries: [...entries],
+                });
+              } catch (error) {""",
+              'serialization failure retention',
+          )
+
+          app = Path('apps/web/src/App.tsx')
+          replace_once(
+              app,
+              "      setNativeProjectAvailability({ open: true, writable: !opened.snapshot.readOnly });",
+              "      setNativeProjectAvailability({ open: true, writable: canPersistWallEdits });",
+              'reference publication safety',
+          )
+          PY
+      - name: Format scoped changes
+        run: pnpm exec prettier --write apps/web/src/App.tsx apps/web/src/project/native-project-session.ts
+      - name: Run focused persistence tests
+        run: pnpm exec vitest run apps/web/src/project/native-project-session.test.ts apps/web/src/project/workspace-persistence.test.ts --coverage=false
+      - name: Typecheck web app
+        run: pnpm --filter @arq/web typecheck
+      - name: Run repository typecheck
+        run: pnpm typecheck
+      - name: Commit final safety fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/App.tsx apps/web/src/project/native-project-session.ts
+          git commit -m "fix(arqfs): retain every unsaved native change"
+          git push origin HEAD:codex/arq-native-editor-persistence-355-recovery
