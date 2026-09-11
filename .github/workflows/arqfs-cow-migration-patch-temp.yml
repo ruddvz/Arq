@@ -23,6 +23,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Apply focused patch
         run: node scripts/apply-arqfs-cow-migration-patch-temp.cjs
+      - name: Add explicit migration session type import
+        run: |
+          sed -i "s/import { conditionForcesReadOnly, resolveArqfsSafeModePlan } from '.\/arqfs-safe-mode';/import { conditionForcesReadOnly, resolveArqfsSafeModePlan, type ArqfsSafeModePlan } from '.\/arqfs-safe-mode';/" packages/arqfs/src/arqfs-worker-handler.ts
       - name: Format changed sources
         run: |
           pnpm exec prettier --write \
