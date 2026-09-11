@@ -147,8 +147,30 @@ function adaptiveSelection(items, cap, selectedTier) {
     const hasImplementationSource =
       selectedCode.length === 0 ||
       selectedCode.some((candidate) => !TEST_PATH.test(candidate.path));
+    const availableProofPair = selectedCode.some((chosen) =>
+      items.some(
+        (candidate) =>
+          CODE_PATH.test(candidate.path) &&
+          pairKey(candidate.path) === pairKey(chosen.path) &&
+          TEST_PATH.test(candidate.path) !== TEST_PATH.test(chosen.path),
+      ),
+    );
+    const selectedProofPair = selectedCode.some((chosen) =>
+      selectedCode.some(
+        (candidate) =>
+          candidate.path !== chosen.path &&
+          pairKey(candidate.path) === pairKey(chosen.path) &&
+          TEST_PATH.test(candidate.path) !== TEST_PATH.test(chosen.path),
+      ),
+    );
+    const proofPairSatisfied = !availableProofPair || selectedProofPair;
 
-    if (selected.length >= minimum && coveredAllAvailable && hasImplementationSource) {
+    if (
+      selected.length >= minimum &&
+      coveredAllAvailable &&
+      hasImplementationSource &&
+      proofPairSatisfied
+    ) {
       stopReason = 'no-new-query-coverage-or-proof-pair-value';
       break;
     }
