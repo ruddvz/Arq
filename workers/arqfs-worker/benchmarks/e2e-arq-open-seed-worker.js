@@ -40,6 +40,17 @@ self.onmessage = async (event) => {
       db.exec('UPDATE arqfs_meta SET value = ? WHERE key = ?', {
         bind: [String(request.value), request.key],
       });
+    } else if (request.type === 'makeSchemaV1') {
+      // Start from a current project written by the real Worker, then remove only
+      // the v2 additions and reset user_version. The resulting file is a genuine
+      // schema-v1 project that the real Worker must classify as migratable.
+      db.exec('DROP TABLE IF EXISTS source_object_map');
+      db.exec('DROP TABLE IF EXISTS import_issue');
+      db.exec('DROP TABLE IF EXISTS import_session');
+      db.exec('DROP TABLE IF EXISTS resource_reference');
+      db.exec('DROP TABLE IF EXISTS source_document');
+      db.exec('DELETE FROM schema_migration WHERE version = 2');
+      db.exec('PRAGMA user_version = 1');
     } else if (request.type === 'makeForeignSqlite') {
       // Valid SQLite, non-zero application_id, no arqfs_meta: the real Worker
       // must refuse rather than initialise a schema over someone else's file.

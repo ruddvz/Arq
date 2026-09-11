@@ -41,6 +41,38 @@
       window.__arqOpen = (projectId) =>
         runOnFreshWorker('./e2e-arq-open-worker.js', projectId, { type: 'open' });
 
+      // Migration is session-gated: the migrate request must run on the same
+      // real Worker that first opened the older schema. Terminate only after both
+      // replies so this proves the shipped session gate rather than two unrelated calls.
+      window.__arqOpenAndMigrate = (projectId) =>
+        new Promise((resolve, reject) => {
+          const worker = new Worker(
+            `./e2e-arq-open-worker.js?project=${encodeURIComponent(projectId)}`,
+            { type: 'module' },
+          );
+          const timer = setTimeout(() => {
+            worker.terminate();
+            reject(new Error('migration worker timed out after 30000ms'));
+          }, 30_000);
+          const replies = [];
+          worker.onmessage = (event) => {
+            replies.push(event.data);
+            if (replies.length === 1) {
+              worker.postMessage({ id: nextId++, type: 'migrateSchemaV1ToV2' });
+              return;
+            }
+            clearTimeout(timer);
+            worker.terminate();
+            resolve({ open: replies[0], migration: replies[1] });
+          };
+          worker.onerror = (event) => {
+            clearTimeout(timer);
+            worker.terminate();
+            reject(new Error(event.message || 'worker error'));
+          };
+          worker.postMessage({ id: nextId++, type: 'open' });
+        });
+
       window.__arqSeed = (projectId, request) =>
         runOnFreshWorker('./e2e-arq-open-seed-worker.js', projectId, request);
 
