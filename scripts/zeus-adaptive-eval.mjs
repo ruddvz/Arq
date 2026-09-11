@@ -53,8 +53,7 @@ const protectedSource = (target, contextChars, purpose) =>
     protectedEvidence: true,
     protectedProof: true,
   });
-const protectedTool = (target, purpose) =>
-  tool(target, true, purpose, { protectedProof: true });
+const protectedTool = (target, purpose) => tool(target, true, purpose, { protectedProof: true });
 
 export const REPRESENTATIVE_SCENARIOS = [
   {
@@ -118,7 +117,12 @@ export const REPRESENTATIVE_SCENARIOS = [
       source('apps/marketing', 1800, false, 'unrelated application surface'),
       source('packages/icons', 1600, false, 'unrelated package'),
       source('historical-pack.md', 2300, false, 'lower-authority duplicate'),
-      source('full-product-blueprint.md', 2800, false, 'whole spec when exact owner sources suffice'),
+      source(
+        'full-product-blueprint.md',
+        2800,
+        false,
+        'whole spec when exact owner sources suffice',
+      ),
       tool('operation-symbol-search', true, 'locate operation'),
       tool('owner-boundary-search', true, 'confirm semantic owner'),
       tool('focused-operation-tests', true, 'prove operation'),
@@ -248,9 +252,7 @@ function runAdaptivePolicy(scenario) {
 function verificationFor(scenario) {
   return {
     'required-gates': 'passed',
-    ...(scenario.requireIndependentReview
-      ? { 'required-independent-review': 'passed' }
-      : {}),
+    ...(scenario.requireIndependentReview ? { 'required-independent-review': 'passed' } : {}),
     ...(scenario.requireCurrentHeadProof ? { 'current-head-proof': 'passed' } : {}),
   };
 }
@@ -351,8 +353,7 @@ export function evaluateRepresentativeScenarios(scenarios = REPRESENTATIVE_SCENA
       id: 'deep-protected-work-is-not-pruned',
       pass: protectedDeep.every((result) =>
         MEASURED_METRICS.every(
-          (metric) =>
-            Number(result.adaptive[metric] ?? 0) === Number(result.baseline[metric] ?? 0),
+          (metric) => Number(result.adaptive[metric] ?? 0) === Number(result.baseline[metric] ?? 0),
         ),
       ),
     },

@@ -39,7 +39,8 @@ const noPruningReport = evaluateRepresentativeScenarios(noPruning);
 assert.equal(noPruningReport.ok, false);
 assert.equal(
   noPruningReport.assertions.find(
-    (assertion) => assertion.id === 'fast-standard-average-context-source-tool-consumption-is-lower',
+    (assertion) =>
+      assertion.id === 'fast-standard-average-context-source-tool-consumption-is-lower',
   )?.pass,
   false,
 );
