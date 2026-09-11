@@ -44,6 +44,7 @@ const limit = Math.max(
 );
 const q = [...new Set(query.toLowerCase().match(/[a-z][a-z0-9_.-]{2,}/g) ?? [])];
 const includeCold = a.includes('--include-cold');
+const adaptive = a.includes('--adaptive');
 const coldHints = contextConfig.coldPathHints ?? [
   'all-contents.md',
   'implementation_ledger',
@@ -70,20 +71,117 @@ const authority = (p) =>
 const scoredAll = idx.files.map((f) => {
   const hay = (f.path + ' ' + f.headings.join(' ') + ' ' + f.keywords.join(' ')).toLowerCase();
   let score = authority(f.path);
+  const matchedTerms = [];
   for (const t of q) {
     if (f.path.toLowerCase().includes(t)) score += 8;
-    if (hay.includes(t)) score += 2;
+    if (hay.includes(t)) {
+      score += 2;
+      matchedTerms.push(t);
+    }
   }
-  return { ...f, score };
+  return { ...f, score, matchedTerms };
 });
 const coldSourcesExcluded = includeCold
   ? 0
   : scoredAll.filter((f) => f.score > 0 && isCold(f.path)).length;
-const scored = scoredAll
+const candidates = scoredAll
   .filter((f) => f.score > 0)
   .filter((f) => includeCold || !isCold(f.path))
-  .sort((x, y) => y.score - x.score || x.path.localeCompare(y.path))
-  .slice(0, limit);
+  .sort((x, y) => y.score - x.score || x.path.localeCompare(y.path));
+
+const CODE_PATH = /\.[cm]?[jt]sx?$/i;
+const TEST_PATH = /\.(?:test|spec)\.[cm]?[jt]sx?$/i;
+const pairKey = (p) => p.replace(/\.(?:test|spec)(?=\.[cm]?[jt]sx?$)/i, '');
+
+function adaptiveSelection(items, cap, selectedTier) {
+  // Protected/deep work deliberately keeps the existing ranked ceiling. #328 is
+  // about not spending cheap-task budgets by habit, not about shaving proof from
+  // persistence, geometry, security or release work before measurement says it
+  // is safe.
+  if (selectedTier === 'deep') {
+    const selected = items.slice(0, cap);
+    return {
+      selected,
+      metadata: {
+        mode: 'adaptive',
+        policy: 'deep-retains-ranked-ceiling',
+        considered: items.length,
+        selected: selected.length,
+        availableTerms: [...new Set(items.flatMap((item) => item.matchedTerms))].sort(),
+        coveredTerms: [...new Set(selected.flatMap((item) => item.matchedTerms))].sort(),
+        stopReason: 'protected-or-deep-work-is-not-pruned',
+      },
+    };
+  }
+
+  const availableTerms = new Set(items.flatMap((item) => item.matchedTerms));
+  const coveredTerms = new Set();
+  const selected = [];
+  const minimum = Math.min(cap, selectedTier === 'standard' ? 2 : 1);
+  let stopReason = 'ranked-candidates-exhausted';
+
+  for (const item of items) {
+    if (selected.length >= cap) {
+      stopReason = 'source-ceiling-reached';
+      break;
+    }
+
+    const addsCoverage = item.matchedTerms.some((term) => !coveredTerms.has(term));
+    const pairsWithSelected =
+      CODE_PATH.test(item.path) &&
+      selected.some(
+        (chosen) =>
+          CODE_PATH.test(chosen.path) &&
+          pairKey(chosen.path) === pairKey(item.path) &&
+          TEST_PATH.test(chosen.path) !== TEST_PATH.test(item.path),
+      );
+    const needMinimum = selected.length < minimum;
+
+    if (selected.length === 0 || addsCoverage || pairsWithSelected || needMinimum) {
+      selected.push(item);
+      for (const term of item.matchedTerms) coveredTerms.add(term);
+    }
+
+    const coveredAllAvailable = [...availableTerms].every((term) => coveredTerms.has(term));
+    const selectedCode = selected.filter((candidate) => CODE_PATH.test(candidate.path));
+    const hasImplementationSource =
+      selectedCode.length === 0 ||
+      selectedCode.some((candidate) => !TEST_PATH.test(candidate.path));
+
+    if (selected.length >= minimum && coveredAllAvailable && hasImplementationSource) {
+      stopReason = 'no-new-query-coverage-or-proof-pair-value';
+      break;
+    }
+  }
+
+  return {
+    selected,
+    metadata: {
+      mode: 'adaptive',
+      policy: 'query-coverage-plus-source-test-pair',
+      considered: items.length,
+      selected: selected.length,
+      availableTerms: [...availableTerms].sort(),
+      coveredTerms: [...coveredTerms].sort(),
+      stopReason,
+    },
+  };
+}
+
+const selection = adaptive
+  ? adaptiveSelection(candidates, limit, tier)
+  : {
+      selected: candidates.slice(0, limit),
+      metadata: {
+        mode: 'ranked-cap',
+        policy: 'existing-ranked-source-cap',
+        considered: candidates.length,
+        selected: Math.min(candidates.length, limit),
+        stopReason:
+          candidates.length > limit ? 'source-ceiling-reached' : 'ranked-candidates-exhausted',
+      },
+    };
+const scored = selection.selected;
 
 const relevantSnippet = (text, terms, cap) => {
   if (cap <= 0) return { text: '', start: 0 };
@@ -160,6 +258,7 @@ console.log(
       usedContextChars: used,
       coldSourcesExcluded,
       fingerprint: idx.fingerprint,
+      selection: selection.metadata,
       results,
     },
     null,
