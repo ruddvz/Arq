@@ -6,7 +6,7 @@
 # packageManager field pins pnpm@9), matching every other workflow in this repo;
 # and the classification/evidence/decision files are written WITHOUT a leading
 # dot — the reference template uploaded dot-prefixed files, which
-# actions/upload-artifact@v4 silently excludes by default (hidden-file policy),
+# actions/upload-artifact@v7 silently excludes by default (hidden-file policy),
 # so every classify run failed at the upload step with "No files were found".
 #
 # Shadow mode means: this workflow runs on every PR and merge-group but is NOT a
@@ -63,7 +63,7 @@ jobs:
             --head-sha "$head_sha" \
             --output engineering-classification.json \
             --github-output "$GITHUB_OUTPUT"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: engineering-classification
           path: engineering-classification.json
@@ -131,7 +131,7 @@ jobs:
           --catalog engineering/ops/evidence-catalog.v5.json
           --repo-root .
           --output engineering-selected-evidence.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: engineering-selected-evidence
           path: engineering-selected-evidence.json
@@ -183,7 +183,7 @@ jobs:
           --jobs-file .engineering-artifacts/evidence/engineering-selected-evidence.json
           --job protected_l4_approval=${{ needs['critical-approval'].result }}
           --output engineering-evidence-decision.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: engineering-evidence-decision
