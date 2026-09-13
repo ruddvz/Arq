@@ -54,6 +54,19 @@ must not imply that planned, library-only or unverified behaviour is current.
 Decorative diagrams must be identifiable as diagrams, and product captures
 must come from user-reachable repository state rather than fabricated screens.
 
+## Verification
+
+`pnpm benchmark:marketing-viewport` is the browser-level public-site gate. It
+checks every rendered route across the repository viewport matrix, keyboard and
+focus behaviour on the home page, reduced-motion behaviour, dark appearance,
+and the 200% zoom envelope. A redesign is not green merely because the static
+build succeeds.
+
+Changes to governed public copy or its canonical source set must also keep the
+ARQ Language System context current. Use `pnpm arq:language:refresh` after a
+canonical public-copy source changes, then require the normal language, claim,
+conflict and rendered-site checks to pass on the exact review head.
+
 ## Known limits
 
 - No analytics: the PUB specs allow "standard web analytics only"; none is
