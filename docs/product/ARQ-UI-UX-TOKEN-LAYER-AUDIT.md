@@ -196,19 +196,17 @@ No effect is removed by this audit based on taste. #402/#489 must measure materi
 
 ## 10. Deterministic drift check
 
-`packages/design-system/src/shell/layer-contract.test.ts` scans only `packages/design-system/src/shell/**` and `workspace/**` source files for raw numeric `z-index`/`zIndex` declarations.
+`packages/design-system/src/shell/layer-contract.test.ts` is deliberately narrow. It:
 
-It intentionally:
+- pins the six canonical named global layer values in `shell-tokens.css`: 10, 90, 100, 110, 120 and 200;
+- scans only `packages/design-system/src/shell/**` and `workspace/**` source files for raw numeric `z-index`/`zIndex` declarations;
+- rejects raw shell/workspace escalation above 20 so new ad hoc values cannot enter the reserved named global layer region;
+- permits the already-audited low local/debt range at or below 20 without freezing the exact count or file location of every current exception;
+- excludes renderer/geometry packages and `App.tsx` by design.
 
-- ignores renderer/geometry packages;
-- ignores token declarations and named `var(...)` uses;
-- keeps an explicit audited allowlist of current raw exceptions;
-- treats the allowlist as debt visibility, not approval;
-- fails when a new raw shell/workspace layer constant appears without an audit update.
+A raw value at or below 20 is not semantic approval. The classifications in this audit and #412 remain authoritative for whether a local value is justified, migratable or invalid. The guard is intentionally not an over-broad numeric lint rule.
 
-The check therefore prevents new `9999`-style drift without flagging valid layout numbers.
-
-`App.tsx` is not included in the guard while #361 owns that high-conflict host file. Its current raw command-palette wrapper is nevertheless recorded above as an exact #412 input.
+`App.tsx` is not included while #361 owns that high-conflict host file. Its current raw command-palette wrapper is nevertheless recorded above as an exact #412 input.
 
 ## 11. Evidence status and closing requirements
 
@@ -224,15 +222,19 @@ Verified by exact-head source inspection:
 - material fallbacks and nested-filter suppression;
 - stale legacy `--arq-z-modal` finding removed.
 
-Executable evidence must be attached to #403/its PR before closure:
+Executable PR evidence confirms the focused audit paths:
 
-- focused Vitest/design-system evidence including the new layer-contract guard;
-- existing appearance/contrast tests;
-- repository CI/type evidence as applicable to the changed files.
+- `pnpm test` passes the two-test `layer-contract.test.ts` guard and the existing design-system/appearance suites;
+- the Chromium capability lane has passed the existing design-system dialog, workspace layout, optical-glass and sheet-chrome checks on the same #403 runtime sources;
+- Rust, language-system, dependency-licence, build and security lanes are green on the #403 branch revisions that carry the same product/runtime sources.
 
-Representative browser overlay checks are desirable where an integrated browser harness exists. The cross-engine browser-matrix work is still an open PR (#363), so this audit must not invent browser evidence from that unmerged lane. If no current-head browser harness executes the representative overlay states, record browser evidence as blocked/not run rather than treating screenshots as proof.
+The repository-wide `pnpm format:check` is not a clean global gate at this integration base because seven unrelated pre-existing documentation files on `main` already fail Prettier. The #403 audit document is clean, and the layer-contract test is formatted to the repository's own Prettier 3.9.6 output. This issue does not mutate unrelated baseline files merely to turn a repository-wide formatting status green.
 
-The requested ZEUS compile invocation is also recorded as blocked/not run in connector-only execution unless an actual runner executes it.
+Because the global format step runs before lint, typecheck and ZEUS drift/validate in that CI job, those downstream steps are skipped when the unrelated baseline format debt is encountered. They are therefore not claimed as executed evidence for #403.
+
+The existing browser capability lane does not provide one synthetic fixture that overlaps every drawer, sheet, menu, HUD, modal and toast at once. That cross-overlay pointer/occlusion fixture is an explicit #412 acceptance input rather than evidence invented here.
+
+The requested `node scripts/zeus.mjs compile --task ...` invocation remains blocked/not run in the connector-only execution environment. Separate ZEUS repository-intelligence workflow evidence must not be represented as that exact command.
 
 ## 12. Inputs now fixed for #412
 
@@ -260,6 +262,6 @@ The requested ZEUS compile invocation is also recorded as blocked/not run in con
 
 ## 14. Closure rule
 
-#403 may close only when the exact-head audit is repository-visible, the deterministic layer guard passes, focused design-system evidence passes, and the final issue comment records any browser/ZEUS evidence that is unavailable as blocked rather than verified.
+#403 may close when the exact-head audit is repository-visible, the deterministic layer guard passes, focused design-system evidence passes, and the final issue comment records unavailable browser/ZEUS evidence as unavailable rather than verified.
 
 Closing #403 does not mean #412, #486 or #489 are complete. It means those implementation lanes have a deterministic current contract and a bounded list of remaining migrations.
