@@ -148,10 +148,6 @@ async function drawWall(page, start, end) {
   await page.keyboard.press('Enter');
 }
 
-async function selectedTreeRows(page) {
-  return page.getByRole('treeitem').filter({ has: page.locator('[aria-selected="true"]') });
-}
-
 async function selectedTreeCount(page) {
   return page.locator('[role="treeitem"][aria-selected="true"]').count();
 }
@@ -185,7 +181,10 @@ async function openFixture(page) {
       { timeout: 120_000 },
     );
   } catch (error) {
-    const dialogText = await page.getByRole('dialog').innerText().catch(() => null);
+    const dialogText = await page
+      .getByRole('dialog')
+      .innerText()
+      .catch(() => null);
     throw new Error(
       `fixture never reached the workspace${dialogText === null ? '' : `; dialog said: ${dialogText}`}\n${String(error)}`,
     );
@@ -209,7 +208,9 @@ async function runScratchScenarios(page, observed) {
   };
 
   await drawWall(page, wallA.start, wallA.end);
-  await drawWall(page, wallB.start, wallB.end);
+  await page.mouse.click(wallB.start.x, wallB.start.y);
+  await page.mouse.click(wallB.end.x, wallB.end.y);
+  await page.keyboard.press('Enter');
   await page.waitForFunction(
     () =>
       [...document.querySelectorAll('[role="treeitem"]')].filter((row) =>
@@ -230,7 +231,10 @@ async function runScratchScenarios(page, observed) {
     { timeout: 5000 },
   );
   const planSelectedId = await inspectorId(page);
-  check(planSelectedId.startsWith('drawn-wall-'), 'Plan selection did not reach inspector semantic ID');
+  check(
+    planSelectedId.startsWith('drawn-wall-'),
+    'Plan selection did not reach inspector semantic ID',
+  );
   check((await selectedTreeCount(page)) === 1, 'Plan selection did not reach exactly one tree row');
   observed.planSelectedId = planSelectedId;
 
@@ -254,7 +258,8 @@ async function runScratchScenarios(page, observed) {
   const openButton = page.getByRole('button', { name: 'Open', exact: true });
   await openButton.focus();
   check(
-    (await page.evaluate(() => document.activeElement?.textContent?.trim()))?.includes('Open') === true,
+    (await page.evaluate(() => document.activeElement?.textContent?.trim()))?.includes('Open') ===
+      true,
     'Open control did not receive DOM focus',
   );
   check((await inspectorId(page)) === planSelectedId, 'focusing Open mutated semantic selection');
@@ -264,13 +269,20 @@ async function runScratchScenarios(page, observed) {
     (await search.evaluate((element) => document.activeElement === element)) === true,
     'model search did not receive DOM focus',
   );
-  check((await inspectorId(page)) === planSelectedId, 'focusing model search mutated semantic selection');
+  check(
+    (await inspectorId(page)) === planSelectedId,
+    'focusing model search mutated semantic selection',
+  );
   observed.domFocusIndependent = true;
 
   /* 8. Escape is cancellation, not current semantic-clear authority. */
   await openButton.focus();
   await page.keyboard.press('Escape');
-  check((await inspectorId(page)) === planSelectedId, 'Escape unexpectedly cleared semantic selection');
+  check(
+    (await inspectorId(page)) === planSelectedId,
+    'Escape unexpectedly cleared semantic selection',
+  );
+  await activateSelectTool(page);
   const clearBox = await plan.boundingBox();
   if (clearBox === null) throw new Error('plan canvas lost its bounding box');
   await page.mouse.click(clearBox.x + clearBox.width * 0.86, clearBox.y + clearBox.height * 0.82);
@@ -290,12 +302,18 @@ async function runScratchScenarios(page, observed) {
   await drawnRows.nth(1).click();
   const treeSecondId = await inspectorId(page);
   const secondPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-  check(treeFirstId !== treeSecondId, 'selecting a second tree wall did not replace the semantic primary');
+  check(
+    treeFirstId !== treeSecondId,
+    'selecting a second tree wall did not replace the semantic primary',
+  );
   check(
     firstPlanPixels.checksum !== secondPlanPixels.checksum,
     'tree selection change did not change Plan selection projection',
   );
-  check((await selectedTreeCount(page)) === 1, 'tree single-select created more than one selected row');
+  check(
+    (await selectedTreeCount(page)) === 1,
+    'tree single-select created more than one selected row',
+  );
   await tab3d.click();
   await model.waitFor({ state: 'visible', timeout: 5000 });
   observed.treeTo3d = await waitForGreenSelection(page, model, true);
@@ -323,9 +341,15 @@ async function runScratchScenarios(page, observed) {
   const selectedRows = page.locator('[role="treeitem"][aria-selected="true"]');
   check((await selectedRows.count()) === 2, 'Plan marquee did not select both drawn walls');
   const primaryRows = selectedRows.locator('button[aria-pressed="true"]');
-  check((await primaryRows.count()) === 1, 'multi-selection did not expose exactly one primary row');
+  check(
+    (await primaryRows.count()) === 1,
+    'multi-selection did not expose exactly one primary row',
+  );
   const inspectorText = await page.getByRole('complementary', { name: 'Inspector' }).innerText();
-  check(/2 walls selected/i.test(inspectorText), 'inspector did not project the two-wall selection');
+  check(
+    /2 walls selected/i.test(inspectorText),
+    'inspector did not project the two-wall selection',
+  );
   observed.multiSelection = { selectedRows: 2, primaryRows: 1 };
 
   /* 4. Delete selected targets -> stale selection is cleared. */
@@ -386,6 +410,7 @@ async function runNativeLevelScenario(page, observed) {
 }
 
 async function run() {
+  mkdirSync(resultsDir, { recursive: true });
   if (!existsSync(fixturePath)) throw new Error(`missing native fixture: ${fixturePath}`);
   execFileSync('npx', ['vite', 'build'], { cwd: webDir, stdio: 'inherit' });
   if (!existsSync(path.join(distDir, 'index.html'))) {
@@ -400,7 +425,10 @@ async function run() {
     headless: true,
   });
   const observed = {
-    exactHead: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' }).trim(),
+    exactHead: execFileSync('git', ['rev-parse', 'HEAD'], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    }).trim(),
     origin,
     scenarios: {
       planSelectionProjectsEverywhere: 1,
@@ -440,7 +468,6 @@ async function run() {
     await new Promise((resolve) => server.close(resolve));
   }
 
-  mkdirSync(resultsDir, { recursive: true });
   const result = {
     capability: 'browser_selection_authority',
     verdict: failures.length === 0 ? 'PASS' : 'FAIL',
