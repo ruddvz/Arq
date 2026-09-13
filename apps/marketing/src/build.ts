@@ -130,9 +130,15 @@ export function buildSite(): { readonly pages: number; readonly outDir: string }
     writePage(page.meta.route, html);
   }
 
-  // Stylesheet and self-hosted fonts.
+  // Stylesheets and self-hosted fonts. The brand token file is copied directly
+  // from its canonical source rather than being duplicated into this app.
   mkdirSync(join(dist, 'assets'), { recursive: true });
+  copyFileSync(
+    join(repoRoot, 'design', 'tokens', 'brand.v4.css'),
+    join(dist, 'assets', 'brand-tokens.css'),
+  );
   copyFileSync(join(appRoot, 'src', 'site.css'), join(dist, 'assets', 'site.css'));
+  copyFileSync(join(appRoot, 'src', 'editorial.css'), join(dist, 'assets', 'editorial.css'));
   copyDir(join(appRoot, 'assets', 'fonts'), join(dist, 'assets', 'fonts'));
 
   // Brand: favicons and manifest at the root (where browsers look), full web

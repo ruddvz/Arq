@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "6e7a9c396cc3141551582e7c93d47c876453c205684e61936083e65866420b48",
+  "sourceSetDigest": "0de1729a44d8a2f1543953eb0971f89613ed4aa842218896ee3c08d4ca40622f",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -564,7 +564,7 @@
       "id": "marketing-content",
       "kind": "directory",
       "path": "apps/marketing/src/content",
-      "sha256": "1de22591d824e14303209af8b094cf1ceac21ffb13ecbb0defa90ef7be68578c",
+      "sha256": "4e786510be0b16a52735c6f53262782c1bde57f866b92fbfd0a233c0421cdb1e",
       "files": [
         {
           "rel": "apps/marketing/src/content/ai.ts",
@@ -598,8 +598,8 @@
         },
         {
           "rel": "apps/marketing/src/content/home.ts",
-          "sha256": "fb5edf7e54263f9a93729145ec6203e43b35212a024a2c9e8c7b83e3f8e96e47",
-          "bytes": 5619
+          "sha256": "b8aef021add2ec845ebdc8c6dd45de365094bf1c9f72d4665b87619b3aa623b9",
+          "bytes": 6388
         },
         {
           "rel": "apps/marketing/src/content/interoperability.ts",
@@ -669,8 +669,8 @@
       "id": "marketing-build",
       "kind": "file",
       "path": "apps/marketing/src/build.ts",
-      "sha256": "20d302412fc449d3adea5c5e69896e9240439729fb3700a44aa5f870b15a2873",
-      "bytes": 7822
+      "sha256": "d85e9602e03c6abdf7dcaa11524d670d94f764dbc00862d802a3d10d5f9c6d14",
+      "bytes": 8155
     },
     "marketing-claims-tests": {
       "id": "marketing-claims-tests",

@@ -22,17 +22,17 @@ This index is a routing aid, not a replacement for live GitHub issue state. Agen
 
 ## Phase epics
 
-| Phase | Epic | Outcome |
-| --- | --- | --- |
-| UX-0 | #379 | Inventory, authority and interaction-contract freeze |
-| UX-1 | #381 | Canvas-first shell and visual hierarchy |
-| UX-2 | #383 | Commands, selection and contextual interaction unification |
-| UX-3 | #384 | Release-1 plan authoring UX completion |
-| UX-4 | #386 | Levels, project browser and coordinated 3D UX |
-| UX-5 | #388 | File, persistence, import/export and recovery UX |
-| UX-6 | #390 | Sheet/document workflow UX |
-| UX-7 | #392 | Inspectable Agent/Review Centre UX |
-| UX-8 | #394 | Accessibility, resilience, responsive and performance hardening |
+| Phase | Epic | Outcome                                                         |
+| ----- | ---- | --------------------------------------------------------------- |
+| UX-0  | #379 | Inventory, authority and interaction-contract freeze            |
+| UX-1  | #381 | Canvas-first shell and visual hierarchy                         |
+| UX-2  | #383 | Commands, selection and contextual interaction unification      |
+| UX-3  | #384 | Release-1 plan authoring UX completion                          |
+| UX-4  | #386 | Levels, project browser and coordinated 3D UX                   |
+| UX-5  | #388 | File, persistence, import/export and recovery UX                |
+| UX-6  | #390 | Sheet/document workflow UX                                      |
+| UX-7  | #392 | Inspectable Agent/Review Centre UX                              |
+| UX-8  | #394 | Accessibility, resilience, responsive and performance hardening |
 
 ## UX-0: ready discovery/routing lanes
 
