@@ -29,6 +29,30 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Prepare formatted probe candidate
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          probe = Path('scripts/run-selection-authority-capability-check.mjs')
+          text = probe.read_text()
+          old = """  await drawWall(page, wallA.start, wallA.end);\n  await drawWall(page, wallB.start, wallB.end);\n"""
+          new = """  await drawWall(page, wallA.start, wallA.end);\n  await page.mouse.click(wallB.start.x, wallB.start.y);\n  await page.mouse.click(wallB.end.x, wallB.end.y);\n  await page.keyboard.press('Enter');\n"""
+          if old not in text:
+              raise SystemExit('expected second-wall probe source was not found')
+          probe.write_text(text.replace(old, new))
+          PY
+          pnpm exec prettier --write \
+            scripts/run-selection-authority-capability-check.mjs \
+            docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md \
+            .github/workflows/selection-authority-evidence.yml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: selection-authority-formatted-source
+          path: |
+            scripts/run-selection-authority-capability-check.mjs
+            docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
+            .github/workflows/selection-authority-evidence.yml
       - run: npx playwright install --with-deps chromium
       - run: node scripts/run-selection-authority-capability-check.mjs
       - uses: actions/upload-artifact@v4
