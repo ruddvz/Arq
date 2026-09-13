@@ -55,7 +55,7 @@ const CANONICAL_LAYERS = [
 describe('shell layer contract', () => {
   it('keeps the named global layer tiers pinned', () => {
     for (const [token, value] of CANONICAL_LAYERS) {
-      expect(SHELL_TOKENS).toMatch(new RegExp(`${token}\\s*:\\s*${value}px?\\s*;`));
+      expect(SHELL_TOKENS).toMatch(new RegExp(`${token}\\s*:\\s*${value}\\s*;`));
     }
   });
 
