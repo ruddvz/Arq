@@ -320,16 +320,16 @@ async function checkReducedMotion(browser, origin) {
     const pageA = await withMotion.newPage();
     await pageA.goto(origin, { waitUntil: 'networkidle' });
     const animatedName = await pageA.evaluate(
-      () => getComputedStyle(document.querySelector('.hero h1')).animationName,
+      () => getComputedStyle(document.querySelector('main h1')).animationName,
     );
 
     const pageB = await reduced.newPage();
     await pageB.goto(origin, { waitUntil: 'networkidle' });
     const reducedName = await pageB.evaluate(
-      () => getComputedStyle(document.querySelector('.hero h1')).animationName,
+      () => getComputedStyle(document.querySelector('main h1')).animationName,
     );
     const h1VisibleUnderReduced = await pageB.evaluate(() => {
-      const h1 = document.querySelector('.hero h1');
+      const h1 = document.querySelector('main h1');
       if (!h1) return false;
       const style = getComputedStyle(h1);
       return style.opacity !== '0' && style.visibility !== 'hidden';

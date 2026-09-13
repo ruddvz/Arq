@@ -24,15 +24,16 @@ function editorialActions(actions: readonly EditorialAction[] | undefined): Safe
   return html`<p class="editorial-actions">
     ${actions.map(
       (action, index) =>
-        html`<a class="${index === 0 ? 'editorial-link editorial-link--primary' : 'editorial-link'}" href="${action.href}">${action.label}</a>`,
+        html`<a
+          class="${index === 0 ? 'editorial-link editorial-link--primary' : 'editorial-link'}"
+          href="${action.href}"
+          >${action.label}</a
+        >`,
     )}
   </p>`;
 }
 
-export function technicalRail(
-  label: string,
-  facts: readonly TechnicalFact[],
-): SafeHtml {
+export function technicalRail(label: string, facts: readonly TechnicalFact[]): SafeHtml {
   return html`
     <aside class="technical-rail" aria-label="${label}">
       <p class="technical-rail__label">${label}</p>
@@ -64,8 +65,7 @@ export function editorialHero(options: EditorialHeroOptions): SafeHtml {
           ${options.heading.map((line) => html`<span>${line}</span>`)}
         </h1>
         <p class="editorial-lede">${options.lede}</p>
-        ${editorialActions(options.actions)}
-        ${facts}
+        ${editorialActions(options.actions)} ${facts}
         <div class="plan-figure" aria-hidden="true">
           <span class="plan-figure__label">${diagramLabel}</span>
           <span class="plan-figure__wall plan-figure__wall--a"></span>
@@ -149,7 +149,10 @@ export function routeCta(
         <div class="route-cta__links">
           ${links.map(
             (link, index) => html`
-              <a class="${index === 0 ? 'route-link route-link--primary' : 'route-link'}" href="${link.href}">
+              <a
+                class="${index === 0 ? 'route-link route-link--primary' : 'route-link'}"
+                href="${link.href}"
+              >
                 <span>${link.label}</span><span aria-hidden="true">→</span>
               </a>
             `,

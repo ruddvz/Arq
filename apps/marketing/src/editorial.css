@@ -264,8 +264,17 @@
   align-self: center;
   border: 1px solid var(--editorial-rule-soft);
   background:
-    linear-gradient(90deg, transparent 49.9%, color-mix(in srgb, var(--accent) 13%, transparent) 50%, transparent 50.1%),
-    linear-gradient(transparent 49.9%, color-mix(in srgb, var(--accent) 13%, transparent) 50%, transparent 50.1%);
+    linear-gradient(
+      90deg,
+      transparent 49.9%,
+      color-mix(in srgb, var(--accent) 13%, transparent) 50%,
+      transparent 50.1%
+    ),
+    linear-gradient(
+      transparent 49.9%,
+      color-mix(in srgb, var(--accent) 13%, transparent) 50%,
+      transparent 50.1%
+    );
   overflow: hidden;
   opacity: 0.82;
 }

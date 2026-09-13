@@ -3,7 +3,7 @@
 **Status:** Planning source for issue creation and implementation sequencing  
 **Date:** 13 September 2026  
 **Scope:** ARQ editor UI, UX, interaction design, visual system, responsive behaviour, accessibility, performance-facing UX, error/recovery states, AI review UX, cross-view consistency and implementation sequencing  
-**Stop point for this revision:** Plan only. This document does not create GitHub issues, implement UI, merge code or change product scope.  
+**Stop point for this revision:** Plan only. This document does not create GitHub issues, implement UI, merge code or change product scope.
 
 ## 0. Authority and how to use this file
 

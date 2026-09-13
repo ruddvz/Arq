@@ -1,10 +1,5 @@
 import { notes, specList } from '../components.js';
-import {
-  editorialHero,
-  editorialStatement,
-  routeCta,
-  statePair,
-} from '../editorial-components.js';
+import { editorialHero, editorialStatement, routeCta, statePair } from '../editorial-components.js';
 import { html } from '../html.js';
 import type { Page } from '../site.js';
 
@@ -40,8 +35,7 @@ export const homePage: Page = {
     ${editorialHero({
       eyebrow: 'ARQ · architectural workspace · pre-release',
       heading: ['Plans made of', 'building elements,', 'not lines.'],
-      lede:
-        'ARQ is architectural design software in open development. A wall in ARQ is a wall, with a thickness and a length in millimetres. The current development build opens an .arq project from your disk, draws walls in a plan, and keeps the work on your own device.',
+      lede: 'ARQ is architectural design software in open development. A wall in ARQ is a wall, with a thickness and a length in millimetres. The current development build opens an .arq project from your disk, draws walls in a plan, and keeps the work on your own device.',
       actions: [
         { href: '/product', label: 'See the product' },
         { href: '/changelog', label: 'What exists today' },
@@ -53,7 +47,6 @@ export const homePage: Page = {
       ],
       diagramLabel: 'Semantic plan geometry',
     })}
-
     ${editorialStatement(
       '01',
       ['Precision', 'is the', 'product.'],
@@ -66,7 +59,6 @@ export const homePage: Page = {
         </p>
       `,
     )}
-
     ${statePair(
       '02',
       'Where your work is kept',
@@ -87,9 +79,9 @@ export const homePage: Page = {
       html`
         <p>
           The ARQ project format is a single <code>.arq</code> file: a versioned SQLite database you
-          hold on your own disk. The current build opens one. Choosing an <code>.arq</code> file checks
-          it, copies it into a working copy on your device, and puts that project in the workspace,
-          including its levels, walls and rooms, plan and 3D view.
+          hold on your own disk. The current build opens one. Choosing an <code>.arq</code> file
+          checks it, copies it into a working copy on your device, and puts that project in the
+          workspace, including its levels, walls and rooms, plan and 3D view.
         </p>
         <p>
           It opens; it does not yet save. ARQ works on the copy and never writes to the file you
@@ -110,10 +102,10 @@ export const homePage: Page = {
           title: 'A small first release, stated plainly',
           body: html`
             <p>
-              ARQ has not shipped. It is not a full CAD seat and does not replace Revit. Its scope is
-              deliberately small. The list below is release scope from
-              <code>docs/product/RELEASE-SCOPE.md</code>. It describes the intended sequence of work,
-              not what the current development build can do today.
+              ARQ has not shipped. It is not a full CAD seat and does not replace Revit. Its scope
+              is deliberately small. The list below is release scope from
+              <code>docs/product/RELEASE-SCOPE.md</code>. It describes the intended sequence of
+              work, not what the current development build can do today.
             </p>
             ${specList([
               {
@@ -133,9 +125,9 @@ export const homePage: Page = {
               },
             ])}
             <p>
-              Doors, windows and rooms are in Release 1 scope. Their libraries and tools exist in the
-              repository and are tested, but they are not yet connected to the drawing canvas, so they
-              are not something you can use today.
+              Doors, windows and rooms are in Release 1 scope. Their libraries and tools exist in
+              the repository and are tested, but they are not yet connected to the drawing canvas,
+              so they are not something you can use today.
             </p>
           `,
         },
