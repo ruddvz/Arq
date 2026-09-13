@@ -7,17 +7,25 @@
 **Issue-contract authority:** #368  
 **Recurring CTO reconciler:** #369  
 **Ownership protocol:** #317 / #319  
-**Graph reconciliation:** #493
+**Graph reconciliation:** #493  
+**Semantic-owner matrix:** `docs/product/ARQ-UI-UX-SEMANTIC-OWNER-MATRIX.md`  
+**Pascal adoption ledger:** `docs/research/PASCAL-EDITOR-ADOPTION-LEDGER-2026-09.md`
 
 This file is a routing aid, not a product/evidence authority. Live repository state, accepted ADRs, exact-head executable evidence and the current issue/PR graph outrank this file. Agents must re-preflight before mutation.
 
+## Current checkpoint
+
+UX-0 static discovery/routing has now produced repository-visible artefacts for #396, #398, #401, #403, #405 and #493. #405 is complete and closed. #493 has reconciled the UI/UX issue family against P1/P2/P3 owners in `ARQ-UI-UX-SEMANTIC-OWNER-MATRIX.md`.
+
+This does **not** make UX-0 or UX-1 green by itself. #396/#398/#401/#403 still require their issue-specific exact-head executable/browser evidence before those audit lanes should close. #369 must record the first CTO reconciliation before broad UX-1 mutation is promoted.
+
 ## Current repository-authority warning
 
-As of the preflight that created this index, GitHub still reports `claude/arq-cad-platform-research-ba8rav` as the repository default branch, while `main` exists and all currently open PRs are based on `main`. Issue #332 remains the branch-authority governance issue. Do not infer integration authority from the repository default alone and do not assume `main` without a fresh #332/current-PR check.
+GitHub still reports `claude/arq-cad-platform-research-ba8rav` as the repository default branch while active development PRs are based on `main`. Issue #332 remains the branch-authority governance issue. Do not infer integration authority from the repository default alone and do not assume `main` without a fresh #332/current-PR check.
 
-Open PR ownership at this checkpoint:
+Open PR ownership at this checkpoint includes:
 
-- #361 owns `apps/web/src/App.tsx` plus native project persistence/session files. Any UI lane touching `App.tsx` is conflict-prone until #361 is merged/retired/reconciled.
+- #361 owns `apps/web/src/App.tsx` plus native project persistence/session files. Any UI lane touching `App.tsx` is conflict-prone until #361 is merged, retired or explicitly reconciled.
 - #363 owns browser-matrix workflow/scripts/docs.
 - #365 owns ZEUS graph/runtime/CI files.
 - #366 owns Archaiflow/competitor research documentation.
@@ -30,8 +38,9 @@ Until #317/#319 enforcement lands, open PRs are legacy owners of the paths they 
 2. The child issue is the work ledger. Post branch/head, claimed files/interfaces, changed assumptions, evidence, blockers and follow-ups at meaningful checkpoints.
 3. Different issue numbers do not imply safe parallelism. Shared root files, command/selection state and canonical operation/persistence paths require explicit sequencing.
 4. Semantic/domain programme issues own canonical model, operations, persistence and safety policy. UI/UX child issues integrate, expose, refine and prove those capabilities unless their contract explicitly owns a domain change.
-5. #369 is the recurring original/CTO lane. Run it after roughly 3–5 merged UI/UX lanes, before every phase gate, after a cross-cutting contract change, or when cross-lane regression appears.
-6. #493 reconciles the UI/UX graph against P1/P2/P3 semantic owners so two agents do not implement the same capability under different issue numbers.
+5. #369 is the recurring original/CTO lane. Run it after roughly 3-5 merged UI/UX lanes, before every phase gate, after a cross-cutting contract change, or when cross-lane regression appears.
+6. #493 reconciles the UI/UX graph against P1/P2/P3 semantic owners. Its current result is the semantic-owner matrix linked above.
+7. A UI lane that discovers a missing semantic/domain API must stop or narrow itself. It may not silently become the semantic authority simply because the API is missing.
 
 ## Phase epics
 
@@ -47,18 +56,55 @@ Until #317/#319 enforcement lands, open PRs are legacy owners of the paths they 
 | UX-7 | #392 | Inspectable Agent/Review Centre UX |
 | UX-8 | #394 | Accessibility, resilience, responsive and performance hardening |
 
-## Initial safe discovery/routing frontier
+## Reconciled domain-owner direction
 
-These UX-0 lanes are the intended first batch because they are audit/metadata heavy and can avoid broad runtime mutation:
+Use `ARQ-UI-UX-SEMANTIC-OWNER-MATRIX.md` for the complete routing table. The high-value owner relationships are:
 
-- #396 shell/panel/overlay/shared-file ownership audit
-- #398 command/tool/capability reachability audit
-- #401 selection/focus/interaction-state authority audit
-- #403 design-token/local-constant/overlay-layer audit
-- #405 Pascal adoption/licence/provenance ledger
-- #493 UI/UX ↔ P1/P2/P3 issue-graph reconciliation
+- #374 owns native project/level authoring. #451/#454/#455 integrate level navigation/workflows and may not invent level mutation policy.
+- #378 owns wall semantics. #431/#433/#435 are interaction slices.
+- #380 owns hosted openings/door/window semantics. #437/#439/#441 are UI interaction slices.
+- #382 owns room semantics. #443 is the room workflow slice.
+- #385 + #465 own dimension semantics/stable references. #445 owns dimension placement/edit interaction.
+- #387 owns notes. #447 owns note interaction.
+- #389 owns cross-surface canonical/derived coordination. UX-4 consumes it rather than creating a second invalidation authority.
+- #391 owns browser/inspector Core product semantics. #449/#456 integrate numeric and hierarchy/selection UX.
+- #468 owns Core plan projection; #470 owns coordinated 3D projection.
+- #371/#355/#356/#397 own publication/persistence/durability mechanics. UX-5 presents/integrates them.
+- #415 with #411/#413 owns exchange fidelity/adapters. #466/#471 consume those contracts.
+- #393 owns sheet/viewports; #395 owns PDF; #406 owns protected Core E2E. #472-#476 are their UI/integration/evidence slices.
+- #419/#421/#422/#424/#428 own Agent host/proposal/apply/eval semantics. #477-#483 own Agent/Review Centre UX only.
+- #400/#402/#404/#358-#360/#408/#211 remain the quality/human/platform authorities consumed by UX-8.
 
-Important current conflict: #396/#493 must treat PR #361 as the live owner of `apps/web/src/App.tsx`. UX-1 root-shell implementation must not begin until that ownership is reconciled.
+#454 was specifically reconciled to existing owner #374. Do not create a second level-operation architecture under the UI issue.
+
+## Current safe parallel frontier
+
+The next safe batch is evidence closure, not broad shell implementation:
+
+- **#396** finish exact-head focused/browser evidence for the workspace ownership map. No redesign and no `App.tsx` mutation while #361 owns it.
+- **#398** finish deterministic command/tool reachability and registry evidence. No new commands or command behaviour.
+- **#401** finish state-flow/browser evidence for Plan/3D/tree/inspector selection/focus. No selection redesign.
+- **#403** finish deterministic token/layer evidence and bounded lint/check strategy. No broad restyling.
+
+#405 is complete. #493 static reconciliation is complete enough for the first #369 pass.
+
+### Explicitly not safe yet
+
+- #407 root desktop shell: blocked by shared `App.tsx` ownership and UX-0 evidence/reconciliation.
+- #414/#416 responsive root composition: depend on #409/#412 and also touch root composition.
+- #418 full shell-state integration: conflict-prone while #361 owns `App.tsx`; a future agent may work only on narrowly claimed reusable design-system primitives if there is no overlap.
+- #420 canonical command integration: wait for #398 evidence and root-dispatch ownership reconciliation.
+- #425 selection implementation: wait for #401 evidence.
+
+### Intended first UX-1 frontier after the gate clears
+
+When #396/#403 close with evidence, #361 root ownership is resolved, and #369 records a safe frontier:
+
+1. #409 panel collapse/resize/docking/reopen may proceed on claimed design-system/workspace paths.
+2. #412 overlay zones/floating controls/z-index may proceed in parallel only where paths/interfaces do not overlap #409 or active Plan/3D owners.
+3. #407 remains the serial root-shell composition lane that integrates those contracts.
+4. #414/#416 follow #409/#412 and consume the resulting responsive shell contract.
+5. #418 can be split into reusable primitives first, root wiring later, if that avoids ownership collision.
 
 ## UX-1 shell lanes
 
@@ -69,7 +115,7 @@ Important current conflict: #396/#493 must treat PR #361 as the live owner of `a
 - #416 phone review/light-edit composition
 - #418 shell empty/loading/disabled/read-only/error states
 
-Do not start broad root-shell work until #396, #403 and #493 establish current ownership/dependencies. `apps/web/src/App.tsx` and shared workspace state are serialised resources.
+`apps/web/src/App.tsx` and shared workspace state are serialised resources.
 
 ## UX-2 interaction-language lanes
 
@@ -92,7 +138,7 @@ Do not start broad root-shell work until #396, #403 and #493 establish current o
 - #447 text note placement/in-place editing
 - #449 inspector numeric editing/units/validation/mixed values
 
-Semantic/domain owners to reconcile first: #378 walls, #380 hosted openings, #382 rooms, #385 dimensions, #387 notes, #389 cross-surface invalidation, #391 browser/inspector, #88 units/numeric representation, #464 tolerance ladder, #465 semantic subreferences, #452 locale/formatting.
+These issues consume the domain owners in the semantic-owner matrix. They may not redefine units (#88), tolerance (#464), stable references (#465), locale/formatting (#452), plan projection (#468) or semantic mutation authority.
 
 ## UX-4 project navigation and 3D
 
@@ -103,12 +149,12 @@ Semantic/domain owners to reconcile first: #378 walls, #380 hosted openings, #38
 - #457 3D camera/fit/reset/selection coordination
 - #458 safe direct 3D edits + Plan hand-off
 
-Coordinate cross-surface work with #389 and browser/inspector work with #391. Renderer objects never become canonical project state.
+Domain direction: #374 levels, #389 cross-surface coordination, #391 browser/inspector, #470 coordinated 3D, plus the semantic owner of every mutation exposed by #458. Renderer objects never become canonical project state.
 
 ## UX-5 file, durability and exchange UX
 
 - #459 durability/project-file state model
-- #460 persistence acknowledgements → durability UI
+- #460 persistence acknowledgements -> durability UI
 - #461 open/hydrate/migrate/load-failure states
 - #462 recovery review/restore/discard
 - #463 read-only/safe-mode behaviour
@@ -116,7 +162,7 @@ Coordinate cross-surface work with #389 and browser/inspector work with #391. Re
 - #469 canonical native Publish/download-copy UX
 - #471 external export fidelity/delivery UX
 
-Domain owners: #371 publication authority, #355 persistence bridge, #356 lossless semantic mutation, #410 exchange epic, #411 DXF, #413 IFC, #415 universal fidelity contract, #446 untrusted file boundary.
+Domain owners: #371 publication authority, #355 persistence bridge, #356 lossless semantic mutation, #397 durability matrix, #410 exchange epic, #411 DXF, #413 IFC, #415 universal fidelity contract, #446 untrusted file boundary.
 
 ## UX-6 sheet/document UX
 
@@ -156,7 +202,7 @@ Existing gate owners include #358, #359, #360, #400, #402, #404, #408 and #211.
 
 ## CTO reconciliation protocol
 
-Run #369 after approximately 3–5 merged UI/UX implementation lanes, before a phase exit, after command/selection/operation/persistence contract changes, or immediately after a cross-lane regression.
+Run #369 after approximately 3-5 merged UI/UX implementation lanes, before a phase exit, after command/selection/operation/persistence contract changes, or immediately after a cross-lane regression.
 
 The reconciler inspects duplicate authority, ownership collisions, selection/focus parity, undo grouping, hosted dependency integrity, Plan/3D/sheet convergence, durability wording, responsive regressions, accessibility/focus, token/z-index drift, performance/bundle regressions, resource leaks, Agent/import boundaries and exact-head phase evidence.
 
@@ -169,13 +215,15 @@ Work end to end on ARQ GitHub issue #<ISSUE_NUMBER> in repository ruddvz/Arq.
 
 Before changing anything:
 1. Determine the actual current integration authority from #332, repository metadata and current PR bases. Do not assume main or the repository default branch.
-2. Read the complete issue, its phase epic, #377, AGENTS.md and .zeus/FAST-KERNEL.md.
+2. Read the complete issue, its phase epic, #377, #493, docs/product/ARQ-UI-UX-ISSUE-EXECUTION-INDEX.md, docs/product/ARQ-UI-UX-SEMANTIC-OWNER-MATRIX.md, AGENTS.md and .zeus/FAST-KERNEL.md.
 3. Read every explicit dependency and semantic/domain owner linked by the issue.
 4. Check active PRs/issues touching the same files/interfaces. Until #317/#319 enforcement lands, treat open PRs as legacy owners of their actual changed paths. If ownership conflicts, stop and comment before editing.
 5. Search for the existing component/system/operation before creating another.
+6. Post a claim checkpoint before mutation: branch/head, claimed paths/interfaces, semantic/domain authority consumed, explicit exclusions and known conflicts.
 
 During implementation:
 - Stay inside the issue contract.
+- UI work integrates domain authority; it does not create a parallel canonical model, operation, persistence, permission or provenance path.
 - Use canonical ARQ commands, typed operations, validation and persistence.
 - Handle loading, empty, disabled, error, read-only, responsive, accessibility and performance states, not only the happy path.
 - Do not resolve open architecture/unit/security decisions incidentally.
