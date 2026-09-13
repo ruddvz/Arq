@@ -1,0 +1,38 @@
+name: Selection authority evidence
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/design-system/**'
+      - 'packages/workspace/**'
+      - 'packages/model-renderer/**'
+      - 'packages/plan-renderer/**'
+      - 'scripts/run-selection-authority-capability-check.mjs'
+      - '.github/workflows/selection-authority-evidence.yml'
+      - 'docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md'
+  workflow_dispatch:
+
+concurrency:
+  group: selection-authority-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser-selection-authority:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/run-selection-authority-capability-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: selection-authority-evidence
+          path: benchmarks/results/selection-authority.*
