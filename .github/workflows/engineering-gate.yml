@@ -37,7 +37,7 @@ jobs:
       required_evidence: ${{ steps.classify.outputs.required_evidence }}
       needs_l4_approval: ${{ steps.classify.outputs.needs_l4_approval }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v4
@@ -73,7 +73,7 @@ jobs:
     needs: classify
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -95,7 +95,7 @@ jobs:
     steps:
       # Full history: the repository_binding evidence verifies that the audited
       # baseline commit is an ancestor of HEAD, which a shallow clone cannot see.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v4
@@ -152,7 +152,7 @@ jobs:
     needs: [classify, preflight, selected-evidence, critical-approval]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 20
