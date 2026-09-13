@@ -129,8 +129,10 @@ async function waitForReady(page, origin) {
 
 async function activateSelectTool(page) {
   const rail = page.getByRole('navigation', { name: 'Tools' });
-  await rail.getByRole('button', { name: 'Select', exact: true }).click();
   const group = rail.getByRole('group', { name: 'Select tools' });
+  if (!(await group.isVisible())) {
+    await rail.locator('button[aria-controls="arq-tool-rail-panel-select"]').click();
+  }
   await group.getByRole('button', { name: 'Select', exact: true }).click();
 }
 
