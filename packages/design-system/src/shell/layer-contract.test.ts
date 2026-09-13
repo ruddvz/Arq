@@ -4,15 +4,9 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 const SRC_ROOT = fileURLToPath(new URL('../', import.meta.url));
-const AUDITED_ROOTS = [
-  resolve(SRC_ROOT, 'shell'),
-  resolve(SRC_ROOT, 'workspace'),
-] as const;
+const AUDITED_ROOTS = [resolve(SRC_ROOT, 'shell'), resolve(SRC_ROOT, 'workspace')] as const;
 const RAW_LAYER = /\b(?:z-index|zIndex)\s*:\s*(\d+)\b/g;
-const SHELL_TOKENS = readFileSync(
-  resolve(SRC_ROOT, 'shell/shell-tokens.css'),
-  'utf8',
-);
+const SHELL_TOKENS = readFileSync(resolve(SRC_ROOT, 'shell/shell-tokens.css'), 'utf8');
 
 function sourceFiles(root: string): readonly string[] {
   const files: string[] = [];
@@ -24,10 +18,7 @@ function sourceFiles(root: string): readonly string[] {
       continue;
     }
 
-    if (
-      /\.(?:css|ts|tsx)$/.test(entry) &&
-      !/\.test\.(?:ts|tsx)$/.test(entry)
-    ) {
+    if (/\.(?:css|ts|tsx)$/.test(entry) && !/\.test\.(?:ts|tsx)$/.test(entry)) {
       files.push(path);
     }
   }
@@ -64,9 +55,7 @@ const CANONICAL_LAYERS = [
 describe('shell layer contract', () => {
   it('keeps the named global layer tiers pinned', () => {
     for (const [token, value] of CANONICAL_LAYERS) {
-      expect(SHELL_TOKENS).toMatch(
-        new RegExp(`${token}\\s*:\\s*${value}\\s*;`),
-      );
+      expect(SHELL_TOKENS).toMatch(new RegExp(`${token}\\s*:\\s*${value}\\s*;`));
     }
   });
 
