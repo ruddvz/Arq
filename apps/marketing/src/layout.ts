@@ -24,9 +24,7 @@ import {
 
 function revisionLabel(sourceRevision: string | undefined): string {
   const shortRevision = sourceRevision?.match(/^[0-9a-f]{7,64}$/i)?.[0]?.slice(0, 7);
-  return shortRevision === undefined
-    ? 'REV B · 2026-08 · local build'
-    : `REV B · 2026-08 · source ${shortRevision}`;
+  return shortRevision === undefined ? 'REV · local build' : `REV · source ${shortRevision}`;
 }
 
 function navLink(item: NavLink, activeRoute: string): SafeHtml {
@@ -121,7 +119,9 @@ export function renderDocument(meta: PageMeta, body: SafeHtml, sourceRevision?: 
         <meta property="og:description" content="${meta.description}" />
         <meta property="og:image" content="/assets/brand/ARQ_OpenGraph_Green_1200x630.png" />
         <meta name="twitter:card" content="summary_large_image" />
+        <link rel="stylesheet" href="/assets/brand-tokens.css" />
         <link rel="stylesheet" href="/assets/site.css" />
+        <link rel="stylesheet" href="/assets/editorial.css" />
       </head>
       <body>
         <a class="skip-link" href="#content">Skip to content</a>
