@@ -4,10 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 const SRC_ROOT = fileURLToPath(new URL('../', import.meta.url));
-const AUDITED_ROOTS = [
-  resolve(SRC_ROOT, 'shell'),
-  resolve(SRC_ROOT, 'workspace'),
-] as const;
+const AUDITED_ROOTS = [resolve(SRC_ROOT, 'shell'), resolve(SRC_ROOT, 'workspace')] as const;
 const RAW_LAYER = /\b(z-index|zIndex)\s*:\s*(\d+)\b/g;
 
 function sourceFiles(root: string): readonly string[] {
