@@ -67,6 +67,7 @@ The audit does not use literal-count reduction as a goal.
 
 The named global scale is coherent:
 
+<!-- prettier-ignore -->
 | Layer | Current authority | Value / behaviour | Classification |
 | --- | --- | --- | --- |
 | base canvas | renderer/content flow | no global named z tier | 2 |
@@ -82,6 +83,7 @@ The named global scale is coherent:
 
 Current component exceptions and collisions:
 
+<!-- prettier-ignore -->
 | Surface | Current value | Classification | Consequence / owner |
 | --- | ---: | --- | --- |
 | `WorkspaceSheet` | `zIndex: 5` | 4 | below raised shell with no named sheet relationship; #412 owns migration |
@@ -112,6 +114,7 @@ Decorative refraction pseudo-elements use `pointer-events: none`, avoiding accid
 
 ## 5. Token and local-value classification by visual domain
 
+<!-- prettier-ignore -->
 | Domain | Current classification | Audit result |
 | --- | --- | --- |
 | spacing | 1 for shared shell rhythm, 2 for measured one-off geometry | shell 4pt vocabulary is canonical; do not tokenise every gap |
