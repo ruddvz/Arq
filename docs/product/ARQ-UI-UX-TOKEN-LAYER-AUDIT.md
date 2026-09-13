@@ -3,290 +3,265 @@
 **Issue:** #403  
 **Programme:** #377  
 **Phase:** UX-0  
-**Audited branch/head:** `main` @ `933771396e7f9ede1548212c798665520a04b957`  
-**Evidence type:** static design-system and shell inspection  
-**Status:** current audit, not visual-regression or performance proof
+**Audited integration head:** `main` @ `2d5a2ae73557049e0d5c2af01f6b0147942b1bcd`  
+**Audit branch:** `codex/403-token-layer-audit-current-head`  
+**Evidence:** exact-head repository inspection plus deterministic shell/workspace layer guard  
+**Scope:** authority and migration audit only. No UX-1 overlay redesign and no broad restyle.
 
-## 1. Purpose
+## 1. Integration and ownership boundary
 
-This audit separates three classes of values:
+Repository settings still name an older default branch, but current product integration authority is `main`: active product PRs target `main`, and the UI routing work uses it as the integration base. The audited exact head is therefore the `main` SHA above.
 
-1. canonical shared visual tokens that UI work should consume;
-2. justified local values that express algorithm, geometry or measured interaction behaviour and should not be forced into a visual token system;
-3. duplicated or ad hoc presentation constants that should be consolidated before UX-1 adds more shell chrome.
+The move from the prior inspected SHA `14d333a225d6b606a8693f85246cacadb1c93ce3` to this exact head is one commit that only updates `docs/product/ARQ-UI-UX-WORKSPACE-OWNERSHIP-MAP.md`; no design-system, workspace implementation, shell token or `App.tsx` source changed in that interval. The implementation findings below therefore remain current at this head.
 
-The goal is not to tokenise every number. It is to prevent spacing, radius, focus, touch, motion and stacking systems from forking across features.
+Fresh open-PR inspection found no active PR claiming `packages/design-system/src/**`. PR #361 remains the live owner of `apps/web/src/App.tsx` and native persistence/session paths. This audit inspects `App.tsx` where needed for layer evidence but does not mutate it.
 
-## 2. Current token authority is layered, not singular
+The #396 workspace ownership map remains compatible with this audit:
 
-### Brand colour source
+- `WorkspaceRoot` is the current workspace composition authority;
+- `@arq/workspace` owns responsive/panel/sheet presentation policy;
+- `App.tsx` is the host integration surface and a serialised/high-conflict path while #361 is active;
+- command palette, modal flows, command feedback and fixed host surfaces outside `WorkspaceRoot` still participate in the global layer contract.
 
-`design/tokens/brand.v4.css` is the generated brand/semantic colour source consumed through `packages/design-system/src/tokens.css`.
+## 2. Classification model
 
-It should remain focused on brand and broad semantic colour identity rather than shell geometry.
+Every inspected visual value is classified as exactly one of:
+
+1. **canonical token** - a shared semantic value already owned by the brand, shell or material system;
+2. **justified local geometry/algorithm value** - a value whose meaning belongs to one component, viewport calculation, platform inset or interaction algorithm;
+3. **migration candidate** - a repeated/shared semantic presentation value that should move onto an existing or deliberately introduced contract;
+4. **invalid duplicate/ad hoc value** - a value that bypasses an already applicable named contract or creates an undocumented global layer relationship.
+
+The audit does not use literal-count reduction as a goal.
+
+## 3. Current authorities
+
+### Brand and semantic colour
+
+`design/tokens/brand.v4.css` is the brand/semantic colour authority. It supplies broad roles including focus, selection and active indication. It should not absorb shell dimensions or renderer geometry.
+
+`packages/design-system/src/tokens.css` now only imports the brand token file. The previous audit's `--arq-z-modal: 400` compatibility finding is stale and has been removed from this audit. No legacy modal layer token exists there at the current head.
 
 ### Shell visual vocabulary
 
-`packages/design-system/src/shell/shell-tokens.css` is the effective editor-shell token authority. It currently owns or defines the shared vocabulary for:
+`packages/design-system/src/shell/shell-tokens.css` is the current shell token authority for:
 
-- UI surfaces, linework and text;
-- plan fills/material colours;
-- typography and font families;
-- spacing based on the 4 point grid;
+- shell colours and materials;
+- spacing on the 4 point grid;
+- typography roles;
 - control/menu/dialog/panel radii;
-- minimum touch target size;
-- focus ring;
-- overlay z-index tiers;
-- overlay backdrop;
-- floating shadows;
+- 44px minimum touch target;
+- focus treatment;
+- shell layer tiers;
+- overlay backdrop and shared shadows;
 - motion durations and easing;
-- light/dark/coarse-pointer adaptations.
+- dark/coarse-pointer adaptations.
 
-This is a legitimate shell-specific layer and should be extended deliberately rather than replaced with unrelated local constants.
+`shell-controls.css` is the shared DOM control-state authority for normal, hover, pressed/active, primary, disabled, invalid and focus-visible states.
 
-### Material layer
+### Material and appearance
 
-`packages/design-system/src/appearance/material.css` owns the one approved functional transparency/backdrop material system. It already contains opaque fallbacks for reduced transparency, increased contrast, forced colours, printing and browsers without backdrop-filter support.
+`packages/design-system/src/appearance/material.css` owns functional transparency. It contains opaque fallbacks for reduced transparency, increased contrast, forced colours, print and unsupported backdrop filtering. Nested material explicitly disables the second backdrop filter and shadow.
 
-This is not a second generic colour system. It is an opt-in floating-surface treatment with a defined fallback contract.
+## 4. Exact current layer hierarchy
 
-## 3. Existing shared interaction tokens are useful and should be preserved
+The named global scale is coherent:
 
-Current shell tokens already cover high-value programme requirements:
+<!-- prettier-ignore -->
+| Layer | Current authority | Value / behaviour | Classification |
+| --- | --- | --- | --- |
+| base canvas | renderer/content flow | no global named z tier | 2 |
+| docked shell | normal layout flow | no global z escalation | 2 |
+| raised/floating shell | `--arq-z-shell-raised` | 10 | 1 |
+| accessibility skip link | `workspace-shell.css` | raw `z-index: 20` | 3 |
+| context HUD | `--arq-z-context-hud` | 90 | 1 |
+| modal backdrop | `--arq-z-overlay-backdrop` | 100 | 1 |
+| modal surface | `--arq-z-overlay-surface` | 110 | 1 |
+| menu/popover | `--arq-z-popover` | 120 | 1 |
+| toast/status notification | `--arq-z-toast` | 200 | 1 |
+| canvas-local transient decoration | renderer/local stacking | local only, must not become a global escalation path | 2 |
 
-- `--arq-touch-target-min: 44px`;
-- shared focus ring;
-- shared spacing values;
-- shared control/menu/dialog/panel radii;
-- shared overlay tiers;
-- motion durations including instant, micro, fast, normal and deliberate;
-- separate standard, enter and exit easing curves.
+Current component exceptions and collisions:
 
-`shell-controls.css` already centralises default, hover, active/pressed, primary, disabled, invalid and focus-visible shell control behaviour.
+<!-- prettier-ignore -->
+| Surface | Current value | Classification | Consequence / owner |
+| --- | ---: | --- | --- |
+| `WorkspaceSheet` | `zIndex: 5` | 4 | below raised shell with no named sheet relationship; #412 owns migration |
+| `TabContextMenu` | `zIndex: 6` | 4 | a menu bypasses the existing popover tier and can sit below raised shell; #412 |
+| phone project-bar More menu | `zIndex: 6` | 4 | same menu-layer defect; #412 |
+| workspace skip link | `z-index: 20` | 3 | accessibility ordering is intentional but unnamed; #412 should make relationship explicit without lowering accessibility |
+| refraction lens pseudo-element | `z-index: 1`, `pointer-events: none` | 2 | local optical decoration, not a global overlay tier |
+| legacy `IPadLandscapeShell` floats | three `zIndex: 1` values | 4 | library-only/legacy candidate per #396; resolve with consumer/cleanup authority rather than escalating |
+| `App.tsx` command-palette wrapper | fixed/transformed `zIndex: 10` | 4 | transformed parent can trap the modal stacking context below HUD/modal/popover tiers; inspect-only until #361 releases `App.tsx`, then #412 must remove or reconcile it |
 
-Later UX work should consume these systems before inventing local equivalents.
+### Bottom sheet/drawer relationship
 
-## 4. Overlay and z-index inventory
+Current floating left/right workspace drawers already use `--arq-z-shell-raised`. The touch `WorkspaceSheet` uses raw 5. Therefore a raised drawer can currently outrank the sheet. That is a real collision, not a reason to invent `9999` or mechanically raise every surface.
 
-The current shell token scale defines these meaningful tiers:
+The correct UX-1 action is for #412 to decide the semantic sheet/drawer ordering and express it with the canonical layer contract.
 
-| Token | Value | Intended class |
-| --- | ---: | --- |
-| `--arq-z-shell-raised` | 10 | raised shell/chrome |
-| `--arq-z-context-hud` | 90 | contextual HUD/tool feedback |
-| `--arq-z-overlay-backdrop` | 100 | modal/review backdrop |
-| `--arq-z-overlay-surface` | 110 | modal/review surface |
-| `--arq-z-popover` | 120 | popovers/menus above overlays where allowed |
-| `--arq-z-toast` | 200 | transient topmost status |
+### Menu relationship
 
-`modal-dialog.css` correctly consumes `--arq-z-overlay-backdrop` and `--arq-z-overlay-surface`.
+Both audited workspace menus use raw 6 even though `--arq-z-popover: 120` already exists. These are invalid duplicates rather than merely local geometry because the semantic role is already named. They should not survive #412.
 
-### Layer drift found
+### Modal and pointer behaviour
 
-`packages/design-system/src/workspace/workspace-sheet.tsx` uses a literal `zIndex: 5`.
+`modal-dialog.css` consumes the canonical backdrop/surface tiers. `ArqModalDialog` is built on React Aria modal primitives, which provide focus containment, background inertness and Escape/outside-dismiss semantics. This is stronger evidence than screenshot ordering alone.
 
-That value is below the named shell raised tier and has no documented relationship to modal, HUD, popover or toast layers. It is a direct #412 migration candidate.
+The workspace menus add Escape and outside-pointer dismissal. Their low raw z values can still create visual/pointer confusion if another raised surface visually covers them while the document-level outside-pointer handler remains active. #412 should test overlapping states, not only isolated menus.
 
-`packages/design-system/src/tokens.css` also defines `--arq-z-modal: 400` while the current modal component consumes the newer overlay backdrop/surface tokens from `shell-tokens.css`. In the inspected modal path this compatibility value is not the active modal authority. Before deleting it, run a full consumer search because code search can be incomplete. It should not be used by new UI.
+Decorative refraction pseudo-elements use `pointer-events: none`, avoiding accidental hit interception.
 
-## 5. Shadow drift found
+## 5. Token and local-value classification by visual domain
 
-The shell token layer already defines shared menu and overlay shadows.
+<!-- prettier-ignore -->
+| Domain | Current classification | Audit result |
+| --- | --- | --- |
+| spacing | 1 for shared shell rhythm, 2 for measured one-off geometry | shell 4pt vocabulary is canonical; do not tokenise every gap |
+| control dimensions | 1 for shared controls/touch target, 2 for measured layout reserves | 44px target is canonical; component-specific widths may remain local |
+| typography | 1 for named shell roles, 3 for repeated inline semantic roles | do not migrate arbitrary text sizes unless they represent an existing/shared role |
+| icon sizes | 1 where control/icon contract already defines them, otherwise 2 | no evidence justifies a new global icon-size family from this audit alone |
+| radii | 1 for control/menu/dialog/panel families | new shell chrome should consume existing semantic radii |
+| borders | 1 for shared shell line/focus/error vocabulary | one-off geometry borders may remain component-local when role differs |
+| panel dimensions | 2 when responsive/measured, 3 only when the same semantic dimension repeats | keep policy in `@arq/workspace` |
+| focus rings | 1 | existing focus semantic/token contract is canonical |
+| selection / active tool | 1 where brand/shell semantic states already exist; 3 for future shared interaction-state gaps | interaction owner defines semantics before new colour tokens |
+| hover / pressed | 1 | `shell-controls.css` authority |
+| disabled | 1 | `shell-controls.css` authority |
+| warning / error / invalid | 1 for existing DOM shell error/invalid semantics; 3 for programme states not yet standardised | do not invent severity colours ahead of owning state contracts |
+| snap feedback | 2/3 | renderer/interaction semantics must define state first; no new token family proven here |
+| drag state | 2/3 | direct-manipulation geometry remains local until shared semantics exist |
+| touch targets | 1 | `--arq-touch-target-min: 44px` |
+| shadows | 1 for shared menu/overlay elevation, 2 for distinct optical/local affordances, 3 for reusable sheet elevation | direction/purpose matters; do not collapse all shadows to one value |
+| backdrop/filter | 1 only through `material.css` | no feature-local backdrop filters should be added |
+| motion duration/easing | 1 for canonical shell vocabulary, 4 when code references non-canonical token names | final programme reconciliation remains #486 |
+| z-index/layering | 1 for named tiers, 4 for semantic overlays using raw numbers, 2 for truly local stacking | guarded by a narrowly scoped static test |
+| safe-area | 2 | `env(safe-area-inset-top, 0px)` in phone project chrome is platform geometry, not a numeric design token |
 
-However, `workspace-sheet.tsx` uses the local literal:
+## 6. High-value migration candidates
 
-`0 -4px 16px rgb(0 0 0 / 18%)`
+### #412 overlay/layer work
 
-The large desktop workspace CSS also contains local shadows for the floating status pill and selected view segment.
+1. Replace `WorkspaceSheet` raw layer 5 with an explicit sheet/drawer relationship in the canonical layer contract.
+2. Move `TabContextMenu` and the phone project-bar menu to the named popover/menu tier.
+3. Reconcile the skip-link layer while preserving its accessibility requirement to become visible above ordinary shell chrome.
+4. After #361 releases `App.tsx`, remove or reconcile the transformed `zIndex: 10` command-palette wrapper so it cannot create a modal stacking-context ceiling.
+5. Resolve or retire raw layer values in the legacy iPad shell only after #396 consumer evidence establishes its status.
+6. Exercise overlapping menu, sheet, drawer, HUD, modal and toast states for pointer hit/occlusion behaviour.
 
-Not every shadow needs the same token, because direction and visual purpose can differ. The rule should be:
+### Token/chrome migrations
 
-- repeated/floating-layer language gets a named token;
-- one-off optical details remain local only when their distinct semantic purpose is documented;
-- no future component adds a new arbitrary shadow merely for decoration.
+`WorkspaceSheet` also carries a local upward shadow, `0 -4px 16px rgb(0 0 0 / 18%)`. It is a class 3 candidate if touch sheets/drawers need a reusable elevation role. It should not simply reuse the menu shadow because direction and semantic elevation differ.
 
-The touch sheet shadow is a high-confidence token/migration candidate because it represents a reusable elevation layer.
+Local `width: 480` in the command palette and similar measured component widths remain class 2 unless another surface proves a shared compact-dialog size family.
 
-## 6. Geometry and responsive constants that should not be blindly tokenised
+## 7. Justified local exceptions
 
-Several numeric values are correctly owned by algorithms or layout policy rather than CSS tokens.
+Keep these local unless their semantics change:
 
-Examples:
+- responsive breakpoints and orientation/pointer thresholds in `@arq/workspace`;
+- sheet detent, viewport-height and drag calculations;
+- renderer hit tolerances, snap distances and geometry coordinates;
+- safe-area `env(...)` values;
+- local optical lens stacking at 1 while `pointer-events: none` keeps it non-interactive;
+- measured component widths/reserve sizes that are not a repeated semantic family;
+- distinct one-off selection/status shadows when they communicate a component-specific affordance rather than global elevation.
 
-- `TopBar` measured-layout constants such as reserve width and overflow-button width;
-- responsive width/orientation/pointer thresholds in `@arq/workspace`;
-- sheet detent calculations and viewport-dependent heights;
-- renderer hit tolerances, geometry coordinates and snap distances;
-- benchmark thresholds and performance budgets owned by #402.
+These values are not defects merely because they are numeric.
 
-A visual-token audit must not move these values into CSS just to reduce literal counts. Their authority is code behaviour, not theme styling.
+## 8. Motion and reduced-motion evidence
 
-## 7. Local presentation constants that are migration candidates
+Verified current patterns:
 
-### Workspace sheet
+- modal entry/exit transition rules only exist under `prefers-reduced-motion: no-preference`;
+- skip-link movement is likewise gated by `no-preference`;
+- refraction-lens movement is explicitly disabled under `prefers-reduced-motion: reduce`.
 
-`workspace-sheet.tsx` currently contains inline presentation values for:
+A drift remains in `workspace-shell.css`: the lens transition references `--arq-motion-duration-fast` and `--arq-motion-ease-standard` with local fallbacks, while the canonical shell vocabulary is `--arq-motion-fast` and `--arq-ease-standard`. This is class 4 token-name drift. #486 should reconcile it as part of the final programme motion pass, or a bounded pre-#486 correction may switch it directly to the canonical names if ownership is clear.
 
-- layer value `zIndex: 5`;
-- sheet shadow literal;
-- `h2` size `1rem`;
-- structural borders/background/radii expressed inline even where tokens exist.
+This issue does **not** claim comprehensive reduced-motion completion. #486 remains the final reconciliation authority.
 
-Its height itself is correctly derived from `@arq/workspace` sheet-detent policy and should remain there.
+## 9. Material and compositing performance follow-up
 
-Recommendation: move reusable sheet chrome into a sheet CSS/module contract consuming named shell tokens while keeping pointer/height behaviour in TypeScript.
+The material system is bounded but not free:
 
-### Command palette
+- regular material uses `saturate(165%) blur(28px)`;
+- strong material uses `saturate(165%) blur(34px)`;
+- optical material uses `blur(16px) saturate(1.06)`;
+- optical material also carries a multi-layer shadow.
 
-`command-palette.tsx` uses the shared modal boundary and most shared shell tokens, which is good. It still has local layout values such as `width: 480` and inline structural styling.
+Mitigations already present include `contain: paint`, opaque accessibility/platform fallbacks and explicit suppression of nested material blur/shadow.
 
-That width is not automatically a token defect. If command/search panels, future quick-open surfaces and Review Centre share a compact-dialog width family, introduce a named size token. Otherwise keep one well-documented component-local value.
+No effect is removed by this audit based on taste. #402/#489 must measure material/filter cost, sheet-open cost, compositing and interaction latency on the actual hot paths. Broad UX work should not expand backdrop filtering to docked/full-viewport surfaces without evidence.
 
-### Desktop workspace polish
+## 10. Deterministic drift check
 
-`workspace-shell.css` contains carefully justified one-off values such as very small segmented-control gaps and local optical shadows. Do not migrate them mechanically.
+`packages/design-system/src/shell/layer-contract.test.ts` is deliberately narrow. It:
 
-High-value migrations are values that represent shared shell dimensions/elevation/state. Low-value migrations are numeric details whose reason exists only inside one control.
+- pins the six canonical named global layer values in `shell-tokens.css`: 10, 90, 100, 110, 120 and 200;
+- scans only `packages/design-system/src/shell/**` and `workspace/**` source files for raw numeric `z-index`/`zIndex` declarations;
+- rejects raw shell/workspace escalation above 20 so new ad hoc values cannot enter the reserved named global layer region;
+- permits the already-audited low local/debt range at or below 20 without freezing the exact count or file location of every current exception;
+- excludes renderer/geometry packages and `App.tsx` by design.
 
-## 8. Focus and accessibility state vocabulary
+A raw value at or below 20 is not semantic approval. The classifications in this audit and #412 remain authoritative for whether a local value is justified, migratable or invalid. The guard is intentionally not an over-broad numeric lint rule.
 
-Current strong foundations:
+`App.tsx` is not included while #361 owns that high-conflict host file. Its current raw command-palette wrapper is nevertheless recorded above as an exact #412 input.
 
-- shared `:focus-visible` ring in `shell-controls.css`;
-- modal descendants reuse the shared ring;
-- minimum 44px touch target token;
-- active/pressed state has fill plus semantic `aria-pressed`, not colour alone;
-- invalid controls require visible caller text in addition to border treatment;
-- disabled controls remain legible.
+## 11. Evidence status and closing requirements
 
-UX-1/UX-2 must preserve these rather than styling focus independently per component.
+Verified by exact-head source inspection:
 
-Potential drift to audit during implementation:
+- canonical token authorities and current shell layer tiers;
+- modal use of backdrop/surface tiers;
+- current workspace raw layer exceptions;
+- current command-palette host stacking-context risk;
+- pointer-event suppression on decorative lens surfaces;
+- safe-area use in phone chrome;
+- modal, skip-link and lens reduced-motion patterns;
+- material fallbacks and nested-filter suppression;
+- stale legacy `--arq-z-modal` finding removed.
 
-- custom canvas/renderer handles that do not use DOM control tokens;
-- direct manipulation handles on tablet that need larger touch geometry;
-- selected state that relies only on opacity/tint;
-- popovers/tooltips opened only on hover.
+Executable PR evidence confirms the focused audit paths:
 
-#484 remains the final accessibility reconciliation authority.
+- `pnpm test` passes the two-test `layer-contract.test.ts` guard and the existing design-system/appearance suites;
+- the Chromium capability lane has passed the existing design-system dialog, workspace layout, optical-glass and sheet-chrome checks on the same #403 runtime sources;
+- Rust, language-system, dependency-licence, build and security lanes are green on the #403 branch revisions that carry the same product/runtime sources.
 
-## 9. Motion vocabulary and reduced-motion status
+The repository-wide `pnpm format:check` is not a clean global gate at this integration base because seven unrelated pre-existing documentation files on `main` already fail Prettier. The #403 audit document is clean, and the layer-contract test is formatted to the repository's own Prettier 3.9.6 output. This issue does not mutate unrelated baseline files merely to turn a repository-wide formatting status green.
 
-The token layer already defines a restrained motion vocabulary and comments explicitly prohibit `transition: all`, decorative bounce and ambient editor motion.
+Because the global format step runs before lint, typecheck and ZEUS drift/validate in that CI job, those downstream steps are skipped when the unrelated baseline format debt is encountered. They are therefore not claimed as executed evidence for #403.
 
-`modal-dialog.css` correctly gates entry/exit animation behind:
+The existing browser capability lane does not provide one synthetic fixture that overlaps every drawer, sheet, menu, HUD, modal and toast at once. That cross-overlay pointer/occlusion fixture is an explicit #412 acceptance input rather than evidence invented here.
 
-`@media (prefers-reduced-motion: no-preference)`
+The requested `node scripts/zeus.mjs compile --task ...` invocation remains blocked/not run in the connector-only execution environment. Separate ZEUS repository-intelligence workflow evidence must not be represented as that exact command.
 
-so the modal becomes effectively unanimated when the user requests reduced motion.
+## 12. Inputs now fixed for #412
 
-This is evidence of the correct pattern, not proof that every animated component follows it.
+#412 may treat the following as current exact-head input:
 
-#486 should inventory all actual transitions after UX-1 through UX-7 and enforce the same rule globally. It should not create a second motion token set.
+- global named order: raised shell 10, HUD 90, modal backdrop 100, modal surface 110, popover 120, toast 200;
+- base canvas/docked shell stay outside global z escalation by default;
+- `WorkspaceSheet` raw 5 is invalid global-layer drift;
+- workspace menu raw 6 values are invalid duplicates of the popover semantic role;
+- skip-link raw 20 is an accessibility-sensitive migration candidate;
+- local refraction z1 is justified and non-interactive;
+- legacy iPad z1 values are lower-priority debt tied to #396 consumer status;
+- `App.tsx` command-palette fixed/transformed z10 wrapper is a high-priority stacking-context risk that cannot be edited until #361 releases the host path;
+- modal infrastructure itself already owns focus containment/background inertness and canonical backdrop/surface tiers;
+- pointer tests must cover overlapping drawer/sheet/menu/HUD/modal/toast states, not isolated screenshots;
+- no arbitrary z escalation is acceptable as a fix.
 
-## 10. Material/transparency performance risk
+## 13. Routing
 
-`material.css` is intentionally bounded and includes strong fallback behaviour. However, its current filters are not cheap:
+- #412 owns layer-zone migration, collision removal and pointer/occlusion reconciliation.
+- #486 owns final reduced-motion reconciliation and should consume the refraction token-name drift.
+- #402/#489 own measurement and enforcement for blur, large shadows, compositing and animated-layout hot paths.
+- #396 should retain `App.tsx` as serialised/high-conflict until #361 releases it and may use this audit's outside-`WorkspaceRoot` overlay findings.
+- #369 should treat new unclassified shell/workspace raw z values, a second motion/focus/touch vocabulary, or unmeasured expansion of heavy materials as routing regressions.
 
-- regular material: `saturate(165%) blur(28px)`;
-- strong material: `saturate(165%) blur(34px)`;
-- optical material: `blur(16px) saturate(1.06)`.
+## 14. Closure rule
 
-The file already prevents nested material blur and uses `contain: paint`, which is good.
+#403 may close when the exact-head audit is repository-visible, the deterministic layer guard passes, focused design-system evidence passes, and the final issue comment records unavailable browser/ZEUS evidence as unavailable rather than verified.
 
-The UI/UX programme should not remove the material layer merely because blur can be expensive. Instead:
-
-- #489/#402 must measure the visible surfaces that use it;
-- #488 must keep an honest fallback when renderer/GPU conditions are poor where relevant;
-- broad shell work must not add backdrop material to docked/full-viewport surfaces;
-- an opaque background must not sit on top of a backdrop filter and pay GPU cost for no visible effect.
-
-## 11. State token coverage
-
-Current shared shell state coverage is strongest for normal DOM controls:
-
-- default;
-- hover;
-- focus;
-- active/pressed;
-- primary action;
-- disabled;
-- invalid/error.
-
-Programme states that still need explicit shared treatment or evidence as features land:
-
-- semantic selection versus primary selection versus hover;
-- drag/active-handle state;
-- snap target/type state;
-- read-only/capability-disabled with reason;
-- warning versus blocking error;
-- Agent proposal preview versus committed selection;
-- hidden/off-level selected state;
-- persistence/recovery status.
-
-Do not add a colour token first and decide semantics later. The owning interaction/state contract should define the state, then the design system should provide the visual vocabulary.
-
-## 12. Recommended token/layer actions before broad UX-1 polish
-
-### High priority
-
-1. Treat `shell-tokens.css` overlay scale as canonical for new UI.
-2. Migrate `WorkspaceSheet` away from literal `zIndex: 5` into the #412 layer contract.
-3. Give reusable touch-sheet elevation a named token if the existing overlay/menu shadows do not semantically fit.
-4. Include CommandPalette, modal dialogs, file-open flows, command feedback, tool HUD, level selector and future Review Centre in the #412 collision map.
-5. Preserve shared focus/touch tokens across new shell controls.
-
-### Medium priority
-
-6. Audit local inline shell dimensions only when multiple components repeat the same semantic dimension.
-7. Remove or formally alias the old `--arq-z-modal` compatibility variable only after a complete consumer search.
-8. Move heavy reusable visual chrome from inline style objects into named component CSS where that improves state/media-query control.
-
-### Evidence work
-
-9. Measure material/filter cost under #402/#489.
-10. Let #486 perform the final reduced-motion inventory after animated programme surfaces exist.
-11. Let #487 provide visual-regression evidence for token migrations instead of updating baselines blindly.
-
-## 13. No-go migrations
-
-Do not:
-
-- move renderer/geometry tolerances into visual tokens;
-- move responsive behavioural policy out of `@arq/workspace` merely because it contains pixel values;
-- create a second motion vocabulary for one feature;
-- add local `z-index: 9999` style escalation;
-- duplicate focus ring/touch target rules in feature components;
-- replace all local constants with tokens without a shared semantic reason;
-- use a token name to make an unresolved product state look standardised.
-
-## 14. Acceptance status for #403
-
-### Satisfied by this static audit
-
-- current brand, shell, interaction and material token authorities are separated;
-- named overlay tiers are identified;
-- literal touch-sheet layer/shadow drift is identified;
-- focus/touch/motion foundations are documented;
-- high-cost material effects and fallback behaviour are documented;
-- justified algorithm/responsive constants are separated from migration candidates;
-- #412/#486/#489 have concrete input.
-
-### Still required before closing #403
-
-- run a complete exact-head consumer search for old/duplicate z-index variables;
-- run or link visual-regression evidence for representative shell states;
-- verify colour/focus/state contrast through the existing design-system tests at the closing head;
-- refresh if active UI PRs introduce new local layer or shell constants;
-- if practical, add a narrow lint/check after the accepted layer contract exists rather than before the contract is settled.
-
-## 15. ZEUS handoff
-
-#369 should flag these as token/layer regressions:
-
-- new arbitrary z-index escalation outside #412's named tiers;
-- a second touch/focus/motion vocabulary;
-- repeated shared shell dimension literals after a canonical token exists;
-- expensive material effects added to large/docked surfaces without measurement;
-- visual-baseline updates used to hide layout/state regressions;
-- colour-only critical state after migration.
+Closing #403 does not mean #412, #486 or #489 are complete. It means those implementation lanes have a deterministic current contract and a bounded list of remaining migrations.
