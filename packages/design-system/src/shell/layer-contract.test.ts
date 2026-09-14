@@ -55,9 +55,12 @@ const CANONICAL_LAYERS = [
 ] as const;
 
 describe('shell layer contract', () => {
-  it('keeps the named global layer tiers pinned', () => {
+  it('keeps the named global layer tiers pinned and ordered', () => {
+    let previous = Number.NEGATIVE_INFINITY;
     for (const [token, value] of CANONICAL_LAYERS) {
       expect(SHELL_TOKENS).toMatch(new RegExp(`${token}\\s*:\\s*${value}\\s*;`));
+      expect(value).toBeGreaterThan(previous);
+      previous = value;
     }
   });
 
