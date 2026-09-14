@@ -46,6 +46,8 @@ function rawLayerValues(): readonly number[] {
 const CANONICAL_LAYERS = [
   ['--arq-z-shell-raised', 10],
   ['--arq-z-context-hud', 90],
+  ['--arq-z-workspace-overlay', 95],
+  ['--arq-z-accessibility', 98],
   ['--arq-z-overlay-backdrop', 100],
   ['--arq-z-overlay-surface', 110],
   ['--arq-z-popover', 120],
