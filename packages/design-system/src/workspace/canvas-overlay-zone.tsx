@@ -39,6 +39,7 @@ export interface CanvasOverlayZoneProps extends Omit<HTMLAttributes<HTMLDivEleme
  * canvas hit-testable while allowing real buttons/fields to own their bounds.
  * Selection/tool zones are geometry-anchored full-canvas hosts; corner/centre
  * zones use the workspace safe-area variables from overlay-zone-contract.css.
+ * Layer ordering itself remains owned by shell-tokens.css.
  */
 export function CanvasOverlayZone(props: CanvasOverlayZoneProps): JSX.Element {
   const { zone, className, children, ...rest } = props;
