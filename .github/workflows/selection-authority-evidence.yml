@@ -1,8 +1,5 @@
 name: Selection authority evidence
 
-permissions:
-  contents: write
-
 on:
   pull_request:
     branches: [main]
@@ -43,34 +40,6 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Prepare crossing-marquee #401 probe
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          probe = Path('scripts/run-selection-authority-capability-check.mjs')
-          text = probe.read_text()
-          old = """  const from = { x: multiBox.x + multiBox.width * 0.2, y: multiBox.y + multiBox.height * 0.25 };\n  const to = { x: multiBox.x + multiBox.width * 0.72, y: multiBox.y + multiBox.height * 0.65 };\n"""
-          new = """  // Start on the unobstructed right side of the canvas, then drag left.\n  // The left project-browser overlay can cover the first ~20% of the canvas;\n  // pointer capture keeps the crossing marquee valid after the drag enters it.\n  const from = { x: multiBox.x + multiBox.width * 0.78, y: multiBox.y + multiBox.height * 0.72 };\n  const to = { x: multiBox.x + multiBox.width * 0.22, y: multiBox.y + multiBox.height * 0.2 };\n"""
-          if old not in text:
-              raise SystemExit('expected marquee probe geometry was not found')
-          probe.write_text(text.replace(old, new))
-          PY
-          pnpm exec prettier --write scripts/run-selection-authority-capability-check.mjs
-      - name: Persist crossing-marquee probe on the PR branch
-        if: github.event_name == 'pull_request'
-        run: |
-          if ! git diff --quiet -- scripts/run-selection-authority-capability-check.mjs; then
-            git stash push -- scripts/run-selection-authority-capability-check.mjs
-            git fetch origin "${{ github.head_ref }}"
-            git checkout -B "${{ github.head_ref }}" "origin/${{ github.head_ref }}"
-            git stash pop
-            git config user.name github-actions[bot]
-            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-            git add scripts/run-selection-authority-capability-check.mjs
-            git commit -m "test(ux): avoid browser overlay in #401 marquee probe"
-            git push origin "${{ github.head_ref }}"
-          fi
       - name: Verify #401 evidence files are formatted
         run: >-
           pnpm exec prettier --check
