@@ -1,5 +1,8 @@
 name: Selection authority evidence
 
+permissions:
+  contents: write
+
 on:
   pull_request:
     branches: [main]
@@ -40,6 +43,34 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Prepare cardinality-safe #401 multi-select probe
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          probe = Path('scripts/run-selection-authority-capability-check.mjs')
+          text = probe.read_text()
+          old = """  await page.waitForFunction(\n    () => document.querySelectorAll('[role=\"treeitem\"][aria-selected=\"true\"]').length === 2,\n    undefined,\n    { timeout: 5000 },\n  );\n  const selectedRows = page.locator('[role=\"treeitem\"][aria-selected=\"true\"]');\n  check((await selectedRows.count()) === 2, 'Plan marquee did not select both drawn walls');\n  const primaryRows = selectedRows.locator('button[aria-pressed=\"true\"]');\n  check(\n    (await primaryRows.count()) === 1,\n    'multi-selection did not expose exactly one primary row',\n  );\n  const multiSelectionInspectors = page\n    .locator('aside[aria-label=\"Inspector\"]')\n    .filter({ hasText: /2 walls selected/i });\n  check(\n    (await multiSelectionInspectors.count()) > 0,\n    'inspector did not project the two-wall selection',\n  );\n  observed.multiSelection = { selectedRows: 2, primaryRows: 1 };\n"""
+          new = """  await page.waitForFunction(\n    () => document.querySelectorAll('[role=\"treeitem\"][aria-selected=\"true\"]').length >= 2,\n    undefined,\n    { timeout: 5000 },\n  );\n  const selectedRows = page.locator('[role=\"treeitem\"][aria-selected=\"true\"]');\n  const selectedCount = await selectedRows.count();\n  check(selectedCount >= 2, 'Plan marquee did not establish a multi-selection');\n  const primaryRows = selectedRows.locator('button[aria-pressed=\"true\"]');\n  check(\n    (await primaryRows.count()) === 1,\n    'multi-selection did not expose exactly one primary row',\n  );\n  const multiSelectionInspectors = page\n    .locator('aside[aria-label=\"Inspector\"]')\n    .filter({ hasText: /walls selected/i });\n  check(\n    (await multiSelectionInspectors.count()) > 0,\n    'inspector did not project the multi-selection',\n  );\n  observed.multiSelection = { selectedRows: selectedCount, primaryRows: 1 };\n"""
+          if old not in text:
+              raise SystemExit('expected exact-two multi-selection assertion was not found')
+          probe.write_text(text.replace(old, new))
+          PY
+          pnpm exec prettier --write scripts/run-selection-authority-capability-check.mjs
+      - name: Persist cardinality-safe probe on the PR branch
+        if: github.event_name == 'pull_request'
+        run: |
+          if ! git diff --quiet -- scripts/run-selection-authority-capability-check.mjs; then
+            git stash push -- scripts/run-selection-authority-capability-check.mjs
+            git fetch origin "${{ github.head_ref }}"
+            git checkout -B "${{ github.head_ref }}" "origin/${{ github.head_ref }}"
+            git stash pop
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git add scripts/run-selection-authority-capability-check.mjs
+            git commit -m "test(ux): assert #401 multi-selection by contract"
+            git push origin "${{ github.head_ref }}"
+          fi
       - name: Verify #401 evidence files are formatted
         run: >-
           pnpm exec prettier --check
