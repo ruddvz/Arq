@@ -10,6 +10,7 @@
 
 ARQ uses one ordered layer model. Local feature code must not create a competing large numeric z-index.
 
+<!-- prettier-ignore -->
 | Order | Surface | Authority |
 | ---: | --- | --- |
 | normal flow | base canvas and docked shell | layout / renderer |
@@ -46,6 +47,7 @@ Corner and centre zones use workspace safe-area variables instead of hard-coded 
 
 Reserved integration roles are:
 
+<!-- prettier-ignore -->
 | Role | Default zone | Pointer behavior |
 | --- | --- | --- |
 | view identity | top-left | transparent unless a real control is added |
