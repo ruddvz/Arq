@@ -44,8 +44,8 @@ describe('workspace overlay zone contract', () => {
 
   it('keeps workspace overlays between the HUD and modal backdrop', () => {
     const hud = cssNumber(SHELL_TOKENS, '--arq-z-context-hud');
-    const workspaceOverlay = cssNumber(CONTRACT_CSS, '--arq-z-workspace-overlay');
-    const accessibility = cssNumber(CONTRACT_CSS, '--arq-z-accessibility');
+    const workspaceOverlay = cssNumber(SHELL_TOKENS, '--arq-z-workspace-overlay');
+    const accessibility = cssNumber(SHELL_TOKENS, '--arq-z-accessibility');
     const modalBackdrop = cssNumber(SHELL_TOKENS, '--arq-z-overlay-backdrop');
 
     expect(hud).toBeLessThan(workspaceOverlay);
@@ -67,7 +67,7 @@ describe('workspace overlay zone contract', () => {
     expect(PHONE_MENU_SOURCE).not.toMatch(/zIndex:\s*6\b/);
   });
 
-  it('moves floating workspace panels and the skip link onto named local tiers', () => {
+  it('moves floating workspace panels and the skip link onto named shell tiers', () => {
     expect(CONTRACT_CSS).toMatch(
       /\.arq-workspace \.arq-workspace__overlay\s*\{[\s\S]*z-index:\s*var\(--arq-z-workspace-overlay\);/,
     );
