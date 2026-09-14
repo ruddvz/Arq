@@ -340,8 +340,11 @@ async function runScratchScenarios(page, observed) {
   await activateSelectTool(page);
   const multiBox = await plan.boundingBox();
   if (multiBox === null) throw new Error('plan canvas lost its bounding box before marquee');
-  const from = { x: multiBox.x + multiBox.width * 0.2, y: multiBox.y + multiBox.height * 0.25 };
-  const to = { x: multiBox.x + multiBox.width * 0.72, y: multiBox.y + multiBox.height * 0.65 };
+  // Start on the unobstructed right side of the canvas, then drag left.
+  // The left project-browser overlay can cover the first ~20% of the canvas;
+  // pointer capture keeps the crossing marquee valid after the drag enters it.
+  const from = { x: multiBox.x + multiBox.width * 0.78, y: multiBox.y + multiBox.height * 0.72 };
+  const to = { x: multiBox.x + multiBox.width * 0.22, y: multiBox.y + multiBox.height * 0.2 };
   await page.mouse.move(from.x, from.y);
   await page.mouse.down();
   await page.mouse.move(to.x, to.y, { steps: 12 });
