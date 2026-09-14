@@ -34,7 +34,7 @@ interface MenuItem {
  *
  * Split right and Split down are deliberately absent rather than present and
  * disabled. The registry's own rule is that an unavailable action "stays
- * visible with reason **when discoverability matters**" — a split view is a
+ * visible with reason **when discoverability matters**" - a split view is a
  * feature this repository has no viewport host for at all, so listing it would
  * advertise a capability rather than explain a temporary state. The tools that
  * *are* built but unavailable for this tab (duplicate on a non-duplicable kind)
@@ -45,7 +45,7 @@ interface MenuItem {
  * labelled, and every disabled item carries its reason in the accessible name.
  *
  * Escape dismisses and returns focus to the tab, and focus moves into the menu
- * on open — without that the menu is unusable by keyboard, which is exactly the
+ * on open - without that the menu is unusable by keyboard, which is exactly the
  * bug found in the phone project bar's More menu.
  */
 export function TabContextMenu(props: TabContextMenuProps): JSX.Element {
@@ -128,6 +128,7 @@ export function TabContextMenu(props: TabContextMenuProps): JSX.Element {
     <div
       ref={menuRef}
       role="menu"
+      data-arq-overlay-role="popover"
       aria-label={`${tab.title} view actions`}
       className="arq-tab-context-menu arq-shell-panel"
       onKeyDown={(event) => {
@@ -140,7 +141,7 @@ export function TabContextMenu(props: TabContextMenuProps): JSX.Element {
         position: 'absolute',
         top: '100%',
         left: 0,
-        zIndex: 6,
+        zIndex: 'var(--arq-z-popover)',
         minWidth: 240,
         padding: 'var(--arq-space-micro)',
         border: '1px solid var(--arq-ui-line-default)',
