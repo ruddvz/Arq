@@ -1,3 +1,5 @@
+import './overlay-zone-contract.css';
+
 export * from './mode-rail';
 export * from './tool-rail-adapter';
 export * from './project-tab-strip';
@@ -16,3 +18,4 @@ export * from './tablet-drawer-bar';
 export * from './use-viewport-probe';
 export * from './view-kind-label';
 export * from './view-kind-switcher';
+export * from './canvas-overlay-zone';
