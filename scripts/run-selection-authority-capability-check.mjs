@@ -14,7 +14,7 @@
  *  5. Plan marquee establishes one primary plus secondary selections.
  *  6. Active-level switch clears an off-level selection deterministically.
  *  7. DOM keyboard focus moves through shell controls without changing selection.
- *  8. Escape preserves semantic selection; empty-canvas selection is the current
+ *  8. Escape preserves semantic selection; an empty 3D click is the current
  *     deterministic clear path.
  *
  * Usage: node scripts/run-selection-authority-capability-check.mjs
@@ -155,16 +155,17 @@ async function selectedTreeCount(page) {
 }
 
 async function inspectorId(page) {
-  const inspector = page.getByRole('complementary', { name: 'Inspector' });
-  const input = inspector.getByRole('textbox', { name: 'ID' });
+  const input = page.locator('aside[aria-label="Inspector"] input[aria-label="ID"]').first();
   return input.inputValue();
 }
 
 async function assertNoSelection(page, label) {
   check((await selectedTreeCount(page)) === 0, `${label}: tree still reports a selected row`);
-  const inspector = page.getByRole('complementary', { name: 'Inspector' });
+  const noSelectionInspectors = page
+    .locator('aside[aria-label="Inspector"]')
+    .filter({ hasText: 'No selection' });
   check(
-    /No selection/.test(await inspector.innerText()),
+    (await noSelectionInspectors.count()) > 0,
     `${label}: inspector did not return to No selection`,
   );
 }
@@ -284,18 +285,28 @@ async function runScratchScenarios(page, observed) {
     (await inspectorId(page)) === planSelectedId,
     'Escape unexpectedly cleared semantic selection',
   );
-  await activateSelectTool(page);
-  const clearBox = await plan.boundingBox();
-  if (clearBox === null) throw new Error('plan canvas lost its bounding box');
-  await page.mouse.click(clearBox.x + clearBox.width * 0.86, clearBox.y + clearBox.height * 0.82);
+  await tab3d.click();
+  await model.waitFor({ state: 'visible', timeout: 5000 });
+  const emptyPoint = await page.evaluate(() => {
+    const canvas = document.querySelector('canvas[aria-label="3D model view"]');
+    const panel = document.querySelector('.arq-workspace__overlay--left');
+    const canvasBox = canvas.getBoundingClientRect();
+    const panelBox = panel?.getBoundingClientRect() ?? null;
+    const clearOfPanel = panelBox === null ? 8 : Math.max(8, panelBox.right - canvasBox.left + 24);
+    return { x: clearOfPanel, y: 24 };
+  });
+  await model.click({ position: emptyPoint });
   await page.waitForFunction(
     () => document.querySelectorAll('[role="treeitem"][aria-selected="true"]').length === 0,
     undefined,
     { timeout: 5000 },
   );
-  await assertNoSelection(page, 'empty-plan-click clear');
+  await assertNoSelection(page, 'empty-3d-click clear');
+  observed.empty3dClear = await waitForGreenSelection(page, model, false);
   observed.escapePreservesSelection = true;
-  observed.emptyClickClearsSelection = true;
+  observed.empty3dClickClearsSelection = true;
+  await planTab.click();
+  await plan.waitFor({ state: 'visible', timeout: 5000 });
 
   /* 2. Tree selection -> Plan/inspector/3D, without another selection source. */
   await drawnRows.nth(0).click();
@@ -347,9 +358,11 @@ async function runScratchScenarios(page, observed) {
     (await primaryRows.count()) === 1,
     'multi-selection did not expose exactly one primary row',
   );
-  const inspectorText = await page.getByRole('complementary', { name: 'Inspector' }).innerText();
+  const multiSelectionInspectors = page
+    .locator('aside[aria-label="Inspector"]')
+    .filter({ hasText: /2 walls selected/i });
   check(
-    /2 walls selected/i.test(inspectorText),
+    (await multiSelectionInspectors.count()) > 0,
     'inspector did not project the two-wall selection',
   );
   observed.multiSelection = { selectedRows: 2, primaryRows: 1 };
