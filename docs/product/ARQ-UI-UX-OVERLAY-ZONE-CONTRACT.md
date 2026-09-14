@@ -8,7 +8,7 @@
 
 ## 1. Layer order
 
-ARQ uses one ordered layer model. Local feature code must not create a competing large numeric z-index.
+ARQ uses one ordered layer model. All named layer numbers live in `packages/design-system/src/shell/shell-tokens.css`; local feature code must consume those names rather than create a competing numeric scale.
 
 <!-- prettier-ignore -->
 | Order | Surface | Authority |
@@ -23,7 +23,7 @@ ARQ uses one ordered layer model. Local feature code must not create a competing
 | 120 | menus and popovers | `--arq-z-popover` |
 | 200 | toast/status notification | `--arq-z-toast` |
 
-The workspace-local 95/98 tiers deliberately occupy the reserved gap between the HUD and modal backdrop. This gives three deterministic rules:
+The workspace-overlay and accessibility tiers deliberately occupy the reserved gap between the HUD and modal backdrop. They are part of the canonical shell layer scale, not workspace-local numeric definitions. This gives three deterministic rules:
 
 1. a drawer or sheet hides tool chrome where it physically covers the canvas;
 2. a focused skip link remains visible above ordinary workspace overlays;
@@ -78,7 +78,8 @@ This issue migrates the current known collisions from #403:
 - desktop floating panels / tablet drawers: raised-shell tier -> workspace-overlay tier;
 - `TabContextMenu`: raw `zIndex: 6` -> `--arq-z-popover`;
 - phone project More menu: raw `zIndex: 6` -> `--arq-z-popover`;
-- workspace skip link: runtime ordering -> named `--arq-z-accessibility` tier.
+- workspace skip link: runtime ordering -> named `--arq-z-accessibility` tier;
+- the new workspace-overlay/accessibility values are promoted into `shell-tokens.css` and pinned by the global layer guard.
 
 `data-arq-overlay-role` is attached to sheet/menu surfaces where practical so browser evidence can identify the semantic layer without inferring it from visual position.
 
