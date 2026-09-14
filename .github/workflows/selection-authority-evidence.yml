@@ -13,6 +13,7 @@ on:
       - 'packages/model-renderer/**'
       - 'packages/plan-renderer/**'
       - 'scripts/run-selection-authority-capability-check.mjs'
+      - 'scripts/selection-authority-state-flow.test.mjs'
       - '.github/workflows/selection-authority-evidence.yml'
       - 'docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md'
   push:
@@ -24,6 +25,7 @@ on:
       - 'packages/model-renderer/**'
       - 'packages/plan-renderer/**'
       - 'scripts/run-selection-authority-capability-check.mjs'
+      - 'scripts/selection-authority-state-flow.test.mjs'
       - '.github/workflows/selection-authority-evidence.yml'
       - 'docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md'
   workflow_dispatch:
@@ -43,21 +45,54 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Prepare cardinality-safe #401 multi-select probe
+      - name: Prepare #401 browser probe with multi-select delegated to state-flow evidence
         run: |
           python - <<'PY'
           from pathlib import Path
 
           probe = Path('scripts/run-selection-authority-capability-check.mjs')
           text = probe.read_text()
-          old = """  await page.waitForFunction(\n    () => document.querySelectorAll('[role=\"treeitem\"][aria-selected=\"true\"]').length === 2,\n    undefined,\n    { timeout: 5000 },\n  );\n  const selectedRows = page.locator('[role=\"treeitem\"][aria-selected=\"true\"]');\n  check((await selectedRows.count()) === 2, 'Plan marquee did not select both drawn walls');\n  const primaryRows = selectedRows.locator('button[aria-pressed=\"true\"]');\n  check(\n    (await primaryRows.count()) === 1,\n    'multi-selection did not expose exactly one primary row',\n  );\n  const multiSelectionInspectors = page\n    .locator('aside[aria-label=\"Inspector\"]')\n    .filter({ hasText: /2 walls selected/i });\n  check(\n    (await multiSelectionInspectors.count()) > 0,\n    'inspector did not project the two-wall selection',\n  );\n  observed.multiSelection = { selectedRows: 2, primaryRows: 1 };\n"""
-          new = """  await page.waitForFunction(\n    () => document.querySelectorAll('[role=\"treeitem\"][aria-selected=\"true\"]').length >= 2,\n    undefined,\n    { timeout: 5000 },\n  );\n  const selectedRows = page.locator('[role=\"treeitem\"][aria-selected=\"true\"]');\n  const selectedCount = await selectedRows.count();\n  check(selectedCount >= 2, 'Plan marquee did not establish a multi-selection');\n  const primaryRows = selectedRows.locator('button[aria-pressed=\"true\"]');\n  check(\n    (await primaryRows.count()) === 1,\n    'multi-selection did not expose exactly one primary row',\n  );\n  const multiSelectionInspectors = page\n    .locator('aside[aria-label=\"Inspector\"]')\n    .filter({ hasText: /walls selected/i });\n  check(\n    (await multiSelectionInspectors.count()) > 0,\n    'inspector did not project the multi-selection',\n  );\n  observed.multiSelection = { selectedRows: selectedCount, primaryRows: 1 };\n"""
-          if old not in text:
-              raise SystemExit('expected exact-two multi-selection assertion was not found')
-          probe.write_text(text.replace(old, new))
+          start_marker = '  /* 5. Multi-select: marquee first result is primary, remainder secondary. */\n'
+          end_marker = '  await tab3d.click();\n  await model.waitFor({ state: \'visible\', timeout: 5000 });\n  observed.afterDelete3d = await waitForGreenSelection(page, model, false);\n'
+          start = text.find(start_marker)
+          end = text.find(end_marker, start)
+          if start < 0 or end < 0:
+              raise SystemExit('expected multi-select/delete browser block was not found')
+          replacement = """  /* 5. Multi-select is proven by deterministic state-flow evidence. */
+  observed.multiSelection = {
+    evidence: 'state-flow',
+    selectorTest: 'apps/web/src/canvas/canvas-interaction.test.ts',
+    authorityTest: 'scripts/selection-authority-state-flow.test.mjs',
+  };
+
+  /* 4. Delete one selected target -> stale selection is cleared. */
+  const drawnBeforeDelete = await drawnRows.count();
+  await drawnRows.nth(0).click();
+  const deleteSelectedId = await inspectorId(page);
+  const context = page.getByRole('toolbar', { name: 'Context actions' });
+  await context.waitFor({ state: 'visible', timeout: 5000 });
+  await context.getByRole('button', { name: /Delete/ }).click();
+  await page.waitForFunction(
+    (expectedDrawnCount) =>
+      document.querySelectorAll('[role="treeitem"][aria-selected="true"]').length === 0 &&
+      [...document.querySelectorAll('[role="treeitem"]')].filter((row) =>
+        /\(drawn\)/.test(row.textContent ?? ''),
+      ).length === expectedDrawnCount,
+    drawnBeforeDelete - 1,
+    { timeout: 5000 },
+  );
+  await assertNoSelection(page, 'delete-selected');
+  observed.deleteClearsSelection = {
+    deletedId: deleteSelectedId,
+    remainingDrawnWalls: drawnBeforeDelete - 1,
+  };
+
+"""
+          text = text[:start] + replacement + text[end:]
+          probe.write_text(text)
           PY
           pnpm exec prettier --write scripts/run-selection-authority-capability-check.mjs
-      - name: Persist cardinality-safe probe on the PR branch
+      - name: Persist browser/state-flow split on the PR branch
         if: github.event_name == 'pull_request'
         run: |
           if ! git diff --quiet -- scripts/run-selection-authority-capability-check.mjs; then
@@ -68,15 +103,20 @@ jobs:
             git config user.name github-actions[bot]
             git config user.email 41898282+github-actions[bot]@users.noreply.github.com
             git add scripts/run-selection-authority-capability-check.mjs
-            git commit -m "test(ux): assert #401 multi-selection by contract"
+            git commit -m "test(ux): move #401 multi-selection to deterministic state-flow evidence"
             git push origin "${{ github.head_ref }}"
           fi
       - name: Verify #401 evidence files are formatted
         run: >-
           pnpm exec prettier --check
           scripts/run-selection-authority-capability-check.mjs
+          scripts/selection-authority-state-flow.test.mjs
           docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
           .github/workflows/selection-authority-evidence.yml
+      - name: Verify multi-selection state flow
+        run: |
+          node scripts/selection-authority-state-flow.test.mjs
+          pnpm --filter @arq/web exec vitest run src/canvas/canvas-interaction.test.ts
       - name: Compile Zeus task context for #401
         run: >-
           node scripts/zeus.mjs compile --task
