@@ -210,6 +210,11 @@
      everything above it. */
   --arq-z-shell-raised: 10;
   --arq-z-context-hud: 90;
+  /* UX-1.3: a workspace drawer or sheet covers canvas HUD chrome where the
+     canvas itself is covered, while accessibility escape surfaces stay visible
+     above workspace overlays without outranking a modal. */
+  --arq-z-workspace-overlay: 95;
+  --arq-z-accessibility: 98;
   --arq-z-overlay-backdrop: 100;
   --arq-z-overlay-surface: 110;
   --arq-z-popover: 120;
