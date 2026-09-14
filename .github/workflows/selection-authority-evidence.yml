@@ -1,5 +1,8 @@
 name: Selection authority evidence
 
+permissions:
+  contents: write
+
 on:
   pull_request:
     branches: [main]
@@ -40,7 +43,7 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Prepare deterministic 3D clear-selection probe
+      - name: Prepare deterministic #401 probe source
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -51,18 +54,29 @@ jobs:
               ' *  8. Escape preserves semantic selection; empty-canvas selection is the current\n *     deterministic clear path.\n',
               ' *  8. Escape preserves semantic selection; an empty 3D click is the current\n *     deterministic clear path.\n',
           )
-          old = """  await activateSelectTool(page);\n  const clearBox = await plan.boundingBox();\n  if (clearBox === null) throw new Error('plan canvas lost its bounding box');\n  await page.mouse.click(clearBox.x + clearBox.width * 0.86, clearBox.y + clearBox.height * 0.82);\n  await page.waitForFunction(\n    () => document.querySelectorAll('[role=\"treeitem\"][aria-selected=\"true\"]').length === 0,\n    undefined,\n    { timeout: 5000 },\n  );\n  await assertNoSelection(page, 'empty-plan-click clear');\n  observed.escapePreservesSelection = true;\n  observed.emptyClickClearsSelection = true;\n\n  /* 2. Tree selection -> Plan/inspector/3D, without another selection source. */\n"""
-          new = """  await tab3d.click();\n  await model.waitFor({ state: 'visible', timeout: 5000 });\n  const emptyPoint = await page.evaluate(() => {\n    const canvas = document.querySelector('canvas[aria-label=\"3D model view\"]');\n    const panel = document.querySelector('.arq-workspace__overlay--left');\n    const canvasBox = canvas.getBoundingClientRect();\n    const panelBox = panel?.getBoundingClientRect() ?? null;\n    const clearOfPanel =\n      panelBox === null ? 8 : Math.max(8, panelBox.right - canvasBox.left + 24);\n    return { x: clearOfPanel, y: 24 };\n  });\n  await model.click({ position: emptyPoint });\n  await page.waitForFunction(\n    () => document.querySelectorAll('[role=\"treeitem\"][aria-selected=\"true\"]').length === 0,\n    undefined,\n    { timeout: 5000 },\n  );\n  await assertNoSelection(page, 'empty-3d-click clear');\n  observed.empty3dClear = await waitForGreenSelection(page, model, false);\n  observed.escapePreservesSelection = true;\n  observed.empty3dClickClearsSelection = true;\n  await planTab.click();\n  await plan.waitFor({ state: 'visible', timeout: 5000 });\n\n  /* 2. Tree selection -> Plan/inspector/3D, without another selection source. */\n"""
-          if old not in text:
-              raise SystemExit('expected Plan clear-selection block was not found')
-          probe.write_text(text.replace(old, new))
+          old_clear = """  await activateSelectTool(page);\n  const clearBox = await plan.boundingBox();\n  if (clearBox === null) throw new Error('plan canvas lost its bounding box');\n  await page.mouse.click(clearBox.x + clearBox.width * 0.86, clearBox.y + clearBox.height * 0.82);\n  await page.waitForFunction(\n    () => document.querySelectorAll('[role=\"treeitem\"][aria-selected=\"true\"]').length === 0,\n    undefined,\n    { timeout: 5000 },\n  );\n  await assertNoSelection(page, 'empty-plan-click clear');\n  observed.escapePreservesSelection = true;\n  observed.emptyClickClearsSelection = true;\n\n  /* 2. Tree selection -> Plan/inspector/3D, without another selection source. */\n"""
+          new_clear = """  await tab3d.click();\n  await model.waitFor({ state: 'visible', timeout: 5000 });\n  const emptyPoint = await page.evaluate(() => {\n    const canvas = document.querySelector('canvas[aria-label=\"3D model view\"]');\n    const panel = document.querySelector('.arq-workspace__overlay--left');\n    const canvasBox = canvas.getBoundingClientRect();\n    const panelBox = panel?.getBoundingClientRect() ?? null;\n    const clearOfPanel =\n      panelBox === null ? 8 : Math.max(8, panelBox.right - canvasBox.left + 24);\n    return { x: clearOfPanel, y: 24 };\n  });\n  await model.click({ position: emptyPoint });\n  await page.waitForFunction(\n    () => document.querySelectorAll('[role=\"treeitem\"][aria-selected=\"true\"]').length === 0,\n    undefined,\n    { timeout: 5000 },\n  );\n  await assertNoSelection(page, 'empty-3d-click clear');\n  observed.empty3dClear = await waitForGreenSelection(page, model, false);\n  observed.escapePreservesSelection = true;\n  observed.empty3dClickClearsSelection = true;\n  await planTab.click();\n  await plan.waitFor({ state: 'visible', timeout: 5000 });\n\n  /* 2. Tree selection -> Plan/inspector/3D, without another selection source. */\n"""
+          if old_clear in text:
+              text = text.replace(old_clear, new_clear)
+
+          old_assert = """async function assertNoSelection(page, label) {\n  check((await selectedTreeCount(page)) === 0, `${label}: tree still reports a selected row`);\n  const inspector = page.getByRole('complementary', { name: 'Inspector' });\n  check(\n    /No selection/.test(await inspector.innerText()),\n    `${label}: inspector did not return to No selection`,\n  );\n}\n"""
+          new_assert = """async function assertNoSelection(page, label) {\n  check((await selectedTreeCount(page)) === 0, `${label}: tree still reports a selected row`);\n  const noSelectionInspectors = page\n    .locator('aside[aria-label=\"Inspector\"]')\n    .filter({ hasText: 'No selection' });\n  check(\n    (await noSelectionInspectors.count()) > 0,\n    `${label}: inspector did not return to No selection`,\n  );\n}\n"""
+          if old_assert in text:
+              text = text.replace(old_assert, new_assert)
+
+          probe.write_text(text)
           PY
           pnpm exec prettier --write scripts/run-selection-authority-capability-check.mjs
-      - name: Upload corrected #401 probe source
-        uses: actions/upload-artifact@v4
-        with:
-          name: selection-authority-corrected-source
-          path: scripts/run-selection-authority-capability-check.mjs
+      - name: Persist corrected #401 probe on the PR branch
+        if: github.event_name == 'pull_request'
+        run: |
+          if ! git diff --quiet -- scripts/run-selection-authority-capability-check.mjs; then
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git add scripts/run-selection-authority-capability-check.mjs
+            git commit -m "test(ux): persist deterministic #401 browser probe"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
       - name: Verify #401 evidence files are formatted
         run: >-
           pnpm exec prettier --check
