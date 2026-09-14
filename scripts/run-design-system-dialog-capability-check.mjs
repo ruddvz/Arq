@@ -180,7 +180,6 @@ async function run() {
     // than importing registry/state helpers into the check. That distinction is
     // the point of #398: repository backing alone must never count as product
     // reachability.
-    const planCanvas = page.locator('canvas[aria-label="Plan canvas"]');
     const toolsNav = page.getByRole('navigation', { name: 'Tools' });
     const drawCategory = toolsNav.locator(
       'button[aria-controls="arq-tool-rail-panel-draw"]',
@@ -239,13 +238,20 @@ async function run() {
     await disabledSearch.fill('Export DXF');
     const disabledCommand = dialog.getByRole('option', { name: /Export DXF/ }).first();
     const disabledCommandMarked = (await disabledCommand.getAttribute('aria-disabled')) === 'true';
-    const disabledReasonVisible = (await disabledCommand.textContent())?.includes('No project open yet') ?? false;
+    const disabledReasonVisible =
+      (await disabledCommand.textContent())?.includes('No project open yet') ?? false;
     await disabledSearch.press('Enter');
     await page.waitForTimeout(100);
     const disabledEnterRefused = await dialog.isVisible();
-    await disabledCommand.click();
+    const disabledCommandBox = await disabledCommand.boundingBox();
+    if (disabledCommandBox !== null) {
+      await page.mouse.click(
+        disabledCommandBox.x + disabledCommandBox.width / 2,
+        disabledCommandBox.y + disabledCommandBox.height / 2,
+      );
+    }
     await page.waitForTimeout(100);
-    const disabledPointerRefused = await dialog.isVisible();
+    const disabledPointerRefused = disabledCommandBox !== null && (await dialog.isVisible());
     await page.keyboard.press('Escape');
     await dialog.waitFor({ state: 'hidden', timeout: 5000 });
 
