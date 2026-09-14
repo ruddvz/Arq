@@ -51,6 +51,7 @@ describe('workspace overlay zone contract', () => {
     expect(hud).toBeLessThan(workspaceOverlay);
     expect(workspaceOverlay).toBeLessThan(accessibility);
     expect(accessibility).toBeLessThan(modalBackdrop);
+    expect(CONTRACT_CSS).not.toMatch(/--arq-z-(?:workspace-overlay|accessibility)\s*:\s*\d+/);
   });
 
   it('keeps zone hosts pointer-transparent and control bounds interactive', () => {
