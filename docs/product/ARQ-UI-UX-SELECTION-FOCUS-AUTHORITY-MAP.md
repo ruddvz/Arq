@@ -4,7 +4,7 @@
 - Programme: #377
 - Phase: UX-0
 - Integration authority: `main`
-- Revalidated integration head: `2d5a2ae73557049e0d5c2af01f6b0147942b1bcd`
+- Revalidated integration head: `4184551be3e75636d7feea93fda13699b00b4b43`
 - Evidence branch: `codex/arq-401-selection-authority-evidence`
 - Runtime mutation scope: none
 
@@ -20,13 +20,12 @@ repository default-branch pointer still names the older
 `claude/arq-cad-platform-research-ba8rav` branch; #332 tracks that
 administrative mismatch.
 
-Current overlap inspection found:
+At the revalidated head:
 
-- PR #361 remains the active owner of `apps/web/src/App.tsx` and native
+- PR #361 remains open and owns `apps/web/src/App.tsx` plus native
   session/persistence paths.
-- PR #363 owns its browser-matrix workflow, script and validation document.
-- No other open PR examined owns the live Plan, 3D, tree, inspector, workspace
-  mode selection, or active level/view paths relevant to #401.
+- no other active PR inspected owns the live Plan, 3D, tree, inspector,
+  workspace-mode selection or active level/view paths relevant to #401;
 - #401 therefore keeps `App.tsx` read-only and adds only deterministic evidence
   plus this audit artefact.
 
@@ -35,7 +34,7 @@ reports no such issue, so this audit does not invent a contract for it.
 
 ## State domains
 
-The current implementation has five different state domains. They must not be
+The current implementation has five distinct state domains. They must not be
 collapsed accidentally.
 
 ### A. Semantic selection/session state
@@ -108,8 +107,7 @@ Current deterministic rules are:
   secondary;
 - tree click: clicked semantic node becomes the sole primary;
 - 3D click: hit semantic element becomes the sole primary;
-- an empty point-selection result while Select is active can clear semantic
-  selection;
+- an empty 3D point-selection result clears semantic selection;
 - selected drawn-wall deletion clears selection after the operation;
 - active native-level switch clears selection;
 - project close/reset clears selection;
@@ -136,11 +134,12 @@ handles.
 `ModelCanvas` receives the same semantic selection object as Plan.
 
 Raycast hits use rendered mesh metadata to recover semantic `elementId`.
-Renderer mesh identity is therefore projection detail, not canonical selection
-identity. Multiple rendered solids may represent one selected semantic object.
+Renderer mesh identity is projection detail, not canonical selection identity.
+Multiple rendered solids may represent one selected semantic object.
 
 3D currently replaces selection with a single primary. It does not provide the
-same multi-selection input behaviour as Plan.
+same multi-selection input behaviour as Plan. An empty 3D hit emits the current
+null-selection clear path.
 
 ## Tree state and focus
 
@@ -214,13 +213,14 @@ Shell Escape handling closes an overlay or cancels the active tool. Plan has
 more specific Escape handling for marquee and wall draft. Semantic selection
 is not cleared merely because Escape was pressed.
 
-The focused browser probe confirms the ordering to test:
+The focused browser probe verifies the current ordering:
 
-1. focus a shell control and press Escape;
-2. semantic selection must remain unchanged;
-3. reactivate Select after Escape cancels it;
-4. click empty Plan space;
-5. the resulting null point selection clears semantic selection.
+1. select a semantic target;
+2. move DOM focus to a shell control and press Escape;
+3. semantic selection remains unchanged;
+4. switch to 3D and click a measured empty point clear of the floating browser
+   panel;
+5. the null 3D point-selection result clears the shared semantic selection.
 
 If #425 later introduces a central Escape-to-clear command, it must define its
 ordering after overlays/tools instead of treating it as an existing contract.
@@ -294,14 +294,15 @@ The focused probe covers:
 5. Marquee multi-select -> two selected rows with exactly one primary.
 6. Active-level switch -> deterministic selection clear.
 7. DOM focus movement -> semantic selection unchanged.
-8. Escape -> selection preserved; reactivated Select + empty Plan click ->
-   deterministic semantic clear.
+8. Escape -> semantic selection preserved; empty 3D click -> deterministic
+   semantic clear.
 
 `.github/workflows/selection-authority-evidence.yml` runs the focused browser
-probe independently of PR #363's browser-matrix-owned files and verifies these
-three #401 evidence files are Prettier-clean before execution.
+probe independently, checks the #401 evidence files with Prettier, runs the
+requested ZEUS compile command, installs Chromium, executes the browser probe
+and uploads JSON/screenshot evidence.
 
-Execution status remains pending until the focused workflow passes on the final
+Execution remains a closure gate until the focused workflow passes on the final
 exact evidence head. #401 must not close before that pass exists.
 
 ## Exact work handed to #425
