@@ -26,8 +26,7 @@ export const CANVAS_OVERLAY_ROLE_ZONE = {
 
 export type CanvasOverlayRole = keyof typeof CANVAS_OVERLAY_ROLE_ZONE;
 
-export interface CanvasOverlayZoneProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface CanvasOverlayZoneProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   readonly zone: CanvasOverlayZoneName;
   readonly children: ReactNode;
 }
