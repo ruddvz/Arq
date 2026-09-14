@@ -83,7 +83,7 @@
   justify-content: center;
 }
 
-/* Selection and tool chrome follows geometry instead of a screen corner. Their
+/* Selection and tool chrome follow geometry instead of a screen corner. Their
    children own positioning; the host only reserves the HUD tier and pointer
    transparency. */
 .arq-canvas-overlay-zone[data-arq-overlay-zone='selection'],
