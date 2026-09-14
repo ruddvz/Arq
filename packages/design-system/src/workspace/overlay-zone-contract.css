@@ -1,0 +1,97 @@
+/*
+ * UX-1.3 workspace overlay contract.
+ *
+ * Existing global tiers remain authoritative for HUDs, modals, popovers and
+ * toasts. These two workspace-local tiers use the reserved gap between the
+ * context HUD (90) and modal backdrop (100): an open drawer/sheet must occlude
+ * tool chrome over the part of the canvas it covers, while a focused skip link
+ * must remain visible above workspace overlays without ever outranking a modal.
+ */
+.arq-workspace {
+  --arq-z-workspace-overlay: 95;
+  --arq-z-accessibility: 98;
+
+  /* Canvas chrome stays off the shell edge and may be overridden by a host
+     that knows about a platform-specific reserved inset. */
+  --arq-overlay-safe-top: var(--arq-space-compact);
+  --arq-overlay-safe-right: var(--arq-space-compact);
+  --arq-overlay-safe-bottom: var(--arq-space-compact);
+  --arq-overlay-safe-left: var(--arq-space-compact);
+}
+
+/* Desktop floating panels and tablet side drawers are real shell overlays, not
+   ordinary raised cards. Higher specificity intentionally supersedes the
+   legacy shell-raised declaration in workspace-shell.css without restyling it. */
+.arq-workspace .arq-workspace__overlay {
+  z-index: var(--arq-z-workspace-overlay);
+}
+
+/* The skip link is an accessibility surface. It remains below modal backdrop
+   because background shell focus is not valid while a modal is active. */
+.arq-workspace .arq-skip-link {
+  z-index: var(--arq-z-accessibility);
+}
+
+/* A zone is geometry only. It must never steal a canvas pointer by filling its
+   containing block with a hit-testable element. Real controls opt back in at
+   their own bounds with .arq-canvas-overlay-control. */
+.arq-canvas-overlay-zone {
+  position: absolute;
+  top: var(--arq-overlay-safe-top);
+  right: var(--arq-overlay-safe-right);
+  bottom: var(--arq-overlay-safe-bottom);
+  left: var(--arq-overlay-safe-left);
+  z-index: var(--arq-z-shell-raised);
+  display: flex;
+  pointer-events: none;
+}
+
+.arq-canvas-overlay-control {
+  pointer-events: auto;
+}
+
+.arq-canvas-overlay-zone[data-arq-overlay-zone='top-left'] {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.arq-canvas-overlay-zone[data-arq-overlay-zone='top-center'] {
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.arq-canvas-overlay-zone[data-arq-overlay-zone='top-right'] {
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.arq-canvas-overlay-zone[data-arq-overlay-zone='bottom-left'] {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.arq-canvas-overlay-zone[data-arq-overlay-zone='bottom-center'] {
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.arq-canvas-overlay-zone[data-arq-overlay-zone='bottom-right'] {
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.arq-canvas-overlay-zone[data-arq-overlay-zone='center'] {
+  z-index: var(--arq-z-context-hud);
+  align-items: center;
+  justify-content: center;
+}
+
+/* Selection and tool chrome follows geometry instead of a screen corner. Their
+   children own positioning; the host only reserves the HUD tier and pointer
+   transparency. */
+.arq-canvas-overlay-zone[data-arq-overlay-zone='selection'],
+.arq-canvas-overlay-zone[data-arq-overlay-zone='tool'] {
+  inset: 0;
+  z-index: var(--arq-z-context-hud);
+  display: block;
+}
