@@ -86,7 +86,9 @@ export interface ResolvedCommand<Mode extends string = string> {
   readonly active: boolean;
 }
 
-const NON_REACHABLE_FALLBACK: Readonly<Record<Exclude<ProductReachabilityState, 'user-reachable'>, string>> = {
+const NON_REACHABLE_FALLBACK: Readonly<
+  Record<Exclude<ProductReachabilityState, 'user-reachable'>, string>
+> = {
   'disabled-intentionally': 'This command is intentionally unavailable',
   'registered-but-not-wired': 'This command is registered but has no live product execution path',
   'library-only': 'Implementation exists in the repository but is not wired into the product',
@@ -118,8 +120,7 @@ export function resolveCommand<Mode extends string>(
   let disabledReason: string | null = null;
 
   if (descriptor.reachability !== 'user-reachable') {
-    disabledReason =
-      descriptor.disabledReason ?? NON_REACHABLE_FALLBACK[descriptor.reachability];
+    disabledReason = descriptor.disabledReason ?? NON_REACHABLE_FALLBACK[descriptor.reachability];
   } else if (!descriptor.modes.includes(context.mode)) {
     disabledReason = `${descriptor.label} is not available in ${context.mode} mode`;
   } else if (
@@ -223,8 +224,12 @@ export function validateCommandDescriptors<Mode extends string>(
     if (descriptor.reachability === 'user-reachable' && descriptor.executionTarget === null) {
       issues.push({ id: descriptor.id, message: 'reachable command needs an execution target' });
     }
-    if (descriptor.effect === 'project-mutating' && descriptor.semanticOperationId === null) {
-      issues.push({ id: descriptor.id, message: 'mutating command needs a semantic operation id' });
+    if (
+      descriptor.reachability === 'user-reachable' &&
+      descriptor.effect === 'project-mutating' &&
+      descriptor.semanticOperationId === null
+    ) {
+      issues.push({ id: descriptor.id, message: 'reachable mutating command needs a semantic operation id' });
     }
     if (
       descriptor.surfaces.includes('keyboard') &&
