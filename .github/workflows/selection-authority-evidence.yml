@@ -1,8 +1,5 @@
 name: Selection authority evidence
 
-permissions:
-  contents: write
-
 on:
   pull_request:
     branches: [main]
@@ -45,19 +42,25 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Format final #401 authority map
-        run: pnpm exec prettier --write docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
-      - name: Persist formatted authority map on the PR branch
-        if: github.event_name == 'pull_request'
+      - name: Verify #401 evidence files are formatted
+        run: >-
+          pnpm exec prettier --check
+          scripts/run-selection-authority-capability-check.mjs
+          scripts/selection-authority-state-flow.test.mjs
+          docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
+          .github/workflows/selection-authority-evidence.yml
+      - name: Verify multi-selection state flow
         run: |
-          if ! git diff --quiet -- docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md; then
-            git stash push -- docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
-            git fetch origin "${{ github.head_ref }}"
-            git checkout -B "${{ github.head_ref }}" "origin/${{ github.head_ref }}"
-            git stash pop
-            git config user.name github-actions[bot]
-            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-            git add docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
-            git commit -m "docs(ux): format #401 authority map"
-            git push origin "${{ github.head_ref }}"
-          fi
+          node scripts/selection-authority-state-flow.test.mjs
+          pnpm --filter @arq/web exec vitest run src/canvas/canvas-interaction.test.ts
+      - name: Compile Zeus task context for #401
+        run: >-
+          node scripts/zeus.mjs compile --task
+          "Finish ARQ issue #401 by validating selection, focus and interaction-state authority across Plan, 3D, tree and inspector at current exact head. Add deterministic evidence only. Do not redesign selection."
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/run-selection-authority-capability-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: selection-authority-evidence
+          path: benchmarks/results/selection-authority.*
