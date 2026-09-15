@@ -1,7 +1,7 @@
 /**
- * `workspace-keyboard-map.json` and doc 51 define the designed shortcut
- * vocabulary. #420 adds the missing shipping question: a designed shortcut is
- * only advertised when the canonical product command is actually reachable.
+ * `workspace-keyboard-map.json` remains the designed shortcut vocabulary.
+ * Product-facing labels are advertised only when the canonical product command
+ * is actually reachable. Registry presence alone is never shipping evidence.
  */
 
 import { KEYBOARD_COMMANDS, keyboardCommand, type KeyboardCommandContract } from './registry';
@@ -24,46 +24,30 @@ export function resolveShortcutDialect(
   return applePlatform ? 'mac' : 'windows';
 }
 
-/**
- * Product-facing shortcut label. Registry presence alone is insufficient: Save
- * and Focus Selection remain designed entries, but are not advertised until a
- * live App handler exists. Escape is the one legacy lifecycle command whose
- * live handler predates #420 and is not represented as a palette/tool command.
- */
 export function shortcutLabel(commandId: string, dialect: ShortcutDialect): string | null {
-  const command = keyboardCommand(commandId);
-  if (command === null) {
+  const descriptor = productCommand(commandId);
+  if (
+    descriptor === null ||
+    descriptor.reachability !== 'user-reachable' ||
+    !descriptor.surfaces.includes('keyboard') ||
+    descriptor.shortcuts === null
+  ) {
     return null;
   }
 
-  if (commandId !== 'escape') {
-    const descriptor = productCommand(commandId);
-    if (
-      descriptor === null ||
-      descriptor.reachability !== 'user-reachable' ||
-      !descriptor.surfaces.includes('keyboard')
-    ) {
-      return null;
-    }
-    if (descriptor.shortcuts === null) {
-      return null;
-    }
-    switch (dialect) {
-      case 'mac':
-        return descriptor.shortcuts.mac;
-      case 'windows':
-        return descriptor.shortcuts.windows;
-      case 'ipad-keyboard':
-        return descriptor.shortcuts.ipadKeyboard;
-      case 'touch-only':
-        return descriptor.shortcuts.touchOnly;
-    }
+  switch (dialect) {
+    case 'mac':
+      return descriptor.shortcuts.mac;
+    case 'windows':
+      return descriptor.shortcuts.windows;
+    case 'ipad-keyboard':
+      return descriptor.shortcuts.ipadKeyboard;
+    case 'touch-only':
+      return descriptor.shortcuts.touchOnly;
   }
-
-  return shortcutLabelFor(command, dialect);
 }
 
-/** Raw registry label for design-audit tooling. Do not use this as reachability evidence. */
+/** Raw design-registry label for audit tooling. Do not use it as reachability evidence. */
 export function shortcutLabelFor(
   command: KeyboardCommandContract,
   dialect: ShortcutDialect,
@@ -82,6 +66,11 @@ export function shortcutLabelFor(
 
 export function commandsInScope(scope: string): readonly KeyboardCommandContract[] {
   return KEYBOARD_COMMANDS.filter((command) => command.scope === scope);
+}
+
+/** Design-registry lookup retained for non-product audit callers. */
+export function designedKeyboardCommand(commandId: string): KeyboardCommandContract | null {
+  return keyboardCommand(commandId);
 }
 
 export interface KeyEventLike {
