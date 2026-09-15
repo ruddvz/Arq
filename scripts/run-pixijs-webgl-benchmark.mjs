@@ -1,36 +1,12 @@
 #!/usr/bin/env node
-/**
- * ARQ-116: benchmark PixiJS WebGL.
- *
- * Drives packages/plan-renderer/benchmarks/pixijs-webgl/pixijs-webgl-benchmark.html
- * in real headless Chromium (Playwright), injecting PixiJS's prebuilt
- * UMD bundle directly from node_modules (no vendored copy committed to
- * the repo) via page.addScriptTag, then reads back the same
- * frame-timing result shape run-canvas-2d-benchmark.mjs (ARQ-115)
- * produces, for direct comparison against benchmarks/PERFORMANCE-BUDGETS.json's
- * panZoomFpsTarget.
- *
- * Usage: node scripts/run-pixijs-webgl-benchmark.mjs
- */
-
+/** ARQ-116 PixiJS WebGL reference benchmark, consuming #402 authority. */
 import { chromium } from 'playwright';
 import { createRequire } from 'node:module';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { getWorkflow, readPerformanceAuthority } from './lib/performance-authority.mjs';
 
-/**
- * `/opt/pw-browsers/chromium` is this development sandbox's own pre-installed
- * browser path (see PLAYWRIGHT_BROWSERS_PATH) - real, but not portable to a
- * plain CI runner, where `npx playwright install --with-deps chromium`
- * installs to Playwright's own default cache instead. Using the sandbox path
- * unconditionally meant this script had never actually been exercised
- * outside this sandbox until it was first wired into CI, where it failed
- * immediately: "Failed to launch chromium because executable doesn't exist
- * at /opt/pw-browsers/chromium". Falling back to `undefined` (Playwright's
- * own resolution) when that specific path is absent fixes both environments
- * without special-casing CI.
- */
 function resolveChromiumExecutablePath() {
   if (process.env.PLAYWRIGHT_CHROMIUM_PATH) return process.env.PLAYWRIGHT_CHROMIUM_PATH;
   if (existsSync('/opt/pw-browsers/chromium')) return '/opt/pw-browsers/chromium';
@@ -40,22 +16,11 @@ function resolveChromiumExecutablePath() {
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
-const htmlPath = path.join(
-  repoRoot,
-  'packages/plan-renderer/benchmarks/pixijs-webgl/pixijs-webgl-benchmark.html',
-);
-const budgetsPath = path.join(repoRoot, 'benchmarks/PERFORMANCE-BUDGETS.json');
-// pixi.js's package.json "exports" map only exposes the ESM entry point
-// (lib/index.js), not a subpath for the prebuilt UMD bundle under dist/ -
-// walk up from the resolved entry to find the package root (the
-// directory whose own package.json declares "name": "pixi.js").
+const htmlPath = path.join(repoRoot, 'packages/plan-renderer/benchmarks/pixijs-webgl/pixijs-webgl-benchmark.html');
 let pixiPackageRoot = path.dirname(require.resolve('pixi.js'));
 function isPixiPackageRoot(dir) {
   const packageJsonPath = path.join(dir, 'package.json');
-  return (
-    existsSync(packageJsonPath) &&
-    JSON.parse(readFileSync(packageJsonPath, 'utf8')).name === 'pixi.js'
-  );
+  return existsSync(packageJsonPath) && JSON.parse(readFileSync(packageJsonPath, 'utf8')).name === 'pixi.js';
 }
 while (pixiPackageRoot !== path.dirname(pixiPackageRoot) && !isPixiPackageRoot(pixiPackageRoot)) {
   pixiPackageRoot = path.dirname(pixiPackageRoot);
@@ -63,8 +28,9 @@ while (pixiPackageRoot !== path.dirname(pixiPackageRoot) && !isPixiPackageRoot(p
 const pixiUmdPath = path.join(pixiPackageRoot, 'dist/pixi.min.js');
 
 async function main() {
-  const budgets = JSON.parse(readFileSync(budgetsPath, 'utf8'));
-
+  const authority = readPerformanceAuthority();
+  const workflow = getWorkflow(authority, 'plan.pan-zoom');
+  const targetFps = workflow.budget.value;
   const browser = await chromium.launch({
     executablePath: resolveChromiumExecutablePath(),
     headless: true,
@@ -75,30 +41,26 @@ async function main() {
     await page.goto(`file://${htmlPath}`);
     await page.addScriptTag({ path: pixiUmdPath });
     const result = await page.evaluate(() => window.runArqPixiBenchmark());
-
     const report = {
       timestamp: new Date().toISOString(),
-      environment:
-        'headless Chromium, software WebGL (SwiftShader) in a sandboxed container (not a certified benchmark device - see docs/research/RENDERER-BENCHMARK-PIXIJS-WEBGL.md)',
-      benchmarkModel: budgets.benchmarkModel,
+      workflowId: workflow.id,
+      renderer: 'pixijs-webgl',
+      environment: 'headless Chromium software WebGL (SwiftShader); reference evidence only',
+      fixture: authority.fixture,
       measuredObjectCounts: result.counts,
       frameCount: result.frameCount,
       avgFrameMs: result.avgFrameMs,
       avgFps: result.avgFps,
       p95FrameMs: result.p95FrameMs,
       maxFrameMs: result.maxFrameMs,
-      panZoomFpsTarget: budgets.targets.panZoomFpsTarget,
-      meetsTarget: result.avgFps >= budgets.targets.panZoomFpsTarget,
+      targetFps,
+      targetEnvironmentClass: workflow.budget.environmentClass,
+      meetsReferenceTarget: result.avgFps >= targetFps,
     };
-
     console.log(JSON.stringify(report, null, 2));
-
     const outDir = path.join(repoRoot, 'benchmarks/results');
     mkdirSync(outDir, { recursive: true });
-    const outPath = path.join(
-      outDir,
-      `pixijs-webgl-${report.timestamp.replace(/[:.]/g, '-')}.json`,
-    );
+    const outPath = path.join(outDir, `pixijs-webgl-${report.timestamp.replace(/[:.]/g, '-')}.json`);
     writeFileSync(outPath, JSON.stringify(report, null, 2));
     console.log(`\nSaved to ${path.relative(repoRoot, outPath)}`);
   } finally {
