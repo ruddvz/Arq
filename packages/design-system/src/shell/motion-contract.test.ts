@@ -51,10 +51,11 @@ describe('shell motion contract', () => {
     expect(reducedMotion).toContain('--arq-motion-deliberate: 1ms;');
   });
 
-  it('removes ornamental modal and refraction movement under reduced motion', () => {
+  it('gates modal motion to no-preference and removes refraction movement under reduce', () => {
     expect(MODAL_DIALOG).toMatch(
-      /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.arq-modal-backdrop[\s\S]*animation:\s*none;/,
+      /@media \(prefers-reduced-motion: no-preference\)[\s\S]*\.arq-modal-overlay\[data-entering\][\s\S]*animation:\s*arq-overlay-fade-in/,
     );
+    expect(MODAL_DIALOG).not.toMatch(/@media \(prefers-reduced-motion: reduce\)[\s\S]*animation:/);
     expect(WORKSPACE_SHELL).toMatch(
       /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.arq-refraction-lens__slot[\s\S]*transition:\s*none;/,
     );
