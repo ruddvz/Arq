@@ -167,11 +167,11 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
 
     // The current project has now been asked every non-mutating question we can
     // ask about the candidate. Before allocating another Worker, give the live
-    // session a chance to drain its own write queue. The surrounding modal is
-    // already trapping focus, so no new canvas edit can race in behind this
-    // barrier. A failed write is a hard refusal: the old session is the only
-    // object that can replay it, so replacing that session would make the edit
-    // irrecoverable.
+    // session a chance to drain its own write queue. A failed write is a hard
+    // refusal: the old session is the only object that can replay it, so
+    // replacing that session would make the edit irrecoverable. The same gate
+    // is checked again immediately before adoption because global shortcuts can
+    // still change the workspace while this modal is waiting on candidate I/O.
     if (prepareForProjectReplacement !== undefined) {
       let preparation: NativeProjectReplacementPreparation;
       try {
@@ -251,6 +251,39 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
       void opened.session.close();
       return;
     }
+
+    // Candidate I/O can take long enough for a global undo/redo shortcut to
+    // enqueue another native write behind the modal. Re-run the same
+    // non-destructive barrier at the last possible moment. If the current
+    // project became unsafe, release the candidate and keep the old session
+    // authoritative and recoverable.
+    if (prepareForProjectReplacement !== undefined) {
+      let preparation: NativeProjectReplacementPreparation;
+      try {
+        preparation = await prepareForProjectReplacement();
+      } catch (error) {
+        void opened.session.close().catch(() => undefined);
+        emit({
+          type: 'fail',
+          code: 'ARQ_REPLACE_PREPARE_FAILED',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'The current project could not be prepared for replacement.',
+        });
+        return;
+      }
+      if (!isCurrent()) {
+        void opened.session.close().catch(() => undefined);
+        return;
+      }
+      if (preparation.status === 'blocked') {
+        void opened.session.close().catch(() => undefined);
+        emit({ type: 'fail', code: preparation.code, message: preparation.reason });
+        return;
+      }
+    }
+
     // Adoption is the last step, and it is the caller's: the panel never
     // replaces the active project itself. `hydrated` follows it, so nothing
     // reports the project as open before the workspace actually holds it.

@@ -890,6 +890,17 @@ export function App(): JSX.Element {
   const [publishing, setPublishing] = useState(false);
 
   /**
+   * Non-destructively drains the current native session before a file-open flow
+   * is allowed to replace it. A failed write must keep that exact session alive:
+   * it owns the pending change and is the only object that can replay it.
+   */
+  const prepareCurrentNativeProjectForReplacement = useCallback(async () => {
+    const current = nativeSessionRef.current;
+    if (current === null) return { status: 'ready' as const };
+    return current.prepareForReplacement();
+  }, []);
+
+  /**
    * Replaces the workspace's project with one that has already been fully
    * validated, decoded and adopted by the open pipeline. This runs only on
    * success: a rejected or cancelled candidate never reaches here, so the
@@ -1882,21 +1893,56 @@ export function App(): JSX.Element {
    * still looking at one, and the next open would draw over it.
    */
   const handleCloseNativeProject = useCallback(() => {
-    void nativeSessionRef.current?.close().catch(() => undefined);
-    nativeSessionRef.current = null;
-    setOpenNativeProject(null);
-    setActiveNativeLevelId(null);
-    setProjectRooms(null);
-    setWallDimensions(new Map());
-    setWallOpenings(new Map());
-    setLevelPlacedContent(EMPTY_LEVEL_CONTENT);
-    setActiveWorkingCopyId(null);
-    setDrawnWalls([]);
-    drawnWallsRef.current = [];
-    setProjectName('Untitled project');
-    setModelSelection({ primary: null, secondary: new Set() });
-    setSaveState('saved');
-    setJournalLabel('Journal current');
+    void (async () => {
+      const session = nativeSessionRef.current;
+      if (session !== null) {
+        const preparation = await session.prepareForReplacement();
+        if (nativeSessionRef.current !== session) return;
+        if (preparation.status === 'blocked') {
+          if (preparation.code === 'ARQ_REPLACE_UNSAVED_FAILURE') {
+            setSaveState('unsaved-changes');
+            setJournalLabel('Working copy write failed · save again before closing');
+            feedbackStoreRef.current.publish(
+              'error',
+              'Project stays open: save again before closing',
+              Date.now(),
+            );
+            return;
+          }
+          feedbackStoreRef.current.publish('error', preparation.reason, Date.now());
+        } else {
+          try {
+            await session.close();
+          } catch (error) {
+            feedbackStoreRef.current.publish(
+              'error',
+              `Project shutdown reported: ${error instanceof Error ? error.message : String(error)}`,
+              Date.now(),
+            );
+          }
+        }
+        if (nativeSessionRef.current !== session) return;
+      }
+
+      // Late persistence completions belong to the project being released and
+      // must not overwrite the scratch-journal status after this reset.
+      persistenceRevisionRef.current += 1;
+      nativeSessionRef.current = null;
+      setNativeProjectAvailability({ open: false, writable: false });
+      setOpenNativeProject(null);
+      setActiveNativeLevelId(null);
+      setProjectRooms(null);
+      setWallDimensions(new Map());
+      setWallOpenings(new Map());
+      setLevelPlacedContent(EMPTY_LEVEL_CONTENT);
+      setActiveWorkingCopyId(null);
+      setDrawnWalls([]);
+      drawnWallsRef.current = [];
+      setProjectName('Untitled project');
+      setModelSelection({ primary: null, secondary: new Set() });
+      setSaveState('saved');
+      setJournalLabel('Journal current');
+    })();
   }, []);
 
   /**
@@ -2619,6 +2665,7 @@ export function App(): JSX.Element {
         onOpenChange={setFileOpenPanelOpen}
         onProjectOpened={adoptNativeProject}
         activeWorkingCopyId={activeWorkingCopyId}
+        prepareForProjectReplacement={prepareCurrentNativeProjectForReplacement}
       />
 
       {/* W135 ToastRegion replaces the previous ad-hoc validation notice,
