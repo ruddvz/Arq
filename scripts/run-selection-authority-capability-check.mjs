@@ -265,8 +265,13 @@ async function runScratchScenarios(page, observed) {
     undefined,
     { timeout: 5000 },
   );
-  const drawnRows = page.getByRole('treeitem').filter({ hasText: '(drawn)' });
-  check((await drawnRows.count()) >= 2, 'scratch setup did not expose two drawn walls in the tree');
+  const modelPanel = page.locator('nav[aria-label="Model"]:visible').first();
+  check((await modelPanel.count()) === 1, 'scratch setup did not expose one visible Model browser');
+  const drawnRows = modelPanel.getByRole('treeitem').filter({ hasText: '(drawn)' });
+  check(
+    (await drawnRows.count()) >= 2,
+    'scratch setup did not expose two drawn walls in the visible Model browser',
+  );
 
   /* 1. Plan selection -> tree/inspector/3D. */
   await activateSelectTool(page);
