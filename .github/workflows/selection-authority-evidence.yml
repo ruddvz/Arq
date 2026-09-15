@@ -1,4 +1,4 @@
-name: Repair #401 evidence harness
+name: Repair #401 evidence map numbering
 
 on:
   push:
@@ -18,92 +18,13 @@ jobs:
         with:
           ref: codex/arq-401-selection-authority-evidence
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: Patch semantic evidence assertions
+      - name: Make browser scenario labels formatter-stable
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re
 
-          script_path = Path('scripts/run-selection-authority-capability-check.mjs')
-          text = script_path.read_text()
-
-          pattern = re.compile(
-              r'''async function assertNoSelection\(page, label\) \{.*?^\}''',
-              re.MULTILINE | re.DOTALL,
-          )
-          replacement = '''async function inspectorPresentsSelection(page) {
-            const input = page.locator('aside[aria-label="Inspector"] input[aria-label="ID"]').first();
-            return (await input.count()) > 0 && (await input.isVisible());
-          }
-
-          async function assertNoSelection(page, label) {
-            check((await selectedTreeCount(page)) === 0, `${label}: tree still reports a selected row`);
-            await page
-              .waitForFunction(
-                () =>
-                  [...document.querySelectorAll('aside[aria-label="Inspector"] input[aria-label="ID"]')].every(
-                    (input) => input.getClientRects().length === 0,
-                  ),
-                undefined,
-                { timeout: 5000 },
-              )
-              .catch(() => undefined);
-            check(
-              !(await inspectorPresentsSelection(page)),
-              `${label}: inspector still exposes a selected semantic ID`,
-            );
-          }'''
-          text, count = pattern.subn(replacement, text, count=1)
-          if count != 1:
-              raise SystemExit(f'assertNoSelection replacement count={count}')
-
-          pattern = re.compile(
-              r'''  check\(\s*\(await page\.evaluate\(\(\) => document\.activeElement\?\.textContent\?\.trim\(\)\)\)\?\.includes\('Open'\) ===\s*true,\s*'Open control did not receive DOM focus',\s*\);''',
-              re.MULTILINE,
-          )
-          replacement = '''  check(
-            (await openButton.evaluate((element) => document.activeElement === element)) === true,
-            'Open control did not receive DOM focus',
-          );'''
-          text, count = pattern.subn(replacement, text, count=1)
-          if count != 1:
-              raise SystemExit(f'Open focus replacement count={count}')
-
-          pattern = re.compile(
-              r'''  await drawnRows\.nth\(0\)\.click\(\);\n  const treeFirstId = await inspectorId\(page\);\n  const firstPlanPixels = await analyzeScreenshot\(page, await plan\.screenshot\(\)\);\n  await drawnRows\.nth\(1\)\.click\(\);\n  const treeSecondId = await inspectorId\(page\);\n  const secondPlanPixels = await analyzeScreenshot\(page, await plan\.screenshot\(\)\);'''
-          )
-          replacement = '''  await drawnRows.nth(0).locator('button').click();
-          const treeFirstId = await inspectorId(page);
-          const firstPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-          const otherDrawnRow = page
-            .locator('[role="treeitem"][aria-selected="false"]')
-            .filter({ hasText: '(drawn)' })
-            .first();
-          await otherDrawnRow.locator('button').click();
-          await page.waitForFunction(
-            (previousId) => {
-              const input = document.querySelector(
-                'aside[aria-label="Inspector"] input[aria-label="ID"]',
-              );
-              return input instanceof HTMLInputElement && input.value !== previousId;
-            },
-            treeFirstId,
-            { timeout: 5000 },
-          );
-          const treeSecondId = await inspectorId(page);
-          const secondPlanPixels = await analyzeScreenshot(page, await plan.screenshot());'''
-          text, count = pattern.subn(replacement, text, count=1)
-          if count != 1:
-              raise SystemExit(f'tree replacement count={count}')
-          script_path.write_text(text)
-
-          doc_path = Path('docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md')
-          doc = doc_path.read_text()
+          path = Path('docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md')
+          text = path.read_text()
           old = '''1. Plan wall selection -> tree, inspector and 3D projection.
           2. Tree wall selection -> Plan, inspector and 3D projection.
           3. Plan -> 3D -> Plan semantic selection continuity.
@@ -114,31 +35,25 @@ jobs:
           7. Escape -> semantic selection preserved; empty 3D click -> deterministic
              semantic clear.
           '''
-          new = '''1. Plan wall selection -> tree, inspector and 3D projection.
-          2. Tree wall selection -> Plan, inspector and 3D projection.
-          3. Plan -> 3D -> Plan semantic selection continuity.
-          4. Delete one selected target -> no stale semantic selection and one fewer
-             drawn-wall row.
-          6. Active-level switch -> deterministic selection clear.
-          7. DOM focus movement -> semantic selection unchanged.
-          8. Escape -> semantic selection preserved; empty 3D click -> deterministic
-             semantic clear.
+          new = '''- Scenario 1: Plan wall selection -> tree, inspector and 3D projection.
+          - Scenario 2: Tree wall selection -> Plan, inspector and 3D projection.
+          - Scenario 3: Plan -> 3D -> Plan semantic selection continuity.
+          - Scenario 4: Delete one selected target -> no stale semantic selection and one fewer
+            drawn-wall row.
+          - Scenario 6: Active-level switch -> deterministic selection clear.
+          - Scenario 7: DOM focus movement -> semantic selection unchanged.
+          - Scenario 8: Escape -> semantic selection preserved; empty 3D click -> deterministic
+            semantic clear.
           '''
-          if old not in doc:
+          if old not in text:
               raise SystemExit('browser scenario list not found')
-          doc_path.write_text(doc.replace(old, new, 1))
+          path.write_text(text.replace(old, new, 1))
           PY
-      - run: >-
-          pnpm exec prettier --write
-          scripts/run-selection-authority-capability-check.mjs
-          docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
-      - name: Persist repair
+      - run: pnpm exec prettier --write docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
+      - name: Persist numbering repair
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add scripts/run-selection-authority-capability-check.mjs docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
-          if git diff --cached --quiet; then
-            exit 0
-          fi
-          git commit -m 'test(UX): harden #401 semantic evidence probe'
+          git add docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
+          git commit -m 'docs(UX): make #401 scenario numbering explicit'
           git push origin HEAD:codex/arq-401-selection-authority-evidence
