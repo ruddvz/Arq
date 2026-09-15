@@ -35,9 +35,41 @@ describe('canonical product command catalog', () => {
     );
   });
 
+  it('fails duplicate canonical ids deterministically', () => {
+    const select = productCommand('select');
+    expect(select).not.toBeNull();
+    if (select === null) throw new Error('select descriptor missing');
+    expect(validateCommandDescriptors([select, select])).toContainEqual({
+      id: 'select',
+      message: 'duplicate canonical id',
+    });
+  });
+
+  it('rejects library-only descriptors that claim a product surface', () => {
+    const select = productCommand('select');
+    expect(select).not.toBeNull();
+    if (select === null) throw new Error('select descriptor missing');
+    expect(
+      validateCommandDescriptors([
+        {
+          ...select,
+          id: 'library-fixture',
+          reachability: 'library-only',
+          disabledReason: 'Library fixture has no product consumer',
+          executionTarget: null,
+          analyticsEventId: null,
+        },
+      ]),
+    ).toContainEqual({
+      id: 'library-fixture',
+      message: 'library-only command cannot claim a product surface',
+    });
+  });
+
   it('proves one reachable view-only command', () => {
     const fit = resolveProductCommand('fit', DESIGN_CONTEXT);
     expect(fit?.available).toBe(true);
+    expect(fit?.state).toBe('available');
     expect(fit?.descriptor.effect).toBe('view-only');
     expect(fit?.descriptor.executionTarget).toEqual({ kind: 'tool', id: 'fit' });
   });
@@ -50,17 +82,37 @@ describe('canonical product command catalog', () => {
     expect(wall?.descriptor.persistence).toBe('journal-on-commit');
   });
 
+  it('carries cheap icon, context, analytics and evidence metadata', () => {
+    const wall = productCommand('wall');
+    expect(wall?.iconId).toBe(toolContract('wall')?.icon);
+    expect(wall?.requiredContext).toEqual(expect.arrayContaining(['workspace.mode', 'workspace.readOnly']));
+    expect(wall?.analyticsEventId).toBe('workspace.command.wall');
+    expect(wall?.evidenceOwner).toContain('#420');
+    expect(productCommand('export-dxf')?.analyticsEventId).toBeNull();
+  });
+
   it('represents intentional unavailability with a real reason', () => {
     const dxf = resolveProductCommand('export-dxf', DESIGN_CONTEXT);
     expect(dxf?.available).toBe(false);
+    expect(dxf?.state).toBe('unreachable');
     expect(dxf?.descriptor.reachability).toBe('disabled-intentionally');
     expect(dxf?.disabledReason).toBe('DXF export is not implemented in the current product');
   });
 
   it('represents registered-but-unwired commands without pretending they execute', () => {
-    for (const id of ['window-select', 'crossing-select', 'selection-filter', 'zoom', 'focus-selection']) {
+    for (const id of [
+      'door',
+      'window',
+      'room-boundary',
+      'window-select',
+      'crossing-select',
+      'selection-filter',
+      'zoom',
+      'focus-selection',
+    ]) {
       const command = resolveProductCommand(id, DESIGN_CONTEXT);
       expect(command?.available, id).toBe(false);
+      expect(command?.state, id).toBe('unreachable');
       expect(command?.descriptor.reachability, id).toBe('registered-but-not-wired');
       expect(command?.descriptor.executionTarget, id).toBeNull();
       expect(command?.disabledReason, id).toBeTruthy();
@@ -72,7 +124,7 @@ describe('canonical product command catalog', () => {
       expect(hasRepositoryBacking(id), id).toBe(true);
       const command = resolveProductCommand(id, DESIGN_CONTEXT);
       expect(command?.available, id).toBe(false);
-      expect(command?.descriptor.reachability, id).toBe('library-only');
+      expect(command?.descriptor.reachability, id).toBe('registered-but-not-wired');
     }
   });
 
@@ -83,13 +135,43 @@ describe('canonical product command catalog', () => {
     expect(zoom?.disabledReason).toContain('Wheel and pinch zoom are live view gestures');
   });
 
+  it('distinguishes hidden, disabled, read-only and in-progress runtime states', () => {
+    const hiddenWall = resolveProductCommand('wall', { ...DESIGN_CONTEXT, mode: 'present' });
+    expect(hiddenWall).toMatchObject({ state: 'hidden', visible: false, available: false });
+
+    const disabledClose = resolveProductCommand('close-tab', {
+      ...DESIGN_CONTEXT,
+      facts: { ...DESIGN_CONTEXT.facts, canCloseActiveTab: false },
+    });
+    expect(disabledClose).toMatchObject({ state: 'disabled', visible: true, available: false });
+
+    const readOnlyWall = resolveProductCommand('wall', { ...DESIGN_CONTEXT, readOnly: true });
+    expect(readOnlyWall).toMatchObject({ state: 'read-only', visible: true, available: false });
+
+    const exporting = resolveProductCommand('export-sheet-pdf', {
+      ...DESIGN_CONTEXT,
+      inProgressCommandIds: new Set(['export-sheet-pdf']),
+    });
+    expect(exporting).toMatchObject({
+      state: 'in-progress',
+      visible: true,
+      available: false,
+      inProgress: true,
+    });
+    expect(exporting?.disabledReason).toBe('Export sheet as PDF is already in progress');
+  });
+
   it('blocks read-only-incompatible commands while retaining view controls', () => {
     const readOnlyContext: ProductCommandContext = { ...DESIGN_CONTEXT, readOnly: true };
     expect(resolveProductCommand('wall', readOnlyContext)?.available).toBe(false);
+    expect(resolveProductCommand('wall', readOnlyContext)?.state).toBe('read-only');
     expect(resolveProductCommand('wall', readOnlyContext)?.disabledReason).toBe(
       'Wall is unavailable in read-only mode',
     );
     expect(resolveProductCommand('save-a-copy', readOnlyContext)?.available).toBe(false);
+    expect(resolveProductCommand('save-a-copy', readOnlyContext)?.descriptor.persistence).toBe(
+      'project-persistence',
+    );
     expect(resolveProductCommand('fit', readOnlyContext)?.available).toBe(true);
   });
 
@@ -122,9 +204,19 @@ describe('surface resolution', () => {
     const dxf = entries.find((entry) => entry.id === 'export-dxf');
 
     expect(wall).toMatchObject({ label: 'Wall', available: true, shortcutLabel: 'W' });
-    expect(door).toMatchObject({ available: false, reachability: 'library-only' });
+    expect(door).toMatchObject({ available: false, reachability: 'registered-but-not-wired' });
     expect(dxf).toMatchObject({ available: false, reachability: 'disabled-intentionally' });
     expect(dxf?.disabledReason).toBeTruthy();
+  });
+
+  it('filters hidden-by-context commands in the canonical surface resolver', () => {
+    const entries = productEntriesForSurface(
+      'command-palette',
+      { ...DESIGN_CONTEXT, mode: 'present' },
+      'windows',
+    );
+    expect(entries.some((entry) => entry.id === 'wall')).toBe(false);
+    expect(entries.some((entry) => entry.id === 'fit')).toBe(true);
   });
 
   it('keeps palette and tool rail id/label/availability aligned for shared tools', () => {
@@ -140,9 +232,10 @@ describe('surface resolution', () => {
     }
   });
 
-  it('takes tool labels from the existing tool registry rather than a second local table', () => {
+  it('takes tool labels and icons from the existing tool registry rather than a second table', () => {
     for (const id of ['select', 'wall', 'door', 'room-boundary', 'fit']) {
       expect(productCommand(id)?.label).toBe(toolContract(id)?.name);
+      expect(productCommand(id)?.iconId).toBe(toolContract(id)?.icon);
     }
   });
 
@@ -161,6 +254,7 @@ describe('surface resolution', () => {
     expect(resolveProductCommand('close-tab', context)?.disabledReason).toBe(
       'The active view cannot be closed',
     );
+    expect(resolveProductCommand('close-tab', context)?.state).toBe('disabled');
   });
 
   it('models existing file actions from their live host handlers', () => {
@@ -195,11 +289,19 @@ describe('keyboard lookup and dispatch', () => {
     expect(activateTool).toHaveBeenCalledWith('wall');
   });
 
+  it('refuses execution when a reachable command has no host adapter', () => {
+    expect(dispatchProductCommand('fit', DESIGN_CONTEXT, {})).toEqual({
+      status: 'missing-adapter',
+      target: { kind: 'tool', id: 'fit' },
+    });
+  });
+
   it('blocks a shortcut lookup target when context forbids execution', () => {
     const readOnlyContext: ProductCommandContext = { ...DESIGN_CONTEXT, readOnly: true };
     const resolved = commandForShortcut('W', 'windows', readOnlyContext);
     expect(resolved?.descriptor.id).toBe('wall');
     expect(resolved?.available).toBe(false);
+    expect(resolved?.state).toBe('read-only');
   });
 
   it('does not advertise registered-only Save or Focus Selection as live shortcuts', () => {
