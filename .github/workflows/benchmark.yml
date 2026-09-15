@@ -1,18 +1,40 @@
-# Runs the deterministic render-frame benchmark against
-# benchmarks/PERFORMANCE-BUDGETS.json in real headless Chromium. Weekly and
-# on demand rather than per-PR: shared-runner timings are too noisy to gate
-# merges on, and pretending otherwise would be a flaky gate, not a budget.
-# Replaces the echo-only "Benchmark template". GPU-bound benchmarks
-# (pixijs/canvaskit) remain manual on controlled hardware - see
-# scripts/run-*-benchmark.mjs.
+# #402 performance authority. Structural/schema checks run when the authority
+# itself changes. Timing evidence stays scheduled/on-demand because shared-runner
+# wall-clock values are too noisy to pretend they are universal PR gates.
 name: Benchmark
 
 on:
   workflow_dispatch:
   schedule: [{ cron: '0 5 * * 1' }]
+  pull_request:
+    paths:
+      - 'benchmarks/PERFORMANCE-BUDGETS.json'
+      - 'benchmarks/fixtures/**'
+      - 'scripts/check-performance-authority*.mjs'
+      - 'scripts/lib/performance-authority.mjs'
+      - 'scripts/run-core-workflow-performance.mjs'
+      - 'scripts/run-material-compositing-performance.mjs'
+      - 'scripts/run-render-frame-benchmark.mjs'
+      - 'scripts/run-canvas-2d-benchmark.mjs'
+      - '.github/workflows/benchmark.yml'
 
 jobs:
-  render-frame:
+  authority:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: node scripts/check-performance-authority-test.mjs
+      - run: node scripts/check-performance-authority.mjs
+      - run: pnpm check:web-bundle-budget:test
+
+  reference-workflows:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,9 +45,15 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: npx playwright install --with-deps chromium
+      - run: pnpm --filter @arq/web build
+      - run: node scripts/check-performance-authority.mjs
+      - run: pnpm check:web-bundle-budget
       - run: pnpm benchmark:render-frame
+      - run: pnpm benchmark:canvas2d
+      - run: node scripts/run-core-workflow-performance.mjs
+      - run: node scripts/run-material-compositing-performance.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: render-frame-benchmark-results
+          name: core-performance-reference-results
           path: benchmarks/results/
