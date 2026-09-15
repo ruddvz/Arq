@@ -21,8 +21,9 @@ export type SelectionIntent =
 
 /**
  * Applies a surface-neutral intent using the canonical pure transitions.
- * Toggle-many is processed in explicit input order so promotion remains stable
- * and independently testable; this function does not infer geometry ordering.
+ * Toggle-many is processed in first-occurrence input order so promotion remains
+ * stable and duplicate semantic IDs cannot toggle twice. This function does not
+ * infer geometry ordering.
  */
 export function applySelectionIntent(
   selection: WorkspaceSelection,
@@ -37,7 +38,7 @@ export function applySelectionIntent(
       return extendSelection(selection, intent.ids);
     case 'toggle': {
       let next = selection;
-      for (const id of intent.ids) {
+      for (const id of new Set(intent.ids)) {
         next = toggleSelection(next, id);
       }
       return next;
