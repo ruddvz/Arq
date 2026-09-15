@@ -43,6 +43,15 @@ describe('applySelectionIntent', () => {
     expect(next.primaryId).toBe('window-3');
   });
 
+  it('collapses duplicate toggle IDs instead of toggling the same semantic target twice', () => {
+    const start = selection('wall-1', ['door-2']);
+    const next = applySelectionIntent(start, {
+      kind: 'toggle',
+      ids: ['door-2', 'door-2', 'window-3', 'window-3'],
+    });
+    expect(selectedIds(next)).toEqual(['wall-1', 'window-3']);
+  });
+
   it('does not mutate the caller-owned starting selection', () => {
     const secondaries = new Set(['door-2']);
     const start: WorkspaceSelection = { primaryId: 'wall-1', secondaryIds: secondaries };
