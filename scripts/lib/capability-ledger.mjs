@@ -146,7 +146,10 @@ function deriveReadOnlyStatus(commandFact) {
 function derivePersistenceSupport(definition, commandFact, blockers) {
   if (commandFact?.mutationType === 'view-session') return 'not-required';
   if (definition.category === 'Project lifecycle' && blockers.length === 0) return 'supported';
-  if (commandFact?.mutationType === 'semantic-project' || definition.category === 'Project lifecycle') {
+  if (
+    commandFact?.mutationType === 'semantic-project' ||
+    definition.category === 'Project lifecycle'
+  ) {
     return 'unknown';
   }
   return 'not-required';
@@ -162,13 +165,22 @@ function evidenceFingerprint(definition, provider, evidence, commandFact) {
   return sha256(JSON.stringify(payload));
 }
 
-export function buildCapabilityLedger({ repoRoot, definitions, commandAuthoritySource, toolRegistry }) {
+export function buildCapabilityLedger({
+  repoRoot,
+  definitions,
+  commandAuthoritySource,
+  toolRegistry,
+}) {
   const commandFacts = parseCommandToolFacts(commandAuthoritySource, toolRegistry);
   const records = definitions.capabilities.map((definition) => {
     const sourceEvidence = definition.sourcePaths.map((p) => evidenceForPath(repoRoot, p));
     const testEvidence = definition.testPaths.map((p) => evidenceForPath(repoRoot, p));
-    const executionEvidence = definition.executionEvidencePaths.map((p) => evidenceForPath(repoRoot, p));
-    const commandFact = definition.commandId ? (commandFacts.get(definition.commandId) ?? null) : null;
+    const executionEvidence = definition.executionEvidencePaths.map((p) =>
+      evidenceForPath(repoRoot, p),
+    );
+    const commandFact = definition.commandId
+      ? (commandFacts.get(definition.commandId) ?? null)
+      : null;
     const blockers = mergeBlockers(definition, definitions.providers);
     if (commandFact?.unavailableReason) blockers.push(commandFact.unavailableReason);
     const maturity = deriveMaturity({
