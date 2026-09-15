@@ -32,8 +32,9 @@ At the revalidated head:
   `WorkspaceModeState.selection`, active-level selection clearing or view-tab
   selection continuity.
 
-Required issue #319 could not be resolved from the live repository. This audit
-does not invent a contract for it.
+Issue #319 is live and governs deterministic multi-agent work ownership only. Its
+own boundary says repository claims must not change ARQ design/evidence truth, so
+it does not create another selection authority for #401.
 
 ## State domains
 

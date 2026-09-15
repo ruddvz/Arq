@@ -395,7 +395,10 @@ async function runNativeLevelScenario(page, observed) {
 
   const planTab = page.getByRole('tab', { name: /Ground floor|Level 1 Plan|Plan/ }).first();
   await planTab.click();
+  const browserViewsTab = page.getByRole('tab', { name: 'Views', exact: true }).first();
+  await browserViewsTab.click();
   const levels = page.getByRole('region', { name: 'Floor plans' });
+  await levels.waitFor({ state: 'visible', timeout: 5000 });
   const levelButtons = levels.getByRole('button');
   const levelCount = await levelButtons.count();
   if (levelCount < 2) {
