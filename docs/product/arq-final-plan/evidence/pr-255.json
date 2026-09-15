@@ -1,0 +1,178 @@
+{
+  "files": [
+    {
+      "sha": "560c241568c0685a27474a8fe84d01d29388a95b",
+      "filename": "rust/Cargo.lock",
+      "status": "modified",
+      "additions": 22,
+      "deletions": 23,
+      "changes": 45,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/0d81f77456dfd1f1b7b0e2fdc1243ff1e8c55ea7/rust%2FCargo.lock",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/0d81f77456dfd1f1b7b0e2fdc1243ff1e8c55ea7/rust%2FCargo.lock",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/rust%2FCargo.lock?ref=0d81f77456dfd1f1b7b0e2fdc1243ff1e8c55ea7",
+      "patch": "@@ -12,11 +12,11 @@ dependencies = [\n \n [[package]]\n name = \"block-buffer\"\n-version = \"0.10.4\"\n+version = \"0.12.1\"\n source = \"registry+https://github.com/rust-lang/crates.io-index\"\n-checksum = \"3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71\"\n+checksum = \"d2f6c7dbe95a6ed67ad9f18e57daf93a2f034c524b99fd2b76d18fdfeb6660aa\"\n dependencies = [\n- \"generic-array\",\n+ \"hybrid-array\",\n ]\n \n [[package]]\n@@ -31,43 +31,48 @@ version = \"1.0.4\"\n source = \"registry+https://github.com/rust-lang/crates.io-index\"\n checksum = \"9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801\"\n \n+[[package]]\n+name = \"const-oid\"\n+version = \"0.10.2\"\n+source = \"registry+https://github.com/rust-lang/crates.io-index\"\n+checksum = \"a6ef517f0926dd24a1582492c791b6a4818a4d94e789a334894aa15b0d12f55c\"\n+\n [[package]]\n name = \"cpufeatures\"\n-version = \"0.2.17\"\n+version = \"0.3.1\"\n source = \"registry+https://github.com/rust-lang/crates.io-index\"\n-checksum = \"59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280\"\n+checksum = \"5ca28b0ae3115b884660db4118d803791fd6756b6e88f39c0f3f7859060d7566\"\n dependencies = [\n  \"libc\",\n ]\n \n [[package]]\n name = \"crypto-common\"\n-version = \"0.1.7\"\n+version = \"0.2.2\"\n source = \"registry+https://github.com/rust-lang/crates.io-index\"\n-checksum = \"78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a\"\n+checksum = \"ce6e4c961d6cd6c9a86db418387425e8bdeaf05b3c8bc1411e6dca4c252f1453\"\n dependencies = [\n- \"generic-array\",\n- \"typenum\",\n+ \"hybrid-array\",\n ]\n \n [[package]]\n name = \"digest\"\n-version = \"0.10.7\"\n+version = \"0.11.3\"\n source = \"registry+https://github.com/rust-lang/crates.io-index\"\n-checksum = \"9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292\"\n+checksum = \"f1dd6dbb5841937940781866fa1281a1ff7bd3bf827091440879f9994983d5c2\"\n dependencies = [\n  \"block-buffer\",\n+ \"const-oid\",\n  \"crypto-common\",\n ]\n \n [[package]]\n-name = \"generic-array\"\n-version = \"0.14.7\"\n+name = \"hybrid-array\"\n+version = \"0.4.15\"\n source = \"registry+https://github.com/rust-lang/crates.io-index\"\n-checksum = \"85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a\"\n+checksum = \"27f864f10dfb56725ce5ce5472bc52252c8f93a4ab86327122cebf62c5f59a17\"\n dependencies = [\n  \"typenum\",\n- \"version_check\",\n ]\n \n [[package]]\n@@ -108,9 +113,9 @@ checksum = \"cf54715a573b99ac80df0bc206da022bcd442c974952c7b9720069370852e21f\"\n \n [[package]]\n name = \"sha2\"\n-version = \"0.10.9\"\n+version = \"0.11.0\"\n source = \"registry+https://github.com/rust-lang/crates.io-index\"\n-checksum = \"a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283\"\n+checksum = \"446ba717509524cb3f22f17ecc096f10f4822d76ab5c0b9822c5f9c284e825f4\"\n dependencies = [\n  \"cfg-if\",\n  \"cpufeatures\",\n@@ -140,12 +145,6 @@ version = \"1.0.24\"\n source = \"registry+https://github.com/rust-lang/crates.io-index\"\n checksum = \"e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75\"\n \n-[[package]]\n-name = \"version_check\"\n-version = \"0.9.5\"\n-source = \"registry+https://github.com/rust-lang/crates.io-index\"\n-checksum = \"0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a\"\n-\n [[package]]\n name = \"wasm-bindgen\"\n version = \"0.2.128\""
+    },
+    {
+      "sha": "3916b5bc2be7780e53ac94d14df46363fb3b3011",
+      "filename": "rust/arq-core/Cargo.toml",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/0d81f77456dfd1f1b7b0e2fdc1243ff1e8c55ea7/rust%2Farq-core%2FCargo.toml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/0d81f77456dfd1f1b7b0e2fdc1243ff1e8c55ea7/rust%2Farq-core%2FCargo.toml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/rust%2Farq-core%2FCargo.toml?ref=0d81f77456dfd1f1b7b0e2fdc1243ff1e8c55ea7",
+      "patch": "@@ -9,7 +9,7 @@ license = \"MIT OR Apache-2.0\"\n crate-type = [\"cdylib\", \"rlib\"]\n \n [dependencies]\n-sha2 = \"0.10\"\n+sha2 = \"0.11\"\n wasm-bindgen = \"0.2\"\n \n [dev-dependencies]"
+    }
+  ],
+  "reviews": [],
+  "detail": {
+    "baseRefOid": "96b271b30005f89044914c7c4c723c45ce44eae4",
+    "body": "Bumps [sha2](https://github.com/RustCrypto/hashes) from 0.10.9 to 0.11.0.\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/RustCrypto/hashes/commit/ffe093984c004769747e998f77da8ff7c0e7a765\"><code>ffe0939</code></a> Release sha2 0.11.0 (<a href=\"https://redirect.github.com/RustCrypto/hashes/issues/806\">#806</a>)</li>\n<li><a href=\"https://github.com/RustCrypto/hashes/commit/8991b65fe400c31c4cc189510f86ae642c470cd9\"><code>8991b65</code></a> Use the standard order of the <code>[package]</code> section fields (<a href=\"https://redirect.github.com/RustCrypto/hashes/issues/807\">#807</a>)</li>\n<li><a href=\"https://github.com/RustCrypto/hashes/commit/3d2bc57db40fd6aeb25d6c6da98d67e2784c2985\"><code>3d2bc57</code></a> sha2: refactor backends (<a href=\"https://redirect.github.com/RustCrypto/hashes/issues/802\">#802</a>)</li>\n<li><a href=\"https://github.com/RustCrypto/hashes/commit/faa55fb83697c8f3113636d88070e5f5edc8c335\"><code>faa55fb</code></a> sha3: bump <code>keccak</code> to v0.2 (<a href=\"https://redirect.github.com/RustCrypto/hashes/issues/803\">#803</a>)</li>\n<li><a href=\"https://github.com/RustCrypto/hashes/commit/d3e6489e56f8486d4a93ceb7a8abf4924af1de7b\"><code>d3e6489</code></a> sha3 v0.11.0-rc.9 (<a href=\"https://redirect.github.com/RustCrypto/hashes/issues/801\">#801</a>)</li>\n<li><a href=\"https://github.com/RustCrypto/hashes/commit/bbf6f51ff97f81ab15e6e5f6cf878bfbcb1f47c8\"><code>bbf6f51</code></a> sha2: tweak backend docs (<a href=\"https://redirect.github.com/RustCrypto/hashes/issues/800\">#800</a>)</li>\n<li><a href=\"https://github.com/RustCrypto/hashes/commit/155dbbf2959dbec0ec75948a82590ddaede2d3bc\"><code>155dbbf</code></a> sha3: add default value for the <code>DS</code> generic parameter on <code>TurboShake128/256</code>...</li>\n<li><a href=\"https://github.com/RustCrypto/hashes/commit/ed514f2b34526683b3b7c41670f1887982c3df64\"><code>ed514f2</code></a> Use published version of <code>keccak</code> v0.2 (<a href=\"https://redirect.github.com/RustCrypto/hashes/issues/799\">#799</a>)</li>\n<li><a href=\"https://github.com/RustCrypto/hashes/commit/702bcd83735a49c928c0fc24506924f5c0aa22af\"><code>702bcd8</code></a> Migrate to closure-based <code>keccak</code> (<a href=\"https://redirect.github.com/RustCrypto/hashes/issues/796\">#796</a>)</li>\n<li><a href=\"https://github.com/RustCrypto/hashes/commit/827c043f82d57666a0b146d156e91c39535c1305\"><code>827c043</code></a> sha3 v0.11.0-rc.8 (<a href=\"https://redirect.github.com/RustCrypto/hashes/issues/794\">#794</a>)</li>\n<li>Additional commits viewable in <a href=\"https://github.com/RustCrypto/hashes/compare/sha2-v0.10.9...sha2-v0.11.0\">compare view</a></li>\n</ul>\n</details>\n<br />\n",
+    "headRefOid": "0d81f77456dfd1f1b7b0e2fdc1243ff1e8c55ea7",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 255,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:15:58Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953314/job/102971378864",
+        "name": "build",
+        "startedAt": "2026-09-10T17:15:16Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:17:42Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953300/job/102971379703",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-09-10T17:15:33Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:16:13Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953345/job/102971379395",
+        "name": "classify",
+        "startedAt": "2026-09-10T17:16:03Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:15:26Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953298/job/102971379196",
+        "name": "secret-scan",
+        "startedAt": "2026-09-10T17:15:14Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:16:23Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953300/job/102971379631",
+        "name": "test",
+        "startedAt": "2026-09-10T17:15:21Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:16:47Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953345/job/102972075461",
+        "name": "preflight",
+        "startedAt": "2026-09-10T17:16:27Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:16:13Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953345/job/102972077732",
+        "name": "critical-approval",
+        "startedAt": "2026-09-10T17:16:14Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:20:41Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953300/job/102971379699",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-09-10T17:15:40Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:15:06Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953300/job/102971379406",
+        "name": "language-system",
+        "startedAt": "2026-09-10T17:14:36Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:22:21Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953345/job/102972270054",
+        "name": "selected-evidence",
+        "startedAt": "2026-09-10T17:16:49Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:15:38Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953300/job/102971379592",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-09-10T17:15:16Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:22:40Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953345/job/102974170826",
+        "name": "engineering-gate",
+        "startedAt": "2026-09-10T17:22:23Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T17:15:52Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34506953300/job/102971379605",
+        "name": "rust-test",
+        "startedAt": "2026-09-10T17:15:21Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-09-10T17:14:09Z",
+        "state": "FAILURE",
+        "targetUrl": "https://vercel.com/pvr6675-3816s-projects?upgradeToPro=build-rate-limit"
+      }
+    ]
+  }
+}

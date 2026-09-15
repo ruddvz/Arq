@@ -1,0 +1,1702 @@
+[
+  {
+    "name": "chore/product-ui-ux-skill-20260908",
+    "commit": {
+      "sha": "0ef05b270d3e31d5e3816ae61aeb2cce85e98616",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/0ef05b270d3e31d5e3816ae61aeb2cce85e98616"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/chore/product-ui-ux-skill-20260908/protection"
+  },
+  {
+    "name": "chore/repository-rename-zeus",
+    "commit": {
+      "sha": "75b954e0da17b07540372a8fc1401d9d6d43faac",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/75b954e0da17b07540372a8fc1401d9d6d43faac"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/chore/repository-rename-zeus/protection"
+  },
+  {
+    "name": "claude/arq-6-aogrp-9xcxam",
+    "commit": {
+      "sha": "ea2fe5836c1ee470202cc93f48371d9ece90e71e",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/ea2fe5836c1ee470202cc93f48371d9ece90e71e"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-6-aogrp-9xcxam/protection"
+  },
+  {
+    "name": "claude/arq-cad-platform-research-ba8rav",
+    "commit": {
+      "sha": "df04288c182bdfcee91f92e70b0e5d0017fc0628",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/df04288c182bdfcee91f92e70b0e5d0017fc0628"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-cad-platform-research-ba8rav/protection"
+  },
+  {
+    "name": "claude/arq-cad-v3-implementation-0v1kh5",
+    "commit": {
+      "sha": "86afcabc68b13141fa7e5f253960faccde356855",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/86afcabc68b13141fa7e5f253960faccde356855"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-cad-v3-implementation-0v1kh5/protection"
+  },
+  {
+    "name": "claude/arq-house-17-release-e9hef5",
+    "commit": {
+      "sha": "9abb591a9bb25fdf08e39f5e4eea7e96497e13b6",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/9abb591a9bb25fdf08e39f5e4eea7e96497e13b6"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-house-17-release-e9hef5/protection"
+  },
+  {
+    "name": "claude/arq-language-system-4-1-l3p9fr",
+    "commit": {
+      "sha": "f5f7264d9def7787a9ce816e0b169967207f9ae7",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/f5f7264d9def7787a9ce816e0b169967207f9ae7"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-language-system-4-1-l3p9fr/protection"
+  },
+  {
+    "name": "claude/arq-liquid-glass-12-5gstys",
+    "commit": {
+      "sha": "0cea3eb87985ccbebcb6d44b13aeba56516999aa",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/0cea3eb87985ccbebcb6d44b13aeba56516999aa"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-liquid-glass-12-5gstys/protection"
+  },
+  {
+    "name": "claude/arq-master-agent-execution-ir9re1",
+    "commit": {
+      "sha": "59a6ff2638ab47d376e0f359375d67dea6ab2dd1",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/59a6ff2638ab47d376e0f359375d67dea6ab2dd1"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-master-agent-execution-ir9re1/protection"
+  },
+  {
+    "name": "claude/arq-mcp-system-improvements-pkoahy",
+    "commit": {
+      "sha": "a6049200240bd91d407a9bbbe4ef008d2232ed28",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/a6049200240bd91d407a9bbbe4ef008d2232ed28"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-mcp-system-improvements-pkoahy/protection"
+  },
+  {
+    "name": "claude/arq-native-lifecycle-v3-smx7rg",
+    "commit": {
+      "sha": "4420ef840065188667e9e835b691b274535ea030",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/4420ef840065188667e9e835b691b274535ea030"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-native-lifecycle-v3-smx7rg/protection"
+  },
+  {
+    "name": "claude/arq-native-project-open-e0lwyv",
+    "commit": {
+      "sha": "0e007e89a2be02cd1b5b8bba675e16f1943ec25a",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/0e007e89a2be02cd1b5b8bba675e16f1943ec25a"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-native-project-open-e0lwyv/protection"
+  },
+  {
+    "name": "claude/arq-package-3-workspace-1p64sa",
+    "commit": {
+      "sha": "fdc3aba4e9eab95785839f35c0367d5d54e87955",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/fdc3aba4e9eab95785839f35c0367d5d54e87955"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-package-3-workspace-1p64sa/protection"
+  },
+  {
+    "name": "claude/arq-pr01-governance",
+    "commit": {
+      "sha": "4d3cf7288a72e9803bddb43bad71b9ee01b3f2af",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/4d3cf7288a72e9803bddb43bad71b9ee01b3f2af"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-pr01-governance/protection"
+  },
+  {
+    "name": "claude/arq-project-improvements-aulz73",
+    "commit": {
+      "sha": "26205942be2fc900aef70714f1f73fd3929e99f7",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/26205942be2fc900aef70714f1f73fd3929e99f7"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-project-improvements-aulz73/protection"
+  },
+  {
+    "name": "claude/arq-project-lifecycle",
+    "commit": {
+      "sha": "6aa4eac18e246faf05f7032a494253e405cba1ce",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/6aa4eac18e246faf05f7032a494253e405cba1ce"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-project-lifecycle/protection"
+  },
+  {
+    "name": "claude/arq-readme-rebuild-9zeb83",
+    "commit": {
+      "sha": "feea6ac0a20e8f36d3ea17ef26f0b1b10ebd52fe",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/feea6ac0a20e8f36d3ea17ef26f0b1b10ebd52fe"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-readme-rebuild-9zeb83/protection"
+  },
+  {
+    "name": "claude/arq-reconciliation-audit-y29e1k",
+    "commit": {
+      "sha": "cfcf2ac2ed1952332ece4d8a59cd0a69585cf93d",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/cfcf2ac2ed1952332ece4d8a59cd0a69585cf93d"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-reconciliation-audit-y29e1k/protection"
+  },
+  {
+    "name": "claude/arq-spec-implementation-aehuox",
+    "commit": {
+      "sha": "0c04584f6fd07ee6001923ca4aa3fed1c851feca",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/0c04584f6fd07ee6001923ca4aa3fed1c851feca"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-spec-implementation-aehuox/protection"
+  },
+  {
+    "name": "claude/arq-vercel-closure",
+    "commit": {
+      "sha": "e781c98157b601e85ed46e12152bcc1348693d79",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/e781c98157b601e85ed46e12152bcc1348693d79"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-vercel-closure/protection"
+  },
+  {
+    "name": "claude/arq-website-redesign-v3-kaf50s",
+    "commit": {
+      "sha": "bc2a93883a4253d37011e4eb3b5540c4b2dc9be0",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/bc2a93883a4253d37011e4eb3b5540c4b2dc9be0"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/arq-website-redesign-v3-kaf50s/protection"
+  },
+  {
+    "name": "claude/code-review-implementation-bnmp78",
+    "commit": {
+      "sha": "8b96d8e92c8d2e1707144007d5481fb8ecb73755",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/8b96d8e92c8d2e1707144007d5481fb8ecb73755"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/code-review-implementation-bnmp78/protection"
+  },
+  {
+    "name": "claude/new-session-7zp4st",
+    "commit": {
+      "sha": "929d693a667335ef0e5ef4ce8e85851e8e1d20b0",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/929d693a667335ef0e5ef4ce8e85851e8e1d20b0"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/new-session-7zp4st/protection"
+  },
+  {
+    "name": "claude/new-session-bakp2v",
+    "commit": {
+      "sha": "453ab38b3945389a969ec778e5a65d0763b164d7",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/453ab38b3945389a969ec778e5a65d0763b164d7"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/new-session-bakp2v/protection"
+  },
+  {
+    "name": "claude/repo-audit-completion-bzolr3",
+    "commit": {
+      "sha": "9c461c54572dd87a75d0efb8ea242fb3619c7ca9",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/9c461c54572dd87a75d0efb8ea242fb3619c7ca9"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/repo-audit-completion-bzolr3/protection"
+  },
+  {
+    "name": "claude/unemployment-alignment-review-9hniy8",
+    "commit": {
+      "sha": "4700bdae045d09feeafaa059ebd8729f058d3277",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/4700bdae045d09feeafaa059ebd8729f058d3277"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/unemployment-alignment-review-9hniy8/protection"
+  },
+  {
+    "name": "claude/zeus-implementation-perfect-9au9az",
+    "commit": {
+      "sha": "a75856e42065be7b0a8143963508a505a981acab",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/a75856e42065be7b0a8143963508a505a981acab"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/zeus-implementation-perfect-9au9az/protection"
+  },
+  {
+    "name": "claude/zeus-system-overview-u0cx9t",
+    "commit": {
+      "sha": "86cee294396cd06c76c8ca0ab7af362e089dc56a",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/86cee294396cd06c76c8ca0ab7af362e089dc56a"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/zeus-system-overview-u0cx9t/protection"
+  },
+  {
+    "name": "claude/zeus-system-perfection-hr0hjb",
+    "commit": {
+      "sha": "4c9e68b7c0ed980a026013078596b2bfbb666951",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/4c9e68b7c0ed980a026013078596b2bfbb666951"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/claude/zeus-system-perfection-hr0hjb/protection"
+  },
+  {
+    "name": "codex/arq-401-selection-authority-evidence",
+    "commit": {
+      "sha": "8703a611c1615791c58ddbdf7920d2c2b5f9876c",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/8703a611c1615791c58ddbdf7920d2c2b5f9876c"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/arq-401-selection-authority-evidence/protection"
+  },
+  {
+    "name": "codex/arq-native-editor-persistence-355-recovery",
+    "commit": {
+      "sha": "c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/c83d761b0e3ccf62936d9a816f65e8268dbe56b6"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/arq-native-editor-persistence-355-recovery/protection"
+  },
+  {
+    "name": "codex/arq-native-editor-persistence-355",
+    "commit": {
+      "sha": "5f965f7678a09e1fbd9a81d51778236fce682736",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/5f965f7678a09e1fbd9a81d51778236fce682736"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/arq-native-editor-persistence-355/protection"
+  },
+  {
+    "name": "codex/arq-public-site-editorial-v1",
+    "commit": {
+      "sha": "2d82ca4c3c8e67755828e6ae117ac13ad101f610",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/2d82ca4c3c8e67755828e6ae117ac13ad101f610"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/arq-public-site-editorial-v1/protection"
+  },
+  {
+    "name": "codex/arqfs-cow-migration-ui-276",
+    "commit": {
+      "sha": "7bf82cbfd52b50fd6a6091fbf757063b2b95cf55",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/7bf82cbfd52b50fd6a6091fbf757063b2b95cf55"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/arqfs-cow-migration-ui-276/protection"
+  },
+  {
+    "name": "codex/arqfs-cow-migration-v1-backup",
+    "commit": {
+      "sha": "c4da70723f0e83fa1b8719d23a24917bb81a1263",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/c4da70723f0e83fa1b8719d23a24917bb81a1263"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/arqfs-cow-migration-v1-backup/protection"
+  },
+  {
+    "name": "codex/arqfs-cow-migration-v1",
+    "commit": {
+      "sha": "a4f6941b5c0b9ef1441a4ea0ca9e1f95cc5a4a60",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/a4f6941b5c0b9ef1441a4ea0ca9e1f95cc5a4a60"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/arqfs-cow-migration-v1/protection"
+  },
+  {
+    "name": "codex/browser-device-matrix-219",
+    "commit": {
+      "sha": "ec738d57a27196ae22dd852ec2ffcb8e8f78d5dd",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/ec738d57a27196ae22dd852ec2ffcb8e8f78d5dd"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/browser-device-matrix-219/protection"
+  },
+  {
+    "name": "codex/browser-matrix-smoke-358",
+    "commit": {
+      "sha": "3c16942f72a5da8234973e45fe794ef6eec158bd",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/3c16942f72a5da8234973e45fe794ef6eec158bd"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/browser-matrix-smoke-358/protection"
+  },
+  {
+    "name": "codex/canonical-units-88",
+    "commit": {
+      "sha": "5a1168c4e8a9876bd66720c303df223704eb0c12",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/5a1168c4e8a9876bd66720c303df223704eb0c12"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/canonical-units-88/protection"
+  },
+  {
+    "name": "codex/engineering-context-refresh-v1",
+    "commit": {
+      "sha": "96a8a82d737d1c98faa29dab3b4198208e5c32ad",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/96a8a82d737d1c98faa29dab3b4198208e5c32ad"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/engineering-context-refresh-v1/protection"
+  },
+  {
+    "name": "codex/ux-0-1-396-exact-head-evidence",
+    "commit": {
+      "sha": "b8f12b1814ad69e8b27c6c33d83053cab41550a3",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/b8f12b1814ad69e8b27c6c33d83053cab41550a3"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/ux-0-1-396-exact-head-evidence/protection"
+  },
+  {
+    "name": "codex/ux-0-2-398-reachability-evidence",
+    "commit": {
+      "sha": "f7d0527edaa65a6e0763cb8f1b6a60568ea82641",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/f7d0527edaa65a6e0763cb8f1b6a60568ea82641"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/ux-0-2-398-reachability-evidence/protection"
+  },
+  {
+    "name": "codex/zeus-adaptive-completion-v3",
+    "commit": {
+      "sha": "aa9d0279e32bb7b735d1e4190b3224ddb71c4ae0",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/aa9d0279e32bb7b735d1e4190b3224ddb71c4ae0"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-adaptive-completion-v3/protection"
+  },
+  {
+    "name": "codex/zeus-adaptive-context-quality-v1",
+    "commit": {
+      "sha": "01c40254e7e5f28aa3c9683771ad869e265b65a3",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/01c40254e7e5f28aa3c9683771ad869e265b65a3"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-adaptive-context-quality-v1/protection"
+  },
+  {
+    "name": "codex/zeus-adaptive-context-quality-v2",
+    "commit": {
+      "sha": "d84e7fa8bc51af32bbe2a775bf38c8fe77872820",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/d84e7fa8bc51af32bbe2a775bf38c8fe77872820"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-adaptive-context-quality-v2/protection"
+  },
+  {
+    "name": "codex/zeus-adaptive-cto-v1",
+    "commit": {
+      "sha": "a100ca9e4e5a736f63893055208781f485c79884",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/a100ca9e4e5a736f63893055208781f485c79884"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-adaptive-cto-v1/protection"
+  },
+  {
+    "name": "codex/zeus-adaptive-eval-v1",
+    "commit": {
+      "sha": "97c44c67d4782c71a314c67d987b52b323b49b05",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/97c44c67d4782c71a314c67d987b52b323b49b05"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-adaptive-eval-v1/protection"
+  },
+  {
+    "name": "codex/zeus-adaptive-measurement-probe-328",
+    "commit": {
+      "sha": "b8a9a60bce01bcdc3b12cb7fafe3bb621a33c513",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/b8a9a60bce01bcdc3b12cb7fafe3bb621a33c513"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-adaptive-measurement-probe-328/protection"
+  },
+  {
+    "name": "codex/zeus-autonomy-gate-integration-v1",
+    "commit": {
+      "sha": "1f557c6770501df56faa1314d4279e9340006546",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/1f557c6770501df56faa1314d4279e9340006546"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-autonomy-gate-integration-v1/protection"
+  },
+  {
+    "name": "codex/zeus-autonomy-gate-integration-v2",
+    "commit": {
+      "sha": "67510c1abccde0647d54c6f13b7fd5b156800c25",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/67510c1abccde0647d54c6f13b7fd5b156800c25"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-autonomy-gate-integration-v2/protection"
+  },
+  {
+    "name": "codex/zeus-autonomy-gate-integration-v3",
+    "commit": {
+      "sha": "aef9955a87ff125c5e021cb4d61f1b0680a7032d",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/aef9955a87ff125c5e021cb4d61f1b0680a7032d"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-autonomy-gate-integration-v3/protection"
+  },
+  {
+    "name": "codex/zeus-autonomy-gate-integration-v4",
+    "commit": {
+      "sha": "567fce62e7eb79bee05c8d33cd05b20498856dbd",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/567fce62e7eb79bee05c8d33cd05b20498856dbd"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-autonomy-gate-integration-v4/protection"
+  },
+  {
+    "name": "codex/zeus-autonomy-gate-integration-v5",
+    "commit": {
+      "sha": "1e93372215eef035574740b13dfb80b4c05d154e",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/1e93372215eef035574740b13dfb80b4c05d154e"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-autonomy-gate-integration-v5/protection"
+  },
+  {
+    "name": "codex/zeus-autonomy-validator-v1",
+    "commit": {
+      "sha": "0a380d90b02b1e3c7f0e6714c3968ab43074edc9",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/0a380d90b02b1e3c7f0e6714c3968ab43074edc9"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-autonomy-validator-v1/protection"
+  },
+  {
+    "name": "codex/zeus-autonomy-validator-v2",
+    "commit": {
+      "sha": "d8c49380b31d03b34cc714a0e0132b9e5c36bd8f",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/d8c49380b31d03b34cc714a0e0132b9e5c36bd8f"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-autonomy-validator-v2/protection"
+  },
+  {
+    "name": "codex/zeus-autonomy-validator-v3",
+    "commit": {
+      "sha": "6b5d49da45362eec55cf9997b2301a02c9dd4316",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/6b5d49da45362eec55cf9997b2301a02c9dd4316"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-autonomy-validator-v3/protection"
+  },
+  {
+    "name": "codex/zeus-browser-budget-fix",
+    "commit": {
+      "sha": "95f3254ddcd28214a686cd3807f557246c8e03f8",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/95f3254ddcd28214a686cd3807f557246c8e03f8"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-browser-budget-fix/protection"
+  },
+  {
+    "name": "codex/zeus-context-economy-5-1",
+    "commit": {
+      "sha": "9fdf3df497bc6569b08a946fe231cc214b4e5fb4",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/9fdf3df497bc6569b08a946fe231cc214b4e5fb4"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-context-economy-5-1/protection"
+  },
+  {
+    "name": "codex/zeus-context-retrieval-v2",
+    "commit": {
+      "sha": "7190276b3e74b392244ff883f35c1a6e20b3e823",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/7190276b3e74b392244ff883f35c1a6e20b3e823"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-context-retrieval-v2/protection"
+  },
+  {
+    "name": "codex/zeus-cross-language-graph-325-scratch",
+    "commit": {
+      "sha": "13ff85674d64e2a66d1620a176a71ac53f07f532",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/13ff85674d64e2a66d1620a176a71ac53f07f532"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-cross-language-graph-325-scratch/protection"
+  },
+  {
+    "name": "codex/zeus-cross-language-graph-325-v1",
+    "commit": {
+      "sha": "168c9963dd20fd8f569bf16c67256489a9432c8d",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/168c9963dd20fd8f569bf16c67256489a9432c8d"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-cross-language-graph-325-v1/protection"
+  },
+  {
+    "name": "codex/zeus-cross-language-graph-325",
+    "commit": {
+      "sha": "4a88bec72ef76660daf643babbbf675b3a6afec6",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/4a88bec72ef76660daf643babbbf675b3a6afec6"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-cross-language-graph-325/protection"
+  },
+  {
+    "name": "codex/zeus-cto-runtime-v2",
+    "commit": {
+      "sha": "9891dbfb5550b9938d20364d63e4a6d029854223",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/9891dbfb5550b9938d20364d63e4a6d029854223"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-cto-runtime-v2/protection"
+  },
+  {
+    "name": "codex/zeus-default-branch-dual-trigger-v1",
+    "commit": {
+      "sha": "5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-default-branch-dual-trigger-v1/protection"
+  },
+  {
+    "name": "codex/zeus-doctor-status-v1",
+    "commit": {
+      "sha": "2866d0105350ef7f46ef6f610e7730b98fa05739",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/2866d0105350ef7f46ef6f610e7730b98fa05739"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-doctor-status-v1/protection"
+  },
+  {
+    "name": "codex/zeus-engineering-context-refresh-350",
+    "commit": {
+      "sha": "06bafc7089f956b39e414ceaa0a984c0d80331a0",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/06bafc7089f956b39e414ceaa0a984c0d80331a0"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-engineering-context-refresh-350/protection"
+  },
+  {
+    "name": "codex/zeus-local-autonomy-v1",
+    "commit": {
+      "sha": "2dfaa1b6217eb34f4078a779430fbfc5231cfdbd",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/2dfaa1b6217eb34f4078a779430fbfc5231cfdbd"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-local-autonomy-v1/protection"
+  },
+  {
+    "name": "codex/zeus-main-migration-prep-332",
+    "commit": {
+      "sha": "2152931de51d98c9bc41529dc860314357e5ba00",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/2152931de51d98c9bc41529dc860314357e5ba00"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-main-migration-prep-332/protection"
+  },
+  {
+    "name": "codex/zeus-repository-intelligence-integration-v1",
+    "commit": {
+      "sha": "82766584159c46c388eabc6d1931cb40f849a56a",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/82766584159c46c388eabc6d1931cb40f849a56a"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-repository-intelligence-integration-v1/protection"
+  },
+  {
+    "name": "codex/zeus-repository-intelligence-integration-v2",
+    "commit": {
+      "sha": "9a0c4276286a97d4d7c9095144915e7c916084fc",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/9a0c4276286a97d4d7c9095144915e7c916084fc"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-repository-intelligence-integration-v2/protection"
+  },
+  {
+    "name": "codex/zeus-repository-intelligence-ledgers-v1",
+    "commit": {
+      "sha": "2a0cbf592d03684ddd981cb8e1ec6e03ee1acc48",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/2a0cbf592d03684ddd981cb8e1ec6e03ee1acc48"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-repository-intelligence-ledgers-v1/protection"
+  },
+  {
+    "name": "codex/zeus-repository-intelligence-ledgers-v2",
+    "commit": {
+      "sha": "83afddf4378581002ecce6e2e456aca6b32cc8e0",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/83afddf4378581002ecce6e2e456aca6b32cc8e0"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-repository-intelligence-ledgers-v2/protection"
+  },
+  {
+    "name": "codex/zeus-repository-intelligence-ledgers-v3",
+    "commit": {
+      "sha": "88c252f200da05f6007c96ea94cb67a6ffffbad5",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/88c252f200da05f6007c96ea94cb67a6ffffbad5"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-repository-intelligence-ledgers-v3/protection"
+  },
+  {
+    "name": "codex/zeus-repository-intelligence-ledgers-v4",
+    "commit": {
+      "sha": "d76402ba048d60643efc77d22b75d0871777759b",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/d76402ba048d60643efc77d22b75d0871777759b"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-repository-intelligence-ledgers-v4/protection"
+  },
+  {
+    "name": "codex/zeus-repository-intelligence-ledgers-v5",
+    "commit": {
+      "sha": "4cfaa699e3126cd64282d1fdae25de32b50cb6d2",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/4cfaa699e3126cd64282d1fdae25de32b50cb6d2"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-repository-intelligence-ledgers-v5/protection"
+  },
+  {
+    "name": "codex/zeus-repository-intelligence-ledgers-v6",
+    "commit": {
+      "sha": "0e2258ff84fd5211bab8e6b38e348e19935fee9e",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/0e2258ff84fd5211bab8e6b38e348e19935fee9e"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-repository-intelligence-ledgers-v6/protection"
+  },
+  {
+    "name": "codex/zeus-repository-intelligence-runtime-v1",
+    "commit": {
+      "sha": "e2d98359e8692c52a480221d3bf175834b9eabbb",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/e2d98359e8692c52a480221d3bf175834b9eabbb"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-repository-intelligence-runtime-v1/protection"
+  },
+  {
+    "name": "codex/zeus-repository-intelligence-v1",
+    "commit": {
+      "sha": "63e22fe67c7e22fdbeb5e40f4e5b20ac3220b94e",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/63e22fe67c7e22fdbeb5e40f4e5b20ac3220b94e"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/zeus-repository-intelligence-v1/protection"
+  },
+  {
+    "name": "codex/403-token-layer-audit-current-head",
+    "commit": {
+      "sha": "7e2e7e97fdcd6c762a31c6b4976a0fb6d4cad244",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/7e2e7e97fdcd6c762a31c6b4976a0fb6d4cad244"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/403-token-layer-audit-current-head/protection"
+  },
+  {
+    "name": "codex/412-overlay-zone-contract",
+    "commit": {
+      "sha": "a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/a6bb7a2cbc29798681f2c1d042961e5bd794c812"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/codex/412-overlay-zone-contract/protection"
+  },
+  {
+    "name": "dependabot/cargo/rust/sha2-0.11.0",
+    "commit": {
+      "sha": "0d81f77456dfd1f1b7b0e2fdc1243ff1e8c55ea7",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/0d81f77456dfd1f1b7b0e2fdc1243ff1e8c55ea7"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/cargo/rust/sha2-0.11.0/protection"
+  },
+  {
+    "name": "dependabot/github_actions/actions/cache-6",
+    "commit": {
+      "sha": "23f507b6c60d125ee4af3646ebc07a0ab0a617ec",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/23f507b6c60d125ee4af3646ebc07a0ab0a617ec"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/github_actions/actions/cache-6/protection"
+  },
+  {
+    "name": "dependabot/github_actions/actions/checkout-7",
+    "commit": {
+      "sha": "2d41567e6a89c2a43b48a6b8773a9ce08cb227c7",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/github_actions/actions/checkout-7/protection"
+  },
+  {
+    "name": "dependabot/github_actions/actions/deploy-pages-5",
+    "commit": {
+      "sha": "0299659c80f6047899ea3310616869be4ae4d411",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/0299659c80f6047899ea3310616869be4ae4d411"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/github_actions/actions/deploy-pages-5/protection"
+  },
+  {
+    "name": "dependabot/github_actions/actions/download-artifact-8",
+    "commit": {
+      "sha": "7243226ab542dda8c68654f3c31c1efbddaba4b8",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/7243226ab542dda8c68654f3c31c1efbddaba4b8"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/github_actions/actions/download-artifact-8/protection"
+  },
+  {
+    "name": "dependabot/github_actions/actions/setup-node-7",
+    "commit": {
+      "sha": "c5ca0327c7018d71c9542e8c1e933b33a8847290",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/c5ca0327c7018d71c9542e8c1e933b33a8847290"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/github_actions/actions/setup-node-7/protection"
+  },
+  {
+    "name": "dependabot/github_actions/actions/upload-artifact-7",
+    "commit": {
+      "sha": "5a33d8ec641cea0bf594360a0592806d8f302dd5",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/5a33d8ec641cea0bf594360a0592806d8f302dd5"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/github_actions/actions/upload-artifact-7/protection"
+  },
+  {
+    "name": "dependabot/github_actions/actions/upload-pages-artifact-5",
+    "commit": {
+      "sha": "f2b0665a5ec0e4ac3946724f141e281168ec7932",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/f2b0665a5ec0e4ac3946724f141e281168ec7932"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/github_actions/actions/upload-pages-artifact-5/protection"
+  },
+  {
+    "name": "dependabot/github_actions/pnpm/action-setup-6",
+    "commit": {
+      "sha": "34a2c689e9c15895484efc5ff01b36f697cae00b",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/34a2c689e9c15895484efc5ff01b36f697cae00b"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/github_actions/pnpm/action-setup-6/protection"
+  },
+  {
+    "name": "dependabot/npm_and_yarn/better-sqlite3-13.0.1",
+    "commit": {
+      "sha": "2a21ee20ea7132d5e4246a757321ddc10636f488",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/2a21ee20ea7132d5e4246a757321ddc10636f488"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/npm_and_yarn/better-sqlite3-13.0.1/protection"
+  },
+  {
+    "name": "dependabot/npm_and_yarn/fast-check-4.9.0",
+    "commit": {
+      "sha": "236c23f3db38049b6d0ce85fa26d79a7fac90a07",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/236c23f3db38049b6d0ce85fa26d79a7fac90a07"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/npm_and_yarn/fast-check-4.9.0/protection"
+  },
+  {
+    "name": "dependabot/npm_and_yarn/minor-and-patch-c95fa9565d",
+    "commit": {
+      "sha": "8e5875b5475d9a45e8132e413e04721104955211",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/8e5875b5475d9a45e8132e413e04721104955211"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/npm_and_yarn/minor-and-patch-c95fa9565d/protection"
+  },
+  {
+    "name": "dependabot/npm_and_yarn/multi-3146d5559c",
+    "commit": {
+      "sha": "39c3c48163fb6d9053b4d5c633af7d5a75951fb6",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/39c3c48163fb6d9053b4d5c633af7d5a75951fb6"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/npm_and_yarn/multi-3146d5559c/protection"
+  },
+  {
+    "name": "dependabot/npm_and_yarn/types/node-26.1.1",
+    "commit": {
+      "sha": "ce431c76b44d9e586a7289e198d2cf5ba5480ae0",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/ce431c76b44d9e586a7289e198d2cf5ba5480ae0"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/npm_and_yarn/types/node-26.1.1/protection"
+  },
+  {
+    "name": "dependabot/npm_and_yarn/typescript-7.0.2",
+    "commit": {
+      "sha": "14c0a0da90685f881b49c02c25211e556ca53685",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/14c0a0da90685f881b49c02c25211e556ca53685"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/npm_and_yarn/typescript-7.0.2/protection"
+  },
+  {
+    "name": "dependabot/npm_and_yarn/vite-8.1.5",
+    "commit": {
+      "sha": "24f0543a97d3651c77c04a539796e3f28e935efa",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/24f0543a97d3651c77c04a539796e3f28e935efa"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/npm_and_yarn/vite-8.1.5/protection"
+  },
+  {
+    "name": "dependabot/npm_and_yarn/vitejs/plugin-react-6.0.4",
+    "commit": {
+      "sha": "493128981e3183bf446e65e04e0e0862ff041cc2",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/493128981e3183bf446e65e04e0e0862ff041cc2"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/dependabot/npm_and_yarn/vitejs/plugin-react-6.0.4/protection"
+  },
+  {
+    "name": "fix/issue-325-zeus-cross-language-impact",
+    "commit": {
+      "sha": "d292ace3cf7dc45cdff6dedca1af477772512953",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/d292ace3cf7dc45cdff6dedca1af477772512953"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/fix/issue-325-zeus-cross-language-impact/protection"
+  },
+  {
+    "name": "main",
+    "commit": {
+      "sha": "a02ccc69e44e41324324c9482a43edbfb58e7905",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/a02ccc69e44e41324324c9482a43edbfb58e7905"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/main/protection"
+  },
+  {
+    "name": "research/archaiflow-reference-2026-09",
+    "commit": {
+      "sha": "408b08914aa28df6dd69a42b723926a5a1e164f8",
+      "url": "https://api.github.com/repos/ruddvz/Arq/commits/408b08914aa28df6dd69a42b723926a5a1e164f8"
+    },
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    },
+    "protection_url": "https://api.github.com/repos/ruddvz/Arq/branches/research/archaiflow-reference-2026-09/protection"
+  }
+]

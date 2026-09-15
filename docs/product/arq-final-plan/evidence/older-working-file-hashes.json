@@ -1,0 +1,128 @@
+[
+  {
+    "path": "STATUS.md",
+    "status": " M",
+    "sha256": "7e3ae95c8ed4d5da1bf806abf07b3f3757df8b56aaf0fb6c8ab7fa20734a7e7e",
+    "bytes": 30990
+  },
+  {
+    "path": "apps/web/src/App.tsx",
+    "status": " M",
+    "sha256": "0ade72f39a905cd5453244e1fa47c12b529e2d6433f2017ef2690e372dbf2839",
+    "bytes": 95475
+  },
+  {
+    "path": "apps/web/src/PlanCanvas.tsx",
+    "status": " M",
+    "sha256": "ea3ea5e37052be1a3b0ecfb7c4ab5b85e4a37a3a09044cee25721a53d1b50832",
+    "bytes": 70787
+  },
+  {
+    "path": "apps/web/src/canvas/plan-document.ts",
+    "status": " M",
+    "sha256": "a046eaf6cefc9415d743abe433400fbc589862f1c090b8732b038abd56dbc295",
+    "bytes": 3095
+  },
+  {
+    "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
+    "status": " M",
+    "sha256": "b74fe3079d437aec2f73b8dd89e74de56a7990f483418928e5ad5a9fd5d5aec6",
+    "bytes": 14808
+  },
+  {
+    "path": "apps/web/src/file-handling/create-arqfs-worker.ts",
+    "status": " M",
+    "sha256": "751b95f3d9d212a607b42b1f7faa5689602afc037103534b92ce0a459485d20e",
+    "bytes": 1398
+  },
+  {
+    "path": "apps/web/src/project/browser-worker-factory.ts",
+    "status": " M",
+    "sha256": "7ccf0a6fd54700201768961350dd8cb3c96a9cee90236c266d35be0abd5f1a05",
+    "bytes": 2073
+  },
+  {
+    "path": "apps/web/src/project/native-project-session.test.ts",
+    "status": " M",
+    "sha256": "b0c38cff8f88b509918717264924ce3e5330ba4d251cd6ba0d13c1cb188c37e9",
+    "bytes": 16423
+  },
+  {
+    "path": "apps/web/src/project/native-project-session.ts",
+    "status": " M",
+    "sha256": "7f95705a3301925c293c245fb30bb49a8cbff53a2fc6dd8c5ef95915746b1378",
+    "bytes": 19934
+  },
+  {
+    "path": "apps/web/src/project/publish-native-project.test.ts",
+    "status": " M",
+    "sha256": "37bd652999407eff7b06e956c16ec603ab9c432ec423bd6bcfdfb0a998da1a8d",
+    "bytes": 20951
+  },
+  {
+    "path": "apps/web/vite.config.ts",
+    "status": " M",
+    "sha256": "f08df6c70a7de191ea8c254b41701660fe5ff80dd2eebd1d3e64249a34367235",
+    "bytes": 920
+  },
+  {
+    "path": "packages/arqfs/src/arqfs-worker-handler.test.ts",
+    "status": " M",
+    "sha256": "58b453b962160f323ce84759bdca5fe80f3bbb09f56adc4939c43d65d8246ab1",
+    "bytes": 43170
+  },
+  {
+    "path": "packages/arqfs/src/arqfs-worker-handler.ts",
+    "status": " M",
+    "sha256": "80aeb730def7d580e5cc4dc33600567558a338fdb1d0d9b20cb480685c0d1e96",
+    "bytes": 25301
+  },
+  {
+    "path": "packages/arqfs/src/arqfs-worker-protocol.ts",
+    "status": " M",
+    "sha256": "d5325014cabba4d2f7d183639ad6a6a2cf5d54b64ccec6d16cfc818cb843db43",
+    "bytes": 14833
+  },
+  {
+    "path": "packages/design-system/src/shell/tool-rail-state.test.ts",
+    "status": " M",
+    "sha256": "7c87c44f1a119150e421d94ca81814aa9760d604e4e0e0b25a37e51d53257a4b",
+    "bytes": 2825
+  },
+  {
+    "path": "packages/design-system/src/shell/tool-rail.tsx",
+    "status": " M",
+    "sha256": "63900ba2911e2fc89f988ecb9df8ff5961c7af9f8c95e9029e372bb538fab849",
+    "bytes": 8756
+  },
+  {
+    "path": "packages/design-system/src/shell/top-bar-state.ts",
+    "status": " M",
+    "sha256": "94505c00bdbe61cbe04beb46f37d12f83ab57960e12a30e4fc7ab57df11a1fdf",
+    "bytes": 5849
+  },
+  {
+    "path": "packages/design-system/src/workspace/workspace-shell.css",
+    "status": " M",
+    "sha256": "2323384943369a8acea059d52a10a7ffd68a35067ff14431fa0efd80138da6fe",
+    "bytes": 37519
+  },
+  {
+    "path": "apps/web/src/project/arqfs-worker-url.test.ts",
+    "status": "??",
+    "sha256": "0127560dcd9bd4134eefa673bda2bf7c2015f790a84fa1a87208f7ac5f089c2a",
+    "bytes": 902
+  },
+  {
+    "path": "apps/web/src/project/arqfs-worker-url.ts",
+    "status": "??",
+    "sha256": "00c5277938f3b8a1ced5b21aa0d220feea86b5117d2f98a387a3ae1e88e03e68",
+    "bytes": 969
+  },
+  {
+    "path": "benchmarks/results/file-open-capability-2026-09-01T19-07-57-900Z.json",
+    "status": "??",
+    "sha256": "f954aa76c74c398da36342e9710e04b8e33a7df99985fd8a8b1654946ef743d8",
+    "bytes": 1322
+  }
+]

@@ -1,0 +1,222 @@
+{
+  "files": [
+    {
+      "sha": "0bc5911a2cb01b4a9680699167e3f22a8a78ca20",
+      "filename": "apps/web/package.json",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/39c3c48163fb6d9053b4d5c633af7d5a75951fb6/apps%2Fweb%2Fpackage.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/39c3c48163fb6d9053b4d5c633af7d5a75951fb6/apps%2Fweb%2Fpackage.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/apps%2Fweb%2Fpackage.json?ref=39c3c48163fb6d9053b4d5c633af7d5a75951fb6",
+      "patch": "@@ -29,13 +29,13 @@\n     \"@arq/project-loading\": \"workspace:*\",\n     \"@arq/validation\": \"workspace:*\",\n     \"@arq/workspace\": \"workspace:*\",\n-    \"react\": \"^18\",\n+    \"react\": \"^19\",\n     \"react-aria-components\": \"^1.19.0\",\n     \"react-dom\": \"^18\",\n     \"three\": \"^0.185.1\"\n   },\n   \"devDependencies\": {\n-    \"@types/react\": \"^18\",\n+    \"@types/react\": \"^19\",\n     \"@types/react-dom\": \"^18\",\n     \"@types/three\": \"^0.185.1\",\n     \"@vitejs/plugin-react\": \"^4\","
+    },
+    {
+      "sha": "5cfe6000f33356e4dfaca7e08d6dc36865b9c37d",
+      "filename": "packages/design-system/package.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/39c3c48163fb6d9053b4d5c633af7d5a75951fb6/packages%2Fdesign-system%2Fpackage.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/39c3c48163fb6d9053b4d5c633af7d5a75951fb6/packages%2Fdesign-system%2Fpackage.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Fdesign-system%2Fpackage.json?ref=39c3c48163fb6d9053b4d5c633af7d5a75951fb6",
+      "patch": "@@ -18,6 +18,6 @@\n     \"react\": \"^18\"\n   },\n   \"devDependencies\": {\n-    \"@types/react\": \"^18\"\n+    \"@types/react\": \"^19\"\n   }\n }"
+    },
+    {
+      "sha": "df240ec80dcd0ad787cc2f7bb3713ffd51223911",
+      "filename": "packages/icons/package.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/39c3c48163fb6d9053b4d5c633af7d5a75951fb6/packages%2Ficons%2Fpackage.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/39c3c48163fb6d9053b4d5c633af7d5a75951fb6/packages%2Ficons%2Fpackage.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Ficons%2Fpackage.json?ref=39c3c48163fb6d9053b4d5c633af7d5a75951fb6",
+      "patch": "@@ -12,7 +12,7 @@\n     \"react\": \"^18\"\n   },\n   \"devDependencies\": {\n-    \"@types/react\": \"^18\"\n+    \"@types/react\": \"^19\"\n   },\n   \"dependencies\": {\n     \"@tabler/icons-react\": \"3.45.0\""
+    },
+    {
+      "sha": "299501903bebbeb831005cf9c8948d2c7d95d217",
+      "filename": "pnpm-lock.yaml",
+      "status": "modified",
+      "additions": 71,
+      "deletions": 22,
+      "changes": 93,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/39c3c48163fb6d9053b4d5c633af7d5a75951fb6/pnpm-lock.yaml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/39c3c48163fb6d9053b4d5c633af7d5a75951fb6/pnpm-lock.yaml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/pnpm-lock.yaml?ref=39c3c48163fb6d9053b4d5c633af7d5a75951fb6",
+      "patch": "@@ -104,24 +104,24 @@ importers:\n         specifier: workspace:*\n         version: link:../../packages/workspace\n       react:\n-        specifier: ^18\n-        version: 18.3.1\n+        specifier: ^19\n+        version: 19.2.8\n       react-aria-components:\n         specifier: ^1.19.0\n-        version: 1.19.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)\n+        version: 1.19.0(react-dom@18.3.1(react@19.2.8))(react@19.2.8)\n       react-dom:\n         specifier: ^18\n-        version: 18.3.1(react@18.3.1)\n+        version: 18.3.1(react@19.2.8)\n       three:\n         specifier: ^0.185.1\n         version: 0.185.1\n     devDependencies:\n       '@types/react':\n-        specifier: ^18\n-        version: 18.3.31\n+        specifier: ^19\n+        version: 19.2.18\n       '@types/react-dom':\n         specifier: ^18\n-        version: 18.3.7(@types/react@18.3.31)\n+        version: 18.3.7(@types/react@19.2.18)\n       '@types/three':\n         specifier: ^0.185.1\n         version: 0.185.1\n@@ -188,8 +188,8 @@ importers:\n         version: 1.19.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)\n     devDependencies:\n       '@types/react':\n-        specifier: ^18\n-        version: 18.3.31\n+        specifier: ^19\n+        version: 19.2.18\n \n   packages/dxf-adapter:\n     dependencies:\n@@ -228,8 +228,8 @@ importers:\n         version: 18.3.1\n     devDependencies:\n       '@types/react':\n-        specifier: ^18\n-        version: 18.3.31\n+        specifier: ^19\n+        version: 19.2.18\n \n   packages/ifc-adapter:\n     dependencies:\n@@ -934,16 +934,13 @@ packages:\n   '@types/node@22.20.1':\n     resolution: {integrity: sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==}\n \n-  '@types/prop-types@15.7.15':\n-    resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}\n-\n   '@types/react-dom@18.3.7':\n     resolution: {integrity: sha512-MEe3UeoENYVFXzoXEWsvcpg6ZvlrFNlOQ7EOsvhI3CfAXwzPfO8Qwuxd40nepsYKqyyVQnTdEfv68q91yLcKrQ==}\n     peerDependencies:\n       '@types/react': ^18.0.0\n \n-  '@types/react@18.3.31':\n-    resolution: {integrity: sha512-vfEqpXTvwT91yhmwdfouStN2hSKwTvyRs8qpLfADyrq/kxDw0hZM7Wk9Ug1FELj8hIby+S/+kQCSRFF32nv2Qw==}\n+  '@types/react@19.2.18':\n+    resolution: {integrity: sha512-AnzbBERsrLKtk2XSfTbYRLjQPdy116Sty4q+T+Bp3IC4l6jNBvreVPAHmpq9qhXQM7CXZPjLVmGMw9sy+hxQ3w==}\n \n   '@types/stats.js@0.17.4':\n     resolution: {integrity: sha512-jIBvWWShCvlBqBNIZt0KAshWpvSjhkwkEu4ZUcASoAvhmrgAUI2t1dXrjSL4xXVLB4FznPrIsX3nKXFl/Dt4vA==}\n@@ -1623,6 +1620,10 @@ packages:\n     resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}\n     engines: {node: '>=0.10.0'}\n \n+  react@19.2.8:\n+    resolution: {integrity: sha512-PWaYA1L/q9u2u7xYQi+Y3L3Yfnie7XyLeaJICV1MGD6LprsBxcAqGjYyr0eY3p+QdsA+x/Irkt4Qif8D63+Sbw==}\n+    engines: {node: '>=0.10.0'}\n+\n   readable-stream@3.6.2:\n     resolution: {integrity: sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA==}\n     engines: {node: '>= 6'}\n@@ -2178,6 +2179,10 @@ snapshots:\n     dependencies:\n       react: 18.3.1\n \n+  '@react-types/shared@3.36.0(react@19.2.8)':\n+    dependencies:\n+      react: 19.2.8\n+\n   '@rolldown/pluginutils@1.0.0-beta.27': {}\n \n   '@rollup/rollup-android-arm-eabi@4.62.2':\n@@ -2325,15 +2330,12 @@ snapshots:\n     dependencies:\n       undici-types: 6.21.0\n \n-  '@types/prop-types@15.7.15': {}\n-\n-  '@types/react-dom@18.3.7(@types/react@18.3.31)':\n+  '@types/react-dom@18.3.7(@types/react@19.2.18)':\n     dependencies:\n-      '@types/react': 18.3.31\n+      '@types/react': 19.2.18\n \n-  '@types/react@18.3.31':\n+  '@types/react@19.2.18':\n     dependencies:\n-      '@types/prop-types': 15.7.15\n       csstype: 3.2.3\n \n   '@types/stats.js@0.17.4': {}\n@@ -3012,6 +3014,17 @@ snapshots:\n       react-dom: 18.3.1(react@18.3.1)\n       react-stately: 3.48.0(react@18.3.1)\n \n+  react-aria-components@1.19.0(react-dom@18.3.1(react@19.2.8))(react@19.2.8):\n+    dependencies:\n+      '@internationalized/date': 3.12.2\n+      '@react-types/shared': 3.36.0(react@19.2.8)\n+      '@swc/helpers': 0.5.23\n+      client-only: 0.0.1\n+      react: 19.2.8\n+      react-aria: 3.50.0(react-dom@18.3.1(react@19.2.8))(react@19.2.8)\n+      react-dom: 18.3.1(react@19.2.8)\n+      react-stately: 3.48.0(react@19.2.8)\n+\n   react-aria@3.50.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):\n     dependencies:\n       '@internationalized/date': 3.12.2\n@@ -3026,12 +3039,32 @@ snapshots:\n       react-stately: 3.48.0(react@18.3.1)\n       use-sync-external-store: 1.6.0(react@18.3.1)\n \n+  react-aria@3.50.0(react-dom@18.3.1(react@19.2.8))(react@19.2.8):\n+    dependencies:\n+      '@internationalized/date': 3.12.2\n+      '@internationalized/number': 3.6.7\n+      '@internationalized/string': 3.2.9\n+      '@react-types/shared': 3.36.0(react@19.2.8)\n+      '@swc/helpers': 0.5.23\n+      aria-hidden: 1.2.6\n+      clsx: 2.1.1\n+      react: 19.2.8\n+      react-dom: 18.3.1(react@19.2.8)\n+      react-stately: 3.48.0(react@19.2.8)\n+      use-sync-external-store: 1.6.0(react@19.2.8)\n+\n   react-dom@18.3.1(react@18.3.1):\n     dependencies:\n       loose-envify: 1.4.0\n       react: 18.3.1\n       scheduler: 0.23.2\n \n+  react-dom@18.3.1(react@19.2.8):\n+    dependencies:\n+      loose-envify: 1.4.0\n+      react: 19.2.8\n+      scheduler: 0.23.2\n+\n   react-refresh@0.17.0: {}\n \n   react-stately@3.48.0(react@18.3.1):\n@@ -3044,10 +3077,22 @@ snapshots:\n       react: 18.3.1\n       use-sync-external-store: 1.6.0(react@18.3.1)\n \n+  react-stately@3.48.0(react@19.2.8):\n+    dependencies:\n+      '@internationalized/date': 3.12.2\n+      '@internationalized/number': 3.6.7\n+      '@internationalized/string': 3.2.9\n+      '@react-types/shared': 3.36.0(react@19.2.8)\n+      '@swc/helpers': 0.5.23\n+      react: 19.2.8\n+      use-sync-external-store: 1.6.0(react@19.2.8)\n+\n   react@18.3.1:\n     dependencies:\n       loose-envify: 1.4.0\n \n+  react@19.2.8: {}\n+\n   readable-stream@3.6.2:\n     dependencies:\n       inherits: 2.0.4\n@@ -3213,6 +3258,10 @@ snapshots:\n     dependencies:\n       react: 18.3.1\n \n+  use-sync-external-store@1.6.0(react@19.2.8):\n+    dependencies:\n+      react: 19.2.8\n+\n   util-deprecate@1.0.2: {}\n \n   vite-node@2.1.9(@types/node@22.20.1):"
+    }
+  ],
+  "reviews": [],
+  "detail": {
+    "baseRefOid": "7a6cb26898ec137c430e7851e740b23d02b2b311",
+    "body": "Bumps [react](https://github.com/react/react/tree/HEAD/packages/react) and [@types/react](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/react). These dependencies needed to be updated together.\nUpdates `react` from 18.3.1 to 19.2.8\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/react/react/releases\">react's releases</a>.</em></p>\n<blockquote>\n<h2>19.2.8 (July 21st, 2026)</h2>\n<h2>React Server Components</h2>\n<ul>\n<li>Performance improvements when decoding\n(<a href=\"https://redirect.github.com/facebook/react/pull/37087\">#37087</a> by <a href=\"https://github.com/eps1lon\"><code>@\u200beps1lon</code></a>)</li>\n</ul>\n<h2>19.2.7 (June 1st, 2026)</h2>\n<h2>React Server Components</h2>\n<ul>\n<li>Fixed missing <code>FormData</code> entries in Server Actions which regressed in 19.2.6\n(<a href=\"https://redirect.github.com/facebook/react/pull/36566\">#36566</a> by <a href=\"https://github.com/unstubbable\"><code>@\u200bunstubbable</code></a>)</li>\n</ul>\n<h2>19.2.6 (May 6th, 2026)</h2>\n<h2>React Server Components</h2>\n<ul>\n<li>Type hardening and performance improvements\n(<a href=\"https://redirect.github.com/facebook/react/pull/36425\">#36425</a> by <a href=\"https://github.com/eps1lon\"><code>@\u200beps1lon</code></a> and <a href=\"https://github.com/unstubbable\"><code>@\u200bunstubbable</code></a>)</li>\n</ul>\n<h2>19.2.5 (April 8th, 2026)</h2>\n<h2>React Server Components</h2>\n<ul>\n<li>Add more cycle protections (<a href=\"https://redirect.github.com/facebook/react/pull/36236\">#36236</a> by <a href=\"https://github.com/eps1lon\"><code>@\u200beps1lon</code></a> and <a href=\"https://github.com/unstubbable\"><code>@\u200bunstubbable</code></a>)</li>\n</ul>\n<h2>19.2.4 (January 26th, 2026)</h2>\n<h2>React Server Components</h2>\n<ul>\n<li>Add more DoS mitigations to Server Actions, and harden Server Components (<a href=\"https://redirect.github.com/facebook/react/pull/35632\">#35632</a> by <a href=\"https://github.com/gnoff\"><code>@\u200bgnoff</code></a>, <a href=\"https://github.com/lubieowoce\"><code>@\u200blubieowoce</code></a>, <a href=\"https://github.com/sebmarkbage\"><code>@\u200bsebmarkbage</code></a>, <a href=\"https://github.com/unstubbable\"><code>@\u200bunstubbable</code></a>)</li>\n</ul>\n<h2>19.2.3 (December 11th, 2025)</h2>\n<h2>React Server Components</h2>\n<ul>\n<li>Add extra loop protection to React Server Functions (<a href=\"https://github.com/sebmarkbage\"><code>@\u200bsebmarkbage</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/35351\">#35351</a>)</li>\n</ul>\n<h2>19.2.2 (December 11th, 2025)</h2>\n<h2>React Server Components</h2>\n<ul>\n<li>Move <code>react-server-dom-webpack/*.unbundled</code> to private <code>react-server-dom-unbundled</code> (<a href=\"https://github.com/eps1lon\"><code>@\u200beps1lon</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/35290\">facebook/react#35290</a>)</li>\n<li>Patch Promise cycles and toString on Server Functions (<a href=\"https://github.com/sebmarkbage\"><code>@\u200bsebmarkbage</code></a>, <a href=\"https://github.com/unstubbable\"><code>@\u200bunstubbable</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/35289\">#35289</a>, <a href=\"https://redirect.github.com/facebook/react/pull/35345\">#35345</a>)</li>\n</ul>\n<h2>19.2.1 (December 3rd, 2025)</h2>\n<h2>React Server Components</h2>\n<ul>\n<li>Bring React Server Component fixes to Server Actions (<a href=\"https://github.com/sebmarkbage\"><code>@\u200bsebmarkbage</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/35277\">#35277</a>)</li>\n</ul>\n<h2>19.2.0 (Oct 1, 2025)</h2>\n<p>Below is a list of all new features, APIs, and bug fixes.</p>\n<p>Read the <a href=\"https://react.dev/blog/2025/10/01/react-19-2\">React 19.2 release post</a> for more information.</p>\n<h2>New React Features</h2>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Changelog</summary>\n<p><em>Sourced from <a href=\"https://github.com/react/react/blob/main/CHANGELOG.md\">react's changelog</a>.</em></p>\n<blockquote>\n<h2>19.2.7 (June 1, 2026)</h2>\n<h3>React Server Components</h3>\n<ul>\n<li>Fixed missing <code>FormData</code> entries in Server Actions which regressed in 19.2.6 (<a href=\"https://github.com/unstubbable\"><code>@\u200bunstubbable</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/36566\">#36566</a>)</li>\n</ul>\n<h2>19.2.6 (May 6, 2026)</h2>\n<h3>React Server Components</h3>\n<ul>\n<li>Type hardening and performance improvements (<a href=\"https://github.com/eps1lon\"><code>@\u200beps1lon</code></a>, <a href=\"https://github.com/unstubbable\"><code>@\u200bunstubbable</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/36425\">#36425</a>)</li>\n</ul>\n<h2>19.2.5 (March 18, 2026)</h2>\n<h3>React Server Components</h3>\n<ul>\n<li>Add more cycle protections (<a href=\"https://github.com/eps1lon\"><code>@\u200beps1lon</code></a>, <a href=\"https://github.com/unstubbable\"><code>@\u200bunstubbable</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/36236\">#36236</a>)</li>\n</ul>\n<h2>19.2.4 (Jan 26, 2026)</h2>\n<h3>React Server Components</h3>\n<ul>\n<li>Add more DoS mitigations to Server Actions, and harden Server Components (<a href=\"https://github.com/gnoff\"><code>@\u200bgnoff</code></a>, <a href=\"https://github.com/lubieowoce\"><code>@\u200blubieowoce</code></a>, <a href=\"https://github.com/sebmarkbage\"><code>@\u200bsebmarkbage</code></a>, <a href=\"https://github.com/unstubbable\"><code>@\u200bunstubbable</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/35632\">#35632</a>)</li>\n</ul>\n<h2>19.2.3 (Dec 11, 2025)</h2>\n<h3>React Server Components</h3>\n<ul>\n<li>Add extra loop protection to React Server Functions (<a href=\"https://github.com/sebmarkbage\"><code>@\u200bsebmarkbage</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/35351\">#35351</a>)</li>\n</ul>\n<h2>19.2.2 (Dec 11, 2025)</h2>\n<h3>React Server Components</h3>\n<ul>\n<li>Move <code>react-server-dom-webpack/*.unbundled</code> to private <code>react-server-dom-unbundled</code> (<a href=\"https://github.com/eps1lon\"><code>@\u200beps1lon</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/35290\">#35290</a>)</li>\n<li>Patch Promise cycles and toString on Server Functions (<a href=\"https://github.com/sebmarkbage\"><code>@\u200bsebmarkbage</code></a>, <a href=\"https://github.com/unstubbable\"><code>@\u200bunstubbable</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/35289\">#35289</a>, <a href=\"https://redirect.github.com/facebook/react/pull/35345\">#35345</a>)</li>\n</ul>\n<h2>19.2.1 (Dec 3, 2025)</h2>\n<h3>React Server Components</h3>\n<ul>\n<li>Bring React Server Component fixes to Server Actions (<a href=\"https://github.com/sebmarkbage\"><code>@\u200bsebmarkbage</code></a> <a href=\"https://redirect.github.com/facebook/react/pull/35277\">#35277</a>)</li>\n</ul>\n<h2>19.2.0 (October 1st, 2025)</h2>\n<p>Below is a list of all new features, APIs, and bug fixes.</p>\n<p>Read the <a href=\"https://react.dev/blog/2025/10/01/react-19-2\">React 19.2 release post</a> for more information.</p>\n<h3>New React Features</h3>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/react/react/commit/1dd4ecbdabf826f527fc9a58c05ea70375b7d170\"><code>1dd4ecb</code></a> [FlightReply] Performance improvements when decoding (<a href=\"https://github.com/react/react/tree/HEAD/packages/react/issues/37087\">#37087</a>)</li>\n<li><a href=\"https://github.com/react/react/commit/b0d2fdb78bdfae075a7fa02ddcebbf25f90952c2\"><code>b0d2fdb</code></a> [19.2.x] Update required references to GitHub repo (<a href=\"https://github.com/react/react/tree/HEAD/packages/react/issues/36753\">#36753</a>)</li>\n<li><a href=\"https://github.com/react/react/commit/6117d7cca4906492c51fe6a03381e35adfd86e7d\"><code>6117d7c</code></a> Version 19.2.7 (<a href=\"https://github.com/react/react/tree/HEAD/packages/react/issues/36591\">#36591</a>)</li>\n<li><a href=\"https://github.com/react/react/commit/eaf3e95ca92be7a23d3c9cc8ffd6f199a40be401\"><code>eaf3e95</code></a> Version 19.2.6</li>\n<li><a href=\"https://github.com/react/react/commit/23f4f9f30da9e9af2108c18bb197bae75ab584ea\"><code>23f4f9f</code></a> 19.2.5</li>\n<li><a href=\"https://github.com/react/react/commit/90ab3f89f4824ac763b6f877c6f711200d1338d2\"><code>90ab3f8</code></a> Version 19.2.4</li>\n<li><a href=\"https://github.com/react/react/commit/612e371fb215498edde4c853bd1e0c8e9203808f\"><code>612e371</code></a> Version 19.2.3</li>\n<li><a href=\"https://github.com/react/react/commit/b910fc15e38d4fa80003819ddb7a928a3c3dca5d\"><code>b910fc1</code></a> Version 19.2.2</li>\n<li><a href=\"https://github.com/react/react/commit/053df4e8561ef4caecef31c330f4178ac25e255b\"><code>053df4e</code></a> Version 19.2.1</li>\n<li><a href=\"https://github.com/react/react/commit/5667a41fe4d81aa806f6c1e8814b17975e33b317\"><code>5667a41</code></a> Bump next prerelease version numbers (<a href=\"https://github.com/react/react/tree/HEAD/packages/react/issues/34639\">#34639</a>)</li>\n<li>Additional commits viewable in <a href=\"https://github.com/react/react/commits/v19.2.8/packages/react\">compare view</a></li>\n</ul>\n</details>\n<details>\n<summary>Maintainer changes</summary>\n<p>This version was pushed to npm by <a href=\"https://www.npmjs.com/~GitHub%20Actions\">GitHub Actions</a>, a new releaser for react since your current version.</p>\n</details>\n<br />\n\nUpdates `@types/react` from 18.3.31 to 19.2.18\n<details>\n<summary>Commits</summary>\n<ul>\n<li>See full diff in <a href=\"https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/react\">compare view</a></li>\n</ul>\n</details>\n<br />\n\n\n> **Note**\n> Automatic rebases have been disabled on this pull request as it has been open for over 30 days.\n",
+    "headRefOid": "39c3c48163fb6d9053b4d5c633af7d5a75951fb6",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 261,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:17Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115316/job/92996271207",
+        "name": "build",
+        "startedAt": "2026-08-07T20:58:07Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:09Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115323/job/92996271165",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-08-07T20:58:07Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:09Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115429/job/92996271110",
+        "name": "classify",
+        "startedAt": "2026-08-07T20:58:07Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:09Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115318/job/92996270772",
+        "name": "secret-scan",
+        "startedAt": "2026-08-07T20:58:07Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:09Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115364/job/92996270846",
+        "name": "verify-routes",
+        "startedAt": "2026-08-07T20:58:07Z",
+        "status": "COMPLETED",
+        "workflowName": "Verify deployment routes"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:09Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115323/job/92996271080",
+        "name": "test",
+        "startedAt": "2026-08-07T20:58:07Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:09Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115429/job/92996281435",
+        "name": "preflight",
+        "startedAt": "2026-08-07T20:58:09Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:14Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115323/job/92996271093",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-08-07T20:58:07Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:09Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115429/job/92996281693",
+        "name": "critical-approval",
+        "startedAt": "2026-08-07T20:58:09Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:18Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115323/job/92996271091",
+        "name": "language-system",
+        "startedAt": "2026-08-07T20:58:07Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:09Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115429/job/92996282018",
+        "name": "selected-evidence",
+        "startedAt": "2026-08-07T20:58:10Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:08Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115323/job/92996271106",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-08-07T20:58:07Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:17Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115429/job/92996281499",
+        "name": "engineering-gate",
+        "startedAt": "2026-08-07T20:58:09Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:09Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31218115323/job/92996271052",
+        "name": "rust-test",
+        "startedAt": "2026-08-07T20:58:07Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-08-07T20:58:21Z",
+        "state": "FAILURE",
+        "targetUrl": "https://vercel.com/pvr6675-3816s-projects/arq-website/4NcHNpvi5g1xn2p4jf3wKwMeSpCA"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-07T20:58:22Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://vercel.com/github",
+        "name": "Vercel Preview Comments",
+        "startedAt": "2026-08-07T20:58:22Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,1028 @@
+[
+  {
+    "path": ".zeus/CONTEXT-BUDGETS.md",
+    "status": " M",
+    "sha256": "d59cca9dee4594e01c592572bb0ff2aa181b3bc11956139dbe905a215d92a583",
+    "bytes": 1507
+  },
+  {
+    "path": ".zeus/config.json",
+    "status": " M",
+    "sha256": "fb1a950d5020fcad815d60918636b31b1150204215d2a340d189496623d6de7f",
+    "bytes": 3363
+  },
+  {
+    "path": "STATUS.md",
+    "status": " M",
+    "sha256": "3a835840726be61510afafa00d70a49ed2ecd77515febf300152af4fe11a1999",
+    "bytes": 34106
+  },
+  {
+    "path": "apps/marketing/src/components.ts",
+    "status": " M",
+    "sha256": "d1afb231f57704dd6510355bb04f53d206d1270f370d57af10b35e63b163a093",
+    "bytes": 61995
+  },
+  {
+    "path": "apps/marketing/src/content/ai.ts",
+    "status": " M",
+    "sha256": "e5714fd18ccac32f2667f6da08ccb902fa30dd11b737419c465fd082a7cf2957",
+    "bytes": 4862
+  },
+  {
+    "path": "apps/marketing/src/content/architects.ts",
+    "status": " M",
+    "sha256": "c638e9d0aee713df2c42970a58dfacff589b74ac42f3d1c496e89f4d01d523c5",
+    "bytes": 4945
+  },
+  {
+    "path": "apps/marketing/src/content/changelog.ts",
+    "status": " M",
+    "sha256": "c28b331bdf345babe15a4c5d9e5eb898f15ff13e624b7335a5eab88791ececb4",
+    "bytes": 11855
+  },
+  {
+    "path": "apps/marketing/src/content/collaboration.ts",
+    "status": " M",
+    "sha256": "7939174ae0649d5ce1f2d21bd5f1540a23e85a088619e1ce8c54e5ca522a32fc",
+    "bytes": 3919
+  },
+  {
+    "path": "apps/marketing/src/content/contact.ts",
+    "status": " M",
+    "sha256": "380584e47df393d00d90715cce0f0ace44ba53e215d740bd9ef42db0e81bfe59",
+    "bytes": 4012
+  },
+  {
+    "path": "apps/marketing/src/content/docs-index.ts",
+    "status": " M",
+    "sha256": "b36b633454f7a7da1276215c41efa8385f0d2841995ffec5cd8efca84f2fe40b",
+    "bytes": 3806
+  },
+  {
+    "path": "apps/marketing/src/content/home.ts",
+    "status": " M",
+    "sha256": "d7c5766e136b09c7932c532adc96757f2d147b356929fc7db7c989a9723f5111",
+    "bytes": 5911
+  },
+  {
+    "path": "apps/marketing/src/content/interoperability.ts",
+    "status": " M",
+    "sha256": "541c44d346ee301493eb58d81ea072c56b588490e9ec37fbb90624715169074c",
+    "bytes": 5270
+  },
+  {
+    "path": "apps/marketing/src/content/ipad.ts",
+    "status": " M",
+    "sha256": "32530301b8c8a8b0b851c12b80e36a19a622492002fba746e927f4fb9efffac2",
+    "bytes": 4847
+  },
+  {
+    "path": "apps/marketing/src/content/not-found.ts",
+    "status": " M",
+    "sha256": "2ed073c16efb5ac21e12c5e28d39e40fc091e35c38f778031f498799c5c27260",
+    "bytes": 1656
+  },
+  {
+    "path": "apps/marketing/src/content/pricing.ts",
+    "status": " M",
+    "sha256": "8908664e92f9520e1165935907cefcce2528b5854303d75cf389c5e9ee8ffb0c",
+    "bytes": 3569
+  },
+  {
+    "path": "apps/marketing/src/content/product.ts",
+    "status": " M",
+    "sha256": "9ab969fe7814cd090e228bfb30865c10c03e7109f93a09cf81efd24fe305137f",
+    "bytes": 6411
+  },
+  {
+    "path": "apps/marketing/src/content/security.ts",
+    "status": " M",
+    "sha256": "2b125e4f00b52a294d0707989475f11ed570d21bb128615b6a927d13499ab6af",
+    "bytes": 5161
+  },
+  {
+    "path": "apps/marketing/src/content/status.ts",
+    "status": " M",
+    "sha256": "6f12ee98407e9f489c591102834cb7a62d60c93d9d7d533c8cfa8207fbc9b9d0",
+    "bytes": 3244
+  },
+  {
+    "path": "apps/marketing/src/content/students.ts",
+    "status": " M",
+    "sha256": "4f61296c6d2b4274add691854d551231fb3fce5504b384bc4b1b29d0dc29eceb",
+    "bytes": 3389
+  },
+  {
+    "path": "apps/marketing/src/layout.ts",
+    "status": " M",
+    "sha256": "a1a3901c7d43b1682a5fd7b557e246e2965f0a427d0330dc2e18ea84a6c8485f",
+    "bytes": 7540
+  },
+  {
+    "path": "apps/marketing/src/site.css",
+    "status": " M",
+    "sha256": "6ed0f0f1736d3819ff8953f543c61a58b34ebb98433beb689a9408c55281382e",
+    "bytes": 70706
+  },
+  {
+    "path": "apps/marketing/src/site.ts",
+    "status": " M",
+    "sha256": "de030462c38073f7c64991f660d11d3872253a3ba5cd54fd9105292bb6fa80cf",
+    "bytes": 5397
+  },
+  {
+    "path": "apps/web/package.json",
+    "status": " M",
+    "sha256": "7b936367ee29e1d9f0bd6ea8fcfec47a9bff5486c3f485d4160e7dab2628923d",
+    "bytes": 1428
+  },
+  {
+    "path": "apps/web/src/App.tsx",
+    "status": " M",
+    "sha256": "60d224c76912c6623bac124ffdd3f41875225dd88dbf14c21d1657fa9e45a2be",
+    "bytes": 128965
+  },
+  {
+    "path": "apps/web/src/ModelCanvas.tsx",
+    "status": " M",
+    "sha256": "b64228db878bc0d34a0e7cd848572b2d1d74fe5d5507d8d30dbb5cc88f20b78b",
+    "bytes": 34487
+  },
+  {
+    "path": "apps/web/src/PlanCanvas.tsx",
+    "status": " M",
+    "sha256": "248085e94c223df8107e5ed1d4b77c0ec83c8097b254c6426abb0b3b976551ab",
+    "bytes": 96830
+  },
+  {
+    "path": "apps/web/src/canvas/canvas-interaction.test.ts",
+    "status": " M",
+    "sha256": "4507d83af1233799176060c93f6197511b81a3986a0ee44e0cc40d09b9060f70",
+    "bytes": 7200
+  },
+  {
+    "path": "apps/web/src/canvas/canvas-interaction.ts",
+    "status": " M",
+    "sha256": "4146c7703be5d0dab8ecb21d7d7372719796eebf7e883185b9e09ccc1914eb85",
+    "bytes": 9713
+  },
+  {
+    "path": "apps/web/src/canvas/plan-document.test.ts",
+    "status": " M",
+    "sha256": "0d1b7bf3b4a60393fc08610d99346f4c076c49405b7f5527246f1f539328a117",
+    "bytes": 25049
+  },
+  {
+    "path": "apps/web/src/canvas/plan-document.ts",
+    "status": " M",
+    "sha256": "6603ce5be54eda9618b7a84bfad04048996725188acfaf061b4a036f6be6c44e",
+    "bytes": 28488
+  },
+  {
+    "path": "apps/web/src/canvas/plan-journal.test.ts",
+    "status": " M",
+    "sha256": "a5ad091c180d5755f2eb6446935bb546d60fc69b140973d051a0c2b511289ca0",
+    "bytes": 13592
+  },
+  {
+    "path": "apps/web/src/canvas/plan-journal.ts",
+    "status": " M",
+    "sha256": "5a81e95df60b59b10f1b83dc6f825d6fb5cbeb56c6a9590e841ddf5ccff8020b",
+    "bytes": 10660
+  },
+  {
+    "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
+    "status": " M",
+    "sha256": "f27607d5a3165f21a607e0fb6765c87d98a4cd2b3451d2ffa2b602c9b4483c24",
+    "bytes": 17645
+  },
+  {
+    "path": "apps/web/src/file-handling/route-file.test.ts",
+    "status": " M",
+    "sha256": "3ec51bf5fb810377ce5b12da8d35a445ba3991917b6a075e6e39519d3beff9e4",
+    "bytes": 2511
+  },
+  {
+    "path": "apps/web/src/file-handling/route-file.ts",
+    "status": " M",
+    "sha256": "3f201a222bf8815c9c541feaa112de0717652a4e422ce7715c70f24725939ffe",
+    "bytes": 2674
+  },
+  {
+    "path": "apps/web/src/inspector-data.ts",
+    "status": " M",
+    "sha256": "3ea456472f7d71575fddc17d9ec243540d4b464ac774ebbd4b4894d742ebcf73",
+    "bytes": 33001
+  },
+  {
+    "path": "apps/web/src/project/describe-publication-outcome.ts",
+    "status": " M",
+    "sha256": "0ece103a636cb7a2d8c78cf40954bb196c9f5c09d49aeef0da3a1462c4a41bf5",
+    "bytes": 6747
+  },
+  {
+    "path": "apps/web/src/project/native-project-session.test.ts",
+    "status": " M",
+    "sha256": "b0c38cff8f88b509918717264924ce3e5330ba4d251cd6ba0d13c1cb188c37e9",
+    "bytes": 16423
+  },
+  {
+    "path": "apps/web/src/project/native-project-session.ts",
+    "status": " M",
+    "sha256": "7f95705a3301925c293c245fb30bb49a8cbff53a2fc6dd8c5ef95915746b1378",
+    "bytes": 19934
+  },
+  {
+    "path": "apps/web/src/project/publish-native-project.test.ts",
+    "status": " M",
+    "sha256": "1867ba90ec3c61a67582b64288d9aaa413be37b4d36299ebca97777373013da7",
+    "bytes": 18379
+  },
+  {
+    "path": "apps/web/src/project/publish-native-project.ts",
+    "status": " M",
+    "sha256": "7925bfa242eba375a2d4455cf1a6a0cabb9916f987f634ccf59684148570e8e7",
+    "bytes": 5302
+  },
+  {
+    "path": "benchmarks/results/responsive/desktop-1600x1000.png",
+    "status": " M",
+    "sha256": "869ed7c63a89a0029f22fad9f0b1d54b35c08522913f14aaac0e47b2a261ad94",
+    "bytes": 198757
+  },
+  {
+    "path": "benchmarks/results/responsive/ipad-compact-1024x768.png",
+    "status": " M",
+    "sha256": "be5ab9a2981dd7f27e0e864061df2cc3265abf33767ada27071411e2b1f64235",
+    "bytes": 109463
+  },
+  {
+    "path": "benchmarks/results/responsive/ipad-regular-1366x1024.png",
+    "status": " M",
+    "sha256": "42ac5627228794fbac66ede9866f93a3f97dc3d1b13de19f405401b79f07c1d1",
+    "bytes": 167869
+  },
+  {
+    "path": "benchmarks/results/responsive/phone-430x932.png",
+    "status": " M",
+    "sha256": "23e13f5a063701347ee712d56e996c9d86cac893ff16c2f11b79dca248956b84",
+    "bytes": 67742
+  },
+  {
+    "path": "benchmarks/results/responsive/responsive-capture.json",
+    "status": " M",
+    "sha256": "e1a131bf44f4fbe1cf0345afe221b87dc198520639cc5d7486058cf266e1ad5c",
+    "bytes": 2684
+  },
+  {
+    "path": "docs/adr/0004-units-and-numeric-representation.md",
+    "status": " M",
+    "sha256": "22c03c4fd3c4bf23f885515ecf73d4860de13a835cb96ade984f26b68f714489",
+    "bytes": 3847
+  },
+  {
+    "path": "packages/arqfs/src/arqfs-local-write.test.ts",
+    "status": " M",
+    "sha256": "603ce3f0577156e7115650f1de57ae95f63e2ee1fbf11be76f371d77b0e21166",
+    "bytes": 6535
+  },
+  {
+    "path": "packages/arqfs/src/arqfs-worker-handler.test.ts",
+    "status": " M",
+    "sha256": "58b453b962160f323ce84759bdca5fe80f3bbb09f56adc4939c43d65d8246ab1",
+    "bytes": 43170
+  },
+  {
+    "path": "packages/arqfs/src/arqfs-worker-handler.ts",
+    "status": " M",
+    "sha256": "80aeb730def7d580e5cc4dc33600567558a338fdb1d0d9b20cb480685c0d1e96",
+    "bytes": 25301
+  },
+  {
+    "path": "packages/arqfs/src/arqfs-worker-protocol.ts",
+    "status": " M",
+    "sha256": "c7422604572ebea6db8687817990ab1a10e00d9b9e53242e0a6626923d49376c",
+    "bytes": 14833
+  },
+  {
+    "path": "packages/arqfs/src/arqfs-working-copy.ts",
+    "status": " M",
+    "sha256": "4b8322c6744e78c9eeb29f080e3a8944fdf8a83d0b2b916698f8bb2a5b4bf9d9",
+    "bytes": 8074
+  },
+  {
+    "path": "packages/arqfs/src/index.ts",
+    "status": " M",
+    "sha256": "99e896e1febd6adcb31eb457ade1223d58c018f8a0e9e62bca814ecee9f00bc0",
+    "bytes": 1255
+  },
+  {
+    "path": "packages/arqscript/src/index.ts",
+    "status": " M",
+    "sha256": "da15f00e0f63c777033e07930e325c29c5bc55edc638de277cf2c0207da76c1f",
+    "bytes": 388
+  },
+  {
+    "path": "packages/bim-core/src/dimension-reference.ts",
+    "status": " M",
+    "sha256": "db782954701d7101ca7e386b45ec1fe5113d7eb0657a3bba9e2c7090a899cf8d",
+    "bytes": 4459
+  },
+  {
+    "path": "packages/bim-core/src/ids.test.ts",
+    "status": " M",
+    "sha256": "42f9567e02e9e541b0d2afe0a0f42e8c63645eb9bf91c096eaaf77d7eeef0e77",
+    "bytes": 1403
+  },
+  {
+    "path": "packages/bim-core/src/ids.ts",
+    "status": " M",
+    "sha256": "782f9559d73e806d23972fda6a6b232c1dba63c6b3a045031393910fc4e86d7c",
+    "bytes": 4643
+  },
+  {
+    "path": "packages/bim-core/src/index.ts",
+    "status": " M",
+    "sha256": "828c7f9520ce965f74d9a4a1b25fde64a5c286d91bad501af818ffa7436ee382",
+    "bytes": 1333
+  },
+  {
+    "path": "packages/derived-cache/src/index.ts",
+    "status": " M",
+    "sha256": "adb118b20689a427f19ad1af1e95705a6f9e78f0ca3ae5075ce7839c01f65761",
+    "bytes": 394
+  },
+  {
+    "path": "packages/design-system/src/appearance/appearance-policy.test.ts",
+    "status": " M",
+    "sha256": "47f318cac258c7ae1d1215263916de61b9bf0613caab9d68f8adf67705727750",
+    "bytes": 11478
+  },
+  {
+    "path": "packages/design-system/src/workspace/phone-dock.tsx",
+    "status": " M",
+    "sha256": "9449cfefdff3f84a7e44dd36cc979e3a3792bcca667288e5412c9cc64a880bc2",
+    "bytes": 6885
+  },
+  {
+    "path": "packages/design-system/src/workspace/phone-project-bar.tsx",
+    "status": " M",
+    "sha256": "36ede73074041d91e43ef102faa0dbe777072aafcc3a97aba88e44f72138eee1",
+    "bytes": 8725
+  },
+  {
+    "path": "packages/design-system/src/workspace/tablet-drawer-bar.tsx",
+    "status": " M",
+    "sha256": "14d14eee4322c1bf8597ad57a23d7d2483d126e40182cfa83da9ed85e5290dd7",
+    "bytes": 4738
+  },
+  {
+    "path": "packages/design-system/src/workspace/workspace-root.tsx",
+    "status": " M",
+    "sha256": "24f733f3445771b5f5c1bf0e186fbdd655b3a50d809cdafc1b3f2b1672a5c174",
+    "bytes": 24633
+  },
+  {
+    "path": "packages/design-system/src/workspace/workspace-shell.css",
+    "status": " M",
+    "sha256": "939b78206265daf5a1c53a3571caef57c4775f89d2e445f8a46590ba3fa06227",
+    "bytes": 40544
+  },
+  {
+    "path": "packages/geometry-2d/src/index.ts",
+    "status": " M",
+    "sha256": "195a76b0856673abe7adffbccdcc772266673dca5b71d289295b63365aa64025",
+    "bytes": 845
+  },
+  {
+    "path": "packages/geometry-2d/src/tolerance.ts",
+    "status": " M",
+    "sha256": "058860f7d4bf9d8ab90258cdbf5af8ab8f36f0842e1c4dc0644e5b58575f8fb3",
+    "bytes": 5084
+  },
+  {
+    "path": "packages/model-renderer/src/model-scene.test.ts",
+    "status": " M",
+    "sha256": "45b5ff4295b4ffb168680cc44591c86027df39cd8d5c0aba227951814fc9ef96",
+    "bytes": 5328
+  },
+  {
+    "path": "packages/model-renderer/src/model-scene.ts",
+    "status": " M",
+    "sha256": "79fa98293049cf07c6519c8057cd5bb0b1e5675f81a8b52da97c9144bddbde03",
+    "bytes": 6505
+  },
+  {
+    "path": "packages/plan-renderer/src/plan-placed-content.test.ts",
+    "status": " M",
+    "sha256": "a31391132da93c3c3fb1ad52b9e6546890f30b3ed00d47ce8529deccf00f0b8b",
+    "bytes": 15569
+  },
+  {
+    "path": "packages/plan-renderer/src/plan-placed-content.ts",
+    "status": " M",
+    "sha256": "2a88c90989b29057e90ad7a69549fb7ddb1c211d53e9e6e5fe8563aad412cc13",
+    "bytes": 28582
+  },
+  {
+    "path": "packages/validation/src/index.ts",
+    "status": " M",
+    "sha256": "817980bcfab2ccc2e537c3076d0e650dda24efc3f2d1b1108dec404515135490",
+    "bytes": 693
+  },
+  {
+    "path": "packages/validation/src/wall-segment-validation.test.ts",
+    "status": " M",
+    "sha256": "cd62f16dee015909ee0887ef582fa05fab61c7412b32139b3f5bee897bc52453",
+    "bytes": 3863
+  },
+  {
+    "path": "packages/validation/src/wall-segment-validation.ts",
+    "status": " M",
+    "sha256": "8982869cec99e0627a03c52ac8fd52850a7ef029c2e26eab330cf74f5caa26d4",
+    "bytes": 8945
+  },
+  {
+    "path": "packages/workspace/src/mode-state.ts",
+    "status": " M",
+    "sha256": "c74695ff42f50ee7b85e2367f574f1735e101cc604b409c4930537dd6749f238",
+    "bytes": 4814
+  },
+  {
+    "path": "packages/workspace/src/registry/workspace-tool-registry.json",
+    "status": " M",
+    "sha256": "873c096ee6af71b55302acc7108a2920c5d8577d268a8496c0fb854d3acc94a1",
+    "bytes": 28213
+  },
+  {
+    "path": "packages/workspace/src/tool-state.test.ts",
+    "status": " M",
+    "sha256": "1773173d74b3e7695c444a74350aaa4114cf7ddf9451485b7a7d5206e489a2ec",
+    "bytes": 5742
+  },
+  {
+    "path": "packages/workspace/src/tool-state.ts",
+    "status": " M",
+    "sha256": "a9caae127355a089a93a16ec5ef6ba64879a6ca420f5906c0c26910b626ccacb",
+    "bytes": 8823
+  },
+  {
+    "path": "pnpm-lock.yaml",
+    "status": " M",
+    "sha256": "5c2aedda956ff62d7f7dda7f07fc58172e028b028c42efa8761094d30d2186ee",
+    "bytes": 106053
+  },
+  {
+    "path": "scripts/install-zeus.sh",
+    "status": " M",
+    "sha256": "7823a2538c2fe318facdc8cc8a915222e7dbdfe6e2626a98af3fbef22ad788bd",
+    "bytes": 1453
+  },
+  {
+    "path": "scripts/run-pencil-pointer-capability-check.mjs",
+    "status": " M",
+    "sha256": "d0f458b5759b612c40f79e5cfa8f4662f75c7ff3ac0385490422e219468c1967",
+    "bytes": 3411
+  },
+  {
+    "path": "scripts/run-responsive-capture.mjs",
+    "status": " M",
+    "sha256": "aa1e2fa021a79bf90822c12f1ba886bfaab75958a1224081dd051943d11aba82",
+    "bytes": 10356
+  },
+  {
+    "path": "scripts/run-workspace-layout-capability-check.mjs",
+    "status": " M",
+    "sha256": "7b8f9557cf5b4ce69a02c41cbf3c1271cc481f0eee15595957fe25afcd6dfd8f",
+    "bytes": 16403
+  },
+  {
+    "path": "scripts/zeus-context.mjs",
+    "status": " M",
+    "sha256": "c037446a613efd6276fce24337caf4c57c780cc9b9103d4692409cc7926b6cb3",
+    "bytes": 2878
+  },
+  {
+    "path": "apps/marketing/src/diagrams.ts",
+    "status": "??",
+    "sha256": "baa3a5eec48dddc2a9d59b596efeb72258e923fb3c1c01db2367ff8931e16540",
+    "bytes": 26942
+  },
+  {
+    "path": "apps/web/src/canvas/atomic-edits-contract.test.ts",
+    "status": "??",
+    "sha256": "769f372d190030edf26e624c48bcb008f0d00673c024d0ad33fd2b8552058234",
+    "bytes": 2795
+  },
+  {
+    "path": "apps/web/src/canvas/atomic-property-edits.test.ts",
+    "status": "??",
+    "sha256": "da27f4e15aca463936af8d4b31f56c9bde6179c035d9111458f680e647dbdbce",
+    "bytes": 8714
+  },
+  {
+    "path": "apps/web/src/canvas/atomic-property-edits.ts",
+    "status": "??",
+    "sha256": "a9aca7957e3ade536620a6f7837cba2b0ce3461d640b79ba74638bd2d1d9984e",
+    "bytes": 17433
+  },
+  {
+    "path": "apps/web/src/canvas/canvas-opening-placement.test.ts",
+    "status": "??",
+    "sha256": "0b2af9a35b503a05725926e257973533bdea9d7196f54776e75d843fb3ed6f2c",
+    "bytes": 8647
+  },
+  {
+    "path": "apps/web/src/canvas/canvas-room-placement.test.ts",
+    "status": "??",
+    "sha256": "cb29a93f9ef490ab2d77add400fddcc84d825531a0e6e2881d9cb97842b103f6",
+    "bytes": 6668
+  },
+  {
+    "path": "apps/web/src/canvas/canvas-wall-editing.test.ts",
+    "status": "??",
+    "sha256": "6f0d5f3369db5ddf44739439d879472072bd106418e8c8f739a6cae29ce4073a",
+    "bytes": 4433
+  },
+  {
+    "path": "apps/web/src/canvas/command-affordances.test.ts",
+    "status": "??",
+    "sha256": "ac4e8b668919ea0b2e38e5bf3b95f314f11ca7e84f3269c05eed3694f85b3ffd",
+    "bytes": 1252
+  },
+  {
+    "path": "apps/web/src/canvas/cross-level-operations.test.ts",
+    "status": "??",
+    "sha256": "b1e1b86d27c0cb3f6a5f081e6260f44547b2c152cd934f7adc4cc0b501dd98ea",
+    "bytes": 6162
+  },
+  {
+    "path": "apps/web/src/canvas/cross-level-operations.ts",
+    "status": "??",
+    "sha256": "6500e5a8f51c6acba9dd7bf095ddf761f1f5369ddfb77c319a05e4766710f680",
+    "bytes": 4652
+  },
+  {
+    "path": "apps/web/src/canvas/dimension-resolver.test.ts",
+    "status": "??",
+    "sha256": "d24bc02ff04c31584b6d404f0c5f2a72caefd5f3445db5beab0354d946f0c3a0",
+    "bytes": 10182
+  },
+  {
+    "path": "apps/web/src/canvas/dimension-resolver.ts",
+    "status": "??",
+    "sha256": "fd2c3f4e9e4d01d10e7f20db5ce92854ae321dd244d1c617b04b4f65ded0392d",
+    "bytes": 10762
+  },
+  {
+    "path": "apps/web/src/canvas/label-placement.test.ts",
+    "status": "??",
+    "sha256": "d586af9df20ecdf7cb066da012841bed1b99166fb49e1ac4285e39d72968e820",
+    "bytes": 1693
+  },
+  {
+    "path": "apps/web/src/canvas/label-placement.ts",
+    "status": "??",
+    "sha256": "407bdf150b4d6cb0597e33db01f6ab77f9f902452809361a9e937ef5c72b5600",
+    "bytes": 2386
+  },
+  {
+    "path": "apps/web/src/canvas/plan-palette-reader.test.ts",
+    "status": "??",
+    "sha256": "44b0fda90bf1d064115ffdbe0aa2fa72b68c5d0b72861606c751691d048d050c",
+    "bytes": 2390
+  },
+  {
+    "path": "apps/web/src/canvas/plan-palette-reader.ts",
+    "status": "??",
+    "sha256": "861be22ad59374ca69456f0fea9bfdc81909cb7f0e1c22474484c59ab21811a4",
+    "bytes": 3298
+  },
+  {
+    "path": "apps/web/src/canvas/selection-hierarchy.test.ts",
+    "status": "??",
+    "sha256": "d1d78f9f234b4db1c473eccbaf5a7382844fcad91e57eef186518749bd2eab1f",
+    "bytes": 7953
+  },
+  {
+    "path": "apps/web/src/canvas/selection-hierarchy.ts",
+    "status": "??",
+    "sha256": "30d35a2deff3471e329b0fe90ae07ab58d81826f702ae67e3311eac21555acfb",
+    "bytes": 12099
+  },
+  {
+    "path": "apps/web/src/canvas/sheet-geometry.test.ts",
+    "status": "??",
+    "sha256": "5d289e571077a9191071e6846b599dba88858d20d4a19bb8051dfb9333b4cce4",
+    "bytes": 2341
+  },
+  {
+    "path": "apps/web/src/canvas/sheet-geometry.ts",
+    "status": "??",
+    "sha256": "075e3e4fe4a0a94cbc27c539878e353edae786579d35a12c827d8c298e599895",
+    "bytes": 3840
+  },
+  {
+    "path": "apps/web/src/canvas/squircle.test.ts",
+    "status": "??",
+    "sha256": "66ec7a4b0d2d40f8bd2333dc89794b555095d17d059e89ec9f8f57496e762676",
+    "bytes": 1685
+  },
+  {
+    "path": "apps/web/src/canvas/squircle.ts",
+    "status": "??",
+    "sha256": "32a5d8126ba4a91ff6505aed907b50c5914184cc0e07cd657ef2126a17a9ee32",
+    "bytes": 2853
+  },
+  {
+    "path": "apps/web/src/canvas/underlay-calibration.test.ts",
+    "status": "??",
+    "sha256": "be965d4e3283202a95fb700e28522eba2d3c0fba57f4e4da33af9cb81262d001",
+    "bytes": 7171
+  },
+  {
+    "path": "apps/web/src/canvas/underlay-calibration.ts",
+    "status": "??",
+    "sha256": "148bd9968f3bf287557c5b0cd4cdf9ec31293dfa9914eafbb8770ed7a339cc59",
+    "bytes": 6831
+  },
+  {
+    "path": "apps/web/src/canvas/wall-editing-operations.test.ts",
+    "status": "??",
+    "sha256": "0454773ca2c94aed89bff491bd532312cad0cb2d3fa132d92be9bad1d0f84859",
+    "bytes": 6201
+  },
+  {
+    "path": "apps/web/src/canvas/wall-editing-operations.ts",
+    "status": "??",
+    "sha256": "d676ba4a40a2ac947190ca7f785cc0d73354e5992a65a8ff42ab309a58a94776",
+    "bytes": 4831
+  },
+  {
+    "path": "apps/web/src/inspector-data.test.ts",
+    "status": "??",
+    "sha256": "b80989e97d3b6dd03d497515c8b06e025e8cc3578c209a9094fe55f5f4539cf3",
+    "bytes": 13199
+  },
+  {
+    "path": "apps/web/src/project/golden-fixture-render-agreement.test.ts",
+    "status": "??",
+    "sha256": "c4a52776aeb0e9aa128f70bb0dd7124f95f9d364384a37be9a880b53d4b75f48",
+    "bytes": 6548
+  },
+  {
+    "path": "apps/web/src/project/model-canvas-resilience.test.ts",
+    "status": "??",
+    "sha256": "0686335d5878e7d607d8522c0319481ef4f0dd11c79194480c98b13b1df75a88",
+    "bytes": 7418
+  },
+  {
+    "path": "apps/web/src/project/native-level-derivation.test.ts",
+    "status": "??",
+    "sha256": "7b379ce4248811defed88c47bbc8dd07cce097455343d4698fdac265b3843fce",
+    "bytes": 10629
+  },
+  {
+    "path": "apps/web/src/project/native-level-derivation.ts",
+    "status": "??",
+    "sha256": "6036be3cf43d3ff5e1eda78684aefdfbb3a1412a2aa8957b4cdb798577d26a89",
+    "bytes": 18338
+  },
+  {
+    "path": "apps/web/src/project/plan-3d-derivation-agreement.test.ts",
+    "status": "??",
+    "sha256": "c0b8bf2a21403701f4d9db6a0b67233e8ab1c09bddeb09ae380628eb677cf90b",
+    "bytes": 13223
+  },
+  {
+    "path": "apps/web/src/project/portable-export-pipeline.test.ts",
+    "status": "??",
+    "sha256": "021abd7125c4e072a9bd3742bef8d8ee591d0120df4c3075d18d8a82b649b632",
+    "bytes": 3583
+  },
+  {
+    "path": "apps/web/src/project/project-switching-safety.test.ts",
+    "status": "??",
+    "sha256": "2f8bbd20100214e1c54dc214fd734982b98c9440c519298687f079163c0f277d",
+    "bytes": 8278
+  },
+  {
+    "path": "apps/web/src/project/storage-quota-service.test.ts",
+    "status": "??",
+    "sha256": "5f70f18a59c561cee1ad3231b2397d3874ed86e4f1e87a184b203f371d269efa",
+    "bytes": 3615
+  },
+  {
+    "path": "apps/web/src/project/storage-quota-service.ts",
+    "status": "??",
+    "sha256": "32220185e0f6329797ab45509da5f6ea093bad8889e7b9c0e0fb94bf1033f2f1",
+    "bytes": 4759
+  },
+  {
+    "path": "apps/web/src/project/storage-recovery-ui.test.ts",
+    "status": "??",
+    "sha256": "bab523e52eb307cb26dacd525f23678c9b21e54f618d2f1b207b0ddf38586a67",
+    "bytes": 2785
+  },
+  {
+    "path": "apps/web/src/sheets/InteractiveScheduleSheet.test.ts",
+    "status": "??",
+    "sha256": "22bdd1cc430ad8aa774d1c9a7fbcb7e480fd3c2b02c3b84100cf11583c201241",
+    "bytes": 2304
+  },
+  {
+    "path": "apps/web/src/sheets/InteractiveScheduleSheet.tsx",
+    "status": "??",
+    "sha256": "a59084476aeb5bf846db5cab2a616c3760fae8d235f52b9b4011024b7c22d2b2",
+    "bytes": 23375
+  },
+  {
+    "path": "apps/web/src/sheets/PlanSheetWorkspace.test.ts",
+    "status": "??",
+    "sha256": "42dc29e6e50e1abcdfd2086228600e6b89cddd0841a5e26bcaf137b8ef0ece6d",
+    "bytes": 8424
+  },
+  {
+    "path": "apps/web/src/sheets/PlanSheetWorkspace.tsx",
+    "status": "??",
+    "sha256": "41b41db0c9ed9f12c255c909988e789d1ae2920d6dfd558dbbee68865aef86e4",
+    "bytes": 32824
+  },
+  {
+    "path": "apps/web/src/sheets/plan-sheet-config.test.ts",
+    "status": "??",
+    "sha256": "44f9c9d565472dfff8a7ad4788ceaa134c85d6bde23153f5f89c51a86b0f6a7b",
+    "bytes": 12422
+  },
+  {
+    "path": "apps/web/src/sheets/plan-sheet-config.ts",
+    "status": "??",
+    "sha256": "292cc3fedfba83a38ae2634c010ab5699fb8e4c31eae6f437bb9ecdcfbfaef20",
+    "bytes": 11560
+  },
+  {
+    "path": "benchmarks/results/pencil-pointer-capability-2026-09-05T00-53-06-573Z.json",
+    "status": "??",
+    "sha256": "275c77cbce8300ab1334924b6063fd31e0de70e88a6e43052b55fcc24fed8d84",
+    "bytes": 706
+  },
+  {
+    "path": "benchmarks/results/pencil-pointer-capability-2026-09-05T01-03-30-381Z.json",
+    "status": "??",
+    "sha256": "404e9ce64d7ead11e31cde0a054c1901daea2984d65740e62eeab5b7fafcf584",
+    "bytes": 706
+  },
+  {
+    "path": "benchmarks/results/pencil-pointer-capability-2026-09-05T11-45-15-354Z.json",
+    "status": "??",
+    "sha256": "dba5bfbec8cfbb3454abc5a786521aef1eed1ef4f5d26611cf6702952937217b",
+    "bytes": 706
+  },
+  {
+    "path": "benchmarks/results/pencil-pointer-capability-2026-09-05T11-50-52-039Z.json",
+    "status": "??",
+    "sha256": "45f50293faa1419908b49f497cd2b733d75ee80d8210c516ae8706ce2f2bd136",
+    "bytes": 706
+  },
+  {
+    "path": "benchmarks/results/workspace-layout-capability-2026-09-05T00-51-02-772Z.json",
+    "status": "??",
+    "sha256": "83c715f0540052b4531c217543e0f2bcd8f8278cc8765b254872bbabf79084b8",
+    "bytes": 5758
+  },
+  {
+    "path": "benchmarks/results/workspace-layout-capability-2026-09-05T01-00-06-937Z.json",
+    "status": "??",
+    "sha256": "24d9950e013a6a7208b66daa42bcfede80c9419d0211a06c71e0b06053b95350",
+    "bytes": 5758
+  },
+  {
+    "path": "benchmarks/results/workspace-layout-capability-2026-09-05T01-02-47-971Z.json",
+    "status": "??",
+    "sha256": "b9fc627cd560d883a91c86e52cafb825ae4961c3f39b5a0fbffa5184016f22b2",
+    "bytes": 5758
+  },
+  {
+    "path": "benchmarks/results/workspace-layout-capability-2026-09-05T11-45-11-517Z.json",
+    "status": "??",
+    "sha256": "a7b77c00eca0e645c4baab89c6cbaee9654e775cac246cd1786b1e746a2f5a2d",
+    "bytes": 5758
+  },
+  {
+    "path": "benchmarks/results/workspace-layout-capability-2026-09-05T11-50-47-663Z.json",
+    "status": "??",
+    "sha256": "ba50d129bd8fef66e6fe227b9aa9802e92f453be21d3c25fd2bd7ea7d58b5ca0",
+    "bytes": 5758
+  },
+  {
+    "path": "docs/product/ARQ-AI-COMPETITIVE-IMPROVEMENT-PLAN.md",
+    "status": "??",
+    "sha256": "52941fbac65a601ca21adb455b24bfcd25e5c1efa1459d45ba7b7535c2a22aea",
+    "bytes": 16817
+  },
+  {
+    "path": "docs/product/ARQ-PRODUCTION-PLAN.md",
+    "status": "??",
+    "sha256": "1d394ca160a4da7bdfd0e87199228ff42d9fc9a8fabe1732142e2bd4434d03de",
+    "bytes": 33198
+  },
+  {
+    "path": "docs/product/RELEASE-1-CAPABILITY-MAP.md",
+    "status": "??",
+    "sha256": "f1b8e68708e22d0ddb7873bce2595409b7200a2d91d3466bbd2c084ca77bdcef",
+    "bytes": 10444
+  },
+  {
+    "path": "docs/research/COMPETITIVE-ANALYSIS-8-AI-ARCH-TOOLS.md",
+    "status": "??",
+    "sha256": "95774dbf3255b949ad34751c5083fb7fd2781a29a5508f60d535117fda75ed7c",
+    "bytes": 24010
+  },
+  {
+    "path": "packages/arqfs/src/arqfs-working-copy-lifecycle.test.ts",
+    "status": "??",
+    "sha256": "9a408008dc804ebcf9af228bcfa76cd2c903eaae3b2bdd77e86fd3f100033f68",
+    "bytes": 5533
+  },
+  {
+    "path": "packages/arqfs/src/arqfs-working-copy-registry.ts",
+    "status": "??",
+    "sha256": "07ca9940329a2567967d77f0fccda32d6533fdeda7e2c5790991d54a7f82c12a",
+    "bytes": 5749
+  },
+  {
+    "path": "packages/arqscript/src/generative-layout-synthesizer.test.ts",
+    "status": "??",
+    "sha256": "92b50bce0e6977c53c44d22db4436bf0b1e444530bffba60088f91dcc69a7cea",
+    "bytes": 4716
+  },
+  {
+    "path": "packages/arqscript/src/generative-layout-synthesizer.ts",
+    "status": "??",
+    "sha256": "9fe2aecefd3fac8c04c9b74d0c8db16e1c7b7070522d45d947d7391c21c3ef8a",
+    "bytes": 15752
+  },
+  {
+    "path": "packages/arqscript/src/intent-compiler.test.ts",
+    "status": "??",
+    "sha256": "13ade8ca2d02ca0d68f8f58f7b9679dd529b1419226a96bfaa56cb36cc07f2fe",
+    "bytes": 4254
+  },
+  {
+    "path": "packages/arqscript/src/intent-compiler.ts",
+    "status": "??",
+    "sha256": "5f1888bf9141e3ad2ed84a07ab9d730e005543dbd01090b37a105fc3ae373764",
+    "bytes": 6906
+  },
+  {
+    "path": "packages/bim-core/src/auto-furnishing.test.ts",
+    "status": "??",
+    "sha256": "7f0646a990436a83fc482ab56706d3bd23e3f20132b80a66c6af34a994a2dffe",
+    "bytes": 4925
+  },
+  {
+    "path": "packages/bim-core/src/auto-furnishing.ts",
+    "status": "??",
+    "sha256": "5c0cc17a7439cc15f9267a5841415c708347f3cdf6590e8822c220a0b2501f1b",
+    "bytes": 9681
+  },
+  {
+    "path": "packages/bim-core/src/numeric-conversion.test.ts",
+    "status": "??",
+    "sha256": "9b67d64c0729645cef5bb1180dd414ee10957df2276d0943cad213f7683c456d",
+    "bytes": 3807
+  },
+  {
+    "path": "packages/bim-core/src/site-lot.test.ts",
+    "status": "??",
+    "sha256": "666e7d05f5e47e8d814f6544e3ceb415007a5a71b93e3744c33b3f18ad82f8ea",
+    "bytes": 3302
+  },
+  {
+    "path": "packages/bim-core/src/site-lot.ts",
+    "status": "??",
+    "sha256": "338be0ad0983055cff587c7dedcd81de746664fe54ad54efc88c71000fca24fd",
+    "bytes": 6190
+  },
+  {
+    "path": "packages/derived-cache/src/cost-takeoff.test.ts",
+    "status": "??",
+    "sha256": "0957a2d34167c44a43ee477b0fec4a8248b0206fee27d365791857369486d534",
+    "bytes": 3873
+  },
+  {
+    "path": "packages/derived-cache/src/cost-takeoff.ts",
+    "status": "??",
+    "sha256": "10b1f20a6ad196b4aab4d21c6095bc7dce9853155ff781779a900dc9da188be2",
+    "bytes": 9541
+  },
+  {
+    "path": "packages/derived-cache/src/spatial-metrics.test.ts",
+    "status": "??",
+    "sha256": "17b167fe44501dba2f08e38d2f6ffe1f5689960b2086ede87134ae7b5c39bb56",
+    "bytes": 5139
+  },
+  {
+    "path": "packages/derived-cache/src/spatial-metrics.ts",
+    "status": "??",
+    "sha256": "b050ddcd747d6d880884490ff88cddacb43cc89be89a39abacbcf9c17b8cad4a",
+    "bytes": 7104
+  },
+  {
+    "path": "packages/design-system/src/workspace/phone-dock.test.ts",
+    "status": "??",
+    "sha256": "d961d843ec2d470d0109f764e51c1888ff214d68f23728b6dec740187a3207da",
+    "bytes": 3382
+  },
+  {
+    "path": "packages/design-system/src/workspace/tablet-drawer-bar.test.ts",
+    "status": "??",
+    "sha256": "4043f041ead88b74f2158c1ba1cb2d59e57030890579d91f13fae4984249f730",
+    "bytes": 2033
+  },
+  {
+    "path": "packages/geometry-2d/src/numeric-bounds.test.ts",
+    "status": "??",
+    "sha256": "3d204ae19742ef78726e69a0d9c3622c3dd692fad53c8aa939a43c3f134a5648",
+    "bytes": 3078
+  },
+  {
+    "path": "packages/geometry-2d/src/numeric-bounds.ts",
+    "status": "??",
+    "sha256": "5ae820c98e846b59237a9d88ef07b6c952ad5ec50a5211d43f42cb24b20a1404",
+    "bytes": 3211
+  },
+  {
+    "path": "packages/geometry-2d/src/numeric-foundation.test.ts",
+    "status": "??",
+    "sha256": "b7e9926219bc987d555f2c34b99831958a104d750349f0ce6558ca6d21d2814b",
+    "bytes": 2786
+  },
+  {
+    "path": "packages/geometry-2d/src/tolerance-calibration.test.ts",
+    "status": "??",
+    "sha256": "0c595d4367112c28d33190f23afa18af005251fa0722bb529ba2bf6d64ccfdaa",
+    "bytes": 3681
+  },
+  {
+    "path": "packages/geometry-2d/src/wall-editing.test.ts",
+    "status": "??",
+    "sha256": "8b03b8e08416cc4ed59423ab3baffbe3f73502b54fb716f10609a3a3c4e54441",
+    "bytes": 7525
+  },
+  {
+    "path": "packages/geometry-2d/src/wall-editing.ts",
+    "status": "??",
+    "sha256": "80a675fa9e9363e530cc24556896b4ccc8cb1ab8afffca40212062faa6fef6ca",
+    "bytes": 7371
+  },
+  {
+    "path": "packages/validation/src/level-validation.test.ts",
+    "status": "??",
+    "sha256": "0d247bae93bb47ee6d093f7360c7113b25337004b21ca5ab1cd64cdf3a2c15ca",
+    "bytes": 3623
+  },
+  {
+    "path": "packages/validation/src/level-validation.ts",
+    "status": "??",
+    "sha256": "d9ed522c70ce24b5ea3026622e91aab299d1308f19f52e20c07f657fc453842c",
+    "bytes": 5752
+  },
+  {
+    "path": "packages/validation/src/opening-validation.test.ts",
+    "status": "??",
+    "sha256": "31820c6a4003246a9ae98532f1f43c919b954bf881fbbbe5a364312e938dcc11",
+    "bytes": 6498
+  },
+  {
+    "path": "packages/validation/src/opening-validation.ts",
+    "status": "??",
+    "sha256": "c83f3ea62580ce492f91b436c35433aa61426732b6845dc6d805fc069036271d",
+    "bytes": 11747
+  },
+  {
+    "path": "packages/validation/src/residential-code-linting.test.ts",
+    "status": "??",
+    "sha256": "e46bcdfdf53140bdc5fa76e99c3ecde39f1fec89f66faf4a56f67ecfdadffaab",
+    "bytes": 5440
+  },
+  {
+    "path": "packages/validation/src/residential-code-linting.ts",
+    "status": "??",
+    "sha256": "514ebd462b5726fcc428e515c57824332ef652f26de18db9f4f93945f686982d",
+    "bytes": 7003
+  },
+  {
+    "path": "packages/validation/src/room-topology-validation.test.ts",
+    "status": "??",
+    "sha256": "bf0e1549bcd518f1767faf273b75b4dde177b0838539f0f65719af33b371ed47",
+    "bytes": 7103
+  },
+  {
+    "path": "packages/validation/src/room-topology-validation.ts",
+    "status": "??",
+    "sha256": "e355216f881a40845427dbfa1a0be23e5b5fa702300fbde6dee32b351adf14df",
+    "bytes": 9230
+  }
+]

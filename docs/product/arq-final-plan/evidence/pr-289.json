@@ -1,0 +1,176 @@
+{
+  "files": [
+    {
+      "sha": "deb31d5c8bda05f784f1eb989aeca03ece02d875",
+      "filename": ".github/workflows/deploy-pages.yml",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/f2b0665a5ec0e4ac3946724f141e281168ec7932/.github%2Fworkflows%2Fdeploy-pages.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/f2b0665a5ec0e4ac3946724f141e281168ec7932/.github%2Fworkflows%2Fdeploy-pages.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fdeploy-pages.yml?ref=f2b0665a5ec0e4ac3946724f141e281168ec7932",
+      "patch": "@@ -93,7 +93,7 @@ jobs:\n           node scripts/write-deployment-provenance.mjs\n           --dist apps/marketing/dist\n           --target github-pages\n-      - uses: actions/upload-pages-artifact@v3\n+      - uses: actions/upload-pages-artifact@v5\n         with:\n           path: apps/marketing/dist\n   deploy:"
+    }
+  ],
+  "reviews": [],
+  "detail": {
+    "baseRefOid": "62c5e5cf7d9c7fd0c32f954f7ce851fe8afeff66",
+    "body": "Bumps [actions/upload-pages-artifact](https://github.com/actions/upload-pages-artifact) from 3 to 5.\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/actions/upload-pages-artifact/releases\">actions/upload-pages-artifact's releases</a>.</em></p>\n<blockquote>\n<h2>v5.0.0</h2>\n<h1>Changelog</h1>\n<ul>\n<li>Update upload-artifact action to version 7 <a href=\"https://github.com/Tom-van-Woudenberg\"><code>@\u200bTom-van-Woudenberg</code></a> (<a href=\"https://redirect.github.com/actions/upload-pages-artifact/issues/139\">#139</a>)</li>\n<li>feat: add <code>include-hidden-files</code> input <a href=\"https://github.com/jonchurch\"><code>@\u200bjonchurch</code></a> (<a href=\"https://redirect.github.com/actions/upload-pages-artifact/issues/137\">#137</a>)</li>\n</ul>\n<p>See details of <a href=\"https://github.com/actions/upload-pages-artifact/compare/v4.0.0...v4.0.1\">all code changes</a> since previous release.</p>\n<h2>v4.0.0</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>Potentially breaking change: hidden files (specifically dotfiles) will not be included in the artifact by <a href=\"https://github.com/tsusdere\"><code>@\u200btsusdere</code></a> in <a href=\"https://redirect.github.com/actions/upload-pages-artifact/pull/102\">actions/upload-pages-artifact#102</a>\nIf you need to include dotfiles in your artifact: instead of using this action, create your own artifact according to these requirements <a href=\"https://github.com/actions/upload-pages-artifact?tab=readme-ov-file#artifact-validation\">https://github.com/actions/upload-pages-artifact?tab=readme-ov-file#artifact-validation</a></li>\n<li>Pin <code>actions/upload-artifact</code> to SHA by <a href=\"https://github.com/heavymachinery\"><code>@\u200bheavymachinery</code></a> in <a href=\"https://redirect.github.com/actions/upload-pages-artifact/pull/127\">actions/upload-pages-artifact#127</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/upload-pages-artifact/compare/v3.0.1...v4.0.0\">https://github.com/actions/upload-pages-artifact/compare/v3.0.1...v4.0.0</a></p>\n<h2>v3.0.1</h2>\n<h1>Changelog</h1>\n<ul>\n<li>Group tar's output to prevent it from messing up action logs <a href=\"https://github.com/SilverRainZ\"><code>@\u200bSilverRainZ</code></a> (<a href=\"https://redirect.github.com/actions/upload-pages-artifact/issues/94\">#94</a>)</li>\n<li>Update README.md <a href=\"https://github.com/uiolee\"><code>@\u200buiolee</code></a> (<a href=\"https://redirect.github.com/actions/upload-pages-artifact/issues/88\">#88</a>)</li>\n<li>Bump the non-breaking-changes group with 1 update <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> (<a href=\"https://redirect.github.com/actions/upload-pages-artifact/issues/92\">#92</a>)</li>\n<li>Update Dependabot config to group non-breaking changes <a href=\"https://github.com/JamesMGreene\"><code>@\u200bJamesMGreene</code></a> (<a href=\"https://redirect.github.com/actions/upload-pages-artifact/issues/91\">#91</a>)</li>\n<li>Bump actions/checkout from 3 to 4 <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> (<a href=\"https://redirect.github.com/actions/upload-pages-artifact/issues/76\">#76</a>)</li>\n</ul>\n<p>See details of <a href=\"https://github.com/actions/upload-pages-artifact/compare/v3.0.0...v3.0.1\">all code changes</a> since previous release.</p>\n</blockquote>\n</details>\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/actions/upload-pages-artifact/commit/fc324d3547104276b827a68afc52ff2a11cc49c9\"><code>fc324d3</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/upload-pages-artifact/issues/139\">#139</a> from Tom-van-Woudenberg/patch-1</li>\n<li><a href=\"https://github.com/actions/upload-pages-artifact/commit/fe9d4b7d84090e1d8d9c53a0236f810d4e00d2c3\"><code>fe9d4b7</code></a> Merge branch 'main' into patch-1</li>\n<li><a href=\"https://github.com/actions/upload-pages-artifact/commit/0ca16172ca884f0a37117fed41734f29784cc980\"><code>0ca1617</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/upload-pages-artifact/issues/137\">#137</a> from jonchurch/include-hidden-files</li>\n<li><a href=\"https://github.com/actions/upload-pages-artifact/commit/57f0e8492b437b7818227931fef2faa1a379839b\"><code>57f0e84</code></a> Update action.yml</li>\n<li><a href=\"https://github.com/actions/upload-pages-artifact/commit/4a90348b2933470dc78cec55534259872a6d3c0d\"><code>4a90348</code></a> v7 --&gt; hash</li>\n<li><a href=\"https://github.com/actions/upload-pages-artifact/commit/56f665a6f297fa95f8d735b314187fb2d7764569\"><code>56f665a</code></a> Update upload-artifact action to version 7</li>\n<li><a href=\"https://github.com/actions/upload-pages-artifact/commit/f7615f5917213b24245d49ba96693d0f5375a414\"><code>f7615f5</code></a> Add <code>include-hidden-files</code> input</li>\n<li><a href=\"https://github.com/actions/upload-pages-artifact/commit/7b1f4a764d45c48632c6b24a0339c27f5614fb0b\"><code>7b1f4a7</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/upload-pages-artifact/issues/127\">#127</a> from heavymachinery/pin-sha</li>\n<li><a href=\"https://github.com/actions/upload-pages-artifact/commit/4cc19c7d3f3e6c87c68366501382a03c8b1ba6db\"><code>4cc19c7</code></a> Pin <code>actions/upload-artifact</code> to SHA</li>\n<li><a href=\"https://github.com/actions/upload-pages-artifact/commit/2d163be3ddce01512f3eea7ac5b7023b5d643ce1\"><code>2d163be</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/upload-pages-artifact/issues/107\">#107</a> from KittyChiu/main</li>\n<li>Additional commits viewable in <a href=\"https://github.com/actions/upload-pages-artifact/compare/v3...v5\">compare view</a></li>\n</ul>\n</details>\n<br />\n\n\n> **Note**\n> Automatic rebases have been disabled on this pull request as it has been open for over 30 days.\n",
+    "headRefOid": "f2b0665a5ec0e4ac3946724f141e281168ec7932",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 289,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:12:29Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166978/job/92159037087",
+        "name": "build",
+        "startedAt": "2026-08-04T23:12:05Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:14:00Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166952/job/92159037188",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-08-04T23:12:20Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:12:17Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166979/job/92159037107",
+        "name": "classify",
+        "startedAt": "2026-08-04T23:12:05Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:12:24Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166917/job/92159037180",
+        "name": "secret-scan",
+        "startedAt": "2026-08-04T23:12:14Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:13:13Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166979/job/92159109945",
+        "name": "preflight",
+        "startedAt": "2026-08-04T23:12:52Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:13:38Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166952/job/92159037287",
+        "name": "test",
+        "startedAt": "2026-08-04T23:12:24Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:14:34Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166952/job/92159037280",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-08-04T23:12:48Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:12:54Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166979/job/92159109994",
+        "name": "critical-approval",
+        "startedAt": "2026-08-04T23:12:52Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:12:45Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166952/job/92159037261",
+        "name": "language-system",
+        "startedAt": "2026-08-04T23:12:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:13:13Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166979/job/92159275394",
+        "name": "selected-evidence",
+        "startedAt": "2026-08-04T23:13:14Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:13:31Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166979/job/92159274746",
+        "name": "engineering-gate",
+        "startedAt": "2026-08-04T23:13:22Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:12:57Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166952/job/92159037290",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-08-04T23:12:37Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:12:44Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30959166952/job/92159037307",
+        "name": "rust-test",
+        "startedAt": "2026-08-04T23:12:33Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-08-04T23:12:55Z",
+        "state": "FAILURE",
+        "targetUrl": "https://vercel.com/pvr6675-3816s-projects/arq-website/D84c5ENdeo45Sb5p9wZgSsCzkHiw"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-04T23:12:55Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://vercel.com/github",
+        "name": "Vercel Preview Comments",
+        "startedAt": "2026-08-04T23:12:55Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ]
+  }
+}

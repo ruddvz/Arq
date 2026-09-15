@@ -1,0 +1,292 @@
+{
+  "files": [
+    {
+      "sha": "43601a610cb3e14ba4c6478e542bc047b1ef5600",
+      "filename": ".github/workflows/zeus-repository-intelligence.yml",
+      "status": "modified",
+      "additions": 18,
+      "deletions": 6,
+      "changes": 24,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/d292ace3cf7dc45cdff6dedca1af477772512953/.github%2Fworkflows%2Fzeus-repository-intelligence.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/d292ace3cf7dc45cdff6dedca1af477772512953/.github%2Fworkflows%2Fzeus-repository-intelligence.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fzeus-repository-intelligence.yml?ref=d292ace3cf7dc45cdff6dedca1af477772512953",
+      "patch": "@@ -9,9 +9,14 @@ on:\n       - 'scripts/zeus-fast-compile.mjs'\n       - 'scripts/zeus-impact.mjs'\n       - 'scripts/lib/zeus-repository-evidence.mjs'\n+      - 'scripts/lib/zeus-rust-graph.mjs'\n+      - 'scripts/lib/zeus-ts-alias-graph.mjs'\n       - 'scripts/zeus-repository-intelligence.mjs'\n       - 'scripts/zeus-repository-intelligence.test.mjs'\n       - 'scripts/zeus-repository-intelligence-integration.test.mjs'\n+      - 'scripts/zeus-repository-cross-language.mjs'\n+      - 'scripts/zeus-repository-cross-language.test.mjs'\n+      - 'scripts/zeus-repository-cross-language-performance.test.mjs'\n       - '.github/workflows/zeus-repository-intelligence.yml'\n       - 'packages/**'\n       - 'apps/web/**'\n@@ -51,27 +56,34 @@ jobs:\n       - name: Check repository intelligence syntax\n         run: |\n           node --check scripts/zeus-repository-intelligence.mjs\n+          node --check scripts/zeus-repository-cross-language.mjs\n+          node --check scripts/lib/zeus-rust-graph.mjs\n+          node --check scripts/lib/zeus-ts-alias-graph.mjs\n           node --check scripts/lib/zeus-repository-evidence.mjs\n           node --check scripts/zeus-fast-compile.mjs\n           node --check scripts/zeus-impact.mjs\n \n       - name: Run repository intelligence regressions\n-        run: node --test scripts/zeus-repository-intelligence.test.mjs\n+        run: |\n+          node --test \\\n+            scripts/zeus-repository-intelligence.test.mjs \\\n+            scripts/zeus-repository-cross-language.test.mjs \\\n+            scripts/zeus-repository-cross-language-performance.test.mjs\n \n       - name: Build fresh repository graph\n-        run: node scripts/zeus-repository-intelligence.mjs --json build\n+        run: node scripts/zeus.mjs graph --json build\n \n       - name: Require fresh repository graph\n-        run: node scripts/zeus-repository-intelligence.mjs --json status\n+        run: node scripts/zeus.mjs graph --json status\n \n       - name: Run compile and impact integration regressions\n         run: node scripts/zeus-repository-intelligence-integration.test.mjs\n \n       - name: Preflight canonical semantic model\n-        run: node scripts/zeus-repository-intelligence.mjs --json preflight packages/bim-core\n+        run: node scripts/zeus.mjs graph --json preflight packages/bim-core\n \n       - name: Inspect pull-request diff impact\n-        run: node scripts/zeus-repository-intelligence.mjs --json diff-impact --base \"origin/${{ github.base_ref }}\"\n+        run: node scripts/zeus.mjs graph --json diff-impact --base \"origin/${{ github.base_ref }}\"\n \n       - name: Verify ZEUS drift guard itself\n         run: node scripts/zeus-drift-guard-test.mjs\n@@ -83,4 +95,4 @@ jobs:\n         run: pnpm zeus:validate\n \n       - name: Verify editor dependency boundaries\n-        run: pnpm check:editor-dependency-boundaries\n+        run: pnpm check:editor-dependency-boundaries\n\\ No newline at end of file"
+    },
+    {
+      "sha": "820eb35ec9620b973a7c4887ba9c8fdf8b3fb8ee",
+      "filename": ".zeus/repository-graph.json",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/d292ace3cf7dc45cdff6dedca1af477772512953/.zeus%2Frepository-graph.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/d292ace3cf7dc45cdff6dedca1af477772512953/.zeus%2Frepository-graph.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.zeus%2Frepository-graph.json?ref=d292ace3cf7dc45cdff6dedca1af477772512953",
+      "patch": "@@ -1,7 +1,7 @@\n {\n   \"protocol\": \"zeus-repository-intelligence/v1\",\n   \"schema_version\": 1,\n-  \"extractor_version\": \"1.0.0\",\n+  \"extractor_version\": \"1.1.0\",\n   \"hard_gate_provenance\": [\"deterministic\", \"declared\"],\n   \"declarations\": [\".zeus/repository-graph-declarations.json\"],\n   \"exclude_prefixes\": [\n@@ -54,4 +54,4 @@\n     \"public_adapter\": [\"pnpm lint\", \"pnpm test\", \"pnpm build\"],\n     \"protected\": [\"pnpm zeus:validate\", \"pnpm lint\", \"pnpm typecheck\", \"pnpm test\", \"pnpm build\"]\n   }\n-}\n+}\n\\ No newline at end of file"
+    },
+    {
+      "sha": "d8806bbd0ddda80ac1db260d1da4d2c371df7f42",
+      "filename": "scripts/lib/zeus-repository-evidence.mjs",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Flib%2Fzeus-repository-evidence.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Flib%2Fzeus-repository-evidence.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Flib%2Fzeus-repository-evidence.mjs?ref=d292ace3cf7dc45cdff6dedca1af477772512953",
+      "patch": "@@ -4,7 +4,7 @@ import {\n   loadConfig,\n   preflightFromGraph,\n   readSnapshot,\n-} from '../zeus-repository-intelligence.mjs';\n+} from '../zeus-repository-cross-language.mjs';\n \n const RISK_RANK = { low: 0, moderate: 1, high: 2, critical: 3 };\n const TIER_RANK = { fast: 0, standard: 1, deep: 2 };\n@@ -149,4 +149,4 @@ export function graphMarkdown(evidence) {\n   ]\n     .filter(Boolean)\n     .join('\\n');\n-}\n+}\n\\ No newline at end of file"
+    },
+    {
+      "sha": "462eb6aee015e68e8ac590f82120714741c7b427",
+      "filename": "scripts/lib/zeus-rust-graph.mjs",
+      "status": "added",
+      "additions": 133,
+      "deletions": 0,
+      "changes": 133,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Flib%2Fzeus-rust-graph.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Flib%2Fzeus-rust-graph.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Flib%2Fzeus-rust-graph.mjs?ref=d292ace3cf7dc45cdff6dedca1af477772512953",
+      "patch": "@@ -0,0 +1,133 @@\n+import { existsSync, readFileSync, statSync } from 'node:fs';\n+import path from 'node:path';\n+\n+const MAX_SOURCE_BYTES = 2_000_000;\n+\n+function normalize(value) {\n+  return String(value).replaceAll('\\\\', '/').replace(/^\\.\\//, '').replace(/\\/$/, '');\n+}\n+function fileNodeId(rel) {\n+  return `file:${normalize(rel)}`;\n+}\n+function packageNodeId(packagePath) {\n+  return `package:${normalize(packagePath)}`;\n+}\n+function readSmallText(root, rel) {\n+  const full = path.join(root, rel);\n+  try {\n+    if (!existsSync(full) || statSync(full).size > MAX_SOURCE_BYTES) return null;\n+    return readFileSync(full, 'utf8');\n+  } catch {\n+    return null;\n+  }\n+}\n+function addEdge(edges, edge) {\n+  if (!edge.source || !edge.target || edge.source === edge.target) return;\n+  edges.push({ provenance: 'deterministic', confidence: 1, ...edge });\n+}\n+function packageRootForFile(rel) {\n+  const clean = normalize(rel);\n+  const match = clean.match(/^(rust\\/[^/]+)\\//);\n+  return match ? match[1] : null;\n+}\n+function cargoMetadata(root, packagePath) {\n+  const text = readSmallText(root, `${packagePath}/Cargo.toml`);\n+  if (!text) return null;\n+  const packageSection = text.match(/\\[package\\]([\\s\\S]*?)(?=\\n\\s*\\[|$)/)?.[1] ?? '';\n+  const libSection = text.match(/\\[lib\\]([\\s\\S]*?)(?=\\n\\s*\\[|$)/)?.[1] ?? '';\n+  const name = packageSection.match(/^\\s*name\\s*=\\s*[\"']([^\"']+)[\"']/m)?.[1] ?? null;\n+  const crateTypeBody = libSection.match(/^\\s*crate-type\\s*=\\s*\\[([^\\]]*)\\]/m)?.[1] ?? '';\n+  const crateTypes = [...crateTypeBody.matchAll(/[\"']([^\"']+)[\"']/g)].map((match) => match[1]);\n+  const wasmBindgen = /^\\s*wasm-bindgen(?:\\s*=|\\s*\\.)/m.test(text);\n+  return { name, crate_types: crateTypes, wasm_bindgen: wasmBindgen };\n+}\n+function rustModuleRefs(text) {\n+  const refs = new Set();\n+  for (const match of text.matchAll(/\\b(?:pub\\s+)?use\\s+crate::([A-Za-z_][A-Za-z0-9_]*)/g)) refs.add(match[1]);\n+  for (const match of text.matchAll(/\\b(?:pub(?:\\([^)]*\\))?\\s+)?mod\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*;/g)) refs.add(match[1]);\n+  for (const match of text.matchAll(/\\b(?:pub\\s+)?use\\s+crate::\\{([^}]+)\\}/g)) {\n+    for (const part of match[1].split(',')) {\n+      const name = part.trim().match(/^([A-Za-z_][A-Za-z0-9_]*)/)?.[1];\n+      if (name) refs.add(name);\n+    }\n+  }\n+  return [...refs];\n+}\n+function rustModuleFile(packagePath, moduleName, fileSet) {\n+  return [`${packagePath}/src/${moduleName}.rs`, `${packagePath}/src/${moduleName}/mod.rs`].find((candidate) => fileSet.has(candidate));\n+}\n+\n+export function augmentRustGraph(root, files, fileSet, nodes, edges, classifyPath) {\n+  const rustRoots = new Set(files.map(packageRootForFile).filter(Boolean));\n+  for (const packagePath of [...rustRoots].sort()) {\n+    const id = packageNodeId(packagePath);\n+    const cargo = cargoMetadata(root, packagePath);\n+    const aliases = [packagePath, path.posix.basename(packagePath), cargo?.name].filter(Boolean);\n+    if (!nodes.has(id)) {\n+      const classification = classifyPath(`${packagePath}/src/lib.rs`);\n+      nodes.set(id, {\n+        id,\n+        kind: 'package',\n+        label: cargo?.name || path.posix.basename(packagePath),\n+        path: `${packagePath}/`,\n+        domain: classification.domain,\n+        authority: classification.authority,\n+        protected: Boolean(classification.protected),\n+        metadata: { aliases: [...new Set(aliases)], cargo },\n+      });\n+    } else {\n+      const current = nodes.get(id);\n+      nodes.set(id, {\n+        ...current,\n+        metadata: {\n+          ...(current.metadata || {}),\n+          aliases: [...new Set([...(current.metadata?.aliases || []), ...aliases])],\n+          ...(cargo ? { cargo } : {}),\n+        },\n+      });\n+    }\n+    for (const rel of files) {\n+      if (!rel.startsWith(`${packagePath}/`) || !nodes.has(fileNodeId(rel))) continue;\n+      addEdge(edges, {\n+        source: fileNodeId(rel),\n+        target: id,\n+        relation: 'MEMBER_OF',\n+        authority: 'repository-layout',\n+        source_ref: rel,\n+        extractor: 'cross-language-package-layout',\n+      });\n+    }\n+  }\n+\n+  for (const rel of files) {\n+    if (path.posix.extname(rel).toLowerCase() !== '.rs') continue;\n+    const packagePath = packageRootForFile(rel);\n+    if (!packagePath) continue;\n+    const text = readSmallText(root, rel);\n+    if (!text) continue;\n+    for (const moduleName of rustModuleRefs(text)) {\n+      const target = rustModuleFile(packagePath, moduleName, fileSet);\n+      if (!target) continue;\n+      addEdge(edges, {\n+        source: fileNodeId(rel),\n+        target: fileNodeId(target),\n+        relation: 'DEPENDS_ON',\n+        authority: 'rust-module-reference',\n+        source_ref: rel,\n+        extractor: 'rust-module-extractor',\n+      });\n+    }\n+    const cargo = cargoMetadata(root, packagePath);\n+    const isWasmSurface = cargo?.wasm_bindgen && cargo.crate_types.includes('cdylib') && /#\\s*\\[\\s*wasm_bindgen(?:\\s*\\(|\\s*\\])/.test(text);\n+    if (isWasmSurface) {\n+      addEdge(edges, {\n+        source: packageNodeId(packagePath),\n+        target: fileNodeId(rel),\n+        relation: 'GENERATED_FROM',\n+        authority: 'wasm-bindgen-interface',\n+        source_ref: rel,\n+        extractor: 'rust-wasm-interface-extractor',\n+      });\n+    }\n+  }\n+}"
+    },
+    {
+      "sha": "ff45d6d9f08eb27915409c762285b89e33971abd",
+      "filename": "scripts/lib/zeus-ts-alias-graph.mjs",
+      "status": "added",
+      "additions": 132,
+      "deletions": 0,
+      "changes": 132,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Flib%2Fzeus-ts-alias-graph.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Flib%2Fzeus-ts-alias-graph.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Flib%2Fzeus-ts-alias-graph.mjs?ref=d292ace3cf7dc45cdff6dedca1af477772512953",
+      "patch": "@@ -0,0 +1,132 @@\n+import { existsSync, readFileSync, statSync } from 'node:fs';\n+import path from 'node:path';\n+\n+const MAX_SOURCE_BYTES = 2_000_000;\n+const JS_TS_EXTENSIONS = new Set(['.js', '.jsx', '.mjs', '.cjs', '.ts', '.tsx']);\n+const MODULE_SUFFIXES = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.json'];\n+\n+function normalize(value) {\n+  return String(value).replaceAll('\\\\', '/').replace(/^\\.\\//, '').replace(/\\/$/, '');\n+}\n+function fileNodeId(rel) {\n+  return `file:${normalize(rel)}`;\n+}\n+function readSmallText(root, rel) {\n+  const full = path.join(root, rel);\n+  try {\n+    if (!existsSync(full) || statSync(full).size > MAX_SOURCE_BYTES) return null;\n+    return readFileSync(full, 'utf8');\n+  } catch {\n+    return null;\n+  }\n+}\n+function moduleCandidates(base) {\n+  const clean = normalize(base);\n+  if (path.posix.extname(clean)) return [clean];\n+  return [clean, ...MODULE_SUFFIXES.map((suffix) => `${clean}${suffix}`), ...MODULE_SUFFIXES.map((suffix) => `${clean}/index${suffix}`)];\n+}\n+function importSpecs(text) {\n+  const specs = [];\n+  const pattern = /(?:import\\s+(?:type\\s+)?(?:[^'\"\\n]*?\\s+from\\s+)?|export\\s+(?:type\\s+)?(?:[^'\"\\n]*?\\s+from\\s+)|require\\s*\\(\\s*|import\\s*\\(\\s*)['\"]([^'\"]+)['\"]/g;\n+  let match;\n+  while ((match = pattern.exec(text)) !== null) specs.push(match[1]);\n+  return [...new Set(specs)];\n+}\n+function parseJsonConfig(text) {\n+  return JSON.parse(text.replace(/\\/\\*[\\s\\S]*?\\*\\//g, '').replace(/(^|[^:])\\/\\/.*$/gm, '$1').replace(/,\\s*([}\\]])/g, '$1'));\n+}\n+function loadMappings(root, files) {\n+  const mappings = [];\n+  for (const rel of files) {\n+    if (!/(^|\\/)tsconfig(?:\\.[^/]+)?\\.json$/.test(rel)) continue;\n+    const text = readSmallText(root, rel);\n+    if (!text) continue;\n+    try {\n+      const parsed = parseJsonConfig(text);\n+      const paths = parsed.compilerOptions?.paths;\n+      if (!paths || typeof paths !== 'object') continue;\n+      const configDir = path.posix.dirname(rel);\n+      const baseUrl = normalize(path.posix.join(configDir, parsed.compilerOptions?.baseUrl || '.'));\n+      for (const [pattern, targets] of Object.entries(paths)) {\n+        if (!Array.isArray(targets)) continue;\n+        mappings.push({\n+          config_dir: configDir === '.' ? '' : normalize(configDir),\n+          base_url: baseUrl === '.' ? '' : baseUrl,\n+          pattern,\n+          targets: targets.filter((target) => typeof target === 'string'),\n+          source_ref: rel,\n+        });\n+      }\n+    } catch {\n+      // Invalid tsconfig syntax belongs to existing TypeScript validation.\n+    }\n+  }\n+  return mappings;\n+}\n+function aliasCapture(pattern, spec) {\n+  const star = pattern.indexOf('*');\n+  if (star < 0) return pattern === spec ? '' : null;\n+  const prefix = pattern.slice(0, star);\n+  const suffix = pattern.slice(star + 1);\n+  if (!spec.startsWith(prefix) || !spec.endsWith(suffix)) return null;\n+  return spec.slice(prefix.length, spec.length - suffix.length);\n+}\n+function aliasTargets(mapping, spec, fileSet) {\n+  const capture = aliasCapture(mapping.pattern, spec);\n+  if (capture === null) return [];\n+  const resolved = new Set();\n+  for (const targetPattern of mapping.targets) {\n+    const target = targetPattern.includes('*') ? targetPattern.replaceAll('*', capture) : targetPattern;\n+    const base = normalize(path.posix.join(mapping.base_url, target));\n+    for (const candidate of moduleCandidates(base)) {\n+      if (fileSet.has(candidate)) resolved.add(candidate);\n+    }\n+  }\n+  return [...resolved];\n+}\n+\n+export function augmentTsAliasGraph(root, files, fileSet, nodes, edges) {\n+  const mappings = loadMappings(root, files);\n+  if (!mappings.length) return;\n+  for (const rel of files) {\n+    if (!JS_TS_EXTENSIONS.has(path.posix.extname(rel).toLowerCase())) continue;\n+    const text = readSmallText(root, rel);\n+    if (!text) continue;\n+    const sourceId = fileNodeId(rel);\n+    for (const spec of importSpecs(text)) {\n+      if (spec.startsWith('.')) continue;\n+      const matching = mappings.filter((mapping) => (!mapping.config_dir || rel === mapping.config_dir || rel.startsWith(`${mapping.config_dir}/`)) && aliasCapture(mapping.pattern, spec) !== null);\n+      if (!matching.length) continue;\n+      const targets = new Set(matching.flatMap((mapping) => aliasTargets(mapping, spec, fileSet)));\n+      if (targets.size === 1) {\n+        edges.push({\n+          source: sourceId,\n+          target: fileNodeId([...targets][0]),\n+          relation: nodes.get(sourceId)?.domain === 'test' ? 'TESTS' : 'DEPENDS_ON',\n+          provenance: 'deterministic',\n+          authority: 'tsconfig-path-alias',\n+          source_ref: matching.map((mapping) => mapping.source_ref).sort().join(','),\n+          extractor: 'ts-path-alias-extractor',\n+          confidence: 1,\n+        });\n+      } else if (targets.size > 1) {\n+        const current = nodes.get(sourceId);\n+        if (!current) continue;\n+        nodes.set(sourceId, {\n+          ...current,\n+          metadata: {\n+            ...(current.metadata || {}),\n+            ambiguous_imports: [\n+              ...(current.metadata?.ambiguous_imports || []),\n+              {\n+                specifier: spec,\n+                candidates: [...targets].sort(),\n+                source_refs: [...new Set(matching.map((mapping) => mapping.source_ref))].sort(),\n+              },\n+            ],\n+          },\n+        });\n+      }\n+    }\n+  }\n+}"
+    },
+    {
+      "sha": "fda54999f18791ab882c43d8c7f5117f4102f3a8",
+      "filename": "scripts/zeus-repository-cross-language-performance.test.mjs",
+      "status": "added",
+      "additions": 120,
+      "deletions": 0,
+      "changes": 120,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Fzeus-repository-cross-language-performance.test.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Fzeus-repository-cross-language-performance.test.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Fzeus-repository-cross-language-performance.test.mjs?ref=d292ace3cf7dc45cdff6dedca1af477772512953",
+      "patch": "@@ -0,0 +1,120 @@\n+import test from 'node:test';\n+import assert from 'node:assert/strict';\n+import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';\n+import os from 'node:os';\n+import path from 'node:path';\n+import { performance } from 'node:perf_hooks';\n+import { spawnSync } from 'node:child_process';\n+\n+import { buildGraph, impactSlice, loadConfig } from './zeus-repository-cross-language.mjs';\n+\n+function git(root, ...args) {\n+  const result = spawnSync('git', args, { cwd: root, encoding: 'utf8' });\n+  if (result.status !== 0) throw new Error(result.stderr || result.stdout);\n+}\n+\n+function write(root, rel, content) {\n+  const full = path.join(root, rel);\n+  mkdirSync(path.dirname(full), { recursive: true });\n+  writeFileSync(full, content);\n+}\n+\n+function makeRepo() {\n+  const root = mkdtempSync(path.join(os.tmpdir(), 'zeus-graph-performance-'));\n+  git(root, 'init', '-b', 'main');\n+  git(root, 'config', 'user.email', 'zeus@example.test');\n+  git(root, 'config', 'user.name', 'Zeus Test');\n+\n+  write(\n+    root,\n+    '.zeus/repository-graph.json',\n+    `${JSON.stringify(\n+      {\n+        protocol: 'zeus-repository-intelligence/v1',\n+        schema_version: 1,\n+        extractor_version: 'performance-test',\n+        hard_gate_provenance: ['deterministic', 'declared'],\n+        declarations: ['.zeus/repository-graph-declarations.json'],\n+        exclude_prefixes: ['.git/', 'node_modules/', 'dist/', 'build/', 'target/'],\n+        source_extensions: ['.js', '.mjs', '.ts', '.tsx', '.json', '.rs', '.toml', '.md'],\n+        budgets: { max_nodes: 240, max_depth: 4, max_context_chars: 28000 },\n+        protected_domains: ['semantic_model', 'operations', 'ai_operations', 'persistence', 'geometry_units', 'contract'],\n+        verification_frontiers: {\n+          harness: ['harness-check'],\n+          renderer_ui: ['renderer-check'],\n+          public_adapter: ['adapter-check'],\n+          protected: ['protected-check'],\n+        },\n+      },\n+      null,\n+      2,\n+    )}\\n`,\n+  );\n+  write(\n+    root,\n+    '.zeus/repository-graph-declarations.json',\n+    `${JSON.stringify({ protocol: 'zeus-repository-intelligence/v1', edges: [] }, null, 2)}\\n`,\n+  );\n+\n+  const packageCount = 32;\n+  const modulesPerPackage = 12;\n+  for (let packageIndex = 0; packageIndex < packageCount; packageIndex += 1) {\n+    const packageName = `fixture-${packageIndex}`;\n+    write(\n+      root,\n+      `packages/${packageName}/package.json`,\n+      `${JSON.stringify({ name: `@arq/${packageName}`, type: 'module' }, null, 2)}\\n`,\n+    );\n+    const previousImport =\n+      packageIndex === 0\n+        ? ''\n+        : `import '@arq/fixture-${packageIndex - 1}';\\n`;\n+    write(\n+      root,\n+      `packages/${packageName}/src/index.ts`,\n+      `${previousImport}export { moduleValue } from './module-0';\\n`,\n+    );\n+    for (let moduleIndex = 0; moduleIndex < modulesPerPackage; moduleIndex += 1) {\n+      write(\n+        root,\n+        `packages/${packageName}/src/module-${moduleIndex}.ts`,\n+        `export const moduleValue${moduleIndex} = ${packageIndex * modulesPerPackage + moduleIndex};\\n`,\n+      );\n+    }\n+  }\n+  write(\n+    root,\n+    'apps/web/src/app.ts',\n+    `import '@arq/fixture-${packageCount - 1}';\\nexport const app = true;\\n`,\n+  );\n+  git(root, 'add', '.');\n+  git(root, 'commit', '-m', 'representative graph fixture');\n+  return root;\n+}\n+\n+test('repository-sized graph build and bounded impact query remain within generous CI ceilings', () => {\n+  const root = makeRepo();\n+  const config = loadConfig(root);\n+\n+  const buildStarted = performance.now();\n+  const graph = buildGraph(root, config);\n+  const buildMs = performance.now() - buildStarted;\n+\n+  const queryStarted = performance.now();\n+  const impact = impactSlice(\n+    graph.nodes,\n+    graph.edges,\n+    ['file:packages/fixture-0/src/module-0.ts'],\n+    config.budgets,\n+  );\n+  const queryMs = performance.now() - queryStarted;\n+\n+  console.log(\n+    `ZEUS graph performance fixture: nodes=${graph.nodes.size} edges=${graph.edges.length} build=${buildMs.toFixed(1)}ms impact=${queryMs.toFixed(1)}ms`,\n+  );\n+\n+  assert(graph.nodes.size >= 32 * 12);\n+  assert(impact.node_count <= config.budgets.max_nodes);\n+  assert(buildMs < 10_000, `graph build exceeded 10s CI ceiling: ${buildMs.toFixed(1)}ms`);\n+  assert(queryMs < 1_000, `impact query exceeded 1s CI ceiling: ${queryMs.toFixed(1)}ms`);\n+});"
+    },
+    {
+      "sha": "b18d9764a5b8569ba31e187e78fd35e4033b66c7",
+      "filename": "scripts/zeus-repository-cross-language.mjs",
+      "status": "added",
+      "additions": 185,
+      "deletions": 0,
+      "changes": 185,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Fzeus-repository-cross-language.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Fzeus-repository-cross-language.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Fzeus-repository-cross-language.mjs?ref=d292ace3cf7dc45cdff6dedca1af477772512953",
+      "patch": "@@ -0,0 +1,185 @@\n+#!/usr/bin/env node\n+\n+import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';\n+import path from 'node:path';\n+import { pathToFileURL } from 'node:url';\n+\n+import {\n+  buildGraph as buildBaseGraph,\n+  cachePath,\n+  classifyPath,\n+  listSourceFiles,\n+  loadConfig,\n+  main as baseMain,\n+  writeSnapshot as writeBaseSnapshot,\n+} from './zeus-repository-intelligence.mjs';\n+import { augmentRustGraph } from './lib/zeus-rust-graph.mjs';\n+import { augmentTsAliasGraph } from './lib/zeus-ts-alias-graph.mjs';\n+\n+export * from './zeus-repository-intelligence.mjs';\n+\n+const MAX_SOURCE_BYTES = 2_000_000;\n+const MODULE_SUFFIXES = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.json'];\n+\n+function normalize(value) {\n+  return String(value).replaceAll('\\\\', '/').replace(/^\\.\\//, '').replace(/\\/$/, '');\n+}\n+function fileNodeId(rel) {\n+  return `file:${normalize(rel)}`;\n+}\n+function readSmallText(root, rel) {\n+  const full = path.join(root, rel);\n+  try {\n+    if (!existsSync(full) || statSync(full).size > MAX_SOURCE_BYTES) return null;\n+    return readFileSync(full, 'utf8');\n+  } catch {\n+    return null;\n+  }\n+}\n+function moduleCandidates(base) {\n+  const clean = normalize(base);\n+  if (path.posix.extname(clean)) return [clean];\n+  return [\n+    clean,\n+    ...MODULE_SUFFIXES.map((suffix) => `${clean}${suffix}`),\n+    ...MODULE_SUFFIXES.map((suffix) => `${clean}/index${suffix}`),\n+  ];\n+}\n+function manifestEntrypoints(root, packagePath) {\n+  const text = readSmallText(root, `${packagePath}/package.json`);\n+  if (!text) return [];\n+  try {\n+    const parsed = JSON.parse(text);\n+    const values = new Set();\n+    const collect = (value) => {\n+      if (typeof value === 'string') values.add(value);\n+      else if (Array.isArray(value)) value.forEach(collect);\n+      else if (value && typeof value === 'object') Object.values(value).forEach(collect);\n+    };\n+    collect(parsed.exports);\n+    for (const key of ['source', 'types', 'module', 'main']) collect(parsed[key]);\n+    return [...values];\n+  } catch {\n+    return [];\n+  }\n+}\n+function packageSurfaceCandidates(root, packagePath) {\n+  const candidates = new Set();\n+  if (packagePath.startsWith('rust/')) candidates.add(`${packagePath}/src/lib.rs`);\n+  for (const raw of manifestEntrypoints(root, packagePath)) {\n+    if (!raw || raw.startsWith('#')) continue;\n+    const clean = normalize(raw.replace(/^\\.\\//, ''));\n+    for (const candidate of moduleCandidates(`${packagePath}/${clean}`)) candidates.add(candidate);\n+  }\n+  for (const candidate of moduleCandidates(`${packagePath}/src/index`)) candidates.add(candidate);\n+  return [...candidates];\n+}\n+function addPackageSurfaceEdges(root, fileSet, nodes, edges) {\n+  for (const item of nodes.values()) {\n+    if (item.kind !== 'package' || !item.path) continue;\n+    const packagePath = normalize(item.path);\n+    for (const rel of packageSurfaceCandidates(root, packagePath)) {\n+      if (!fileSet.has(rel)) continue;\n+      edges.push({\n+        source: item.id,\n+        target: fileNodeId(rel),\n+        relation: 'GENERATED_FROM',\n+        provenance: 'deterministic',\n+        authority: packagePath.startsWith('rust/') ? 'rust-crate-surface' : 'package-entrypoint',\n+        source_ref: rel,\n+        extractor: 'package-surface-extractor',\n+        confidence: 1,\n+      });\n+    }\n+  }\n+}\n+function addPackageDependencyEdges(root, fileSet, nodes, edges) {\n+  const existing = [...edges];\n+  for (const item of nodes.values()) {\n+    if (item.kind !== 'package' || !item.path) continue;\n+    const packagePath = normalize(item.path);\n+    const entryIds = new Set(\n+      packageSurfaceCandidates(root, packagePath)\n+        .filter((candidate) => fileSet.has(candidate))\n+        .map(fileNodeId),\n+    );\n+    for (const edge of existing) {\n+      if (\n+        !entryIds.has(edge.source) ||\n+        edge.provenance !== 'deterministic' ||\n+        !['DEPENDS_ON', 'GENERATED_FROM'].includes(edge.relation)\n+      ) {\n+        continue;\n+      }\n+      edges.push({\n+        source: item.id,\n+        target: edge.target,\n+        relation: 'DEPENDS_ON',\n+        provenance: 'deterministic',\n+        authority: 'package-entrypoint-dependency',\n+        source_ref: edge.source_ref || packagePath,\n+        extractor: 'package-surface-extractor',\n+        confidence: 1,\n+      });\n+    }\n+  }\n+}\n+function uniqueEdges(edges) {\n+  const unique = new Map();\n+  for (const edge of edges) {\n+    const key = [edge.source, edge.target, edge.relation, edge.provenance].join('\\0');\n+    if (!unique.has(key)) unique.set(key, edge);\n+  }\n+  return [...unique.values()].sort((a, b) =>\n+    `${a.source}\\0${a.target}\\0${a.relation}`.localeCompare(\n+      `${b.source}\\0${b.target}\\0${b.relation}`,\n+    ),\n+  );\n+}\n+\n+export function augmentGraph(root, config, baseGraph = buildBaseGraph(root, config)) {\n+  const files = listSourceFiles(root, config);\n+  const fileSet = new Set(files);\n+  const nodes = new Map(baseGraph.nodes);\n+  const edges = [...baseGraph.edges];\n+  augmentRustGraph(root, files, fileSet, nodes, edges, classifyPath);\n+  augmentTsAliasGraph(root, files, fileSet, nodes, edges);\n+  addPackageSurfaceEdges(root, fileSet, nodes, edges);\n+  addPackageDependencyEdges(root, fileSet, nodes, edges);\n+  return { nodes, edges: uniqueEdges(edges) };\n+}\n+\n+export function buildGraph(root, config) {\n+  return augmentGraph(root, config, buildBaseGraph(root, config));\n+}\n+\n+export function writeSnapshot(root, config) {\n+  const base = writeBaseSnapshot(root, config);\n+  const graph = buildGraph(root, config);\n+  const snapshotPath = cachePath(root);\n+  const payload = JSON.parse(readFileSync(snapshotPath, 'utf8'));\n+  payload.nodes = [...graph.nodes.values()].sort((a, b) => a.id.localeCompare(b.id));\n+  payload.edges = graph.edges;\n+  writeFileSync(snapshotPath, `${JSON.stringify(payload, null, 2)}\\n`);\n+  return { ...base, nodes: payload.nodes.length, edges: payload.edges.length };\n+}\n+\n+export async function main(argv = process.argv.slice(2), root = process.cwd()) {\n+  const args = argv.filter((arg) => arg !== '--json');\n+  if (args[0] !== 'build') return baseMain(argv, root);\n+  const result = writeSnapshot(root, loadConfig(root));\n+  if (argv.includes('--json')) console.log(JSON.stringify(result, null, 2));\n+  else {\n+    console.log(`ZEUS repository graph built: ${result.nodes} nodes, ${result.edges} edges`);\n+    console.log(`revision: ${result.source_revision}`);\n+    console.log(`cache: ${result.cache}`);\n+  }\n+  return result;\n+}\n+\n+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {\n+  main().catch((error) => {\n+    console.error(`ZEUS repository intelligence failed: ${error.message}`);\n+    process.exitCode = 1;\n+  });\n+}"
+    },
+    {
+      "sha": "69eb3332b9929305e084715acd0e7f4b56ee609c",
+      "filename": "scripts/zeus-repository-cross-language.test.mjs",
+      "status": "added",
+      "additions": 115,
+      "deletions": 0,
+      "changes": 115,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Fzeus-repository-cross-language.test.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Fzeus-repository-cross-language.test.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Fzeus-repository-cross-language.test.mjs?ref=d292ace3cf7dc45cdff6dedca1af477772512953",
+      "patch": "@@ -0,0 +1,115 @@\n+import test from 'node:test';\n+import assert from 'node:assert/strict';\n+import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';\n+import os from 'node:os';\n+import path from 'node:path';\n+import { spawnSync } from 'node:child_process';\n+\n+import { buildGraph, impactSlice, loadConfig } from './zeus-repository-cross-language.mjs';\n+\n+function git(root, ...args) {\n+  const result = spawnSync('git', args, { cwd: root, encoding: 'utf8' });\n+  if (result.status !== 0) throw new Error(result.stderr || result.stdout);\n+  return result.stdout.trim();\n+}\n+function write(root, rel, content) {\n+  const full = path.join(root, rel);\n+  mkdirSync(path.dirname(full), { recursive: true });\n+  writeFileSync(full, content);\n+}\n+function packageFile(root, packageName, source = 'export const value = 1;\\n') {\n+  write(root, `packages/${packageName}/package.json`, `${JSON.stringify({ name: `@arq/${packageName}`, type: 'module' }, null, 2)}\\n`);\n+  write(root, `packages/${packageName}/src/index.ts`, source);\n+}\n+function fixtureConfig() {\n+  return {\n+    protocol: 'zeus-repository-intelligence/v1',\n+    schema_version: 1,\n+    extractor_version: 'cross-language-test',\n+    hard_gate_provenance: ['deterministic', 'declared'],\n+    declarations: ['.zeus/repository-graph-declarations.json'],\n+    exclude_prefixes: ['.git/', 'node_modules/', 'dist/', 'build/', 'target/'],\n+    source_extensions: ['.js', '.mjs', '.ts', '.tsx', '.json', '.rs', '.toml', '.md'],\n+    budgets: { max_nodes: 240, max_depth: 4, max_context_chars: 28000 },\n+    protected_domains: ['semantic_model', 'operations', 'ai_operations', 'persistence', 'geometry_units', 'contract'],\n+    verification_frontiers: {\n+      harness: ['harness-check'],\n+      renderer_ui: ['renderer-check'],\n+      public_adapter: ['adapter-check'],\n+      protected: ['protected-check'],\n+    },\n+  };\n+}\n+function makeRepo() {\n+  const root = mkdtempSync(path.join(os.tmpdir(), 'zeus-cross-language-'));\n+  git(root, 'init', '-b', 'main');\n+  git(root, 'config', 'user.email', 'zeus@example.test');\n+  git(root, 'config', 'user.name', 'Zeus Test');\n+  write(root, '.zeus/repository-graph.json', `${JSON.stringify(fixtureConfig(), null, 2)}\\n`);\n+  write(root, '.zeus/repository-graph-declarations.json', `${JSON.stringify({ protocol: 'zeus-repository-intelligence/v1', edges: [] }, null, 2)}\\n`);\n+  return root;\n+}\n+function commitFixture(root) {\n+  git(root, 'add', '.');\n+  git(root, 'commit', '-m', 'fixture');\n+}\n+\n+test('Rust changes propagate through wasm-bindgen into TypeScript and UI consumers within budget', () => {\n+  const root = makeRepo();\n+  write(root, 'rust/arq-core/Cargo.toml', `[package]\\nname = \"arq-core\"\\nversion = \"0.1.0\"\\nedition = \"2021\"\\n\\n[lib]\\ncrate-type = [\"cdylib\", \"rlib\"]\\n\\n[dependencies]\\nwasm-bindgen = \"0.2\"\\n`);\n+  write(root, 'rust/arq-core/src/lib.rs', 'pub mod hashing;\\npub mod wasm_bindings;\\n');\n+  write(root, 'rust/arq-core/src/hashing.rs', 'pub fn semantic_hash() -> u64 { 7 }\\n');\n+  write(root, 'rust/arq-core/src/wasm_bindings.rs', `use wasm_bindgen::prelude::*;\\nuse crate::hashing::semantic_hash;\\n\\n#[wasm_bindgen(js_name = semanticHash)]\\npub fn semantic_hash_js() -> u64 { semantic_hash() }\\n`);\n+  packageFile(root, 'rust-bindings', `export { semanticHash } from 'arq-core';\\n`);\n+  write(root, 'apps/web/src/app.ts', `import { semanticHash } from '@arq/rust-bindings';\\nexport const hash = semanticHash;\\n`);\n+  commitFixture(root);\n+\n+  const cfg = loadConfig(root);\n+  const graph = buildGraph(root, cfg);\n+  assert(graph.edges.some((edge) => edge.source === 'file:rust/arq-core/src/wasm_bindings.rs' && edge.target === 'file:rust/arq-core/src/hashing.rs' && edge.extractor === 'rust-module-extractor'));\n+  assert(graph.edges.some((edge) => edge.source === 'package:rust/arq-core' && edge.target === 'file:rust/arq-core/src/wasm_bindings.rs' && edge.authority === 'wasm-bindgen-interface'));\n+  assert(graph.edges.some((edge) => edge.source === 'package:packages/rust-bindings' && edge.target === 'package:rust/arq-core' && edge.authority === 'package-entrypoint-dependency'));\n+\n+  const impact = impactSlice(graph.nodes, graph.edges, ['file:rust/arq-core/src/hashing.rs'], cfg.budgets);\n+  const ids = new Set(impact.nodes.map((item) => item.id));\n+  assert(ids.has('file:rust/arq-core/src/wasm_bindings.rs'));\n+  assert(ids.has('package:rust/arq-core'));\n+  assert(ids.has('package:packages/rust-bindings'));\n+  assert(ids.has('file:apps/web/src/app.ts'));\n+  assert.equal(impact.truncated, false);\n+});\n+\n+test('tsconfig aliases and barrel re-exports preserve deterministic downstream reachability', () => {\n+  const root = makeRepo();\n+  write(root, 'tsconfig.json', `${JSON.stringify({ compilerOptions: { baseUrl: '.', paths: { '@kernel/*': ['packages/kernel/src/*'] } } }, null, 2)}\\n`);\n+  packageFile(root, 'kernel', `export { coreValue } from '@kernel/core';\\n`);\n+  write(root, 'packages/kernel/src/core.ts', 'export const coreValue = 42;\\n');\n+  write(root, 'apps/web/src/kernel-consumer.ts', `import { coreValue } from '@arq/kernel';\\nexport const rendered = coreValue;\\n`);\n+  commitFixture(root);\n+\n+  const cfg = loadConfig(root);\n+  const graph = buildGraph(root, cfg);\n+  assert(graph.edges.some((edge) => edge.source === 'file:packages/kernel/src/index.ts' && edge.target === 'file:packages/kernel/src/core.ts' && edge.authority === 'tsconfig-path-alias'));\n+  assert(graph.edges.some((edge) => edge.source === 'package:packages/kernel' && edge.target === 'file:packages/kernel/src/core.ts' && edge.authority === 'package-entrypoint-dependency'));\n+\n+  const impact = impactSlice(graph.nodes, graph.edges, ['file:packages/kernel/src/core.ts'], cfg.budgets);\n+  const ids = new Set(impact.nodes.map((item) => item.id));\n+  assert(ids.has('package:packages/kernel'));\n+  assert(ids.has('file:apps/web/src/kernel-consumer.ts'));\n+  assert.equal(impact.truncated, false);\n+});\n+\n+test('ambiguous tsconfig alias targets stay explicit and do not become hard dependency edges', () => {\n+  const root = makeRepo();\n+  write(root, 'tsconfig.json', `${JSON.stringify({ compilerOptions: { baseUrl: '.', paths: { '@ambiguous': ['packages/a/src/index', 'packages/b/src/index'] } } }, null, 2)}\\n`);\n+  packageFile(root, 'a');\n+  packageFile(root, 'b');\n+  write(root, 'apps/web/src/app.ts', `import { value } from '@ambiguous';\\nexport { value };\\n`);\n+  commitFixture(root);\n+\n+  const graph = buildGraph(root, loadConfig(root));\n+  const app = graph.nodes.get('file:apps/web/src/app.ts');\n+  assert.equal(app.metadata.ambiguous_imports.length, 1);\n+  assert.deepEqual(app.metadata.ambiguous_imports[0].candidates, ['packages/a/src/index.ts', 'packages/b/src/index.ts']);\n+  assert.equal(graph.edges.some((edge) => edge.source === 'file:apps/web/src/app.ts' && edge.authority === 'tsconfig-path-alias'), false);\n+});"
+    },
+    {
+      "sha": "9169ce4e01c80a2f1df6ecd6d45dc9f6635332fc",
+      "filename": "scripts/zeus.mjs",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Fzeus.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/d292ace3cf7dc45cdff6dedca1af477772512953/scripts%2Fzeus.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Fzeus.mjs?ref=d292ace3cf7dc45cdff6dedca1af477772512953",
+      "patch": "@@ -10,7 +10,7 @@ const map = {\n   evidence: 'zeus-evidence.mjs',\n   index: 'zeus-index.mjs',\n   context: 'zeus-context.mjs',\n-  graph: 'zeus-repository-intelligence.mjs',\n+  graph: 'zeus-repository-cross-language.mjs',\n   impact: 'zeus-impact.mjs',\n   check: 'zeus-check.mjs',\n   validate: 'zeus-validate.mjs',\n@@ -47,4 +47,4 @@ if (!map[cmd]) {\n   process.exit(2);\n }\n const r = spawnSync(process.execPath, [join(dir, map[cmd]), ...args], { stdio: 'inherit' });\n-process.exit(r.status ?? 1);\n+process.exit(r.status ?? 1);\n\\ No newline at end of file"
+    }
+  ],
+  "reviews": [],
+  "detail": {
+    "baseRefOid": "5f965f7678a09e1fbd9a81d51778236fce682736",
+    "body": "Closes #325\n\n## What changed\n\n- extend the existing ZEUS repository graph with deterministic Rust module relationships\n- recognise checked-in wasm-bindgen crate surfaces without inventing generated bindings that are not in the repository\n- propagate deterministic package entrypoint dependencies so bounded impact traversal can cross Rust -> WASM/package surface -> TypeScript consumers\n- resolve unique TypeScript `paths` aliases and barrel/re-export chains\n- record ambiguous alias targets as explicit uncertainty metadata instead of hard dependency edges\n- keep the existing graph schema, cache, freshness fingerprint, traversal budgets and repository-evidence consumer as the single authority\n- route `zeus graph` and repository evidence through the augmented extractor\n- bump the extractor version to invalidate stale graph snapshots\n\n## Focused regression coverage\n\n- synthetic Rust -> wasm-bindgen -> TypeScript -> app impact propagation\n- TypeScript path alias + barrel re-export propagation\n- ambiguous alias targets remain non-authoritative\n- representative 32-package / 12-module-per-package graph build and impact-query performance fixture with bounded traversal assertions\n\n## Evidence boundary\n\nThe current repository contains `rust/arq-core` wasm-bindgen exports but no checked-in TypeScript consumer of that crate and no current tsconfig path aliases. The production graph therefore only records relationships that exist in current source. Cross-language consumer and alias behaviour is proven with isolated repository fixtures rather than hypothetical production edges.\n\n## Coordination\n\nBranch is based on current `main` (`5f965f7`) and is 0 commits behind at PR creation. The diff is limited to ZEUS graph/runtime/CI files. It does not overlap the active #355/#356 ARQFS lane, #358 browser-matrix lane, or #219 platform documentation lane.\n\n## Validation\n\n- local syntax checks for the new extractor/helper/test files: pass\n- branch/main comparison: 10 commits ahead, 0 behind\n- full focused regression, graph freshness, drift and repository CI evidence: pending this PR's exact-head workflows",
+    "headRefOid": "d292ace3cf7dc45cdff6dedca1af477772512953",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 365,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:52Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403729/job/103388553197",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-09-11T19:11:08Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:25Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403702/job/103388552923",
+        "name": "build",
+        "startedAt": "2026-09-11T19:10:53Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:52Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403776/job/103388553159",
+        "name": "classify",
+        "startedAt": "2026-09-11T19:10:43Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:59Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403793/job/103388553051",
+        "name": "secret-scan",
+        "startedAt": "2026-09-11T19:10:46Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:05Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403758/job/103388553011",
+        "name": "doctor",
+        "startedAt": "2026-09-11T19:10:41Z",
+        "status": "COMPLETED",
+        "workflowName": "ZEUS doctor"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:42Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403869/job/103388553763",
+        "name": "graph-regression",
+        "startedAt": "2026-09-11T19:11:09Z",
+        "status": "COMPLETED",
+        "workflowName": "ZEUS repository intelligence"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:07Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403724/job/103388553809",
+        "name": "verify",
+        "startedAt": "2026-09-11T19:11:00Z",
+        "status": "COMPLETED",
+        "workflowName": "ZEUS repository intelligence ledgers"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:12:32Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403729/job/103388553207",
+        "name": "test",
+        "startedAt": "2026-09-11T19:11:09Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:24Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403776/job/103388627372",
+        "name": "preflight",
+        "startedAt": "2026-09-11T19:11:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:16:45Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403729/job/103388553244",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-09-11T19:10:54Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:42Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403776/job/103388627493",
+        "name": "critical-approval",
+        "startedAt": "2026-09-11T19:11:38Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:15:12Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403776/job/103388780520",
+        "name": "selected-evidence",
+        "startedAt": "2026-09-11T19:11:43Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:05Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403729/job/103388552936",
+        "name": "language-system",
+        "startedAt": "2026-09-11T19:10:41Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:15:28Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403776/job/103389912518",
+        "name": "engineering-gate",
+        "startedAt": "2026-09-11T19:15:15Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:36Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403729/job/103388553281",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-09-11T19:11:12Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:21Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637403729/job/103388553308",
+        "name": "rust-test",
+        "startedAt": "2026-09-11T19:11:11Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-09-11T19:10:05Z",
+        "state": "FAILURE",
+        "targetUrl": "https://vercel.com/pvr6675-3816s-projects?upgradeToPro=build-rate-limit"
+      }
+    ]
+  }
+}

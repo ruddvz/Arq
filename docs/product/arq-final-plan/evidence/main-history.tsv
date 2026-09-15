@@ -1,0 +1,408 @@
+648cabcd0925498e252da36279a85f2487bd6ead	2026-07-21	Add initial research and architecture direction for Arq
+66b665b61f613ca994d599c7eb3c87405b51f7b3	2026-07-21	Add pain-point research, product plan, and design system direction
+146be38a5257c884a68ee27ab93d5d3177004d9b	2026-07-21	Add ARQ master product plan v0.1 as the new source of truth
+f5ffbaf1d166319c8329d387b439308dfaedd282	2026-07-21	Add repo governance scaffolding: LICENSE, NOTICE, SECURITY, CONTRIBUTING, ADR template
+82c4c85a30aa177f042da4a66ca01465db99fad0	2026-07-21	Initialise monorepo workspace tooling (pnpm) and formatting/lint/CI config
+cd6dee85684782b910678cc06aa5c2ccc132db13	2026-07-21	Integrate the ARQ all-in-one master build pack v2.0
+7b90a2a288dd407d64c05551d6bdc957eebde402	2026-07-22	ARQ-004/005/009: refine research guide, synthesis template, device matrix
+31278b4108aaea85b14500b29bdac2147771b48c	2026-07-22	ARQ-178/179/180: cross-check OpenAPI, DB schema, and TS contracts
+97c27a22d43f4b6d7a10163d963258c3c2158d91	2026-07-22	ARQ-174/176/182/183/184/185/181/186/187/188: real triage, not rubber-stamp
+41d9beadbece812ff182cd42f7b80fc2af4bd00b	2026-07-22	ARQ-175: replace one generic page template with 4 real category specs
+bd83e21f4e905797efa87bf1f33f6028586f879d	2026-07-22	ARQ-177: build a real, verified component test harness
+1c9f493ec8749e84813c1d29f04e74a95b1c545e	2026-07-22	Add ARQ-190: differentiate the 84 component docs per component
+3ec41c4a2eeaf3ed0d76a8ba754d2849f0f0ac6c	2026-07-22	Implement coordinate systems and pan/zoom (ARQ-032, ARQ-033)
+71fec774cb64d52d9044ed3c23f879b62afb0001	2026-07-22	Implement pointer and touch input abstractions (ARQ-035, ARQ-036)
+b42f86b7d32bcf89e02be7306716774db8f11ef2	2026-07-22	Implement keyboard input abstraction (ARQ-037)
+174978c4f6c7a9b00a7eb9a73c9a86e74ce84192	2026-07-22	Implement command lifecycle state machine (ARQ-038)
+86960d2549f6a5427af2111b8c71f2a837b0d108	2026-07-22	Implement selection hit-test interface and point selection (ARQ-039, ARQ-040)
+d4d0cc237343fc8fd74b92900ccce9c3474a7632	2026-07-22	Implement window and crossing selection (ARQ-041, ARQ-042)
+503e2edae65d65167a9645d8423537f4da8b4ae8	2026-07-22	Implement candidate cycling (ARQ-043)
+9cdb536d0a7336aa455db699c000981e4f879ba9	2026-07-22	Implement selection filters (ARQ-044)
+06f0cb00dea502a6b4a615c30f2f98eb98ad3ee1	2026-07-22	Define snap result contract and implement endpoint snap (ARQ-045, ARQ-046)
+513c1fe5f6473644ba409ff42976ea14cff4858e	2026-07-22	Implement midpoint, intersection, perpendicular, grid, and extension snap (ARQ-047 through ARQ-051)
+76a0c639e89b91529ede6d4ee286c73810c77b1d	2026-07-22	Implement snap tie-break (ARQ-052)
+be68b6f7609f7af724b03c9ff736a79d573338d9	2026-07-22	Add ARQ-191 (centre/nearest snap gap) and implement nearest snap
+c414df265fb38b252e28adba171ca87317216c69	2026-07-22	Implement numeric overlay (ARQ-053)
+6943aedb59dd157cffebf3b460a3c8640e19d2d8	2026-07-22	Support metric and imperial numeric input (ARQ-054, ARQ-055)
+f9809b1c1426507bb211a18ef279fa7ecfc85971	2026-07-22	Implement undo command stack and redo (ARQ-056, ARQ-057)
+8361fb29b2a1cbd2aa7fe97c2db2f33bb22ea496	2026-07-22	Record ADR-0004/ARQ-058's unit decision as an open decision (D-014)
+e9bfe281af57bd34c6b5c8918ca25d2affe8b25f	2026-07-22	Define typed unit library and ID types (ARQ-059, ARQ-060)
+4dbcbec762dec298e7fcf60c9d7f39036d1d3a5a	2026-07-22	Define project schema v0 (ARQ-061)
+400513dc5f0463bc69706d5f2878637964249055	2026-07-22	Define level schema (ARQ-062)
+a3732345960769d275fe79892e0f7e28d6e92ff7	2026-07-22	Define element base schema and type/instance property states (ARQ-063, ARQ-064)
+b64e14e75183ed8dec26bdd38a4ea4013ac13ec0	2026-07-22	Define operation and validation contracts; implement create/update operations (ARQ-065 through ARQ-068)
+694690bd08ee38e123f745431d39844f56c8d82d	2026-07-22	Add property-based inverse operation tests (ARQ-069, ARQ-070)
+b254fea576829a2eb930412d1bccf050caddeb0a	2026-07-22	Add Dexie project database (ARQ-071)
+a9a15822fc0701e0f0fdd056dcc568f9b53826bc	2026-07-22	Implement local journal recovery and snapshot policy (ARQ-072)
+74461380917348459cb015701240e774d7fb1faf	2026-07-22	Implement snapshots and quota handling (ARQ-073, ARQ-074)
+42808abbc450d8e402629cad6205afe240723a8d	2026-07-22	Implement abnormal-exit recovery (ARQ-075)
+408b6578019b4619e97f5c0031690a06e5a2bd65	2026-07-22	Implement the .arq project format v0 (ARQ-076 through ARQ-080)
+7fb322b444ab5ea18fb6c2ff14596baeb22701a5	2026-07-22	Implement tolerance policy, vector primitives, and consolidate segment geometry (ARQ-081 through ARQ-084)
+bca3ad2bb49d55a56e2f692c6d411e3f18d164e6	2026-07-22	Implement polygon area and winding (ARQ-085)
+ec24bf73bcd176264360298ab36d7dc7e8ec1792	2026-07-22	Spike the four candidate geometry libraries (ARQ-086 through ARQ-089)
+081f0c5437510b806e2dc133a12e2ec968bbd5c9	2026-07-22	Build geometry adversarial fixtures (ARQ-090)
+53fde3cee3ecd9435c13df348c79e52fc654d40a	2026-07-22	Define wall type, wall instance, and implement wall outline (ARQ-091, ARQ-092, ARQ-093)
+28378323b5cbcd394df3a639f5f62268d8f859bc	2026-07-22	Implement wall drawing tool (ARQ-094)
+d52cff6932273baa0a9c973c997c1b5f1a661300	2026-07-22	Implement butt, mitre, T, and cross wall joins (ARQ-095 through ARQ-098)
+819709941535a1bc33c019cb6d74757cba09bf1d	2026-07-22	Implement trim, extend, and split wall (ARQ-099, ARQ-100, ARQ-101)
+131733f3c17ca3e5f5ba7ac4416ea20fffe740b5	2026-07-22	Implement offset wall (ARQ-102)
+97bc42a0ece55620d1e3dd082856bbb0aa60aab2	2026-07-22	Define hosted opening (ARQ-103)
+35adfdd53f81d8538cd17b55e2ef44a9374e84f9	2026-07-22	Define door type and instance (ARQ-104)
+6bb7762265d5e31c2633f6729bd3b952e30dfaa2	2026-07-22	Implement door placement (ARQ-105)
+843dfefcdb42097e7de9638b87935aa3f5a42e60	2026-07-22	Implement door flip controls (ARQ-106)
+319a793646e2e7fd0917ecc522961f5e0159335b	2026-07-22	Define window type and instance (ARQ-107)
+f91a0bc2b200bed021ab1171a9793f0c1b6ac970	2026-07-22	Implement window placement (ARQ-108)
+33ca811f724be516dc5c3c7b9bc55af59e2dc61f	2026-07-22	Implement opening overlap validation (ARQ-109)
+a7f4d2198d02a24be897fb0571abcf76f2bdd449	2026-07-22	Define room schema (ARQ-110)
+5af16861fa064af62bbcd152f0bc30bec968d423	2026-07-22	Implement room boundary graph (ARQ-111)
+0223e58773963665a1989e5089138b20a04b24fb	2026-07-22	Implement room placement (ARQ-112)
+43d054f03dcb6638120b2d08f251debb8dacc51c	2026-07-22	Add final ARQ brand assets and wire them into the prototype (#222)
+d55675eafb77726e601bbcabc3fcd3b191243411	2026-07-22	Implement zoom to room gap (ARQ-113)
+f37a1ba37f988dc41c27d99aefcd5514990ff00b	2026-07-22	Implement room area (ARQ-114)
+af13aae5c235383290bea53b2bfcf4c984e3a08f	2026-07-22	Benchmark Canvas 2D (ARQ-115)
+46deb0a5f4a98ff0afcce80632173c1f0b6fd9b2	2026-07-22	Benchmark PixiJS WebGL (ARQ-116)
+e4e266993fc880bf8d83da5d97ac989bd26dc2f7	2026-07-22	Evaluate CanvasKit fallback (ARQ-117)
+3f3c9f7b4f0321a7c910ae5362677a7da268d1d1	2026-07-22	Select 2D renderer through ADR (ARQ-118)
+fd094aff0c42df14a960be118624cfdc74e83858	2026-07-22	Implement plan scene abstraction (ARQ-119)
+aaf2fafaa46887e2acff7ffea3166fe5f9e9e7af	2026-07-22	Implement stable line weights (ARQ-120)
+fa7d2c624df49dbbfb75851a6640a8237c4d9493	2026-07-22	Implement selection rendering (ARQ-121)
+f683384f7d075d3ded60c6ba65d59d81a83b0d58	2026-07-22	Implement snap glyph rendering (ARQ-122)
+003a33a08eb9d5e10fca14998cc46bffbe08e3f0	2026-07-22	Add Three.js WebGL scene (ARQ-123)
+0287566c5f736bd594001ae111a5035343ca1c28	2026-07-22	Generate wall meshes (ARQ-124)
+9cb55c03bedd70cdef646e8420039a1e752e9704	2026-07-22	File incoming v2.0 blueprint/v4.0 UX critique as reference material
+bd593b137f5d5efa2cdfaff51d6522fe208c5da9	2026-07-22	Generate opening meshes (ARQ-125)
+1fad4e06fecacde2c2797f2cdb79e005dffc7366	2026-07-22	Implement orthographic camera (ARQ-126)
+06b1ab4cbad82caac6015073d37b4e345568a35f	2026-07-22	Implement orbit and fit (ARQ-127)
+00df84440b5d3f04b03639da793f1c3d84da18be	2026-07-22	Implement 2D and 3D shared selection (ARQ-128)
+197728573b7c59b50ee45b7a4fc8f806f7f47109	2026-07-22	Implement hide and isolate (ARQ-129)
+43b8ef1391fcb10346b7799ea63288afecfa984a	2026-07-22	Build identity property group (ARQ-130)
+5d11f46686bbea0ba302dee4a82ba0411b4c6af5	2026-07-22	Build geometry property group (ARQ-131)
+dcb5338f770a576b90327d5051220b34da06cde1	2026-07-22	Build type and instance property group (ARQ-132)
+515e83e93a00c23295b871712a710961418317fe	2026-07-22	Build relationships property group (ARQ-133)
+b13c8b785703c72fdcff6fd7f7b0ee05724a6865	2026-07-22	Build warnings property group (ARQ-134)
+d9a3e06cadeda46305e493506061ef608e4de857	2026-07-22	Build history property group (ARQ-135)
+40762de916632ac688c91fa76b25e9b3bc4305cd	2026-07-22	Define dimension reference model (ARQ-136)
+0c3e19ca8f9c4d0f52a01fe739de3310040a4dbb	2026-07-22	Implement linear dimension (ARQ-137)
+62c35a58fe074b993e28a3ffafe837e7efd0fbfb	2026-07-22	Implement room label (ARQ-138)
+0c35b8309fe3845b9f2e06f312d91982fec45c07	2026-07-22	Define circular snap candidate and implement centre snap (ARQ-192, ARQ-191)
+7e35ce530fc0677917b220be771cbcae4d16c8db	2026-07-22	Implement text note (ARQ-139)
+60f51f82ba5da057333c65b00b04773edcb4cb0c	2026-07-22	Complete filed page-renderings-2.0 set; document v4.0 CORE pack review
+5517a71b107aa9348032a66decf5cfddaf2f0d1d	2026-07-22	Install and enforce Zeus 4.0 prompt operating system
+4971c46a8526309e0e4ea7a0a36b5e861a514478	2026-07-23	Extend backlog to 242 items and adopt v4.0 CORE reference material
+99d2df65ff27d288e3f56cb249d6e13283251340	2026-07-23	Define sheet schema (ARQ-140)
+fbe971ebb6a728d7233c54803699d7c73abcee0e	2026-07-23	Build one plan viewport (ARQ-141)
+4fc965ccbda84883017ad38dd46e1d57eecda7d5	2026-07-23	Prototype pdf-lib vector export (ARQ-142)
+95df6fa6849e240b2c4a365ba76d52751a832d4a	2026-07-23	Implement font embedding tests (ARQ-143)
+ff75c6758a904e0927d4aec6087f80d6433abcf2	2026-07-23	Implement scale validation (ARQ-144)
+286ae6df3788a752028d2ba773d231d9dfa71622	2026-07-23	Add export metadata (ARQ-145)
+65d37a79d58f2f33e898be4d97ce74cc0219a8fa	2026-07-23	Implement corrupt cache recovery (ARQ-146)
+cde74579c0989506255f535b9d27ac624a495638	2026-07-23	Make Zeus echo the real per-prompt contract, not a generic reminder
+c9f4aff98d8362cd60d80196c03636a0be6a2010	2026-07-23	Implement safe mode (ARQ-147)
+27b4829f0de90c6068cd6fde1443e1bb2696cf3c	2026-07-23	Define benchmark hardware (ARQ-148)
+0c9aa18446adad51997698ea4b50464b57a781b5	2026-07-23	Add selection benchmark (ARQ-149)
+d7e5b1d909bed4980ee375cd042452ce65f1a67d	2026-07-23	Add room rebuild benchmark (ARQ-150)
+64571bbd54ea54af618a3b731ff2a7593981e165	2026-07-23	Add render frame benchmark (ARQ-151)
+02b639b861b5ee124c3e6ac4cf79faaa8fe671d9	2026-07-23	Merge remote-tracking branch 'origin/claude/arq-cad-platform-research-ba8rav' into claude/zeus-system-overview-u0cx9t
+86cee294396cd06c76c8ca0ab7af362e089dc56a	2026-07-23	Full audit pass: restore missing editor-input module, fix role/doc drift
+c97d9c2a0c3f22bd3d2b6d33232b599632758def	2026-07-23	Complete keyboard-only workflow (ARQ-152)
+fb95229e3612cfffae9da42b246f8e26daa6743e	2026-07-23	Add VoiceOver labels (ARQ-153)
+57b941c7ae48f920592d6280dfa1e87b5219a94b	2026-07-23	Test 200 percent zoom (ARQ-154)
+b6e03b084d51fd8cfb3423e5b4988f8e0d38d488	2026-07-23	Create threat model (ARQ-155)
+c97589d83aff38ca336799ce764f92b9a2ea9a74	2026-07-23	Fuzz arq archive (ARQ-156)
+09043fc589da4bf417b9087c82d3010a0b4314fe	2026-07-23	Add file size and complexity limits (ARQ-157)
+13fca07f640d33d5371bb390d9ec50de52835954	2026-07-23	Prototype DXF parser (ARQ-158)
+077a68411d44cef56db5fc2ab17d3d9766382edb	2026-07-23	Define DXF support matrix (ARQ-159)
+910990ec8de528c2e64231531c6e923d2d2f3bd4	2026-07-23	Prototype web-ifc viewer (ARQ-160)
+e0f2cc2aaefa28b4c997226dc8e982bef340524c	2026-07-23	Define IFC mapping report (ARQ-161)
+85520cee94a99cfc8bebd09c54ff7cc925e844bb	2026-07-23	Prototype presence only (ARQ-162)
+b08b2b3d2a407923890a13cce68bdc2f01dd6682	2026-07-23	Implement comments (ARQ-163)
+63cfd0872979752845fbcb56090bf4452bdb9c3c	2026-07-23	Implement issues (ARQ-164)
+ac84c88b272d7b706125dd2231277540a8eb5e73	2026-07-23	Implement revision snapshots (ARQ-165)
+34229c9a9bad0e00ed37cd93cd19f8a0ff160643	2026-07-23	Define ArqScript grammar v0 (ARQ-166)
+e217e27d6df0b99c792f847b46cff35c9463fa13	2026-07-23	Reconcile ArqScript grammar with the pre-existing ebnf draft (ARQ-166)
+0d7392c7e7a4d349bfce4cc71b6e212ff42ac80d	2026-07-23	Implement ArqScript parser (ARQ-167)
+84915035f137682916b6a5ae575ccb87bf1c81ae	2026-07-23	Add ten deterministic AI benchmarks (ARQ-168)
+ff2970549974fd8e00938e2b31f4ef16c9611311	2026-07-23	Prototype explain selection (ARQ-169)
+c1b6993845b4180e392e2bc5e3b32932a28e7df0	2026-07-23	Merge remote-tracking branch 'origin/claude/zeus-system-overview-u0cx9t' into claude/arq-cad-platform-research-ba8rav
+a4d7cc574a93cd43d059ccef1707f8e5efa83078	2026-07-23	Prototype one-step wall edit proposal (ARQ-170)
+5f2c5d042a14a9fe524b98ab3608ef5f948823fa	2026-07-23	Test Pencil web input (ARQ-171)
+3389cc30fbad53e1b287efbb4dc98b51eaf69153	2026-07-23	Prototype native hover (ARQ-172)
+3801600068593dd0493be41411ef5a484a9ffba3	2026-07-23	Prototype RoomPlan conversion (ARQ-173)
+5243d7503883654c21bcb7412c675a1bab8af8bb	2026-07-23	Reconcile storage architecture contradiction (ARQ-193/194/218)
+4c43b4af2ff188da0d93904a0d69296a4c44db8c	2026-07-23	Reconcile the archive half of ARQ-218 (missed in the first pass)
+8c7d8ca9952d9a7504c34d2f0e93adf99a86d5e4	2026-07-23	Implement arqfs schema v1 prototype, native track (ARQ-195)
+b666a6053051c606c87f9f8ef2c02ccf16f85df5	2026-07-23	Implement SQLite-WASM-OPFS Worker runtime + single-writer lock (ARQ-196/219/220)
+0b2152f238ff4451651a13db84a7b587e6b75491	2026-07-23	Add clean export, working copy, and resource chunks (ARQ-197/198/199)
+e4bd4f1fa20955bf802f67dde8fe40dbf8f0f570	2026-07-23	Add arq-core: shared Rust core, narrowly scoped (ARQ-203/204/205/224/225/200/201)
+2cd4ebb05c6806e9a965d6736f71e0a0c48a933d	2026-07-24	Harden the file-system prototype (ARQ-202/217/221/222/237)
+998906e8d15f4f6e197f0f50a9046fea220f5915	2026-07-24	Add local-first sync protocol, narrowly scoped (ARQ-206/207/208/209)
+38154a62f0ed2c5f4b87c336e53abab468254cef	2026-07-24	Bootstrap the app shell: Vite+React, icon codegen, Canvas 2D backend (ARQ-020)
+70939a1db45c14d983f3eb17facfc7357b0817a7	2026-07-24	Build the design-system UI shell epic for real (ARQ-023-031)
+5df8916e37d4ec0c90c69764ef393aee2b6c6640	2026-07-24	Add SBOM/licence scanning and dependency update automation (ARQ-003/016/017)
+ae929dbd2361d0d8ba3388912387183e9bd4f54e	2026-07-24	Integrate reviewed universal file-ingress overlay (schema v2, 4 new packages)
+3d0d7118489d5efcb2efbc96b8144ace1da2143b	2026-07-24	Rebuild README with canonical brand wordmark and honest status (#266)
+a790f13f5cbad0ba26ae0b19eb1fbadc41180d37	2026-07-24	Fix FP-005: new arqfs files were created with schema v1, not latest
+d19d388a3a56a83d4f802f7d073d8c6e802877be	2026-07-24	Fix FP-019: import worker could post a converted/failed result after cancellation
+9b6f68c2f25e744dcacdc9b57c384a4ccdedadde	2026-07-24	Fix FP-014: resource_reference table had no write helper, so nothing populated it
+db215a7f7acc8fd73c63c73b23e1539d39e766a0	2026-07-24	Fix FP-004: prove and enforce that v1-to-v2 schema migration is copy-on-write
+448b8ea6ed27a4448fb876960900c4f004aec87a	2026-07-24	Add FP-007 regression test: convert rejects when source hash changed mid-import
+fae333020fb45ffd37d824246e962139c59de701	2026-07-24	Add FP-036 test: prove @arq/derived-cache deletion is safe and total
+3e8f34737342613cbf9ac06ce024113f39780053	2026-07-24	Add FP-016: structured kind discriminant to ArqfsSafeModePlan
+2c03e9f5c42268037e69d765424cfaeb7f5bebdf	2026-07-24	Add FP-012: OS file-association templates for .arq (Windows, Apple, PWA)
+d34cbef145e44d752d39e3dc192c3061df599951	2026-07-24	Differentiate the 84 component docs (ARQ-190, closes #220)
+3d808d58b3f817e5007b7dd017f4e3f5b96a3b44	2026-07-24	Harden .arq safety foundation (ARQFS-001..004, 007, 008)
+52737796fbb3b42f84885de09b1d15ea5bb5f526	2026-07-24	Prove .arq migration, swap and export durability (ARQFS-005, 006, 011)
+2d6bcc6f50dcc6cc938caef2e69506fc2414a503	2026-07-24	Fix cross-project OPFS collision and Worker crash handling (ARQFS-008, 009)
+da3988dea73cc4b8ddc63078aaac7ffd21443984	2026-07-24	Commit reviewed imports atomically into arqfs (ARQFS-012, 013, 014)
+4fbb64b9318770f1558748d5dbdef0b13b3cc8d1	2026-07-24	Wire React Aria overlay foundation and fix unstyled shell (UI-001, UI-003)
+367db803f1f2aeb1321a8e35b8b420c413174027	2026-07-24	Wire the real byte-safe file-open gate into apps/web (UI-011)
+71ce1d02f4afbcd53a22b6230e4951a54533fd17	2026-07-24	Add arqfs lifecycle observability, support bundle, and CI test/browser gates (ARQFS-018, 020)
+8c37beb9b50ad428d804d488956012e1c9d5981a	2026-07-24	Fix Chromium executable path for CI (all capability-check scripts)
+e693d5958967fa8fbed4d20289d9cc9ef5d19fc5	2026-07-24	Fix pre-existing prettier formatting drift; unblocks CI (no behaviour change)
+9c0c00011558114316edd9afcb9e0053ad33d6bf	2026-07-24	Triage the 2026-07-24 CAD/BIM architecture package upload
+7d983addfa97d322e83db7eefcb6c1ff403bb9d8	2026-07-24	Apply Prettier formatting to the 2026-07-24 upload triage
+d80435f2c10f424e42de48e622e239203e8322ad	2026-07-26	Build the open-project workspace from UI/UX Package 3.0/4.0
+ed39434265d3d0b0800d7539a4f217a583a508e7	2026-07-26	Update pnpm-lock.yaml for the new @arq/workspace links
+5a13a78dd8f6dc7306a1a3b444e4368acc13bc87	2026-07-26	Fix 3 defects found by self-critique of this branch's own work
+1b56a88e0dad0f9527474ba1107253ecaad887c9	2026-07-26	Add .prettierignore and clear the pre-existing formatting drift
+6d2b2eb0b1ac3ed74a6fcfea8b97a1b14c93fd9d	2026-07-26	Stop the shell claiming "Saved"/"Synced" when nothing is saved or synced (UI honesty)
+21bc4c50c8de16727f452475cd8e48ec9b965523	2026-07-26	Fix resource GC treating preserved import sources as orphaned (ARQFS-007)
+be93b4a72ac59b364dbb6e9732130e0c75af5a91	2026-07-26	Build the open-project workspace from UI/UX Package 3.0/4.0 (#279)
+02ef08449fe62193f4dcbd12f7f1ae0b0a90bb51	2026-07-26	Merge remote-tracking branch 'origin/claude/arq-cad-platform-research-ba8rav' into claude/arq-spec-implementation-aehuox
+59a6ff2638ab47d376e0f359375d67dea6ab2dd1	2026-07-26	Merge updated base (workspace shell #279) into the arqfs hardening branch
+6009484095e096d15df19ce4003c4c9278d079ad	2026-07-26	Refresh triage claims against the merged workspace package
+6e44c6ea64cfd3a0980d68221ef8f41d097a188a	2026-07-26	Format native-desktop-port.ts under the lockfile's Prettier version
+a3e98d2e81676edd26dbf2f8f3b759f8b9321f21	2026-07-26	Harden .arq foundation, wire real file-open UI, add CI test gates (#277)
+9eab79a86e7391fa770f3730bca10a3422d4de8c	2026-07-26	Triage 2026-07-24 CAD/BIM architecture package upload (#278)
+e7e5d4e3e594057125fe79e7c6a56ab081f890dc	2026-07-26	Make the touch bands usable: drawers, sheets, phone dock and phone bar
+7feb11dd4c81a84cd82f235a7ce816a59e0d2876	2026-07-26	Build the browser and inspector section systems (docs 39, 40)
+4411f97d8f490e3719430706c949db875fc1e8c6	2026-07-26	Wire the workspace controls the registries already described (docs 36, 37, 51, 52)
+290bf595ace3a545d85e6a34dbb36dd78d10d348	2026-07-26	Critique pass: fix five defects in the workspace shell
+fdc3aba4e9eab95785839f35c0367d5d54e87955	2026-07-26	Close the last five shell gaps: collapse, preference, drag, virtualisation, reorder
+2f7fbb599ae4a2baeb4b749f2fbe420266bea002	2026-07-26	Complete the workspace: touch compositions, panel systems, controls and a critique pass (#281)
+e1aa1018b0ba8c3c3f9cd64bb34edb38db7e220d	2026-07-27	Full-repo audit and completion: website, canvas, validation, persistence, 3D, quality gates, Pages deploy (#282)
+9e6b1d55e4e52af43965d34be21f0e5853a559fe	2026-07-27	Arq Language System 4.1 (Z Voice): one governed vocabulary, gated claims, deployed-site proof (#283)
+fb2e145e9cb72beb124b0f43df3a5e0dfbb40b7e	2026-07-27	Z Voice: mechanical update-and-log loop for every governed change (#285)
+5b6565c883884d72bf197a6b56db6df21fd56be1	2026-07-27	Install Engineering OS 5.0: deterministic gate, registries, and repo alignment fixes (#284)
+545d334fa11c46ab269041999dee07b445ef1ec2	2026-07-28	Proof-gap closures, 3D conflict resolution, and ARQ Interaction Foundation 1.0 (#286)
+375e8cbdb08d903e4fd2846db640a915b4fe38bb	2026-07-30	Zeus 5.0: boundary-safe routing, blast radius, method selection and typed evidence (#287)
+7f15889ea66b672bd918a8b7ba61a904f6b4da3d	2026-08-01	MCP System 3.0: the AI boundary, wired to the real Arq packages (ADR-0027) (#292)
+4c311071f3d03afb1483beeb681623ecb5109d34	2026-08-04	Reconcile the package audit against the real repository and close the e2e_arq_open proof gap
+d867e6aa4aad00f26b9a28ac258cf8780c12c46e	2026-08-04	Make a native .arq project openable, read-only, from the product
+4718696304224c2d81bf95ed67592a21dd6c8431	2026-08-04	Rebuild the engineering context, and teach browser_file_open the new boundary
+c2bf7894360a4aa3e0f06d6102c1bc4e0f3e06cf	2026-08-04	Correct a false claim: protected_l4_approval is not holding this change
+62c5e5cf7d9c7fd0c32f954f7ce851fe8afeff66	2026-08-04	Record the owner decisions and enforce the identifiers they depend on
+dabb6cbcd3bc66e78bf8db8a9b89a6e0c1aa34d5	2026-08-04	Merge the accepted ADR-0028, and drop the carve-out it makes unnecessary
+0336cfa08eed9c087f4e1446e1b87cabc0181220	2026-08-04	Extend the file flow to the full project lifecycle, with no false open
+1cdf1601a3b9d93b64cda84db42e2102ada59e97	2026-08-04	Open a chosen .arq project into the workspace, and deploy from the repository (#294)
+f117c650244c03647a409c64f4a674ab04386206	2026-08-05	Fold the read-only open into the lifecycle state machine, not beside it
+0b57cf348c1e4987e2f6294388a0b46097ae8321	2026-08-05	Re-measure the bundle against the real branch point, not a stale baseline
+2c1ad5f5181cdc67fb8b55a6a7881bb1fab5caa2	2026-08-05	Close the read gate, the request-typing hole and the import gap in the arqfs Worker
+60835e65927c0c26801e763a83cb4b93a126608b	2026-08-05	Make opening a project a thing the product can actually do
+6c29e706b44a546783874d8e61e7af37cc289ab2	2026-08-05	Reconcile onto the merged native open path, keeping one implementation
+1605fc1db455a35308c8e716f1d0c1875d6e46cd	2026-08-05	Check the working copy before trusting it
+e73b3bd4749f4004fafe903d10f9084b71bf8c95	2026-08-05	Refresh the generated engineering context for this change
+f8675f586d100021cb8d75b15795ff0add6c47a8	2026-08-05	Stop a superseded open attempt from driving the flow
+dcf34933b16bb2423d07662c543685e713374e31	2026-08-05	Record what the Implementation Pack asks for against what is real
+540817947704d84d172f9d7d92950252499c8668	2026-08-04	Bind the Vercel deployment to an approved revision, and re-measure STATUS (#299)
+db4be97e0484c58dc3cb852af58f1ce64f1d2380	2026-08-05	Merge the working-copy open, and give it the reference project format
+18694f07df967fb294647e2baebe6425870943ad	2026-08-05	Make the open check say what it saw when it times out
+4abed44385711f9d5cbc3f3387b24bd8afd373ab	2026-08-05	Add exportDatabase and computeSemanticHash, and fix a real import race
+9b39405af510eda947ee9f3137101af429860c62	2026-08-05	Recognise the project already open, and draw one level at a time
+45656f0500aa312e6532a1a75d89ec17ca0bbcf6	2026-08-05	Keep only the capability result that describes what ships
+71256dbeeeff53667d7c0a4b0d8c845406440659	2026-08-05	Say what the open actually does in STATUS, now that it is a working copy
+9e529bb039eabe7782d0bf03bcfda3ee24bc1704	2026-08-05	Publish: checkpoint, export, verify with a fresh reader, and only then call it published
+8947af25dcbc73dfbdf37c4f3b4af5b3af8f5f13	2026-08-05	Merge the Vercel deployment binding from the base
+5f79ce69c68e01bc8e62a64d39b7e8ee62e2b5c2	2026-08-05	Re-run the open check against the merged tree
+c85a5554414890053dde16740763ffa4f16c41a5	2026-08-05	Verify a publication before calling it published
+0160338eb0fb83ea34f74ea60c6533c711fff55d	2026-08-05	Refresh the language context against the final file-handling sources
+dcf9d25d53afde968466a9e312725a1b391e0a5a	2026-08-05	Wire publish into the workspace, and record what publication actually closes
+50809c70d2c11de262d08b6328984f47278c382a	2026-08-05	Wait on the workspace, not on a dialog that closes itself
+4420ef840065188667e9e835b691b274535ea030	2026-08-05	Rebuild the engineering context after the STATUS edit
+d6d3eb247cc50b51ea89c403a43434134fd560d4	2026-08-05	Ignore the per-run Zeus evidence ledger
+fa8dafbbd322e93fea6f2bf4523b38a103eca0fe	2026-08-05	Name the project on every Worker response, not only the request it answers
+69810b2fb87abed3efc1d503f2f9caaa1a9cf04a	2026-08-05	Survey the numeric and tolerance foundation, and fix the one real gap it found
+176cfdcfc9c325df15670ae87b3b4c49967a835d	2026-08-05	R8: resolve all remaining not-inspected register items with real evidence
+dd32b44d52c56b1b601586ae0dada268bbdf732a	2026-08-05	Merge remote-tracking branch 'origin/claude/arq-cad-platform-research-ba8rav' into claude/arq-project-improvements-aulz73
+938a8ec6154ab08c4f8486787f0834e6bff264e2	2026-08-05	Regenerate governed context after merging the moved base branch
+82dfc1fb7c4fe1b11a4df57c4454fa0fea4e8229	2026-08-05	Read the reference project format, and fix two defects in opening it (#296)
+d067a463e48918019a8752557b53f5480ae7cb0a	2026-08-05	Complete the recovery and publication phase
+440e86eb527a7f973b71d77d585f8616f9fd19e1	2026-08-05	Give every mutation one commit path, and undo the user's gesture
+08f95a56afb56dcaa288657aed9796b60dfef00d	2026-08-05	Measure the canonical units question, and answer part of it
+ed8f11e873d57eed9fbbbf37ac5d48ceb19b58e4	2026-08-05	Make references survive the geometry they point at
+a029f78ba20be8fd0f53518b94fb39a074c68042	2026-08-05	Fix the constraint solver boundary, and solve the accepted first subset
+baf6e1d73000591efd4ee3b482e7e5d7e6b9f423	2026-08-05	Decide what deleting an element does to everything that depended on it
+8d47381e9a30525fd1dcfe657d234e2c202677a6	2026-08-05	Turn eight snap sources into one inference the user can steer
+5cbb160e825cd782d8a9b17234f5efebf1145cc2	2026-08-05	Merge PR-296's read-only open, and carry publication onto its state model
+55f7a9b34c548b5d80921a77988d636ccf8f511e	2026-08-05	Refresh the language context after formatting, not before
+fad46d490e1148894b0ea2733e81320ce6d5aefb	2026-08-05	Add slabs, stairs, materials and schedules to the semantic model
+352bc4bade169884fa2c2e33ee81d86644fa4e5c	2026-08-05	Keep commands off text entry, selection off the pointer, one gesture one undo
+bb18e8749c04f5249599323f2edfecbc850f0d54	2026-08-05	Keep openings hosted across a wall edit, and bound room recomputation
+d593cc8ae46d4c330622213629b513330e1f5fe8	2026-08-05	Parse lengths into typed values, and give ViewDefinition a cut plane
+293b41eff85ee540dc65eb8bb1dab2a0948d395b	2026-08-05	Rebase distant coordinates, free GPU memory, invalidate by effect
+d637551461f4b7362874c3304f45635d872beecf	2026-08-05	Make disabled reasons reachable, and stop live regions flooding
+12f149e93265cc8438598c71316a60e77bb4b703	2026-08-05	Make an AI proposal a request, with authority kept out of the document
+52295d099e4494fe74b018a7c48356a18176aeba	2026-08-05	Show a proposal in the model's terms, apply it through the ordinary engine
+20bdb5ebef43ed59d9d327862641a1d1d94c9ff7	2026-08-05	Refuse to guess an import unit, keep what cannot be converted, report an export
+d0041e5d0cf4805c706b39587a59280004e776f2	2026-08-05	Bound a decompression while it runs, and allowlist what telemetry may carry
+407770d9792cbabdccf35d78fbe95291e66a397a	2026-08-05	Make hiding and clipping properties of a view, never of the building
+d84e41d7880f30b9a0f74d685137390bb7d217de	2026-08-05	Leave a receipt for what happened, and keep the evidence before repairing it
+48000e2bf5ede130b85e92100ec68f18864c9a49	2026-08-05	Put a drawing on a sheet without changing what it contains or where it ends
+6e6095d0a08d685a5b7ced79a1679ad17cf9e1e2	2026-08-05	State that derived geometry is derived, and refuse a mesh the model outran
+78e1f0f038444ab97c969eac6df2be8545bd85ca	2026-08-05	Register the vocabulary for everything the last twelve commits introduced
+1b269b4bf336f4cccbbf46453625bc743a0bdc75	2026-08-05	Settle who owns a gesture, what diagnostics may claim, and what colour may say
+012d8cf5a95dcf92de9e00fc935b043742641cfe	2026-08-05	Move PDF generation off the main thread, and read the result back
+9e47376d159008e311dad1c90358e5b6587bce04	2026-08-05	Keep long names distinguishable, and keep a proposal's picture honest
+abd6f69fe7b727d0d126eaae066e09f486797e3e	2026-08-05	Record where all 205 pack tasks landed, verified rather than asserted
+b9c69598c13e9db5170396cdcf3aa5f46e94a2c7	2026-08-05	Close three real gaps in the lifecycle reducer the traceability audit exposed
+2d1dccfb1304840cb475fef81189b31476351ea1	2026-08-05	P2: give import rejections a code that survives the worker boundary
+5e8fb872e77df842996083b9f5ad3c65dbaf1347	2026-08-05	P2: validate Worker requests at the boundary, and correct the traceability
+af470fc568f1fe4bf6ac298817404e45666f9e41	2026-08-05	P3: verify a project's own entry digests when opening it, not only when writing it
+fecbde5daaf408b0c105ee1011b10b049fb24621	2026-08-05	P7: connect the eight snap sources to the layer that ranks them
+a096cec5a9dc028f2be0e543c7bd01350be24c9b	2026-08-05	P2: acquire the single-writer lock that ADR-0024 specifies
+4749e7f62bea8eb118f903f2c5b35e28b7e9c78c	2026-08-05	Traceability: finish the caller-reachability audit, including where it was wrong
+17ed18228304775877a077a81570100368165681	2026-08-05	Traceability: record the thirteen expected reachability hits
+0e3c69f63f4ad508546856909ca8382928ac7336	2026-08-05	P5: wire publish through the arqfs Worker
+86afcabc68b13141fa7e5f253960faccde356855	2026-08-05	Fix the Worker response never reaching the client, and the phantom format failure it caused
+91e79cc15a064551b987cc224496b998d8654e56	2026-08-05	Implement the ARQ CAD Pack 3.0 backlog: lifecycle, operations, units, references, constraints, inference (#301)
+50004be74de2013423327ebbccf02cb6b4e00910	2026-08-05	Merge remote-tracking branch 'origin/claude/arq-cad-platform-research-ba8rav' into claude/arq-project-improvements-aulz73
+26205942be2fc900aef70714f1f73fd3929e99f7	2026-08-05	Reconcile the PR #301 merge: fix a real protocol integration gap, adjust to its new writer-lock gate, and update the register against its traceability record
+ca363bec15797c4ccb6ada92ef7ec955fa8572ed	2026-08-05	Publication: checkpoint, export, fresh-reader verification, and a real Publish command (#300)
+7a6cb26898ec137c430e7851e740b23d02b2b311	2026-08-07	Version 12: canvas-first composition, material and dark appearance, and nine defects found by rendering the product (#303)
+539194144c95cd2935d4e10ae77efd1466052a71	2026-08-07	Triage AOGRP 6.0 (ARQ Future Precision System) proposal package (#307)
+4b9314c25ea03d3eb6c2f963c1f212bc34305de0	2026-08-07	Verify ARQ House 17.0 against the live reader, and enumerate why it is refused
+585145fd266b0f8e0c5a2b1ef80b4f2a7a0c45a1	2026-08-07	Record the slimmed house.arq container against the same hydration gate
+c7bba3350f7eec060cab471f2f39ac6b91b29127	2026-08-08	Adapt the ARQ House 17.0 vocabulary, so the file opens and every element hydrates
+91f44ff28be17bbd17059f52b2b9f75b52a79fc5	2026-08-08	Open ARQ House 17.0 in the product, instead of silently reducing it to wall lines
+664d6dc9c9d9f4610bf3d715008bee29ee808581	2026-08-08	Record that the Version 17 open failure was never the file size
+9508d86524cb126dd797d9cfee0c711091eac386	2026-08-08	Prove ARQ House 17.0 opens in the real product, with screenshots
+aa01538cdfdd0b0301f712babec94f109230ac76	2026-08-08	Put the docked rails on one column, and keep the sheet chrome off the edge
+8b825a47deee0429710d6110cc56ebf86e06ac2d	2026-08-08	Draw every level of a project on one page, and stop a check racing the dialog
+cdf4107fbe4a7b503aaa6f6014fa67af621878ca	2026-08-08	Hinge the 17.0 doors the way the fixture's own drawings hinge them
+14a0dbe0edfb97b86fb07157172f034a17435b25	2026-08-08	Keep the refraction lens inside the control it decorates
+95c31c6f47e68aabef46fd5f2ba1d3a368d0b431	2026-08-08	Draw the furniture, floor plates and stairs the app was dropping
+5d587fbd86832f670b395259f3ed3d9ce3d9ce57	2026-08-08	Fill furniture with the material the model already states
+209a7db17201cf38dc8554f35be430728a0ec3fa	2026-08-08	Build the 3D view from the same content the plan draws
+9ebfbf0a52055932bd39c9e2143904aed225b6c9	2026-08-08	Count the 55 sections the adapter leaves behind
+15369dfb20b20430a40c30560f02d8b33af4f9c0	2026-08-08	Record the ARQ House 17.0 fixture's own defects
+6df39ec8fb5e008785cba18c670d3b80680767af	2026-08-08	Format the fixture defect list
+4a713bd93201bb0a08adcae2367671d8fd2532df	2026-08-08	Draw the 126 services points and 11 routes the file carries
+b1f6b138d7d37841f7ad2bddb19dca2383fa897d	2026-08-08	marketing: give limitation notes a distinct visual role, fix hierarchy gaps
+d2405110e49a690ad895fce6051f32679c972feb	2026-08-08	Give windows glass and the drawing an orientation
+29d1eccb58d43cbd2a6d78e2eec11a78bd87a4f1	2026-08-08	Draw sanitary fittings and appliances as symbols, not rectangles
+9d6dec12f22b61447bc92aec3312b26e98d9a358	2026-08-08	Refresh the language context for the sources this branch moved
+dcfc7e17654c2d704c6766aba022be8f5bbb2a9b	2026-08-08	Format the research documents the format gate was already failing on
+4dcd372da7f81a780fbf86dabc96362bb5d99827	2026-08-08	Rebuild the engineering context this branch's sources invalidated
+52ac1c366a70b236b52cd71e51b5adede0c78673	2026-08-08	marketing: enrich interoperability matrix, changelog timeline, legal metadata
+5f1085e960f2fb41de464b7be0803ba680614e05	2026-08-08	docs: format pre-existing AOGRP research files with prettier
+7ebdb1efb263383c843d31fbef4adc3809e30642	2026-08-10	marketing: introduce the four public page families
+cfe6dce92e920e47643a65f305b0940f6d9dddb7	2026-08-10	docs: resync generated language context after pages.test.ts edit
+398f4861a6b62fddd39277891abc38b050958a03	2026-08-10	marketing: regroup primary navigation into Product/Solutions/Resources
+bc3840e13941afc9f405c31dcf5d6e1db5f405ba	2026-08-10	marketing: reduce footer's title-block visual dominance
+ff569e7ed07ffbb0810dafd3e8dbdf965eed5dfe	2026-08-10	marketing: real Playwright evidence for the audit's Verification section
+e901cd428b440c8db4432e44baed72c70249ecb5	2026-08-10	marketing: add a public-site size budget to the capability check
+7fe3b6115fb53412b6f18cd8de5d92653956b8ca	2026-08-10	ci: run the marketing-viewport check before apps/web's checks
+df631523618704e0b2cc278b8423710676acd1d8	2026-08-10	Add four-level note separation hierarchy (related/chapter tiers)
+9cfbf36cc50266f771ebe233e5d26406453da5ab	2026-08-10	Document the comprehension-test rubric and run a grounded self-check
+043812940c72a22b81b34cf38493cfefe7e426ce	2026-08-10	Fix four defects found by a critical review of this branch's own work
+e3f93488431a7c66d2e38185536969b8d7cf581b	2026-08-10	Replace the nav dropdown's nested landmarks with labelled lists
+2fde6453e352893d3147cd32bd6baed1a2befd43	2026-08-11	Fix the native-open check waiting on a string only the dialog ever shows
+9abb591a9bb25fdf08e39f5e4eea7e96497e13b6	2026-08-11	Put doors and windows in the 3D model, and fix the leaf rule they exposed
+05424accee84e76812a0a8b67d02dc851f5ad5c9	2026-08-11	Open ARQ House 17.0 in Arq: read what the file actually contains, and draw it (#308)
+f1c0a6714a2ad8214262284fc6377280f46b0ec2	2026-08-11	Merge remote-tracking branch 'origin/claude/arq-cad-platform-research-ba8rav' into claude/arq-website-redesign-v3-kaf50s
+bc2a93883a4253d37011e4eb3b5540c4b2dc9be0	2026-08-11	Resync generated contexts after merging the base branch
+d1e17a1b1ca21ee8569bd95696db5ba4808597b5	2026-08-11	marketing: page-family system + UI/UX audit implementation (#309)
+221c33bdb3a32c1fb7fcf9ccbeb7ecf04566eb10	2026-08-11	Three things the repository was wrong about, and the gates that let it be (#310)
+22c04d974b27cbc9fd2284883adc60325eb81e0d	2026-08-22	Zeus 5: continual harness, refine gate, drift guards and gate ledger
+c9a332134a5993cc71b71754ab88182435953e98	2026-08-22	Zeus gate ledger: measure the diff against the merge target, not the push target
+af0c1fa02ba1ab77c5a77ed1d12a3b9f8e199651	2026-08-22	Regenerate the Engineering OS context after adding the zeus package scripts
+3d5c02b277c8b348f2dff26baf2a194fa84771b0	2026-08-22	Zeus 5: show the reading before the work, and fix three defects found attacking it
+4dd45b9ee6a5c92a483db5c7a65f038294329686	2026-08-22	Zeus 5: wire the seven dead scripts, and make the org chart real
+f91e453179ac3ce3c8a39472b92cbf48d8ffe685	2026-08-22	Zeus 5 plan ledger: refuse to call a plan done while an item is unproven
+58fb3703cf597886ad7c664fdca1f0cd444443d4	2026-08-22	Zeus 5 spec compiler, and the UI routing defect it uncovered
+a75856e42065be7b0a8143963508a505a981acab	2026-08-22	Zeus gate ledger: checked by everyone the diff calls for, not merely by somebody
+2c07adbe3594e35c111f33f123e9399d5c492ae0	2026-08-22	Zeus 5: the reading, the plan loop, the spec compiler, and seven dead scripts wired (#314)
+63e22fe67c7e22fdbeb5e40f4e5b20ac3220b94e	2026-09-09	docs(zeus): define repository intelligence contract
+2ebbf454c70837fa25380c9a7d3544cb2994b5d7	2026-09-09	feat(zeus): add adaptive CTO budget extension
+a9b47dc5e05cee5d628f3731da8ba1319bc29cd3	2026-09-09	feat(zeus): add adaptive budget adviser and self-check
+1f0471e477a98e0ee9889d36d09e00fae99b7f9a	2026-09-09	test(zeus): cover adaptive budget ceilings and VOI
+366acc38b69c881f9bae4559dc307fa8c6cdde53	2026-09-09	docs(zeus): define adaptive CTO extension
+2cabf5b021c16abf154404ab6724ffc13602252f	2026-09-09	Upgrade product UI/UX operating skill to v2
+b98ef5adb3214eb324d25296c2a4e350cc730374	2026-09-09	feat(zeus): measure adaptive work efficiency and reuse
+3c61d02538ffc2500bab983dd138b8d9846f284a	2026-09-09	test(zeus): cover dedupe, capability routing and run efficiency
+472fab28097f7de292ad0a3d7fd3c0b5c3f87027	2026-09-09	style(zeus): format adaptive CTO policy
+495603ff8531db873696b85ebaf25ee15c920c46	2026-09-09	style(zeus): format adaptive budget adviser
+06630f36d2babfb95f16d8e36cc38a9bb6771467	2026-09-09	style(zeus): format adaptive budget tests
+8883aa93b8840dbce1d5a9411a4dc76341d8d98d	2026-09-09	chore(zeus): emit exact Prettier diagnostic in CI
+be7ebf6d35cd80867f7b95cb2bc3c765c00ed554	2026-09-09	Make ZEUS repository rename safe for GitHub Pages (#331)
+5bf925f00b7562cba3ef148e2cf417cd58df11d5	2026-09-10	ci(zeus): add temporary adaptive format probe
+172c193a0ef0041cea262e7dfbb5efa4db164266	2026-09-10	ci(zeus): apply exact pinned Prettier output
+f2b7c7ee544af8f288ba3d20b450fa252a5d5838	2026-09-10	style(zeus): apply pinned Prettier output
+49aa5425846e4ba82d8db140f5be90fd793c954e	2026-09-10	chore(zeus): remove temporary format probe
+191dbaa0580e22c73640b04704423e7cc8e6b2df	2026-09-10	ci(zeus): add adaptive runtime v2 regression workflow
+053602971fcb64c398c37dcb11be416d0ff06090	2026-09-10	chore(zeus): restore adaptive v1 scope
+c2d4962471792968795e5d06d7372b11878f0d46	2026-09-10	feat(zeus): add closed-loop adaptive runtime
+edffb580e96319db039206d88934395070339284	2026-09-10	chore(zeus): restore v1 feature scope before v2 stack
+cf6729d82b70d098f0c7c760c5c6ed99992a20e9	2026-09-10	feat(zeus): add closed-loop adaptive runtime
+63612c77b10a1bf95908b24e4177a45f6b7ffee3	2026-09-10	test(zeus): cover closed-loop adaptive runtime decisions
+764356fda258fa2d6176ea5b49a88dfcad642a6a	2026-09-10	ci(zeus): add adaptive runtime v2 regression workflow
+564622155f66dc93b53aa42c2ff0fb190d327369	2026-09-10	docs(zeus): record bounded adaptive runtime v2 lane
+1d9a0a1846a71336e42dfdb4ac5c0caf56ca7162	2026-09-10	chore(zeus): keep runtime v2 lane three-file only
+3d8db2aa0599c96ca1e7df61f1c55e5ba7e9af32	2026-09-10	ci(zeus): apply pinned runtime formatting before verification
+bbdb9c6be3aad86495e68f872db1bbb0e941d726	2026-09-10	style(zeus): apply pinned runtime formatting
+bd648e023e7ecd03cfd374d70082305f2a128697	2026-09-10	ci(zeus): execute adaptive CTO v1 regression
+9891dbfb5550b9938d20364d63e4a6d029854223	2026-09-10	ci(zeus): restore runtime v2 read-only verification
+13a0ce7195ce190e9844d9ed31f16d353a15580a	2026-09-10	docs(zeus): make Arq harness explicitly autonomous (#322)
+b5a36656078d4116ece801e5ba1d1cf8fdaad53a	2026-09-10	feat(Zeus): add adaptive CTO budget adviser (#329)
+40fc938575891c933b7688fd200ca4f642768cd0	2026-09-10	feat(Zeus): enforce closed-loop adaptive runtime decisions (#334)
+cf9c12c6312917d2e522f0adeba0a9a790d5b0a3	2026-09-10	docs(Zeus): define repository intelligence contract (#323)
+b1b4583f2574a10c6ff626325fd3a48abf5811cb	2026-09-10	fix(Zeus): enforce browser interaction ceilings (#337)
+96b271b30005f89044914c7c4c723c45ce44eae4	2026-09-10	build(deps): bump wasm-bindgen to 0.2.128 (#311)
+a0b9bc598ef84267a218a94e79821db220cc35b7	2026-09-10	feat(Zeus): add SHA-bound ARQ repository intelligence (#336)
+29763a7c2800c7a214ba2bd88a695e58eafebbec	2026-09-10	fix(Zeus): complete adaptive lifecycle and telemetry invariants (#341)
+221dee6fd4bcfbae041989e7070702e44ffe8bd3	2026-09-10	feat(Zeus): improve context retrieval without shrinking core budgets (#338)
+d1cac742537015bc4cb18bcdbf8d36ea4556796b	2026-09-10	test(zeus): enforce local-autonomy invariants (#342)
+4061bf59b5086088a463327c81ad05adb6d2d144	2026-09-10	feat(Zeus): add four-axis doctor and next-action status (#346)
+0c00bc060b086bcc57c7bae42711f61911aede35	2026-09-10	feat(Zeus): integrate repository graph into compile and impact (#349)
+9a7e8216cd69549aa489d14b8c1a59ff57c0a87c	2026-09-10	fix(Zeus): enforce autonomy in canonical verify and drift (#348)
+d154101489e6da5134e8117b52e5ac917cf8a69b	2026-09-10	feat(Zeus): bind repository intelligence to evidence and gates (#350)
+3207001ee02d7319d8a3d622de97507286a83c8c	2026-09-11	chore(zeus): make CI default-branch cutover safe
+ed47817d04cd38991065cfafc87462b6fb53e6a9	2026-09-11	chore(zeus): make Pages default-branch cutover safe
+b9d43ffc7ad9d7f97a6740d1fdd501cc6df38ed7	2026-09-11	ci: regenerate Engineering OS context for cutover proof
+cde64b775a784fe0c77472bcda808617fe97eb92	2026-09-11	ci: let context refresh commit deterministic proof
+7fd9acde5b2c15094a0233fcbccb99cf97911f1b	2026-09-11	chore(engineering): refresh source-hashed context
+b1c3fed391699a364882c2df6c5e163363c4dbc2	2026-09-11	chore(engineering): remove temporary context refresh workflow
+d0d9f0d9f22e99fc41b1af787dba2dab1fadd222	2026-09-11	test(Zeus): measure adaptive CTO quality per work (#352)
+cc0aec49f6a7013c13fb3c6888bf0515f16f7630	2026-09-11	chore(language): add temporary context refresh workflow
+f8131932ae40576ad674be1634ff38e46e2e4e56	2026-09-11	chore(language): refresh source-hashed context
+5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08	2026-09-11	ci: remove temporary language context refresher
+4f1fda24c8d36157087b0ce78ea0cbf28e6d259c	2026-09-11	Merge pull request #353 from ruddvz/codex/zeus-default-branch-dual-trigger-v1
+c137baa58e2368ff81887f1fd9f040e498975aff	2026-09-11	ci: apply focused ARQFS migration patch
+d22c4bdc8f25c2f5b5f3e359a0d19ec68ebc9bd4	2026-09-11	ci: move ARQFS migration patch logic out of workflow yaml
+6ed90f8ac03a4f430ae8846821491bc635981ab9	2026-09-11	ci: simplify ARQFS migration patch runner
+96e014d563b824e07db8c43c1d54ffa31ca71149	2026-09-11	ci: fix ARQFS migration type import before verification
+ae7cd511a94e9dbf8b9ddd58dbc34a7815a5c5bd	2026-09-11	ci: cover ARQFS migration policy wording
+9f3e2d3506b505eb93b22252c31777572906c9e8	2026-09-11	ci: keep ARQFS migration behind healthy-copy gate
+47cdf5b1f7de72325e0c23d744d76d44daf9e7c6	2026-09-11	ci: update ARQFS migration fixture shapes
+d85a82f4d4497b3576d1779e70654b408ddd3a5a	2026-09-11	feat(arqfs): migrate older projects on isolated working copies
+46bef80efcba5dc8d337b060ee9d4921e00c456f	2026-09-11	test(arqfs): prepare real Worker migration proof
+d9888c24e02cfb746076c490245becb8ea0ce5fe	2026-09-11	test(arqfs): run real Worker migration proof
+c4da70723f0e83fa1b8719d23a24917bb81a1263	2026-09-11	test(arqfs): prove schema migration over real Worker and OPFS
+4e3af39fe8abfb8e215030bd3e98d0b316be178c	2026-09-11	fix(arqfs): restore tracked benchmark evidence after proof run
+f9468a5852365d047dac6686b3a1c645e7e3f0b6	2026-09-11	ci: refresh ARQFS governed context proofs
+ab7421b538c6acba7729209daeabad9e8dfabc6d	2026-09-11	chore(arqfs): refresh governed context proofs
+1d57520d6c8fa3c389145644c3c7e27cc4593cf8	2026-09-11	ci: retrigger ARQFS exact-head checks
+a4f6941b5c0b9ef1441a4ea0ca9e1f95cc5a4a60	2026-09-11	ci: restore ARQFS final tree after exact-head trigger
+5f965f7678a09e1fbd9a81d51778236fce682736	2026-09-11	Merge pull request #357 from ruddvz/codex/arqfs-cow-migration-v1
+b58a77d85a43fa8c1e2c92cac4f0a06251a219d0	2026-09-13	docs(ui-ux): add issue execution index on main
+ea99da3f6e998ccfe79799bd4f40e0a3622db7ba	2026-09-13	docs(ui-ux): add semantic ownership routing graph
+028a5125aca41da7069af805be8515a6a2776497	2026-09-13	docs(ui-ux): map workspace shell ownership
+48c5a7399166a6288a77b76a374b5b660ae471a6	2026-09-13	docs(ui-ux): audit command and tool reachability
+933771396e7f9ede1548212c798665520a04b957	2026-09-13	docs(ui-ux): map selection and focus authority
+e292d3c50aa19e8105c29662ed21a3bb739ac225	2026-09-13	docs(ui-ux): audit tokens motion and overlay layering
+96a9bdbf518d11db54d7efb632daa364a0364e20	2026-09-13	docs(research): add Pascal editor adoption ledger
+99cebdd5404b73bf1d4654786abbb262f4506d38	2026-09-13	docs(product): add reconciled UI semantic-owner matrix
+14d333a225d6b606a8693f85246cacadb1c93ce3	2026-09-13	docs(product): reconcile UI issue graph and next safe frontier
+2d5a2ae73557049e0d5c2af01f6b0147942b1bcd	2026-09-13	docs(UX): verify #396 workspace ownership at exact head
+4184551be3e75636d7feea93fda13699b00b4b43	2026-09-13	docs(test): finish exact-head token and layer audit (#498)
+a02ccc69e44e41324324c9482a43edbfb58e7905	2026-09-13	test(UX): close #398 command reachability evidence

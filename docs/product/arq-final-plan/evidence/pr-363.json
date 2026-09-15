@@ -1,0 +1,301 @@
+{
+  "files": [
+    {
+      "sha": "058ed88689e54c3c73199ab3997b3cf5a22e21fd",
+      "filename": ".github/workflows/browser-matrix-smoke.yml",
+      "status": "added",
+      "additions": 40,
+      "deletions": 0,
+      "changes": 40,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/3c16942f72a5da8234973e45fe794ef6eec158bd/.github%2Fworkflows%2Fbrowser-matrix-smoke.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/3c16942f72a5da8234973e45fe794ef6eec158bd/.github%2Fworkflows%2Fbrowser-matrix-smoke.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fbrowser-matrix-smoke.yml?ref=3c16942f72a5da8234973e45fe794ef6eec158bd",
+      "patch": "@@ -0,0 +1,40 @@\n+name: Browser matrix smoke\n+\n+on:\n+  pull_request:\n+    paths:\n+      - 'apps/web/**'\n+      - 'packages/**'\n+      - 'scripts/run-browser-matrix-smoke.mjs'\n+      - '.github/workflows/browser-matrix-smoke.yml'\n+      - 'pnpm-lock.yaml'\n+      - 'package.json'\n+  workflow_dispatch:\n+\n+jobs:\n+  browser-engine-smoke:\n+    name: ${{ matrix.browser }} engine smoke\n+    runs-on: ubuntu-latest\n+    timeout-minutes: 20\n+    strategy:\n+      fail-fast: false\n+      matrix:\n+        browser: [chromium, firefox, webkit]\n+    steps:\n+      - uses: actions/checkout@v4\n+      - uses: pnpm/action-setup@v4\n+      - uses: actions/setup-node@v4\n+        with:\n+          node-version: 20\n+          cache: pnpm\n+      - run: pnpm install --frozen-lockfile\n+      - name: Install ${{ matrix.browser }} with runner dependencies\n+        run: pnpm exec playwright install --with-deps ${{ matrix.browser }}\n+      - name: Run ${{ matrix.browser }} engine smoke\n+        run: node scripts/run-browser-matrix-smoke.mjs --browser ${{ matrix.browser }}\n+      - uses: actions/upload-artifact@v4\n+        if: always()\n+        with:\n+          name: browser-matrix-${{ matrix.browser }}\n+          path: benchmarks/results/browser-matrix-smoke-${{ matrix.browser }}.json\n+          if-no-files-found: warn"
+    },
+    {
+      "sha": "e6f023285d39b0ae400cbbe6b62eb7e4b5ed4ad8",
+      "filename": "scripts/run-browser-matrix-smoke.mjs",
+      "status": "added",
+      "additions": 274,
+      "deletions": 0,
+      "changes": 274,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/3c16942f72a5da8234973e45fe794ef6eec158bd/scripts%2Frun-browser-matrix-smoke.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/3c16942f72a5da8234973e45fe794ef6eec158bd/scripts%2Frun-browser-matrix-smoke.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Frun-browser-matrix-smoke.mjs?ref=3c16942f72a5da8234973e45fe794ef6eec158bd",
+      "patch": "@@ -0,0 +1,274 @@\n+#!/usr/bin/env node\n+/**\n+ * Cross-engine smoke evidence for issue #358.\n+ *\n+ * This deliberately reports engine capabilities instead of turning browser\n+ * version strings into product-support claims. Playwright WebKit is WebKit\n+ * engine evidence only. It is not certification of shipping Safari or any\n+ * physical Apple device.\n+ *\n+ * Usage:\n+ *   node scripts/run-browser-matrix-smoke.mjs\n+ *   node scripts/run-browser-matrix-smoke.mjs --browser chromium\n+ *   node scripts/run-browser-matrix-smoke.mjs --browser firefox\n+ *   node scripts/run-browser-matrix-smoke.mjs --browser webkit\n+ */\n+\n+import { chromium, firefox, webkit } from 'playwright';\n+import { createServer } from 'node:http';\n+import { execFileSync } from 'node:child_process';\n+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';\n+import { fileURLToPath } from 'node:url';\n+import path from 'node:path';\n+\n+const __dirname = path.dirname(fileURLToPath(import.meta.url));\n+const repoRoot = path.resolve(__dirname, '..');\n+const webDir = path.join(repoRoot, 'apps/web');\n+const distDir = path.join(webDir, 'dist');\n+const resultsDir = path.join(repoRoot, 'benchmarks/results');\n+\n+const engines = { chromium, firefox, webkit };\n+const requested = process.argv.includes('--browser')\n+  ? [process.argv[process.argv.indexOf('--browser') + 1]]\n+  : Object.keys(engines);\n+\n+for (const name of requested) {\n+  if (!(name in engines)) {\n+    throw new Error(`Unsupported browser engine: ${name}. Expected chromium, firefox or webkit.`);\n+  }\n+}\n+\n+function buildBundle() {\n+  execFileSync('pnpm', ['--filter', '@arq/web', 'build'], {\n+    cwd: repoRoot,\n+    stdio: 'inherit',\n+  });\n+  if (!existsSync(path.join(distDir, 'index.html'))) {\n+    throw new Error('web build did not produce apps/web/dist/index.html');\n+  }\n+}\n+\n+const MIME_TYPES = {\n+  '.html': 'text/html; charset=utf-8',\n+  '.js': 'text/javascript; charset=utf-8',\n+  '.css': 'text/css; charset=utf-8',\n+  '.svg': 'image/svg+xml',\n+  '.png': 'image/png',\n+  '.wasm': 'application/wasm',\n+  '.json': 'application/json',\n+};\n+\n+function startServer() {\n+  return createServer((req, res) => {\n+    const url = new URL(req.url ?? '/', 'http://localhost');\n+    const relative = url.pathname === '/' ? '/index.html' : url.pathname;\n+    const filePath = path.resolve(distDir, `.${relative}`);\n+    if (\n+      !filePath.startsWith(`${distDir}${path.sep}`) &&\n+      filePath !== path.join(distDir, 'index.html')\n+    ) {\n+      res.writeHead(403);\n+      res.end();\n+      return;\n+    }\n+    try {\n+      const contents = readFileSync(filePath);\n+      res.writeHead(200, {\n+        'content-type': MIME_TYPES[path.extname(filePath)] ?? 'application/octet-stream',\n+      });\n+      res.end(contents);\n+    } catch {\n+      // Vite's production app is an SPA. Unknown route-like requests should\n+      // receive the application shell, while missing asset requests stay 404.\n+      if (!path.extname(relative)) {\n+        res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });\n+        res.end(readFileSync(path.join(distDir, 'index.html')));\n+        return;\n+      }\n+      res.writeHead(404);\n+      res.end();\n+    }\n+  });\n+}\n+\n+async function probe(engineName, origin) {\n+  const browserType = engines[engineName];\n+  const browser = await browserType.launch({ headless: true });\n+  const browserVersion = browser.version();\n+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });\n+  const page = await context.newPage();\n+  const consoleErrors = [];\n+  const pageErrors = [];\n+\n+  page.on('console', (message) => {\n+    if (message.type() === 'error') consoleErrors.push(message.text());\n+  });\n+  page.on('pageerror', (error) => pageErrors.push(error.message));\n+\n+  try {\n+    const response = await page.goto(origin, { waitUntil: 'networkidle' });\n+    if (response === null || !response.ok()) {\n+      throw new Error(\n+        `application navigation failed with HTTP ${response?.status() ?? 'no-response'}`,\n+      );\n+    }\n+\n+    await page.locator('.arq-workspace').waitFor({ state: 'visible', timeout: 15_000 });\n+    await page.locator('.arq-workspace__viewport').waitFor({ state: 'visible', timeout: 15_000 });\n+\n+    const boot = await page.evaluate(() => {\n+      const root = document.querySelector('.arq-workspace');\n+      const viewport = document.querySelector('.arq-workspace__viewport');\n+      const rect = viewport?.getBoundingClientRect();\n+      return {\n+        title: document.title,\n+        workspacePresent: root !== null,\n+        viewportWidth: rect ? Math.round(rect.width) : 0,\n+        viewportHeight: rect ? Math.round(rect.height) : 0,\n+        horizontalOverflow:\n+          document.documentElement.scrollWidth > document.documentElement.clientWidth,\n+        userAgent: navigator.userAgent,\n+      };\n+    });\n+\n+    // Keyboard smoke: a real Tab must move focus onto a rendered interactive\n+    // control. This catches a class of inert-shell regressions without tying\n+    // the matrix to one particular button label or visual composition.\n+    await page.keyboard.press('Tab');\n+    const keyboard = await page.evaluate(() => {\n+      const active = document.activeElement;\n+      if (!(active instanceof HTMLElement)) return { passed: false, reason: 'no active element' };\n+      const tag = active.tagName.toLowerCase();\n+      const role = active.getAttribute('role');\n+      const rect = active.getBoundingClientRect();\n+      const interactive =\n+        ['a', 'button', 'input', 'select', 'textarea', 'summary'].includes(tag) ||\n+        role === 'button' ||\n+        role === 'tab' ||\n+        role === 'menuitem';\n+      return {\n+        passed: interactive && rect.width > 0 && rect.height > 0,\n+        tag,\n+        role,\n+        label: active.getAttribute('aria-label') ?? active.textContent?.trim().slice(0, 80) ?? '',\n+      };\n+    });\n+\n+    const capability = await page.evaluate(() => {\n+      const canvas = document.createElement('canvas');\n+      const webgpuAvailable =\n+        'gpu' in navigator && navigator.gpu !== undefined && navigator.gpu !== null;\n+      let webgl2Available = false;\n+      let webglAvailable = false;\n+      try {\n+        webgl2Available = canvas.getContext('webgl2') !== null;\n+      } catch {\n+        webgl2Available = false;\n+      }\n+      try {\n+        webglAvailable = canvas.getContext('webgl') !== null;\n+      } catch {\n+        webglAvailable = false;\n+      }\n+      const renderingCapability = webgpuAvailable\n+        ? 'webgpu-available'\n+        : webgl2Available\n+          ? 'webgl2-fallback-available'\n+          : webglAvailable\n+            ? 'webgl-fallback-available'\n+            : 'no-gpu-rendering-api';\n+      const capabilityStatus =\n+        renderingCapability === 'no-gpu-rendering-api' ? 'unavailable-in-runner' : 'available';\n+      return {\n+        webgpuAvailable,\n+        webgl2Available,\n+        webglAvailable,\n+        renderingCapability,\n+        capabilityStatus,\n+      };\n+    });\n+\n+    const failures = [];\n+    if (!boot.workspacePresent) failures.push('workspace root did not render');\n+    if (boot.viewportWidth <= 0 || boot.viewportHeight <= 0) {\n+      failures.push(\n+        `workspace viewport is not measurable (${boot.viewportWidth}x${boot.viewportHeight})`,\n+      );\n+    }\n+    if (boot.title.trim().length === 0) failures.push('document title is empty');\n+    if (boot.horizontalOverflow) failures.push('document overflows horizontally at 1440x900');\n+    if (!keyboard.passed) failures.push(`keyboard focus smoke failed: ${JSON.stringify(keyboard)}`);\n+    if (consoleErrors.length > 0) failures.push(`console errors: ${consoleErrors.join(' | ')}`);\n+    if (pageErrors.length > 0) failures.push(`page errors: ${pageErrors.join(' | ')}`);\n+\n+    const capabilityNotes = [];\n+    if (capability.capabilityStatus === 'unavailable-in-runner') {\n+      capabilityNotes.push(\n+        'This headless runner exposed neither WebGPU nor WebGL. That is recorded as unavailable capability evidence, not converted into a browser-support claim.',\n+      );\n+    }\n+\n+    return {\n+      engine: engineName,\n+      browserVersion,\n+      userAgent: boot.userAgent,\n+      status: failures.length === 0 ? 'pass' : 'fail',\n+      boot,\n+      keyboard,\n+      capability,\n+      capabilityNotes,\n+      failures,\n+      evidenceBoundary:\n+        engineName === 'webkit'\n+          ? 'Playwright WebKit engine evidence only; not shipping Safari or physical Apple-device certification.'\n+          : 'Playwright browser-engine evidence; not physical-device certification.',\n+    };\n+  } finally {\n+    await context.close();\n+    await browser.close();\n+  }\n+}\n+\n+buildBundle();\n+mkdirSync(resultsDir, { recursive: true });\n+const server = startServer();\n+await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));\n+const address = server.address();\n+if (address === null || typeof address === 'string')\n+  throw new Error('could not resolve smoke server');\n+const origin = `http://127.0.0.1:${address.port}`;\n+\n+const results = [];\n+try {\n+  for (const engineName of requested) {\n+    const result = await probe(engineName, origin);\n+    results.push(result);\n+    console.log(\n+      `[browser-matrix] ${result.engine} ${result.browserVersion}: ${result.status.toUpperCase()} | ${result.capability.renderingCapability} (${result.capability.capabilityStatus})`,\n+    );\n+    console.log(`  UA: ${result.userAgent}`);\n+    console.log(`  keyboard: ${result.keyboard.passed ? 'pass' : 'fail'}`);\n+    console.log(`  evidence: ${result.evidenceBoundary}`);\n+    for (const note of result.capabilityNotes) console.warn(`  capability: ${note}`);\n+    for (const failure of result.failures) console.error(`  failure: ${failure}`);\n+  }\n+} finally {\n+  await new Promise((resolve, reject) =>\n+    server.close((error) => (error ? reject(error) : resolve())),\n+  );\n+}\n+\n+const report = {\n+  schemaVersion: 1,\n+  generatedAt: new Date().toISOString(),\n+  evidenceType: 'automated-browser-engine-smoke',\n+  supportClaim:\n+    'This report records runtime engine capability only. Product support still requires the evidence defined by validation/BROWSER-AND-DEVICE-MATRIX.csv.',\n+  results,\n+};\n+const suffix = requested.length === 1 ? `-${requested[0]}` : '';\n+const reportPath = path.join(resultsDir, `browser-matrix-smoke${suffix}.json`);\n+writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\\n`);\n+console.log(`[browser-matrix] wrote ${path.relative(repoRoot, reportPath)}`);\n+\n+if (results.some((result) => result.status !== 'pass')) process.exitCode = 1;"
+    },
+    {
+      "sha": "9db3662c92486645c546f437e33a3918ef66028d",
+      "filename": "validation/BROWSER-ENGINE-SMOKE.md",
+      "status": "added",
+      "additions": 55,
+      "deletions": 0,
+      "changes": 55,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/3c16942f72a5da8234973e45fe794ef6eec158bd/validation%2FBROWSER-ENGINE-SMOKE.md",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/3c16942f72a5da8234973e45fe794ef6eec158bd/validation%2FBROWSER-ENGINE-SMOKE.md",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/validation%2FBROWSER-ENGINE-SMOKE.md?ref=3c16942f72a5da8234973e45fe794ef6eec158bd",
+      "patch": "@@ -0,0 +1,55 @@\n+# Browser engine smoke validation\n+\n+Tracking: #358. Parent support-matrix decision: #219.\n+\n+The product support source is `validation/BROWSER-AND-DEVICE-MATRIX.csv`. This smoke check supplies one evidence layer for that matrix. It does not replace real-browser or physical-device validation.\n+\n+## Run it\n+\n+Install the browsers once:\n+\n+```sh\n+pnpm exec playwright install chromium firefox webkit\n+```\n+\n+Run all three engines:\n+\n+```sh\n+node scripts/run-browser-matrix-smoke.mjs\n+```\n+\n+Run one engine, which is also how CI executes the matrix:\n+\n+```sh\n+node scripts/run-browser-matrix-smoke.mjs --browser chromium\n+node scripts/run-browser-matrix-smoke.mjs --browser firefox\n+node scripts/run-browser-matrix-smoke.mjs --browser webkit\n+```\n+\n+Reports are written to `benchmarks/results/browser-matrix-smoke*.json` and include the exact Playwright browser version, user agent, capability result and failures. CI also uploads each engine's JSON report as a separate workflow artifact so the exact run evidence remains inspectable.\n+\n+## What counts as a smoke pass\n+\n+Each engine must:\n+\n+1. load the production `apps/web` build without page or console errors;\n+2. render the workspace and a measurable primary viewport;\n+3. accept real keyboard focus through `Tab` on a visible interactive control;\n+4. avoid horizontal document overflow at the desktop smoke viewport.\n+\n+GPU capability is evidence, not the pass condition for this engine smoke. The report separately records `webgpu-available`, `webgl2-fallback-available`, `webgl-fallback-available`, or `no-gpu-rendering-api` from runtime capability checks rather than browser-version assumptions.\n+\n+If a headless CI runner exposes neither WebGPU nor WebGL, the engine smoke can still pass when the application shell and interaction checks pass. That result is recorded as `capabilityStatus: unavailable-in-runner`. It must not be relabelled as WebGPU support, fallback support, or a product browser-support decision. This distinction keeps unsupported or unavailable WebGPU honest without making the evidence harness itself a cross-browser support gate.\n+\n+## Evidence boundary\n+\n+Playwright Chromium, Firefox and WebKit are automated browser-engine evidence. In particular, Playwright WebKit is not shipping Safari certification. This check does not prove:\n+\n+- physical macOS Safari behaviour;\n+- iPadOS Safari behaviour;\n+- Apple Pencil, touch hardware or trackpad behaviour;\n+- VoiceOver behaviour;\n+- a particular physical GPU or driver configuration;\n+- sustained real-device performance.\n+\n+Real Safari/iPad hardware evidence is tracked separately by #359. Firefox product-support policy by OS is tracked by #360. The matrix must keep those distinctions visible rather than promoting this automated smoke result into a broader support claim."
+    }
+  ],
+  "reviews": [
+    {
+      "id": 5182479089,
+      "node_id": "PRR_kwDOTfeiEM8AAAABNOZa8Q",
+      "user": {
+        "login": "ruddvz",
+        "id": 198288250,
+        "node_id": "U_kgDOC9Gjeg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/198288250?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/ruddvz",
+        "html_url": "https://github.com/ruddvz",
+        "followers_url": "https://api.github.com/users/ruddvz/followers",
+        "following_url": "https://api.github.com/users/ruddvz/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ruddvz/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/ruddvz/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ruddvz/subscriptions",
+        "organizations_url": "https://api.github.com/users/ruddvz/orgs",
+        "repos_url": "https://api.github.com/users/ruddvz/repos",
+        "events_url": "https://api.github.com/users/ruddvz/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/ruddvz/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "body": "One remaining evidence-quality issue before I would call #358 complete: the GPU probe currently treats `'gpu' in navigator && navigator.gpu != null` as `webgpuAvailable`. That proves the API surface exists, not that this runner/browser can obtain a usable WebGPU adapter. Please make this probe async and call `await navigator.gpu.requestAdapter()`, recording API presence and adapter availability separately. If the API exists but no adapter is returned, fall through to WebGL/WebGL2 capability reporting rather than labelling the engine `webgpu-available`. The Firefox runner gating fix is correct: missing GPU capability should remain a recorded capability finding, not an app-boot failure while #360 still owns the support-policy decision.",
+      "state": "COMMENTED",
+      "html_url": "https://github.com/ruddvz/Arq/pull/363#pullrequestreview-5182479089",
+      "pull_request_url": "https://api.github.com/repos/ruddvz/Arq/pulls/363",
+      "author_association": "OWNER",
+      "_links": {
+        "html": {
+          "href": "https://github.com/ruddvz/Arq/pull/363#pullrequestreview-5182479089"
+        },
+        "pull_request": {
+          "href": "https://api.github.com/repos/ruddvz/Arq/pulls/363"
+        }
+      },
+      "submitted_at": "2026-09-11T19:03:14Z",
+      "commit_id": "91b411a81d9f09d1ef61be7470d0f1ecfca8d323"
+    },
+    {
+      "id": 5182545590,
+      "node_id": "PRR_kwDOTfeiEM8AAAABNOdetg",
+      "user": {
+        "login": "ruddvz",
+        "id": 198288250,
+        "node_id": "U_kgDOC9Gjeg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/198288250?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/ruddvz",
+        "html_url": "https://github.com/ruddvz",
+        "followers_url": "https://api.github.com/users/ruddvz/followers",
+        "following_url": "https://api.github.com/users/ruddvz/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ruddvz/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/ruddvz/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ruddvz/subscriptions",
+        "organizations_url": "https://api.github.com/users/ruddvz/orgs",
+        "repos_url": "https://api.github.com/users/ruddvz/repos",
+        "events_url": "https://api.github.com/users/ruddvz/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/ruddvz/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "body": "Current-head recheck: the WebGPU evidence issue is still present. `navigator.gpu` existence is API-surface evidence only. Please make the probe async, call `await navigator.gpu.requestAdapter()`, record API presence and adapter availability separately, and fall through to WebGL2/WebGL if no adapter is returned. The dedicated browser matrix is otherwise behaving correctly now, including treating Firefox runner GPU unavailability as a capability finding rather than an ARQ boot failure.",
+      "state": "COMMENTED",
+      "html_url": "https://github.com/ruddvz/Arq/pull/363#pullrequestreview-5182545590",
+      "pull_request_url": "https://api.github.com/repos/ruddvz/Arq/pulls/363",
+      "author_association": "OWNER",
+      "_links": {
+        "html": {
+          "href": "https://github.com/ruddvz/Arq/pull/363#pullrequestreview-5182545590"
+        },
+        "pull_request": {
+          "href": "https://api.github.com/repos/ruddvz/Arq/pulls/363"
+        }
+      },
+      "submitted_at": "2026-09-11T19:11:26Z",
+      "commit_id": "3c16942f72a5da8234973e45fe794ef6eec158bd"
+    }
+  ],
+  "detail": {
+    "baseRefOid": "5f965f7678a09e1fbd9a81d51778236fce682736",
+    "body": "Closes #358\n\n## What changed\n\n- adds `scripts/run-browser-matrix-smoke.mjs` for Chromium, Firefox and WebKit engine evidence\n- builds and serves the real `apps/web` production bundle before every smoke run\n- checks workspace boot, measurable viewport, keyboard focus and horizontal overflow\n- reports runtime WebGPU presence plus WebGL/WebGL2 fallback availability without inferring support from version strings\n- records exact browser version, user agent, capability result and failures as JSON evidence\n- adds a PR CI matrix that installs and runs all three Playwright engines independently\n- documents the evidence boundary in `validation/BROWSER-ENGINE-SMOKE.md`\n\n## Evidence boundary\n\nPlaywright WebKit is engine-level evidence only. It is not shipping Safari, physical iPad, Apple Pencil, VoiceOver or physical-GPU certification. Real Apple-hardware validation remains #359. Firefox per-OS support policy remains #360. The product support source remains `validation/BROWSER-AND-DEVICE-MATRIX.csv` under #219.\n\n## Validation\n\nThe PR workflow runs each engine independently and uploads its JSON report. Existing repository checks remain authoritative for lint, typecheck, tests and policy controls.",
+    "headRefOid": "3c16942f72a5da8234973e45fe794ef6eec158bd",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 363,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:16Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376058/job/103388465963",
+        "name": "chromium engine smoke",
+        "startedAt": "2026-09-11T19:10:23Z",
+        "status": "COMPLETED",
+        "workflowName": "Browser matrix smoke"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:07Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376040/job/103388514086",
+        "name": "build",
+        "startedAt": "2026-09-11T19:10:33Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:12:58Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376029/job/103388562997",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-09-11T19:11:00Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:10Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376057/job/103388573027",
+        "name": "classify",
+        "startedAt": "2026-09-11T19:10:55Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:33Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376023/job/103388465969",
+        "name": "secret-scan",
+        "startedAt": "2026-09-11T19:10:23Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:27Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376058/job/103388465953",
+        "name": "firefox engine smoke",
+        "startedAt": "2026-09-11T19:10:23Z",
+        "status": "COMPLETED",
+        "workflowName": "Browser matrix smoke"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:34Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376058/job/103388465729",
+        "name": "webkit engine smoke",
+        "startedAt": "2026-09-11T19:10:23Z",
+        "status": "COMPLETED",
+        "workflowName": "Browser matrix smoke"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:12:51Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376029/job/103388563466",
+        "name": "test",
+        "startedAt": "2026-09-11T19:11:26Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:55Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376057/job/103388710495",
+        "name": "preflight",
+        "startedAt": "2026-09-11T19:11:32Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:16:15Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376029/job/103388563399",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-09-11T19:11:04Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:40Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376057/job/103388710460",
+        "name": "critical-approval",
+        "startedAt": "2026-09-11T19:11:32Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:34Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376029/job/103388563443",
+        "name": "language-system",
+        "startedAt": "2026-09-11T19:11:09Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:15:36Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376057/job/103388936302",
+        "name": "selected-evidence",
+        "startedAt": "2026-09-11T19:11:58Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:38Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376029/job/103388563579",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-09-11T19:11:18Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:15:53Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376057/job/103390032280",
+        "name": "engineering-gate",
+        "startedAt": "2026-09-11T19:15:39Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:55Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637376029/job/103388563612",
+        "name": "rust-test",
+        "startedAt": "2026-09-11T19:11:24Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-09-11T19:10:18Z",
+        "state": "FAILURE",
+        "targetUrl": "https://vercel.com/pvr6675-3816s-projects?upgradeToPro=build-rate-limit"
+      }
+    ]
+  }
+}

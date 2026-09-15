@@ -1,0 +1,178 @@
+{
+  "files": [
+    {
+      "sha": "f8c255df214aedbf67d5927dae35bf9bc223d332",
+      "filename": "validation/BROWSER-AND-DEVICE-MATRIX-EVIDENCE.md",
+      "status": "added",
+      "additions": 117,
+      "deletions": 0,
+      "changes": 117,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/ec738d57a27196ae22dd852ec2ffcb8e8f78d5dd/validation%2FBROWSER-AND-DEVICE-MATRIX-EVIDENCE.md",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/ec738d57a27196ae22dd852ec2ffcb8e8f78d5dd/validation%2FBROWSER-AND-DEVICE-MATRIX-EVIDENCE.md",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/validation%2FBROWSER-AND-DEVICE-MATRIX-EVIDENCE.md?ref=ec738d57a27196ae22dd852ec2ffcb8e8f78d5dd",
+      "patch": "@@ -0,0 +1,117 @@\n+# Browser and device matrix evidence\n+\n+Issue: #219 / ARQ-189  \n+Evidence date: 2026-09-11  \n+Owner: ARQ platform validation  \n+Matrix: `validation/BROWSER-AND-DEVICE-MATRIX.csv`\n+\n+## Evidence-state rule\n+\n+This record separates three kinds of evidence:\n+\n+- **Primary-source capability evidence** says a browser/device vendor ships a capability.\n+- **Repository engine evidence** says ARQ exercised a browser engine or input contract in an automated environment.\n+- **Physical-device release evidence** requires the named shipping browser on the named hardware. It is not satisfied by headless Chromium, synthetic pointer events, or Playwright WebKit.\n+\n+A browser version is never sufficient proof that WebGPU or an input capability is usable on a particular machine. Release validation must combine the version policy with runtime capability detection and measured device evidence.\n+\n+## Primary-source evidence\n+\n+### BDM-E01\n+\n+Chrome shipped WebGPU initially in Chrome 113 on ChromeOS/Vulkan, Windows/D3D12 and macOS; Android followed in Chrome 121. Chrome's WebGPU release series records Linux support from Chrome 144 and expanded Linux NVIDIA support in 147-148.\n+\n+Primary evidence: https://developer.chrome.com/docs/web-platform/webgpu/overview and https://developer.chrome.com/blog/new-in-webgpu-149-150\n+\n+### BDM-E02\n+\n+Microsoft documents WebGPU enabled by default from Edge 113 on Mac, Windows and ChromeOS.\n+\n+Primary evidence: https://opensource.microsoft.com/blog/2024/02/29/onnx-runtime-web-unleashes-generative-ai-in-the-browser-using-webgpu/\n+\n+### BDM-E03\n+\n+Safari 26.0 shipped WebGPU on macOS; Safari 26.6 shipped on 2026-07-27 and is the stable Safari evidence point used in this pass.\n+\n+Primary evidence: https://webkit.org/blog/17333/webkit-features-in-safari-26-0/ and https://webkit.org/blog/18178/webkit-features-for-safari-26-6/\n+\n+### BDM-E04\n+\n+Safari 26.0 shipped WebGPU on iPadOS. Apple documents the exact iPad/Pencil combinations that support Apple Pencil hover; Pencil Pro requires iPadOS 17.5+ on its compatible devices.\n+\n+Primary evidence: https://webkit.org/blog/17333/webkit-features-in-safari-26-0/ ; https://support.apple.com/en-ca/guide/ipad/-ipadc55b6c7a/ipados ; https://support.apple.com/en-ca/108937\n+\n+### BDM-E05\n+\n+Firefox 141 shipped WebGPU on Windows. Firefox 147 enabled WebGPU on all supported macOS versions on Apple Silicon. Current Mozilla documentation keeps Linux and Intel macOS in Nightly/flag-enabled territory rather than stable default support.\n+\n+Primary evidence: https://www.mozilla.org/firefox/releasenotes/ ; https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/141 ; https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/147 ; https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features\n+\n+### BDM-E06\n+\n+Safari 26.0 shipped WebGPU on iOS. This capability fact does not change ARQ's existing iPhone viewer/review-only product scope.\n+\n+Primary evidence: https://webkit.org/blog/17333/webkit-features-in-safari-26-0/\n+\n+## Repository evidence reviewed\n+\n+- `package.json` already depends on Playwright and exposes multiple browser capability benchmarks.\n+- `scripts/run-pencil-pointer-capability-check.mjs` intentionally launches **Chromium** and records that it is not physical iPad/Apple Pencil evidence.\n+- `docs/research/PENCIL-WEB-INPUT.md` explicitly states that no physical iPad or Apple Pencil hardware was tested. It distinguishes real Chromium Pointer Events evidence from real iPadOS Safari/Pencil validation.\n+- Issues #201 and #202 preserve that same evidence boundary for Pencil role classification and hover-preview behaviour.\n+\n+This means ARQ already has useful real-browser evidence, but not a cross-browser release gate and not physical Apple-device certification.\n+\n+## Decision register\n+\n+### BDM-D01 \u2014 Capability detection stays authoritative\n+\n+**Status:** accepted for this matrix refresh.  \n+**Decision:** browser/version eligibility is a test-selection rule, not proof that WebGPU is available. Runtime capability detection plus a supported fallback remains required.  \n+**Reason:** GPU availability depends on OS, hardware, driver, browser build and feature status. The matrix must not turn a vendor release note into a machine-specific pass.\n+\n+### BDM-D02 \u2014 Do not expand product platform scope in a research refresh\n+\n+**Status:** accepted.  \n+**Decision:** keep the existing matrix roles intact: desktop Chrome/Edge and Safari surfaces remain `required`, Safari iPadOS remains `required`, Firefox remains `decision required`, and iPhone Safari remains `later` / viewer-and-review-only.  \n+**Reason:** #219 is a validation-matrix task. Browser capability changes are not authority to widen product scope.\n+\n+### BDM-D03 \u2014 Firefox must be decided per OS\n+\n+**Status:** open product decision, tracked in #360.  \n+**Decision for this matrix:** replace the ambiguous Firefox capability text with the current OS-specific evidence and retain `decision required` until #360 records an explicit support envelope.  \n+**Reason:** Windows, Apple Silicon macOS, Intel macOS and Linux do not currently have the same default WebGPU support state.\n+\n+### BDM-D04 \u2014 Physical Safari/iPad evidence is a separate release gate\n+\n+**Status:** open validation work, tracked in #359.  \n+**Decision:** engine-level WebKit or Chromium evidence must not be relabelled as shipping Safari, Apple Pencil, VoiceOver or physical-GPU evidence.  \n+**Reason:** the repository's own Pencil research already documents this limitation.\n+\n+## Contradictions corrected in the draft matrix\n+\n+1. Removed the stale `current 26.5 as of May 2026` wording. Safari 26.6 shipped on 2026-07-27.\n+2. Replaced the broad `M-series or A15+ device` Pencil-hover wording with Apple's exact documented device/Pencil combinations.\n+3. Corrected Firefox macOS support: Firefox 145/146 had narrower Apple Silicon enablement; Firefox 147 is the documented point for all supported macOS versions on Apple Silicon.\n+4. Removed `Android targeted late 2026` from the Firefox row because the current primary evidence reviewed for this pass does not support that product-release claim.\n+5. Updated the Chrome evidence boundary: older overview text said Linux was coming later, while Chrome's subsequent WebGPU release notes record Linux support from Chrome 144 and additional NVIDIA coverage in 147-148.\n+\n+## Required follow-up work\n+\n+- #358 \u2014 add browser-matrix smoke validation across Chromium, WebKit and Firefox. Playwright WebKit is engine evidence, not Safari certification.\n+- #359 \u2014 run physical Safari/macOS and Safari/iPadOS input, accessibility and performance validation on the actual supported hardware.\n+- #360 \u2014 decide the Firefox desktop support envelope per OS and fallback path.\n+\n+## Security, accessibility, performance and licence effects\n+\n+**Security:** WebGPU exposes low-level GPU capability and therefore remains gated by browser security/validation. This refresh does not weaken secure-context, browser or runtime capability checks. Safari's shipping notes explicitly call out security review for WebGPU.\n+\n+**Accessibility:** GPU support alone is not a browser-support pass. Required surfaces still need keyboard/focus and relevant assistive-technology checks. #359 includes physical VoiceOver/keyboard smoke where the product surface requires it; #358 covers engine-level keyboard smoke.\n+\n+**Performance:** WebGPU availability is not equivalent to acceptable ARQ editor performance. Physical-device and sustained-rendering benchmarks remain required before a device/browser combination becomes release evidence.\n+\n+**Licence:** this change adds no dependency and ships no browser binary. Playwright is already a repository dev dependency. Any future browser-test packaging must continue through the repository's existing dependency-licence checks.\n+\n+## Completion state for #219\n+\n+The research matrix is now evidence-linked, stale capability claims are corrected, product-scope decisions are not silently widened, and every unresolved validation/implementation decision has a bounded follow-up issue. Physical-device results remain explicitly **not yet verified** and belong to #359 rather than being fabricated here."
+    },
+    {
+      "sha": "d30dd9c595a7904a7e981610150ffbbf86b46bac",
+      "filename": "validation/BROWSER-AND-DEVICE-MATRIX.csv",
+      "status": "modified",
+      "additions": 7,
+      "deletions": 7,
+      "changes": 14,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/ec738d57a27196ae22dd852ec2ffcb8e8f78d5dd/validation%2FBROWSER-AND-DEVICE-MATRIX.csv",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/ec738d57a27196ae22dd852ec2ffcb8e8f78d5dd/validation%2FBROWSER-AND-DEVICE-MATRIX.csv",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/validation%2FBROWSER-AND-DEVICE-MATRIX.csv?ref=ec738d57a27196ae22dd852ec2ffcb8e8f78d5dd",
+      "patch": "@@ -1,7 +1,7 @@\n-platform,versionPolicy,input,status,webgpuSupport,notes\n-Chrome desktop,current and previous major after testing,\"mouse, keyboard, touch where hardware\",required,\"Yes, since Chrome 113 (2023)\",\"WebGPU shipping by default; safe rendering-path baseline.\"\n-Edge desktop,current and previous major after testing,\"mouse, keyboard, touch\",required,\"Yes, since Edge 113 (2023)\",\"Chromium-based, tracks Chrome's WebGPU timeline.\"\n-Safari macOS,supported OS versions after benchmark,\"mouse, keyboard, trackpad\",required,\"Yes, since Safari 26 / macOS Tahoe 26 (Sep 2025)\",\"Pre-Safari 26 macOS falls back to WebGL; confirm real-device benchmark before treating WebGPU as the default path here.\"\n-Safari iPadOS,selected iPadOS and devices,\"touch, Pencil, keyboard, trackpad\",required,\"Yes, since Safari 26 / iPadOS 26 (Sep 2025, current 26.5 as of May 2026)\",\"Apple Pencil Pro hover/barrel-roll/squeeze needs iPadOS 17.5+ on an M-series or A15+ device; iPadOS 26 needed for the hover gesture set referenced in the design system. Devices: iPad Pro 11-/13-inch (M4/M5), iPad Air (M2/M3/M4).\"\n-Firefox desktop,research and test,\"mouse, keyboard\",decision required,\"Partial: Windows since Firefox 141 (2025); macOS Apple Silicon since Firefox 145 (2025); Android targeted late 2026\",\"No Intel-Mac or Linux WebGPU yet as of this research pass; decide whether Firefox gets full support now (WebGL fallback) or is deferred until WebGPU lands everywhere it needs to.\"\n-iPhone Safari,viewer and review only,touch,later,\"Yes, since Safari 26 / iOS 26 (Sep 2025)\",\"WebGPU capability exists but iPhone stays viewer/review-only per the product decision (ARQ-171 through ARQ-173 scope authoring to iPad, not iPhone).\"\n+platform,versionPolicy,input,status,webgpuSupport,evidenceId,notes\n+Chrome desktop,current and previous major after testing,\"mouse, keyboard, touch where hardware\",required,\"Default from Chrome 113 on ChromeOS with Vulkan, Windows with Direct3D 12, and macOS; Linux WebGPU added from Chrome 144 with NVIDIA expansion in 147-148. Runtime capability detection is still required.\",BDM-E01,\"Do not treat browser version alone as hardware support. Keep the WebGL fallback and require measured browser/device evidence for release claims.\"\n+Edge desktop,current and previous major after testing,\"mouse, keyboard, touch\",required,\"Microsoft documents WebGPU enabled by default from Edge 113 on Mac, Windows, and ChromeOS. Runtime capability detection is still required.\",BDM-E02,\"Validate Edge itself. Do not infer untested OS/GPU combinations from Chrome simply because Edge is Chromium-based.\"\n+Safari macOS,\"Safari 26+ on supported macOS after benchmark\",\"mouse, keyboard, trackpad\",required,\"WebGPU ships from Safari 26.0. Safari 26.6 is the current stable evidence point used by this matrix as of 2026-09-11.\",BDM-E03,\"Pre-Safari 26 requires the WebGL fallback. Physical Mac performance and accessibility validation is tracked in #359.\"\n+Safari iPadOS,\"Safari 26+ on selected iPadOS devices after benchmark\",\"touch, Pencil, keyboard, trackpad\",required,\"WebGPU ships from Safari 26.0 on iPadOS.\",BDM-E04,\"Apple Pencil hover is model-specific. Validate only documented combinations: iPad Pro 11-inch (4th generation) and iPad Pro 12.9-inch (6th generation) with Apple Pencil (2nd generation); iPad mini (A17 Pro), iPad Air 11/13-inch (M2, M3, M4), and iPad Pro 11/13-inch (M4, M5) with Apple Pencil Pro. Physical validation is tracked in #359.\"\n+Firefox desktop,research and test,\"mouse, keyboard\",decision required,\"Stable WebGPU support is documented on Windows from Firefox 141 and on Apple Silicon macOS from Firefox 147. Linux and Intel macOS remain Nightly/flag-only in current Mozilla evidence.\",BDM-E05,\"The prior Android-target claim is removed because current primary evidence does not support it. Per-OS product support is tracked in #360; automated engine smoke coverage is tracked in #358.\"\n+iPhone Safari,viewer and review only,touch,later,\"WebGPU ships from Safari 26.0 on iOS.\",BDM-E06,\"WebGPU capability does not change the existing viewer/review-only product scope.\""
+    }
+  ],
+  "reviews": [],
+  "detail": {
+    "baseRefOid": "5f965f7678a09e1fbd9a81d51778236fce682736",
+    "body": "## Summary\n\nCompletes the research/validation deliverable for #219 without changing runtime behaviour or widening ARQ's platform promises.\n\n### Matrix corrections\n\n- refreshes Safari evidence from the stale 26.5/May 2026 wording to Safari 26.6 as the stable evidence point used in this pass\n- replaces the broad Apple Pencil `M-series or A15+` wording with Apple's exact documented hover-capable model/Pencil combinations\n- corrects Firefox WebGPU support by OS: Windows stable from Firefox 141, Apple Silicon macOS from Firefox 147, with Linux/Intel macOS still non-default/experimental in current Mozilla evidence\n- removes the unsupported `Android targeted late 2026` Firefox claim\n- updates Chrome's Linux WebGPU history using the later Chrome WebGPU release record\n- preserves the existing iPhone viewer/review-only scope and the existing required/decision-required statuses\n\n### Evidence and decision record\n\nAdds `validation/BROWSER-AND-DEVICE-MATRIX-EVIDENCE.md` with:\n\n- primary vendor sources for every capability row\n- explicit evidence-state boundaries between vendor capability, browser-engine tests and physical-device release evidence\n- a bounded decision register for capability detection, platform-scope preservation, Firefox OS-specific support and physical Safari/iPad validation\n- security, accessibility, performance and licence effects\n- the contradictions corrected by this pass\n\n### Follow-up issues\n\n- #358 \u2014 automated Chromium/WebKit/Firefox browser-matrix smoke coverage\n- #359 \u2014 physical Safari/macOS + Safari/iPadOS input, accessibility and performance validation\n- #360 \u2014 explicit Firefox desktop support envelope per OS/fallback path\n\n## Validation\n\n- branch is based on current `main` and is 0 commits behind at PR creation\n- diff is limited to the browser/device matrix and its evidence record\n- CSV parses as seven columns for the header and every data row\n- no dependency, runtime, renderer, deployment or product-scope mutation\n- no physical iPad/Safari result is claimed; that evidence remains explicitly unverified and is routed to #359\n\nCloses #219",
+    "headRefOid": "ec738d57a27196ae22dd852ec2ffcb8e8f78d5dd",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 362,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:08:53Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158544/job/103387754438",
+        "name": "build",
+        "startedAt": "2026-09-11T19:08:13Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:22Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158589/job/103388004826",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-09-11T19:08:50Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:08:49Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158428/job/103387929890",
+        "name": "classify",
+        "startedAt": "2026-09-11T19:08:36Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:08:11Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158863/job/103387736341",
+        "name": "secret-scan",
+        "startedAt": "2026-09-11T19:07:58Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:20Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158589/job/103388004919",
+        "name": "test",
+        "startedAt": "2026-09-11T19:08:51Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:09:15Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158428/job/103388007381",
+        "name": "preflight",
+        "startedAt": "2026-09-11T19:08:52Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:08:49Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158428/job/103388008727",
+        "name": "critical-approval",
+        "startedAt": "2026-09-11T19:08:49Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:15:00Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158589/job/103388004869",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-09-11T19:08:51Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:09:15Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158589/job/103388004553",
+        "name": "language-system",
+        "startedAt": "2026-09-11T19:08:50Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:01Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158428/job/103388135740",
+        "name": "selected-evidence",
+        "startedAt": "2026-09-11T19:09:17Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:09:14Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158589/job/103388004843",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-09-11T19:08:51Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:15Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158428/job/103388366949",
+        "name": "engineering-gate",
+        "startedAt": "2026-09-11T19:10:03Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:09:13Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637158589/job/103388004875",
+        "name": "rust-test",
+        "startedAt": "2026-09-11T19:08:53Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-09-11T19:07:52Z",
+        "state": "FAILURE",
+        "targetUrl": "https://vercel.com/pvr6675-3816s-projects?upgradeToPro=build-rate-limit"
+      }
+    ]
+  }
+}

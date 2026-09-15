@@ -1,0 +1,258 @@
+{
+  "files": [
+    {
+      "sha": "227e722140c6efce0f2ca41b84356add56ac544f",
+      "filename": ".github/workflows/benchmark.yml",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fbenchmark.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fbenchmark.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fbenchmark.yml?ref=2d41567e6a89c2a43b48a6b8773a9ce08cb227c7",
+      "patch": "@@ -15,7 +15,7 @@ jobs:\n   render-frame:\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: pnpm/action-setup@v4\n       - uses: actions/setup-node@v4\n         with:"
+    },
+    {
+      "sha": "c176582ede511ffdc05c03117f0a64f4b221d93c",
+      "filename": ".github/workflows/build.yml",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fbuild.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fbuild.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fbuild.yml?ref=2d41567e6a89c2a43b48a6b8773a9ce08cb227c7",
+      "patch": "@@ -21,7 +21,7 @@ jobs:\n   build:\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: pnpm/action-setup@v4\n       - uses: actions/setup-node@v4\n         with:"
+    },
+    {
+      "sha": "3e4b9b7bfdaceecee9ef9331d0d03f5a6bfc5c35",
+      "filename": ".github/workflows/ci.yml",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 6,
+      "changes": 12,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fci.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fci.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fci.yml?ref=2d41567e6a89c2a43b48a6b8773a9ce08cb227c7",
+      "patch": "@@ -28,7 +28,7 @@ jobs:\n       # fetch-depth 0 so the decision-id check below can read the base tree.\n       # A shallow clone cannot, and the base comparison is the half that catches\n       # an identifier taken by work that merged after the branch was opened.\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n         with:\n           fetch-depth: 0\n       - uses: pnpm/action-setup@v4\n@@ -66,7 +66,7 @@ jobs:\n   test:\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: pnpm/action-setup@v4\n       - uses: actions/setup-node@v4\n         with:\n@@ -84,7 +84,7 @@ jobs:\n   browser-capability-checks:\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: pnpm/action-setup@v4\n       - uses: actions/setup-node@v4\n         with:\n@@ -157,7 +157,7 @@ jobs:\n   language-system:\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: pnpm/action-setup@v4\n       - uses: actions/setup-node@v4\n         with:\n@@ -195,7 +195,7 @@ jobs:\n   dependency-licence-scan:\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: pnpm/action-setup@v4\n       - uses: actions/setup-node@v4\n         with:\n@@ -211,7 +211,7 @@ jobs:\n   rust-test:\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: dtolnay/rust-toolchain@stable\n         with:\n           components: rustfmt, clippy"
+    },
+    {
+      "sha": "7000bb1afbd86f66415ac93ed755df5c1092330d",
+      "filename": ".github/workflows/deploy-pages.yml",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fdeploy-pages.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fdeploy-pages.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fdeploy-pages.yml?ref=2d41567e6a89c2a43b48a6b8773a9ce08cb227c7",
+      "patch": "@@ -46,7 +46,7 @@ jobs:\n   build:\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: pnpm/action-setup@v4\n       - uses: actions/setup-node@v4\n         with:\n@@ -116,7 +116,7 @@ jobs:\n     needs: deploy\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: pnpm/action-setup@v4\n       - uses: actions/setup-node@v4\n         with:"
+    },
+    {
+      "sha": "6cca46f73f9819ed44674668ac93dc92b6c82496",
+      "filename": ".github/workflows/engineering-gate.yml",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 4,
+      "changes": 8,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fengineering-gate.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fengineering-gate.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fengineering-gate.yml?ref=2d41567e6a89c2a43b48a6b8773a9ce08cb227c7",
+      "patch": "@@ -37,7 +37,7 @@ jobs:\n       required_evidence: ${{ steps.classify.outputs.required_evidence }}\n       needs_l4_approval: ${{ steps.classify.outputs.needs_l4_approval }}\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n         with:\n           fetch-depth: 0\n       - uses: actions/setup-node@v4\n@@ -73,7 +73,7 @@ jobs:\n     needs: classify\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: pnpm/action-setup@v4\n       - uses: actions/setup-node@v4\n         with:\n@@ -95,7 +95,7 @@ jobs:\n     steps:\n       # Full history: the repository_binding evidence verifies that the audited\n       # baseline commit is an ancestor of HEAD, which a shallow clone cannot see.\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n         with:\n           fetch-depth: 0\n       - uses: pnpm/action-setup@v4\n@@ -152,7 +152,7 @@ jobs:\n     needs: [classify, preflight, selected-evidence, critical-approval]\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: actions/setup-node@v4\n         with:\n           node-version: 20"
+    },
+    {
+      "sha": "2b52ab272c54b229e58c65a155e709a645b395db",
+      "filename": ".github/workflows/security.yml",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fsecurity.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fsecurity.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fsecurity.yml?ref=2d41567e6a89c2a43b48a6b8773a9ce08cb227c7",
+      "patch": "@@ -24,7 +24,7 @@ jobs:\n   secret-scan:\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: actions/setup-node@v4\n         with:\n           node-version: 20"
+    },
+    {
+      "sha": "d91a6793d094ab3d81dff5ad21b0115f2d8b1d5f",
+      "filename": ".github/workflows/verify-deployment-routes.yml",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fverify-deployment-routes.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7/.github%2Fworkflows%2Fverify-deployment-routes.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fverify-deployment-routes.yml?ref=2d41567e6a89c2a43b48a6b8773a9ce08cb227c7",
+      "patch": "@@ -49,7 +49,7 @@ jobs:\n   verify-routes:\n     runs-on: ubuntu-latest\n     steps:\n-      - uses: actions/checkout@v4\n+      - uses: actions/checkout@v7\n       - uses: actions/setup-node@v4\n         with:\n           node-version: 20"
+    }
+  ],
+  "reviews": [],
+  "detail": {
+    "baseRefOid": "82dfc1fb7c4fe1b11a4df57c4454fa0fea4e8229",
+    "body": "Bumps [actions/checkout](https://github.com/actions/checkout) from 4 to 7.\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/actions/checkout/releases\">actions/checkout's releases</a>.</em></p>\n<blockquote>\n<h2>v7.0.0</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>block checking out fork pr for pull_request_target and workflow_run by <a href=\"https://github.com/aiqiaoy\"><code>@\u200baiqiaoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2454\">actions/checkout#2454</a></li>\n<li>Bump actions/publish-immutable-action from 0.0.3 to 0.0.4 in the minor-actions-dependencies group across 1 directory by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a>[bot] in <a href=\"https://redirect.github.com/actions/checkout/pull/2458\">actions/checkout#2458</a></li>\n<li>Bump flatted from 3.3.1 to 3.4.2 by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a>[bot] in <a href=\"https://redirect.github.com/actions/checkout/pull/2460\">actions/checkout#2460</a></li>\n<li>Bump js-yaml from 4.1.0 to 4.2.0 by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a>[bot] in <a href=\"https://redirect.github.com/actions/checkout/pull/2461\">actions/checkout#2461</a></li>\n<li>Bump <code>@\u200bactions/core</code> and <code>@\u200bactions/tool-cache</code> and Remove uuid by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a>[bot] in <a href=\"https://redirect.github.com/actions/checkout/pull/2459\">actions/checkout#2459</a></li>\n<li>upgrade module to esm and update dependencies by <a href=\"https://github.com/aiqiaoy\"><code>@\u200baiqiaoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2463\">actions/checkout#2463</a></li>\n<li>Bump the minor-npm-dependencies group across 1 directory with 3 updates by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a>[bot] in <a href=\"https://redirect.github.com/actions/checkout/pull/2462\">actions/checkout#2462</a></li>\n<li>getting ready for checkout v7 release by <a href=\"https://github.com/aiqiaoy\"><code>@\u200baiqiaoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2464\">actions/checkout#2464</a></li>\n<li>update error wording by <a href=\"https://github.com/aiqiaoy\"><code>@\u200baiqiaoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2467\">actions/checkout#2467</a></li>\n</ul>\n<h2>New Contributors</h2>\n<ul>\n<li><a href=\"https://github.com/aiqiaoy\"><code>@\u200baiqiaoy</code></a> made their first contribution in <a href=\"https://redirect.github.com/actions/checkout/pull/2454\">actions/checkout#2454</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/checkout/compare/v6.0.3...v7.0.0\">https://github.com/actions/checkout/compare/v6.0.3...v7.0.0</a></p>\n<h2>v6.1.0</h2>\n<h2>What's Changed</h2>\n<ul>\n<li><strong>[BREAKING]</strong> backport <code>allow-unsafe-pr-checkout</code> to v6 by <a href=\"https://github.com/aiqiaoy\"><code>@\u200baiqiaoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2500\">actions/checkout#2500</a></li>\n<li>backport fixes to releases-v6 by <a href=\"https://github.com/aiqiaoy\"><code>@\u200baiqiaoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2527\">actions/checkout#2527</a></li>\n</ul>\n<p><a href=\"https://github.blog/changelog/2026-06-18-safer-pull_request_target-defaults-for-github-actions-checkout/\">https://github.blog/changelog/2026-06-18-safer-pull_request_target-defaults-for-github-actions-checkout/</a> for more details about this breaking change</p>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/checkout/compare/v6.0.3...v6.1.0\">https://github.com/actions/checkout/compare/v6.0.3...v6.1.0</a></p>\n<h2>v6.0.3</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>Update changelog by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2357\">actions/checkout#2357</a></li>\n<li>fix: expand merge commit SHA regex and add SHA-256 test cases by <a href=\"https://github.com/yaananth\"><code>@\u200byaananth</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2414\">actions/checkout#2414</a></li>\n<li>Fix checkout init for SHA-256 repositories by <a href=\"https://github.com/yaananth\"><code>@\u200byaananth</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2439\">actions/checkout#2439</a></li>\n<li>Update changelog for v6.0.3 by <a href=\"https://github.com/yaananth\"><code>@\u200byaananth</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2446\">actions/checkout#2446</a></li>\n</ul>\n<h2>New Contributors</h2>\n<ul>\n<li><a href=\"https://github.com/yaananth\"><code>@\u200byaananth</code></a> made their first contribution in <a href=\"https://redirect.github.com/actions/checkout/pull/2414\">actions/checkout#2414</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/checkout/compare/v6...v6.0.3\">https://github.com/actions/checkout/compare/v6...v6.0.3</a></p>\n<h2>v6.0.2</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>Add orchestration_id to git user-agent when ACTIONS_ORCHESTRATION_ID is set by <a href=\"https://github.com/TingluoHuang\"><code>@\u200bTingluoHuang</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2355\">actions/checkout#2355</a></li>\n<li>Fix tag handling: preserve annotations and explicit fetch-tags by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2356\">actions/checkout#2356</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/checkout/compare/v6.0.1...v6.0.2\">https://github.com/actions/checkout/compare/v6.0.1...v6.0.2</a></p>\n<h2>v6.0.1</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>Update all references from v5 and v4 to v6 by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2314\">actions/checkout#2314</a></li>\n<li>Add worktree support for persist-credentials includeIf by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2327\">actions/checkout#2327</a></li>\n<li>Clarify v6 README by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2328\">actions/checkout#2328</a></li>\n</ul>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Changelog</summary>\n<p><em>Sourced from <a href=\"https://github.com/actions/checkout/blob/main/CHANGELOG.md\">actions/checkout's changelog</a>.</em></p>\n<blockquote>\n<h1>Changelog</h1>\n<h2>v7.0.1</h2>\n<ul>\n<li>Skip running unsafe pr check if input is default by <a href=\"https://github.com/aiqiaoy\"><code>@\u200baiqiaoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2518\">actions/checkout#2518</a></li>\n<li>Trim only ascii whitespace for branch by <a href=\"https://github.com/aiqiaoy\"><code>@\u200baiqiaoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2521\">actions/checkout#2521</a></li>\n<li>Escape values passed to --unset by <a href=\"https://github.com/aiqiaoy\"><code>@\u200baiqiaoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2530\">actions/checkout#2530</a></li>\n<li>Various dependency updates</li>\n</ul>\n<h2>v7.0.0</h2>\n<ul>\n<li>Block checking out fork PR for pull_request_target and workflow_run by <a href=\"https://github.com/aiqiaoy\"><code>@\u200baiqiaoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2454\">actions/checkout#2454</a></li>\n<li>Various dependency updates</li>\n</ul>\n<h2>v6.0.3</h2>\n<ul>\n<li>Fix checkout init for SHA-256 repositories by <a href=\"https://github.com/yaananth\"><code>@\u200byaananth</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2439\">actions/checkout#2439</a></li>\n<li>fix: expand merge commit SHA regex and add SHA-256 test cases by <a href=\"https://github.com/yaananth\"><code>@\u200byaananth</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2414\">actions/checkout#2414</a></li>\n</ul>\n<h2>v6.0.2</h2>\n<ul>\n<li>Fix tag handling: preserve annotations and explicit fetch-tags by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2356\">actions/checkout#2356</a></li>\n</ul>\n<h2>v6.0.1</h2>\n<ul>\n<li>Add worktree support for persist-credentials includeIf by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2327\">actions/checkout#2327</a></li>\n</ul>\n<h2>v6.0.0</h2>\n<ul>\n<li>Persist creds to a separate file by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2286\">actions/checkout#2286</a></li>\n<li>Update README to include Node.js 24 support details and requirements by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2248\">actions/checkout#2248</a></li>\n</ul>\n<h2>v5.0.1</h2>\n<ul>\n<li>Port v6 cleanup to v5 by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2301\">actions/checkout#2301</a></li>\n</ul>\n<h2>v5.0.0</h2>\n<ul>\n<li>Update actions checkout to use node 24 by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2226\">actions/checkout#2226</a></li>\n</ul>\n<h2>v4.3.1</h2>\n<ul>\n<li>Port v6 cleanup to v4 by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2305\">actions/checkout#2305</a></li>\n</ul>\n<h2>v4.3.0</h2>\n<ul>\n<li>docs: update README.md by <a href=\"https://github.com/motss\"><code>@\u200bmotss</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1971\">actions/checkout#1971</a></li>\n<li>Add internal repos for checking out multiple repositories by <a href=\"https://github.com/mouismail\"><code>@\u200bmouismail</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1977\">actions/checkout#1977</a></li>\n<li>Documentation update - add recommended permissions to Readme by <a href=\"https://github.com/benwells\"><code>@\u200bbenwells</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2043\">actions/checkout#2043</a></li>\n<li>Adjust positioning of user email note and permissions heading by <a href=\"https://github.com/joshmgross\"><code>@\u200bjoshmgross</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2044\">actions/checkout#2044</a></li>\n<li>Update README.md by <a href=\"https://github.com/nebuk89\"><code>@\u200bnebuk89</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2194\">actions/checkout#2194</a></li>\n<li>Update CODEOWNERS for actions by <a href=\"https://github.com/TingluoHuang\"><code>@\u200bTingluoHuang</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2224\">actions/checkout#2224</a></li>\n<li>Update package dependencies by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2236\">actions/checkout#2236</a></li>\n</ul>\n<h2>v4.2.2</h2>\n<ul>\n<li><code>url-helper.ts</code> now leverages well-known environment variables by <a href=\"https://github.com/jww3\"><code>@\u200bjww3</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1941\">actions/checkout#1941</a></li>\n<li>Expand unit test coverage for <code>isGhes</code> by <a href=\"https://github.com/jww3\"><code>@\u200bjww3</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1946\">actions/checkout#1946</a></li>\n</ul>\n<h2>v4.2.1</h2>\n<ul>\n<li>Check out other refs/* by commit if provided, fall back to ref by <a href=\"https://github.com/orhantoy\"><code>@\u200borhantoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1924\">actions/checkout#1924</a></li>\n</ul>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/actions/checkout/commit/3d3c42e5aac5ba805825da76410c181273ba90b1\"><code>3d3c42e</code></a> prep v7.0.1 release (<a href=\"https://redirect.github.com/actions/checkout/issues/2531\">#2531</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/28802689a136bfcdb721715abd713740beecbe07\"><code>2880268</code></a> escape values passed to --unset (<a href=\"https://redirect.github.com/actions/checkout/issues/2530\">#2530</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/12cd2235efa0937479335606d7c3ac9f6c0973b1\"><code>12cd223</code></a> trim only ascii whitespace for branch (<a href=\"https://redirect.github.com/actions/checkout/issues/2521\">#2521</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/62661c4e71a304b2823ed026347b8d34c3eac541\"><code>62661c4</code></a> skip running unsafe pr check if input is default (<a href=\"https://redirect.github.com/actions/checkout/issues/2518\">#2518</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/e8d4307400f9427dba7cb98e488d6ab85f1cec5f\"><code>e8d4307</code></a> Bump the minor-actions-dependencies group with 2 updates (<a href=\"https://redirect.github.com/actions/checkout/issues/2499\">#2499</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/631c942040754b6e095e929c1677c07e10ed4f87\"><code>631c942</code></a> eslint 9 (<a href=\"https://redirect.github.com/actions/checkout/issues/2474\">#2474</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/4f1f4aec02e41874fa0262ea8ff5172d7978ad1e\"><code>4f1f4ae</code></a> Bump actions/upload-artifact from 4 to 7 (<a href=\"https://redirect.github.com/actions/checkout/issues/2476\">#2476</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/ba097532fb203f7e88c9c3c0b899b49469908a92\"><code>ba09753</code></a> Bump actions/checkout from 6 to 7 (<a href=\"https://redirect.github.com/actions/checkout/issues/2488\">#2488</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/b9e0990d219a03df7633c93f6f005a8fecbcab22\"><code>b9e0990</code></a> Bump docker/login-action from 3.3.0 to 4.2.0 (<a href=\"https://redirect.github.com/actions/checkout/issues/2479\">#2479</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/e8cb398be4a550817e382abf69e4c12c76fce1f2\"><code>e8cb398</code></a> Bump docker/build-push-action from 6.5.0 to 7.2.0 (<a href=\"https://redirect.github.com/actions/checkout/issues/2478\">#2478</a>)</li>\n<li>Additional commits viewable in <a href=\"https://github.com/actions/checkout/compare/v4...v7\">compare view</a></li>\n</ul>\n</details>\n<br />\n\n\n> **Note**\n> Automatic rebases have been disabled on this pull request as it has been open for over 30 days.\n",
+    "headRefOid": "2d41567e6a89c2a43b48a6b8773a9ce08cb227c7",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 254,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:26:39Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189605/job/92354594969",
+        "name": "verify-routes",
+        "startedAt": "2026-08-05T15:26:07Z",
+        "status": "COMPLETED",
+        "workflowName": "Verify deployment routes"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:26:10Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189575/job/92354594718",
+        "name": "build",
+        "startedAt": "2026-08-05T15:25:25Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:28:50Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189509/job/92354594555",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-08-05T15:25:51Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:25:44Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189583/job/92354595034",
+        "name": "classify",
+        "startedAt": "2026-08-05T15:25:29Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:25:48Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189533/job/92354594414",
+        "name": "secret-scan",
+        "startedAt": "2026-08-05T15:25:32Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:26:24Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189583/job/92354761193",
+        "name": "preflight",
+        "startedAt": "2026-08-05T15:26:00Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:27:52Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189509/job/92354594360",
+        "name": "test",
+        "startedAt": "2026-08-05T15:25:24Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:28:34Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189509/job/92354594538",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-08-05T15:25:46Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:26:09Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189583/job/92354761341",
+        "name": "critical-approval",
+        "startedAt": "2026-08-05T15:26:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:26:14Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189509/job/92354594625",
+        "name": "language-system",
+        "startedAt": "2026-08-05T15:25:49Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:26:24Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189583/job/92354953752",
+        "name": "selected-evidence",
+        "startedAt": "2026-08-05T15:26:24Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:26:54Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189583/job/92354953620",
+        "name": "engineering-gate",
+        "startedAt": "2026-08-05T15:26:38Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:26:05Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189509/job/92354594453",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-08-05T15:25:36Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:26:01Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31020189509/job/92354594487",
+        "name": "rust-test",
+        "startedAt": "2026-08-05T15:25:38Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-08-05T15:26:24Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://vercel.com/pvr6675-3816s-projects/arq-website/DMcJKwp2XRt4nJ5TmPX7RLTxYBd6"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-05T15:26:25Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://vercel.com/github",
+        "name": "Vercel Preview Comments",
+        "startedAt": "2026-08-05T15:26:25Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ]
+  }
+}

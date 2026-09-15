@@ -1,0 +1,200 @@
+{
+  "files": [
+    {
+      "sha": "7aa9c2c3304aa8ded9bb8e89bd90b5f77bb1d2df",
+      "filename": ".github/workflows/benchmark.yml",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/5a33d8ec641cea0bf594360a0592806d8f302dd5/.github%2Fworkflows%2Fbenchmark.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/5a33d8ec641cea0bf594360a0592806d8f302dd5/.github%2Fworkflows%2Fbenchmark.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fbenchmark.yml?ref=5a33d8ec641cea0bf594360a0592806d8f302dd5",
+      "patch": "@@ -24,7 +24,7 @@ jobs:\n       - run: pnpm install --frozen-lockfile\n       - run: npx playwright install --with-deps chromium\n       - run: pnpm benchmark:render-frame\n-      - uses: actions/upload-artifact@v4\n+      - uses: actions/upload-artifact@v7\n         if: always()\n         with:\n           name: render-frame-benchmark-results"
+    },
+    {
+      "sha": "95caedb6047d1d8ec32e890a53a47f7e4f095e98",
+      "filename": ".github/workflows/ci.yml",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/5a33d8ec641cea0bf594360a0592806d8f302dd5/.github%2Fworkflows%2Fci.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/5a33d8ec641cea0bf594360a0592806d8f302dd5/.github%2Fworkflows%2Fci.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fci.yml?ref=5a33d8ec641cea0bf594360a0592806d8f302dd5",
+      "patch": "@@ -170,7 +170,7 @@ jobs:\n       # checks both halves - that the chunk is absent until the command runs,\n       # and that running it produces a PDF with drawn geometry.\n       - run: pnpm benchmark:sheet-export\n-      - uses: actions/upload-artifact@v4\n+      - uses: actions/upload-artifact@v7\n         if: always()\n         with:\n           name: browser-capability-check-results\n@@ -242,7 +242,7 @@ jobs:\n       # is not tracked in git.\n       - run: pnpm check:notice-attribution:test\n       - run: pnpm check:notice-attribution\n-      - uses: actions/upload-artifact@v4\n+      - uses: actions/upload-artifact@v7\n         with:\n           name: dependency-sbom\n           path: dependency-sbom.json"
+    },
+    {
+      "sha": "ed259f25c962d97342e449d4871ac174d8241deb",
+      "filename": ".github/workflows/engineering-gate.yml",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 4,
+      "changes": 8,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/5a33d8ec641cea0bf594360a0592806d8f302dd5/.github%2Fworkflows%2Fengineering-gate.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/5a33d8ec641cea0bf594360a0592806d8f302dd5/.github%2Fworkflows%2Fengineering-gate.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fengineering-gate.yml?ref=5a33d8ec641cea0bf594360a0592806d8f302dd5",
+      "patch": "@@ -6,7 +6,7 @@\n # packageManager field pins pnpm@9), matching every other workflow in this repo;\n # and the classification/evidence/decision files are written WITHOUT a leading\n # dot \u2014 the reference template uploaded dot-prefixed files, which\n-# actions/upload-artifact@v4 silently excludes by default (hidden-file policy),\n+# actions/upload-artifact@v7 silently excludes by default (hidden-file policy),\n # so every classify run failed at the upload step with \"No files were found\".\n #\n # Shadow mode means: this workflow runs on every PR and merge-group but is NOT a\n@@ -63,7 +63,7 @@ jobs:\n             --head-sha \"$head_sha\" \\\n             --output engineering-classification.json \\\n             --github-output \"$GITHUB_OUTPUT\"\n-      - uses: actions/upload-artifact@v4\n+      - uses: actions/upload-artifact@v7\n         with:\n           name: engineering-classification\n           path: engineering-classification.json\n@@ -131,7 +131,7 @@ jobs:\n           --catalog engineering/ops/evidence-catalog.v5.json\n           --repo-root .\n           --output engineering-selected-evidence.json\n-      - uses: actions/upload-artifact@v4\n+      - uses: actions/upload-artifact@v7\n         with:\n           name: engineering-selected-evidence\n           path: engineering-selected-evidence.json\n@@ -183,7 +183,7 @@ jobs:\n           --jobs-file .engineering-artifacts/evidence/engineering-selected-evidence.json\n           --job protected_l4_approval=${{ needs['critical-approval'].result }}\n           --output engineering-evidence-decision.json\n-      - uses: actions/upload-artifact@v4\n+      - uses: actions/upload-artifact@v7\n         if: always()\n         with:\n           name: engineering-evidence-decision"
+    }
+  ],
+  "reviews": [],
+  "detail": {
+    "baseRefOid": "221c33bdb3a32c1fb7fcf9ccbeb7ecf04566eb10",
+    "body": "Bumps [actions/upload-artifact](https://github.com/actions/upload-artifact) from 4 to 7.\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/actions/upload-artifact/releases\">actions/upload-artifact's releases</a>.</em></p>\n<blockquote>\n<h2>v7.0.0</h2>\n<h2>v7 What's new</h2>\n<h3>Direct Uploads</h3>\n<p>Adds support for uploading single files directly (unzipped). Callers can set the new <code>archive</code> parameter to <code>false</code> to skip zipping the file during upload. Right now, we only support single files. The action will fail if the glob passed resolves to multiple files. The <code>name</code> parameter is also ignored with this setting. Instead, the name of the artifact will be the name of the uploaded file.</p>\n<h3>ESM</h3>\n<p>To support new versions of the <code>@actions/*</code> packages, we've upgraded the package to ESM.</p>\n<h2>What's Changed</h2>\n<ul>\n<li>Add proxy integration test by <a href=\"https://github.com/Link\"><code>@\u200bLink</code></a>- in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/754\">actions/upload-artifact#754</a></li>\n<li>Upgrade the module to ESM and bump dependencies by <a href=\"https://github.com/danwkennedy\"><code>@\u200bdanwkennedy</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/762\">actions/upload-artifact#762</a></li>\n<li>Support direct file uploads by <a href=\"https://github.com/danwkennedy\"><code>@\u200bdanwkennedy</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/764\">actions/upload-artifact#764</a></li>\n</ul>\n<h2>New Contributors</h2>\n<ul>\n<li><a href=\"https://github.com/Link\"><code>@\u200bLink</code></a>- made their first contribution in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/754\">actions/upload-artifact#754</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/upload-artifact/compare/v6...v7.0.0\">https://github.com/actions/upload-artifact/compare/v6...v7.0.0</a></p>\n<h2>v6.0.0</h2>\n<h2>v6 - What's new</h2>\n<blockquote>\n<p>[!IMPORTANT]\nactions/upload-artifact@v6 now runs on Node.js 24 (<code>runs.using: node24</code>) and requires a minimum Actions Runner version of 2.327.1. If you are using self-hosted runners, ensure they are updated before upgrading.</p>\n</blockquote>\n<h3>Node.js 24</h3>\n<p>This release updates the runtime to Node.js 24. v5 had preliminary support for Node.js 24, however this action was by default still running on Node.js 20. Now this action by default will run on Node.js 24.</p>\n<h2>What's Changed</h2>\n<ul>\n<li>Upload Artifact Node 24 support by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/719\">actions/upload-artifact#719</a></li>\n<li>fix: update <code>@\u200bactions/artifact</code> for Node.js 24 punycode deprecation by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/744\">actions/upload-artifact#744</a></li>\n<li>prepare release v6.0.0 for Node.js 24 support by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/745\">actions/upload-artifact#745</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/upload-artifact/compare/v5.0.0...v6.0.0\">https://github.com/actions/upload-artifact/compare/v5.0.0...v6.0.0</a></p>\n<h2>v5.0.0</h2>\n<h2>What's Changed</h2>\n<p><strong>BREAKING CHANGE:</strong> this update supports Node <code>v24.x</code>. This is not a breaking change per-se but we're treating it as such.</p>\n<ul>\n<li>Update README.md by <a href=\"https://github.com/GhadimiR\"><code>@\u200bGhadimiR</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/681\">actions/upload-artifact#681</a></li>\n<li>Update README.md by <a href=\"https://github.com/nebuk89\"><code>@\u200bnebuk89</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/712\">actions/upload-artifact#712</a></li>\n<li>Readme: spell out the first use of GHES by <a href=\"https://github.com/danwkennedy\"><code>@\u200bdanwkennedy</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/727\">actions/upload-artifact#727</a></li>\n<li>Update GHES guidance to include reference to Node 20 version by <a href=\"https://github.com/patrikpolyak\"><code>@\u200bpatrikpolyak</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/725\">actions/upload-artifact#725</a></li>\n<li>Bump <code>@actions/artifact</code> to <code>v4.0.0</code></li>\n<li>Prepare <code>v5.0.0</code> by <a href=\"https://github.com/danwkennedy\"><code>@\u200bdanwkennedy</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/734\">actions/upload-artifact#734</a></li>\n</ul>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/043fb46d1a93c77aae656e7c1c64a875d1fc6a0a\"><code>043fb46</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/upload-artifact/issues/797\">#797</a> from actions/yacaovsnc/update-dependency</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/634250c1388765ea7ed0f053e636f1f399000b94\"><code>634250c</code></a> Include changes in typespec/ts-http-runtime 0.3.5</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/e454baaac2be505c9450e11b8f3215c6fc023ce8\"><code>e454baa</code></a> Readme: bump all the example versions to v7 (<a href=\"https://redirect.github.com/actions/upload-artifact/issues/796\">#796</a>)</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/74fad66b98a6d799dc004d3353ccd0e6f6b2530e\"><code>74fad66</code></a> Update the readme with direct upload details (<a href=\"https://redirect.github.com/actions/upload-artifact/issues/795\">#795</a>)</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/bbbca2ddaa5d8feaa63e36b76fdaad77386f024f\"><code>bbbca2d</code></a> Support direct file uploads (<a href=\"https://redirect.github.com/actions/upload-artifact/issues/764\">#764</a>)</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/589182c5a4cec8920b8c1bce3e2fab1c97a02296\"><code>589182c</code></a> Upgrade the module to ESM and bump dependencies (<a href=\"https://redirect.github.com/actions/upload-artifact/issues/762\">#762</a>)</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/47309c993abb98030a35d55ef7ff34b7fa1074b5\"><code>47309c9</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/upload-artifact/issues/754\">#754</a> from actions/Link-/add-proxy-integration-tests</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/02a8460834e70dab0ce194c64360c59dc1475ef0\"><code>02a8460</code></a> Add proxy integration test</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/b7c566a772e6b6bfb58ed0dc250532a479d7789f\"><code>b7c566a</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/upload-artifact/issues/745\">#745</a> from actions/upload-artifact-v6-release</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/e516bc8500aaf3d07d591fcd4ae6ab5f9c391d5b\"><code>e516bc8</code></a> docs: correct description of Node.js 24 support in README</li>\n<li>Additional commits viewable in <a href=\"https://github.com/actions/upload-artifact/compare/v4...v7\">compare view</a></li>\n</ul>\n</details>\n<br />\n\n\n> **Note**\n> Automatic rebases have been disabled on this pull request as it has been open for over 30 days.\n",
+    "headRefOid": "5a33d8ec641cea0bf594360a0592806d8f302dd5",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 253,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:51:02Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996915/job/93964472850",
+        "name": "build",
+        "startedAt": "2026-08-11T23:50:28Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:52:24Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996902/job/93964473111",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-08-11T23:50:28Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:50:42Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996893/job/93964472943",
+        "name": "classify",
+        "startedAt": "2026-08-11T23:50:28Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:50:39Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996942/job/93964472982",
+        "name": "secret-scan",
+        "startedAt": "2026-08-11T23:50:28Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:51:03Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996893/job/93964524615",
+        "name": "preflight",
+        "startedAt": "2026-08-11T23:50:44Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:51:31Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996902/job/93964473086",
+        "name": "test",
+        "startedAt": "2026-08-11T23:50:28Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:56:09Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996902/job/93964473003",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-08-11T23:50:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:50:48Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996893/job/93964524585",
+        "name": "critical-approval",
+        "startedAt": "2026-08-11T23:50:45Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:51:03Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996893/job/93964590290",
+        "name": "selected-evidence",
+        "startedAt": "2026-08-11T23:51:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:50:52Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996902/job/93964473009",
+        "name": "language-system",
+        "startedAt": "2026-08-11T23:50:28Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:51:15Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996893/job/93964589948",
+        "name": "engineering-gate",
+        "startedAt": "2026-08-11T23:51:05Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:50:47Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996902/job/93964472990",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-08-11T23:50:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:50:46Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/31547996902/job/93964472952",
+        "name": "rust-test",
+        "startedAt": "2026-08-11T23:50:28Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-08-11T23:50:43Z",
+        "state": "FAILURE",
+        "targetUrl": "https://vercel.com/pvr6675-3816s-projects/arq-website/2Kna7Q76h8T781NS3BrFUVncFzPV"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-08-11T23:50:44Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://vercel.com/github",
+        "name": "Vercel Preview Comments",
+        "startedAt": "2026-08-11T23:50:44Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ]
+  }
+}

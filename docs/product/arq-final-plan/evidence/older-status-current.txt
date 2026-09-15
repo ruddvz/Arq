@@ -1,0 +1,23 @@
+ M STATUS.md
+ M apps/web/src/App.tsx
+ M apps/web/src/PlanCanvas.tsx
+ M apps/web/src/canvas/plan-document.ts
+ M apps/web/src/file-handling/FileOpenPanel.tsx
+ M apps/web/src/file-handling/create-arqfs-worker.ts
+ M apps/web/src/project/browser-worker-factory.ts
+ M apps/web/src/project/native-project-session.test.ts
+ M apps/web/src/project/native-project-session.ts
+ M apps/web/src/project/publish-native-project.test.ts
+ M apps/web/vite.config.ts
+ M packages/arqfs/src/arqfs-worker-handler.test.ts
+ M packages/arqfs/src/arqfs-worker-handler.ts
+ M packages/arqfs/src/arqfs-worker-protocol.ts
+ M packages/design-system/src/shell/tool-rail-state.test.ts
+ M packages/design-system/src/shell/tool-rail.tsx
+ M packages/design-system/src/shell/top-bar-state.ts
+ M packages/design-system/src/workspace/workspace-shell.css
+?? apps/web/src/project/arqfs-worker-url.test.ts
+?? apps/web/src/project/arqfs-worker-url.ts
+?? benchmarks/results/file-open-capability-2026-09-01T19-07-57-900Z.json
+?? outputs/
+?? work/
