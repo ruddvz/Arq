@@ -97,6 +97,20 @@ describe('selection transitions', () => {
     expectSelection(reconcileSelection(start, () => false), null, []);
   });
 
+  it('bounds reconciliation work to selected IDs rather than a whole-project collection', () => {
+    const ids = Array.from({ length: 5_000 }, (_, index) => `element-${index}`);
+    const start = replaceSelection(ids);
+    let validityChecks = 0;
+
+    const next = reconcileSelection(start, () => {
+      validityChecks += 1;
+      return true;
+    });
+
+    expect(validityChecks).toBe(ids.length);
+    expect(selectedIds(next)).toHaveLength(ids.length);
+  });
+
   it('reports membership across primary and secondary IDs', () => {
     const start = selection('wall-7', ['door-2']);
     expect(isSelected(start, 'wall-7')).toBe(true);
