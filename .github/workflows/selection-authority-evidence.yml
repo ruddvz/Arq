@@ -31,7 +31,6 @@ jobs:
 
           path = Path('scripts/run-selection-authority-capability-check.mjs')
           text = path.read_text()
-
           pattern = re.compile(
               r"  const drawnRows = page\.getByRole\('treeitem'\)\.filter\(\{ hasText: '\(drawn\)' \}\);\n  check\(\(await drawnRows\.count\(\)\) >= 2, 'scratch setup did not expose two drawn walls in the tree'\);"
           )
@@ -45,27 +44,7 @@ jobs:
           text, count = pattern.subn(replacement, text, count=1)
           if count != 1:
               raise SystemExit(f'visible Model browser replacement count={count}')
-
-          old = '''  throw new Error(
-            `no visible drawn tree row selected a semantic entity distinct from ${previousId}; ` +
-              `rendered drawn rows=${rowCount}`,
-          );'''
-          new = '''  const rows = await drawnRows.evaluateAll((entries) =>
-            entries.map((row) => ({
-              position: row.getAttribute('aria-posinset'),
-              selected: row.getAttribute('aria-selected'),
-              pressed: row.querySelector('button')?.getAttribute('aria-pressed') ?? null,
-              text: row.textContent?.trim() ?? '',
-              visible: row.getClientRects().length > 0,
-            })),
-          );
-          throw new Error(
-            `no visible drawn tree row selected a semantic entity distinct from ${previousId}; ` +
-              `rows=${JSON.stringify(rows)}`,
-          );'''
-          if old not in text:
-              raise SystemExit('diagnostic error block not found')
-          path.write_text(text.replace(old, new, 1))
+          path.write_text(text)
           PY
       - run: pnpm exec prettier --write scripts/run-selection-authority-capability-check.mjs
       - name: Persist evidence repair
