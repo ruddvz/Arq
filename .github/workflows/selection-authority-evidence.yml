@@ -27,22 +27,16 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
           script_path = Path('scripts/run-selection-authority-capability-check.mjs')
           text = script_path.read_text()
 
-          old = '''async function assertNoSelection(page, label) {
-            check((await selectedTreeCount(page)) === 0, `${label}: tree still reports a selected row`);
-            const noSelectionInspectors = page
-              .locator('aside[aria-label="Inspector"]')
-              .filter({ hasText: 'No selection' });
-            check(
-              (await noSelectionInspectors.count()) > 0,
-              `${label}: inspector did not return to No selection`,
-            );
-          }
-          '''
-          new = '''async function inspectorPresentsSelection(page) {
+          pattern = re.compile(
+              r'''async function assertNoSelection\(page, label\) \{.*?^\}''',
+              re.MULTILINE | re.DOTALL,
+          )
+          replacement = '''async function inspectorPresentsSelection(page) {
             const input = page.locator('aside[aria-label="Inspector"] input[aria-label="ID"]').first();
             return (await input.count()) > 0 && (await input.isVisible());
           }
@@ -63,35 +57,27 @@ jobs:
               !(await inspectorPresentsSelection(page)),
               `${label}: inspector still exposes a selected semantic ID`,
             );
-          }
-          '''
-          if old not in text:
-            raise SystemExit('assertNoSelection source block not found')
-          text = text.replace(old, new, 1)
+          }'''
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'assertNoSelection replacement count={count}')
 
-          old = '''  check(
-            (await page.evaluate(() => document.activeElement?.textContent?.trim()))?.includes('Open') ===
-              true,
-            'Open control did not receive DOM focus',
-          );
-          '''
-          new = '''  check(
+          pattern = re.compile(
+              r'''  check\(\s*\(await page\.evaluate\(\(\) => document\.activeElement\?\.textContent\?\.trim\(\)\)\)\?\.includes\('Open'\) ===\s*true,\s*'Open control did not receive DOM focus',\s*\);''',
+              re.MULTILINE,
+          )
+          replacement = '''  check(
             (await openButton.evaluate((element) => document.activeElement === element)) === true,
             'Open control did not receive DOM focus',
-          );
-          '''
-          if old not in text:
-            raise SystemExit('Open focus source block not found')
-          text = text.replace(old, new, 1)
+          );'''
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'Open focus replacement count={count}')
 
-          old = '''  await drawnRows.nth(0).click();
-          const treeFirstId = await inspectorId(page);
-          const firstPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-          await drawnRows.nth(1).click();
-          const treeSecondId = await inspectorId(page);
-          const secondPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-          '''
-          new = '''  await drawnRows.nth(0).locator('button').click();
+          pattern = re.compile(
+              r'''  await drawnRows\.nth\(0\)\.click\(\);\n  const treeFirstId = await inspectorId\(page\);\n  const firstPlanPixels = await analyzeScreenshot\(page, await plan\.screenshot\(\)\);\n  await drawnRows\.nth\(1\)\.click\(\);\n  const treeSecondId = await inspectorId\(page\);\n  const secondPlanPixels = await analyzeScreenshot\(page, await plan\.screenshot\(\)\);'''
+          )
+          replacement = '''  await drawnRows.nth(0).locator('button').click();
           const treeFirstId = await inspectorId(page);
           const firstPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
           const otherDrawnRow = page
@@ -110,11 +96,10 @@ jobs:
             { timeout: 5000 },
           );
           const treeSecondId = await inspectorId(page);
-          const secondPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-          '''
-          if old not in text:
-            raise SystemExit('tree replacement source block not found')
-          text = text.replace(old, new, 1)
+          const secondPlanPixels = await analyzeScreenshot(page, await plan.screenshot());'''
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'tree replacement count={count}')
           script_path.write_text(text)
 
           doc_path = Path('docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md')
@@ -140,7 +125,7 @@ jobs:
              semantic clear.
           '''
           if old not in doc:
-            raise SystemExit('browser scenario list not found')
+              raise SystemExit('browser scenario list not found')
           doc_path.write_text(doc.replace(old, new, 1))
           PY
       - run: >-
