@@ -1,113 +1,66 @@
-name: Diagnose #401 tree semantic replacement
+name: Selection authority evidence
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/design-system/**'
+      - 'packages/workspace/**'
+      - 'packages/model-renderer/**'
+      - 'packages/plan-renderer/**'
+      - 'scripts/run-selection-authority-capability-check.mjs'
+      - 'scripts/selection-authority-state-flow.test.mjs'
+      - '.github/workflows/selection-authority-evidence.yml'
+      - 'docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md'
   push:
-    branches:
-      - codex/arq-401-selection-authority-evidence
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/design-system/**'
+      - 'packages/workspace/**'
+      - 'packages/model-renderer/**'
+      - 'packages/plan-renderer/**'
+      - 'scripts/run-selection-authority-capability-check.mjs'
+      - 'scripts/selection-authority-state-flow.test.mjs'
+      - '.github/workflows/selection-authority-evidence.yml'
+      - 'docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md'
   workflow_dispatch:
 
-permissions:
-  contents: write
+concurrency:
+  group: selection-authority-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  repair:
-    if: github.actor != 'github-actions[bot]'
+  browser-selection-authority:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: codex/arq-401-selection-authority-evidence
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Harden distinct tree target evidence
+      - name: Verify #401 evidence files are formatted
+        run: >-
+          pnpm exec prettier --check
+          scripts/run-selection-authority-capability-check.mjs
+          scripts/selection-authority-state-flow.test.mjs
+          docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
+          .github/workflows/selection-authority-evidence.yml
+      - name: Verify multi-selection state flow
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
-
-          path = Path('scripts/run-selection-authority-capability-check.mjs')
-          text = path.read_text()
-
-          pattern = re.compile(
-              r"  const drawnRows = page\.getByRole\('treeitem'\)\.filter\(\{ hasText: '\(drawn\)' \}\);\n  check\(\(await drawnRows\.count\(\)\) >= 2, 'scratch setup did not expose two drawn walls in the tree'\);"
-          )
-          replacement = '''  const modelPanel = page.locator('nav[aria-label="Model"]:visible').first();
-          const drawnRows = modelPanel.getByRole('treeitem').filter({ hasText: '(drawn)' });
-          check(
-            (await drawnRows.count()) >= 2,
-            'scratch setup did not expose two drawn walls in the visible tree',
-          );'''
-          text, count = pattern.subn(replacement, text, count=1)
-          if count != 1:
-              raise SystemExit(f'drawnRows replacement count={count}')
-
-          pattern = re.compile(
-              r"  await drawnRows\.nth\(0\)\.locator\('button'\)\.click\(\);\n  const treeFirstId = await inspectorId\(page\);\n  const firstPlanPixels = await analyzeScreenshot\(page, await plan\.screenshot\(\)\);\n  const otherDrawnRow = page\n    \.locator\('\[role=\"treeitem\"\]\[aria-selected=\"false\"\]'\)\n    \.filter\(\{ hasText: '\(drawn\)' \}\)\n    \.first\(\);\n  await otherDrawnRow\.locator\('button'\)\.click\(\);\n  await page\.waitForFunction\(\n    \(previousId\) => \{\n      const input = document\.querySelector\('aside\[aria-label=\"Inspector\"\] input\[aria-label=\"ID\"\]'\);\n      return input instanceof HTMLInputElement && input\.value !== previousId;\n    \},\n    treeFirstId,\n    \{ timeout: 5000 \},\n  \);\n  const treeSecondId = await inspectorId\(page\);\n  const secondPlanPixels = await analyzeScreenshot\(page, await plan\.screenshot\(\)\);"
-          )
-          replacement = '''  const firstTreeRow = drawnRows.nth(0);
-          const firstTreePosition = await firstTreeRow.getAttribute('aria-posinset');
-          check(firstTreePosition !== null, 'first drawn tree row has no stable aria-posinset');
-          await firstTreeRow.locator('button').click();
-          await modelPanel
-            .locator(
-              `[role="treeitem"][aria-posinset="${firstTreePosition}"][aria-selected="true"]`,
-            )
-            .waitFor({ state: 'attached', timeout: 5000 });
-          await page
-            .locator('aside[aria-label="Inspector"] input[aria-label="ID"]')
-            .first()
-            .waitFor({ state: 'visible', timeout: 5000 });
-          const treeFirstId = await inspectorId(page);
-          const firstPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-
-          const otherDrawnRow = modelPanel
-            .locator('[role="treeitem"][aria-selected="false"]')
-            .filter({ hasText: '(drawn)' })
-            .first();
-          const secondTreePosition = await otherDrawnRow.getAttribute('aria-posinset');
-          check(secondTreePosition !== null, 'second drawn tree row has no stable aria-posinset');
-          check(
-            secondTreePosition !== firstTreePosition,
-            'tree evidence did not resolve a distinct drawn-wall row',
-          );
-          await otherDrawnRow.locator('button').click();
-          await modelPanel
-            .locator(
-              `[role="treeitem"][aria-posinset="${secondTreePosition}"][aria-selected="true"]`,
-            )
-            .waitFor({ state: 'attached', timeout: 5000 });
-          await page
-            .locator('aside[aria-label="Inspector"] input[aria-label="ID"]')
-            .first()
-            .waitFor({ state: 'visible', timeout: 5000 });
-          await page.waitForFunction(
-            (previousId) => {
-              const input = document.querySelector(
-                'aside[aria-label="Inspector"] input[aria-label="ID"]',
-              );
-              return input instanceof HTMLInputElement && input.value !== previousId;
-            },
-            treeFirstId,
-            { timeout: 5000 },
-          );
-          const treeSecondId = await inspectorId(page);
-          const secondPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-          observed.treePositions = [firstTreePosition, secondTreePosition];'''
-          text, count = pattern.subn(replacement, text, count=1)
-          if count != 1:
-              raise SystemExit(f'tree replacement count={count}')
-
-          path.write_text(text)
-          PY
-      - run: pnpm exec prettier --write scripts/run-selection-authority-capability-check.mjs
-      - name: Persist harness repair
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add scripts/run-selection-authority-capability-check.mjs
-          git commit -m 'test(UX): resolve distinct #401 tree targets semantically'
-          git push origin HEAD:codex/arq-401-selection-authority-evidence
+          node scripts/selection-authority-state-flow.test.mjs
+          pnpm --filter @arq/web exec vitest run src/canvas/canvas-interaction.test.ts
+      - name: Compile Zeus task context for #401
+        run: >-
+          node scripts/zeus.mjs compile --task
+          "Finish ARQ issue #401 by validating selection, focus and interaction-state authority across Plan, 3D, tree and inspector at current exact head. Add deterministic evidence only. Do not redesign selection."
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/run-selection-authority-capability-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: selection-authority-evidence
+          path: benchmarks/results/selection-authority.*
