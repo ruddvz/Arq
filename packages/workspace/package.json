@@ -7,8 +7,5 @@
   "main": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@arq/command-system": "workspace:*"
   }
 }
