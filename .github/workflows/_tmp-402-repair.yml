@@ -24,7 +24,9 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Apply review repairs
-        run: node scripts/_tmp-repair-402.mjs
+        run: |
+          node scripts/_tmp-repair-402.mjs
+          node scripts/_tmp-repair-402-v2.mjs
       - name: Format only #402-owned files
         run: >-
           pnpm exec prettier --write
@@ -66,9 +68,9 @@ jobs:
             scripts/run-material-compositing-performance.mjs \
             scripts/run-pixijs-webgl-benchmark.mjs \
             scripts/run-render-frame-benchmark.mjs
-      - name: Remove temporary workflow and commit repair
+      - name: Commit non-workflow repair
         run: |
-          rm .github/workflows/_tmp-402-repair.yml
+          git checkout -- .github/workflows/benchmark.yml
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add -A
