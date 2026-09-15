@@ -396,7 +396,31 @@ async function runNativeLevelScenario(page, observed) {
   const planTab = page.getByRole('tab', { name: /Ground floor|Level 1 Plan|Plan/ }).first();
   await planTab.click();
   const levels = page.getByRole('region', { name: 'Floor plans' });
-  await levels.getByRole('button', { name: /Upper floor/ }).click();
+  const levelButtons = levels.getByRole('button');
+  const levelCount = await levelButtons.count();
+  if (levelCount < 2) {
+    throw new Error(`native fixture exposed ${levelCount} floor-plan buttons; expected at least 2`);
+  }
+  const levelCandidates = [];
+  for (let index = 0; index < levelCount; index += 1) {
+    const button = levelButtons.nth(index);
+    const label =
+      (await button.getAttribute('aria-label'))?.trim() ||
+      (await button.innerText()).trim() ||
+      `level-${index + 1}`;
+    const isCurrent =
+      (await button.getAttribute('aria-current')) === 'true' ||
+      (await button.getAttribute('aria-current')) === 'page' ||
+      (await button.getAttribute('aria-selected')) === 'true' ||
+      (await button.getAttribute('aria-pressed')) === 'true';
+    if (!(await button.isDisabled()) && !isCurrent && !/add|create|new/i.test(label)) {
+      levelCandidates.push({ index, label });
+    }
+  }
+  const target = levelCandidates.at(-1) ?? { index: levelCount - 1, label: `level-${levelCount}` };
+  observed.nativeLevelButtons = levelCandidates.map(({ label }) => label);
+  observed.levelSwitchTarget = target.label;
+  await levelButtons.nth(target.index).click();
   await page.waitForFunction(
     () => document.querySelectorAll('[role="treeitem"][aria-selected="true"]').length === 0,
     undefined,
