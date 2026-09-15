@@ -1,0 +1,105 @@
+@import '../shell/shell-controls.css';
+
+/*
+ * UX-1.6 shell-state presentation only. The owning product/system decides which
+ * state is true; this stylesheet only gives supplied copy and actions a stable,
+ * readable layout. There is intentionally no z-index, shadow or local colour
+ * vocabulary here.
+ */
+.arq-shell-state {
+  display: grid;
+  place-items: center;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  padding: var(--arq-space-section);
+  color: var(--arq-ui-text-primary);
+  text-align: center;
+}
+
+.arq-shell-state__content {
+  display: flex;
+  inline-size: min(100%, 32rem);
+  min-inline-size: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--arq-space-compact);
+}
+
+.arq-shell-state__icon {
+  display: inline-flex;
+  max-inline-size: 100%;
+  align-items: center;
+  justify-content: center;
+  color: var(--arq-ui-text-secondary);
+  flex: none;
+}
+
+.arq-shell-state__title {
+  max-inline-size: 100%;
+  margin: 0;
+  color: inherit;
+  font: var(--arq-text-panel-title);
+  overflow-wrap: anywhere;
+}
+
+.arq-shell-state__description {
+  max-inline-size: 100%;
+  margin: 0;
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-body);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.arq-shell-state__actions {
+  display: flex;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--arq-space-compact);
+  margin-block-start: var(--arq-space-micro);
+}
+
+.arq-shell-state__action {
+  display: flex;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--arq-space-micro);
+}
+
+.arq-shell-state__actions .arq-shell-button {
+  max-inline-size: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+  text-decoration: none;
+}
+
+.arq-shell-state__action-reason {
+  max-inline-size: 20rem;
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-body);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Empty panels use the same contract without spending full-surface space. */
+.arq-shell-state--panel {
+  place-items: start;
+  padding: var(--arq-space-panel);
+  text-align: start;
+}
+
+.arq-shell-state--panel .arq-shell-state__content {
+  inline-size: 100%;
+  align-items: flex-start;
+}
+
+.arq-shell-state--panel .arq-shell-state__actions,
+.arq-shell-state--panel .arq-shell-state__action {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
