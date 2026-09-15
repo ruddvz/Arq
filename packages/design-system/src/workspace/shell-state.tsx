@@ -1,4 +1,8 @@
 import { useId, type ReactNode } from 'react';
+import {
+  describeDisabledState,
+  shouldIgnoreActivation,
+} from '../interaction-foundation/interaction';
 
 export const SHELL_STATE_KINDS = [
   'empty',
@@ -14,14 +18,23 @@ export type ShellStateKind = (typeof SHELL_STATE_KINDS)[number];
 
 export type ShellStateAnnouncement = 'auto' | 'off' | 'polite' | 'assertive';
 
-export interface ShellStateButtonAction {
+interface ShellStateActionBase {
   readonly label: string;
+  /**
+   * When supplied, the action stays keyboard reachable but activation is
+   * suppressed and this reason is rendered visibly and through
+   * aria-describedby. Capability/permission owners supply the reason; this
+   * component never derives one.
+   */
+  readonly disabledReason?: string;
+}
+
+export interface ShellStateButtonAction extends ShellStateActionBase {
   readonly onAction: () => void;
   readonly href?: never;
 }
 
-export interface ShellStateLinkAction {
-  readonly label: string;
+export interface ShellStateLinkAction extends ShellStateActionBase {
   readonly href: string;
   readonly onAction?: never;
 }
@@ -87,19 +100,65 @@ function ShellStateActionControl(props: {
 }): JSX.Element {
   const { action, primary } = props;
   const className = primary ? 'arq-shell-button arq-shell-button--primary' : 'arq-shell-button';
+  const reactId = useId().replace(/:/g, '');
+  const disabledReason = action.disabledReason;
 
-  if (action.href !== undefined) {
-    return (
-      <a className={className} href={action.href}>
-        {action.label}
-      </a>
-    );
+  if (disabledReason !== undefined && disabledReason.trim().length === 0) {
+    throw new Error('a disabled shell-state action must provide a visible reason');
   }
 
+  const reasonId =
+    disabledReason === undefined ? undefined : `arq-shell-state-action-${reactId}-reason`;
+  const disabledState = describeDisabledState({
+    disabled: disabledReason !== undefined,
+    reason: disabledReason ?? null,
+    ...(reasonId === undefined ? {} : { reasonElementId: reasonId }),
+  });
+  const accessibilityProps = {
+    'aria-disabled': disabledState.attributes['aria-disabled'],
+    'aria-describedby': disabledState.attributes['aria-describedby'],
+  };
+
+  const control =
+    action.href !== undefined ? (
+      <a
+        className={className}
+        href={action.href}
+        {...accessibilityProps}
+        onClick={(event) => {
+          if (shouldIgnoreActivation(disabledState)) {
+            event.preventDefault();
+          }
+        }}
+      >
+        {action.label}
+      </a>
+    ) : (
+      <button
+        className={className}
+        type="button"
+        {...accessibilityProps}
+        onClick={(event) => {
+          if (shouldIgnoreActivation(disabledState)) {
+            event.preventDefault();
+            return;
+          }
+          action.onAction();
+        }}
+      >
+        {action.label}
+      </button>
+    );
+
   return (
-    <button className={className} type="button" onClick={action.onAction}>
-      {action.label}
-    </button>
+    <span className="arq-shell-state__action">
+      {control}
+      {disabledState.reasonText === null ? null : (
+        <span id={reasonId} className="arq-shell-state__action-reason">
+          {disabledState.reasonText}
+        </span>
+      )}
+    </span>
   );
 }
 
