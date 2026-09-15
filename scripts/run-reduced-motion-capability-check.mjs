@@ -153,7 +153,9 @@ async function run() {
     await page.keyboard.press('Escape');
     await dialog.waitFor({ state: 'hidden', timeout: 5000 });
 
-    const viewTabs = page.locator('[role="tablist"][aria-label="View kind"] [role="tab"]:not(:disabled)');
+    const viewTabs = page.locator(
+      '[role="tablist"][aria-label="View kind"] [role="tab"]:not(:disabled)',
+    );
     const viewTabCount = await viewTabs.count();
     let rapidStateSettled = true;
     let finalViewLabel = null;
@@ -198,7 +200,9 @@ async function run() {
       throw new Error(`reduced-motion capability check failed: ${JSON.stringify(result)}`);
     }
 
-    process.stdout.write(`reduced-motion capability check passed: ${JSON.stringify(result)}\n`);
+    process.stdout.write(
+      `reduced-motion capability check passed: ${JSON.stringify(result)}\n`,
+    );
   } finally {
     await browser.close();
     server.close();
