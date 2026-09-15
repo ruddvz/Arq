@@ -56,8 +56,18 @@
   max-inline-size: 100%;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: flex-start;
   gap: var(--arq-space-compact);
   margin-block-start: var(--arq-space-micro);
+}
+
+.arq-shell-state__action {
+  display: flex;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--arq-space-micro);
 }
 
 .arq-shell-state__actions .arq-shell-button {
@@ -66,6 +76,14 @@
   overflow-wrap: anywhere;
   text-align: center;
   text-decoration: none;
+}
+
+.arq-shell-state__action-reason {
+  max-inline-size: 20rem;
+  color: var(--arq-ui-text-muted);
+  font: var(--arq-text-body);
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* Empty panels use the same contract without spending full-surface space. */
@@ -80,6 +98,8 @@
   align-items: flex-start;
 }
 
-.arq-shell-state--panel .arq-shell-state__actions {
+.arq-shell-state--panel .arq-shell-state__actions,
+.arq-shell-state--panel .arq-shell-state__action {
   justify-content: flex-start;
+  align-items: flex-start;
 }
