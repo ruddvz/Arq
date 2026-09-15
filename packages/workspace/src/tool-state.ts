@@ -2,19 +2,14 @@
  * Runtime tool state.
  *
  * Design registry status, repository backing and product reachability are three
- * different facts. #420 makes `product-command-authority.ts` the only source of
- * product reachability. This module keeps the tool lifecycle, but never infers
- * availability from implementation modules existing somewhere in the repo.
+ * different facts. `product-command-authority.ts` is the only source of product
+ * reachability. This module keeps the tool lifecycle and consumes that truth.
  */
 
 import { TOOL_CONTRACTS, toolContract, type ToolContract, type ToolGroup } from './registry';
 import type { WorkspaceMode } from './workspace-types';
 import { toolGroupsForMode } from './mode-state';
-import {
-  hasRepositoryBacking,
-  resolveProductCommand,
-  TOOLS_WITH_REPOSITORY_BACKING,
-} from './product-command-authority';
+import { hasRepositoryBacking, resolveProductCommand } from './product-command-authority';
 
 export { hasRepositoryBacking, TOOLS_WITH_REPOSITORY_BACKING } from './product-command-authority';
 
@@ -32,10 +27,7 @@ export type ToolPhase =
 
 /**
  * Why a tool cannot be activated, or null when it can.
- *
- * Repository backing is not consulted here. The canonical product descriptor
- * is what knows whether a live consumer exists and why an unavailable tool is
- * unavailable.
+ * Repository backing is not consulted here.
  */
 export function toolUnavailableReason(
   toolId: string,
@@ -80,7 +72,7 @@ export const INITIAL_TOOL_STATE: ToolState = Object.freeze({
 
 /**
  * Arming a tool is not itself a model mutation. A mutating tool such as Wall
- * only produces a semantic operation when its valid preview commits.
+ * produces its semantic operation only when a valid preview commits.
  */
 export function activateTool(
   state: ToolState,
@@ -98,11 +90,7 @@ export function activateTool(
   };
 }
 
-/**
- * `workspace-state-machines.json` > `invariants[2]`: "Tool preview never
- * becomes canonical until transaction commit." Preview is a phase in this
- * state machine and carries no document revision with it.
- */
+/** Preview state is never canonical document state. */
 export function beginPreview(state: ToolState): ToolState {
   return state.phase === 'armed' ? { ...state, phase: 'previewing' } : state;
 }
@@ -152,10 +140,7 @@ export interface ToolRailEntry {
   readonly disabledReason: string | null;
 }
 
-/**
- * The rail is discoverable but honest: registered tools remain visible with the
- * canonical reason when they are not product-reachable.
- */
+/** Registered tools stay discoverable, with the canonical reason when unavailable. */
 export function toolRailEntriesForMode(
   mode: WorkspaceMode,
   readOnly = false,
@@ -181,6 +166,3 @@ export function toolCoverage(): ToolCoverage {
     designSpecifiedOnly: TOOL_CONTRACTS.filter((tool) => !hasRepositoryBacking(tool.id)).length,
   };
 }
-
-/** Keep this import live so coverage and the exported evidence list cannot drift. */
-void TOOLS_WITH_REPOSITORY_BACKING;
