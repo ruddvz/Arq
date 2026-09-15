@@ -22,6 +22,7 @@ export const CORE_WORKFLOW_SCALE = Object.freeze({
 });
 
 const WALL_TYPES = 2;
+const WALLS_PER_LEVEL = CORE_WORKFLOW_SCALE.walls / CORE_WORKFLOW_SCALE.levels;
 const DOORS = CORE_WORKFLOW_SCALE.doorsAndWindows / 2;
 const WINDOWS = CORE_WORKFLOW_SCALE.doorsAndWindows - DOORS;
 const FILLER_DIMENSIONS =
@@ -50,6 +51,10 @@ function wallId(index: number): string {
 
 function openingId(index: number): string {
   return `opening-${String(index + 1).padStart(3, '0')}`;
+}
+
+function levelIndexForWall(index: number): number {
+  return Math.floor(index / WALLS_PER_LEVEL);
 }
 
 /**
@@ -83,11 +88,10 @@ export function buildCoreWorkflowModel(): Record<string, unknown> {
   ];
 
   const openings = Array.from({ length: CORE_WORKFLOW_SCALE.doorsAndWindows }, (_, index) => {
-    const hostIndex = index;
     const isDoor = index < DOORS;
     return {
       id: openingId(index),
-      hostWallId: wallId(hostIndex),
+      hostWallId: wallId(index),
       kind: isDoor ? 'door' : 'window',
       offsetFromWallStart: { value: 1000, unit: 'mm' },
       width: { value: isDoor ? 900 : 1200, unit: 'mm' },
@@ -97,9 +101,8 @@ export function buildCoreWorkflowModel(): Record<string, unknown> {
   });
 
   const walls = Array.from({ length: CORE_WORKFLOW_SCALE.walls }, (_, index) => {
-    const perLevel = CORE_WORKFLOW_SCALE.walls / CORE_WORKFLOW_SCALE.levels;
-    const levelIndex = Math.floor(index / perLevel);
-    const localIndex = index % perLevel;
+    const levelIndex = levelIndexForWall(index);
+    const localIndex = index % WALLS_PER_LEVEL;
     const column = localIndex % 15;
     const row = Math.floor(localIndex / 15);
     return {
@@ -120,7 +123,7 @@ export function buildCoreWorkflowModel(): Record<string, unknown> {
     id: `door-${String(index + 1).padStart(3, '0')}`,
     typeId: 'door-type-synthetic',
     openingId: openingId(index),
-    levelId: levelId(index < 30 ? 0 : 1),
+    levelId: levelId(levelIndexForWall(index)),
     side: index % 2 === 0 ? 'left' : 'right',
     hand: index % 2 === 0 ? 'left' : 'right',
     swingAngle: 90,
@@ -132,7 +135,7 @@ export function buildCoreWorkflowModel(): Record<string, unknown> {
       id: `window-${String(offset + 1).padStart(3, '0')}`,
       typeId: 'window-type-synthetic',
       openingId: openingId(index),
-      levelId: levelId(index < 75 ? 0 : 1),
+      levelId: levelId(levelIndexForWall(index)),
       side: offset % 2 === 0 ? 'left' : 'right',
     };
   });
@@ -140,7 +143,7 @@ export function buildCoreWorkflowModel(): Record<string, unknown> {
   const rooms = Array.from({ length: CORE_WORKFLOW_SCALE.rooms }, (_, index) => {
     const levelIndex = index < CORE_WORKFLOW_SCALE.rooms / 2 ? 0 : 1;
     const localIndex = index % (CORE_WORKFLOW_SCALE.rooms / 2);
-    const hostWallIndex = levelIndex * 75 + localIndex * 2;
+    const hostWallIndex = levelIndex * WALLS_PER_LEVEL + localIndex * 2;
     const x = (localIndex % 10) * 6000 + 500;
     const y = Math.floor(localIndex / 10) * 6000 + 500;
     return {
