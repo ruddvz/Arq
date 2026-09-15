@@ -23,8 +23,9 @@ function expectSelection(
 ): void {
   expect(actual.primaryId).toBe(primaryId);
   expect([...actual.secondaryIds]).toEqual(secondaryIds);
-  expect(actual.primaryId === null).toBe(secondaryIds.length === 0);
-  if (actual.primaryId !== null) {
+  if (actual.primaryId === null) {
+    expect(actual.secondaryIds.size).toBe(0);
+  } else {
     expect(actual.secondaryIds.has(actual.primaryId)).toBe(false);
   }
 }
