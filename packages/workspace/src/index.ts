@@ -4,6 +4,7 @@ export * from './responsive';
 export * from './collapse-priority';
 export * from './view-tabs-state';
 export * from './panel-layout-state';
+export * from './panel-layout-preference';
 export * from './browser-panel-state';
 export * from './tree-virtualisation';
 export * from './inspector-tabs-state';
