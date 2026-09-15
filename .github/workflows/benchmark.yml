@@ -1,6 +1,7 @@
-# #402 performance authority. Structural/schema checks run when the authority
-# itself changes. Timing evidence stays scheduled/on-demand because shared-runner
-# wall-clock values are too noisy to pretend they are universal PR gates.
+# #402 performance authority. Structural/schema checks gate relevant changes.
+# Browser timing evidence also runs on performance-infrastructure PRs so an
+# authority change carries exact-head measurements, but shared-runner timings
+# are reference evidence only and are not used as universal millisecond gates.
 name: Benchmark
 
 on:
@@ -16,6 +17,8 @@ on:
       - 'scripts/run-material-compositing-performance.mjs'
       - 'scripts/run-render-frame-benchmark.mjs'
       - 'scripts/run-canvas-2d-benchmark.mjs'
+      - 'scripts/run-pixijs-webgl-benchmark.mjs'
+      - 'scripts/run-canvaskit-benchmark.mjs'
       - '.github/workflows/benchmark.yml'
 
 jobs:
@@ -34,8 +37,8 @@ jobs:
       - run: pnpm check:web-bundle-budget:test
 
   reference-workflows:
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
