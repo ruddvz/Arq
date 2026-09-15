@@ -45,7 +45,7 @@ const provenanceCheck = `const provenanceConsumers = [
 ];
 for (const relative of provenanceConsumers) {
   const source = readFileSync(path.join(repoRoot, relative), 'utf8');
-  if (source.includes('authority.fixture')) fail(\`${'${relative}'}: ambiguous authority.fixture consumer must not return\`);
+  if (source.includes('fixture: authority.fixture,')) fail(\`${'${relative}'}: ambiguous legacy fixture consumer must not return\`);
   if (!source.includes('fixtureContract: authority.fixtureContract')) fail(\`${'${relative}'}: fixtureContract provenance is absent\`);
   if (!source.includes('evidenceFixture: workflow.evidenceFixture')) fail(\`${'${relative}'}: evidenceFixture provenance is absent\`);
 }
