@@ -28,16 +28,23 @@ export interface ShellStateLinkAction {
 
 export type ShellStateAction = ShellStateButtonAction | ShellStateLinkAction;
 
-export interface ShellStateProps {
-  readonly kind: ShellStateKind;
+interface ShellStateBaseProps {
   readonly title: string;
-  readonly description?: string;
   readonly icon?: ReactNode;
   readonly primaryAction?: ShellStateAction;
   readonly secondaryAction?: ShellStateAction;
   readonly announcement?: ShellStateAnnouncement;
-  readonly className?: string;
 }
+
+export type ShellStateProps =
+  | (ShellStateBaseProps & {
+      readonly kind: 'unavailable' | 'read-only';
+      readonly description: string;
+    })
+  | (ShellStateBaseProps & {
+      readonly kind: Exclude<ShellStateKind, 'unavailable' | 'read-only'>;
+      readonly description?: string;
+    });
 
 export interface ShellStateSemantics {
   readonly role: 'group' | 'status' | 'alert';
@@ -100,8 +107,9 @@ function ShellStateActionControl(props: {
  * One lightweight shell-state presentation surface. It never derives state from
  * project, permission, persistence, command or session data; callers supply the
  * state, copy and actions after their owning systems have made those decisions.
- * Message fields are deliberately strings, and there is no exception/diagnostic
- * input, so the public API does not encourage passing raw runtime objects into UI.
+ * Unavailable and read-only states require visible explanatory copy. Message
+ * fields are deliberately strings, and there is no exception/diagnostic input,
+ * so the public API does not encourage passing raw runtime objects into UI.
  */
 export function ShellState(props: ShellStateProps): JSX.Element {
   const {
@@ -112,24 +120,18 @@ export function ShellState(props: ShellStateProps): JSX.Element {
     primaryAction,
     secondaryAction,
     announcement = 'auto',
-    className,
   } = props;
   const reactId = useId().replace(/:/g, '');
   const titleId = `arq-shell-state-${reactId}-title`;
-  const descriptionId = description === undefined ? undefined : `arq-shell-state-${reactId}-description`;
+  const descriptionId =
+    description === undefined ? undefined : `arq-shell-state-${reactId}-description`;
   const semantics = resolveShellStateSemantics(kind, announcement);
-  const classes = [
-    'arq-shell-state',
-    `arq-shell-state--${kind}`,
-    kind === 'empty-panel' ? 'arq-shell-state--panel' : undefined,
-    className,
-  ]
-    .filter((value): value is string => Boolean(value))
-    .join(' ');
+  const className =
+    kind === 'empty-panel' ? 'arq-shell-state arq-shell-state--panel' : 'arq-shell-state';
 
   return (
     <div
-      className={classes}
+      className={className}
       data-state-kind={kind}
       role={semantics.role}
       aria-live={semantics.live}
