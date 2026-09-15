@@ -1,38 +1,12 @@
 /**
- * ARQ-150: add room rebuild benchmark.
+ * ARQ-150 room rebuild compute microbenchmark.
  *
- * Blueprint section 120's "room recalculation median under 150 ms for
- * one wall move" target, measured against the real room-boundary
- * pipeline: traceRoomBoundary (room-boundary-graph.ts, ARQ-111) plus
- * polygonArea (polygon-area.ts, ARQ-085) - the same two functions
- * room-placement-tool.ts (@arq/editor-shell, ARQ-112) already calls in
- * production, not a reimplementation.
- *
- * Like ARQ-149's selection benchmark, this needs no browser: boundary
- * tracing and area calculation are pure computation, so this runs as a
- * normal Vitest test using real performance.now() measurements.
- *
- * The scene is a full wall-centreline grid - 10 columns x 6 rows of
- * 4m x 3m cells, matching benchmarks/PERFORMANCE-BUDGETS.json's
- * benchmarkModel room count (60) - built from *unit* segments (one
- * per grid cell edge, sharing exact endpoints at every intersection),
- * since traceRoomBoundary's half-edge graph (room-boundary-graph.ts's
- * own doc comment) only merges vertices that already coincide within
- * tolerance; it does not split a long edge at points where other edges
- * cross it. This yields 136 wall segments (11 columns x 6 rows of
- * vertical unit segments, 7 rows x 10 columns of horizontal ones) -
- * close to, though not forced to exactly match, the benchmark model's
- * 150, since artificially padding to exactly 150 would mean adding
- * segments that do not participate in any real room boundary, which
- * would not make the benchmark any more faithful.
- *
- * "One wall move" is simulated by re-tracing a single room's boundary
- * from the *already-built* grid (a wall move would invalidate exactly
- * one room's boundary per section 36's "derived dependency graph", not
- * the whole project) - this benchmark deliberately measures one
- * targeted room recalculation, not all 60 rooms at once.
+ * This measures traceRoomBoundary + polygonArea for one invalidated room. It is
+ * deliberately not presented as the end-to-end room-settle workflow. #402 owns
+ * the compute target and the later workflow measurement contract.
  */
 
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { polygonArea } from './polygon-area';
 import { traceRoomBoundary, type RoomBoundaryEdge } from './room-boundary-graph';
@@ -44,7 +18,23 @@ const CELL_WIDTH_MM = 4000;
 const CELL_HEIGHT_MM = 3000;
 const TOLERANCE_MM = 1;
 const TRIAL_COUNT = 200;
-const ROOM_RECALC_TARGET_MS = 150; // benchmarks/PERFORMANCE-BUDGETS.json's roomRecalculateMedianMs.
+
+function canonicalRoomComputeTargetMs(): number {
+  const authority = JSON.parse(
+    readFileSync(new URL('../../../benchmarks/PERFORMANCE-BUDGETS.json', import.meta.url), 'utf8'),
+  ) as {
+    workflows: Array<{
+      id: string;
+      budget?: { metric?: string; value?: number } | null;
+    }>;
+  };
+  const workflow = authority.workflows.find((entry) => entry.id === 'room.recompute');
+  const budget = workflow?.budget;
+  if (budget?.metric !== 'legacyComputeMedianMs' || typeof budget.value !== 'number') {
+    throw new Error('canonical #402 room compute target is absent');
+  }
+  return budget.value;
+}
 
 function median(values: readonly number[]): number {
   const sorted = [...values].sort((a, b) => a - b);
@@ -88,11 +78,11 @@ function cellSeedPoint(col: number, row: number): ReturnType<typeof worldPoint> 
 }
 
 describe('room rebuild benchmark (ARQ-150)', () => {
-  it('produces the expected grid wall count', () => {
+  it('produces the expected deterministic grid wall count', () => {
     expect(buildGridWalls()).toHaveLength((COLS + 1) * ROWS + (ROWS + 1) * COLS);
   });
 
-  it('correctly traces one room boundary and computes its area, as a correctness baseline', () => {
+  it('correctly traces one room boundary and computes its area', () => {
     const walls = buildGridWalls();
     const traced = traceRoomBoundary(walls, cellSeedPoint(5, 3), TOLERANCE_MM);
     expect(traced.status).toBe('valid');
@@ -101,7 +91,7 @@ describe('room rebuild benchmark (ARQ-150)', () => {
     expect(areaMm2).toBeCloseTo(CELL_WIDTH_MM * CELL_HEIGHT_MM, 0);
   });
 
-  it('meets the room recalculation median under 150ms target (section 120) for one wall move', () => {
+  it('meets the canonical #402 room compute target for one invalidated room', () => {
     const walls = buildGridWalls();
     const seedPoint = cellSeedPoint(5, 3);
     const durationsMs: number[] = [];
@@ -114,22 +104,21 @@ describe('room rebuild benchmark (ARQ-150)', () => {
     }
 
     const medianMs = median(durationsMs);
+    const targetMs = canonicalRoomComputeTargetMs();
 
     console.log(
-      `room rebuild benchmark: median ${medianMs.toFixed(4)}ms over ${TRIAL_COUNT} trials (${walls.length}-wall grid, one room retraced)`,
+      `room rebuild compute benchmark: median ${medianMs.toFixed(4)}ms over ${TRIAL_COUNT} trials (${walls.length}-wall grid, one room retraced); #402 target ${targetMs}ms`,
     );
-    expect(medianMs).toBeLessThan(ROOM_RECALC_TARGET_MS);
+    expect(medianMs).toBeLessThan(targetMs);
   });
 
-  it('traces every room in the grid correctly (broader correctness check than the single-room benchmark)', () => {
+  it('traces every room in the grid correctly', () => {
     const walls = buildGridWalls();
     let validCount = 0;
     for (let row = 0; row < ROWS; row += 1) {
       for (let col = 0; col < COLS; col += 1) {
         const traced = traceRoomBoundary(walls, cellSeedPoint(col, row), TOLERANCE_MM);
-        if (traced.status === 'valid') {
-          validCount += 1;
-        }
+        if (traced.status === 'valid') validCount += 1;
       }
     }
     expect(validCount).toBe(COLS * ROWS);
