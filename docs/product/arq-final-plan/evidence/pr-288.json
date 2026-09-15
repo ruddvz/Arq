@@ -1,0 +1,159 @@
+{
+  "files": [
+    {
+      "sha": "e94281448b6e5c1d26f26cfba0d06a9313681ec8",
+      "filename": ".github/workflows/deploy-pages.yml",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/0299659c80f6047899ea3310616869be4ae4d411/.github%2Fworkflows%2Fdeploy-pages.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/0299659c80f6047899ea3310616869be4ae4d411/.github%2Fworkflows%2Fdeploy-pages.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fdeploy-pages.yml?ref=0299659c80f6047899ea3310616869be4ae4d411",
+      "patch": "@@ -84,7 +84,7 @@ jobs:\n       page_url: ${{ steps.deployment.outputs.page_url }}\n     steps:\n       - id: deployment\n-        uses: actions/deploy-pages@v4\n+        uses: actions/deploy-pages@v5\n \n   # The build artifact passing is not evidence that the live site passes. This\n   # job reads the deployed proof and every deployed route back off the Pages"
+    }
+  ],
+  "reviews": [],
+  "detail": {
+    "baseRefOid": "375e8cbdb08d903e4fd2846db640a915b4fe38bb",
+    "body": "Bumps [actions/deploy-pages](https://github.com/actions/deploy-pages) from 4 to 5.\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/actions/deploy-pages/releases\">actions/deploy-pages's releases</a>.</em></p>\n<blockquote>\n<h2>v5.0.0</h2>\n<h1>Changelog</h1>\n<ul>\n<li>Update Node.js version to 24.x <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/404\">#404</a>)</li>\n<li>Add workflow file for publishing releases to immutable action package <a href=\"https://github.com/Jcambass\"><code>@\u200bJcambass</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/374\">#374</a>)</li>\n<li>Bump braces from 3.0.2 to 3.0.3 in the npm_and_yarn group across 1 directory <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/360\">#360</a>)</li>\n<li>Make the rebuild dist workflow work nicer with Dependabot <a href=\"https://github.com/yoannchaudet\"><code>@\u200byoannchaudet</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/361\">#361</a>)</li>\n<li>Bump the non-breaking-changes group across 1 directory with 3 updates <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/358\">#358</a>)</li>\n<li>Delete repeated sentence <a href=\"https://github.com/garethsb\"><code>@\u200bgarethsb</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/359\">#359</a>)</li>\n<li>Update README.md <a href=\"https://github.com/tsusdere\"><code>@\u200btsusdere</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/348\">#348</a>)</li>\n<li>Bump the non-breaking-changes group with 4 updates <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/341\">#341</a>)</li>\n<li>Remove error message for file permissions <a href=\"https://github.com/TooManyBees\"><code>@\u200bTooManyBees</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/340\">#340</a>)</li>\n</ul>\n<hr />\n<p>See details of <a href=\"https://github.com/actions/deploy-pages/compare/v4.0.5...v4.0.6\">all code changes</a> since previous release.</p>\n<p>:warning: For use with products other than GitHub.com, such as GitHub Enterprise Server, please consult the <a href=\"https://github.com/actions/deploy-pages/#compatibility\">compatibility table</a>.</p>\n<h2>v4.0.5</h2>\n<h1>Changelog</h1>\n<ul>\n<li>On API error, the error message will surface the API request ID <a href=\"https://github.com/TooManyBees\"><code>@\u200bTooManyBees</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/324\">#324</a>)</li>\n<li>Bump the non-breaking-changes group with 2 updates <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/318\">#318</a>)</li>\n<li>Bump the non-breaking-changes group with 1 update <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/316\">#316</a>)</li>\n<li>Bump the non-breaking-changes group with 3 updates <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/314\">#314</a>)</li>\n<li>Bump release-drafter/release-drafter from 5.25.0 to 6.0.0 <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/311\">#311</a>)</li>\n</ul>\n<hr />\n<p>See details of <a href=\"https://github.com/actions/deploy-pages/compare/v4.0.4...v4.0.5\">all code changes</a> since previous release.</p>\n<p>:warning: For use with products other than GitHub.com, such as GitHub Enterprise Server, please consult the <a href=\"https://github.com/actions/deploy-pages/#compatibility\">compatibility table</a>.</p>\n<h2>v4.0.4</h2>\n<h1>Changelog</h1>\n<ul>\n<li>Update api-client.js <a href=\"https://github.com/lmammino\"><code>@\u200blmammino</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/295\">#295</a>)</li>\n<li>fix typo: compatibilty -&gt; compatibility <a href=\"https://github.com/SimonSiefke\"><code>@\u200bSimonSiefke</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/298\">#298</a>)</li>\n<li>Bump <code>@\u200bactions/artifact</code> from 2.0.1 to 2.1.1 <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/310\">#310</a>)</li>\n<li>Update Dependabot config to group non-breaking changes <a href=\"https://github.com/JamesMGreene\"><code>@\u200bJamesMGreene</code></a> (<a href=\"https://redirect.github.com/actions/deploy-pages/issues/307\">#307</a>)</li>\n</ul>\n<hr />\n<p>See details of <a href=\"https://github.com/actions/deploy-pages/compare/v4.0.3...v4.0.4\">all code changes</a> since previous release.</p>\n<p>:warning: For use with products other than GitHub.com, such as GitHub Enterprise Server, please consult the <a href=\"https://github.com/actions/deploy-pages/#compatibility\">compatibility table</a>.</p>\n<h2>v4.0.3</h2>\n<h1>Changelog</h1>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/actions/deploy-pages/commit/cd2ce8fcbc39b97be8ca5fce6e763baed58fa128\"><code>cd2ce8f</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/deploy-pages/issues/404\">#404</a> from salmanmkc/node24</li>\n<li><a href=\"https://github.com/actions/deploy-pages/commit/bbe2a950ee52d4f5cbe74e6d9d6a8803676e91d5\"><code>bbe2a95</code></a> Update Node.js version to 24.x</li>\n<li><a href=\"https://github.com/actions/deploy-pages/commit/854d7aa1b99e4509c4d1b53d69b7ba4eaf39215a\"><code>854d7aa</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/deploy-pages/issues/374\">#374</a> from actions/Jcambass-patch-1</li>\n<li><a href=\"https://github.com/actions/deploy-pages/commit/306bb814f29679fd12f0e4b0014bc1f3a7e7f4bc\"><code>306bb81</code></a> Add workflow file for publishing releases to immutable action package</li>\n<li><a href=\"https://github.com/actions/deploy-pages/commit/b74272834adc04f971da4b0b055c49fa8d7f90c9\"><code>b742728</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/deploy-pages/issues/360\">#360</a> from actions/dependabot/npm_and_yarn/npm_and_yarn-513...</li>\n<li><a href=\"https://github.com/actions/deploy-pages/commit/72732942c639e67ea3f70165fd2e012dd6d95027\"><code>7273294</code></a> Bump braces in the npm_and_yarn group across 1 directory</li>\n<li><a href=\"https://github.com/actions/deploy-pages/commit/963791f01c40ef3eff219c255dbfb97a6f2c9f87\"><code>963791f</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/deploy-pages/issues/361\">#361</a> from actions/dependabot-friendly</li>\n<li><a href=\"https://github.com/actions/deploy-pages/commit/51bb29d9d7bfe15d731c4957ce1887b5ae8c6727\"><code>51bb29d</code></a> Make the rebuild dist workflow safer for Dependabot</li>\n<li><a href=\"https://github.com/actions/deploy-pages/commit/89f3d10406f57ee86e6517a982b3fb0438bd6dc5\"><code>89f3d10</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/deploy-pages/issues/358\">#358</a> from actions/dependabot/npm_and_yarn/non-breaking-cha...</li>\n<li><a href=\"https://github.com/actions/deploy-pages/commit/bce735589bbbfa569f1d2ac003277b590d743e4c\"><code>bce7355</code></a> Merge branch 'main' into dependabot/npm_and_yarn/non-breaking-changes-99c12deb21</li>\n<li>Additional commits viewable in <a href=\"https://github.com/actions/deploy-pages/compare/v4...v5\">compare view</a></li>\n</ul>\n</details>\n<br />\n\n\n[![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=actions/deploy-pages&package-manager=github_actions&previous-version=4&new-version=5)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\n\nYou can trigger a rebase of this PR by commenting `@dependabot rebase`.\n\n[//]: # (dependabot-automerge-start)\n[//]: # (dependabot-automerge-end)\n\n---\n\n<details>\n<summary>Dependabot commands and options</summary>\n<br />\n\nYou can trigger Dependabot actions by commenting on this PR:\n- `@dependabot rebase` will rebase this PR\n- `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it\n- `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency\n- `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself)\n- `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself)\n- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)\n\n\n</details>\n\n> **Note**\n> Automatic rebases have been disabled on this pull request as it has been open for over 30 days.\n",
+    "headRefOid": "0299659c80f6047899ea3310616869be4ae4d411",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 288,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:44:27Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309929/job/91067443210",
+        "name": "build",
+        "startedAt": "2026-07-31T03:44:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:45:48Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309944/job/91067443394",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-07-31T03:44:07Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:44:09Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309941/job/91067443497",
+        "name": "classify",
+        "startedAt": "2026-07-31T03:44:00Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:44:13Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309947/job/91067443446",
+        "name": "secret-scan",
+        "startedAt": "2026-07-31T03:44:00Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:44:30Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309941/job/91067467083",
+        "name": "preflight",
+        "startedAt": "2026-07-31T03:44:15Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:45:16Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309944/job/91067443392",
+        "name": "test",
+        "startedAt": "2026-07-31T03:44:06Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:45:41Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309944/job/91067443437",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-07-31T03:44:00Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:44:31Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309941/job/91067467097",
+        "name": "critical-approval",
+        "startedAt": "2026-07-31T03:44:28Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:44:23Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309944/job/91067443336",
+        "name": "language-system",
+        "startedAt": "2026-07-31T03:44:01Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:44:30Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309941/job/91067509827",
+        "name": "selected-evidence",
+        "startedAt": "2026-07-31T03:44:30Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:44:47Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309941/job/91067512020",
+        "name": "engineering-gate",
+        "startedAt": "2026-07-31T03:44:37Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:44:22Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309944/job/91067443389",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-07-31T03:44:06Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-31T03:44:21Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30602309944/job/91067443382",
+        "name": "rust-test",
+        "startedAt": "2026-07-31T03:44:01Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      }
+    ]
+  }
+}

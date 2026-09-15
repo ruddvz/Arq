@@ -1,0 +1,41 @@
+{
+  "files": [
+    {
+      "sha": "9c92e0ca1678e44d412f16475d201b641e5b8901",
+      "filename": ".github/workflows/ci.yml",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 3,
+      "changes": 7,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/e8b437654348f887685ec54d511f6fffe6bab68f/.github%2Fworkflows%2Fci.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/e8b437654348f887685ec54d511f6fffe6bab68f/.github%2Fworkflows%2Fci.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fci.yml?ref=e8b437654348f887685ec54d511f6fffe6bab68f",
+      "patch": "@@ -1,14 +1,15 @@\n name: CI\n \n-# push covers the actual default branch (this repository's default is the\n-# long-lived claude/arq-cad-platform-research-ba8rav branch, not main);\n+# During ADR-0029's reversible branch migration, pushes to both the current\n+# integration branch and the future `main` branch must receive the same CI.\n+# Keep both until `main` is the verified default and the rollback window closes.\n # merge_group is present so a merge queue can be enabled later without a\n # coverage gap \u2014 see engineering/33_IMPLEMENTATION_HANDOFF.md Phase 2.\n on:\n   pull_request:\n   merge_group:\n   push:\n-    branches: [claude/arq-cad-platform-research-ba8rav]\n+    branches: [claude/arq-cad-platform-research-ba8rav, main]\n \n # This is the expensive workflow - eleven headless-Chromium capability checks,\n # the full test suite and the language ladder - and without a concurrency group"
+    },
+    {
+      "sha": "2c9a7f777e6a1635d1490c6115d7a4ea26381964",
+      "filename": ".github/workflows/deploy-pages.yml",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 3,
+      "changes": 7,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/e8b437654348f887685ec54d511f6fffe6bab68f/.github%2Fworkflows%2Fdeploy-pages.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/e8b437654348f887685ec54d511f6fffe6bab68f/.github%2Fworkflows%2Fdeploy-pages.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fdeploy-pages.yml?ref=e8b437654348f887685ec54d511f6fffe6bab68f",
+      "patch": "@@ -8,9 +8,9 @@\n # SITE_ORIGIN enables sitemap.xml, the robots Sitemap line and absolute\n # Open Graph URLs.\n #\n-# Triggers: pushes that touch the site on the default branch, plus manual\n-# dispatch. (The in-flight site branch triggers were trimmed after PRs #282\n-# and #283 merged, as their own comments instructed.)\n+# Triggers: pushes that touch the site on either branch participating in the\n+# ADR-0029 migration, plus manual dispatch. Keeping both branch triggers during\n+# the rollback window prevents the deployment path from disappearing mid-cutover.\n #\n # Language System 4.1 adds three gates around the existing build: route\n # coverage before the build, a rendered-copy audit that writes a commit-bound\n@@ -25,6 +25,7 @@ on:\n   push:\n     branches:\n       - claude/arq-cad-platform-research-ba8rav\n+      - main\n     paths:\n       - 'apps/marketing/**'\n       - 'brand/**'"
+    },
+    {
+      "sha": "4f684233dfa97253196ba9af58a90163169224d4",
+      "filename": "engineering/ops/generated/engineering-context-v5.json",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 3,
+      "changes": 6,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/e8b437654348f887685ec54d511f6fffe6bab68f/engineering%2Fops%2Fgenerated%2Fengineering-context-v5.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/e8b437654348f887685ec54d511f6fffe6bab68f/engineering%2Fops%2Fgenerated%2Fengineering-context-v5.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/engineering%2Fops%2Fgenerated%2Fengineering-context-v5.json?ref=e8b437654348f887685ec54d511f6fffe6bab68f",
+      "patch": "@@ -4,7 +4,7 @@\n   \"version\": \"5.0.0\",\n   \"hash_algorithm\": \"sha256\",\n   \"repository_bound\": true,\n-  \"source_hash\": \"18920373b71be76f79acca276c8e581f79a94567044a1c3b0c9a6f5635e61517\",\n+  \"source_hash\": \"a1e9d0bf3fb4c9bc783eb99e652793c18ababbbc980b547cdd2214ce66c70673\",\n   \"source_records\": [\n     {\n       \"scope\": \"package\",\n@@ -89,12 +89,12 @@\n     {\n       \"scope\": \"repository\",\n       \"path\": \".github/workflows/ci.yml\",\n-      \"sha256\": \"3320f61ef48c89f63f182f663bf5a07ee128649a995e297dc004d6dcd5074b67\"\n+      \"sha256\": \"ae46167c6cae1d928b1d83371a7359e74a496ac7931aaadf9706c9489327529a\"\n     },\n     {\n       \"scope\": \"repository\",\n       \"path\": \".github/workflows/deploy-pages.yml\",\n-      \"sha256\": \"d76cafc585a32391650c3be10777eded7e6198951b183f47bb4b28e5424fcece\"\n+      \"sha256\": \"5c2808ce2c3616138afded0c6735539a91d19926a8fe95eb25a1062b4990cecf\"\n     },\n     {\n       \"scope\": \"repository\","
+    }
+  ],
+  "reviews": []
+}

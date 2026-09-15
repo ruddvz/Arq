@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "sha": "d342d153b2ab84522370304bb7bb7b18fcb0f506",
+      "filename": "scripts/zeus-adaptive-budget.mjs",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 0,
+      "changes": 3,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/95f3254ddcd28214a686cd3807f557246c8e03f8/scripts%2Fzeus-adaptive-budget.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/95f3254ddcd28214a686cd3807f557246c8e03f8/scripts%2Fzeus-adaptive-budget.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Fzeus-adaptive-budget.mjs?ref=95f3254ddcd28214a686cd3807f557246c8e03f8",
+      "patch": "@@ -52,6 +52,7 @@ export function validateAdaptiveConfig({ core, adaptive } = loadConfigs()) {\n     for (const key of [\n       'toolCallsBeforeReevaluation',\n       'externalResearchQueries',\n+      'browserInteractions',\n       'parallelReadOnlyAgents',\n       'parallelMutationLanes',\n       'reviewerFanoutSoftCeiling',\n@@ -230,6 +231,7 @@ export function evaluateRunEfficiency({\n     supportingMethods: budget.supportingMethods,\n     toolCalls: budget.toolCallsBeforeReevaluation,\n     externalResearchQueries: budget.externalResearchQueries,\n+    browserInteractions: budget.browserInteractions,\n     readOnlyAgents: budget.parallelReadOnlyAgents,\n     mutationLanes: budget.parallelMutationLanes,\n     repairRounds: budget.repairRounds,\n@@ -242,6 +244,7 @@ export function evaluateRunEfficiency({\n     supportingMethods: usage.supportingMethods ?? 0,\n     toolCalls: usage.toolCalls ?? 0,\n     externalResearchQueries: usage.externalResearchQueries ?? 0,\n+    browserInteractions: usage.browserInteractions ?? 0,\n     readOnlyAgents: usage.readOnlyAgents ?? 0,\n     mutationLanes: usage.mutationLanes ?? 0,\n     repairRounds: usage.repairRounds ?? 0,"
+    },
+    {
+      "sha": "3d881b2905fae7ad6de0998ca057e196e8eca30f",
+      "filename": "scripts/zeus-adaptive-budget.test.mjs",
+      "status": "modified",
+      "additions": 33,
+      "deletions": 0,
+      "changes": 33,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/95f3254ddcd28214a686cd3807f557246c8e03f8/scripts%2Fzeus-adaptive-budget.test.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/95f3254ddcd28214a686cd3807f557246c8e03f8/scripts%2Fzeus-adaptive-budget.test.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Fzeus-adaptive-budget.test.mjs?ref=95f3254ddcd28214a686cd3807f557246c8e03f8",
+      "patch": "@@ -18,11 +18,20 @@ const configs = loadConfigs();\n   assert.equal(result.ok, true, result.errors.join('\\n'));\n }\n \n+{\n+  const broken = structuredClone(configs);\n+  broken.adaptive.budgetExtensions.standard.browserInteractions = -1;\n+  const result = validateAdaptiveConfig(broken);\n+  assert.equal(result.ok, false);\n+  assert.match(result.errors.join('\\n'), /standard\\.browserInteractions/);\n+}\n+\n {\n   const budget = mergedBudget('fast', configs);\n   assert.equal(budget.sources, 4);\n   assert.equal(budget.contextChars, 8000);\n   assert.equal(budget.toolCallsBeforeReevaluation, 8);\n+  assert.equal(budget.browserInteractions, 0);\n   assert.equal(budget.parallelMutationLanes, 1);\n }\n \n@@ -141,6 +150,7 @@ const configs = loadConfigs();\n       supportingMethods: 1,\n       toolCalls: 5,\n       externalResearchQueries: 0,\n+      browserInteractions: 0,\n       readOnlyAgents: 0,\n       mutationLanes: 1,\n       repairRounds: 1,\n@@ -204,6 +214,29 @@ const configs = loadConfigs();\n   assert.equal(result.decision, 're-evaluate-tier-or-strategy');\n }\n \n+{\n+  const result = evaluateRunEfficiency({\n+    tier: 'standard',\n+    configs,\n+    usage: {\n+      modules: 1,\n+      sources: 2,\n+      contextChars: 4000,\n+      supportingMethods: 1,\n+      toolCalls: 3,\n+      browserInteractions: 5,\n+      mutationLanes: 1,\n+      requiredGatesPassed: true,\n+      requiredReviewPassed: true,\n+      evidenceState: 'verified',\n+      acceptanceProven: false,\n+    },\n+  });\n+  assert.equal(result.within_budget, false);\n+  assert.equal(result.exceeded.includes('browserInteractions'), true);\n+  assert.equal(result.decision, 're-evaluate-tier-or-strategy');\n+}\n+\n {\n   const result = evaluateRunEfficiency({\n     tier: 'deep',"
+    }
+  ],
+  "reviews": []
+}

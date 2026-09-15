@@ -1,0 +1,351 @@
+{
+  "files": [
+    {
+      "sha": "d5ea106f8832353577bc9ce240d1e609f1d8ef67",
+      "filename": "apps/web/src/App.tsx",
+      "status": "modified",
+      "additions": 76,
+      "deletions": 45,
+      "changes": 121,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/apps%2Fweb%2Fsrc%2FApp.tsx",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/apps%2Fweb%2Fsrc%2FApp.tsx",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/apps%2Fweb%2Fsrc%2FApp.tsx?ref=c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+      "patch": "@@ -106,6 +106,7 @@ import {\n } from './canvas/plan-document';\n import { createPlanJournal, type PlanJournal } from './canvas/plan-journal';\n import type { NativeProjectSession, NativeProjectSnapshot } from './project/native-project-session';\n+import { persistWorkspaceOperation } from './project/workspace-persistence';\n import {\n   browserCopyDelivery,\n   deliverPublishedCopy,\n@@ -770,6 +771,8 @@ export function App(): JSX.Element {\n    * the journal cannot take writes (quota, eviction, no IndexedDB).\n    */\n   const journalRef = useRef<PlanJournal | null>(null);\n+  // Only the newest persistence attempt may settle the global save indicator.\n+  const persistenceRevisionRef = useRef(0);\n   const wallIdCounterRef = useRef(0);\n   const [saveState, setSaveState] = useState<\n     'no-project' | 'saved' | 'saving' | 'unsaved-changes' | 'recovered'\n@@ -780,10 +783,11 @@ export function App(): JSX.Element {\n     const journal = createPlanJournal();\n     journalRef.current = journal;\n     let cancelled = false;\n+    const recoveryRevision = persistenceRevisionRef.current;\n     journal\n       .recover(PLAN_PROJECT_ID)\n       .then(({ walls, recoveredOperationCount }) => {\n-        if (cancelled) {\n+        if (cancelled || recoveryRevision !== persistenceRevisionRef.current) {\n           return;\n         }\n         setDrawnWalls(walls);\n@@ -796,12 +800,14 @@ export function App(): JSX.Element {\n         );\n       })\n       .catch(() => {\n-        if (!cancelled) {\n+        if (!cancelled && recoveryRevision === persistenceRevisionRef.current) {\n           setSaveState('unsaved-changes');\n           setJournalLabel('Journal unavailable');\n         }\n       });\n     const unsubscribe = journal.onUnavailable(() => {\n+      // The demo journal is not authoritative while a native project is open.\n+      if (nativeSessionRef.current !== null) return;\n       setSaveState('unsaved-changes');\n       setJournalLabel('Journal unavailable');\n     });\n@@ -813,33 +819,50 @@ export function App(): JSX.Element {\n     };\n   }, []);\n \n-  const journalOperation = useCallback((operation: WorkspaceOperation) => {\n-    const journal = journalRef.current;\n-    if (journal === null || operation.kind === 'note') {\n-      return;\n-    }\n-    setSaveState('saving');\n-    void journal.append(PLAN_PROJECT_ID, operation).then((state) => {\n-      if (state.status === 'ready') {\n-        setSaveState('saved');\n-        setJournalLabel('Journal current');\n-      } else {\n+  const persistOperation = useCallback(\n+    (operation: WorkspaceOperation, walls: readonly DrawnWall[]) => {\n+      if (operation.kind === 'note') return;\n+      const revision = ++persistenceRevisionRef.current;\n+      setSaveState('saving');\n+      void persistWorkspaceOperation({\n+        nativeSession: nativeSessionRef.current,\n+        journal: journalRef.current,\n+        journalProjectId: PLAN_PROJECT_ID,\n+        operation,\n+        walls,\n+      }).then((result) => {\n+        if (revision !== persistenceRevisionRef.current) return;\n+        if (result.status === 'skipped') return;\n+        if (result.status === 'saved') {\n+          setSaveState('saved');\n+          setJournalLabel(\n+            result.authority === 'native' ? 'Working copy current' : 'Journal current',\n+          );\n+          return;\n+        }\n+\n         setSaveState('unsaved-changes');\n-        // The journal already worked out why, and a full disk is the one\n-        // failure the user can do something about. Collapsing every write\n-        // failure to the same four words threw that away: it told someone\n-        // their work was not being kept without telling them the reason they\n-        // could act on.\n+        if (result.status === 'blocked') {\n+          setJournalLabel(\n+            result.reason === 'read-only'\n+              ? 'Project is read-only \u00b7 changes are not saved'\n+              : 'Reference project wall edits are not saved in this build',\n+          );\n+          return;\n+        }\n+        if (result.authority === 'native') {\n+          setJournalLabel('Working copy write failed');\n+          return;\n+        }\n         setJournalLabel(\n-          state.status === 'unavailable'\n-            ? 'Journal unavailable'\n-            : state.cause === 'storage-full'\n-              ? 'Journal write failed: device storage is full'\n-              : 'Journal write failed',\n+          result.cause === 'storage-full'\n+            ? 'Journal write failed: device storage is full'\n+            : 'Journal write failed',\n         );\n-      }\n-    });\n-  }, []);\n+      });\n+    },\n+    [],\n+  );\n \n   const [projectName, setProjectName] = useState('Untitled project');\n   /**\n@@ -877,6 +900,8 @@ export function App(): JSX.Element {\n       readonly session: NativeProjectSession;\n       readonly snapshot: NativeProjectSnapshot;\n     }) => {\n+      // Changing persistence authority invalidates completions from the old one.\n+      persistenceRevisionRef.current += 1;\n       const previous = nativeSessionRef.current;\n       nativeSessionRef.current = opened.session;\n       // Fire-and-forget, but never skipped: releasing the previous Worker is\n@@ -918,17 +943,18 @@ export function App(): JSX.Element {\n       );\n       wallIdCounterRef.current = highestWallIdSuffix(shown);\n       setProjectName(opened.snapshot.displayName);\n-      // Read from the working copy, not written to it yet: \"opened\" is not\n-      // \"saved\", and this build does not checkpoint edits back to the `.arq`\n-      // file. Saying `saved` here would claim durability the product has not\n-      // earned.\n-      setSaveState('unsaved-changes');\n+      // A committed baseline is a saved/editable state only for the flat model\n+      // this editor can round-trip without semantic loss.\n+      const canPersistWallEdits = !opened.snapshot.readOnly && opened.snapshot.document === null;\n+      setSaveState(canPersistWallEdits ? 'saved' : 'unsaved-changes');\n       setJournalLabel(\n         opened.snapshot.readOnly\n-          ? 'Open for reading only \u00b7 edits are not saved to this project'\n-          : 'Open from a local working copy \u00b7 edits are not saved to this project yet',\n+          ? 'Open for reading only \u00b7 changes cannot be saved'\n+          : opened.snapshot.document !== null\n+            ? 'Reference project open \u00b7 wall edits are not persistable in this build'\n+            : 'Working copy current',\n       );\n-      setNativeProjectAvailability({ open: true, writable: !opened.snapshot.readOnly });\n+      setNativeProjectAvailability({ open: true, writable: canPersistWallEdits });\n       // Kept so the project browser can show what the file contains beyond the\n       // walls the plan draws - its levels, wall types and rooms. Null for a\n       // project this build wrote, which carries none of that, and the panel is\n@@ -944,7 +970,9 @@ export function App(): JSX.Element {\n                 writeVerdict: opened.snapshot.readOnly ? 'read-only' : 'working-copy',\n                 writeReason: opened.snapshot.readOnly\n                   ? 'This project was written by a newer version of ARQ, so it can be read but not changed.'\n-                  : 'Changes are kept in a local working copy on this device. Nothing is written back to the .arq file you chose.',\n+                  : opened.snapshot.document !== null\n+                    ? 'This project is open from a local working copy. Wall edits are not persisted until ARQ can preserve the full reference model.'\n+                    : 'Changes are kept in a local working copy on this device. Nothing is written back to the .arq file you chose.',\n                 conditions: opened.snapshot.warnings,\n               },\n             },\n@@ -1122,17 +1150,18 @@ export function App(): JSX.Element {\n     return null;\n   };\n \n-  /** Applies a typed operation to the plan document, records its real inverse, journals it. */\n+  /** Applies a typed operation to the plan document, records its real inverse, and persists it. */\n   const performOperation = useCallback(\n     (operation: WorkspaceOperation) => {\n       const current = drawnWallsRef.current;\n       undoStackRef.current.push({\n         forward: operation,\n         inverse: invertOperation(current, operation),\n       });\n-      setDrawnWalls(applyOperation(current, operation));\n+      const next = applyOperation(current, operation);\n+      setDrawnWalls(next);\n       setHistoryVersion((v) => v + 1);\n-      journalOperation(operation);\n+      persistOperation(operation, next);\n       // Published after the model applied and the inverse is recorded - the\n       // semantic commit is real. Persistence has its own honest channel\n       // (the status bar's journal state), deliberately not conflated here.\n@@ -1141,28 +1170,30 @@ export function App(): JSX.Element {\n         feedbackStoreRef.current.publish('success', message, Date.now());\n       }\n     },\n-    [journalOperation],\n+    [persistOperation],\n   );\n \n   const handleUndo = useCallback(() => {\n     const inverse = undoStackRef.current.undo();\n     if (inverse !== null) {\n-      setDrawnWalls(applyOperation(drawnWallsRef.current, inverse));\n-      journalOperation(inverse);\n+      const next = applyOperation(drawnWallsRef.current, inverse);\n+      setDrawnWalls(next);\n+      persistOperation(inverse, next);\n       feedbackStoreRef.current.publish('info', 'Undone', Date.now());\n     }\n     setHistoryVersion((v) => v + 1);\n-  }, [journalOperation]);\n+  }, [persistOperation]);\n \n   const handleRedo = useCallback(() => {\n     const forward = undoStackRef.current.redo();\n     if (forward !== null) {\n-      setDrawnWalls(applyOperation(drawnWallsRef.current, forward));\n-      journalOperation(forward);\n+      const next = applyOperation(drawnWallsRef.current, forward);\n+      setDrawnWalls(next);\n+      persistOperation(forward, next);\n       feedbackStoreRef.current.publish('info', 'Redone', Date.now());\n     }\n     setHistoryVersion((v) => v + 1);\n-  }, [journalOperation]);\n+  }, [persistOperation]);\n \n   const recordDemoAction = useCallback(\n     (label: string) => {"
+    },
+    {
+      "sha": "c710833bd70d667b4c166aa4154be07d07512041",
+      "filename": "apps/web/src/project/native-project-session.test.ts",
+      "status": "modified",
+      "additions": 83,
+      "deletions": 0,
+      "changes": 83,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/apps%2Fweb%2Fsrc%2Fproject%2Fnative-project-session.test.ts",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/apps%2Fweb%2Fsrc%2Fproject%2Fnative-project-session.test.ts",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/apps%2Fweb%2Fsrc%2Fproject%2Fnative-project-session.test.ts?ref=c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+      "patch": "@@ -4,6 +4,7 @@ import { worldPoint } from '@arq/geometry-2d';\n import {\n   NativeProjectSession,\n   NativeProjectReadOnlyError,\n+  NativeProjectUnsupportedEditError,\n   type NativeProjectSnapshot,\n   type NativeProjectWorkerHandle,\n } from './native-project-session';\n@@ -179,6 +180,88 @@ describe('NativeProjectSession write semantics', () => {\n     );\n     expect(requestTypes).toEqual([]);\n   });\n+  it('refuses the flat save path for a reference-format project before touching the Worker', async () => {\n+    const { session, requestTypes } = sessionWith(async () => ({ kind: 'putArchiveEntries' }), {\n+      document: {} as NativeProjectSnapshot['document'],\n+    });\n+\n+    await expect(\n+      session.save({\n+        walls: [wall('w1', 1000)],\n+        operation: { kind: 'add-walls', walls: [wall('w1', 1000)] },\n+      }),\n+    ).rejects.toBeInstanceOf(NativeProjectUnsupportedEditError);\n+    expect(requestTypes).toEqual([]);\n+  });\n+\n+  it('replays failed operation history into the next successful full-state save', async () => {\n+    const written: ReadonlyArray<readonly [string, Uint8Array]>[] = [];\n+    let attempt = 0;\n+    const { session } = sessionWith(async (request) => {\n+      if (request.type !== 'putArchiveEntries') throw new Error(`unexpected ${request.type}`);\n+      attempt += 1;\n+      if (attempt === 1) throw new Error('simulated durable write failure');\n+      written.push(request.entries ?? []);\n+      return { kind: 'putArchiveEntries' };\n+    });\n+    const first = wall('first', 1000);\n+    const second = wall('second', 2000);\n+    const firstOperation = { kind: 'add-walls', walls: [first] } as const;\n+    const secondOperation = { kind: 'add-walls', walls: [second] } as const;\n+\n+    await expect(session.save({ walls: [first], operation: firstOperation })).rejects.toThrow(\n+      'simulated durable write failure',\n+    );\n+    await expect(\n+      session.save({ walls: [first, second], operation: secondOperation }),\n+    ).resolves.toBeUndefined();\n+\n+    expect(session.snapshot()).toMatchObject({\n+      walls: [first, second],\n+      journalSequence: 2,\n+    });\n+    expect(session.hasUnsavedFailure).toBe(false);\n+\n+    const archive = await importArchive(new Map(written[0]));\n+    expect(archive.status).toBe('opened');\n+    if (archive.status === 'opened') {\n+      expect(archive.model).toMatchObject({\n+        walls: [{ id: 'first' }, { id: 'second' }],\n+      });\n+      expect(archive.operations).toEqual([firstOperation, secondOperation]);\n+    }\n+  });\n+\n+  it('lets a later full wall state supersede geometry from a failed change', async () => {\n+    const written: ReadonlyArray<readonly [string, Uint8Array]>[] = [];\n+    let attempt = 0;\n+    const { session } = sessionWith(async (request) => {\n+      if (request.type !== 'putArchiveEntries') throw new Error(`unexpected ${request.type}`);\n+      attempt += 1;\n+      if (attempt === 1) throw new Error('simulated durable write failure');\n+      written.push(request.entries ?? []);\n+      return { kind: 'putArchiveEntries' };\n+    });\n+    const failedWall = wall('failed', 1000);\n+    const replacement = wall('replacement', 2500);\n+\n+    await expect(\n+      session.save({\n+        walls: [failedWall],\n+        operation: { kind: 'add-walls', walls: [failedWall] },\n+      }),\n+    ).rejects.toThrow('simulated durable write failure');\n+    await session.save({\n+      walls: [replacement],\n+      operation: { kind: 'remove-walls', wallIds: ['failed'] },\n+    });\n+\n+    const archive = await importArchive(new Map(written[0]));\n+    expect(archive.status).toBe('opened');\n+    if (archive.status === 'opened') {\n+      expect(archive.model).toMatchObject({ walls: [{ id: 'replacement' }] });\n+    }\n+  });\n });\n \n describe('NativeProjectSession shutdown', () => {"
+    },
+    {
+      "sha": "80ed5afc6e3656a54adb7af9db3b9a957c593bf3",
+      "filename": "apps/web/src/project/native-project-session.ts",
+      "status": "modified",
+      "additions": 50,
+      "deletions": 19,
+      "changes": 69,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/apps%2Fweb%2Fsrc%2Fproject%2Fnative-project-session.ts",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/apps%2Fweb%2Fsrc%2Fproject%2Fnative-project-session.ts",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/apps%2Fweb%2Fsrc%2Fproject%2Fnative-project-session.ts?ref=c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+      "patch": "@@ -99,6 +99,19 @@ export class NativeProjectReadOnlyError extends Error {\n   }\n }\n \n+/**\n+ * The flat wall encoder cannot preserve a reference-format project's levels,\n+ * wall types, rooms, openings, hosted elements or views.\n+ */\n+export class NativeProjectUnsupportedEditError extends Error {\n+  constructor() {\n+    super(\n+      'This reference-format project cannot persist wall edits until ARQ can preserve its full semantic model.',\n+    );\n+    this.name = 'NativeProjectUnsupportedEditError';\n+  }\n+}\n+\n /**\n  * What `prepareForPublication` hands to `publishNativeProject` once the working\n  * copy is genuinely ready to be exported: everything drained, checkpointed and\n@@ -132,6 +145,8 @@ export class NativeProjectSession {\n    * `save` carries the failure; this tail only orders the next write.\n    */\n   #queue: Promise<void> = Promise.resolve();\n+  /** Changes that became visible in the editor but whose Worker write failed. */\n+  #pendingChanges: readonly NativeProjectChange[] = [];\n   #lastWriteError: unknown = null;\n   #closed = false;\n \n@@ -179,6 +194,13 @@ export class NativeProjectSession {\n       return Promise.reject(new NativeProjectReadOnlyError());\n     }\n \n+    if (this.#snapshot.document !== null) {\n+      // The current wall operation carries centreline geometry only. Passing a\n+      // reference project through the flat encoder would silently discard its\n+      // richer canonical model, so this is a hard session-level boundary.\n+      return Promise.reject(new NativeProjectUnsupportedEditError());\n+    }\n+\n     const run = (): Promise<void> => this.#commit(change);\n     // `then(run, run)` on both settlements is the whole of rule 2: the next save\n     // runs whether or not the previous one rejected.\n@@ -254,39 +276,48 @@ export class NativeProjectSession {\n   }\n \n   async #commit(change: NativeProjectChange): Promise<void> {\n-    // Built from the *committed* snapshot, read now rather than when `save` was\n-    // called, so a queued write always extends what actually landed.\n-    const committed = this.#snapshot;\n-    const next: NativeProjectSnapshot = {\n-      ...committed,\n-      displayName: change.displayName ?? committed.displayName,\n-      walls: change.walls ?? committed.walls,\n-      journalSequence: change.journalSequence ?? committed.journalSequence,\n-    };\n-    const nextOperations =\n-      change.operation === undefined ? this.#operations : [...this.#operations, change.operation];\n+    // Reapply failed changes in order, then the newest state. A later full wall\n+    // state therefore remains authoritative (including undo), while operation\n+    // history from a transient failure is not silently dropped.\n+    const pending = [...this.#pendingChanges, change];\n+    let next = this.#snapshot;\n+    let nextOperations = this.#operations;\n \n-    const entries = await exportArchive({\n-      manifest: this.#manifest,\n-      model: encodeNativeProjectModel({ projectName: next.displayName, walls: next.walls }),\n-      operations: nextOperations,\n-    });\n+    for (const candidate of pending) {\n+      next = {\n+        ...next,\n+        displayName: candidate.displayName ?? next.displayName,\n+        walls: candidate.walls ?? next.walls,\n+        journalSequence:\n+          candidate.journalSequence ??\n+          (candidate.operation === undefined ? next.journalSequence : next.journalSequence + 1),\n+      };\n+      if (candidate.operation !== undefined) {\n+        nextOperations = [...nextOperations, candidate.operation];\n+      }\n+    }\n \n     try {\n+      const entries = await exportArchive({\n+        manifest: this.#manifest,\n+        model: encodeNativeProjectModel({ projectName: next.displayName, walls: next.walls }),\n+        operations: nextOperations,\n+      });\n       await this.#handle.client.request({\n         type: 'putArchiveEntries',\n         entries: [...entries],\n       });\n     } catch (error) {\n-      // Rule 1: nothing above this line has touched #snapshot, and nothing\n-      // below it runs. The project in memory is still exactly what the working\n-      // copy holds.\n+      // Canonical state remains the last Worker-acknowledged snapshot. Keep the\n+      // intended changes only for the next save attempt.\n+      this.#pendingChanges = pending;\n       this.#lastWriteError = error;\n       throw error;\n     }\n \n     this.#snapshot = next;\n     this.#operations = nextOperations;\n+    this.#pendingChanges = [];\n     this.#lastWriteError = null;\n   }\n "
+    },
+    {
+      "sha": "155ccae574e4d446b0ab1ed49d9cceafb5481772",
+      "filename": "apps/web/src/project/workspace-persistence.test.ts",
+      "status": "added",
+      "additions": 191,
+      "deletions": 0,
+      "changes": 191,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/apps%2Fweb%2Fsrc%2Fproject%2Fworkspace-persistence.test.ts",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/apps%2Fweb%2Fsrc%2Fproject%2Fworkspace-persistence.test.ts",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/apps%2Fweb%2Fsrc%2Fproject%2Fworkspace-persistence.test.ts?ref=c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+      "patch": "@@ -0,0 +1,191 @@\n+import { worldPoint } from '@arq/geometry-2d';\n+import { describe, expect, it, vi } from 'vitest';\n+import type { PlanJournal } from '../canvas/plan-journal';\n+import type { WorkspaceOperation } from '../canvas/plan-document';\n+import {\n+  NativeProjectReadOnlyError,\n+  NativeProjectUnsupportedEditError,\n+  type NativeProjectSession,\n+} from './native-project-session';\n+import { persistWorkspaceOperation } from './workspace-persistence';\n+\n+const operation: WorkspaceOperation = {\n+  kind: 'add-walls',\n+  walls: [{ id: 'wall-1', start: worldPoint(0, 0), end: worldPoint(1000, 0) }],\n+};\n+const walls = operation.kind === 'add-walls' ? operation.walls : [];\n+\n+function journal(result: Awaited<ReturnType<PlanJournal['append']>>) {\n+  return {\n+    append: vi.fn().mockResolvedValue(result),\n+  } satisfies Pick<PlanJournal, 'append'>;\n+}\n+\n+function nativeSession(save: ReturnType<typeof vi.fn>) {\n+  return { save } as unknown as Pick<NativeProjectSession, 'save'>;\n+}\n+\n+describe('persistWorkspaceOperation', () => {\n+  it('uses the demo journal only when no native project owns the edit', async () => {\n+    const localJournal = journal({ status: 'ready' });\n+\n+    const result = await persistWorkspaceOperation({\n+      nativeSession: null,\n+      journal: localJournal,\n+      journalProjectId: 'demo-project',\n+      operation,\n+      walls,\n+    });\n+\n+    expect(result).toEqual({ status: 'saved', authority: 'journal' });\n+    expect(localJournal.append).toHaveBeenCalledWith('demo-project', operation);\n+  });\n+\n+  it('uses the native session without duplicating the edit into the demo journal', async () => {\n+    const save = vi.fn().mockResolvedValue(undefined);\n+    const localJournal = journal({ status: 'ready' });\n+\n+    const result = await persistWorkspaceOperation({\n+      nativeSession: nativeSession(save),\n+      journal: localJournal,\n+      journalProjectId: 'demo-project',\n+      operation,\n+      walls,\n+    });\n+\n+    expect(result).toEqual({ status: 'saved', authority: 'native' });\n+    expect(save).toHaveBeenCalledWith({ walls, operation });\n+    expect(localJournal.append).not.toHaveBeenCalled();\n+  });\n+\n+  it('never falls back to the demo journal when a native project is read-only', async () => {\n+    const save = vi.fn().mockRejectedValue(new NativeProjectReadOnlyError());\n+    const localJournal = journal({ status: 'ready' });\n+\n+    const result = await persistWorkspaceOperation({\n+      nativeSession: nativeSession(save),\n+      journal: localJournal,\n+      journalProjectId: 'demo-project',\n+      operation,\n+      walls,\n+    });\n+\n+    expect(result).toMatchObject({\n+      status: 'blocked',\n+      authority: 'native',\n+      reason: 'read-only',\n+    });\n+    expect(localJournal.append).not.toHaveBeenCalled();\n+  });\n+\n+  it('never flattens a reference project or falls back to the demo journal', async () => {\n+    const save = vi.fn().mockRejectedValue(new NativeProjectUnsupportedEditError());\n+    const localJournal = journal({ status: 'ready' });\n+\n+    const result = await persistWorkspaceOperation({\n+      nativeSession: nativeSession(save),\n+      journal: localJournal,\n+      journalProjectId: 'demo-project',\n+      operation,\n+      walls,\n+    });\n+\n+    expect(result).toMatchObject({\n+      status: 'blocked',\n+      authority: 'native',\n+      reason: 'reference-project',\n+    });\n+    expect(localJournal.append).not.toHaveBeenCalled();\n+  });\n+\n+  it('reports a native write failure and allows the next operation to try the session again', async () => {\n+    const save = vi\n+      .fn()\n+      .mockRejectedValueOnce(new Error('durable write failed'))\n+      .mockResolvedValueOnce(undefined);\n+    const session = nativeSession(save);\n+\n+    const first = await persistWorkspaceOperation({\n+      nativeSession: session,\n+      journal: null,\n+      journalProjectId: 'demo-project',\n+      operation,\n+      walls,\n+    });\n+    const second = await persistWorkspaceOperation({\n+      nativeSession: session,\n+      journal: null,\n+      journalProjectId: 'demo-project',\n+      operation,\n+      walls,\n+    });\n+\n+    expect(first).toEqual({\n+      status: 'failed',\n+      authority: 'native',\n+      detail: 'durable write failed',\n+    });\n+    expect(second).toEqual({ status: 'saved', authority: 'native' });\n+    expect(save).toHaveBeenCalledTimes(2);\n+  });\n+\n+  it('does not persist note-only UI history', async () => {\n+    const save = vi.fn();\n+    const localJournal = journal({ status: 'ready' });\n+\n+    const result = await persistWorkspaceOperation({\n+      nativeSession: nativeSession(save),\n+      journal: localJournal,\n+      journalProjectId: 'demo-project',\n+      operation: { kind: 'note', label: 'Opened menu' },\n+      walls,\n+    });\n+\n+    expect(result).toEqual({ status: 'skipped' });\n+    expect(save).not.toHaveBeenCalled();\n+    expect(localJournal.append).not.toHaveBeenCalled();\n+  });\n+\n+  it('preserves actionable journal failure causes', async () => {\n+    const localJournal = journal({\n+      status: 'write-failed',\n+      cause: 'storage-full',\n+      reason: 'quota exceeded',\n+    });\n+\n+    const result = await persistWorkspaceOperation({\n+      nativeSession: null,\n+      journal: localJournal,\n+      journalProjectId: 'demo-project',\n+      operation,\n+      walls,\n+    });\n+\n+    expect(result).toEqual({\n+      status: 'failed',\n+      authority: 'journal',\n+      detail: 'quota exceeded',\n+      cause: 'storage-full',\n+    });\n+  });\n+\n+  it('reports an unexpected thrown journal failure instead of rejecting the UI callback', async () => {\n+    const localJournal = {\n+      append: vi.fn().mockRejectedValue(new Error('database closed')),\n+    } as unknown as Pick<PlanJournal, 'append'>;\n+\n+    const result = await persistWorkspaceOperation({\n+      nativeSession: null,\n+      journal: localJournal,\n+      journalProjectId: 'demo-project',\n+      operation,\n+      walls,\n+    });\n+\n+    expect(result).toEqual({\n+      status: 'failed',\n+      authority: 'journal',\n+      detail: 'database closed',\n+    });\n+  });\n+});"
+    },
+    {
+      "sha": "fbe626de756a6e93687f67402cdae487ceceab7d",
+      "filename": "apps/web/src/project/workspace-persistence.ts",
+      "status": "added",
+      "additions": 118,
+      "deletions": 0,
+      "changes": 118,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/apps%2Fweb%2Fsrc%2Fproject%2Fworkspace-persistence.ts",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/apps%2Fweb%2Fsrc%2Fproject%2Fworkspace-persistence.ts",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/apps%2Fweb%2Fsrc%2Fproject%2Fworkspace-persistence.ts?ref=c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+      "patch": "@@ -0,0 +1,118 @@\n+import type { PlanJournal, PlanJournalWriteFailureCause } from '../canvas/plan-journal';\n+import type { DrawnWall, WorkspaceOperation } from '../canvas/plan-document';\n+import {\n+  NativeProjectReadOnlyError,\n+  NativeProjectUnsupportedEditError,\n+  type NativeProjectSession,\n+} from './native-project-session';\n+\n+/**\n+ * The workspace has two persistence authorities, but never for the same edit.\n+ *\n+ * A native session owns an opened `.arq` project's working copy. The IndexedDB\n+ * journal owns only the no-project/demo plan. Falling back from a native write\n+ * to the demo journal would be dangerous: the UI could say an opened project is\n+ * saved even though its own working copy never changed.\n+ */\n+export interface WorkspacePersistenceInputs {\n+  readonly nativeSession: Pick<NativeProjectSession, 'save'> | null;\n+  readonly journal: Pick<PlanJournal, 'append'> | null;\n+  readonly journalProjectId: string;\n+  readonly operation: WorkspaceOperation;\n+  readonly walls: readonly DrawnWall[];\n+}\n+\n+export type WorkspacePersistenceResult =\n+  | { readonly status: 'saved'; readonly authority: 'native' | 'journal' }\n+  | { readonly status: 'skipped' }\n+  | {\n+      readonly status: 'blocked';\n+      readonly authority: 'native';\n+      readonly reason: 'read-only' | 'reference-project';\n+      readonly detail: string;\n+    }\n+  | {\n+      readonly status: 'failed';\n+      readonly authority: 'native' | 'journal';\n+      readonly detail: string;\n+      readonly cause?: PlanJournalWriteFailureCause;\n+    };\n+\n+function describeError(error: unknown): string {\n+  return error instanceof Error ? error.message : String(error);\n+}\n+\n+/**\n+ * Persists one operation through exactly one authority.\n+ *\n+ * Native sessions already serialize writes and remember failed changes for a\n+ * later recovery attempt, so this bridge deliberately adds no queue of its own.\n+ * Its job is routing and honest outcome reporting, not another persistence\n+ * implementation.\n+ */\n+export async function persistWorkspaceOperation(\n+  inputs: WorkspacePersistenceInputs,\n+): Promise<WorkspacePersistenceResult> {\n+  if (inputs.operation.kind === 'note') {\n+    return { status: 'skipped' };\n+  }\n+\n+  if (inputs.nativeSession !== null) {\n+    try {\n+      await inputs.nativeSession.save({ walls: inputs.walls, operation: inputs.operation });\n+      return { status: 'saved', authority: 'native' };\n+    } catch (error) {\n+      if (error instanceof NativeProjectReadOnlyError) {\n+        return {\n+          status: 'blocked',\n+          authority: 'native',\n+          reason: 'read-only',\n+          detail: error.message,\n+        };\n+      }\n+      if (error instanceof NativeProjectUnsupportedEditError) {\n+        return {\n+          status: 'blocked',\n+          authority: 'native',\n+          reason: 'reference-project',\n+          detail: error.message,\n+        };\n+      }\n+      return {\n+        status: 'failed',\n+        authority: 'native',\n+        detail: describeError(error),\n+      };\n+    }\n+  }\n+\n+  if (inputs.journal === null) {\n+    return {\n+      status: 'failed',\n+      authority: 'journal',\n+      detail: 'Local edit persistence is unavailable.',\n+    };\n+  }\n+\n+  try {\n+    const state = await inputs.journal.append(inputs.journalProjectId, inputs.operation);\n+    if (state.status === 'ready') {\n+      return { status: 'saved', authority: 'journal' };\n+    }\n+    if (state.status === 'unavailable') {\n+      return { status: 'failed', authority: 'journal', detail: state.reason };\n+    }\n+    return {\n+      status: 'failed',\n+      authority: 'journal',\n+      detail: state.reason,\n+      cause: state.cause,\n+    };\n+  } catch (error) {\n+    return {\n+      status: 'failed',\n+      authority: 'journal',\n+      detail: describeError(error),\n+    };\n+  }\n+}"
+    },
+    {
+      "sha": "b8e53c6f015eea2dc6bbc775acd1788dfe4a3a7f",
+      "filename": "docs/product/voice/context/REFRESH-LOG.json",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 0,
+      "changes": 6,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/docs%2Fproduct%2Fvoice%2Fcontext%2FREFRESH-LOG.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/docs%2Fproduct%2Fvoice%2Fcontext%2FREFRESH-LOG.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/docs%2Fproduct%2Fvoice%2Fcontext%2FREFRESH-LOG.json?ref=c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+      "patch": "@@ -1,6 +1,12 @@\n {\n   \"schemaVersion\": 1,\n   \"entries\": [\n+    {\n+      \"generatedAt\": \"2026-09-11T19:06:57.448Z\",\n+      \"sourceSetDigest\": \"62ca9be7d09505265ed0ef120581263953ca356386e776fcd73e352e8e25715d\",\n+      \"previousSourceSetDigest\": \"f87139089e621b8273e5188b038916c9a2f4885295356cd8374cad2f6ff5ba4f\",\n+      \"changedSourceSets\": [\"web-app\"]\n+    },\n     {\n       \"generatedAt\": \"2026-09-11T15:53:06.927Z\",\n       \"sourceSetDigest\": \"f87139089e621b8273e5188b038916c9a2f4885295356cd8374cad2f6ff5ba4f\","
+    },
+    {
+      "sha": "885d6185815a54002b6d2e9cac019d1fb0430bbf",
+      "filename": "docs/product/voice/generated-repo-context.json",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 3,
+      "changes": 6,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/docs%2Fproduct%2Fvoice%2Fgenerated-repo-context.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/docs%2Fproduct%2Fvoice%2Fgenerated-repo-context.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/docs%2Fproduct%2Fvoice%2Fgenerated-repo-context.json?ref=c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+      "patch": "@@ -2,7 +2,7 @@\n   \"schemaVersion\": 4,\n   \"contractVersion\": \"4.1.0\",\n   \"sourceContractDigest\": \"8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995\",\n-  \"sourceSetDigest\": \"f87139089e621b8273e5188b038916c9a2f4885295356cd8374cad2f6ff5ba4f\",\n+  \"sourceSetDigest\": \"62ca9be7d09505265ed0ef120581263953ca356386e776fcd73e352e8e25715d\",\n   \"sourceContextGeneratedBy\": \"refresh-repo-context.mjs@4.1\",\n   \"sources\": {\n     \"repository-readme\": {\n@@ -430,8 +430,8 @@\n       \"id\": \"web-app\",\n       \"kind\": \"file\",\n       \"path\": \"apps/web/src/App.tsx\",\n-      \"sha256\": \"e430b27a51ad73abfe9d382be9605d176dcf40f8ac0c1961d31b284a5d77f0ac\",\n-      \"bytes\": 106154\n+      \"sha256\": \"14ff1cac9dc1b072ec6e59d07bae8b9393bf378a8cc9f7bcbf734c14cfcc0c4b\",\n+      \"bytes\": 107582\n     },\n     \"plan-canvas\": {\n       \"id\": \"plan-canvas\","
+    },
+    {
+      "sha": "f5123d1248449423fa2e9c101f5e3a0af55657b2",
+      "filename": "engineering/ops/generated/engineering-context-v5.json",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/engineering%2Fops%2Fgenerated%2Fengineering-context-v5.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/c83d761b0e3ccf62936d9a816f65e8268dbe56b6/engineering%2Fops%2Fgenerated%2Fengineering-context-v5.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/engineering%2Fops%2Fgenerated%2Fengineering-context-v5.json?ref=c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+      "patch": "@@ -4,7 +4,7 @@\n   \"version\": \"5.0.0\",\n   \"hash_algorithm\": \"sha256\",\n   \"repository_bound\": true,\n-  \"source_hash\": \"df7f9b53a4f7674a653971ec89a491debba43421195ebf0cb1cede5adbeb7252\",\n+  \"source_hash\": \"24634e08f6571523ad337fed65952cb63147a981131426d9b88c6dad5d4ba46c\",\n   \"source_records\": [\n     {\n       \"scope\": \"package\",\n@@ -204,7 +204,7 @@\n     {\n       \"scope\": \"repository\",\n       \"path\": \"apps/web/src/App.tsx\",\n-      \"sha256\": \"e430b27a51ad73abfe9d382be9605d176dcf40f8ac0c1961d31b284a5d77f0ac\"\n+      \"sha256\": \"14ff1cac9dc1b072ec6e59d07bae8b9393bf378a8cc9f7bcbf734c14cfcc0c4b\"\n     },\n     {\n       \"scope\": \"repository\","
+    }
+  ],
+  "reviews": [
+    {
+      "id": 5182547462,
+      "node_id": "PRR_kwDOTfeiEM8AAAABNOdmBg",
+      "user": {
+        "login": "ruddvz",
+        "id": 198288250,
+        "node_id": "U_kgDOC9Gjeg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/198288250?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/ruddvz",
+        "html_url": "https://github.com/ruddvz",
+        "followers_url": "https://api.github.com/users/ruddvz/followers",
+        "following_url": "https://api.github.com/users/ruddvz/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ruddvz/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/ruddvz/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ruddvz/subscriptions",
+        "organizations_url": "https://api.github.com/users/ruddvz/orgs",
+        "repos_url": "https://api.github.com/users/ruddvz/repos",
+        "events_url": "https://api.github.com/users/ruddvz/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/ruddvz/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "body": "Two current-head blockers before I would treat #361 as release-ready.\n\n1. **Unsaved native edits can be lost when switching projects after a write failure.** Repro from the current control flow: a writable flat native project receives an edit; `NativeProjectSession.save()` fails, so `hasUnsavedFailure` is true and the UI reports unsaved. Both desktop `onOpenProject={() => setFileOpenPanelOpen(true)}` and mobile back/open actions still allow another project to open. `adoptNativeProject()` then swaps `nativeSessionRef` and the visible wall state immediately, calls `void previous?.close().catch(() => undefined)`, and `close()` terminates the old Worker before rejecting because `#lastWriteError` is still set. That rejection is swallowed. The failed visible operation is therefore no longer visible and the old session is gone, so acceptance criterion 3's later-save recovery path has been destroyed by an ordinary project switch. Please gate/safely coordinate project replacement while native persistence is in-flight or failed. A safe handoff must retain the old project/session when recovery is still required, or otherwise require an explicit user decision rather than silently discarding it.\n\n2. **The PR diff is no longer the bounded five-file implementation described in its body.** Current head includes `.github/workflows/arq-355-engineering-context-refresh.yml` plus generated product-voice context files while the PR says temporary recovery workflows/scripts were removed. I understand the workflow is being used to repair the stale Engineering Gate context, but it and unrelated generated changes should not remain in the final #355 diff unless they are actually required repository artefacts for this change. Please regenerate the required engineering context, remove the one-off self-writing workflow, and re-check the final changed-file set.\n\nThe native routing, reference-format refusal and failed-write replay logic otherwise look directionally sound.",
+      "state": "COMMENTED",
+      "html_url": "https://github.com/ruddvz/Arq/pull/361#pullrequestreview-5182547462",
+      "pull_request_url": "https://api.github.com/repos/ruddvz/Arq/pulls/361",
+      "author_association": "OWNER",
+      "_links": {
+        "html": {
+          "href": "https://github.com/ruddvz/Arq/pull/361#pullrequestreview-5182547462"
+        },
+        "pull_request": {
+          "href": "https://api.github.com/repos/ruddvz/Arq/pulls/361"
+        }
+      },
+      "submitted_at": "2026-09-11T19:11:41Z",
+      "commit_id": "490b080a39c2e9d6072b0eb0aebd162105c24042"
+    },
+    {
+      "id": 5192603122,
+      "node_id": "PRR_kwDOTfeiEM8AAAABNYDV8g",
+      "user": {
+        "login": "ruddvz",
+        "id": 198288250,
+        "node_id": "U_kgDOC9Gjeg",
+        "avatar_url": "https://avatars.githubusercontent.com/u/198288250?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/ruddvz",
+        "html_url": "https://github.com/ruddvz",
+        "followers_url": "https://api.github.com/users/ruddvz/followers",
+        "following_url": "https://api.github.com/users/ruddvz/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ruddvz/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/ruddvz/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ruddvz/subscriptions",
+        "organizations_url": "https://api.github.com/users/ruddvz/orgs",
+        "repos_url": "https://api.github.com/users/ruddvz/repos",
+        "events_url": "https://api.github.com/users/ruddvz/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/ruddvz/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "body": "BLOCKING REVIEW. Engineering verdict: REQUEST_CHANGES.\n\nGitHub rejected the requested `REQUEST_CHANGES` review state because the authenticated account owns this pull request (`Review Can not request changes on your own pull request`). This COMMENT is therefore the strongest review state GitHub permits from this account. It must not be interpreted as a non-blocking review.\n\nExact reviewed SHA: `c83d761b0e3ccf62936d9a816f65e8268dbe56b6`\n\nCurrent integration base: `main` is `14d333a225d6b606a8693f85246cacadb1c93ce3`. The PR branch is currently diverged from that head, 9 commits behind and 25 commits ahead. The latest CI evidence for this PR checked this exact PR head in merge commit `afda620d2eb95e65a7ed749cfe33b30878010405` against the older base `5f965f7678a09e1fbd9a81d51778236fce682736`, so it is exact-head evidence but not current-base integration evidence.\n\n## Current diff scope\n\n8 files:\n- `apps/web/src/App.tsx`\n- `apps/web/src/project/native-project-session.ts`\n- `apps/web/src/project/native-project-session.test.ts`\n- `apps/web/src/project/workspace-persistence.ts`\n- `apps/web/src/project/workspace-persistence.test.ts`\n- `docs/product/voice/context/REFRESH-LOG.json`\n- `docs/product/voice/generated-repo-context.json`\n- `engineering/ops/generated/engineering-context-v5.json`\n\nThe PR body still says the final diff is limited to five product/test files, so that description is stale and was not used as validation evidence.\n\n## Blocking finding\n\n### Project replacement can discard a failed native edit and suppress the only close failure that reports it\n\n`apps/web/src/App.tsx:904-910` invalidates the old persistence revision, replaces `nativeSessionRef` with the newly opened session, then starts `previous?.close()` fire-and-forget and consumes any rejection with `.catch(() => undefined)` before the newly opened project is adopted into the visible workspace.\n\nThat is unsafe after a native write failure. `apps/web/src/project/native-project-session.ts:425-449` deliberately makes `close()` wait for the write queue, shut down the Worker/lease, and then reject if `#lastWriteError` is still present. The session also retains failed changes in `#pendingChanges` so a later save can replay them. Swallowing this rejection during project replacement destroys that recovery boundary: the old Worker/session is terminated, its pending retry state becomes unreachable, the visible workspace is replaced, and the user gets no blocking decision or preservation path for the failed edit.\n\nThis is a correctness/data-loss defect, not merely missing evidence. It violates #355's failed-write recovery and close/open transition requirements and the accepted ADR-0030 adoption/write boundaries. Do not solve it by silently falling back to the demo IndexedDB tier. Replacement must either retain/resolve the old session until it is safe, or require an explicit user decision that accurately describes the unsaved native state.\n\n## Review questions\n\nA. Native project edits: PASS for the core write path. Committed non-note workspace operations route through `persistWorkspaceOperation` to `NativeProjectSession.save()`. `NativeProjectSession` advances its committed snapshot/operation history only after `putArchiveEntries` resolves. I found no native-to-demo persistence fallback in this path.\n\nB. Failure: PARTIAL / BLOCKED by the finding above. Within one live session, a failed write leaves the acknowledged snapshot unchanged, keeps pending changes, keeps the queue usable, and a later full-wall save can recover without resurrecting superseded geometry. The active shell reports an unsaved state on a failed current revision. But switching projects can discard that recovery state.\n\nC. Read-only: PASS at the session boundary. `save()` refuses read-only projects before they enter the queue, and tests cover deterministic refusal.\n\nD. Reference-format safety: PASS. Reference-format projects are refused before the flat wall encoder can flatten richer semantics. This is a conservative fail-closed boundary only. #361 does not steal #356's responsibility for lossless richer-model edit/round-trip semantics.\n\nE. Undo/redo: PASS at source/unit level. Normal operation, undo and redo all use the same persistence entry point; the session queue serialises writes, failed pending changes are replayed in order, full wall state remains authoritative, and operation history advances in queue order. I found no separate native durability path for undo/redo.\n\nF. Project identity: BLOCKED by the finding above. Worker/session identity checks and revision invalidation protect against an old completion updating the new project's save indicator, and writes are bound to the captured session. However close/open transition safety is not satisfied when the previous session has an unsaved failure.\n\nG. Shell truth: PARTIAL. A writable native project reaches `saved` only after the persistence promise returns `persisted`, which occurs after Worker acknowledgement; failed current writes report unsaved. Demo IndexedDB journal/recovery remains separately named in browser evidence. However project replacement suppresses the previous native session's unsaved close failure. Also `App.tsx:948-955` uses the generic `unsaved-changes` save state for an initially read-only/reference project while the adjacent journal label carries the more precise reason. That state-model wording should be tightened, but the project-switch data-loss path is the blocking defect.\n\nH. Regression boundary: PARTIAL. Demo/no-project journal recovery and native open/Worker paths have browser evidence, but current required browser evidence is not green and the product-level native open -> edit -> reopen durability path is not proven by the existing browser harness.\n\n## Exact-head executable evidence\n\nGitHub Actions run `34637354372` for this exact head reports:\n- `pnpm format:check` PASS\n- `pnpm lint` PASS\n- `pnpm typecheck` PASS\n- repository `pnpm test` PASS, including the current native-project-session and workspace-persistence tests\n- Rust fmt/clippy/test PASS\n- `pnpm benchmark:arqfs-opfs` PASS\n- `pnpm benchmark:arqfs-writer-lock` PASS\n- `pnpm benchmark:arqfs-project-isolation` PASS\n- `pnpm benchmark:file-open` PASS\n- `pnpm benchmark:journal-recovery` PASS\n- `pnpm benchmark:e2e-arq-open` PASS\n- `pnpm benchmark:native-open` FAIL\n\nThe native-open failure is specific: the harness reports `the panel did not say the chosen file is not written back to`. Its own limitation states that it proves open/level switching/working-copy/Worker teardown but does not prove checkpointing edits. Because that job fails, CI is red and the live #493 handoff gate is not satisfied unless the failure is explicitly reconciled/evidence-exempted by the repository's current authority.\n\nReviewer-local standalone filtered commands are BLOCKED in this connected review environment because it does not expose a repository execution shell. I therefore did not invent rerun results. The full exact-head `pnpm test` result above is independent Actions evidence. A browser-native `open -> edit -> failure/retry/undo/redo -> reopen` product path is also NOT PROVEN by the current harness and should be added/run before integration.\n\nThere are currently no unresolved inline review threads. I revalidated the source defect above from the current exact head rather than inheriting the earlier review comment.\n\n## Non-blocking follow-ups\n\n- Reconcile the three generated context files with the stated PR scope, or update the PR description so the final diff is truthful.\n- Give read-only/reference projects an explicit durability state rather than overloading `unsaved-changes` for a clean baseline.\n- After fixing the source blocker, update/reconcile onto current `main` and rerun the required checks against the current integration base.\n\n## Boundary and ownership verdicts\n\n**#356 boundary:** correct. Keep richer semantic persistence in #356; #361 should continue to refuse unsafe flattening.\n\n**Integration-ready:** NO. There is a proven project-switch data-loss/authority defect, browser CI is red, native edit/reopen product evidence is incomplete, and the branch is behind current `main`.\n\n**`apps/web/src/App.tsx` ownership:** NOT RELEASED. Review completion or mergeability alone does not release it. Release only after #361 is actually integrated with the blocking defect fixed and current #493/#377 handoff/ownership reconciliation records the transition, or after the PR is explicitly abandoned and ownership is reconciled.\n\n**#369 / root UI lanes:** NOT SAFE YET. #369 may consider the root UI lanes only after #361 is integrated (or explicitly abandoned), current-main reconciliation is complete, required evidence is green/reconciled, and the ownership handoff is recorded. Do not start #407/#414/#416/#418/#420 in `App.tsx` on the basis of this review alone.\n\nDo not merge in the current state.",
+      "state": "COMMENTED",
+      "html_url": "https://github.com/ruddvz/Arq/pull/361#pullrequestreview-5192603122",
+      "pull_request_url": "https://api.github.com/repos/ruddvz/Arq/pulls/361",
+      "author_association": "OWNER",
+      "_links": {
+        "html": {
+          "href": "https://github.com/ruddvz/Arq/pull/361#pullrequestreview-5192603122"
+        },
+        "pull_request": {
+          "href": "https://api.github.com/repos/ruddvz/Arq/pulls/361"
+        }
+      },
+      "submitted_at": "2026-09-13T23:04:59Z",
+      "commit_id": "c83d761b0e3ccf62936d9a816f65e8268dbe56b6"
+    }
+  ],
+  "detail": {
+    "baseRefOid": "5f965f7678a09e1fbd9a81d51778236fce682736",
+    "body": "Closes #355\n\n## What changed\n- route workspace wall edits, undo and redo through `NativeProjectSession.save()` whenever a native `.arq` project is open\n- keep IndexedDB journaling only for the no-project/demo workspace\n- refuse reference-format wall persistence rather than flattening its richer canonical model; #356 remains the semantic follow-up\n- keep failed native changes visible and report the project as unsaved\n- replay failed native changes through the existing session queue so later successful saves recover operation history without resurrecting superseded geometry\n- advance the native journal sequence for typed operations\n- report native working-copy save state distinctly from the demo journal\n\n## Safety properties\n- no native-to-demo persistence fallback\n- read-only projects never queue writes\n- reference-format projects never enter the flat encoder\n- canonical session state still advances only after Worker acknowledgement\n- failed writes do not poison the queue\n- latest full wall state remains authoritative, including undo/replacement after a failed write\n\n## Validation\nRecovery branch was rebuilt from current `main` after #357. Before opening this PR:\n- scoped Prettier: pass\n- focused `native-project-session` + `workspace-persistence` Vitest suites: pass\n- `pnpm --filter @arq/web typecheck`: pass\n- repository `pnpm typecheck`: pass\n\nTemporary recovery workflows/scripts were removed before this PR; final diff is limited to the five product/test files for #355.",
+    "headRefOid": "c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 361,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:27:43Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354423/job/103388832162",
+        "name": "verify-routes",
+        "startedAt": "2026-09-11T19:11:44Z",
+        "status": "COMPLETED",
+        "workflowName": "Verify deployment routes"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:44Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354376/job/103388393592",
+        "name": "build",
+        "startedAt": "2026-09-11T19:10:09Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:12:14Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354372/job/103388529686",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-09-11T19:10:36Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:25Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354371/job/103388430382",
+        "name": "classify",
+        "startedAt": "2026-09-11T19:10:16Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:18Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354394/job/103388393849",
+        "name": "secret-scan",
+        "startedAt": "2026-09-11T19:10:08Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:39Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354414/job/103388409507",
+        "name": "graph-regression",
+        "startedAt": "2026-09-11T19:10:12Z",
+        "status": "COMPLETED",
+        "workflowName": "ZEUS repository intelligence"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:59Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354372/job/103388529826",
+        "name": "test",
+        "startedAt": "2026-09-11T19:10:35Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:53Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354371/job/103388490554",
+        "name": "preflight",
+        "startedAt": "2026-09-11T19:10:28Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:15:41Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354372/job/103388529952",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-09-11T19:10:35Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:31Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354371/job/103388490612",
+        "name": "critical-approval",
+        "startedAt": "2026-09-11T19:10:28Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:07Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354372/job/103388530033",
+        "name": "language-system",
+        "startedAt": "2026-09-11T19:10:36Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:15:47Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354371/job/103388628620",
+        "name": "selected-evidence",
+        "startedAt": "2026-09-11T19:11:29Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:11:02Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354372/job/103388530119",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-09-11T19:10:36Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:16:05Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354371/job/103390090289",
+        "name": "engineering-gate",
+        "startedAt": "2026-09-11T19:15:50Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-11T19:10:51Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34637354372/job/103388529930",
+        "name": "rust-test",
+        "startedAt": "2026-09-11T19:10:36Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-09-11T19:10:06Z",
+        "state": "FAILURE",
+        "targetUrl": "https://vercel.com/pvr6675-3816s-projects?upgradeToPro=build-rate-limit"
+      }
+    ]
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "files": [
+    {
+      "sha": "c021c48191776c13547f760e4c31a928cfef36aa",
+      "filename": "apps/marketing/package.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/ce431c76b44d9e586a7289e198d2cf5ba5480ae0/apps%2Fmarketing%2Fpackage.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/ce431c76b44d9e586a7289e198d2cf5ba5480ae0/apps%2Fmarketing%2Fpackage.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/apps%2Fmarketing%2Fpackage.json?ref=ce431c76b44d9e586a7289e198d2cf5ba5480ae0",
+      "patch": "@@ -11,6 +11,6 @@\n     \"typecheck\": \"tsc --noEmit\"\n   },\n   \"devDependencies\": {\n-    \"@types/node\": \"^22.0.0\"\n+    \"@types/node\": \"^26.1.1\"\n   }\n }"
+    },
+    {
+      "sha": "24c2b69c9a5f14d704a98063abf533d9ab0d6a88",
+      "filename": "packages/pdf-export/package.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/ce431c76b44d9e586a7289e198d2cf5ba5480ae0/packages%2Fpdf-export%2Fpackage.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/ce431c76b44d9e586a7289e198d2cf5ba5480ae0/packages%2Fpdf-export%2Fpackage.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Fpdf-export%2Fpackage.json?ref=ce431c76b44d9e586a7289e198d2cf5ba5480ae0",
+      "patch": "@@ -15,6 +15,6 @@\n     \"@arq/plan-renderer\": \"workspace:*\"\n   },\n   \"devDependencies\": {\n-    \"@types/node\": \"^22.0.0\"\n+    \"@types/node\": \"^26.1.1\"\n   }\n }"
+    },
+    {
+      "sha": "e4e1c8f212d8327763691067038fd7e29a38a9d9",
+      "filename": "pnpm-lock.yaml",
+      "status": "modified",
+      "additions": 28,
+      "deletions": 28,
+      "changes": 56,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/ce431c76b44d9e586a7289e198d2cf5ba5480ae0/pnpm-lock.yaml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/ce431c76b44d9e586a7289e198d2cf5ba5480ae0/pnpm-lock.yaml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/pnpm-lock.yaml?ref=ce431c76b44d9e586a7289e198d2cf5ba5480ae0",
+      "patch": "@@ -37,15 +37,15 @@ importers:\n         version: 8.65.0(eslint@10.8.0)(typescript@5.9.3)\n       vitest:\n         specifier: ^2\n-        version: 2.1.9(@types/node@22.20.1)\n+        version: 2.1.9(@types/node@26.1.1)\n \n   apps/api: {}\n \n   apps/marketing:\n     devDependencies:\n       '@types/node':\n-        specifier: ^22.0.0\n-        version: 22.20.1\n+        specifier: ^26.1.1\n+        version: 26.1.1\n \n   apps/web:\n     dependencies:\n@@ -115,13 +115,13 @@ importers:\n         version: 0.185.1\n       '@vitejs/plugin-react':\n         specifier: ^4\n-        version: 4.7.0(vite@5.4.21(@types/node@22.20.1))\n+        version: 4.7.0(vite@5.4.21(@types/node@26.1.1))\n       fake-indexeddb:\n         specifier: ^6.2.5\n         version: 6.2.5\n       vite:\n         specifier: ^5\n-        version: 5.4.21(@types/node@22.20.1)\n+        version: 5.4.21(@types/node@26.1.1)\n \n   packages/arqfs:\n     dependencies:\n@@ -271,8 +271,8 @@ importers:\n         version: 1.17.1\n     devDependencies:\n       '@types/node':\n-        specifier: ^22.0.0\n-        version: 22.20.1\n+        specifier: ^26.1.1\n+        version: 26.1.1\n \n   packages/plan-renderer:\n     dependencies:\n@@ -846,8 +846,8 @@ packages:\n   '@types/json-schema@7.0.15':\n     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}\n \n-  '@types/node@22.20.1':\n-    resolution: {integrity: sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==}\n+  '@types/node@26.1.1':\n+    resolution: {integrity: sha512-nxAkRSVkN1Y0JC1W8ky/fTfkGsMmcrRsbx+3XoZE+rMOX71kLYTV7fLXpqud1GpbpP5TuffXFqfX7fH2GgZREw==}\n \n   '@types/prop-types@15.7.15':\n     resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}\n@@ -1633,8 +1633,8 @@ packages:\n     engines: {node: '>=14.17'}\n     hasBin: true\n \n-  undici-types@6.21.0:\n-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}\n+  undici-types@8.3.0:\n+    resolution: {integrity: sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==}\n \n   update-browserslist-db@1.2.3:\n     resolution: {integrity: sha512-Js0m9cx+qOgDxo0eMiFGEueWztz+d4+M3rGlmKPT+T4IS/jP4ylw3Nwpu6cpTTP8R1MAC1kF4VbdLt3ARf209w==}\n@@ -2157,7 +2157,7 @@ snapshots:\n \n   '@types/better-sqlite3@7.6.13':\n     dependencies:\n-      '@types/node': 22.20.1\n+      '@types/node': 26.1.1\n \n   '@types/earcut@3.0.0': {}\n \n@@ -2167,9 +2167,9 @@ snapshots:\n \n   '@types/json-schema@7.0.15': {}\n \n-  '@types/node@22.20.1':\n+  '@types/node@26.1.1':\n     dependencies:\n-      undici-types: 6.21.0\n+      undici-types: 8.3.0\n \n   '@types/prop-types@15.7.15': {}\n \n@@ -2286,15 +2286,15 @@ snapshots:\n       '@typescript-eslint/types': 8.65.0\n       eslint-visitor-keys: 5.0.1\n \n-  '@vitejs/plugin-react@4.7.0(vite@5.4.21(@types/node@22.20.1))':\n+  '@vitejs/plugin-react@4.7.0(vite@5.4.21(@types/node@26.1.1))':\n     dependencies:\n       '@babel/core': 7.29.7\n       '@babel/plugin-transform-react-jsx-self': 7.29.7(@babel/core@7.29.7)\n       '@babel/plugin-transform-react-jsx-source': 7.29.7(@babel/core@7.29.7)\n       '@rolldown/pluginutils': 1.0.0-beta.27\n       '@types/babel__core': 7.20.5\n       react-refresh: 0.17.0\n-      vite: 5.4.21(@types/node@22.20.1)\n+      vite: 5.4.21(@types/node@26.1.1)\n     transitivePeerDependencies:\n       - supports-color\n \n@@ -2305,13 +2305,13 @@ snapshots:\n       chai: 5.3.3\n       tinyrainbow: 1.2.0\n \n-  '@vitest/mocker@2.1.9(vite@5.4.21(@types/node@22.20.1))':\n+  '@vitest/mocker@2.1.9(vite@5.4.21(@types/node@26.1.1))':\n     dependencies:\n       '@vitest/spy': 2.1.9\n       estree-walker: 3.0.3\n       magic-string: 0.30.21\n     optionalDependencies:\n-      vite: 5.4.21(@types/node@22.20.1)\n+      vite: 5.4.21(@types/node@26.1.1)\n \n   '@vitest/pretty-format@2.1.9':\n     dependencies:\n@@ -3018,7 +3018,7 @@ snapshots:\n \n   typescript@5.9.3: {}\n \n-  undici-types@6.21.0: {}\n+  undici-types@8.3.0: {}\n \n   update-browserslist-db@1.2.3(browserslist@4.28.7):\n     dependencies:\n@@ -3036,13 +3036,13 @@ snapshots:\n \n   util-deprecate@1.0.2: {}\n \n-  vite-node@2.1.9(@types/node@22.20.1):\n+  vite-node@2.1.9(@types/node@26.1.1):\n     dependencies:\n       cac: 6.7.14\n       debug: 4.4.3\n       es-module-lexer: 1.7.0\n       pathe: 1.1.2\n-      vite: 5.4.21(@types/node@22.20.1)\n+      vite: 5.4.21(@types/node@26.1.1)\n     transitivePeerDependencies:\n       - '@types/node'\n       - less\n@@ -3054,19 +3054,19 @@ snapshots:\n       - supports-color\n       - terser\n \n-  vite@5.4.21(@types/node@22.20.1):\n+  vite@5.4.21(@types/node@26.1.1):\n     dependencies:\n       esbuild: 0.21.5\n       postcss: 8.5.21\n       rollup: 4.62.2\n     optionalDependencies:\n-      '@types/node': 22.20.1\n+      '@types/node': 26.1.1\n       fsevents: 2.3.3\n \n-  vitest@2.1.9(@types/node@22.20.1):\n+  vitest@2.1.9(@types/node@26.1.1):\n     dependencies:\n       '@vitest/expect': 2.1.9\n-      '@vitest/mocker': 2.1.9(vite@5.4.21(@types/node@22.20.1))\n+      '@vitest/mocker': 2.1.9(vite@5.4.21(@types/node@26.1.1))\n       '@vitest/pretty-format': 2.1.9\n       '@vitest/runner': 2.1.9\n       '@vitest/snapshot': 2.1.9\n@@ -3082,11 +3082,11 @@ snapshots:\n       tinyexec: 0.3.2\n       tinypool: 1.1.1\n       tinyrainbow: 1.2.0\n-      vite: 5.4.21(@types/node@22.20.1)\n-      vite-node: 2.1.9(@types/node@22.20.1)\n+      vite: 5.4.21(@types/node@26.1.1)\n+      vite-node: 2.1.9(@types/node@26.1.1)\n       why-is-node-running: 2.3.0\n     optionalDependencies:\n-      '@types/node': 22.20.1\n+      '@types/node': 26.1.1\n     transitivePeerDependencies:\n       - less\n       - lightningcss"
+    }
+  ],
+  "reviews": [],
+  "detail": {
+    "baseRefOid": "e1aa1018b0ba8c3c3f9cd64bb34edb38db7e220d",
+    "body": "Bumps [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node) from 22.20.1 to 26.1.1.\n<details>\n<summary>Commits</summary>\n<ul>\n<li>See full diff in <a href=\"https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node\">compare view</a></li>\n</ul>\n</details>\n<br />\n\n\n> **Note**\n> Automatic rebases have been disabled on this pull request as it has been open for over 30 days.\n",
+    "headRefOid": "ce431c76b44d9e586a7289e198d2cf5ba5480ae0",
+    "isDraft": false,
+    "mergeStateStatus": "CLEAN",
+    "mergeable": "MERGEABLE",
+    "number": 264,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T14:27:23Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30275098243/job/90007023685",
+        "name": "build",
+        "startedAt": "2026-07-27T14:26:43Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T14:29:13Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30275098213/job/90007023798",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-07-27T14:27:42Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T14:26:56Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30275098117/job/90007023276",
+        "name": "secret-scan",
+        "startedAt": "2026-07-27T14:26:48Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T14:28:02Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30275098213/job/90007023735",
+        "name": "test",
+        "startedAt": "2026-07-27T14:26:50Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T14:28:52Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30275098213/job/90007023688",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-07-27T14:27:36Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T14:27:52Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30275098213/job/90007023792",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-07-27T14:27:33Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-07-27T14:27:59Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/30275098213/job/90007023801",
+        "name": "rust-test",
+        "startedAt": "2026-07-27T14:27:36Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      }
+    ]
+  }
+}

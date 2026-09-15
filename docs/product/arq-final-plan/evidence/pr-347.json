@@ -1,0 +1,41 @@
+{
+  "files": [
+    {
+      "sha": "14615da5e460264e4975c3584219fdd64c45632b",
+      "filename": ".github/workflows/zeus-autonomy.yml",
+      "status": "modified",
+      "additions": 30,
+      "deletions": 0,
+      "changes": 30,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/aef9955a87ff125c5e021cb4d61f1b0680a7032d/.github%2Fworkflows%2Fzeus-autonomy.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/aef9955a87ff125c5e021cb4d61f1b0680a7032d/.github%2Fworkflows%2Fzeus-autonomy.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fzeus-autonomy.yml?ref=aef9955a87ff125c5e021cb4d61f1b0680a7032d",
+      "patch": "@@ -6,8 +6,10 @@ on:\n       - '.zeus/AUTONOMY.md'\n       - '.zeus/autonomy.json'\n       - 'AGENTS.md'\n+      - 'package.json'\n       - 'scripts/zeus-autonomy-verify.mjs'\n       - 'scripts/zeus-autonomy-verify.test.mjs'\n+      - 'scripts/zeus-verify.mjs'\n       - '.github/workflows/zeus-autonomy.yml'\n   workflow_dispatch:\n \n@@ -31,3 +33,31 @@ jobs:\n         run: node scripts/zeus-autonomy-verify.mjs\n       - name: Mutation-test autonomy boundaries\n         run: node scripts/zeus-autonomy-verify.test.mjs\n+      - name: Verify canonical ZEUS commands fail closed on weakened autonomy\n+        shell: bash\n+        run: |\n+          backup=\"$RUNNER_TEMP/autonomy.json\"\n+          cp .zeus/autonomy.json \"$backup\"\n+          trap 'cp \"$backup\" .zeus/autonomy.json' EXIT\n+\n+          node --input-type=module <<'NODE'\n+          import { readFileSync, writeFileSync } from 'node:fs';\n+          const file = '.zeus/autonomy.json';\n+          const autonomy = JSON.parse(readFileSync(file, 'utf8'));\n+          autonomy.runtimeDependenciesOnPeers = true;\n+          writeFileSync(file, `${JSON.stringify(autonomy, null, 2)}\\n`);\n+          NODE\n+\n+          if node scripts/zeus-verify.mjs; then\n+            echo 'zeus:verify accepted weakened autonomy' >&2\n+            exit 1\n+          fi\n+          if npm run --silent zeus:drift; then\n+            echo 'zeus:drift accepted weakened autonomy' >&2\n+            exit 1\n+          fi\n+\n+          cp \"$backup\" .zeus/autonomy.json\n+          trap - EXIT\n+          node scripts/zeus-verify.mjs\n+          npm run --silent zeus:drift"
+    },
+    {
+      "sha": "3abe110440eccc02ab9f82c4bc36592b38cda4e9",
+      "filename": "package.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/aef9955a87ff125c5e021cb4d61f1b0680a7032d/package.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/aef9955a87ff125c5e021cb4d61f1b0680a7032d/package.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/package.json?ref=aef9955a87ff125c5e021cb4d61f1b0680a7032d",
+      "patch": "@@ -93,7 +93,7 @@\n     \"zeus:harness\": \"node scripts/zeus-harness-state.mjs\",\n     \"zeus:gate\": \"node scripts/zeus-gate-ledger.mjs\",\n     \"zeus:plan\": \"node scripts/zeus-plan-ledger.mjs\",\n-    \"zeus:drift\": \"node scripts/zeus-drift-guard.mjs\",\n+    \"zeus:drift\": \"node scripts/zeus-autonomy-verify.mjs && node scripts/zeus-drift-guard.mjs\",\n     \"spike:canonical-units\": \"node scripts/run-canonical-units-spike.mjs\"\n   },\n   \"devDependencies\": {"
+    },
+    {
+      "sha": "920d5f56c9f316571ac87d3266ae45367298795b",
+      "filename": "scripts/zeus-verify.mjs",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 0,
+      "changes": 6,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/aef9955a87ff125c5e021cb4d61f1b0680a7032d/scripts%2Fzeus-verify.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/aef9955a87ff125c5e021cb4d61f1b0680a7032d/scripts%2Fzeus-verify.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Fzeus-verify.mjs?ref=aef9955a87ff125c5e021cb4d61f1b0680a7032d",
+      "patch": "@@ -1,10 +1,14 @@\n #!/usr/bin/env node\n import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';\n import { join } from 'node:path';\n+import { validateAutonomyFiles } from './zeus-autonomy-verify.mjs';\n+\n const root = process.cwd();\n const required = [\n   '.zeus/FAST-KERNEL.md',\n   '.zeus/ZEUS.md',\n+  '.zeus/AUTONOMY.md',\n+  '.zeus/autonomy.json',\n   '.zeus/module-manifest.json',\n   '.zeus/config.json',\n   '.zeus/compact-contract.schema.json',\n@@ -22,6 +26,7 @@ const required = [\n   'scripts/zeus-method.mjs',\n   'scripts/zeus-evidence.mjs',\n   'scripts/zeus-validate.mjs',\n+  'scripts/zeus-autonomy-verify.mjs',\n   'scripts/zeus-hook.sh',\n   'scripts/zeus-agent-registry.mjs',\n   'scripts/zeus-harness-state.mjs',\n@@ -77,6 +82,7 @@ const cursorRule = existsSync(join(root, '.cursor/rules/zeus-always-on.mdc'))\n   : '';\n if (!/alwaysApply:\\s*true/.test(cursorRule))\n   errors.push('.cursor/rules/zeus-always-on.mdc is missing alwaysApply: true');\n+errors.push(...validateAutonomyFiles(root));\n if (errors.length) {\n   console.error('Zeus verify failed:\\n' + errors.map((x) => '- ' + x).join('\\n'));\n   process.exit(1);"
+    }
+  ],
+  "reviews": []
+}

@@ -1,0 +1,41 @@
+{
+  "files": [
+    {
+      "sha": "c1420b138167d9ab5800482f45dd288f3b933c2b",
+      "filename": ".zeus/AUTONOMY.md",
+      "status": "added",
+      "additions": 54,
+      "deletions": 0,
+      "changes": 54,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/2dfaa1b6217eb34f4078a779430fbfc5231cfdbd/.zeus%2FAUTONOMY.md",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/2dfaa1b6217eb34f4078a779430fbfc5231cfdbd/.zeus%2FAUTONOMY.md",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.zeus%2FAUTONOMY.md?ref=2dfaa1b6217eb34f4078a779430fbfc5231cfdbd",
+      "patch": "@@ -0,0 +1,54 @@\n+# ZEUS local autonomy contract\n+\n+ZEUS is the Arq execution harness. It may adopt reviewed generic harness techniques, but it is never subordinate to a sibling repository or a shared mutable control plane.\n+\n+## Local authority\n+\n+ZEUS and the Arq Engineering OS retain local authority for:\n+\n+- mode, risk, blast-radius and reversibility classification;\n+- context budgets and routing;\n+- Arq invariants and source authority;\n+- evidence states and gate semantics;\n+- reviewer requirements;\n+- graph vocabulary and impact interpretation;\n+- `.arq` persistence/recovery rules;\n+- merge, deployment and production authority.\n+\n+A peer harness may suggest a technique. It cannot lower a ZEUS tier, mark evidence verified, waive an invariant, satisfy Engineering OS, or authorize a release.\n+\n+## Federation boundary\n+\n+Federation is a reviewed knowledge channel only. It is not a distributed runtime.\n+\n+ZEUS may study generic graph/extractor techniques, context compilers, coordination state machines, failure modes, benchmarks, test strategies and operator-UX patterns. Local adoption requires provenance, Arq adaptation and validation.\n+\n+Never automatically import another repository's active claims, locks, project truth, evidence conclusions, risk classification, release authority, secrets or learned project-specific doctrine.\n+\n+ZEUS must remain fully operable when every peer repository is unavailable.\n+\n+## ZEUS-specific graph model\n+\n+A future Arq graph should prioritise relationships such as:\n+\n+`Rust crate/symbol -> geometry or constraint kernel -> WASM export -> TypeScript binding -> command/tool -> document state -> renderer/UI -> .arq persistence -> benchmark/test -> issue`\n+\n+Cross-language identity is important, but uncertainty must remain visible. Dynamic dispatch, runtime reflection and AI-inferred relationships are advisory unless a deterministic extractor or controlled declaration proves them.\n+\n+Do not import LEAPH physical-system entities, CLEO health/product entities or RAAS catalogue/music entities merely because the generic protocol permits extension.\n+\n+## Context autonomy\n+\n+ZEUS decides context depth from its existing fast/standard/deep budgets and the task's four-axis classification. A shared context-compiler implementation may be reused only if it respects those local budgets and source-authority rules.\n+\n+Ordinary Arq work must never need a sibling repository to compile context.\n+\n+## Operator UX\n+\n+A future ZEUS status/doctor surface should expose Arq-specific state: mode, tier, blast radius, reversibility, graph freshness, affected packages/languages, evidence state, required gates/reviewers and one next action.\n+\n+Hard blockers, failed evidence, stale evidence and advisory graph hints must be distinct. A generic green harness status may never hide a failed Engineering OS gate.\n+\n+## Failure rule\n+\n+If federation, graph intelligence or an optional adapter fails, fall back to the canonical ZEUS and Engineering OS workflows. Optional intelligence may disappear; invariants, evidence requirements and release authority may not weaken."
+    },
+    {
+      "sha": "b3be89f44f1e645d34525b524ae4d82d034d724d",
+      "filename": ".zeus/autonomy.json",
+      "status": "added",
+      "additions": 62,
+      "deletions": 0,
+      "changes": 62,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/2dfaa1b6217eb34f4078a779430fbfc5231cfdbd/.zeus%2Fautonomy.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/2dfaa1b6217eb34f4078a779430fbfc5231cfdbd/.zeus%2Fautonomy.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.zeus%2Fautonomy.json?ref=2dfaa1b6217eb34f4078a779430fbfc5231cfdbd",
+      "patch": "@@ -0,0 +1,62 @@\n+{\n+  \"protocol\": \"harness-autonomy/v1\",\n+  \"harness\": \"ZEUS\",\n+  \"project\": \"Arq\",\n+  \"repository\": \"ruddvz/Arq\",\n+  \"localAuthority\": {\n+    \"fourAxisClassification\": true,\n+    \"contextBudgets\": true,\n+    \"invariants\": true,\n+    \"sourceAuthority\": true,\n+    \"evidenceStates\": true,\n+    \"reviewAndGateSemantics\": true,\n+    \"graphVocabulary\": true,\n+    \"persistenceRules\": true,\n+    \"engineeringOsReleaseAuthority\": true\n+  },\n+  \"runtimeDependenciesOnPeers\": false,\n+  \"sharedMutableState\": false,\n+  \"federation\": {\n+    \"mode\": \"reviewed-knowledge-only\",\n+    \"allowed\": [\n+      \"graph-extractor-techniques\",\n+      \"context-compiler-techniques\",\n+      \"coordination-state-machines\",\n+      \"failure-modes\",\n+      \"benchmarks\",\n+      \"test-strategies\",\n+      \"operator-ux-patterns\"\n+    ],\n+    \"forbidden\": [\n+      \"active-claims\",\n+      \"locks\",\n+      \"project-truth\",\n+      \"evidence-conclusions\",\n+      \"risk-classifications\",\n+      \"release-authority\",\n+      \"secrets\",\n+      \"foreign-learned-project-doctrine\"\n+    ]\n+  },\n+  \"graph\": {\n+    \"ontology\": [\n+      \"rust-crate\",\n+      \"rust-symbol\",\n+      \"geometry-kernel\",\n+      \"constraint-solver\",\n+      \"wasm-export\",\n+      \"typescript-binding\",\n+      \"command\",\n+      \"tool\",\n+      \"document-state\",\n+      \"renderer\",\n+      \"ui-surface\",\n+      \"arq-persistence\",\n+      \"benchmark\",\n+      \"test\",\n+      \"issue\"\n+    ],\n+    \"dynamicOrInferredEdgesAreAdvisory\": true\n+  },\n+  \"fallback\": \"canonical-zeus-engineering-os-workflow\"\n+}"
+    },
+    {
+      "sha": "5ffccaf5fb000e78598b7abb74f74485e8120f55",
+      "filename": "AGENTS.md",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 0,
+      "changes": 6,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/2dfaa1b6217eb34f4078a779430fbfc5231cfdbd/AGENTS.md",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/2dfaa1b6217eb34f4078a779430fbfc5231cfdbd/AGENTS.md",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/AGENTS.md?ref=2dfaa1b6217eb34f4078a779430fbfc5231cfdbd",
+      "patch": "@@ -28,3 +28,9 @@ test, push, merge, deployment or production claim without evidence.\n Engineering OS 5.0 is the merge authority and the Arq Language System 4.1 is the\n language authority. Zeus may raise a lane or report a wording defect. It may never lower\n a lane, pass missing evidence, or re-decide governed vocabulary.\n+\n+For harness federation, graph-protocol adoption, cross-repository learning or changes\n+that could make ZEUS depend on another harness, additionally read `.zeus/AUTONOMY.md`\n+and `.zeus/autonomy.json`. They are conditional boundary documents, not ordinary\n+always-on context. Arq execution must continue correctly when sibling repositories are\n+unavailable."
+    }
+  ],
+  "reviews": []
+}

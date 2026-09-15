@@ -1,0 +1,188 @@
+{
+  "files": [
+    {
+      "sha": "b374845f71adaa0d4a809596f27649a903aae633",
+      "filename": "docs/research/ARCHAIFLOW-REFERENCE-2026-09.md",
+      "status": "added",
+      "additions": 279,
+      "deletions": 0,
+      "changes": 279,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/408b08914aa28df6dd69a42b723926a5a1e164f8/docs%2Fresearch%2FARCHAIFLOW-REFERENCE-2026-09.md",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/408b08914aa28df6dd69a42b723926a5a1e164f8/docs%2Fresearch%2FARCHAIFLOW-REFERENCE-2026-09.md",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/docs%2Fresearch%2FARCHAIFLOW-REFERENCE-2026-09.md?ref=408b08914aa28df6dd69a42b723926a5a1e164f8",
+      "patch": "@@ -0,0 +1,279 @@\n+# Archaiflow research reference\n+\n+**Status:** Research reference only. Not an accepted ARQ product decision, implementation plan, architecture decision, backlog commitment, or release requirement.\n+\n+**Research date:** 2026-09-12\n+\n+**External source:** https://archaiflow.com\n+\n+**Purpose:** Preserve a dated, inspectable record of useful Archaiflow patterns that may be relevant to ARQ later. Future work should re-check the external source before relying on any detail here because Archaiflow and ARQ will both evolve.\n+\n+## Why this exists\n+\n+Archaiflow is useful to ARQ mainly as a research reference for narrow, evidence-grounded AI and deterministic architectural workflows. The useful lesson is not to copy its product structure or build a large chat-first assistant. The useful lesson is to keep AI around deterministic architectural systems, source evidence, explicit uncertainty, and reviewable changes.\n+\n+ARQ already has compatible foundations: an authoritative semantic model, typed operations, deterministic validation, reviewable AI proposals, local project ownership, and explicit separation between canonical project state and derived representations.\n+\n+This note records patterns worth revisiting if future ARQ work needs them.\n+\n+## Patterns worth keeping as references\n+\n+### 1. Review Centre / proposal review surface\n+\n+Archaiflow's strongest pattern is narrow, reviewable automation rather than opaque autonomous mutation.\n+\n+Potential ARQ application:\n+\n+- surface AI or automated findings in a dedicated Review Centre;\n+- show the original request, parsed intent, assumptions, affected elements, exact operations, before/after, warnings, preview, provenance, and validation state;\n+- distinguish read-only findings from mutation proposals;\n+- require deterministic validation before any consequential change can be approved;\n+- keep Apply / Reject / Edit actions explicit;\n+- preserve grouped undo and provenance.\n+\n+This aligns with ARQ's existing `docs/ai/AI-PROPOSAL-UX.md` direction and should be treated as reinforcement of that architecture, not a replacement for it.\n+\n+### 2. Project Search with cite-or-refuse behaviour\n+\n+Archaiflow's Project Search pattern is valuable because it attempts to answer from supplied project sources and explicitly refuses to invent unsupported facts.\n+\n+Potential ARQ application:\n+\n+- search semantic BIM entities and relationships;\n+- search imported project documents, specifications, sheets, and attachments;\n+- cite exact objects, document pages, drawing references, or source locations;\n+- report `not found in project sources` when evidence does not exist;\n+- report contradictions when two project sources disagree;\n+- visibly separate project evidence from general model knowledge;\n+- begin read-only.\n+\n+ARQ can go further than document-only systems because its project model is structured. A future answer should be able to point to entities such as a wall, room, level, type, view, or source document rather than merely returning prose.\n+\n+### 3. Deterministic \"Explain why\" validation\n+\n+A useful general pattern is to use deterministic code for the actual decision and AI only to explain the result.\n+\n+Potential ARQ application:\n+\n+- invalid geometry;\n+- rejected operations;\n+- hosted-opening conflicts;\n+- room boundary failures;\n+- orphaned dimensions or annotations;\n+- export problems;\n+- unresolved references;\n+- model health warnings.\n+\n+A finding should identify the exact rule or invariant, affected objects, missing information, and possible resolution paths. AI may translate the result into clearer language, but must not invent the cause.\n+\n+### 4. Documentation coverage and export preflight\n+\n+Archaiflow's model-to-document checking suggests a useful ARQ preflight pattern.\n+\n+Potential ARQ application before sheet/PDF publication:\n+\n+- unresolved dimensions;\n+- missing or stale references;\n+- broken view links;\n+- orphaned annotations;\n+- unresolved model warnings;\n+- invalid room boundaries;\n+- stale derived projections;\n+- missing expected sheet content;\n+- export fidelity warnings;\n+- any other condition ARQ can deterministically prove.\n+\n+Recommended evidence states are explicit rather than binary, for example:\n+\n+- Ready\n+- Needs review\n+- Unable to verify\n+\n+Do not infer professional approval from a green technical preflight.\n+\n+### 5. Reusable deterministic solver contract\n+\n+Archaiflow's StairFit work is useful mainly as an architectural pattern: measure first, enumerate feasible candidates, evaluate constraints deterministically, rank survivors, then let AI explain or orchestrate the workflow.\n+\n+Potential reusable ARQ solver shape:\n+\n+```text\n+Snapshot\n+  -> Measure\n+  -> Generate candidates\n+  -> Apply deterministic constraints\n+  -> Rank survivors\n+  -> Preview\n+  -> User approval\n+  -> Typed operations\n+```\n+\n+Possible future applications include:\n+\n+- sheet/view packing;\n+- constrained opening placement;\n+- dimension placement;\n+- constrained object positioning;\n+- later, richer architectural solvers when the required domain objects and rules exist.\n+\n+Do not start by placing code-critical or safety-critical decisions inside an LLM prompt.\n+\n+### 6. Rule graph / clause-resolution architecture\n+\n+Archaiflow's zoning work suggests representing external rules as structured clauses and relationships rather than as free-form prompt context.\n+\n+Potential future ARQ architecture:\n+\n+- jurisdiction and edition identifiers;\n+- verified rule corpus;\n+- clause graph with overrides, exclusions, dependencies, and derivations;\n+- project facts as a separate input;\n+- explicit missing-input state;\n+- provenance for every determination;\n+- candidate clauses shown when applicability cannot be decided.\n+\n+AI may retrieve and explain clauses. Deterministic rule logic should decide applicability wherever ARQ claims a machine-verifiable result.\n+\n+Never equate LLM confidence with building-code compliance.\n+\n+### 7. Small specialist capabilities instead of one giant agent\n+\n+Archaiflow is a useful reminder that narrow specialist workflows are easier to inspect and validate than a single omnipotent architecture assistant.\n+\n+Potential ARQ capability boundaries:\n+\n+- Search project\n+- Explain selection\n+- Explain validation failure\n+- Check model\n+- Check documentation\n+- Analyse impact\n+- Propose bounded change\n+- Solve constrained problem\n+\n+Each capability should declare:\n+\n+- allowed inputs;\n+- allowed data sources;\n+- deterministic tools it may call;\n+- mutation privileges;\n+- output schema;\n+- evidence requirements;\n+- conditions it cannot conclude.\n+\n+The product UI does not need to expose these as multiple personas or \"agents\".\n+\n+### 8. Geometry-consistent AI rendering\n+\n+Archaiflow's rendering and walkthrough experiments suggest using model-derived constraints rather than unconstrained image generation.\n+\n+Potential future ARQ application:\n+\n+- derive semantic masks from the BIM model;\n+- derive depth, normals, material classes, and camera metadata;\n+- generate a disposable visualisation from those constraints;\n+- compare generated output against source geometry;\n+- expose model, AI render, semantic mask, and difference views where useful.\n+\n+AI imagery must remain a derived representation. It must never silently become canonical geometry or evidence of geometric correctness.\n+\n+### 9. Practice / firm memory as a separate evidence layer\n+\n+Archaiflow's firm-memory work suggests a useful long-term distinction between project truth and organisation knowledge.\n+\n+Potential ARQ direction:\n+\n+- project-specific canonical state remains inside `.arq`;\n+- firm memory remains separate from individual project files;\n+- firm knowledge is source-linked, exportable, inspectable, and user-controlled;\n+- project evidence, firm knowledge, and general model knowledge are presented as distinct evidence classes.\n+\n+Do not merge cross-project organisational memory into the canonical project model by default.\n+\n+## Ideas not to copy blindly\n+\n+The following should not be treated as recommendations merely because they appear in or around Archaiflow research:\n+\n+- a marketplace of many AI agents;\n+- chat-first CAD/BIM interaction;\n+- dozens of persona-style assistants;\n+- building-code values embedded directly in prompts;\n+- unconstrained model generation presented as authoritative design;\n+- automatic whole-building generation before bounded operations are dependable;\n+- generative rendering or walkthroughs ahead of ARQ's protected authoring workflow;\n+- external AI reasoning that bypasses ARQ typed operations or validation;\n+- opaque mutation without preview, provenance, impact analysis, and undo.\n+\n+ARQ's existing principle remains preferable: AI may interpret, retrieve, propose, explain, and orchestrate, while deterministic systems own geometry, validation, canonical state, persistence, and accepted operations.\n+\n+## Possible evaluation additions if these patterns are implemented\n+\n+ARQ's current AI benchmark direction already includes dimensional accuracy, semantic accuracy, valid geometry, assumptions, user corrections, time saved, operation latency, rejection quality, crash rate, and undo success.\n+\n+If source-grounded research patterns are implemented later, also consider measuring:\n+\n+- citation correctness;\n+- unsupported-claim rate;\n+- abstention correctness;\n+- missing-input detection;\n+- source-contradiction detection;\n+- proposal impact completeness;\n+- provenance completeness;\n+- deterministic replay equivalence;\n+- review-to-apply error rate;\n+- false confidence / false-ready rate.\n+\n+These metrics should be tied to reproducible fixtures or real usage evidence. Do not estimate them.\n+\n+## Relationship to current ARQ priorities\n+\n+This research note does **not** change the current ARQ release order.\n+\n+The protected first workflow remains the priority: dependable architectural authoring from plan through coordinated 3D, documentation, scaled PDF, local persistence/recovery, and verified reopen.\n+\n+If a future issue needs ideas from this note, the safest early implementations are likely to be read-only or validation-adjacent capabilities such as:\n+\n+- Review Centre UI;\n+- Explain Why;\n+- evidence/citation primitives;\n+- Project Search;\n+- export/documentation preflight.\n+\n+These are lower architectural risk than broad natural-language authoring because they reinforce existing ARQ contracts rather than bypass them.\n+\n+## Revalidation checklist for future agents\n+\n+Before using anything in this file for implementation:\n+\n+1. Revisit https://archaiflow.com and the specific relevant research page.\n+2. Record the access date and source URL.\n+3. Check current ARQ `main`, accepted ADRs, product blueprint, status file, open issues, open PRs, and current ownership claims.\n+4. Confirm whether ARQ already implemented the capability independently.\n+5. Separate generic architectural lessons from Archaiflow-specific implementation details.\n+6. Check licences and rights before copying code, schemas, prompts, assets, or substantial text. This file records concepts only and does not authorise copying implementation.\n+7. Keep external research advisory until ARQ's own tests and evidence establish correctness.\n+8. Create or update an ADR only if an actual architecture decision is being made.\n+9. Create a bounded implementation issue only when the work is approved and does not duplicate an existing issue.\n+10. Update this research note when materially newer evidence changes or invalidates a recorded pattern.\n+\n+## Source pointers captured in the 2026-09-12 research pass\n+\n+The research pass reviewed the Archaiflow homepage and publicly linked research/workflow material, including patterns around:\n+\n+- Project Search / document-grounded retrieval;\n+- StairFit-style deterministic solving;\n+- zoning clause graphs;\n+- model-derived rendering and walkthrough constraints;\n+- firm-memory / Obsidian-style organisational knowledge.\n+\n+External URLs and product details may change. Treat this section as a discovery index, not a permanent factual specification.\n+\n+## Bottom line\n+\n+The enduring research lesson is:\n+\n+> Put AI around the architectural engine, not in place of the architectural engine.\n+\n+For ARQ, the strongest reusable ideas are source-grounded project search, reviewable proposals, deterministic explanation, technical preflight, constrained solver contracts, structured rule graphs, evidence-class separation, and geometry-constrained derived visualisation.\n+\n+Everything else should be re-evaluated against ARQ's current product state when needed."
+    },
+    {
+      "sha": "f1df90e8792fef6913257af3a09f3a4c29b9af01",
+      "filename": "docs/research/COMPETITOR-WORKFLOW-AUDIT.md",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 0,
+      "changes": 4,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/408b08914aa28df6dd69a42b723926a5a1e164f8/docs%2Fresearch%2FCOMPETITOR-WORKFLOW-AUDIT.md",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/408b08914aa28df6dd69a42b723926a5a1e164f8/docs%2Fresearch%2FCOMPETITOR-WORKFLOW-AUDIT.md",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/docs%2Fresearch%2FCOMPETITOR-WORKFLOW-AUDIT.md?ref=408b08914aa28df6dd69a42b723926a5a1e164f8",
+      "patch": "@@ -37,3 +37,7 @@ Record:\n - recovery behaviour.\n \n Do not copy competitor interface or icons.\n+\n+## External workflow research references\n+\n+- [Archaiflow research reference](ARCHAIFLOW-REFERENCE-2026-09.md) \u2014 dated 2026-09-12. Advisory patterns for source-grounded project search, reviewable proposals, deterministic validation/explanation, documentation preflight, solver contracts, rule graphs, geometry-constrained derived visualisation, and separate firm-memory evidence. Revalidate the external source and current ARQ state before implementation."
+    }
+  ],
+  "reviews": [],
+  "detail": {
+    "baseRefOid": "5f965f7678a09e1fbd9a81d51778236fce682736",
+    "body": "## Purpose\n\nPreserve the 2026-09-12 Archaiflow research pass as an advisory ARQ reference that future agents can re-check when a related capability is needed.\n\n## What this adds\n\n- `docs/research/ARCHAIFLOW-REFERENCE-2026-09.md`\n- reusable observations around reviewable proposals, source-grounded project search, deterministic Explain Why, documentation/export preflight, solver contracts, rule graphs, specialist capabilities, geometry-constrained derived rendering, and separate firm-memory evidence\n- explicit `do not copy blindly` section\n- revalidation checklist requiring future agents to revisit the external source, current ARQ `main`, ADRs, issues, PRs, ownership, and licence constraints before implementation\n- no product commitment, architecture change, backlog commitment, runtime code, dependency, or release-scope change\n\n## Authority boundary\n\nThis is research only. Accepted ADRs, the active ARQ blueprint, current implementation evidence, validation gates, and repository ownership rules remain authoritative.\n\n## Coordination\n\nThe branch is based on `main` and only adds one new research document. It does not mutate current product/runtime files or overlap the active ARQFS, browser-validation, or ZEUS graph implementation lanes.",
+    "headRefOid": "408b08914aa28df6dd69a42b723926a5a1e164f8",
+    "isDraft": false,
+    "mergeStateStatus": "CLEAN",
+    "mergeable": "MERGEABLE",
+    "number": 366,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:18:16Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516449/job/103622666727",
+        "name": "build",
+        "startedAt": "2026-09-12T21:17:38Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:20:28Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516435/job/103622668068",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-09-12T21:18:24Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:17:31Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516438/job/103622666693",
+        "name": "classify",
+        "startedAt": "2026-09-12T21:17:19Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:17:28Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516447/job/103622666737",
+        "name": "secret-scan",
+        "startedAt": "2026-09-12T21:17:19Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:19:01Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516435/job/103622668059",
+        "name": "test",
+        "startedAt": "2026-09-12T21:17:37Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:23:15Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516438/job/103622704758",
+        "name": "preflight",
+        "startedAt": "2026-09-12T21:22:51Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:17:36Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516438/job/103622705569",
+        "name": "critical-approval",
+        "startedAt": "2026-09-12T21:17:36Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:23:03Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516435/job/103622668051",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-09-12T21:17:36Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:18:02Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516435/job/103622668071",
+        "name": "language-system",
+        "startedAt": "2026-09-12T21:17:37Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:24:16Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516438/job/103623442667",
+        "name": "selected-evidence",
+        "startedAt": "2026-09-12T21:23:35Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:17:55Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516435/job/103622667957",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-09-12T21:17:36Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:25:40Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516438/job/103623576252",
+        "name": "engineering-gate",
+        "startedAt": "2026-09-12T21:25:28Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:18:29Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34719516435/job/103622668135",
+        "name": "rust-test",
+        "startedAt": "2026-09-12T21:18:20Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-09-12T21:17:45Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://vercel.com/pvr6675-3816s-projects/arq-website/G5WM4kW8h8bGQhXM9AjwbUeVe2Gy"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-12T21:17:45Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://vercel.com/github",
+        "name": "Vercel Preview Comments",
+        "startedAt": "2026-09-12T21:17:45Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ]
+  }
+}

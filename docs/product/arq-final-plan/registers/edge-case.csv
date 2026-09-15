@@ -1,0 +1,421 @@
+id,title,state,phases,source,url,disposition,routing_basis,body,head,base,head_branch,base_branch,ahead_main,behind_main,file_count,files,failed_checks
+EDGE-001,Hidden object receives pointer hit,catalogued; execution evidence unverified,"[""E04""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-001
+area: Selection
+scenario: Hidden object receives pointer hit
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-002,Inspector displays a different element than the canvas highlight,catalogued; execution evidence unverified,"[""E04""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-002
+area: Selection
+scenario: Inspector displays a different element than the canvas highlight
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-003,Candidate cycling order changes without pointer movement,catalogued; execution evidence unverified,"[""E04""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-003
+area: Selection
+scenario: Candidate cycling order changes without pointer movement
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-004,Selection is lost while editing a property,catalogued; execution evidence unverified,"[""E04""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-004
+area: Selection
+scenario: Selection is lost while editing a property
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-005,Snap jitters between equal candidates,catalogued; execution evidence unverified,"[""E11""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-005
+area: Snapping
+scenario: Snap jitters between equal candidates
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-006,Snap uses stale derived geometry,catalogued; execution evidence unverified,"[""E11""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-006
+area: Snapping
+scenario: Snap uses stale derived geometry
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-007,Snap tolerance changes incorrectly with zoom,catalogued; execution evidence unverified,"[""E11""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-007
+area: Snapping
+scenario: Snap tolerance changes incorrectly with zoom
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-008,Perpendicular snap appears on an invalid extension,catalogued; execution evidence unverified,"[""E11""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-008
+area: Snapping
+scenario: Perpendicular snap appears on an invalid extension
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-009,Rounded display value is stored as authoritative,catalogued; execution evidence unverified,"[""E03""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-009
+area: Numeric input
+scenario: Rounded display value is stored as authoritative
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-010,Imperial fraction parses incorrectly,catalogued; execution evidence unverified,"[""E03""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-010
+area: Numeric input
+scenario: Imperial fraction parses incorrectly
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-011,Locale comma is interpreted as coordinate separator,catalogued; execution evidence unverified,"[""E03""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-011
+area: Numeric input
+scenario: Locale comma is interpreted as coordinate separator
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-012,Negative length commits where prohibited,catalogued; execution evidence unverified,"[""E03""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-012
+area: Numeric input
+scenario: Negative length commits where prohibited
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-013,Reversing endpoints flips interior and exterior unexpectedly,catalogued; execution evidence unverified,"[""E11""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-013
+area: Walls and joins
+scenario: Reversing endpoints flips interior and exterior unexpectedly
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-014,Mitre join creates a sliver,catalogued; execution evidence unverified,"[""E11""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-014
+area: Walls and joins
+scenario: Mitre join creates a sliver
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-015,T junction disconnects after reopen,catalogued; execution evidence unverified,"[""E11""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-015
+area: Walls and joins
+scenario: T junction disconnects after reopen
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-016,Collinear walls overlap instead of merge warning,catalogued; execution evidence unverified,"[""E11""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-016
+area: Walls and joins
+scenario: Collinear walls overlap instead of merge warning
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-017,Door extends beyond host,catalogued; execution evidence unverified,"[""E12""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-017
+area: Openings
+scenario: Door extends beyond host
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-018,Overlapping openings commit,catalogued; execution evidence unverified,"[""E12""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-018
+area: Openings
+scenario: Overlapping openings commit
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-019,Door moves to wrong wall end after endpoint reversal,catalogued; execution evidence unverified,"[""E12""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-019
+area: Openings
+scenario: Door moves to wrong wall end after endpoint reversal
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-020,Window sill exceeds wall height,catalogued; execution evidence unverified,"[""E12""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-020
+area: Openings
+scenario: Window sill exceeds wall height
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-021,Tiny gap is silently closed,catalogued; execution evidence unverified,"[""E13""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-021
+area: Rooms
+scenario: Tiny gap is silently closed
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-022,Room area remains stale after wall move,catalogued; execution evidence unverified,"[""E13""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-022
+area: Rooms
+scenario: Room area remains stale after wall move
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-023,Seed point selects adjacent room,catalogued; execution evidence unverified,"[""E13""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-023
+area: Rooms
+scenario: Seed point selects adjacent room
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-024,Concave boundary self-intersects,catalogued; execution evidence unverified,"[""E13""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-024
+area: Rooms
+scenario: Concave boundary self-intersects
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-025,Dimension references a disposable mesh edge,catalogued; execution evidence unverified,"[""E16""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-025
+area: Dimensions
+scenario: Dimension references a disposable mesh edge
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-026,Detached reference shows old value,catalogued; execution evidence unverified,"[""E16""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-026
+area: Dimensions
+scenario: Detached reference shows old value
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-027,Text override changes measured value,catalogued; execution evidence unverified,"[""E16""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-027
+area: Dimensions
+scenario: Text override changes measured value
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-028,Witness line moves to wrong face,catalogued; execution evidence unverified,"[""E16""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-028
+area: Dimensions
+scenario: Witness line moves to wrong face
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-029,Line weight changes with zoom,catalogued; execution evidence unverified,"[""E18""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-029
+area: 2D rendering
+scenario: Line weight changes with zoom
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-030,Selection halo obscures geometry,catalogued; execution evidence unverified,"[""E18""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-030
+area: 2D rendering
+scenario: Selection halo obscures geometry
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-031,Text blurs on high-density display,catalogued; execution evidence unverified,"[""E18""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-031
+area: 2D rendering
+scenario: Text blurs on high-density display
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-032,Canvas loses GPU context,catalogued; execution evidence unverified,"[""E18""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-032
+area: 2D rendering
+scenario: Canvas loses GPU context
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-033,Mesh remains after element deletion,catalogued; execution evidence unverified,"[""E18""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-033
+area: 3D rendering
+scenario: Mesh remains after element deletion
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-034,Selection outline uses wrong element ID,catalogued; execution evidence unverified,"[""E18""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-034
+area: 3D rendering
+scenario: Selection outline uses wrong element ID
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-035,Opening mesh has inverted normals,catalogued; execution evidence unverified,"[""E18""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-035
+area: 3D rendering
+scenario: Opening mesh has inverted normals
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-036,Orthographic fit clips model,catalogued; execution evidence unverified,"[""E18""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-036
+area: 3D rendering
+scenario: Orthographic fit clips model
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-037,UI reports saved before journal write,catalogued; execution evidence unverified,"[""E07""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-037
+area: Storage and recovery
+scenario: UI reports saved before journal write
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-038,Quota failure is presented as network failure,catalogued; execution evidence unverified,"[""E07""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-038
+area: Storage and recovery
+scenario: Quota failure is presented as network failure
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-039,Snapshot compaction loses operations,catalogued; execution evidence unverified,"[""E07""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-039
+area: Storage and recovery
+scenario: Snapshot compaction loses operations
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-040,Two tabs corrupt local journal,catalogued; execution evidence unverified,"[""E07""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-040
+area: Storage and recovery
+scenario: Two tabs corrupt local journal
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-041,Archive accepts path traversal,catalogued; execution evidence unverified,"[""E07""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-041
+area: Archive and migration
+scenario: Archive accepts path traversal
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-042,Checksum is not verified,catalogued; execution evidence unverified,"[""E07""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-042
+area: Archive and migration
+scenario: Checksum is not verified
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-043,Unknown optional section blocks opening,catalogued; execution evidence unverified,"[""E07""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-043
+area: Archive and migration
+scenario: Unknown optional section blocks opening
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-044,Schema migration changes IDs,catalogued; execution evidence unverified,"[""E07""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-044
+area: Archive and migration
+scenario: Schema migration changes IDs
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-045,Wrong units scale imported drawing,catalogued; execution evidence unverified,"[""E34""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-045
+area: Import
+scenario: Wrong units scale imported drawing
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-046,Unsupported object disappears without report,catalogued; execution evidence unverified,"[""E34""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-046
+area: Import
+scenario: Unsupported object disappears without report
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-047,Partial import mutates project after failure,catalogued; execution evidence unverified,"[""E34""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-047
+area: Import
+scenario: Partial import mutates project after failure
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-048,Malicious text becomes executable markup,catalogued; execution evidence unverified,"[""E34""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-048
+area: Import
+scenario: Malicious text becomes executable markup
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-049,PDF is a raster screenshot,catalogued; execution evidence unverified,"[""E20""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-049
+area: Export
+scenario: PDF is a raster screenshot
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-050,Export changes project revision,catalogued; execution evidence unverified,"[""E20""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-050
+area: Export
+scenario: Export changes project revision
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-051,Font is missing or substituted silently,catalogued; execution evidence unverified,"[""E20""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-051
+area: Export
+scenario: Font is missing or substituted silently
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-052,Physical print scale is wrong,catalogued; execution evidence unverified,"[""E20""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-052
+area: Export
+scenario: Physical print scale is wrong
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-053,Last write wins on delete versus modify,catalogued; execution evidence unverified,"[""E43""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-053
+area: Collaboration and sync
+scenario: Last write wins on delete versus modify
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-054,Offline operation applies twice,catalogued; execution evidence unverified,"[""E43""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-054
+area: Collaboration and sync
+scenario: Offline operation applies twice
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-055,User undoes another user work,catalogued; execution evidence unverified,"[""E43""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-055
+area: Collaboration and sync
+scenario: User undoes another user work
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-056,Presence remains after disconnect,catalogued; execution evidence unverified,"[""E43""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-056
+area: Collaboration and sync
+scenario: Presence remains after disconnect
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-057,Viewer can call edit API directly,catalogued; execution evidence unverified,"[""E09""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-057
+area: Security and permissions
+scenario: Viewer can call edit API directly
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-058,Project existence leaks through error difference,catalogued; execution evidence unverified,"[""E09""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-058
+area: Security and permissions
+scenario: Project existence leaks through error difference
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-059,Signed URL lasts too long,catalogued; execution evidence unverified,"[""E09""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-059
+area: Security and permissions
+scenario: Signed URL lasts too long
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-060,Cross-tenant object-storage key accepted,catalogued; execution evidence unverified,"[""E09""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-060
+area: Security and permissions
+scenario: Cross-tenant object-storage key accepted
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-061,AI applies without preview,catalogued; execution evidence unverified,"[""E36""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-061
+area: AI
+scenario: AI applies without preview
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-062,AI hides dimensional assumption,catalogued; execution evidence unverified,"[""E36""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-062
+area: AI
+scenario: AI hides dimensional assumption
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-063,AI deletes geometry to satisfy request,catalogued; execution evidence unverified,"[""E36""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-063
+area: AI
+scenario: AI deletes geometry to satisfy request
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-064,Prompt injection in imported metadata changes behaviour,catalogued; execution evidence unverified,"[""E36""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-064
+area: AI
+scenario: Prompt injection in imported metadata changes behaviour
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-065,Pencil stroke orbits camera,catalogued; execution evidence unverified,"[""E22""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-065
+area: iPad and input
+scenario: Pencil stroke orbits camera
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-066,Finger touch creates geometry during Pencil use,catalogued; execution evidence unverified,"[""E22""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-066
+area: iPad and input
+scenario: Finger touch creates geometry during Pencil use
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-067,Software keyboard covers numeric input,catalogued; execution evidence unverified,"[""E22""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-067
+area: iPad and input
+scenario: Software keyboard covers numeric input
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-068,Hover snap differs from tap snap,catalogued; execution evidence unverified,"[""E22""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-068
+area: iPad and input
+scenario: Hover snap differs from tap snap
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-069,Active tool is indicated only by colour,catalogued; execution evidence unverified,"[""E21""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-069
+area: Accessibility
+scenario: Active tool is indicated only by colour
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-070,Command palette focus is lost after results update,catalogued; execution evidence unverified,"[""E21""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-070
+area: Accessibility
+scenario: Command palette focus is lost after results update
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-071,Canvas selection has no textual equivalent,catalogued; execution evidence unverified,"[""E21""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-071
+area: Accessibility
+scenario: Canvas selection has no textual equivalent
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-072,Dialog closes without returning focus,catalogued; execution evidence unverified,"[""E21""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-072
+area: Accessibility
+scenario: Dialog closes without returning focus
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-073,Room rebuild recalculates whole project,catalogued; execution evidence unverified,"[""E23""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-073
+area: Performance
+scenario: Room rebuild recalculates whole project
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-074,Hover performs exact geometry on every frame,catalogued; execution evidence unverified,"[""E23""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-074
+area: Performance
+scenario: Hover performs exact geometry on every frame
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-075,React rerenders full model on pointer move,catalogued; execution evidence unverified,"[""E23""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-075
+area: Performance
+scenario: React rerenders full model on pointer move
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-076,Worker messages copy large buffers unnecessarily,catalogued; execution evidence unverified,"[""E23""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-076
+area: Performance
+scenario: Worker messages copy large buffers unnecessarily
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-077,Safari storage is evicted without recovery path,catalogued; execution evidence unverified,"[""E22""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-077
+area: Browser and platform
+scenario: Safari storage is evicted without recovery path
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-078,Browser shortcut prevents Arq command,catalogued; execution evidence unverified,"[""E22""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-078
+area: Browser and platform
+scenario: Browser shortcut prevents Arq command
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-079,WebGL context limit is exceeded,catalogued; execution evidence unverified,"[""E22""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-079
+area: Browser and platform
+scenario: WebGL context limit is exceeded
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-080,File System Access API is assumed everywhere,catalogued; execution evidence unverified,"[""E22""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-080
+area: Browser and platform
+scenario: File System Access API is assumed everywhere
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-081,Saved label hides unsynced state,catalogued; execution evidence unverified,"[""E10""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-081
+area: UI state and copy
+scenario: Saved label hides unsynced state
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-082,Disabled action has no explanation,catalogued; execution evidence unverified,"[""E10""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-082
+area: UI state and copy
+scenario: Disabled action has no explanation
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-083,Modal opens behind canvas overlay,catalogued; execution evidence unverified,"[""E10""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-083
+area: UI state and copy
+scenario: Modal opens behind canvas overlay
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,
+EDGE-084,Panel opening shifts canvas coordinates,catalogued; execution evidence unverified,"[""E10""]",quality/EDGE-CASE-CATALOG.csv,https://github.com/ruddvz/Arq/blob/a02ccc69e44e41324324c9482a43edbfb58e7905/quality/EDGE-CASE-CATALOG.csv,"Preserve source stage and applicability. This is coverage allocation, not proof of implementation or a confirmed defect. Revalidate detailed owning capability before execution.",category/title coverage allocation; source stage remains controlling,"id: EDGE-084
+area: UI state and copy
+scenario: Panel opening shifts canvas coordinates
+expectedSafeBehaviour: No silent project mutation or data loss. Explain the state and provide a safe next action.
+fixtureRequired: yes",,,,,,,,,

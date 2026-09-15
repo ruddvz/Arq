@@ -1,0 +1,211 @@
+ M .zeus/CONTEXT-BUDGETS.md
+ M .zeus/config.json
+ M STATUS.md
+ M apps/marketing/src/components.ts
+ M apps/marketing/src/content/ai.ts
+ M apps/marketing/src/content/architects.ts
+ M apps/marketing/src/content/changelog.ts
+ M apps/marketing/src/content/collaboration.ts
+ M apps/marketing/src/content/contact.ts
+ M apps/marketing/src/content/docs-index.ts
+ M apps/marketing/src/content/home.ts
+ M apps/marketing/src/content/interoperability.ts
+ M apps/marketing/src/content/ipad.ts
+ M apps/marketing/src/content/not-found.ts
+ M apps/marketing/src/content/pricing.ts
+ M apps/marketing/src/content/product.ts
+ M apps/marketing/src/content/security.ts
+ M apps/marketing/src/content/status.ts
+ M apps/marketing/src/content/students.ts
+ M apps/marketing/src/layout.ts
+ M apps/marketing/src/site.css
+ M apps/marketing/src/site.ts
+ M apps/web/package.json
+ M apps/web/src/App.tsx
+ M apps/web/src/ModelCanvas.tsx
+ M apps/web/src/PlanCanvas.tsx
+ M apps/web/src/canvas/canvas-interaction.test.ts
+ M apps/web/src/canvas/canvas-interaction.ts
+ M apps/web/src/canvas/plan-document.test.ts
+ M apps/web/src/canvas/plan-document.ts
+ M apps/web/src/canvas/plan-journal.test.ts
+ M apps/web/src/canvas/plan-journal.ts
+ M apps/web/src/file-handling/FileOpenPanel.tsx
+ M apps/web/src/file-handling/route-file.test.ts
+ M apps/web/src/file-handling/route-file.ts
+ M apps/web/src/inspector-data.ts
+ M apps/web/src/project/describe-publication-outcome.ts
+ M apps/web/src/project/native-project-session.test.ts
+ M apps/web/src/project/native-project-session.ts
+ M apps/web/src/project/publish-native-project.test.ts
+ M apps/web/src/project/publish-native-project.ts
+ M benchmarks/results/responsive/desktop-1600x1000.png
+ M benchmarks/results/responsive/ipad-compact-1024x768.png
+ M benchmarks/results/responsive/ipad-regular-1366x1024.png
+ M benchmarks/results/responsive/phone-430x932.png
+ M benchmarks/results/responsive/responsive-capture.json
+ M docs/adr/0004-units-and-numeric-representation.md
+ M packages/arqfs/src/arqfs-local-write.test.ts
+ M packages/arqfs/src/arqfs-worker-handler.test.ts
+ M packages/arqfs/src/arqfs-worker-handler.ts
+ M packages/arqfs/src/arqfs-worker-protocol.ts
+ M packages/arqfs/src/arqfs-working-copy.ts
+ M packages/arqfs/src/index.ts
+ M packages/arqscript/src/index.ts
+ M packages/bim-core/src/dimension-reference.ts
+ M packages/bim-core/src/ids.test.ts
+ M packages/bim-core/src/ids.ts
+ M packages/bim-core/src/index.ts
+ M packages/derived-cache/src/index.ts
+ M packages/design-system/src/appearance/appearance-policy.test.ts
+ M packages/design-system/src/workspace/phone-dock.tsx
+ M packages/design-system/src/workspace/phone-project-bar.tsx
+ M packages/design-system/src/workspace/tablet-drawer-bar.tsx
+ M packages/design-system/src/workspace/workspace-root.tsx
+ M packages/design-system/src/workspace/workspace-shell.css
+ M packages/geometry-2d/src/index.ts
+ M packages/geometry-2d/src/tolerance.ts
+ M packages/model-renderer/src/model-scene.test.ts
+ M packages/model-renderer/src/model-scene.ts
+ M packages/plan-renderer/src/plan-placed-content.test.ts
+ M packages/plan-renderer/src/plan-placed-content.ts
+ M packages/validation/src/index.ts
+ M packages/validation/src/wall-segment-validation.test.ts
+ M packages/validation/src/wall-segment-validation.ts
+ M packages/workspace/src/mode-state.ts
+ M packages/workspace/src/registry/workspace-tool-registry.json
+ M packages/workspace/src/tool-state.test.ts
+ M packages/workspace/src/tool-state.ts
+ M pnpm-lock.yaml
+ M scripts/install-zeus.sh
+ M scripts/run-pencil-pointer-capability-check.mjs
+ M scripts/run-responsive-capture.mjs
+ M scripts/run-workspace-layout-capability-check.mjs
+ M scripts/zeus-context.mjs
+?? .agents/skills/zeus-accessibility/
+?? .agents/skills/zeus-adversarial-review/
+?? .agents/skills/zeus-ai-assistance/
+?? .agents/skills/zeus-architecture/
+?? .agents/skills/zeus-assumption-audit/
+?? .agents/skills/zeus-causal-diagnosis/
+?? .agents/skills/zeus-current-research/
+?? .agents/skills/zeus-debugging/
+?? .agents/skills/zeus-decision-engine/
+?? .agents/skills/zeus-deep-analysis/
+?? .agents/skills/zeus-docs-and-claims/
+?? .agents/skills/zeus-editor-command-state/
+?? .agents/skills/zeus-engineering/
+?? .agents/skills/zeus-explain-levels/
+?? .agents/skills/zeus-fast-ooda/
+?? .agents/skills/zeus-file-format/
+?? .agents/skills/zeus-first-principles/
+?? .agents/skills/zeus-geometry-kernel/
+?? .agents/skills/zeus-idea-generation/
+?? .agents/skills/zeus-import-export/
+?? .agents/skills/zeus-learning-coach/
+?? .agents/skills/zeus-migration/
+?? .agents/skills/zeus-numerics-coordinates/
+?? .agents/skills/zeus-output-formatter/
+?? .agents/skills/zeus-package-ship/
+?? .agents/skills/zeus-product-ux/
+?? .agents/skills/zeus-recovery/
+?? .agents/skills/zeus-release-evidence/
+?? .agents/skills/zeus-renderer-performance/
+?? .agents/skills/zeus-router/
+?? .agents/skills/zeus-security-privacy/
+?? .agents/skills/zeus-selection-snapping/
+?? .agents/skills/zeus-semantic-model/
+?? .agents/skills/zeus-storage/
+?? .agents/skills/zeus-sync-collaboration/
+?? .agents/skills/zeus-system-thinking/
+?? .agents/skills/zeus-typed-operations/
+?? .agents/skills/zeus-writing-transform/
+?? .codex/
+?? apps/marketing/src/diagrams.ts
+?? apps/web/src/canvas/atomic-edits-contract.test.ts
+?? apps/web/src/canvas/atomic-property-edits.test.ts
+?? apps/web/src/canvas/atomic-property-edits.ts
+?? apps/web/src/canvas/canvas-opening-placement.test.ts
+?? apps/web/src/canvas/canvas-room-placement.test.ts
+?? apps/web/src/canvas/canvas-wall-editing.test.ts
+?? apps/web/src/canvas/command-affordances.test.ts
+?? apps/web/src/canvas/cross-level-operations.test.ts
+?? apps/web/src/canvas/cross-level-operations.ts
+?? apps/web/src/canvas/dimension-resolver.test.ts
+?? apps/web/src/canvas/dimension-resolver.ts
+?? apps/web/src/canvas/label-placement.test.ts
+?? apps/web/src/canvas/label-placement.ts
+?? apps/web/src/canvas/plan-palette-reader.test.ts
+?? apps/web/src/canvas/plan-palette-reader.ts
+?? apps/web/src/canvas/selection-hierarchy.test.ts
+?? apps/web/src/canvas/selection-hierarchy.ts
+?? apps/web/src/canvas/sheet-geometry.test.ts
+?? apps/web/src/canvas/sheet-geometry.ts
+?? apps/web/src/canvas/squircle.test.ts
+?? apps/web/src/canvas/squircle.ts
+?? apps/web/src/canvas/underlay-calibration.test.ts
+?? apps/web/src/canvas/underlay-calibration.ts
+?? apps/web/src/canvas/wall-editing-operations.test.ts
+?? apps/web/src/canvas/wall-editing-operations.ts
+?? apps/web/src/components/
+?? apps/web/src/inspector-data.test.ts
+?? apps/web/src/project/golden-fixture-render-agreement.test.ts
+?? apps/web/src/project/model-canvas-resilience.test.ts
+?? apps/web/src/project/native-level-derivation.test.ts
+?? apps/web/src/project/native-level-derivation.ts
+?? apps/web/src/project/plan-3d-derivation-agreement.test.ts
+?? apps/web/src/project/portable-export-pipeline.test.ts
+?? apps/web/src/project/project-switching-safety.test.ts
+?? apps/web/src/project/storage-quota-service.test.ts
+?? apps/web/src/project/storage-quota-service.ts
+?? apps/web/src/project/storage-recovery-ui.test.ts
+?? apps/web/src/sheets/InteractiveScheduleSheet.test.ts
+?? apps/web/src/sheets/InteractiveScheduleSheet.tsx
+?? apps/web/src/sheets/PlanSheetWorkspace.test.ts
+?? apps/web/src/sheets/PlanSheetWorkspace.tsx
+?? apps/web/src/sheets/plan-sheet-config.test.ts
+?? apps/web/src/sheets/plan-sheet-config.ts
+?? benchmarks/results/pencil-pointer-capability-2026-09-05T00-53-06-573Z.json
+?? benchmarks/results/pencil-pointer-capability-2026-09-05T01-03-30-381Z.json
+?? benchmarks/results/pencil-pointer-capability-2026-09-05T11-45-15-354Z.json
+?? benchmarks/results/pencil-pointer-capability-2026-09-05T11-50-52-039Z.json
+?? benchmarks/results/workspace-layout-capability-2026-09-05T00-51-02-772Z.json
+?? benchmarks/results/workspace-layout-capability-2026-09-05T01-00-06-937Z.json
+?? benchmarks/results/workspace-layout-capability-2026-09-05T01-02-47-971Z.json
+?? benchmarks/results/workspace-layout-capability-2026-09-05T11-45-11-517Z.json
+?? benchmarks/results/workspace-layout-capability-2026-09-05T11-50-47-663Z.json
+?? docs/product/ARQ-AI-COMPETITIVE-IMPROVEMENT-PLAN.md
+?? docs/product/ARQ-PRODUCTION-PLAN.md
+?? docs/product/RELEASE-1-CAPABILITY-MAP.md
+?? docs/research/COMPETITIVE-ANALYSIS-8-AI-ARCH-TOOLS.md
+?? packages/arqfs/src/arqfs-working-copy-lifecycle.test.ts
+?? packages/arqfs/src/arqfs-working-copy-registry.ts
+?? packages/arqscript/src/generative-layout-synthesizer.test.ts
+?? packages/arqscript/src/generative-layout-synthesizer.ts
+?? packages/arqscript/src/intent-compiler.test.ts
+?? packages/arqscript/src/intent-compiler.ts
+?? packages/bim-core/src/auto-furnishing.test.ts
+?? packages/bim-core/src/auto-furnishing.ts
+?? packages/bim-core/src/numeric-conversion.test.ts
+?? packages/bim-core/src/site-lot.test.ts
+?? packages/bim-core/src/site-lot.ts
+?? packages/derived-cache/src/cost-takeoff.test.ts
+?? packages/derived-cache/src/cost-takeoff.ts
+?? packages/derived-cache/src/spatial-metrics.test.ts
+?? packages/derived-cache/src/spatial-metrics.ts
+?? packages/design-system/src/workspace/phone-dock.test.ts
+?? packages/design-system/src/workspace/tablet-drawer-bar.test.ts
+?? packages/geometry-2d/src/numeric-bounds.test.ts
+?? packages/geometry-2d/src/numeric-bounds.ts
+?? packages/geometry-2d/src/numeric-foundation.test.ts
+?? packages/geometry-2d/src/tolerance-calibration.test.ts
+?? packages/geometry-2d/src/wall-editing.test.ts
+?? packages/geometry-2d/src/wall-editing.ts
+?? packages/validation/src/level-validation.test.ts
+?? packages/validation/src/level-validation.ts
+?? packages/validation/src/opening-validation.test.ts
+?? packages/validation/src/opening-validation.ts
+?? packages/validation/src/residential-code-linting.test.ts
+?? packages/validation/src/residential-code-linting.ts
+?? packages/validation/src/room-topology-validation.test.ts
+?? packages/validation/src/room-topology-validation.ts

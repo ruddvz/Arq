@@ -1,0 +1,65 @@
+{
+  "files": [
+    {
+      "sha": "e6e22ba4fcf54d852bee064285962ca177ef8247",
+      "filename": ".github/workflows/ci.yml",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 5,
+      "changes": 10,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08/.github%2Fworkflows%2Fci.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08/.github%2Fworkflows%2Fci.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fci.yml?ref=5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08",
+      "patch": "@@ -1,14 +1,14 @@\n name: CI\n \n-# push covers the actual default branch (this repository's default is the\n-# long-lived claude/arq-cad-platform-research-ba8rav branch, not main);\n-# merge_group is present so a merge queue can be enabled later without a\n-# coverage gap \u2014 see engineering/33_IMPLEMENTATION_HANDOFF.md Phase 2.\n+# Push covers both the current canonical branch and the stable branch candidate\n+# during the non-destructive default-branch cutover tracked by #332. Keep both\n+# until the new default has exact-head CI/Pages proof and the rollback window\n+# is complete; pull_request and merge_group remain branch-name independent.\n on:\n   pull_request:\n   merge_group:\n   push:\n-    branches: [claude/arq-cad-platform-research-ba8rav]\n+    branches: [claude/arq-cad-platform-research-ba8rav, main]\n \n # This is the expensive workflow - eleven headless-Chromium capability checks,\n # the full test suite and the language ladder - and without a concurrency group"
+    },
+    {
+      "sha": "c657e4792dac5b18094c54ac80940fe425179bfb",
+      "filename": ".github/workflows/deploy-pages.yml",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 3,
+      "changes": 8,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08/.github%2Fworkflows%2Fdeploy-pages.yml",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08/.github%2Fworkflows%2Fdeploy-pages.yml",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/.github%2Fworkflows%2Fdeploy-pages.yml?ref=5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08",
+      "patch": "@@ -8,9 +8,10 @@\n # SITE_ORIGIN enables sitemap.xml, the robots Sitemap line and absolute\n # Open Graph URLs.\n #\n-# Triggers: pushes that touch the site on the default branch, plus manual\n-# dispatch. (The in-flight site branch triggers were trimmed after PRs #282\n-# and #283 merged, as their own comments instructed.)\n+# Triggers: pushes that touch the site on either the current canonical branch\n+# or the stable branch candidate during the non-destructive #332 cutover, plus\n+# manual dispatch. Keep both branches until the new default has live Pages\n+# proof and the rollback window is complete.\n #\n # Language System 4.1 adds three gates around the existing build: route\n # coverage before the build, a rendered-copy audit that writes a commit-bound\n@@ -25,6 +26,7 @@ on:\n   push:\n     branches:\n       - claude/arq-cad-platform-research-ba8rav\n+      - main\n     paths:\n       - 'apps/marketing/**'\n       - 'brand/**'"
+    },
+    {
+      "sha": "f1a9da58cbde58bd6bb2260ccb98bbb77f809be6",
+      "filename": "docs/product/voice/context/REFRESH-LOG.json",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 0,
+      "changes": 6,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08/docs%2Fproduct%2Fvoice%2Fcontext%2FREFRESH-LOG.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08/docs%2Fproduct%2Fvoice%2Fcontext%2FREFRESH-LOG.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/docs%2Fproduct%2Fvoice%2Fcontext%2FREFRESH-LOG.json?ref=5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08",
+      "patch": "@@ -1,6 +1,12 @@\n {\n   \"schemaVersion\": 1,\n   \"entries\": [\n+    {\n+      \"generatedAt\": \"2026-09-11T15:11:08.911Z\",\n+      \"sourceSetDigest\": \"6e7a9c396cc3141551582e7c93d47c876453c205684e61936083e65866420b48\",\n+      \"previousSourceSetDigest\": \"c3e0400708328f35ad39b681124a3de91a37773d2dd6980ea9871d755c554555\",\n+      \"changedSourceSets\": [\"marketing-deployment\"]\n+    },\n     {\n       \"generatedAt\": \"2026-09-09T21:31:56.739Z\",\n       \"sourceSetDigest\": \"c3e0400708328f35ad39b681124a3de91a37773d2dd6980ea9871d755c554555\","
+    },
+    {
+      "sha": "beae0e58ab37435eda2cba0474e2f4c4af91095b",
+      "filename": "docs/product/voice/generated-repo-context.json",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 3,
+      "changes": 6,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08/docs%2Fproduct%2Fvoice%2Fgenerated-repo-context.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08/docs%2Fproduct%2Fvoice%2Fgenerated-repo-context.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/docs%2Fproduct%2Fvoice%2Fgenerated-repo-context.json?ref=5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08",
+      "patch": "@@ -2,7 +2,7 @@\n   \"schemaVersion\": 4,\n   \"contractVersion\": \"4.1.0\",\n   \"sourceContractDigest\": \"8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995\",\n-  \"sourceSetDigest\": \"c3e0400708328f35ad39b681124a3de91a37773d2dd6980ea9871d755c554555\",\n+  \"sourceSetDigest\": \"6e7a9c396cc3141551582e7c93d47c876453c205684e61936083e65866420b48\",\n   \"sourceContextGeneratedBy\": \"refresh-repo-context.mjs@4.1\",\n   \"sources\": {\n     \"repository-readme\": {\n@@ -683,8 +683,8 @@\n       \"id\": \"marketing-deployment\",\n       \"kind\": \"file\",\n       \"path\": \".github/workflows/deploy-pages.yml\",\n-      \"sha256\": \"d76cafc585a32391650c3be10777eded7e6198951b183f47bb4b28e5424fcece\",\n-      \"bytes\": 5486\n+      \"sha256\": \"1f806d50467691c606d51b669d79852cee1b3e41a10c350253db20497b1190e3\",\n+      \"bytes\": 5572\n     },\n     \"telemetry\": {\n       \"id\": \"telemetry\","
+    },
+    {
+      "sha": "b1b7d2622b7cf364ffb0e49879a69909e6f1fcbe",
+      "filename": "engineering/ops/generated/engineering-context-v5.json",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 3,
+      "changes": 6,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08/engineering%2Fops%2Fgenerated%2Fengineering-context-v5.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08/engineering%2Fops%2Fgenerated%2Fengineering-context-v5.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/engineering%2Fops%2Fgenerated%2Fengineering-context-v5.json?ref=5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08",
+      "patch": "@@ -4,7 +4,7 @@\n   \"version\": \"5.0.0\",\n   \"hash_algorithm\": \"sha256\",\n   \"repository_bound\": true,\n-  \"source_hash\": \"18920373b71be76f79acca276c8e581f79a94567044a1c3b0c9a6f5635e61517\",\n+  \"source_hash\": \"25fdeba5e34d9e0e31b91ae7d8d346d611502aed292cb51c2cfe71676a4d30bb\",\n   \"source_records\": [\n     {\n       \"scope\": \"package\",\n@@ -89,12 +89,12 @@\n     {\n       \"scope\": \"repository\",\n       \"path\": \".github/workflows/ci.yml\",\n-      \"sha256\": \"3320f61ef48c89f63f182f663bf5a07ee128649a995e297dc004d6dcd5074b67\"\n+      \"sha256\": \"b161e0038bb1e3d8246994724293c486d3eeae0f2d03568284e497d937134423\"\n     },\n     {\n       \"scope\": \"repository\",\n       \"path\": \".github/workflows/deploy-pages.yml\",\n-      \"sha256\": \"d76cafc585a32391650c3be10777eded7e6198951b183f47bb4b28e5424fcece\"\n+      \"sha256\": \"1f806d50467691c606d51b669d79852cee1b3e41a10c350253db20497b1190e3\"\n     },\n     {\n       \"scope\": \"repository\","
+    }
+  ],
+  "reviews": []
+}

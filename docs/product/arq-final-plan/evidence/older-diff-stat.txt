@@ -1,0 +1,19 @@
+ STATUS.md                                          |  36 ++---
+ apps/web/src/App.tsx                               | 173 +++++++++++++++++++--
+ apps/web/src/PlanCanvas.tsx                        |  28 ++--
+ apps/web/src/canvas/plan-document.ts               |  12 +-
+ apps/web/src/file-handling/FileOpenPanel.tsx       |  12 +-
+ apps/web/src/file-handling/create-arqfs-worker.ts  |  12 +-
+ apps/web/src/project/browser-worker-factory.ts     |   9 +-
+ .../web/src/project/native-project-session.test.ts |  86 ++++++++--
+ apps/web/src/project/native-project-session.ts     |  85 +++++++++-
+ .../web/src/project/publish-native-project.test.ts |  86 +++++++++-
+ apps/web/vite.config.ts                            |  13 +-
+ packages/arqfs/src/arqfs-worker-handler.test.ts    |  55 ++++++-
+ packages/arqfs/src/arqfs-worker-handler.ts         |  36 ++++-
+ packages/arqfs/src/arqfs-worker-protocol.ts        |   4 +-
+ .../src/shell/tool-rail-state.test.ts              |  15 ++
+ packages/design-system/src/shell/tool-rail.tsx     |  22 ++-
+ packages/design-system/src/shell/top-bar-state.ts  |   2 +-
+ .../src/workspace/workspace-shell.css              |  12 ++
+ 18 files changed, 594 insertions(+), 104 deletions(-)

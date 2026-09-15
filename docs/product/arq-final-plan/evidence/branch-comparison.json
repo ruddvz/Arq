@@ -1,0 +1,3653 @@
+[
+  {
+    "id": "BR-chore/product-ui-ux-skill-20260908",
+    "kind": "branch",
+    "title": "chore/product-ui-ux-skill-20260908",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/0ef05b270d3e31d5e3816ae61aeb2cce85e98616",
+    "head": "0ef05b270d3e31d5e3816ae61aeb2cce85e98616",
+    "behind_main": 84,
+    "ahead_main": 2,
+    "files": [
+      ".agents/skills/product-ui-ux/SKILL.md",
+      ".agents/skills/product-ui-ux/SOURCES.md",
+      ".agents/skills/product-ui-ux/references/ACCESSIBILITY.md",
+      ".agents/skills/product-ui-ux/references/ADAPTIVE-PWA.md",
+      ".agents/skills/product-ui-ux/references/FOUNDATIONS.md",
+      ".agents/skills/product-ui-ux/references/INTERACTION-CONTENT.md",
+      ".agents/skills/product-ui-ux/references/SYSTEMS-PERFORMANCE-AI.md",
+      ".agents/skills/product-ui-ux/references/VALIDATION.md"
+    ],
+    "file_count": 8,
+    "related_prs": [
+      318
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-chore/repository-rename-zeus",
+    "kind": "branch",
+    "title": "chore/repository-rename-zeus",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/75b954e0da17b07540372a8fc1401d9d6d43faac",
+    "head": "75b954e0da17b07540372a8fc1401d9d6d43faac",
+    "behind_main": 83,
+    "ahead_main": 4,
+    "files": [
+      ".github/workflows/deploy-pages.yml",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/generated-repo-context.json",
+      "engineering/ops/generated/engineering-context-v5.json"
+    ],
+    "file_count": 4,
+    "related_prs": [
+      331
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-6-aogrp-9xcxam",
+    "kind": "branch",
+    "title": "claude/arq-6-aogrp-9xcxam",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/ea2fe5836c1ee470202cc93f48371d9ece90e71e",
+    "head": "ea2fe5836c1ee470202cc93f48371d9ece90e71e",
+    "behind_main": 137,
+    "ahead_main": 4,
+    "files": [
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/00_README_FIRST.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/01_EXECUTIVE_VERDICT.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/02_VERSION_5_CRITIQUE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/03_ARQ_NOT_A_SQLITE_WRAPPER.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/04_ARQ_NATIVE_SUBSTRATE_ARCHITECTURE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/05_SQLITE_AND_OTHER_ENGINE_BOUNDARIES.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/06_BLOCKERS_AND_CLOSURE_PLAN.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/07_COMPLETENESS_AND_CLAIM_MATRIX.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/08_IMPLEMENTATION_SEQUENCE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/MANIFEST_SHA256.txt",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/PACKAGE_INVENTORY.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/TRIAGE-README.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/VALIDATION_REPORT.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/fixtures-v6/EXPECTED_VERDICTS.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/fixtures-v6/append-failure-tail.aogrp.arq",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/fixtures-v6/bad-magic.aogrp.arq",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/fixtures-v6/both-roots-corrupt.aogrp.arq",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/fixtures-v6/corrupt-segment.aogrp.arq",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/fixtures-v6/healthy.aogrp.arq",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/fixtures-v6/one-root-corrupt.aogrp.arq",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/fixtures-v6/published-compact.aogrp.arq",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/fixtures-v6/truncated.aogrp.arq",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/fixtures-v6/unknown-optional.aogrp.arq",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/fixtures-v6/unknown-required.aogrp.arq",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/handoff-v6/REPOSITORY_IMPLEMENTATION_PROMPT.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/handoff-v6/ZEUS_TASK_HANDOFF.yaml",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/00_REFERENCE_ARCHITECTURE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/01_RUST_PACKAGE_MAP.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/02_DECISION_SEQUENCE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/03_FIRST_VERTICAL_SLICE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/04_MIGRATION_BRIDGE_PLAN.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/05_PERFORMANCE_BUDGETS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/06_CRASH_INJECTION_MATRIX.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/07_FUZZING_AND_PARSER_HARDENING.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/08_BROWSER_IMPLEMENTATION.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/09_CLOUD_AND_SYNC_IMPLEMENTATION.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/10_KERNEL_AND_GEOMETRY_BAKEOFF.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/11_INDEPENDENT_READER_PLAN.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/12_RELEASE_AND_ROLLBACK.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/13_HARNESS_SYSTEM.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/implementation-v6/14_RISK_REGISTER.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/matrices-v6/STORAGE_TECHNOLOGY_DECISION.csv",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/mcp-v6/00_ARCHITECTURE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/mcp-v6/01_TOOL_CATALOGUE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/mcp-v6/02_PACK_RESOURCE_BOUNDARY.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/00_SCOPE_AND_CONFORMANCE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/01_AOGRP_BINARY_ENVELOPE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/02_SEGMENTS_PACKS_AND_CODECS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/03_OBJECT_IDENTITY_AND_REGISTRY.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/04_EXACT_QUANTITIES_COORDINATES_TOLERANCES.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/05_DETERMINISTIC_ENCODING_AND_HASHES.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/06_OPERATIONS_REVISIONS_AND_SNAPSHOTS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/07_BRANCH_MERGE_AND_CONFLICTS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/08_DUAL_ROOT_APPEND_AND_RECOVERY.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/09_GARBAGE_COLLECTION_AND_REPACK.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/10_STORAGE_ADAPTER_ABI.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/11_GEOMETRY_REPRESENTATION_AND_KERNELS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/12_PERSISTENT_TOPOLOGY_SELECTION.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/13_ASSETS_CHUNKS_AND_LARGE_ARRAYS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/14_CAPABILITIES_DOMAIN_PACKS_AND_ABI.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/15_FEDERATION_PARTIAL_CLONE_AND_LOD.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/16_SYNC_TRANSFER_AND_OFFLINE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/17_INTERCHANGE_FIDELITY.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/18_SIMULATION_AND_EVIDENCE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/19_SECURITY_LIMITS_ENCRYPTION_SIGNING.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/20_MIGRATION_FROM_SQLITE_ARQ.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/21_CONFORMANCE_AND_INDEPENDENT_READERS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/22_MCP_AND_AUTOMATION_HARNESS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/23_UI_STATE_CONTRACT.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/normative-v6/24_RELEASE_PROFILE_AND_NON_CLAIMS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/README.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/arq6/__init__.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/arq6/canonical.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/arq6/cli.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/arq6/format.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/arq6/mcp.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/arq6/migrate.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/generate_fixtures.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/tests/test_canonical.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/tests/test_format.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/tests/test_mcp.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/tests/test_migrate.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/reference-v6/tests/test_schemas.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/00_SOURCE_REGISTER.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/01_CONTENT_ADDRESSED_OBJECTS_AND_PACKFILES.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/02_HDF5_SUPERBLOCKS_AND_SELF_DESCRIPTION.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/03_CBOR_CAPNPROTO_FLATBUFFERS_DECISION.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/04_ZARR_CHUNKING_AND_SIMULATION_DATA.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/05_FOUNDATIONDB_LAYERS_AND_CLOUD_STORE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/06_LMDB_ROCKSDB_AND_LOCAL_INDEXES.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/07_MERKLE_DAG_AND_HASH_AGILITY.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/08_EVENT_SOURCING_SNAPSHOTS_AND_UNDO.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/09_CRDT_OT_AND_PRECISION_CONFLICTS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/10_GEOMETRY_AND_MULTI_REPRESENTATION.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/11_SECURITY_AND_HOSTILE_PACKS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/research-v6/12_COMPETITIVE_POSITION.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/schemas-v6/capability.schema.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/schemas-v6/content-object.schema.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/schemas-v6/diagnostic.schema.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/schemas-v6/exact-quantity.schema.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/schemas-v6/fidelity-report.schema.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/schemas-v6/grant.schema.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/schemas-v6/manifest.schema.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/schemas-v6/operation-group.schema.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/schemas-v6/proposal.schema.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/schemas-v6/revision.schema.json",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/tools-v6/validate_package.py",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/ux-v6/00_OPEN_AND_PREFLIGHT.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/ux-v6/01_STORAGE_STATE_LANGUAGE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/ux-v6/02_RECOVERY_AND_REPAIR.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/ux-v6/03_LARGE_PROJECT_LOADING.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/ux-v6/04_MERGE_AND_CONFLICTS.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/ux-v6/05_AI_REVIEW_CENTRE.md",
+      "docs/research/incoming/2026-08-06-arq-future-precision-system-6.0-aogrp/ux-v6/06_ACCESSIBILITY_AND_MOBILE.md",
+      "docs/research/incoming/README.md"
+    ],
+    "file_count": 115,
+    "related_prs": [
+      307
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-cad-platform-research-ba8rav",
+    "kind": "branch",
+    "title": "claude/arq-cad-platform-research-ba8rav",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/df04288c182bdfcee91f92e70b0e5d0017fc0628",
+    "head": "df04288c182bdfcee91f92e70b0e5d0017fc0628",
+    "behind_main": 29,
+    "ahead_main": 2,
+    "files": [
+      "docs/product/ARQ-UI-UX-ISSUE-EXECUTION-INDEX.md",
+      "docs/product/ARQ-UI-UX-MASTER-EXECUTION-PLAN-v1.0.md"
+    ],
+    "file_count": 2,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Preserve rollback history and unique UI master-plan/routing changes; reconcile with main before default switch.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-cad-v3-implementation-0v1kh5",
+    "kind": "branch",
+    "title": "claude/arq-cad-v3-implementation-0v1kh5",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/86afcabc68b13141fa7e5f253960faccde356855",
+    "head": "86afcabc68b13141fa7e5f253960faccde356855",
+    "behind_main": 157,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      301
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-house-17-release-e9hef5",
+    "kind": "branch",
+    "title": "claude/arq-house-17-release-e9hef5",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/9abb591a9bb25fdf08e39f5e4eea7e96497e13b6",
+    "head": "9abb591a9bb25fdf08e39f5e4eea7e96497e13b6",
+    "behind_main": 113,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      308
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-language-system-4-1-l3p9fr",
+    "kind": "branch",
+    "title": "claude/arq-language-system-4-1-l3p9fr",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/f5f7264d9def7787a9ce816e0b169967207f9ae7",
+    "head": "f5f7264d9def7787a9ce816e0b169967207f9ae7",
+    "behind_main": 224,
+    "ahead_main": 1,
+    "files": [
+      "CLAUDE.md",
+      "docs/product/voice/context/CHANGELOG.md",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "scripts/arq-language-guardian.mjs",
+      "scripts/refresh-arq-language-context.mjs",
+      "scripts/verify-arq-language-context.mjs"
+    ],
+    "file_count": 6,
+    "related_prs": [
+      285,
+      283
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-liquid-glass-12-5gstys",
+    "kind": "branch",
+    "title": "claude/arq-liquid-glass-12-5gstys",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/0cea3eb87985ccbebcb6d44b13aeba56516999aa",
+    "head": "0cea3eb87985ccbebcb6d44b13aeba56516999aa",
+    "behind_main": 138,
+    "ahead_main": 77,
+    "files": [
+      ".github/workflows/ci.yml",
+      "ARQ_V12_IMPLEMENTATION_LEDGER.md",
+      "ARQ_V13_IMPLEMENTATION_LEDGER.md",
+      "apps/web/package.json",
+      "apps/web/public/fonts/JetBrainsMono-Variable.woff2",
+      "apps/web/public/fonts/PlusJakartaSans-Variable.woff2",
+      "apps/web/src/App.tsx",
+      "apps/web/src/ModelCanvas.tsx",
+      "apps/web/src/NativeProjectPanel.tsx",
+      "apps/web/src/PlanCanvas.tsx",
+      "apps/web/src/canvas/wall-command-contract.test.ts",
+      "apps/web/src/inspector-data.ts",
+      "apps/web/src/native-project-view.test.ts",
+      "apps/web/src/project/deliver-published-copy.test.ts",
+      "apps/web/src/project/deliver-published-copy.ts",
+      "apps/web/src/project/describe-publication-outcome.test.ts",
+      "apps/web/src/project/describe-publication-outcome.ts",
+      "apps/web/src/project/native-open-policy.ts",
+      "apps/web/src/project/native-project-model.ts",
+      "apps/web/src/project/open-native-project.test.ts",
+      "apps/web/src/project/open-native-project.ts",
+      "apps/web/src/sheets/sheet-export.test.ts",
+      "apps/web/src/sheets/sheet-export.ts",
+      "apps/web/src/tool-icons.test.ts",
+      "apps/web/src/tool-icons.tsx",
+      "benchmarks/results/arqfs-opfs-capability-2026-08-06T04-01-10-183Z.json",
+      "benchmarks/results/arqfs-opfs-capability-2026-08-07T04-29-07-283Z.json",
+      "benchmarks/results/arqfs-project-isolation-capability-2026-08-06T04-01-15-132Z.json",
+      "benchmarks/results/arqfs-project-isolation-capability-2026-08-06T16-01-17-358Z.json",
+      "benchmarks/results/arqfs-project-isolation-capability-2026-08-07T04-29-12-057Z.json",
+      "benchmarks/results/arqfs-writer-lock-capability-2026-08-06T04-01-12-349Z.json",
+      "benchmarks/results/arqfs-writer-lock-capability-2026-08-06T16-01-18-767Z.json",
+      "benchmarks/results/arqfs-writer-lock-capability-2026-08-07T04-29-09-455Z.json",
+      "benchmarks/results/design-system-dialog-capability-2026-08-06T03-54-01-200Z.json",
+      "benchmarks/results/design-system-dialog-capability-2026-08-07T04-29-32-028Z.json",
+      "benchmarks/results/e2e-arq-open-capability-2026-08-06T04-00-47-120Z.json",
+      "benchmarks/results/e2e-arq-open-capability-2026-08-06T16-00-00-135Z.json",
+      "benchmarks/results/e2e-arq-open-capability-2026-08-07T04-12-59-160Z.json",
+      "benchmarks/results/e2e-arq-open-capability-2026-08-07T04-40-11-663Z.json",
+      "benchmarks/results/file-open-capability-2026-08-06T04-00-05-866Z.json",
+      "benchmarks/results/file-open-capability-2026-08-06T16-01-15-735Z.json",
+      "benchmarks/results/file-open-capability-2026-08-07T04-28-52-856Z.json",
+      "benchmarks/results/hover-sequence-capability-2026-08-06T04-00-21-411Z.json",
+      "benchmarks/results/hover-sequence-capability-2026-08-07T04-31-19-785Z.json",
+      "benchmarks/results/icon-contact-sheet.png",
+      "benchmarks/results/icon-redraw-check.png",
+      "benchmarks/results/journal-recovery-capability-2026-08-06T04-00-18-173Z.json",
+      "benchmarks/results/journal-recovery-capability-2026-08-07T04-30-01-058Z.json",
+      "benchmarks/results/journal-recovery-capability-2026-08-07T04-32-45-285Z.json",
+      "benchmarks/results/look-rail.png",
+      "benchmarks/results/look-top.png",
+      "benchmarks/results/mcp-protocol-capability-2026-08-06T04-02-03-341Z.json",
+      "benchmarks/results/mcp-protocol-capability-2026-08-07T04-40-12-420Z.json",
+      "benchmarks/results/model-canvas-capability-2026-08-06T03-57-10-130Z.json",
+      "benchmarks/results/model-canvas-capability-2026-08-06T15-02-22-435Z.json",
+      "benchmarks/results/model-canvas-capability-2026-08-06T15-13-32-775Z.json",
+      "benchmarks/results/model-canvas-capability-2026-08-06T15-20-45-833Z.json",
+      "benchmarks/results/model-canvas-capability-2026-08-06T16-44-19-675Z.json",
+      "benchmarks/results/model-canvas-capability-2026-08-06T22-32-22-963Z.json",
+      "benchmarks/results/model-canvas-capability-2026-08-07T04-36-37-583Z.json",
+      "benchmarks/results/model-canvas-capability-2026-08-07T13-10-57-292Z.json",
+      "benchmarks/results/model-canvas-visual-2026-08-06T03-57-10-130Z.png",
+      "benchmarks/results/model-canvas-visual-2026-08-06T15-02-22-435Z.png",
+      "benchmarks/results/model-canvas-visual-2026-08-06T15-13-32-775Z.png",
+      "benchmarks/results/model-canvas-visual-2026-08-06T15-20-45-833Z.png",
+      "benchmarks/results/model-canvas-visual-2026-08-06T16-44-19-675Z.png",
+      "benchmarks/results/model-canvas-visual-2026-08-06T22-32-22-963Z.png",
+      "benchmarks/results/model-canvas-visual-2026-08-07T04-34-40-904Z.png",
+      "benchmarks/results/model-canvas-visual-2026-08-07T04-35-43-196Z.png",
+      "benchmarks/results/model-canvas-visual-2026-08-07T04-36-37-583Z.png",
+      "benchmarks/results/model-canvas-visual-2026-08-07T13-10-57-292Z.png",
+      "benchmarks/results/native-open-capability-2026-08-06T04-01-07-845Z.json",
+      "benchmarks/results/native-open-capability-2026-08-06T15-13-31-529Z.json",
+      "benchmarks/results/native-open-capability-2026-08-06T15-20-44-722Z.json",
+      "benchmarks/results/native-open-capability-2026-08-06T16-00-58-189Z.json",
+      "benchmarks/results/native-open-capability-2026-08-06T16-29-12-485Z.json",
+      "benchmarks/results/native-open-capability-2026-08-06T16-30-24-392Z.json",
+      "benchmarks/results/native-open-capability-2026-08-06T16-35-02-911Z.json",
+      "benchmarks/results/native-open-capability-2026-08-06T16-42-17-237Z.json",
+      "benchmarks/results/native-open-capability-2026-08-06T16-44-45-313Z.json",
+      "benchmarks/results/native-open-capability-2026-08-07T04-19-58-269Z.json",
+      "benchmarks/results/native-open-capability-2026-08-07T04-26-44-905Z.json",
+      "benchmarks/results/native-open-capability-2026-08-07T13-10-46-832Z.json",
+      "benchmarks/results/native-open-capability.png",
+      "benchmarks/results/native-open-plan.png",
+      "benchmarks/results/network-observation-capability-2026-08-06T04-01-42-185Z.json",
+      "benchmarks/results/network-observation-capability-2026-08-07T04-31-41-790Z.json",
+      "benchmarks/results/optical-glass-capability-1786073011965.json",
+      "benchmarks/results/optical-glass-capability-1786074282163.json",
+      "benchmarks/results/optical-glass-capability-1786074904688.json",
+      "benchmarks/results/optical-glass-capability-1786075827569.json",
+      "benchmarks/results/pencil-pointer-capability-2026-08-06T04-00-19-798Z.json",
+      "benchmarks/results/pencil-pointer-capability-2026-08-07T04-31-18-201Z.json",
+      "benchmarks/results/responsive/desktop-1600x1000.png",
+      "benchmarks/results/responsive/ipad-compact-1024x768.png",
+      "benchmarks/results/responsive/ipad-regular-1366x1024.png",
+      "benchmarks/results/responsive/phone-430x932.png",
+      "benchmarks/results/responsive/responsive-capture.json",
+      "benchmarks/results/sheet-chrome-capability-1786073825563.json",
+      "benchmarks/results/sheet-chrome-capability-1786074608944.json",
+      "benchmarks/results/sheet-chrome-capability-1786075014443.json",
+      "benchmarks/results/sheet-chrome-capability-1786075870938.json",
+      "benchmarks/results/wall-hud-capability-2026-08-06T03-54-56-434Z.json",
+      "benchmarks/results/wall-hud-capability-2026-08-06T15-21-04-934Z.json",
+      "benchmarks/results/wall-hud-capability-2026-08-07T04-31-16-520Z.json",
+      "benchmarks/results/wall-hud-capability-2026-08-07T04-38-21-396Z.json",
+      "benchmarks/results/wall-hud-capability-2026-08-07T04-38-55-871Z.json",
+      "benchmarks/results/wall-hud-capability-2026-08-07T04-39-59-669Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-06T03-53-37-208Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-06T15-02-21-345Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-06T15-14-00-294Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T00-56-28-617Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T01-05-11-101Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T01-10-57-479Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T01-40-22-585Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T01-48-14-613Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T02-01-40-610Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T02-13-57-672Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T02-25-41-736Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T02-36-21-121Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T02-44-07-031Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T03-05-45-593Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T03-13-55-994Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T03-26-34-035Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T03-40-32-375Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T03-49-39-420Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-07T04-11-43-838Z.json",
+      "design/icons/svg/align.svg",
+      "design/icons/svg/arq-archive.svg",
+      "design/icons/svg/comment.svg",
+      "design/icons/svg/copy.svg",
+      "design/icons/svg/crossing-select.svg",
+      "design/icons/svg/dimension.svg",
+      "design/icons/svg/door.svg",
+      "design/icons/svg/elevation.svg",
+      "design/icons/svg/export.svg",
+      "design/icons/svg/extend.svg",
+      "design/icons/svg/fit.svg",
+      "design/icons/svg/grid.svg",
+      "design/icons/svg/history.svg",
+      "design/icons/svg/inspect.svg",
+      "design/icons/svg/join.svg",
+      "design/icons/svg/level.svg",
+      "design/icons/svg/mirror.svg",
+      "design/icons/svg/model-3d.svg",
+      "design/icons/svg/model-health.svg",
+      "design/icons/svg/move.svg",
+      "design/icons/svg/offset.svg",
+      "design/icons/svg/orbit.svg",
+      "design/icons/svg/orthographic.svg",
+      "design/icons/svg/pan.svg",
+      "design/icons/svg/perspective.svg",
+      "design/icons/svg/plan.svg",
+      "design/icons/svg/relationships.svg",
+      "design/icons/svg/revision.svg",
+      "design/icons/svg/room.svg",
+      "design/icons/svg/rotate.svg",
+      "design/icons/svg/section.svg",
+      "design/icons/svg/select.svg",
+      "design/icons/svg/sheet.svg",
+      "design/icons/svg/split.svg",
+      "design/icons/svg/text-note.svg",
+      "design/icons/svg/trim.svg",
+      "design/icons/svg/wall.svg",
+      "design/icons/svg/warning.svg",
+      "design/icons/svg/window-select.svg",
+      "design/icons/svg/window.svg",
+      "design/tokens/brand.v4.css",
+      "docs/adr/0031-functional-material-layer.md",
+      "docs/adr/0032-dark-appearance.md",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/generated-repo-context.json",
+      "docs/v13/REPOSITORY_COMPONENT_MAP.csv",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "package.json",
+      "packages/arqfs/src/arqfs-safe-mode.ts",
+      "packages/arqfs/src/arqfs-worker-handler.ts",
+      "packages/arqfs/src/arqfs-worker-protocol.ts",
+      "packages/design-system/src/appearance/appearance-policy.test.ts",
+      "packages/design-system/src/appearance/appearance-policy.ts",
+      "packages/design-system/src/appearance/dark-appearance.test.ts",
+      "packages/design-system/src/appearance/index.ts",
+      "packages/design-system/src/appearance/lens-map.test.ts",
+      "packages/design-system/src/appearance/lens-map.ts",
+      "packages/design-system/src/appearance/material.css",
+      "packages/design-system/src/appearance/optical-quality.test.ts",
+      "packages/design-system/src/appearance/optical-quality.ts",
+      "packages/design-system/src/appearance/refraction-lens.tsx",
+      "packages/design-system/src/appearance/use-lens-map.ts",
+      "packages/design-system/src/index.ts",
+      "packages/design-system/src/interaction-foundation/feedback/command-feedback.css",
+      "packages/design-system/src/interaction-foundation/feedback/command-feedback.tsx",
+      "packages/design-system/src/interaction-foundation/motion/display-preferences.test.ts",
+      "packages/design-system/src/interaction-foundation/motion/display-preferences.ts",
+      "packages/design-system/src/interaction-foundation/overlays/context-hud.css",
+      "packages/design-system/src/interaction-foundation/overlays/context-hud.tsx",
+      "packages/design-system/src/shell/context-bar-state.test.ts",
+      "packages/design-system/src/shell/context-bar-state.ts",
+      "packages/design-system/src/shell/context-bar.tsx",
+      "packages/design-system/src/shell/inspector-groups.ts",
+      "packages/design-system/src/shell/merge-inspector-fields.test.ts",
+      "packages/design-system/src/shell/modal-dialog.css",
+      "packages/design-system/src/shell/modal-dialog.tsx",
+      "packages/design-system/src/shell/model-panel-type-suffix.test.ts",
+      "packages/design-system/src/shell/model-panel.tsx",
+      "packages/design-system/src/shell/shell-tokens.css",
+      "packages/design-system/src/shell/status-bar.tsx",
+      "packages/design-system/src/shell/tool-rail.tsx",
+      "packages/design-system/src/shell/top-bar-icon-names.test.ts",
+      "packages/design-system/src/shell/top-bar.tsx",
+      "packages/design-system/src/workspace/index.ts",
+      "packages/design-system/src/workspace/mode-rail.tsx",
+      "packages/design-system/src/workspace/phone-dock.tsx",
+      "packages/design-system/src/workspace/phone-project-bar.tsx",
+      "packages/design-system/src/workspace/project-browser-panel.tsx",
+      "packages/design-system/src/workspace/project-overview-surface.tsx",
+      "packages/design-system/src/workspace/use-viewport-probe.ts",
+      "packages/design-system/src/workspace/view-kind-label.test.ts",
+      "packages/design-system/src/workspace/view-kind-label.ts",
+      "packages/design-system/src/workspace/view-kind-switcher.test.ts",
+      "packages/design-system/src/workspace/view-kind-switcher.tsx",
+      "packages/design-system/src/workspace/workspace-root.tsx",
+      "packages/design-system/src/workspace/workspace-shell.css",
+      "packages/editor-shell/src/viewport-controller.test.ts",
+      "packages/editor-shell/src/viewport-controller.ts",
+      "packages/icons/package.json",
+      "packages/icons/src/arq-icons.tsx",
+      "packages/icons/src/generated/AlignIcon.tsx",
+      "packages/icons/src/generated/ArqArchiveIcon.tsx",
+      "packages/icons/src/generated/CommentIcon.tsx",
+      "packages/icons/src/generated/CopyIcon.tsx",
+      "packages/icons/src/generated/CrossingSelectIcon.tsx",
+      "packages/icons/src/generated/DimensionIcon.tsx",
+      "packages/icons/src/generated/DoorIcon.tsx",
+      "packages/icons/src/generated/ElevationIcon.tsx",
+      "packages/icons/src/generated/ExportIcon.tsx",
+      "packages/icons/src/generated/ExtendIcon.tsx",
+      "packages/icons/src/generated/FitIcon.tsx",
+      "packages/icons/src/generated/GridIcon.tsx",
+      "packages/icons/src/generated/HistoryIcon.tsx",
+      "packages/icons/src/generated/InspectIcon.tsx",
+      "packages/icons/src/generated/JoinIcon.tsx",
+      "packages/icons/src/generated/LevelIcon.tsx",
+      "packages/icons/src/generated/MirrorIcon.tsx",
+      "packages/icons/src/generated/Model3dIcon.tsx",
+      "packages/icons/src/generated/ModelHealthIcon.tsx",
+      "packages/icons/src/generated/MoveIcon.tsx",
+      "packages/icons/src/generated/OffsetIcon.tsx",
+      "packages/icons/src/generated/OrbitIcon.tsx",
+      "packages/icons/src/generated/OrthographicIcon.tsx",
+      "packages/icons/src/generated/PanIcon.tsx",
+      "packages/icons/src/generated/PerspectiveIcon.tsx",
+      "packages/icons/src/generated/PlanIcon.tsx",
+      "packages/icons/src/generated/RelationshipsIcon.tsx",
+      "packages/icons/src/generated/RevisionIcon.tsx",
+      "packages/icons/src/generated/RoomIcon.tsx",
+      "packages/icons/src/generated/RotateIcon.tsx",
+      "packages/icons/src/generated/SectionIcon.tsx",
+      "packages/icons/src/generated/SelectIcon.tsx",
+      "packages/icons/src/generated/SheetIcon.tsx",
+      "packages/icons/src/generated/SplitIcon.tsx",
+      "packages/icons/src/generated/TextNoteIcon.tsx",
+      "packages/icons/src/generated/TrimIcon.tsx",
+      "packages/icons/src/generated/WallIcon.tsx",
+      "packages/icons/src/generated/WarningIcon.tsx",
+      "packages/icons/src/generated/WindowIcon.tsx",
+      "packages/icons/src/generated/WindowSelectIcon.tsx",
+      "packages/icons/src/generated/index.ts",
+      "packages/icons/src/index.ts",
+      "packages/model-renderer/src/model-scene.test.ts",
+      "packages/model-renderer/src/model-scene.ts",
+      "packages/plan-renderer/src/canvas2d-paint.test.ts",
+      "packages/plan-renderer/src/canvas2d-paint.ts",
+      "packages/plan-renderer/src/index.ts",
+      "packages/plan-renderer/src/plan-openings.test.ts",
+      "packages/plan-renderer/src/plan-openings.ts",
+      "packages/plan-renderer/src/plan-scene.ts",
+      "packages/plan-renderer/src/room-hatch.test.ts",
+      "packages/plan-renderer/src/room-hatch.ts",
+      "packages/plan-renderer/src/room-label.test.ts",
+      "packages/plan-renderer/src/room-label.ts",
+      "packages/plan-renderer/src/room-tint.test.ts",
+      "packages/plan-renderer/src/room-tint.ts",
+      "packages/project-loading/src/golden-fixture-model.test.ts",
+      "packages/project-loading/src/native-project-model.test.ts",
+      "packages/project-loading/src/native-project-model.ts",
+      "packages/workspace/src/browser-panel-state.test.ts",
+      "packages/workspace/src/browser-panel-state.ts",
+      "packages/workspace/src/collapse-priority.test.ts",
+      "packages/workspace/src/collapse-priority.ts",
+      "packages/workspace/src/floating-composition.test.ts",
+      "packages/workspace/src/panel-layout-state.ts",
+      "packages/workspace/src/phone-bottom-owner.test.ts",
+      "packages/workspace/src/project-overview.test.ts",
+      "packages/workspace/src/project-overview.ts",
+      "packages/workspace/src/registry/workspace-panel-registry.json",
+      "packages/workspace/src/sheet-state.ts",
+      "packages/workspace/src/view-tabs-state.test.ts",
+      "packages/workspace/src/view-tabs-state.ts",
+      "pnpm-lock.yaml",
+      "scripts/check-workspace-registries.mjs",
+      "scripts/generate-icon-components.mjs",
+      "scripts/refresh-arq-language-context.mjs",
+      "scripts/run-file-open-capability-check.mjs",
+      "scripts/run-journal-recovery-capability-check.mjs",
+      "scripts/run-model-canvas-capability-check.mjs",
+      "scripts/run-native-open-capability-check.mjs",
+      "scripts/run-optical-glass-capability-check.mjs",
+      "scripts/run-responsive-capture.mjs",
+      "scripts/run-sheet-chrome-capability-check.mjs",
+      "scripts/run-wall-hud-capability-check.mjs",
+      "scripts/run-workspace-layout-capability-check.mjs",
+      "scripts/verify-arq-state-adapters.mjs"
+    ],
+    "file_count": 313,
+    "related_prs": [
+      303
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-master-agent-execution-ir9re1",
+    "kind": "branch",
+    "title": "claude/arq-master-agent-execution-ir9re1",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/59a6ff2638ab47d376e0f359375d67dea6ab2dd1",
+    "head": "59a6ff2638ab47d376e0f359375d67dea6ab2dd1",
+    "behind_main": 239,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      277
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-mcp-system-improvements-pkoahy",
+    "kind": "branch",
+    "title": "claude/arq-mcp-system-improvements-pkoahy",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/a6049200240bd91d407a9bbbe4ef008d2232ed28",
+    "head": "a6049200240bd91d407a9bbbe4ef008d2232ed28",
+    "behind_main": 220,
+    "ahead_main": 8,
+    "files": [
+      ".github/workflows/build.yml",
+      ".github/workflows/ci.yml",
+      ".github/workflows/deploy-pages.yml",
+      ".github/workflows/engineering-gate.yml",
+      ".github/workflows/security.yml",
+      "STATUS.md",
+      "apps/web/src/App.tsx",
+      "apps/web/src/canvas/plan-journal.test.ts",
+      "apps/web/src/canvas/plan-journal.ts",
+      "apps/web/src/file-handling/FileOpenPanel.tsx",
+      "apps/web/src/file-handling/describe-file-flow-state.test.ts",
+      "apps/web/src/file-handling/describe-file-flow-state.ts",
+      "apps/web/src/file-handling/file-state-machine.test.ts",
+      "apps/web/src/file-handling/file-state-machine.ts",
+      "benchmarks/results/arq-core-worker-capability-2026-08-01T05-32-29-949Z.json",
+      "benchmarks/results/arqfs-opfs-capability-2026-08-01T06-18-41-438Z.json",
+      "benchmarks/results/arqfs-project-isolation-capability-2026-08-01T05-57-06-062Z.json",
+      "benchmarks/results/arqfs-project-isolation-capability-2026-08-01T06-18-47-705Z.json",
+      "benchmarks/results/arqfs-writer-lock-capability-2026-08-01T05-13-25-018Z.json",
+      "benchmarks/results/arqfs-writer-lock-capability-2026-08-01T05-57-08-718Z.json",
+      "benchmarks/results/arqfs-writer-lock-capability-2026-08-01T06-18-44-249Z.json",
+      "benchmarks/results/design-system-dialog-capability-2026-08-01T05-57-19-288Z.json",
+      "benchmarks/results/design-system-dialog-capability-2026-08-01T06-18-58-356Z.json",
+      "benchmarks/results/file-open-capability-2026-08-01T06-19-11-864Z.json",
+      "benchmarks/results/hover-sequence-capability-2026-08-01T05-57-21-550Z.json",
+      "benchmarks/results/hover-sequence-capability-2026-08-01T06-20-02-552Z.json",
+      "benchmarks/results/journal-recovery-capability-2026-08-01T06-18-30-635Z.json",
+      "benchmarks/results/journal-recovery-capability-2026-08-01T06-30-15-428Z.json",
+      "benchmarks/results/journal-recovery-capability-2026-08-01T16-59-43-373Z.json",
+      "benchmarks/results/mcp-protocol-capability-2026-08-01T04-46-35-158Z.json",
+      "benchmarks/results/mcp-protocol-capability-2026-08-01T04-47-16-545Z.json",
+      "benchmarks/results/mcp-protocol-capability-2026-08-01T05-57-25-361Z.json",
+      "benchmarks/results/model-canvas-capability-2026-08-01T06-19-14-084Z.json",
+      "benchmarks/results/model-canvas-visual-2026-08-01T06-19-14-084Z.png",
+      "benchmarks/results/network-observation-capability-2026-08-01T16-59-03-136Z.json",
+      "benchmarks/results/pencil-pointer-capability-2026-08-01T05-57-23-920Z.json",
+      "benchmarks/results/pencil-pointer-capability-2026-08-01T06-20-00-194Z.json",
+      "benchmarks/results/wall-hud-capability-2026-08-01T06-19-36-920Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-01T06-12-04-670Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-01T06-19-57-931Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-01T16-59-33-572Z.json",
+      "docs/adr/0027-mcp-boundary-and-domain-profiles.md",
+      "docs/ai/MCP-SYSTEM-3.0-PLAN.md",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/generated-repo-context.json",
+      "engineering/fixtures/v5/classifier/17-evidence-instruments.json",
+      "engineering/fixtures/v5/classifier/18-language-evidence-instruments.json",
+      "engineering/fixtures/v5/classifier/19-ai-boundary.json",
+      "engineering/fixtures/v5/classifier/20-capability-check-evidence.json",
+      "engineering/fixtures/v5/classifier/21-privacy-network-observation.json",
+      "engineering/ops/change-map.v5.json",
+      "engineering/ops/evidence-catalog.v5.json",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "engineering/tools/engineering/run-selected-evidence.mjs",
+      "engineering/tools/engineering/verify-package.mjs",
+      "engineering/tools/engineering/verify-policy.mjs",
+      "engineering/tools/engineering/verify-workflow-controls.mjs",
+      "engineering/tools/engineering/verify-workflow-templates.mjs",
+      "package.json",
+      "packages/arqfs/benchmarks/writer-lock/writer-lock-capability.html",
+      "packages/arqfs/src/arqfs-defensive-open.ts",
+      "packages/arqfs/src/arqfs-migration.test.ts",
+      "packages/arqfs/src/arqfs-migration.ts",
+      "packages/arqfs/src/arqfs-preflight-fixtures.test.ts",
+      "packages/arqfs/src/arqfs-preflight.test.ts",
+      "packages/arqfs/src/arqfs-preflight.ts",
+      "packages/arqfs/src/arqfs-semantic-hash.test.ts",
+      "packages/arqfs/src/arqfs-semantic-hash.ts",
+      "packages/arqfs/src/arqfs-single-writer-lock.test.ts",
+      "packages/arqfs/src/arqfs-single-writer-lock.ts",
+      "packages/arqfs/src/arqfs-worker-handler.test.ts",
+      "packages/arqfs/src/arqfs-worker-handler.ts",
+      "packages/arqfs/src/arqfs-worker-protocol.ts",
+      "packages/design-system/src/shell/status-bar.tsx",
+      "packages/design-system/src/shell/top-bar-state.ts",
+      "packages/local-storage/src/database.ts",
+      "packages/local-storage/src/journal-append.test.ts",
+      "packages/local-storage/src/journal-append.ts",
+      "packages/mcp-server/README.md",
+      "packages/mcp-server/config/README.md",
+      "packages/mcp-server/config/claude-code.mcp.json",
+      "packages/mcp-server/config/codex.config.toml",
+      "packages/mcp-server/config/cursor.mcp.json",
+      "packages/mcp-server/config/remote-http.mcp.json",
+      "packages/mcp-server/package.json",
+      "packages/mcp-server/src/adapter/bridge-adapter.test.ts",
+      "packages/mcp-server/src/adapter/bridge-adapter.ts",
+      "packages/mcp-server/src/adapter/coverage.ts",
+      "packages/mcp-server/src/adapter/cursor.ts",
+      "packages/mcp-server/src/adapter/idempotency.ts",
+      "packages/mcp-server/src/audit/audit-trail.test.ts",
+      "packages/mcp-server/src/audit/audit-trail.ts",
+      "packages/mcp-server/src/bin/stdio-entry.ts",
+      "packages/mcp-server/src/domain/brief.ts",
+      "packages/mcp-server/src/domain/changeset.ts",
+      "packages/mcp-server/src/domain/design-program.ts",
+      "packages/mcp-server/src/domain/envelope.ts",
+      "packages/mcp-server/src/domain/errors.ts",
+      "packages/mcp-server/src/domain/graph.ts",
+      "packages/mcp-server/src/domain/limits.ts",
+      "packages/mcp-server/src/domain/plan-common.ts",
+      "packages/mcp-server/src/domain/plan-contracts.test.ts",
+      "packages/mcp-server/src/domain/proposal.ts",
+      "packages/mcp-server/src/grant/grant.test.ts",
+      "packages/mcp-server/src/grant/grant.ts",
+      "packages/mcp-server/src/grant/scopes.ts",
+      "packages/mcp-server/src/host/memory-project-host.test.ts",
+      "packages/mcp-server/src/host/memory-project-host.ts",
+      "packages/mcp-server/src/host/project-host.ts",
+      "packages/mcp-server/src/index.ts",
+      "packages/mcp-server/src/mcp/instructions.ts",
+      "packages/mcp-server/src/mcp/prompts.ts",
+      "packages/mcp-server/src/mcp/protocol.ts",
+      "packages/mcp-server/src/mcp/resources.ts",
+      "packages/mcp-server/src/mcp/server.test.ts",
+      "packages/mcp-server/src/mcp/server.ts",
+      "packages/mcp-server/src/mcp/tools.ts",
+      "packages/mcp-server/src/profile/architecture-operations.ts",
+      "packages/mcp-server/src/profile/architecture-profile.ts",
+      "packages/mcp-server/src/profile/declared-profiles.ts",
+      "packages/mcp-server/src/profile/domain-profile.ts",
+      "packages/mcp-server/src/profile/profile-registry.test.ts",
+      "packages/mcp-server/src/profile/profile-registry.ts",
+      "packages/mcp-server/src/review/review-centre.test.ts",
+      "packages/mcp-server/src/review/review-centre.ts",
+      "packages/mcp-server/src/runtime/clock.ts",
+      "packages/mcp-server/src/runtime/create-runtime.ts",
+      "packages/mcp-server/src/schema/identifiers.test.ts",
+      "packages/mcp-server/src/schema/identifiers.ts",
+      "packages/mcp-server/src/schema/json-value.ts",
+      "packages/mcp-server/src/schema/reference-uri.test.ts",
+      "packages/mcp-server/src/schema/reference-uri.ts",
+      "packages/mcp-server/src/schema/schema.test.ts",
+      "packages/mcp-server/src/schema/schema.ts",
+      "packages/mcp-server/src/service/tool-service.ts",
+      "packages/mcp-server/src/transport/http-guard.ts",
+      "packages/mcp-server/src/transport/stdio.ts",
+      "packages/mcp-server/src/transport/transport.test.ts",
+      "packages/mcp-server/src/util/hash.ts",
+      "packages/mcp-server/tsconfig.json",
+      "packages/mcp-server/vite.config.ts",
+      "packages/telemetry/src/redact-sensitive-fields.test.ts",
+      "packages/telemetry/src/redact-sensitive-fields.ts",
+      "pnpm-lock.yaml",
+      "scripts/build-arq-core-wasm.mjs",
+      "scripts/check-secrets-test.mjs",
+      "scripts/check-secrets.mjs",
+      "scripts/refresh-arq-language-context.mjs",
+      "scripts/run-arqfs-writer-lock-capability-check.mjs",
+      "scripts/run-journal-recovery-capability-check.mjs",
+      "scripts/run-mcp-protocol-capability-check.mjs",
+      "scripts/run-network-observation-capability-check.mjs",
+      "scripts/run-workspace-layout-capability-check.mjs",
+      "workers/arqfs-worker/src/arqfs-worker-entry.ts"
+    ],
+    "file_count": 154,
+    "related_prs": [
+      292
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-native-lifecycle-v3-smx7rg",
+    "kind": "branch",
+    "title": "claude/arq-native-lifecycle-v3-smx7rg",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/4420ef840065188667e9e835b691b274535ea030",
+    "head": "4420ef840065188667e9e835b691b274535ea030",
+    "behind_main": 199,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      296
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-native-project-open-e0lwyv",
+    "kind": "branch",
+    "title": "claude/arq-native-project-open-e0lwyv",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/0e007e89a2be02cd1b5b8bba675e16f1943ec25a",
+    "head": "0e007e89a2be02cd1b5b8bba675e16f1943ec25a",
+    "behind_main": 216,
+    "ahead_main": 26,
+    "files": [
+      ".github/workflows/verify-deployment-routes.yml",
+      "STATUS.md",
+      "apps/web/package.json",
+      "apps/web/src/App.tsx",
+      "apps/web/src/file-handling/FileOpenPanel.tsx",
+      "apps/web/src/file-handling/describe-file-flow-state.test.ts",
+      "apps/web/src/file-handling/describe-file-flow-state.ts",
+      "apps/web/src/file-handling/evaluate-selected-file.test.ts",
+      "apps/web/src/file-handling/evaluate-selected-file.ts",
+      "apps/web/src/file-handling/file-state-machine.test.ts",
+      "apps/web/src/file-handling/file-state-machine.ts",
+      "apps/web/src/project/browser-worker-factory.ts",
+      "apps/web/src/project/native-open-policy.test.ts",
+      "apps/web/src/project/native-open-policy.ts",
+      "apps/web/src/project/native-project-model.test.ts",
+      "apps/web/src/project/native-project-model.ts",
+      "apps/web/src/project/native-project-session.test.ts",
+      "apps/web/src/project/native-project-session.ts",
+      "apps/web/src/project/open-native-project.test.ts",
+      "apps/web/src/project/open-native-project.ts",
+      "benchmarks/results/e2e-arq-open-capability-2026-08-04T21-24-12-615Z.json",
+      "benchmarks/results/file-open-capability-2026-08-04T20-26-33-161Z.json",
+      "benchmarks/results/file-open-capability-2026-08-04T21-41-49-943Z.json",
+      "benchmarks/results/file-open-capability-2026-08-05T02-21-16-257Z.json",
+      "docs/adr/0030-browser-working-copy-and-recovery-tiers.md",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/generated-repo-context.json",
+      "docs/product/voice/state-language-map.json",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "packages/arqfs/src/arqfs-source-completeness.test.ts",
+      "packages/arqfs/src/arqfs-source-completeness.ts",
+      "packages/arqfs/src/arqfs-worker-client.ts",
+      "packages/arqfs/src/arqfs-worker-handler.test.ts",
+      "packages/arqfs/src/arqfs-worker-handler.ts",
+      "packages/arqfs/src/arqfs-worker-protocol.ts",
+      "packages/arqfs/src/index.ts",
+      "pnpm-lock.yaml",
+      "scripts/build-vercel.mjs",
+      "scripts/run-e2e-arq-open-capability-check.mjs",
+      "scripts/run-file-open-capability-check.mjs",
+      "scripts/verify-vercel-routes.mjs",
+      "vercel.json",
+      "workers/arqfs-worker/src/arqfs-worker-entry.ts"
+    ],
+    "file_count": 43,
+    "related_prs": [
+      294
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-package-3-workspace-1p64sa",
+    "kind": "branch",
+    "title": "claude/arq-package-3-workspace-1p64sa",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/fdc3aba4e9eab95785839f35c0367d5d54e87955",
+    "head": "fdc3aba4e9eab95785839f35c0367d5d54e87955",
+    "behind_main": 233,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      281,
+      279
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-pr01-governance",
+    "kind": "branch",
+    "title": "claude/arq-pr01-governance",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/4d3cf7288a72e9803bddb43bad71b9ee01b3f2af",
+    "head": "4d3cf7288a72e9803bddb43bad71b9ee01b3f2af",
+    "behind_main": 218,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/ci.yml",
+      ".github/workflows/deploy-pages.yml",
+      "LICENSE-DECISION-REQUIRED.md",
+      "STATUS.md",
+      "docs/adr/0028-persistence-responsibility-split.md",
+      "docs/adr/0029-main-as-stable-integration-branch.md",
+      "docs/product/DECISION-REGISTER.csv",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/generated-repo-context.json",
+      "docs/product/voice/language-context.json",
+      "engineering/36_REQUIRED_CHECK_ROLLOUT.md",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "package.json",
+      "quality/fixtures/decision-ids/clean/docs/adr/0027-mcp-boundary-and-domain-profiles.md",
+      "quality/fixtures/decision-ids/clean/docs/adr/0028-persistence-responsibility-split.md",
+      "quality/fixtures/decision-ids/clean/docs/product/DECISION-REGISTER.csv",
+      "quality/fixtures/decision-ids/pr280-collision/docs/adr/0027-desktop-shell-deferral.md",
+      "quality/fixtures/decision-ids/pr280-collision/docs/adr/0027-mcp-boundary-and-domain-profiles.md",
+      "quality/fixtures/decision-ids/pr280-collision/docs/product/DECISION-REGISTER.csv",
+      "scripts/verify-decision-ids-test.mjs",
+      "scripts/verify-decision-ids.mjs",
+      "scripts/verify-toolchain-policy.mjs",
+      "scripts/write-deployment-provenance.mjs"
+    ],
+    "file_count": 23,
+    "related_prs": [
+      295
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-project-improvements-aulz73",
+    "kind": "branch",
+    "title": "claude/arq-project-improvements-aulz73",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/26205942be2fc900aef70714f1f73fd3929e99f7",
+    "head": "26205942be2fc900aef70714f1f73fd3929e99f7",
+    "behind_main": 139,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      300
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-project-lifecycle",
+    "kind": "branch",
+    "title": "claude/arq-project-lifecycle",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/6aa4eac18e246faf05f7032a494253e405cba1ce",
+    "head": "6aa4eac18e246faf05f7032a494253e405cba1ce",
+    "behind_main": 217,
+    "ahead_main": 2,
+    "files": [
+      "apps/web/src/file-handling/describe-file-flow-state.ts",
+      "apps/web/src/file-handling/file-state-machine.test.ts",
+      "apps/web/src/file-handling/file-state-machine.ts",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/generated-repo-context.json",
+      "docs/product/voice/language-context.json",
+      "docs/product/voice/state-language-map.json"
+    ],
+    "file_count": 7,
+    "related_prs": [
+      298
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-readme-rebuild-9zeb83",
+    "kind": "branch",
+    "title": "claude/arq-readme-rebuild-9zeb83",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/feea6ac0a20e8f36d3ea17ef26f0b1b10ebd52fe",
+    "head": "feea6ac0a20e8f36d3ea17ef26f0b1b10ebd52fe",
+    "behind_main": 266,
+    "ahead_main": 3,
+    "files": [
+      "README.md"
+    ],
+    "file_count": 1,
+    "related_prs": [
+      266
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-reconciliation-audit-y29e1k",
+    "kind": "branch",
+    "title": "claude/arq-reconciliation-audit-y29e1k",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/cfcf2ac2ed1952332ece4d8a59cd0a69585cf93d",
+    "head": "cfcf2ac2ed1952332ece4d8a59cd0a69585cf93d",
+    "behind_main": 219,
+    "ahead_main": 5,
+    "files": [
+      ".github/workflows/ci.yml",
+      ".github/workflows/deploy-pages.yml",
+      "STATUS.md",
+      "apps/marketing/src/base-path.test.ts",
+      "apps/marketing/src/build.ts",
+      "apps/marketing/src/content/ai.ts",
+      "apps/marketing/src/content/architects.ts",
+      "apps/marketing/src/content/changelog.ts",
+      "apps/marketing/src/content/collaboration.ts",
+      "apps/marketing/src/content/contact.ts",
+      "apps/marketing/src/content/docs-index.ts",
+      "apps/marketing/src/content/home.ts",
+      "apps/marketing/src/content/interoperability.ts",
+      "apps/marketing/src/content/ipad.ts",
+      "apps/marketing/src/content/not-found.ts",
+      "apps/marketing/src/content/open-source.ts",
+      "apps/marketing/src/content/pricing.ts",
+      "apps/marketing/src/content/privacy.ts",
+      "apps/marketing/src/content/product.ts",
+      "apps/marketing/src/content/security.ts",
+      "apps/marketing/src/content/status.ts",
+      "apps/marketing/src/content/students.ts",
+      "apps/marketing/src/content/terms.ts",
+      "apps/marketing/src/layout.ts",
+      "apps/marketing/src/pages.test.ts",
+      "apps/marketing/src/site.css",
+      "apps/marketing/src/site.ts",
+      "apps/web/src/App.tsx",
+      "benchmarks/results/arqfs-opfs-capability-2026-08-04T19-47-00-289Z.json",
+      "benchmarks/results/arqfs-project-isolation-capability-2026-08-04T19-47-06-554Z.json",
+      "benchmarks/results/arqfs-writer-lock-capability-2026-08-04T19-47-03-003Z.json",
+      "benchmarks/results/e2e-arq-open-capability-2026-08-04T19-39-57-271Z.json",
+      "benchmarks/results/e2e-arq-open-capability-2026-08-04T19-40-38-457Z.json",
+      "benchmarks/results/e2e-arq-open-capability-2026-08-04T19-40-59-209Z.json",
+      "benchmarks/results/e2e-arq-open-capability-2026-08-04T19-41-24-693Z.json",
+      "benchmarks/results/e2e-arq-open-capability-2026-08-04T19-41-48-213Z.json",
+      "benchmarks/results/file-open-capability-2026-08-04T19-47-21-376Z.json",
+      "benchmarks/results/journal-recovery-capability-2026-08-04T19-47-31-778Z.json",
+      "benchmarks/results/model-canvas-capability-2026-08-04T15-46-03-266Z.json",
+      "benchmarks/results/model-canvas-visual-2026-08-04T15-46-03-266Z.png",
+      "benchmarks/results/network-observation-capability-2026-08-04T15-48-38-196Z.json",
+      "benchmarks/results/wall-hud-capability-2026-08-04T15-48-14-171Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-08-04T15-48-01-294Z.json",
+      "docs/ZEUS-v5-UPGRADE-AND-FIXES.md",
+      "docs/adr/0028-persistence-responsibility-split.md",
+      "docs/product/DECISION-REGISTER.csv",
+      "docs/product/PRODUCT-COPY-PRINCIPLES.md",
+      "docs/product/VOICE-SYSTEM.md",
+      "docs/product/voice/GOVERNANCE.md",
+      "docs/product/voice/INTEGRATION-BRIEF.md",
+      "docs/product/voice/INTEGRATION-PLAN.md",
+      "docs/product/voice/INTEGRATION-READINESS.md",
+      "docs/product/voice/README.md",
+      "docs/product/voice/answerability-policy.json",
+      "docs/product/voice/claim-binding-registry.json",
+      "docs/product/voice/claim-registry.json",
+      "docs/product/voice/context-contract.json",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/editorial-authenticity-policy.json",
+      "docs/product/voice/format-language-map.json",
+      "docs/product/voice/future-readiness/PRODUCT-AI-CONTRACT.md",
+      "docs/product/voice/future-readiness/SUPPORT-BOT-CONTRACT.md",
+      "docs/product/voice/future-readiness/VOICE-SYSTEM-CONSUMER-RULES.md",
+      "docs/product/voice/generated-repo-context.json",
+      "docs/product/voice/knowledge-domain-map.json",
+      "docs/product/voice/language-context.json",
+      "docs/product/voice/message-contract.json",
+      "docs/product/voice/public-copy-inventory.json",
+      "docs/product/voice/source-registry.json",
+      "docs/product/voice/standards/ai-copy.md",
+      "docs/product/voice/standards/brand-voice.md",
+      "docs/product/voice/standards/deployed-public-site.md",
+      "docs/product/voice/standards/destructive-actions.md",
+      "docs/product/voice/standards/editorial-authenticity.md",
+      "docs/product/voice/standards/error-recovery-copy.md",
+      "docs/product/voice/standards/evidence-and-answer-contract.md",
+      "docs/product/voice/standards/files-storage-recovery.md",
+      "docs/product/voice/standards/interoperability-copy.md",
+      "docs/product/voice/standards/localisation-and-translation.md",
+      "docs/product/voice/standards/marketing-copy.md",
+      "docs/product/voice/standards/naming-and-taxonomy.md",
+      "docs/product/voice/standards/onboarding-and-education.md",
+      "docs/product/voice/standards/search-command-and-help-language.md",
+      "docs/product/voice/standards/semantic-ui-contracts.md",
+      "docs/product/voice/standards/state-language.md",
+      "docs/product/voice/standards/support-copy.md",
+      "docs/product/voice/standards/terminology.md",
+      "docs/product/voice/standards/units-numbers-measurements.md",
+      "docs/product/voice/state-language-map.json",
+      "docs/product/voice/support-intents.json",
+      "docs/product/voice/system-map.json",
+      "docs/product/voice/templates/evidence-led-public-claim.md",
+      "docs/product/voice/templates/file-open-state.md",
+      "docs/product/voice/term-aliases.json",
+      "docs/product/voice/terminology.json",
+      "engineering/00-audit/ARQ_PACKAGE_RECONCILIATION_AND_RELEASE_AUDIT_2026-08-04.md",
+      "engineering/00-audit/ARQ_PACKAGE_RECONCILIATION_MATRIX_2026-08-04.json",
+      "engineering/00-audit/ARQ_RECONCILIATION_EVIDENCE_2026-08-04.json",
+      "engineering/fixtures/v5/classifier/22-marketing-layout.json",
+      "engineering/fixtures/v5/classifier/23-editor-shell-viewport.json",
+      "engineering/fixtures/v5/evidence/03-proof-gap-fails.json",
+      "engineering/ops/change-map.v5.json",
+      "engineering/ops/evidence-catalog.v5.json",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "engineering/tools/engineering/run-selected-evidence.mjs",
+      "package.json",
+      "packages/arqfs/src/arqfs-defensive-open.test.ts",
+      "packages/arqfs/src/arqfs-defensive-open.ts",
+      "packages/arqfs/src/arqfs-worker-handler.test.ts",
+      "quality/fixtures/security-clean/open-project.sql",
+      "remaining/DECISIONS-REQUIRING-EVIDENCE.csv",
+      "remaining/REMAINING-WORK.md",
+      "scripts/run-e2e-arq-open-capability-check.mjs",
+      "scripts/zeus-security-lint.mjs",
+      "workers/arqfs-worker/benchmarks/e2e-arq-open-seed-worker.js",
+      "workers/arqfs-worker/benchmarks/e2e-arq-open.html",
+      "workers/arqfs-worker/src/arqfs-project-filename.ts",
+      "workers/arqfs-worker/src/arqfs-worker-entry.ts"
+    ],
+    "file_count": 118,
+    "related_prs": [
+      293
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-spec-implementation-aehuox",
+    "kind": "branch",
+    "title": "claude/arq-spec-implementation-aehuox",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/0c04584f6fd07ee6001923ca4aa3fed1c851feca",
+    "head": "0c04584f6fd07ee6001923ca4aa3fed1c851feca",
+    "behind_main": 232,
+    "ahead_main": 1,
+    "files": [
+      "docs/adr/0027-desktop-shell-deferral.md",
+      "docs/product/DECISION-REGISTER.csv",
+      "docs/research/incoming/2026-07-24-cad-bim-architecture-package/README.md",
+      "docs/research/incoming/README.md"
+    ],
+    "file_count": 4,
+    "related_prs": [
+      280,
+      278
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-vercel-closure",
+    "kind": "branch",
+    "title": "claude/arq-vercel-closure",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/e781c98157b601e85ed46e12152bcc1348693d79",
+    "head": "e781c98157b601e85ed46e12152bcc1348693d79",
+    "behind_main": 215,
+    "ahead_main": 7,
+    "files": [
+      ".github/workflows/verify-deployment-routes.yml",
+      "STATUS.md",
+      "benchmarks/results/e2e-arq-open-capability-2026-08-05T02-47-43-993Z.json",
+      "benchmarks/results/file-open-capability-2026-08-05T02-47-35-371Z.json",
+      "docs/deployment/VERCEL.md",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/generated-repo-context.json",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "scripts/build-vercel.mjs"
+    ],
+    "file_count": 9,
+    "related_prs": [
+      299
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/arq-website-redesign-v3-kaf50s",
+    "kind": "branch",
+    "title": "claude/arq-website-redesign-v3-kaf50s",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/bc2a93883a4253d37011e4eb3b5540c4b2dc9be0",
+    "head": "bc2a93883a4253d37011e4eb3b5540c4b2dc9be0",
+    "behind_main": 95,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      309
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/code-review-implementation-bnmp78",
+    "kind": "branch",
+    "title": "claude/code-review-implementation-bnmp78",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/8b96d8e92c8d2e1707144007d5481fb8ecb73755",
+    "head": "8b96d8e92c8d2e1707144007d5481fb8ecb73755",
+    "behind_main": 94,
+    "ahead_main": 4,
+    "files": [
+      ".github/workflows/build.yml",
+      ".github/workflows/ci.yml",
+      "NOTICE",
+      "STATUS.md",
+      "apps/marketing/src/content/architects.ts",
+      "apps/marketing/src/content/changelog.ts",
+      "apps/marketing/src/content/home.ts",
+      "apps/marketing/src/content/ipad.ts",
+      "apps/marketing/src/content/product.ts",
+      "apps/marketing/src/pages.test.ts",
+      "apps/web/src/App.tsx",
+      "benchmarks/results/marketing-viewport-capability-2026-08-11T07-51-09-260Z.json",
+      "benchmarks/results/native-open-capability-2026-08-11T07-34-26-854Z.json",
+      "benchmarks/results/native-open-capability.png",
+      "benchmarks/results/native-open-plan.png",
+      "benchmarks/results/sheet-export-capability-2026-08-11T08-32-46-466Z.json",
+      "docs/product/voice/claim-binding-registry.json",
+      "docs/product/voice/claim-registry.json",
+      "docs/product/voice/conflict-registry.json",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/generated-repo-context.json",
+      "docs/product/voice/language-context.json",
+      "docs/product/voice/public-copy-inventory.json",
+      "engineering/fixtures/v5/classifier/25-sheet-export.json",
+      "engineering/ops/change-map.v5.json",
+      "engineering/ops/evidence-catalog.v5.json",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "engineering/tools/engineering/run-selected-evidence.mjs",
+      "package.json",
+      "scripts/check-notice-attribution-test.mjs",
+      "scripts/check-notice-attribution.mjs",
+      "scripts/check-web-bundle-budget-test.mjs",
+      "scripts/check-web-bundle-budget.mjs",
+      "scripts/run-sheet-export-capability-check.mjs"
+    ],
+    "file_count": 34,
+    "related_prs": [
+      310
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/new-session-7zp4st",
+    "kind": "branch",
+    "title": "claude/new-session-7zp4st",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/929d693a667335ef0e5ef4ce8e85851e8e1d20b0",
+    "head": "929d693a667335ef0e5ef4ce8e85851e8e1d20b0",
+    "behind_main": 221,
+    "ahead_main": 4,
+    "files": [
+      ".claude/agents/arq-architecture-reviewer.md",
+      ".claude/agents/arq-file-integrity-reviewer.md",
+      ".claude/agents/arq-geometry-reviewer.md",
+      ".claude/agents/arq-release-reviewer.md",
+      ".claude/agents/arq-security-ai-reviewer.md",
+      ".claude/agents/arq-ux-accessibility-reviewer.md",
+      ".claude/agents/zeus-orchestrator.md",
+      ".claude/hooks/post-write-invariant-guard.cjs",
+      ".claude/hooks/pre-tool-guard.cjs",
+      ".claude/hooks/stop-evidence-check.cjs",
+      ".claude/settings.json",
+      ".claude/skills/zeus-accessibility/SKILL.md",
+      ".claude/skills/zeus-adversarial-review/SKILL.md",
+      ".claude/skills/zeus-ai-assistance/SKILL.md",
+      ".claude/skills/zeus-architecture/SKILL.md",
+      ".claude/skills/zeus-assumption-audit/SKILL.md",
+      ".claude/skills/zeus-causal-diagnosis/SKILL.md",
+      ".claude/skills/zeus-current-research/SKILL.md",
+      ".claude/skills/zeus-debugging/SKILL.md",
+      ".claude/skills/zeus-decision-engine/SKILL.md",
+      ".claude/skills/zeus-deep-analysis/SKILL.md",
+      ".claude/skills/zeus-docs-and-claims/SKILL.md",
+      ".claude/skills/zeus-editor-command-state/SKILL.md",
+      ".claude/skills/zeus-engineering/SKILL.md",
+      ".claude/skills/zeus-explain-levels/SKILL.md",
+      ".claude/skills/zeus-fast-ooda/SKILL.md",
+      ".claude/skills/zeus-file-format/SKILL.md",
+      ".claude/skills/zeus-first-principles/SKILL.md",
+      ".claude/skills/zeus-geometry-kernel/SKILL.md",
+      ".claude/skills/zeus-idea-generation/SKILL.md",
+      ".claude/skills/zeus-import-export/SKILL.md",
+      ".claude/skills/zeus-learning-coach/SKILL.md",
+      ".claude/skills/zeus-migration/SKILL.md",
+      ".claude/skills/zeus-numerics-coordinates/SKILL.md",
+      ".claude/skills/zeus-output-formatter/SKILL.md",
+      ".claude/skills/zeus-package-ship/SKILL.md",
+      ".claude/skills/zeus-product-ux/SKILL.md",
+      ".claude/skills/zeus-recovery/SKILL.md",
+      ".claude/skills/zeus-release-evidence/SKILL.md",
+      ".claude/skills/zeus-renderer-performance/SKILL.md",
+      ".claude/skills/zeus-router/SKILL.md",
+      ".claude/skills/zeus-security-privacy/SKILL.md",
+      ".claude/skills/zeus-selection-snapping/SKILL.md",
+      ".claude/skills/zeus-semantic-model/SKILL.md",
+      ".claude/skills/zeus-storage/SKILL.md",
+      ".claude/skills/zeus-sync-collaboration/SKILL.md",
+      ".claude/skills/zeus-system-thinking/SKILL.md",
+      ".claude/skills/zeus-typed-operations/SKILL.md",
+      ".claude/skills/zeus-writing-transform/SKILL.md",
+      ".claude/skills/zeus/SKILL.md",
+      ".cursor/rules/zeus-always-on.mdc",
+      ".github/copilot-instructions.md",
+      ".prettierignore",
+      ".zeus/EVIDENCE-STATES.md",
+      ".zeus/FAILURE-MODES.md",
+      ".zeus/FAST-KERNEL.md",
+      ".zeus/INVARIANTS.md",
+      ".zeus/METHOD-SELECTION.md",
+      ".zeus/SOURCE-AUTHORITY.md",
+      ".zeus/TASK-STATE-MACHINE.md",
+      ".zeus/UPGRADE-4-TO-5.md",
+      ".zeus/ZEUS.md",
+      ".zeus/blast-radius.json",
+      ".zeus/compact-contract.schema.json",
+      ".zeus/config.json",
+      ".zeus/evidence-ledger.schema.json",
+      ".zeus/method-registry.json",
+      ".zeus/module-manifest.json",
+      "AGENTS.md",
+      "CLAUDE.md",
+      "docs/ZEUS-v5-UPGRADE-AND-FIXES.md",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "package.json",
+      "quality/architecture-bad/README.md",
+      "quality/architecture-clean/README.md",
+      "quality/fixtures/security-bad/open-project.sql",
+      "quality/fixtures/security-clean/open-project.sql",
+      "quality/fixtures/zeus-classification-cases.json",
+      "quality/fixtures/zeus-guard-cases.json",
+      "scripts/install-zeus.sh",
+      "scripts/lib/zeus-engine.mjs",
+      "scripts/test-zeus-hook.sh",
+      "scripts/test-zeus-system.sh",
+      "scripts/zeus-architecture-lint.mjs",
+      "scripts/zeus-classification-test.mjs",
+      "scripts/zeus-evidence.mjs",
+      "scripts/zeus-guard-test.mjs",
+      "scripts/zeus-hook.sh",
+      "scripts/zeus-impact.mjs",
+      "scripts/zeus-method.mjs",
+      "scripts/zeus-validate.mjs",
+      "scripts/zeus-verify.mjs",
+      "scripts/zeus.mjs"
+    ],
+    "file_count": 93,
+    "related_prs": [
+      287
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/new-session-bakp2v",
+    "kind": "branch",
+    "title": "claude/new-session-bakp2v",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/453ab38b3945389a969ec778e5a65d0763b164d7",
+    "head": "453ab38b3945389a969ec778e5a65d0763b164d7",
+    "behind_main": 352,
+    "ahead_main": 3,
+    "files": [
+      ".github/workflows/ci.yml",
+      "README.md",
+      "brand/00_GUIDE/ARQ_Brand_Guidelines_FINAL.pdf",
+      "brand/00_GUIDE/ARQ_Logo_Quick_Reference_FINAL.pdf",
+      "brand/00_GUIDE/README.txt",
+      "brand/01_VECTOR/ARQ_Lockup_Tagline_Black.svg",
+      "brand/01_VECTOR/ARQ_Lockup_Tagline_Black_RGB.pdf",
+      "brand/01_VECTOR/ARQ_Lockup_Tagline_PhthaloGreen.svg",
+      "brand/01_VECTOR/ARQ_Lockup_Tagline_PhthaloGreen_RGB.pdf",
+      "brand/01_VECTOR/ARQ_Lockup_Tagline_White.svg",
+      "brand/01_VECTOR/ARQ_Lockup_Tagline_White_RGB.pdf",
+      "brand/01_VECTOR/ARQ_Symbol_Black.svg",
+      "brand/01_VECTOR/ARQ_Symbol_Black_RGB.pdf",
+      "brand/01_VECTOR/ARQ_Symbol_PhthaloGreen.svg",
+      "brand/01_VECTOR/ARQ_Symbol_PhthaloGreen_RGB.pdf",
+      "brand/01_VECTOR/ARQ_Symbol_White.svg",
+      "brand/01_VECTOR/ARQ_Symbol_White_RGB.pdf",
+      "brand/01_VECTOR/ARQ_Wordmark_Black.svg",
+      "brand/01_VECTOR/ARQ_Wordmark_Black_RGB.pdf",
+      "brand/01_VECTOR/ARQ_Wordmark_PhthaloGreen.svg",
+      "brand/01_VECTOR/ARQ_Wordmark_PhthaloGreen_RGB.pdf",
+      "brand/01_VECTOR/ARQ_Wordmark_White.svg",
+      "brand/01_VECTOR/ARQ_Wordmark_White_RGB.pdf",
+      "brand/02_4K_PNG/ARQ_Lockup_Tagline_Black_4800px.png",
+      "brand/02_4K_PNG/ARQ_Lockup_Tagline_PhthaloGreen_4800px.png",
+      "brand/02_4K_PNG/ARQ_Lockup_Tagline_White_4800px.png",
+      "brand/02_4K_PNG/ARQ_Symbol_Black_ClearSpace_4096px.png",
+      "brand/02_4K_PNG/ARQ_Symbol_Black_Tight_4096px.png",
+      "brand/02_4K_PNG/ARQ_Symbol_PhthaloGreen_ClearSpace_4096px.png",
+      "brand/02_4K_PNG/ARQ_Symbol_PhthaloGreen_Tight_4096px.png",
+      "brand/02_4K_PNG/ARQ_Symbol_White_ClearSpace_4096px.png",
+      "brand/02_4K_PNG/ARQ_Symbol_White_Tight_4096px.png",
+      "brand/02_4K_PNG/ARQ_Wordmark_Black_ClearSpace_4096px.png",
+      "brand/02_4K_PNG/ARQ_Wordmark_Black_Tight_4096px.png",
+      "brand/02_4K_PNG/ARQ_Wordmark_PhthaloGreen_ClearSpace_4096px.png",
+      "brand/02_4K_PNG/ARQ_Wordmark_PhthaloGreen_Tight_4096px.png",
+      "brand/02_4K_PNG/ARQ_Wordmark_White_ClearSpace_4096px.png",
+      "brand/02_4K_PNG/ARQ_Wordmark_White_Tight_4096px.png",
+      "brand/03_WEB/ARQ_OpenGraph_Green_1200x630.png",
+      "brand/03_WEB/android-chrome-192x192.png",
+      "brand/03_WEB/android-chrome-512x512.png",
+      "brand/03_WEB/apple-touch-icon.png",
+      "brand/03_WEB/favicon.ico",
+      "brand/03_WEB/favicon.svg",
+      "brand/03_WEB/maskable-icon-512x512.png",
+      "brand/03_WEB/site.webmanifest",
+      "brand/04_APP_ICONS/ARQ_AppIcon_Black_1024.png",
+      "brand/04_APP_ICONS/ARQ_AppIcon_PhthaloGreen_1024.png",
+      "brand/05_PRINT/ARQ_Lockup_Tagline_Black_CMYK.pdf",
+      "brand/05_PRINT/ARQ_Lockup_Tagline_PhthaloGreen_CMYK.pdf",
+      "brand/05_PRINT/ARQ_Lockup_Tagline_White_on_Black_CMYK.pdf",
+      "brand/05_PRINT/ARQ_Symbol_Black_CMYK.pdf",
+      "brand/05_PRINT/ARQ_Symbol_PhthaloGreen_CMYK.pdf",
+      "brand/05_PRINT/ARQ_Symbol_White_on_Black_CMYK.pdf",
+      "brand/05_PRINT/ARQ_Wordmark_Black_CMYK.pdf",
+      "brand/05_PRINT/ARQ_Wordmark_PhthaloGreen_CMYK.pdf",
+      "brand/05_PRINT/ARQ_Wordmark_White_on_Black_CMYK.pdf",
+      "marketing/BRAND-VOICE.md",
+      "prototype/ARQ_OpenGraph_Green_1200x630.png",
+      "prototype/android-chrome-192x192.png",
+      "prototype/android-chrome-512x512.png",
+      "prototype/apple-touch-icon.png",
+      "prototype/favicon.ico",
+      "prototype/favicon.svg",
+      "prototype/index.html",
+      "prototype/maskable-icon-512x512.png",
+      "prototype/site.webmanifest"
+    ],
+    "file_count": 67,
+    "related_prs": [
+      222
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/repo-audit-completion-bzolr3",
+    "kind": "branch",
+    "title": "claude/repo-audit-completion-bzolr3",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/9c461c54572dd87a75d0efb8ea242fb3619c7ca9",
+    "head": "9c461c54572dd87a75d0efb8ea242fb3619c7ca9",
+    "behind_main": 226,
+    "ahead_main": 12,
+    "files": [
+      ".github/workflows/benchmark-template.yml",
+      ".github/workflows/benchmark.yml",
+      ".github/workflows/build.yml",
+      ".github/workflows/deploy-pages.yml",
+      ".github/workflows/quality-template.yml",
+      ".github/workflows/security-template.yml",
+      ".github/workflows/security.yml",
+      ".gitignore",
+      "ALL-CONTENTS.md",
+      "README.md",
+      "START-HERE.md",
+      "STATUS.md",
+      "apps/marketing/README.md",
+      "apps/marketing/assets/fonts/JetBrainsMono-Italic-Variable.woff2",
+      "apps/marketing/assets/fonts/JetBrainsMono-Variable.woff2",
+      "apps/marketing/assets/fonts/LICENCE.md",
+      "apps/marketing/assets/fonts/PlusJakartaSans-Italic-Variable.woff2",
+      "apps/marketing/assets/fonts/PlusJakartaSans-Variable.woff2",
+      "apps/marketing/package.json",
+      "apps/marketing/src/base-path.test.ts",
+      "apps/marketing/src/build.ts",
+      "apps/marketing/src/components.ts",
+      "apps/marketing/src/content/ai.ts",
+      "apps/marketing/src/content/architects.ts",
+      "apps/marketing/src/content/changelog.ts",
+      "apps/marketing/src/content/collaboration.ts",
+      "apps/marketing/src/content/contact.ts",
+      "apps/marketing/src/content/docs-index.ts",
+      "apps/marketing/src/content/home.ts",
+      "apps/marketing/src/content/interoperability.ts",
+      "apps/marketing/src/content/ipad.ts",
+      "apps/marketing/src/content/not-found.ts",
+      "apps/marketing/src/content/open-source.ts",
+      "apps/marketing/src/content/pricing.ts",
+      "apps/marketing/src/content/privacy.ts",
+      "apps/marketing/src/content/product.ts",
+      "apps/marketing/src/content/security.ts",
+      "apps/marketing/src/content/status.ts",
+      "apps/marketing/src/content/students.ts",
+      "apps/marketing/src/content/terms.ts",
+      "apps/marketing/src/html.test.ts",
+      "apps/marketing/src/html.ts",
+      "apps/marketing/src/index.ts",
+      "apps/marketing/src/layout.ts",
+      "apps/marketing/src/open-source-data.test.ts",
+      "apps/marketing/src/open-source-data.ts",
+      "apps/marketing/src/pages.test.ts",
+      "apps/marketing/src/routes.ts",
+      "apps/marketing/src/serve.ts",
+      "apps/marketing/src/site.css",
+      "apps/marketing/src/site.ts",
+      "apps/marketing/tsconfig.build.json",
+      "apps/web/README.md",
+      "apps/web/package.json",
+      "apps/web/src/App.tsx",
+      "apps/web/src/ModelCanvas.tsx",
+      "apps/web/src/PlanCanvas.tsx",
+      "apps/web/src/canvas/canvas-interaction.test.ts",
+      "apps/web/src/canvas/canvas-interaction.ts",
+      "apps/web/src/canvas/plan-document.test.ts",
+      "apps/web/src/canvas/plan-document.ts",
+      "apps/web/src/canvas/plan-journal.test.ts",
+      "apps/web/src/canvas/plan-journal.ts",
+      "apps/web/src/inspector-data.ts",
+      "backlog/ISSUES.md",
+      "backlog/issues.csv",
+      "backlog/issues.json",
+      "benchmarks/results/workspace-layout-capability-2026-07-27T04-25-15-424Z.json",
+      "contracts/tsconfig.json",
+      "docs/brand/ARQ-BRAND-IMPLEMENTATION-SPEC-v4.0.md",
+      "docs/pages/PUB-001-marketing-home.md",
+      "docs/pages/PUB-002-product-overview.md",
+      "docs/pages/PUB-003-for-architects.md",
+      "docs/pages/PUB-004-for-students.md",
+      "docs/pages/PUB-005-collaboration.md",
+      "docs/pages/PUB-006-ai.md",
+      "docs/pages/PUB-007-interoperability.md",
+      "docs/pages/PUB-008-ipad.md",
+      "docs/pages/PUB-009-pricing.md",
+      "docs/pages/PUB-010-security.md",
+      "docs/pages/PUB-011-documentation-index.md",
+      "docs/pages/PUB-012-changelog.md",
+      "docs/pages/PUB-013-status.md",
+      "docs/pages/PUB-014-contact-and-support.md",
+      "docs/pages/PUB-015-privacy-notice.md",
+      "docs/pages/PUB-016-terms.md",
+      "docs/pages/PUB-017-open-source-notices.md",
+      "docs/product/DEPENDENCY-AND-LICENCE-POLICY.md",
+      "eslint.config.js",
+      "eslint.config.mjs",
+      "package.json",
+      "packages/arqfs/README.md",
+      "packages/command-system/README.md",
+      "packages/dxf-adapter/README.md",
+      "packages/editor-shell/README.md",
+      "packages/editor-shell/src/selection-benchmark.test.ts",
+      "packages/geometry-2d/README.md",
+      "packages/geometry-2d/src/room-rebuild-benchmark.test.ts",
+      "packages/geometry-3d/README.md",
+      "packages/ifc-adapter/README.md",
+      "packages/ifc-adapter/package.json",
+      "packages/ifc-adapter/src/ifc-ingress-adapter.test.ts",
+      "packages/ifc-adapter/src/ifc-ingress-adapter.ts",
+      "packages/ifc-adapter/src/index.ts",
+      "packages/input-system/README.md",
+      "packages/model-renderer/README.md",
+      "packages/operations/README.md",
+      "packages/plan-renderer/README.md",
+      "packages/plan-renderer/src/canvas2d-paint.ts",
+      "packages/plan-renderer/src/line-treatment.test.ts",
+      "packages/validation/package.json",
+      "packages/validation/src/index.ts",
+      "packages/validation/src/room-polygon-validation.test.ts",
+      "packages/validation/src/room-polygon-validation.ts",
+      "packages/validation/src/unique-id-validation.test.ts",
+      "packages/validation/src/unique-id-validation.ts",
+      "packages/validation/src/wall-segment-validation.test.ts",
+      "packages/validation/src/wall-segment-validation.ts",
+      "pnpm-lock.yaml",
+      "remaining/REMAINING-WORK.md",
+      "scripts/check-dependency-licences.mjs",
+      "scripts/check-secrets.mjs",
+      "scripts/generate-backlog-index.mjs",
+      "scripts/run-canvaskit-benchmark.mjs",
+      "turbo.json",
+      "workers/import-export-worker/README.md",
+      "workers/import-export-worker/package.json",
+      "workers/import-export-worker/src/default-registry.ts"
+    ],
+    "file_count": 128,
+    "related_prs": [
+      282
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/unemployment-alignment-review-9hniy8",
+    "kind": "branch",
+    "title": "claude/unemployment-alignment-review-9hniy8",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/4700bdae045d09feeafaa059ebd8729f058d3277",
+    "head": "4700bdae045d09feeafaa059ebd8729f058d3277",
+    "behind_main": 222,
+    "ahead_main": 4,
+    "files": [
+      ".github/workflows/ci.yml",
+      ".github/workflows/engineering-gate.yml",
+      "STATUS.md",
+      "apps/marketing/src/content/product.ts",
+      "apps/marketing/src/pages.test.ts",
+      "apps/web/src/App.tsx",
+      "apps/web/src/PlanCanvas.tsx",
+      "apps/web/src/canvas/wall-hud-entry.tsx",
+      "benchmarks/results/design-system-dialog-capability-2026-07-29T00-55-31-669Z.json",
+      "benchmarks/results/hover-sequence-capability-2026-07-29T00-56-25-672Z.json",
+      "benchmarks/results/journal-recovery-capability-2026-07-28T02-35-56-231Z.json",
+      "benchmarks/results/journal-recovery-capability-2026-07-28T02-36-08-922Z.json",
+      "benchmarks/results/journal-recovery-capability-2026-07-28T02-36-16-144Z.json",
+      "benchmarks/results/journal-recovery-capability-2026-07-28T02-45-18-680Z.json",
+      "benchmarks/results/model-canvas-capability-2026-07-28T02-36-21-115Z.json",
+      "benchmarks/results/model-canvas-capability-2026-07-28T02-36-34-176Z.json",
+      "benchmarks/results/model-canvas-capability-2026-07-28T02-36-42-075Z.json",
+      "benchmarks/results/model-canvas-capability-2026-07-28T02-45-20-409Z.json",
+      "benchmarks/results/model-canvas-visual-2026-07-28T02-36-21-115Z.png",
+      "benchmarks/results/model-canvas-visual-2026-07-28T02-36-34-176Z.png",
+      "benchmarks/results/model-canvas-visual-2026-07-28T02-36-42-075Z.png",
+      "benchmarks/results/model-canvas-visual-2026-07-28T02-45-20-409Z.png",
+      "benchmarks/results/render-frame-2026-07-29T00-56-07-070Z.json",
+      "benchmarks/results/render-frame-2026-07-29T00-56-17-936Z.json",
+      "benchmarks/results/wall-hud-capability-2026-07-29T00-40-01-371Z.json",
+      "benchmarks/results/wall-hud-capability-2026-07-29T00-46-15-701Z.json",
+      "benchmarks/results/wall-hud-capability-2026-07-29T00-50-13-786Z.json",
+      "benchmarks/results/wall-hud-capability-2026-07-29T00-50-36-999Z.json",
+      "benchmarks/results/wall-hud-capability-2026-07-29T00-50-46-523Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-07-29T00-55-43-892Z.json",
+      "benchmarks/results/workspace-layout-capability-2026-07-29T00-56-01-470Z.json",
+      "docs/product/voice/claim-binding-registry.json",
+      "docs/product/voice/claim-registry.json",
+      "docs/product/voice/conflict-registry.json",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/generated-repo-context.json",
+      "engineering/fixtures/v5/evidence/03-proof-gap-fails.json",
+      "engineering/ops/active-surface-register.v5.json",
+      "engineering/ops/change-map.v5.json",
+      "engineering/ops/conflict-registry.v5.json",
+      "engineering/ops/critical-contracts.v5.json",
+      "engineering/ops/evidence-catalog.v5.json",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "engineering/tools/engineering/run-selected-evidence.mjs",
+      "engineering/tools/engineering/verify-policy.mjs",
+      "package.json",
+      "packages/design-system/package.json",
+      "packages/design-system/src/index.ts",
+      "packages/design-system/src/interaction-foundation/feedback/command-feedback-state.test.ts",
+      "packages/design-system/src/interaction-foundation/feedback/command-feedback-state.ts",
+      "packages/design-system/src/interaction-foundation/feedback/command-feedback.css",
+      "packages/design-system/src/interaction-foundation/feedback/command-feedback.tsx",
+      "packages/design-system/src/interaction-foundation/feedback/index.ts",
+      "packages/design-system/src/interaction-foundation/index.ts",
+      "packages/design-system/src/interaction-foundation/interaction/editor-input-guard.ts",
+      "packages/design-system/src/interaction-foundation/interaction/index.ts",
+      "packages/design-system/src/interaction-foundation/motion/index.ts",
+      "packages/design-system/src/interaction-foundation/motion/tokens.test.ts",
+      "packages/design-system/src/interaction-foundation/motion/tokens.ts",
+      "packages/design-system/src/interaction-foundation/motion/transitions.ts",
+      "packages/design-system/src/interaction-foundation/motion/use-arq-reduced-motion.ts",
+      "packages/design-system/src/interaction-foundation/overlays/context-hud.css",
+      "packages/design-system/src/interaction-foundation/overlays/context-hud.tsx",
+      "packages/design-system/src/interaction-foundation/overlays/index.ts",
+      "packages/design-system/src/interaction-foundation/overlays/screen-anchor.ts",
+      "packages/design-system/src/shell/modal-dialog.css",
+      "packages/design-system/src/shell/shell-tokens.css",
+      "packages/design-system/src/shell/top-bar.tsx",
+      "packages/design-system/src/workspace/phone-project-bar.tsx",
+      "packages/design-system/src/workspace/tab-context-menu.tsx",
+      "packages/design-system/src/workspace/workspace-shell.css",
+      "packages/editor-shell/src/numeric-overlay.test.ts",
+      "packages/editor-shell/src/numeric-overlay.ts",
+      "pnpm-lock.yaml",
+      "quality/editor-dependency-boundaries.json",
+      "scripts/check-editor-dependency-boundaries.mjs",
+      "scripts/run-journal-recovery-capability-check.mjs",
+      "scripts/run-model-canvas-capability-check.mjs",
+      "scripts/run-wall-hud-capability-check.mjs"
+    ],
+    "file_count": 79,
+    "related_prs": [
+      286,
+      284
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/zeus-implementation-perfect-9au9az",
+    "kind": "branch",
+    "title": "claude/zeus-implementation-perfect-9au9az",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/a75856e42065be7b0a8143963508a505a981acab",
+    "head": "a75856e42065be7b0a8143963508a505a981acab",
+    "behind_main": 85,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      314
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/zeus-system-overview-u0cx9t",
+    "kind": "branch",
+    "title": "claude/zeus-system-overview-u0cx9t",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/86cee294396cd06c76c8ca0ab7af362e089dc56a",
+    "head": "86cee294396cd06c76c8ca0ab7af362e089dc56a",
+    "behind_main": 302,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      225,
+      224
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-claude/zeus-system-perfection-hr0hjb",
+    "kind": "branch",
+    "title": "claude/zeus-system-perfection-hr0hjb",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/4c9e68b7c0ed980a026013078596b2bfbb666951",
+    "head": "4c9e68b7c0ed980a026013078596b2bfbb666951",
+    "behind_main": 198,
+    "ahead_main": 5,
+    "files": [
+      ".claude/commands/zeus-team.md",
+      ".zeus/ZEUS.md",
+      ".zeus/evidence-ledger.json",
+      ".zeus/install-manifest.jsonl",
+      "CLAUDE.md",
+      "company/README.md",
+      "company/ROSTER.md",
+      "company/ZEUS-BRIDGE.md",
+      "company/roles/engineering/ai-lead.md",
+      "company/roles/engineering/backend-lead.md",
+      "company/roles/engineering/frontend-lead.md",
+      "company/roles/engineering/geometry-bim-lead.md",
+      "company/roles/engineering/qa-release-lead.md",
+      "company/roles/engineering/security-lead.md",
+      "company/roles/engineering/vp-engineering.md",
+      "company/roles/executive/ceo.md",
+      "company/roles/executive/chief-of-staff.md",
+      "company/roles/executive/cto.md",
+      "company/roles/growth/marketing-comms.md",
+      "company/roles/operations/incident-commander.md",
+      "company/roles/product/design-lead.md",
+      "company/roles/product/product-manager.md",
+      "scripts/lib/zeus-engine.mjs",
+      "scripts/test-zeus-hook.sh",
+      "scripts/zeus-hook.sh",
+      "scripts/zeus-prompt-lint.mjs",
+      "scripts/zeus-prompt.mjs",
+      "scripts/zeus-role-plan.mjs",
+      "scripts/zeus.mjs"
+    ],
+    "file_count": 29,
+    "related_prs": [
+      302
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/arq-401-selection-authority-evidence",
+    "kind": "branch",
+    "title": "codex/arq-401-selection-authority-evidence",
+    "state": "active PR",
+    "phases": [
+      "E04"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/8703a611c1615791c58ddbdf7920d2c2b5f9876c",
+    "head": "8703a611c1615791c58ddbdf7920d2c2b5f9876c",
+    "behind_main": 3,
+    "ahead_main": 21,
+    "files": [
+      ".github/workflows/selection-authority-evidence.yml",
+      "docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md",
+      "scripts/run-selection-authority-capability-check.mjs",
+      "scripts/selection-authority-state-flow.test.mjs"
+    ],
+    "file_count": 4,
+    "related_prs": [
+      496
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/arq-native-editor-persistence-355-recovery",
+    "kind": "branch",
+    "title": "codex/arq-native-editor-persistence-355-recovery",
+    "state": "active PR",
+    "phases": [
+      "E06"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+    "head": "c83d761b0e3ccf62936d9a816f65e8268dbe56b6",
+    "behind_main": 12,
+    "ahead_main": 25,
+    "files": [
+      "apps/web/src/App.tsx",
+      "apps/web/src/project/native-project-session.test.ts",
+      "apps/web/src/project/native-project-session.ts",
+      "apps/web/src/project/workspace-persistence.test.ts",
+      "apps/web/src/project/workspace-persistence.ts",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/generated-repo-context.json",
+      "engineering/ops/generated/engineering-context-v5.json"
+    ],
+    "file_count": 8,
+    "related_prs": [
+      361
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/arq-native-editor-persistence-355",
+    "kind": "branch",
+    "title": "codex/arq-native-editor-persistence-355",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/5f965f7678a09e1fbd9a81d51778236fce682736",
+    "head": "5f965f7678a09e1fbd9a81d51778236fce682736",
+    "behind_main": 12,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/arq-public-site-editorial-v1",
+    "kind": "branch",
+    "title": "codex/arq-public-site-editorial-v1",
+    "state": "active PR",
+    "phases": [
+      "E27"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/2d82ca4c3c8e67755828e6ae117ac13ad101f610",
+    "head": "2d82ca4c3c8e67755828e6ae117ac13ad101f610",
+    "behind_main": 29,
+    "ahead_main": 13,
+    "files": [
+      "apps/marketing/README.md",
+      "apps/marketing/src/build.ts",
+      "apps/marketing/src/content/home.ts",
+      "apps/marketing/src/editorial-components.ts",
+      "apps/marketing/src/editorial.css",
+      "apps/marketing/src/layout.ts",
+      "docs/product/ARQ-UI-UX-ISSUE-EXECUTION-INDEX.md",
+      "docs/product/ARQ-UI-UX-MASTER-EXECUTION-PLAN-v1.0.md",
+      "docs/product/voice/context/REFRESH-LOG.json",
+      "docs/product/voice/generated-repo-context.json",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "scripts/run-marketing-viewport-capability-check.mjs"
+    ],
+    "file_count": 12,
+    "related_prs": [
+      495
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/arqfs-cow-migration-ui-276",
+    "kind": "branch",
+    "title": "codex/arqfs-cow-migration-ui-276",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/7bf82cbfd52b50fd6a6091fbf757063b2b95cf55",
+    "head": "7bf82cbfd52b50fd6a6091fbf757063b2b95cf55",
+    "behind_main": 39,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/tmp-arqfs-migration-276.yml"
+    ],
+    "file_count": 1,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/arqfs-cow-migration-v1-backup",
+    "kind": "branch",
+    "title": "codex/arqfs-cow-migration-v1-backup",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/c4da70723f0e83fa1b8719d23a24917bb81a1263",
+    "head": "c4da70723f0e83fa1b8719d23a24917bb81a1263",
+    "behind_main": 18,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/arqfs-cow-migration-v1",
+    "kind": "branch",
+    "title": "codex/arqfs-cow-migration-v1",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/a4f6941b5c0b9ef1441a4ea0ca9e1f95cc5a4a60",
+    "head": "a4f6941b5c0b9ef1441a4ea0ca9e1f95cc5a4a60",
+    "behind_main": 13,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      357
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/browser-device-matrix-219",
+    "kind": "branch",
+    "title": "codex/browser-device-matrix-219",
+    "state": "active PR",
+    "phases": [
+      "E22"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/ec738d57a27196ae22dd852ec2ffcb8e8f78d5dd",
+    "head": "ec738d57a27196ae22dd852ec2ffcb8e8f78d5dd",
+    "behind_main": 12,
+    "ahead_main": 4,
+    "files": [
+      "validation/BROWSER-AND-DEVICE-MATRIX-EVIDENCE.md",
+      "validation/BROWSER-AND-DEVICE-MATRIX.csv"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      362
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/browser-matrix-smoke-358",
+    "kind": "branch",
+    "title": "codex/browser-matrix-smoke-358",
+    "state": "active PR",
+    "phases": [
+      "E22"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/3c16942f72a5da8234973e45fe794ef6eec158bd",
+    "head": "3c16942f72a5da8234973e45fe794ef6eec158bd",
+    "behind_main": 12,
+    "ahead_main": 10,
+    "files": [
+      ".github/workflows/browser-matrix-smoke.yml",
+      "scripts/run-browser-matrix-smoke.mjs",
+      "validation/BROWSER-ENGINE-SMOKE.md"
+    ],
+    "file_count": 3,
+    "related_prs": [
+      363
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/canonical-units-88",
+    "kind": "branch",
+    "title": "codex/canonical-units-88",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/5a1168c4e8a9876bd66720c303df223704eb0c12",
+    "head": "5a1168c4e8a9876bd66720c303df223704eb0c12",
+    "behind_main": 12,
+    "ahead_main": 3,
+    "files": [
+      "docs/adr/0004-units-and-numeric-representation.md",
+      "docs/product/DECISION-REGISTER.csv",
+      "packages/geometry-2d/src/coordinate-system.ts"
+    ],
+    "file_count": 3,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/engineering-context-refresh-v1",
+    "kind": "branch",
+    "title": "codex/engineering-context-refresh-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/96a8a82d737d1c98faa29dab3b4198208e5c32ad",
+    "head": "96a8a82d737d1c98faa29dab3b4198208e5c32ad",
+    "behind_main": 44,
+    "ahead_main": 2,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/ux-0-1-396-exact-head-evidence",
+    "kind": "branch",
+    "title": "codex/ux-0-1-396-exact-head-evidence",
+    "state": "divergent",
+    "phases": [
+      "E04"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/b8f12b1814ad69e8b27c6c33d83053cab41550a3",
+    "head": "b8f12b1814ad69e8b27c6c33d83053cab41550a3",
+    "behind_main": 3,
+    "ahead_main": 1,
+    "files": [
+      "docs/product/ARQ-UI-UX-WORKSPACE-OWNERSHIP-MAP.md"
+    ],
+    "file_count": 1,
+    "related_prs": [
+      497
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/ux-0-2-398-reachability-evidence",
+    "kind": "branch",
+    "title": "codex/ux-0-2-398-reachability-evidence",
+    "state": "divergent",
+    "phases": [
+      "E04"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/f7d0527edaa65a6e0763cb8f1b6a60568ea82641",
+    "head": "f7d0527edaa65a6e0763cb8f1b6a60568ea82641",
+    "behind_main": 1,
+    "ahead_main": 3,
+    "files": [
+      "packages/workspace/src/registry-execution.test.ts",
+      "scripts/run-design-system-dialog-capability-check.mjs"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      502
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-adaptive-completion-v3",
+    "kind": "branch",
+    "title": "codex/zeus-adaptive-completion-v3",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/aa9d0279e32bb7b735d1e4190b3224ddb71c4ae0",
+    "head": "aa9d0279e32bb7b735d1e4190b3224ddb71c4ae0",
+    "behind_main": 48,
+    "ahead_main": 5,
+    "files": [
+      ".zeus/adaptive-cto.json",
+      "scripts/zeus-adaptive-budget.mjs",
+      "scripts/zeus-adaptive-budget.test.mjs",
+      "scripts/zeus-adaptive-runtime.mjs",
+      "scripts/zeus-adaptive-runtime.test.mjs"
+    ],
+    "file_count": 5,
+    "related_prs": [
+      341
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-adaptive-context-quality-v1",
+    "kind": "branch",
+    "title": "codex/zeus-adaptive-context-quality-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/01c40254e7e5f28aa3c9683771ad869e265b65a3",
+    "head": "01c40254e7e5f28aa3c9683771ad869e265b65a3",
+    "behind_main": 41,
+    "ahead_main": 6,
+    "files": [
+      ".github/workflows/test-zeus-adaptive-context-328.yml",
+      "scripts/zeus-context-retrieval.test.mjs",
+      "scripts/zeus-context.mjs"
+    ],
+    "file_count": 3,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-adaptive-context-quality-v2",
+    "kind": "branch",
+    "title": "codex/zeus-adaptive-context-quality-v2",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/d84e7fa8bc51af32bbe2a775bf38c8fe77872820",
+    "head": "d84e7fa8bc51af32bbe2a775bf38c8fe77872820",
+    "behind_main": 40,
+    "ahead_main": 14,
+    "files": [
+      ".github/workflows/zeus-adaptive-quality.yml",
+      "scripts/zeus-adaptive-quality-eval.mjs",
+      "scripts/zeus-context-retrieval.test.mjs",
+      "scripts/zeus-context.mjs"
+    ],
+    "file_count": 4,
+    "related_prs": [
+      351
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-adaptive-cto-v1",
+    "kind": "branch",
+    "title": "codex/zeus-adaptive-cto-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/a100ca9e4e5a736f63893055208781f485c79884",
+    "head": "a100ca9e4e5a736f63893055208781f485c79884",
+    "behind_main": 65,
+    "ahead_main": 2,
+    "files": [
+      "scripts/zeus-adaptive-budget.mjs",
+      "scripts/zeus-adaptive-budget.test.mjs"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      329
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-adaptive-eval-v1",
+    "kind": "branch",
+    "title": "codex/zeus-adaptive-eval-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/97c44c67d4782c71a314c67d987b52b323b49b05",
+    "head": "97c44c67d4782c71a314c67d987b52b323b49b05",
+    "behind_main": 40,
+    "ahead_main": 10,
+    "files": [
+      ".github/workflows/zeus-adaptive-runtime-v2.yml",
+      "scripts/zeus-adaptive-eval.mjs",
+      "scripts/zeus-adaptive-eval.test.mjs"
+    ],
+    "file_count": 3,
+    "related_prs": [
+      352
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-adaptive-measurement-probe-328",
+    "kind": "branch",
+    "title": "codex/zeus-adaptive-measurement-probe-328",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/b8a9a60bce01bcdc3b12cb7fafe3bb621a33c513",
+    "head": "b8a9a60bce01bcdc3b12cb7fafe3bb621a33c513",
+    "behind_main": 41,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/zeus-adaptive-measurement-probe-328.yml"
+    ],
+    "file_count": 1,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-autonomy-gate-integration-v1",
+    "kind": "branch",
+    "title": "codex/zeus-autonomy-gate-integration-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/1f557c6770501df56faa1314d4279e9340006546",
+    "head": "1f557c6770501df56faa1314d4279e9340006546",
+    "behind_main": 49,
+    "ahead_main": 10,
+    "files": [
+      ".github/workflows/zeus-autonomy.yml",
+      "package.json",
+      "scripts/zeus-autonomy-verify.mjs",
+      "scripts/zeus-autonomy-verify.test.mjs",
+      "scripts/zeus-verify.mjs"
+    ],
+    "file_count": 5,
+    "related_prs": [
+      340
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-autonomy-gate-integration-v2",
+    "kind": "branch",
+    "title": "codex/zeus-autonomy-gate-integration-v2",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/67510c1abccde0647d54c6f13b7fd5b156800c25",
+    "head": "67510c1abccde0647d54c6f13b7fd5b156800c25",
+    "behind_main": 44,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/zeus-autonomy.yml",
+      "package.json",
+      "scripts/zeus-verify.mjs"
+    ],
+    "file_count": 3,
+    "related_prs": [
+      343
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-autonomy-gate-integration-v3",
+    "kind": "branch",
+    "title": "codex/zeus-autonomy-gate-integration-v3",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/aef9955a87ff125c5e021cb4d61f1b0680a7032d",
+    "head": "aef9955a87ff125c5e021cb4d61f1b0680a7032d",
+    "behind_main": 44,
+    "ahead_main": 3,
+    "files": [
+      ".github/workflows/zeus-autonomy.yml",
+      "package.json",
+      "scripts/zeus-verify.mjs"
+    ],
+    "file_count": 3,
+    "related_prs": [
+      347
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-autonomy-gate-integration-v4",
+    "kind": "branch",
+    "title": "codex/zeus-autonomy-gate-integration-v4",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/567fce62e7eb79bee05c8d33cd05b20498856dbd",
+    "head": "567fce62e7eb79bee05c8d33cd05b20498856dbd",
+    "behind_main": 44,
+    "ahead_main": 19,
+    "files": [
+      ".github/workflows/zeus-autonomy.yml",
+      "scripts/zeus-drift-guard-test.mjs",
+      "scripts/zeus-drift-guard.mjs",
+      "scripts/zeus-verify.mjs"
+    ],
+    "file_count": 4,
+    "related_prs": [
+      348
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-autonomy-gate-integration-v5",
+    "kind": "branch",
+    "title": "codex/zeus-autonomy-gate-integration-v5",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/1e93372215eef035574740b13dfb80b4c05d154e",
+    "head": "1e93372215eef035574740b13dfb80b4c05d154e",
+    "behind_main": 44,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/zeus-autonomy.yml",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "package.json",
+      "scripts/zeus-verify.mjs"
+    ],
+    "file_count": 4,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-autonomy-validator-v1",
+    "kind": "branch",
+    "title": "codex/zeus-autonomy-validator-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/0a380d90b02b1e3c7f0e6714c3968ab43074edc9",
+    "head": "0a380d90b02b1e3c7f0e6714c3968ab43074edc9",
+    "behind_main": 49,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/zeus-autonomy.yml",
+      "scripts/zeus-autonomy-verify.mjs",
+      "scripts/zeus-autonomy-verify.test.mjs"
+    ],
+    "file_count": 3,
+    "related_prs": [
+      327
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-autonomy-validator-v2",
+    "kind": "branch",
+    "title": "codex/zeus-autonomy-validator-v2",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/d8c49380b31d03b34cc714a0e0132b9e5c36bd8f",
+    "head": "d8c49380b31d03b34cc714a0e0132b9e5c36bd8f",
+    "behind_main": 49,
+    "ahead_main": 8,
+    "files": [
+      ".github/workflows/zeus-autonomy.yml",
+      ".github/workflows/zeus-format-probe.yml",
+      "scripts/zeus-autonomy-verify.mjs",
+      "scripts/zeus-autonomy-verify.test.mjs"
+    ],
+    "file_count": 4,
+    "related_prs": [
+      339
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-autonomy-validator-v3",
+    "kind": "branch",
+    "title": "codex/zeus-autonomy-validator-v3",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/6b5d49da45362eec55cf9997b2301a02c9dd4316",
+    "head": "6b5d49da45362eec55cf9997b2301a02c9dd4316",
+    "behind_main": 46,
+    "ahead_main": 8,
+    "files": [
+      ".github/workflows/zeus-autonomy.yml",
+      "scripts/zeus-autonomy-verify.mjs",
+      "scripts/zeus-autonomy-verify.test.mjs"
+    ],
+    "file_count": 3,
+    "related_prs": [
+      342
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-browser-budget-fix",
+    "kind": "branch",
+    "title": "codex/zeus-browser-budget-fix",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/95f3254ddcd28214a686cd3807f557246c8e03f8",
+    "head": "95f3254ddcd28214a686cd3807f557246c8e03f8",
+    "behind_main": 52,
+    "ahead_main": 2,
+    "files": [
+      "scripts/zeus-adaptive-budget.mjs",
+      "scripts/zeus-adaptive-budget.test.mjs"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      337
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-context-economy-5-1",
+    "kind": "branch",
+    "title": "codex/zeus-context-economy-5-1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/9fdf3df497bc6569b08a946fe231cc214b4e5fb4",
+    "head": "9fdf3df497bc6569b08a946fe231cc214b4e5fb4",
+    "behind_main": 84,
+    "ahead_main": 1,
+    "files": [
+      ".zeus/PROJECT-INTELLIGENCE.md",
+      ".zeus/config.json",
+      "scripts/test-zeus-system.sh",
+      "scripts/zeus-context.mjs"
+    ],
+    "file_count": 4,
+    "related_prs": [
+      316
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-context-retrieval-v2",
+    "kind": "branch",
+    "title": "codex/zeus-context-retrieval-v2",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/7190276b3e74b392244ff883f35c1a6e20b3e823",
+    "head": "7190276b3e74b392244ff883f35c1a6e20b3e823",
+    "behind_main": 50,
+    "ahead_main": 8,
+    "files": [
+      ".github/workflows/zeus-context-retrieval.yml",
+      "scripts/zeus-context-retrieval.test.mjs",
+      "scripts/zeus-context.mjs"
+    ],
+    "file_count": 3,
+    "related_prs": [
+      338
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-cross-language-graph-325-scratch",
+    "kind": "branch",
+    "title": "codex/zeus-cross-language-graph-325-scratch",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/13ff85674d64e2a66d1620a176a71ac53f07f532",
+    "head": "13ff85674d64e2a66d1620a176a71ac53f07f532",
+    "behind_main": 40,
+    "ahead_main": 5,
+    "files": [
+      ".github/workflows/tmp-zeus-graph-325-parser.yml",
+      "scripts/lib/zeus-repository-symbols.mjs",
+      "scripts/zeus-repository-symbols.test.mjs"
+    ],
+    "file_count": 3,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-cross-language-graph-325-v1",
+    "kind": "branch",
+    "title": "codex/zeus-cross-language-graph-325-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/168c9963dd20fd8f569bf16c67256489a9432c8d",
+    "head": "168c9963dd20fd8f569bf16c67256489a9432c8d",
+    "behind_main": 39,
+    "ahead_main": 3,
+    "files": [
+      "scripts/lib/zeus-repository-cross-language.mjs",
+      "scripts/lib/zeus-repository-symbols.mjs",
+      "scripts/zeus-repository-symbols.test.mjs"
+    ],
+    "file_count": 3,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-cross-language-graph-325",
+    "kind": "branch",
+    "title": "codex/zeus-cross-language-graph-325",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/4a88bec72ef76660daf643babbbf675b3a6afec6",
+    "head": "4a88bec72ef76660daf643babbbf675b3a6afec6",
+    "behind_main": 39,
+    "ahead_main": 2,
+    "files": [
+      "scripts/lib/zeus-repository-symbols.mjs",
+      "scripts/zeus-repository-symbols.test.mjs"
+    ],
+    "file_count": 2,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-cto-runtime-v2",
+    "kind": "branch",
+    "title": "codex/zeus-cto-runtime-v2",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/9891dbfb5550b9938d20364d63e4a6d029854223",
+    "head": "9891dbfb5550b9938d20364d63e4a6d029854223",
+    "behind_main": 58,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      334
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-default-branch-dual-trigger-v1",
+    "kind": "branch",
+    "title": "codex/zeus-default-branch-dual-trigger-v1",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08",
+    "head": "5e42fb86d7ac8aea4bdda4f8047421f6e90ebe08",
+    "behind_main": 31,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      353
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-doctor-status-v1",
+    "kind": "branch",
+    "title": "codex/zeus-doctor-status-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/2866d0105350ef7f46ef6f610e7730b98fa05739",
+    "head": "2866d0105350ef7f46ef6f610e7730b98fa05739",
+    "behind_main": 46,
+    "ahead_main": 6,
+    "files": [
+      ".github/workflows/zeus-doctor.yml",
+      "scripts/zeus-doctor.mjs",
+      "scripts/zeus-doctor.test.mjs"
+    ],
+    "file_count": 3,
+    "related_prs": [
+      346
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-engineering-context-refresh-350",
+    "kind": "branch",
+    "title": "codex/zeus-engineering-context-refresh-350",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/06bafc7089f956b39e414ceaa0a984c0d80331a0",
+    "head": "06bafc7089f956b39e414ceaa0a984c0d80331a0",
+    "behind_main": 41,
+    "ahead_main": 2,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-local-autonomy-v1",
+    "kind": "branch",
+    "title": "codex/zeus-local-autonomy-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/2dfaa1b6217eb34f4078a779430fbfc5231cfdbd",
+    "head": "2dfaa1b6217eb34f4078a779430fbfc5231cfdbd",
+    "behind_main": 84,
+    "ahead_main": 3,
+    "files": [
+      ".zeus/AUTONOMY.md",
+      ".zeus/autonomy.json",
+      "AGENTS.md"
+    ],
+    "file_count": 3,
+    "related_prs": [
+      322
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-main-migration-prep-332",
+    "kind": "branch",
+    "title": "codex/zeus-main-migration-prep-332",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/2152931de51d98c9bc41529dc860314357e5ba00",
+    "head": "2152931de51d98c9bc41529dc860314357e5ba00",
+    "behind_main": 40,
+    "ahead_main": 7,
+    "files": [
+      ".github/workflows/ci.yml",
+      ".github/workflows/deploy-pages.yml",
+      ".github/workflows/language-context-refresh-temp.yml",
+      "engineering/ops/generated/engineering-context-v5.json"
+    ],
+    "file_count": 4,
+    "related_prs": [
+      354
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-repository-intelligence-integration-v1",
+    "kind": "branch",
+    "title": "codex/zeus-repository-intelligence-integration-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/82766584159c46c388eabc6d1931cb40f849a56a",
+    "head": "82766584159c46c388eabc6d1931cb40f849a56a",
+    "behind_main": 46,
+    "ahead_main": 21,
+    "files": [
+      ".github/workflows/zeus-repository-intelligence.yml",
+      ".zeus/repository-graph.json",
+      "scripts/lib/zeus-repository-evidence.mjs",
+      "scripts/zeus-fast-compile.mjs",
+      "scripts/zeus-impact.mjs",
+      "scripts/zeus-repository-intelligence-integration.test.mjs",
+      "scripts/zeus.mjs"
+    ],
+    "file_count": 7,
+    "related_prs": [
+      344
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-repository-intelligence-integration-v2",
+    "kind": "branch",
+    "title": "codex/zeus-repository-intelligence-integration-v2",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/9a0c4276286a97d4d7c9095144915e7c916084fc",
+    "head": "9a0c4276286a97d4d7c9095144915e7c916084fc",
+    "behind_main": 44,
+    "ahead_main": 11,
+    "files": [
+      ".github/workflows/zeus-repository-intelligence.yml",
+      ".zeus/repository-graph.json",
+      "scripts/lib/zeus-repository-evidence.mjs",
+      "scripts/zeus-fast-compile.mjs",
+      "scripts/zeus-impact.mjs",
+      "scripts/zeus-repository-intelligence-integration.test.mjs",
+      "scripts/zeus.mjs"
+    ],
+    "file_count": 7,
+    "related_prs": [
+      349
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-repository-intelligence-ledgers-v1",
+    "kind": "branch",
+    "title": "codex/zeus-repository-intelligence-ledgers-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/2a0cbf592d03684ddd981cb8e1ec6e03ee1acc48",
+    "head": "2a0cbf592d03684ddd981cb8e1ec6e03ee1acc48",
+    "behind_main": 46,
+    "ahead_main": 16,
+    "files": [
+      ".github/workflows/zeus-repository-intelligence.yml",
+      ".zeus/repository-graph.json",
+      "scripts/lib/zeus-repository-evidence.mjs",
+      "scripts/zeus-evidence.mjs",
+      "scripts/zeus-fast-compile.mjs",
+      "scripts/zeus-impact.mjs",
+      "scripts/zeus-repository-intelligence-integration.test.mjs",
+      "scripts/zeus.mjs"
+    ],
+    "file_count": 8,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-repository-intelligence-ledgers-v2",
+    "kind": "branch",
+    "title": "codex/zeus-repository-intelligence-ledgers-v2",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/83afddf4378581002ecce6e2e456aca6b32cc8e0",
+    "head": "83afddf4378581002ecce6e2e456aca6b32cc8e0",
+    "behind_main": 44,
+    "ahead_main": 17,
+    "files": [
+      ".github/workflows/test-zeus-ledger-v2.yml",
+      ".github/workflows/zeus-repository-intelligence-ledgers.yml",
+      ".github/workflows/zeus-repository-intelligence.yml",
+      ".zeus/repository-graph.json",
+      "package.json",
+      "scripts/lib/zeus-repository-evidence.mjs",
+      "scripts/lib/zeus-repository-ledger.mjs",
+      "scripts/zeus-evidence.mjs",
+      "scripts/zeus-fast-compile.mjs",
+      "scripts/zeus-gate.mjs",
+      "scripts/zeus-impact.mjs",
+      "scripts/zeus-repository-intelligence-integration.test.mjs",
+      "scripts/zeus-repository-intelligence-ledgers.test.mjs",
+      "scripts/zeus.mjs"
+    ],
+    "file_count": 14,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-repository-intelligence-ledgers-v3",
+    "kind": "branch",
+    "title": "codex/zeus-repository-intelligence-ledgers-v3",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/88c252f200da05f6007c96ea94cb67a6ffffbad5",
+    "head": "88c252f200da05f6007c96ea94cb67a6ffffbad5",
+    "behind_main": 44,
+    "ahead_main": 17,
+    "files": [
+      ".github/workflows/engineering-context-ledger-probe.yml",
+      ".github/workflows/zeus-repository-intelligence.yml",
+      ".zeus/repository-graph.json",
+      "package.json",
+      "scripts/lib/zeus-repository-evidence.mjs",
+      "scripts/lib/zeus-repository-ledger.mjs",
+      "scripts/zeus-evidence.mjs",
+      "scripts/zeus-fast-compile.mjs",
+      "scripts/zeus-gate-ledger.mjs",
+      "scripts/zeus-gate.mjs",
+      "scripts/zeus-impact.mjs",
+      "scripts/zeus-repository-intelligence-integration.test.mjs",
+      "scripts/zeus-repository-intelligence-ledger.test.mjs",
+      "scripts/zeus.mjs"
+    ],
+    "file_count": 14,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-repository-intelligence-ledgers-v4",
+    "kind": "branch",
+    "title": "codex/zeus-repository-intelligence-ledgers-v4",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/d76402ba048d60643efc77d22b75d0871777759b",
+    "head": "d76402ba048d60643efc77d22b75d0871777759b",
+    "behind_main": 42,
+    "ahead_main": 5,
+    "files": [
+      "package.json",
+      "scripts/lib/zeus-repository-ledger.mjs",
+      "scripts/zeus-evidence.mjs",
+      "scripts/zeus-gate-ledger.mjs",
+      "scripts/zeus-gate.mjs",
+      "scripts/zeus-repository-intelligence-ledger.test.mjs",
+      "scripts/zeus.mjs"
+    ],
+    "file_count": 7,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-repository-intelligence-ledgers-v5",
+    "kind": "branch",
+    "title": "codex/zeus-repository-intelligence-ledgers-v5",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/4cfaa699e3126cd64282d1fdae25de32b50cb6d2",
+    "head": "4cfaa699e3126cd64282d1fdae25de32b50cb6d2",
+    "behind_main": 42,
+    "ahead_main": 7,
+    "files": [
+      ".github/workflows/test-zeus-ledger-v5.yml",
+      ".github/workflows/zeus-repository-intelligence-ledgers.yml",
+      "package.json",
+      "scripts/lib/zeus-repository-ledger.mjs",
+      "scripts/zeus-evidence.mjs",
+      "scripts/zeus-gate.mjs",
+      "scripts/zeus-repository-intelligence-ledgers.test.mjs",
+      "scripts/zeus.mjs"
+    ],
+    "file_count": 8,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-repository-intelligence-ledgers-v6",
+    "kind": "branch",
+    "title": "codex/zeus-repository-intelligence-ledgers-v6",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/0e2258ff84fd5211bab8e6b38e348e19935fee9e",
+    "head": "0e2258ff84fd5211bab8e6b38e348e19935fee9e",
+    "behind_main": 41,
+    "ahead_main": 3,
+    "files": [
+      ".github/workflows/zeus-repository-intelligence-ledgers.yml",
+      "engineering/ops/generated/engineering-context-v5.json",
+      "package.json",
+      "scripts/lib/zeus-repository-ledger.mjs",
+      "scripts/zeus-evidence.mjs",
+      "scripts/zeus-gate.mjs",
+      "scripts/zeus-repository-intelligence-ledgers.test.mjs",
+      "scripts/zeus.mjs"
+    ],
+    "file_count": 8,
+    "related_prs": [
+      350
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-repository-intelligence-runtime-v1",
+    "kind": "branch",
+    "title": "codex/zeus-repository-intelligence-runtime-v1",
+    "state": "divergent",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/e2d98359e8692c52a480221d3bf175834b9eabbb",
+    "head": "e2d98359e8692c52a480221d3bf175834b9eabbb",
+    "behind_main": 50,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/zeus-repository-intelligence.yml",
+      ".zeus/repository-graph-declarations.json",
+      ".zeus/repository-graph.json",
+      "scripts/zeus-repository-intelligence.mjs",
+      "scripts/zeus-repository-intelligence.test.mjs"
+    ],
+    "file_count": 5,
+    "related_prs": [
+      336
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/zeus-repository-intelligence-v1",
+    "kind": "branch",
+    "title": "codex/zeus-repository-intelligence-v1",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/63e22fe67c7e22fdbeb5e40f4e5b20ac3220b94e",
+    "head": "63e22fe67c7e22fdbeb5e40f4e5b20ac3220b94e",
+    "behind_main": 83,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [
+      323
+    ],
+    "protected": false,
+    "disposition": "Fully reachable from main by ancestry; archival candidate after release rollback/owner review.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/403-token-layer-audit-current-head",
+    "kind": "branch",
+    "title": "codex/403-token-layer-audit-current-head",
+    "state": "divergent",
+    "phases": [
+      "E04",
+      "E10"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/7e2e7e97fdcd6c762a31c6b4976a0fb6d4cad244",
+    "head": "7e2e7e97fdcd6c762a31c6b4976a0fb6d4cad244",
+    "behind_main": 2,
+    "ahead_main": 11,
+    "files": [
+      "docs/product/ARQ-UI-UX-TOKEN-LAYER-AUDIT.md",
+      "packages/design-system/src/shell/layer-contract.test.ts"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      498
+    ],
+    "protected": false,
+    "disposition": "Divergent history: compare patch equivalence and linked merged/superseded PRs; do not infer missing features or delete from ancestry alone.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-codex/412-overlay-zone-contract",
+    "kind": "branch",
+    "title": "codex/412-overlay-zone-contract",
+    "state": "active PR",
+    "phases": [
+      "E10"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+    "head": "a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+    "behind_main": 1,
+    "ahead_main": 19,
+    "files": [
+      "docs/product/ARQ-UI-UX-OVERLAY-ZONE-CONTRACT.md",
+      "packages/design-system/src/shell/layer-contract.test.ts",
+      "packages/design-system/src/shell/shell-tokens.css",
+      "packages/design-system/src/workspace/canvas-overlay-zone.tsx",
+      "packages/design-system/src/workspace/index.ts",
+      "packages/design-system/src/workspace/overlay-zone-contract.css",
+      "packages/design-system/src/workspace/overlay-zone-contract.test.ts",
+      "packages/design-system/src/workspace/phone-project-bar.tsx",
+      "packages/design-system/src/workspace/tab-context-menu.tsx",
+      "packages/design-system/src/workspace/workspace-sheet.tsx"
+    ],
+    "file_count": 10,
+    "related_prs": [
+      499
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/cargo/rust/sha2-0.11.0",
+    "kind": "branch",
+    "title": "dependabot/cargo/rust/sha2-0.11.0",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/0d81f77456dfd1f1b7b0e2fdc1243ff1e8c55ea7",
+    "head": "0d81f77456dfd1f1b7b0e2fdc1243ff1e8c55ea7",
+    "behind_main": 48,
+    "ahead_main": 1,
+    "files": [
+      "rust/Cargo.lock",
+      "rust/arq-core/Cargo.toml"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      255
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/github_actions/actions/cache-6",
+    "kind": "branch",
+    "title": "dependabot/github_actions/actions/cache-6",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/23f507b6c60d125ee4af3646ebc07a0ab0a617ec",
+    "head": "23f507b6c60d125ee4af3646ebc07a0ab0a617ec",
+    "behind_main": 138,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/engineering-gate.yml"
+    ],
+    "file_count": 1,
+    "related_prs": [
+      304
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/github_actions/actions/checkout-7",
+    "kind": "branch",
+    "title": "dependabot/github_actions/actions/checkout-7",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/2d41567e6a89c2a43b48a6b8773a9ce08cb227c7",
+    "head": "2d41567e6a89c2a43b48a6b8773a9ce08cb227c7",
+    "behind_main": 198,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/benchmark.yml",
+      ".github/workflows/build.yml",
+      ".github/workflows/ci.yml",
+      ".github/workflows/deploy-pages.yml",
+      ".github/workflows/engineering-gate.yml",
+      ".github/workflows/security.yml",
+      ".github/workflows/verify-deployment-routes.yml"
+    ],
+    "file_count": 7,
+    "related_prs": [
+      254
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/github_actions/actions/deploy-pages-5",
+    "kind": "branch",
+    "title": "dependabot/github_actions/actions/deploy-pages-5",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/0299659c80f6047899ea3310616869be4ae4d411",
+    "head": "0299659c80f6047899ea3310616869be4ae4d411",
+    "behind_main": 220,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/deploy-pages.yml"
+    ],
+    "file_count": 1,
+    "related_prs": [
+      288
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/github_actions/actions/download-artifact-8",
+    "kind": "branch",
+    "title": "dependabot/github_actions/actions/download-artifact-8",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/7243226ab542dda8c68654f3c31c1efbddaba4b8",
+    "head": "7243226ab542dda8c68654f3c31c1efbddaba4b8",
+    "behind_main": 219,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/engineering-gate.yml"
+    ],
+    "file_count": 1,
+    "related_prs": [
+      290
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/github_actions/actions/setup-node-7",
+    "kind": "branch",
+    "title": "dependabot/github_actions/actions/setup-node-7",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/c5ca0327c7018d71c9542e8c1e933b33a8847290",
+    "head": "c5ca0327c7018d71c9542e8c1e933b33a8847290",
+    "behind_main": 198,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/benchmark.yml",
+      ".github/workflows/build.yml",
+      ".github/workflows/ci.yml",
+      ".github/workflows/deploy-pages.yml",
+      ".github/workflows/engineering-gate.yml",
+      ".github/workflows/security.yml",
+      ".github/workflows/verify-deployment-routes.yml"
+    ],
+    "file_count": 7,
+    "related_prs": [
+      257
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/github_actions/actions/upload-artifact-7",
+    "kind": "branch",
+    "title": "dependabot/github_actions/actions/upload-artifact-7",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/5a33d8ec641cea0bf594360a0592806d8f302dd5",
+    "head": "5a33d8ec641cea0bf594360a0592806d8f302dd5",
+    "behind_main": 93,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/benchmark.yml",
+      ".github/workflows/ci.yml",
+      ".github/workflows/engineering-gate.yml"
+    ],
+    "file_count": 3,
+    "related_prs": [
+      253
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/github_actions/actions/upload-pages-artifact-5",
+    "kind": "branch",
+    "title": "dependabot/github_actions/actions/upload-pages-artifact-5",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/f2b0665a5ec0e4ac3946724f141e281168ec7932",
+    "head": "f2b0665a5ec0e4ac3946724f141e281168ec7932",
+    "behind_main": 217,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/deploy-pages.yml"
+    ],
+    "file_count": 1,
+    "related_prs": [
+      289
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/github_actions/pnpm/action-setup-6",
+    "kind": "branch",
+    "title": "dependabot/github_actions/pnpm/action-setup-6",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/34a2c689e9c15895484efc5ff01b36f697cae00b",
+    "head": "34a2c689e9c15895484efc5ff01b36f697cae00b",
+    "behind_main": 217,
+    "ahead_main": 1,
+    "files": [
+      ".github/workflows/benchmark.yml",
+      ".github/workflows/build.yml",
+      ".github/workflows/ci.yml",
+      ".github/workflows/deploy-pages.yml",
+      ".github/workflows/engineering-gate.yml"
+    ],
+    "file_count": 5,
+    "related_prs": [
+      256
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/npm_and_yarn/better-sqlite3-13.0.1",
+    "kind": "branch",
+    "title": "dependabot/npm_and_yarn/better-sqlite3-13.0.1",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/2a21ee20ea7132d5e4246a757321ddc10636f488",
+    "head": "2a21ee20ea7132d5e4246a757321ddc10636f488",
+    "behind_main": 221,
+    "ahead_main": 1,
+    "files": [
+      "packages/arqfs/package.json",
+      "pnpm-lock.yaml"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      260
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/npm_and_yarn/fast-check-4.9.0",
+    "kind": "branch",
+    "title": "dependabot/npm_and_yarn/fast-check-4.9.0",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/236c23f3db38049b6d0ce85fa26d79a7fac90a07",
+    "head": "236c23f3db38049b6d0ce85fa26d79a7fac90a07",
+    "behind_main": 225,
+    "ahead_main": 1,
+    "files": [
+      "package.json",
+      "pnpm-lock.yaml"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      262
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/npm_and_yarn/minor-and-patch-c95fa9565d",
+    "kind": "branch",
+    "title": "dependabot/npm_and_yarn/minor-and-patch-c95fa9565d",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/8e5875b5475d9a45e8132e413e04721104955211",
+    "head": "8e5875b5475d9a45e8132e413e04721104955211",
+    "behind_main": 39,
+    "ahead_main": 1,
+    "files": [
+      "apps/web/package.json",
+      "package.json",
+      "packages/collaboration/package.json",
+      "packages/design-system/package.json",
+      "packages/icons/package.json",
+      "packages/local-storage/package.json",
+      "packages/model-renderer/package.json",
+      "pnpm-lock.yaml"
+    ],
+    "file_count": 8,
+    "related_prs": [
+      315
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/npm_and_yarn/multi-3146d5559c",
+    "kind": "branch",
+    "title": "dependabot/npm_and_yarn/multi-3146d5559c",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/39c3c48163fb6d9053b4d5c633af7d5a75951fb6",
+    "head": "39c3c48163fb6d9053b4d5c633af7d5a75951fb6",
+    "behind_main": 137,
+    "ahead_main": 1,
+    "files": [
+      "apps/web/package.json",
+      "packages/design-system/package.json",
+      "packages/icons/package.json",
+      "pnpm-lock.yaml"
+    ],
+    "file_count": 4,
+    "related_prs": [
+      261
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/npm_and_yarn/types/node-26.1.1",
+    "kind": "branch",
+    "title": "dependabot/npm_and_yarn/types/node-26.1.1",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/ce431c76b44d9e586a7289e198d2cf5ba5480ae0",
+    "head": "ce431c76b44d9e586a7289e198d2cf5ba5480ae0",
+    "behind_main": 225,
+    "ahead_main": 1,
+    "files": [
+      "apps/marketing/package.json",
+      "packages/pdf-export/package.json",
+      "pnpm-lock.yaml"
+    ],
+    "file_count": 3,
+    "related_prs": [
+      264
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/npm_and_yarn/typescript-7.0.2",
+    "kind": "branch",
+    "title": "dependabot/npm_and_yarn/typescript-7.0.2",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/14c0a0da90685f881b49c02c25211e556ca53685",
+    "head": "14c0a0da90685f881b49c02c25211e556ca53685",
+    "behind_main": 225,
+    "ahead_main": 1,
+    "files": [
+      "package.json",
+      "pnpm-lock.yaml"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      259
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/npm_and_yarn/vite-8.1.5",
+    "kind": "branch",
+    "title": "dependabot/npm_and_yarn/vite-8.1.5",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/24f0543a97d3651c77c04a539796e3f28e935efa",
+    "head": "24f0543a97d3651c77c04a539796e3f28e935efa",
+    "behind_main": 225,
+    "ahead_main": 1,
+    "files": [
+      "apps/web/package.json",
+      "pnpm-lock.yaml"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      265
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-dependabot/npm_and_yarn/vitejs/plugin-react-6.0.4",
+    "kind": "branch",
+    "title": "dependabot/npm_and_yarn/vitejs/plugin-react-6.0.4",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/493128981e3183bf446e65e04e0e0862ff041cc2",
+    "head": "493128981e3183bf446e65e04e0e0862ff041cc2",
+    "behind_main": 225,
+    "ahead_main": 1,
+    "files": [
+      "apps/web/package.json",
+      "pnpm-lock.yaml"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      263
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-fix/issue-325-zeus-cross-language-impact",
+    "kind": "branch",
+    "title": "fix/issue-325-zeus-cross-language-impact",
+    "state": "active PR",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/d292ace3cf7dc45cdff6dedca1af477772512953",
+    "head": "d292ace3cf7dc45cdff6dedca1af477772512953",
+    "behind_main": 12,
+    "ahead_main": 10,
+    "files": [
+      ".github/workflows/zeus-repository-intelligence.yml",
+      ".zeus/repository-graph.json",
+      "scripts/lib/zeus-repository-evidence.mjs",
+      "scripts/lib/zeus-rust-graph.mjs",
+      "scripts/lib/zeus-ts-alias-graph.mjs",
+      "scripts/zeus-repository-cross-language-performance.test.mjs",
+      "scripts/zeus-repository-cross-language.mjs",
+      "scripts/zeus-repository-cross-language.test.mjs",
+      "scripts/zeus.mjs"
+    ],
+    "file_count": 9,
+    "related_prs": [
+      365
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-main",
+    "kind": "branch",
+    "title": "main",
+    "state": "contained in main",
+    "phases": [
+      "E00"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/a02ccc69e44e41324324c9482a43edbfb58e7905",
+    "head": "a02ccc69e44e41324324c9482a43edbfb58e7905",
+    "behind_main": 0,
+    "ahead_main": 0,
+    "files": [],
+    "file_count": 0,
+    "related_prs": [],
+    "protected": false,
+    "disposition": "Preserve current product integration snapshot; resolve default/protection drift under #332.",
+    "routing_basis": "git ancestry and associated PRs"
+  },
+  {
+    "id": "BR-research/archaiflow-reference-2026-09",
+    "kind": "branch",
+    "title": "research/archaiflow-reference-2026-09",
+    "state": "active PR",
+    "phases": [
+      "E01"
+    ],
+    "url": "https://github.com/ruddvz/Arq/tree/408b08914aa28df6dd69a42b723926a5a1e164f8",
+    "head": "408b08914aa28df6dd69a42b723926a5a1e164f8",
+    "behind_main": 12,
+    "ahead_main": 2,
+    "files": [
+      "docs/research/ARCHAIFLOW-REFERENCE-2026-09.md",
+      "docs/research/COMPETITOR-WORKFLOW-AUDIT.md"
+    ],
+    "file_count": 2,
+    "related_prs": [
+      366
+    ],
+    "protected": false,
+    "disposition": "Active PR owns changed paths; do not independently overwrite or bulk merge.",
+    "routing_basis": "git ancestry and associated PRs"
+  }
+]

@@ -1,0 +1,77 @@
+{
+  "files": [
+    {
+      "sha": "f0aaeb0cefb98e89961e2dc66002110c91316117",
+      "filename": "CLAUDE.md",
+      "status": "modified",
+      "additions": 26,
+      "deletions": 0,
+      "changes": 26,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/f5f7264d9def7787a9ce816e0b169967207f9ae7/CLAUDE.md",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/f5f7264d9def7787a9ce816e0b169967207f9ae7/CLAUDE.md",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/CLAUDE.md?ref=f5f7264d9def7787a9ce816e0b169967207f9ae7",
+      "patch": "@@ -25,3 +25,29 @@ visible, not silent. It stays quiet only on acknowledgements, `/zeus-*` slash co\n Full specification: `.zeus/ZEUS.md`. Domain rules: `.zeus/modules/`. Slash commands:\n `/zeus`, `/zeus-audit`, `/zeus-handoff`, `/zeus-design`, `/zeus-incident`,\n `/zeus-release`.\n+\n+## Z Voice (Arq Language System 4.1)\n+\n+The governed vocabulary lives under `docs/product/voice/` and is enforced by the\n+`language-system` CI job and the Pages deployment gates. Standing rules for\n+every session, human or AI:\n+\n+1. Any change that touches a governed source set (the 29 sets listed in\n+   `docs/product/voice/context-contract.json`: STATUS.md, README.md, ADRs,\n+   marketing content, workspace registries, state machines, routes, RBAC and\n+   the rest) must run `pnpm arq:language:refresh` once, in the same change.\n+   The refresh appends an entry to `docs/product/voice/context/REFRESH-LOG.json`\n+   naming the source sets that moved; CI fails a context whose change is not\n+   logged, and never regenerates the context itself.\n+2. All copy that AI writes for product UI, marketing pages or docs is checked\n+   at write time by the warn-only guardian hook\n+   (`scripts/arq-language-guardian.mjs`, wired as a `PostToolUse` hook) and\n+   blocked at CI time by `pnpm arq:language:audit:ci`. Do not bypass a guardian\n+   warning; fix the wording or record a reviewed acknowledgement.\n+3. Before pushing a change that affects public copy, product state language or\n+   the registries, run the ladder: `pnpm arq:language:sources:verify` through\n+   `pnpm arq:language:audit:ci` (order in\n+   `docs/product/voice/INTEGRATION-BRIEF.md`), then tests.\n+4. A public current-state claim needs a claim-registry binding; an open\n+   conflict in `docs/product/voice/conflict-registry.json` blocks its claims\n+   from every surface until resolved by its owner."
+    },
+    {
+      "sha": "78296ac70033d7a4ce646f98a0e8b4ad414314f6",
+      "filename": "docs/product/voice/context/CHANGELOG.md",
+      "status": "modified",
+      "additions": 18,
+      "deletions": 0,
+      "changes": 18,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/f5f7264d9def7787a9ce816e0b169967207f9ae7/docs%2Fproduct%2Fvoice%2Fcontext%2FCHANGELOG.md",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/f5f7264d9def7787a9ce816e0b169967207f9ae7/docs%2Fproduct%2Fvoice%2Fcontext%2FCHANGELOG.md",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/docs%2Fproduct%2Fvoice%2Fcontext%2FCHANGELOG.md?ref=f5f7264d9def7787a9ce816e0b169967207f9ae7",
+      "patch": "@@ -1,5 +1,23 @@\n # Arq language-system changelog\n \n+## 2026-07-28 - Refresh logging and write-time docs coverage\n+\n+Every substantive context refresh now records itself. When the source-set\n+digest changes, `refresh-arq-language-context.mjs` appends an entry to\n+`context/REFRESH-LOG.json` naming the source sets that moved, and\n+`verify-arq-language-context.mjs` fails any committed context whose digest the\n+log does not carry. An update to governed sources therefore cannot land\n+unlogged: CI rejects it.\n+\n+The warn-only guardian hook now also covers prose under `docs/pages`,\n+`docs/product`, `docs/ai` and `docs/interoperability` (excluding\n+`docs/product/voice`, whose audit records quote violations on purpose and are\n+governed by the acknowledgement contract). AI-written copy on those surfaces is\n+checked at write time; `arq:language:audit:ci` remains the blocking gate.\n+\n+`CLAUDE.md` states the standing loop for every session: touch a governed\n+source, refresh once in the same change, run the ladder before pushing.\n+\n ## 2026-07-27 - Version 4.1\n \n Version 4.1 corrects a deployment-boundary defect found by inspecting the live"
+    },
+    {
+      "sha": "9786baf4aa204584e153863110f1a2bfd98762b0",
+      "filename": "docs/product/voice/context/REFRESH-LOG.json",
+      "status": "added",
+      "additions": 11,
+      "deletions": 0,
+      "changes": 11,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/f5f7264d9def7787a9ce816e0b169967207f9ae7/docs%2Fproduct%2Fvoice%2Fcontext%2FREFRESH-LOG.json",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/f5f7264d9def7787a9ce816e0b169967207f9ae7/docs%2Fproduct%2Fvoice%2Fcontext%2FREFRESH-LOG.json",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/docs%2Fproduct%2Fvoice%2Fcontext%2FREFRESH-LOG.json?ref=f5f7264d9def7787a9ce816e0b169967207f9ae7",
+      "patch": "@@ -0,0 +1,11 @@\n+{\n+  \"schemaVersion\": 1,\n+  \"entries\": [\n+    {\n+      \"generatedAt\": \"2026-07-28T01:29:10.416Z\",\n+      \"sourceSetDigest\": \"09ed514f0ae5cce46e6e9269c702a292348f77f9264d67e1c3beafe2aefd8488\",\n+      \"previousSourceSetDigest\": \"09ed514f0ae5cce46e6e9269c702a292348f77f9264d67e1c3beafe2aefd8488\",\n+      \"changedSourceSets\": []\n+    }\n+  ]\n+}"
+    },
+    {
+      "sha": "d8c34a191e242d63abfa983637ea6c389c169774",
+      "filename": "scripts/arq-language-guardian.mjs",
+      "status": "modified",
+      "additions": 9,
+      "deletions": 1,
+      "changes": 10,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/f5f7264d9def7787a9ce816e0b169967207f9ae7/scripts%2Farq-language-guardian.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/f5f7264d9def7787a9ce816e0b169967207f9ae7/scripts%2Farq-language-guardian.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Farq-language-guardian.mjs?ref=f5f7264d9def7787a9ce816e0b169967207f9ae7",
+      "patch": "@@ -32,11 +32,19 @@ const filePath =\n if (!filePath) process.exit(0);\n \n const rel = filePath.replace(/^.*\\/Arq\\//, '');\n+/*\n+ * Docs prose is warned on at write time with the same bases the hard audit\n+ * scans, except docs/product/voice/: the system's own audit records quote\n+ * violations on purpose and are covered by the acknowledgement contract in\n+ * arq:language:audit:ci instead.\n+ */\n const inScope =\n   /^apps\\/marketing\\/src\\//.test(rel) ||\n   /^apps\\/web\\/src\\//.test(rel) ||\n   /^packages\\/design-system\\/src\\//.test(rel) ||\n-  /^packages\\/workspace\\/src\\/registry\\/.*\\.json$/.test(rel);\n+  /^packages\\/workspace\\/src\\/registry\\/.*\\.json$/.test(rel) ||\n+  (/^docs\\/(pages|product|ai|interoperability)\\//.test(rel) &&\n+    !/^docs\\/product\\/voice\\//.test(rel));\n \n const isTest = /\\.(test|spec)\\.[tj]sx?$/.test(rel) || /__tests__\\//.test(rel);\n if (!inScope || isTest) process.exit(0);"
+    },
+    {
+      "sha": "3ed35435cba517a3edd2b9400f00829f3f342285",
+      "filename": "scripts/refresh-arq-language-context.mjs",
+      "status": "modified",
+      "additions": 39,
+      "deletions": 0,
+      "changes": 39,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/f5f7264d9def7787a9ce816e0b169967207f9ae7/scripts%2Frefresh-arq-language-context.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/f5f7264d9def7787a9ce816e0b169967207f9ae7/scripts%2Frefresh-arq-language-context.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Frefresh-arq-language-context.mjs?ref=f5f7264d9def7787a9ce816e0b169967207f9ae7",
+      "patch": "@@ -182,6 +182,45 @@ const context = {\n     launchClaims: readRepo('business/LAUNCH-CLAIMS-CHECKLIST.md'),\n   },\n };\n+/*\n+ * Refresh log. Every substantive refresh (a digest change) appends an entry\n+ * naming the source sets that moved, so the record of what changed and when is\n+ * written by the same step that updates the context. verify-arq-language-context\n+ * requires the latest entry to match the committed context, which makes an\n+ * unlogged update fail CI. The log itself is not a hashed source set, so\n+ * writing it cannot invalidate the context it describes.\n+ */\n+const logPath = join(languageRoot, 'context/REFRESH-LOG.json');\n+let previous = null;\n+if (existsSync(output)) {\n+  try {\n+    previous = JSON.parse(readFileSync(output, 'utf8'));\n+  } catch {\n+    previous = null;\n+  }\n+}\n+let refreshLog = { schemaVersion: 1, entries: [] };\n+if (existsSync(logPath)) {\n+  try {\n+    const parsed = JSON.parse(readFileSync(logPath, 'utf8'));\n+    if (Array.isArray(parsed?.entries)) refreshLog = parsed;\n+  } catch {\n+    /* an unreadable log is rebuilt from this refresh */\n+  }\n+}\n+if (refreshLog.entries[0]?.sourceSetDigest !== sourceSetDigest) {\n+  const previousSources = previous?.sources ?? {};\n+  const changedSourceSets = [...new Set([...Object.keys(previousSources), ...Object.keys(records)])]\n+    .filter((id) => previousSources[id]?.sha256 !== records[id]?.sha256)\n+    .sort();\n+  refreshLog.entries.unshift({\n+    generatedAt: new Date().toISOString(),\n+    sourceSetDigest,\n+    previousSourceSetDigest: previous?.sourceSetDigest ?? null,\n+    changedSourceSets,\n+  });\n+  writeFileSync(logPath, `${JSON.stringify(refreshLog, null, 2)}\\n`);\n+}\n mkdirSync(dirname(output), { recursive: true });\n writeFileSync(output, `${JSON.stringify(context, null, 2)}\\n`);\n console.log("
+    },
+    {
+      "sha": "8a72217b3498745678b97b92ffded647c2209ddd",
+      "filename": "scripts/verify-arq-language-context.mjs",
+      "status": "modified",
+      "additions": 23,
+      "deletions": 0,
+      "changes": 23,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/f5f7264d9def7787a9ce816e0b169967207f9ae7/scripts%2Fverify-arq-language-context.mjs",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/f5f7264d9def7787a9ce816e0b169967207f9ae7/scripts%2Fverify-arq-language-context.mjs",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/scripts%2Fverify-arq-language-context.mjs?ref=f5f7264d9def7787a9ce816e0b169967207f9ae7",
+      "patch": "@@ -113,6 +113,29 @@ const digest = sha(\n     .join('\\n'),\n );\n if (context.sourceSetDigest !== digest) fail('generated context source-set digest mismatch');\n+/*\n+ * The refresh log written by refresh-arq-language-context must record the\n+ * digest the committed context carries. This fails a context that was updated\n+ * without its change being logged, so the record of which source sets moved\n+ * stays complete.\n+ */\n+const refreshLogPath = join(languageRoot, 'context/REFRESH-LOG.json');\n+if (!existsSync(refreshLogPath)) {\n+  fail('context refresh log missing: run arq:language:refresh');\n+} else {\n+  let refreshLog = null;\n+  try {\n+    refreshLog = JSON.parse(readFileSync(refreshLogPath, 'utf8'));\n+  } catch {\n+    refreshLog = null;\n+  }\n+  const latest = refreshLog?.entries?.[0];\n+  if (!latest?.sourceSetDigest) fail('context refresh log has no entries');\n+  else if (latest.sourceSetDigest !== context.sourceSetDigest)\n+    fail('context change is not logged: run arq:language:refresh');\n+  else if (!Array.isArray(latest.changedSourceSets))\n+    fail('latest refresh log entry does not record changed source sets');\n+}\n if (failures) {\n   console.error(\n     `\\n${failures} repo-context freshness failure(s). Run arq:language:refresh after fixing canonical sources.`,"
+    }
+  ],
+  "reviews": []
+}

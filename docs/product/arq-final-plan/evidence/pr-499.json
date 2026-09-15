@@ -1,0 +1,277 @@
+{
+  "files": [
+    {
+      "sha": "2faaeb567795746c5cfb0b023481c3568e0c3b6e",
+      "filename": "docs/product/ARQ-UI-UX-OVERLAY-ZONE-CONTRACT.md",
+      "status": "added",
+      "additions": 140,
+      "deletions": 0,
+      "changes": 140,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/a6bb7a2cbc29798681f2c1d042961e5bd794c812/docs%2Fproduct%2FARQ-UI-UX-OVERLAY-ZONE-CONTRACT.md",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/a6bb7a2cbc29798681f2c1d042961e5bd794c812/docs%2Fproduct%2FARQ-UI-UX-OVERLAY-ZONE-CONTRACT.md",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/docs%2Fproduct%2FARQ-UI-UX-OVERLAY-ZONE-CONTRACT.md?ref=a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+      "patch": "@@ -0,0 +1,140 @@\n+# ARQ UI/UX overlay zone contract\n+\n+**Issue:** #412  \n+**Parent:** #381  \n+**Input audit:** #403 / `docs/product/ARQ-UI-UX-TOKEN-LAYER-AUDIT.md`  \n+**Implementation base:** `main` @ `4184551be3e75636d7feea93fda13699b00b4b43`  \n+**Scope:** presentation layering, canvas overlay placement and pointer ownership only. No CAD hit-testing redesign.\n+\n+## 1. Layer order\n+\n+ARQ uses one ordered layer model. All named layer numbers live in `packages/design-system/src/shell/shell-tokens.css`; local feature code must consume those names rather than create a competing numeric scale.\n+\n+<!-- prettier-ignore -->\n+| Order | Surface | Authority |\n+| ---: | --- | --- |\n+| normal flow | base canvas and docked shell | layout / renderer |\n+| 10 | raised shell and passive view identity | `--arq-z-shell-raised` |\n+| 90 | context HUD, selection/tool chrome and centre transient canvas feedback | `--arq-z-context-hud` |\n+| 95 | workspace overlays: floating panels, tablet drawers and bottom sheets | `--arq-z-workspace-overlay` |\n+| 98 | focused accessibility escape surfaces such as the skip link | `--arq-z-accessibility` |\n+| 100 | modal backdrop | `--arq-z-overlay-backdrop` |\n+| 110 | modal surface | `--arq-z-overlay-surface` |\n+| 120 | menus and popovers | `--arq-z-popover` |\n+| 200 | toast/status notification | `--arq-z-toast` |\n+\n+The workspace-overlay and accessibility tiers deliberately occupy the reserved gap between the HUD and modal backdrop. They are part of the canonical shell layer scale, not workspace-local numeric definitions. This gives three deterministic rules:\n+\n+1. a drawer or sheet hides tool chrome where it physically covers the canvas;\n+2. a focused skip link remains visible above ordinary workspace overlays;\n+3. a modal backdrop still wins over all background workspace surfaces.\n+\n+## 2. Canvas zones\n+\n+`CanvasOverlayZone` defines the only named placement zones for new canvas chrome:\n+\n+- `top-left`\n+- `top-center`\n+- `top-right`\n+- `bottom-left`\n+- `bottom-center`\n+- `bottom-right`\n+- `center`\n+- `selection`\n+- `tool`\n+\n+Corner and centre zones use workspace safe-area variables instead of hard-coded edge offsets. `selection` and `tool` are full-canvas geometry hosts whose children own their exact geometry-derived position.\n+\n+Reserved integration roles are:\n+\n+<!-- prettier-ignore -->\n+| Role | Default zone | Pointer behavior |\n+| --- | --- | --- |\n+| view identity | top-left | transparent unless a real control is added |\n+| level selector | top-left | actual control bounds only |\n+| view controls | top-right | actual control bounds only |\n+| transient feedback | bottom-center | transparent by default |\n+| AI/review highlight | center | transparent by default |\n+| selection chrome | selection | actual control bounds only |\n+| tool HUD | tool | actual control bounds only |\n+\n+These are presentation roles, not project state. A future feature may choose another named zone when evidence requires it, but it must not invent a private overlay coordinate system.\n+\n+## 3. Pointer ownership\n+\n+The canvas owns pointer input everywhere except the actual bounds of an interactive overlay control.\n+\n+`arq-canvas-overlay-zone` is therefore always `pointer-events: none`. An interactive child opts back in with `arq-canvas-overlay-control`, which is `pointer-events: auto`.\n+\n+The existing Context HUD follows the same rule independently: its host is pointer-transparent and the wall numeric input explicitly opts back in. This preserves snapping, pointer move and click ownership outside the field.\n+\n+A full-screen transparent overlay container with pointer events enabled is forbidden. So is a transparent backdrop added only to make outside-click handling easier. Outside dismissal must not steal canvas input before the actual control receives it.\n+\n+## 4. Current migrations\n+\n+This issue migrates the current known collisions from #403:\n+\n+- `WorkspaceSheet`: raw `zIndex: 5` -> `--arq-z-workspace-overlay`;\n+- desktop floating panels / tablet drawers: raised-shell tier -> workspace-overlay tier;\n+- `TabContextMenu`: raw `zIndex: 6` -> `--arq-z-popover`;\n+- phone project More menu: raw `zIndex: 6` -> `--arq-z-popover`;\n+- workspace skip link: runtime ordering -> named `--arq-z-accessibility` tier;\n+- the new workspace-overlay/accessibility values are promoted into `shell-tokens.css` and pinned by the global layer guard.\n+\n+`data-arq-overlay-role` is attached to sheet/menu surfaces where practical so browser evidence can identify the semantic layer without inferring it from visual position.\n+\n+## 5. Current conforming surfaces and explicit exceptions\n+\n+### Conforming\n+\n+- Plan tool Context HUD: HUD tier, pointer-transparent host, interactive numeric field only.\n+- modal infrastructure: named backdrop/surface tiers and React Aria modal behavior.\n+- passive view identity: raised-shell tier and pointer-transparent surface.\n+- refraction decoration: local z-index only and `pointer-events: none`.\n+- 3D canvas: no independent floating overlay system at this implementation head.\n+\n+### Explicit exceptions routed elsewhere\n+\n+- `apps/web/src/App.tsx` command-palette wrapper remains a transformed raw `zIndex: 10` stacking context while PR #361 owns that host file. #412 records the defect but does not mutate #361-owned code. After #361 releases the path, the wrapper must be removed or reconciled so modal children are not capped below global tiers.\n+- legacy `IPadLandscapeShell` raw z-index values remain tied to #396 consumer/legacy resolution rather than being mechanically promoted.\n+\n+These exceptions are not permission for new code to copy their values.\n+\n+## 6. Collision rules\n+\n+When two surfaces want the same screen area, resolve the conflict in this order:\n+\n+1. preserve semantic layer order;\n+2. move or flip geometry-anchored HUD/popover content when a positioning engine can do so without changing model state;\n+3. let a higher workspace surface occlude lower canvas chrome where the underlying canvas itself is covered;\n+4. collapse or relocate low-priority passive chrome on narrow canvases;\n+5. never fix a collision by adding a larger local z-index.\n+\n+Menus/popovers are allowed to appear above sheets because they are transient descendants of a current interaction. Modal backdrop/surface outrank sheets and HUDs. Toasts remain last-resort notification chrome above all of them.\n+\n+## 7. Safe areas, resize and drag\n+\n+The zone host exposes top/right/bottom/left safe-area CSS variables with compact workspace spacing as the default. A platform host may override these variables when it owns a real reserved inset.\n+\n+Panel resize and sheet drag remain presentation/session behavior. They must not write overlay coordinates into canonical project data. During resize/drag, avoid measuring or relaying out unrelated overlay zones on every pointer move. A sheet follows its existing detent/drag path; floating panels continue to publish their occupied width through the workspace layout contract.\n+\n+## 8. Performance\n+\n+The overlay contract adds no new blur, backdrop filter or animation. It uses layer ordering and pointer transparency only.\n+\n+Existing material/filter cost remains owned by #402/#489. New overlay work must not add a full-viewport filtered surface merely to establish stacking or outside-click behavior.\n+\n+## 9. Evidence contract\n+\n+#412 closure evidence must include:\n+\n+- unit/static evidence for layer ordering, named zones and pointer ownership;\n+- proof that raw sheet/menu z-index values are gone from their components;\n+- representative browser evidence for sheet/workspace layout and existing HUD/modal paths where the current Chromium harness supports them;\n+- explicit recording of the #361 `App.tsx` exception if it is still externally owned at closure.\n+\n+Cross-engine completion is not invented here if the browser-matrix lane is still separate.\n+\n+## 10. Rule for later features\n+\n+Later level selectors, selection handles, Review Centre highlights, AI annotations and tool HUDs must choose a named zone and an existing semantic layer. If none fits, the feature must produce evidence for extending this contract before adding a new tier or full-canvas interaction surface."
+    },
+    {
+      "sha": "e5455996fcfb06c0fff2807caa5aab1cb3f30e1f",
+      "filename": "packages/design-system/src/shell/layer-contract.test.ts",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 1,
+      "changes": 7,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fshell%2Flayer-contract.test.ts",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fshell%2Flayer-contract.test.ts",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Fdesign-system%2Fsrc%2Fshell%2Flayer-contract.test.ts?ref=a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+      "patch": "@@ -46,16 +46,21 @@ function rawLayerValues(): readonly number[] {\n const CANONICAL_LAYERS = [\n   ['--arq-z-shell-raised', 10],\n   ['--arq-z-context-hud', 90],\n+  ['--arq-z-workspace-overlay', 95],\n+  ['--arq-z-accessibility', 98],\n   ['--arq-z-overlay-backdrop', 100],\n   ['--arq-z-overlay-surface', 110],\n   ['--arq-z-popover', 120],\n   ['--arq-z-toast', 200],\n ] as const;\n \n describe('shell layer contract', () => {\n-  it('keeps the named global layer tiers pinned', () => {\n+  it('keeps the named global layer tiers pinned and ordered', () => {\n+    let previous = Number.NEGATIVE_INFINITY;\n     for (const [token, value] of CANONICAL_LAYERS) {\n       expect(SHELL_TOKENS).toMatch(new RegExp(`${token}\\\\s*:\\\\s*${value}\\\\s*;`));\n+      expect(value).toBeGreaterThan(previous);\n+      previous = value;\n     }\n   });\n "
+    },
+    {
+      "sha": "2742ad56ec817ad060be8f54aefc6547b3107077",
+      "filename": "packages/design-system/src/shell/shell-tokens.css",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 0,
+      "changes": 5,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fshell%2Fshell-tokens.css",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fshell%2Fshell-tokens.css",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Fdesign-system%2Fsrc%2Fshell%2Fshell-tokens.css?ref=a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+      "patch": "@@ -210,6 +210,11 @@\n      everything above it. */\n   --arq-z-shell-raised: 10;\n   --arq-z-context-hud: 90;\n+  /* UX-1.3: a workspace drawer or sheet covers canvas HUD chrome where the\n+     canvas itself is covered, while accessibility escape surfaces stay visible\n+     above workspace overlays without outranking a modal. */\n+  --arq-z-workspace-overlay: 95;\n+  --arq-z-accessibility: 98;\n   --arq-z-overlay-backdrop: 100;\n   --arq-z-overlay-surface: 110;\n   --arq-z-popover: 120;"
+    },
+    {
+      "sha": "d29495e0cb9e3ed708b6760f9cefed3fb4cbb6e9",
+      "filename": "packages/design-system/src/workspace/canvas-overlay-zone.tsx",
+      "status": "added",
+      "additions": 57,
+      "deletions": 0,
+      "changes": 57,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Fcanvas-overlay-zone.tsx",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Fcanvas-overlay-zone.tsx",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Fcanvas-overlay-zone.tsx?ref=a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+      "patch": "@@ -0,0 +1,57 @@\n+import type { HTMLAttributes, ReactNode } from 'react';\n+\n+export const CANVAS_OVERLAY_ZONES = [\n+  'top-left',\n+  'top-center',\n+  'top-right',\n+  'bottom-left',\n+  'bottom-center',\n+  'bottom-right',\n+  'center',\n+  'selection',\n+  'tool',\n+] as const;\n+\n+export type CanvasOverlayZoneName = (typeof CANVAS_OVERLAY_ZONES)[number];\n+\n+export const CANVAS_OVERLAY_ROLE_ZONE = {\n+  'view-identity': 'top-left',\n+  'level-selector': 'top-left',\n+  'view-controls': 'top-right',\n+  'transient-feedback': 'bottom-center',\n+  'ai-highlight': 'center',\n+  'selection-chrome': 'selection',\n+  'tool-hud': 'tool',\n+} as const satisfies Readonly<Record<string, CanvasOverlayZoneName>>;\n+\n+export type CanvasOverlayRole = keyof typeof CANVAS_OVERLAY_ROLE_ZONE;\n+\n+export interface CanvasOverlayZoneProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {\n+  readonly zone: CanvasOverlayZoneName;\n+  readonly children: ReactNode;\n+}\n+\n+/**\n+ * Presentation-only host for canvas chrome.\n+ *\n+ * The zone itself is always pointer-transparent. Interactive descendants opt\n+ * back in with `arq-canvas-overlay-control`, which keeps the rest of the\n+ * canvas hit-testable while allowing real buttons/fields to own their bounds.\n+ * Selection/tool zones are geometry-anchored full-canvas hosts; corner/centre\n+ * zones use the workspace safe-area variables from overlay-zone-contract.css.\n+ * Layer ordering itself remains owned by shell-tokens.css.\n+ */\n+export function CanvasOverlayZone(props: CanvasOverlayZoneProps): JSX.Element {\n+  const { zone, className, children, ...rest } = props;\n+  return (\n+    <div\n+      {...rest}\n+      className={['arq-canvas-overlay-zone', className].filter(Boolean).join(' ')}\n+      data-arq-overlay-zone={zone}\n+    >\n+      {children}\n+    </div>\n+  );\n+}\n+\n+export const CANVAS_OVERLAY_CONTROL_CLASS = 'arq-canvas-overlay-control';"
+    },
+    {
+      "sha": "55a503415efb72c9494d35c26607abe6bbd10041",
+      "filename": "packages/design-system/src/workspace/index.ts",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 0,
+      "changes": 3,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Findex.ts",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Findex.ts",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Findex.ts?ref=a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+      "patch": "@@ -1,3 +1,5 @@\n+import './overlay-zone-contract.css';\n+\n export * from './mode-rail';\n export * from './tool-rail-adapter';\n export * from './project-tab-strip';\n@@ -16,3 +18,4 @@ export * from './tablet-drawer-bar';\n export * from './use-viewport-probe';\n export * from './view-kind-label';\n export * from './view-kind-switcher';\n+export * from './canvas-overlay-zone';"
+    },
+    {
+      "sha": "1dfc70f7d9ecd749e7ed1c19671b4c1b74f7a985",
+      "filename": "packages/design-system/src/workspace/overlay-zone-contract.css",
+      "status": "added",
+      "additions": 94,
+      "deletions": 0,
+      "changes": 94,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Foverlay-zone-contract.css",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Foverlay-zone-contract.css",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Foverlay-zone-contract.css?ref=a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+      "patch": "@@ -0,0 +1,94 @@\n+/*\n+ * UX-1.3 workspace overlay contract.\n+ *\n+ * Layer numbers live only in shell-tokens.css. This file owns workspace\n+ * placement and pointer behavior, then consumes those semantic tiers: an open\n+ * drawer/sheet must occlude tool chrome over the part of the canvas it covers,\n+ * while a focused skip link remains visible above workspace overlays without\n+ * ever outranking a modal.\n+ */\n+.arq-workspace {\n+  /* Canvas chrome stays off the shell edge and may be overridden by a host\n+     that knows about a platform-specific reserved inset. */\n+  --arq-overlay-safe-top: var(--arq-space-compact);\n+  --arq-overlay-safe-right: var(--arq-space-compact);\n+  --arq-overlay-safe-bottom: var(--arq-space-compact);\n+  --arq-overlay-safe-left: var(--arq-space-compact);\n+}\n+\n+/* Desktop floating panels and tablet side drawers are real shell overlays, not\n+   ordinary raised cards. Higher specificity intentionally supersedes the\n+   legacy shell-raised declaration in workspace-shell.css without restyling it. */\n+.arq-workspace .arq-workspace__overlay {\n+  z-index: var(--arq-z-workspace-overlay);\n+}\n+\n+/* The skip link is an accessibility surface. It remains below modal backdrop\n+   because background shell focus is not valid while a modal is active. */\n+.arq-workspace .arq-skip-link {\n+  z-index: var(--arq-z-accessibility);\n+}\n+\n+/* A zone is geometry only. It must never steal a canvas pointer by filling its\n+   containing block with a hit-testable element. Real controls opt back in at\n+   their own bounds with .arq-canvas-overlay-control. */\n+.arq-canvas-overlay-zone {\n+  position: absolute;\n+  top: var(--arq-overlay-safe-top);\n+  right: var(--arq-overlay-safe-right);\n+  bottom: var(--arq-overlay-safe-bottom);\n+  left: var(--arq-overlay-safe-left);\n+  z-index: var(--arq-z-shell-raised);\n+  display: flex;\n+  pointer-events: none;\n+}\n+\n+.arq-canvas-overlay-control {\n+  pointer-events: auto;\n+}\n+\n+.arq-canvas-overlay-zone[data-arq-overlay-zone='top-left'] {\n+  align-items: flex-start;\n+  justify-content: flex-start;\n+}\n+\n+.arq-canvas-overlay-zone[data-arq-overlay-zone='top-center'] {\n+  align-items: flex-start;\n+  justify-content: center;\n+}\n+\n+.arq-canvas-overlay-zone[data-arq-overlay-zone='top-right'] {\n+  align-items: flex-start;\n+  justify-content: flex-end;\n+}\n+\n+.arq-canvas-overlay-zone[data-arq-overlay-zone='bottom-left'] {\n+  align-items: flex-end;\n+  justify-content: flex-start;\n+}\n+\n+.arq-canvas-overlay-zone[data-arq-overlay-zone='bottom-center'] {\n+  align-items: flex-end;\n+  justify-content: center;\n+}\n+\n+.arq-canvas-overlay-zone[data-arq-overlay-zone='bottom-right'] {\n+  align-items: flex-end;\n+  justify-content: flex-end;\n+}\n+\n+.arq-canvas-overlay-zone[data-arq-overlay-zone='center'] {\n+  z-index: var(--arq-z-context-hud);\n+  align-items: center;\n+  justify-content: center;\n+}\n+\n+/* Selection and tool chrome follow geometry instead of a screen corner. Their\n+   children own positioning; the host only reserves the HUD tier and pointer\n+   transparency. */\n+.arq-canvas-overlay-zone[data-arq-overlay-zone='selection'],\n+.arq-canvas-overlay-zone[data-arq-overlay-zone='tool'] {\n+  inset: 0;\n+  z-index: var(--arq-z-context-hud);\n+  display: block;\n+}"
+    },
+    {
+      "sha": "9ac748ed9413f0d9748066a78be57a4c7bf75bcf",
+      "filename": "packages/design-system/src/workspace/overlay-zone-contract.test.ts",
+      "status": "added",
+      "additions": 79,
+      "deletions": 0,
+      "changes": 79,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Foverlay-zone-contract.test.ts",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Foverlay-zone-contract.test.ts",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Foverlay-zone-contract.test.ts?ref=a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+      "patch": "@@ -0,0 +1,79 @@\n+import { readFileSync } from 'node:fs';\n+import { fileURLToPath } from 'node:url';\n+import { describe, expect, it } from 'vitest';\n+import { CANVAS_OVERLAY_ROLE_ZONE, CANVAS_OVERLAY_ZONES } from './canvas-overlay-zone';\n+\n+const WORKSPACE_ROOT = fileURLToPath(new URL('./', import.meta.url));\n+const CONTRACT_CSS = readFileSync(`${WORKSPACE_ROOT}overlay-zone-contract.css`, 'utf8');\n+const SHELL_TOKENS = readFileSync(new URL('../shell/shell-tokens.css', import.meta.url), 'utf8');\n+const SHEET_SOURCE = readFileSync(new URL('./workspace-sheet.tsx', import.meta.url), 'utf8');\n+const TAB_MENU_SOURCE = readFileSync(new URL('./tab-context-menu.tsx', import.meta.url), 'utf8');\n+const PHONE_MENU_SOURCE = readFileSync(new URL('./phone-project-bar.tsx', import.meta.url), 'utf8');\n+\n+function cssNumber(source: string, token: string): number {\n+  const match = new RegExp(`${token}\\\\s*:\\\\s*(\\\\d+)\\\\s*;`).exec(source);\n+  if (match === null) {\n+    throw new Error(`missing numeric CSS token ${token}`);\n+  }\n+  return Number(match[1]);\n+}\n+\n+describe('workspace overlay zone contract', () => {\n+  it('reserves all named canvas zones and future integration roles', () => {\n+    expect(CANVAS_OVERLAY_ZONES).toEqual([\n+      'top-left',\n+      'top-center',\n+      'top-right',\n+      'bottom-left',\n+      'bottom-center',\n+      'bottom-right',\n+      'center',\n+      'selection',\n+      'tool',\n+    ]);\n+    expect(CANVAS_OVERLAY_ROLE_ZONE).toEqual({\n+      'view-identity': 'top-left',\n+      'level-selector': 'top-left',\n+      'view-controls': 'top-right',\n+      'transient-feedback': 'bottom-center',\n+      'ai-highlight': 'center',\n+      'selection-chrome': 'selection',\n+      'tool-hud': 'tool',\n+    });\n+  });\n+\n+  it('keeps workspace overlays between the HUD and modal backdrop', () => {\n+    const hud = cssNumber(SHELL_TOKENS, '--arq-z-context-hud');\n+    const workspaceOverlay = cssNumber(SHELL_TOKENS, '--arq-z-workspace-overlay');\n+    const accessibility = cssNumber(SHELL_TOKENS, '--arq-z-accessibility');\n+    const modalBackdrop = cssNumber(SHELL_TOKENS, '--arq-z-overlay-backdrop');\n+\n+    expect(hud).toBeLessThan(workspaceOverlay);\n+    expect(workspaceOverlay).toBeLessThan(accessibility);\n+    expect(accessibility).toBeLessThan(modalBackdrop);\n+    expect(CONTRACT_CSS).not.toMatch(/--arq-z-(?:workspace-overlay|accessibility)\\s*:\\s*\\d+/);\n+  });\n+\n+  it('keeps zone hosts pointer-transparent and control bounds interactive', () => {\n+    expect(CONTRACT_CSS).toMatch(/\\.arq-canvas-overlay-zone\\s*\\{[\\s\\S]*pointer-events:\\s*none;/);\n+    expect(CONTRACT_CSS).toMatch(/\\.arq-canvas-overlay-control\\s*\\{[\\s\\S]*pointer-events:\\s*auto;/);\n+  });\n+\n+  it('migrates sheet and menus to named layer variables', () => {\n+    expect(SHEET_SOURCE).toContain(\"zIndex: 'var(--arq-z-workspace-overlay)'\");\n+    expect(SHEET_SOURCE).not.toMatch(/zIndex:\\s*5\\b/);\n+    expect(TAB_MENU_SOURCE).toContain(\"zIndex: 'var(--arq-z-popover)'\");\n+    expect(TAB_MENU_SOURCE).not.toMatch(/zIndex:\\s*6\\b/);\n+    expect(PHONE_MENU_SOURCE).toContain(\"zIndex: 'var(--arq-z-popover)'\");\n+    expect(PHONE_MENU_SOURCE).not.toMatch(/zIndex:\\s*6\\b/);\n+  });\n+\n+  it('moves floating workspace panels and the skip link onto named shell tiers', () => {\n+    expect(CONTRACT_CSS).toMatch(\n+      /\\.arq-workspace \\.arq-workspace__overlay\\s*\\{[\\s\\S]*z-index:\\s*var\\(--arq-z-workspace-overlay\\);/,\n+    );\n+    expect(CONTRACT_CSS).toMatch(\n+      /\\.arq-workspace \\.arq-skip-link\\s*\\{[\\s\\S]*z-index:\\s*var\\(--arq-z-accessibility\\);/,\n+    );\n+  });\n+});"
+    },
+    {
+      "sha": "03525344e278443e4a9481fa827c8a4163d3a332",
+      "filename": "packages/design-system/src/workspace/phone-project-bar.tsx",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 5,
+      "changes": 11,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Fphone-project-bar.tsx",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Fphone-project-bar.tsx",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Fphone-project-bar.tsx?ref=a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+      "patch": "@@ -32,15 +32,15 @@ export interface PhoneProjectBarProps {\n  * from a canvas doc 47 wants dominant. Wrapping was the right emergency fix for\n  * a horizontal overflow; it is not a phone design.\n  *\n- * Doc 36's collapse priority \u2014 \"presence labels, low-priority status text and\n+ * Doc 36's collapse priority - \"presence labels, low-priority status text and\n  * secondary collaboration actions collapse first\", while \"project identity and\n- * active view never disappear\" \u2014 is implemented here literally: identity and\n+ * active view never disappear\" - is implemented here literally: identity and\n  * status stay on the bar, and undo, redo, share, open and account move into\n  * More. That is the overflow menu the earlier pass said was missing.\n  *\n  * Save and sync stay two separate words in one chip. Blueprint section 12's\n  * rule is that they are \"separate concepts\", which is about not collapsing them\n- * into a single status *enum* \u2014 \"Saved \u00b7 Offline\" keeps both facts legible,\n+ * into a single status *enum* - \"Saved \u00b7 Offline\" keeps both facts legible,\n  * where a merged \"Synced\" would hide a local-save failure behind a network\n  * state.\n  */\n@@ -183,8 +183,9 @@ export function PhoneProjectBar(props: PhoneProjectBarProps): JSX.Element {\n         <div\n           ref={menuRef}\n           role=\"menu\"\n+          data-arq-overlay-role=\"popover\"\n           aria-label=\"Project actions\"\n-          className=\"arq-shell-panel\"\n+          className=\"arq-phone-project-menu arq-shell-panel\"\n           onKeyDown={(event) => {\n             if (event.key === 'Escape') {\n               event.stopPropagation();\n@@ -195,7 +196,7 @@ export function PhoneProjectBar(props: PhoneProjectBarProps): JSX.Element {\n             position: 'absolute',\n             top: '100%',\n             right: 'var(--arq-space-compact)',\n-            zIndex: 6,\n+            zIndex: 'var(--arq-z-popover)',\n             minWidth: 200,\n             padding: 'var(--arq-space-micro)',\n             border: '1px solid var(--arq-ui-line-default)',"
+    },
+    {
+      "sha": "4056c6c917b47b305781c89a2c6612fa58fe21b6",
+      "filename": "packages/design-system/src/workspace/tab-context-menu.tsx",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 3,
+      "changes": 7,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Ftab-context-menu.tsx",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Ftab-context-menu.tsx",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Ftab-context-menu.tsx?ref=a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+      "patch": "@@ -34,7 +34,7 @@ interface MenuItem {\n  *\n  * Split right and Split down are deliberately absent rather than present and\n  * disabled. The registry's own rule is that an unavailable action \"stays\n- * visible with reason **when discoverability matters**\" \u2014 a split view is a\n+ * visible with reason **when discoverability matters**\" - a split view is a\n  * feature this repository has no viewport host for at all, so listing it would\n  * advertise a capability rather than explain a temporary state. The tools that\n  * *are* built but unavailable for this tab (duplicate on a non-duplicable kind)\n@@ -45,7 +45,7 @@ interface MenuItem {\n  * labelled, and every disabled item carries its reason in the accessible name.\n  *\n  * Escape dismisses and returns focus to the tab, and focus moves into the menu\n- * on open \u2014 without that the menu is unusable by keyboard, which is exactly the\n+ * on open - without that the menu is unusable by keyboard, which is exactly the\n  * bug found in the phone project bar's More menu.\n  */\n export function TabContextMenu(props: TabContextMenuProps): JSX.Element {\n@@ -128,6 +128,7 @@ export function TabContextMenu(props: TabContextMenuProps): JSX.Element {\n     <div\n       ref={menuRef}\n       role=\"menu\"\n+      data-arq-overlay-role=\"popover\"\n       aria-label={`${tab.title} view actions`}\n       className=\"arq-tab-context-menu arq-shell-panel\"\n       onKeyDown={(event) => {\n@@ -140,7 +141,7 @@ export function TabContextMenu(props: TabContextMenuProps): JSX.Element {\n         position: 'absolute',\n         top: '100%',\n         left: 0,\n-        zIndex: 6,\n+        zIndex: 'var(--arq-z-popover)',\n         minWidth: 240,\n         padding: 'var(--arq-space-micro)',\n         border: '1px solid var(--arq-ui-line-default)',"
+    },
+    {
+      "sha": "e39a6e550f8877aea2fa935d38daebd18ff62bf5",
+      "filename": "packages/design-system/src/workspace/workspace-sheet.tsx",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 3,
+      "changes": 9,
+      "blob_url": "https://github.com/ruddvz/Arq/blob/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Fworkspace-sheet.tsx",
+      "raw_url": "https://github.com/ruddvz/Arq/raw/a6bb7a2cbc29798681f2c1d042961e5bd794c812/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Fworkspace-sheet.tsx",
+      "contents_url": "https://api.github.com/repos/ruddvz/Arq/contents/packages%2Fdesign-system%2Fsrc%2Fworkspace%2Fworkspace-sheet.tsx?ref=a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+      "patch": "@@ -29,7 +29,7 @@ const DETENT_LABEL: Readonly<Record<Exclude<SheetDetent, 'closed'>, string>> = {\n  * Doc 47's bottom sheet: the touch replacement for a docked panel.\n  *\n  * Modal only at `full`. That is the significant decision here. A sheet at\n- * `peek` or `half` deliberately leaves the canvas visible *and usable* \u2014 doc\n+ * `peek` or `half` deliberately leaves the canvas visible *and usable* - doc\n  * 47's peek detent exists so a user can see the selection identity while still\n  * looking at the drawing, and trapping focus over a canvas the user can still\n  * see and touch would make the sheet feel broken. At `full` the canvas is\n@@ -38,7 +38,7 @@ const DETENT_LABEL: Readonly<Record<Exclude<SheetDetent, 'closed'>, string>> = {\n  *\n  * Detent changes are a real control, not only a drag. Doc 47 lists a drag\n  * gesture, but a sheet whose only path between detents is a drag is unusable\n- * with a keyboard or a switch device \u2014 so the grabber is a `<button>` that\n+ * with a keyboard or a switch device - so the grabber is a `<button>` that\n  * cycles, and Escape closes.\n  *\n  * The height comes from `sheetHeightPx`, which reads the layout registry's own\n@@ -133,6 +133,7 @@ export function WorkspaceSheet(props: WorkspaceSheetProps): JSX.Element {\n   return (\n     <div\n       className={`arq-sheet arq-sheet--${detent}`}\n+      data-arq-overlay-role=\"workspace-sheet\"\n       role=\"dialog\"\n       aria-modal={modal}\n       aria-label={`${title}, ${DETENT_LABEL[detent]}`}\n@@ -150,7 +151,9 @@ export function WorkspaceSheet(props: WorkspaceSheetProps): JSX.Element {\n         right: 0,\n         bottom: 0,\n         height: heightPx,\n-        zIndex: 5,\n+        // Above canvas/HUD chrome where the sheet physically covers it, but\n+        // below modal backdrop/surface and transient popovers.\n+        zIndex: 'var(--arq-z-workspace-overlay)',\n         display: 'flex',\n         flexDirection: 'column',\n         background: 'var(--arq-ui-paper)',"
+    }
+  ],
+  "reviews": [],
+  "detail": {
+    "baseRefOid": "4184551be3e75636d7feea93fda13699b00b4b43",
+    "body": "Closes #412 when exact-head evidence is accepted.\n\n## Scope\n\n- define the documented canvas overlay-zone contract for top/bottom corners, center, selection and tool chrome;\n- extend the canonical `shell-tokens.css` layer scale with workspace-overlay `95` and accessibility `98` between Context HUD `90` and modal backdrop `100`;\n- pin the complete named layer order in the global layer guard;\n- migrate `WorkspaceSheet` off raw z5;\n- migrate tab and phone More menus off raw z6 to the canonical popover tier;\n- move floating workspace panels/tablet drawers onto the workspace-overlay tier without changing panel behavior;\n- preserve canvas pointer ownership with pointer-transparent zone hosts and opt-in interactive child bounds;\n- add deterministic contract tests and stable overlay-role attributes for browser evidence.\n\n## Exact integration base\n\n`main` @ `4184551be3e75636d7feea93fda13699b00b4b43`.\n\nCurrent branch is directly ahead of that head with no behind commits.\n\n## Ownership boundary\n\nPR #361 is still open and owns `apps/web/src/App.tsx`. This PR does not mutate `App.tsx`. The known transformed command-palette wrapper there remains an explicit external exception until #361 releases the host path.\n\nNo CAD hit testing, snapping, camera semantics, project persistence or broad shell redesign is changed.\n\n## Canonical layer order\n\n- raised shell: 10\n- Context HUD / selection/tool chrome: 90\n- workspace overlays: 95\n- accessibility escape surface: 98\n- modal backdrop: 100\n- modal surface: 110\n- popover: 120\n- toast: 200\n\nAll named numeric values live in `packages/design-system/src/shell/shell-tokens.css`. Workspace CSS only consumes those names.\n\nThis makes a drawer/sheet occlude HUD chrome only where it physically covers the canvas, keeps the skip link above ordinary workspace overlays, and still leaves modal infrastructure authoritative.\n\n## Pointer contract\n\n`CanvasOverlayZone` hosts are always pointer-transparent. Real controls opt back in only at their bounds using `arq-canvas-overlay-control`. Full-canvas transparent hit surfaces are not introduced.\n\nThe existing wall Context HUD remains a conforming independent implementation: pointer-transparent HUD host, interactive numeric field, and browser evidence for wheel/canvas ownership.\n\n## Evidence\n\n`packages/design-system/src/workspace/overlay-zone-contract.test.ts` locks zone names, reserved future roles, layer ordering, pointer transparency, canonical token ownership and removal of raw sheet/menu z-index values. `packages/design-system/src/shell/layer-contract.test.ts` pins the complete global layer scale and rejects future raw escalation.\n\nRepository-wide `format:check` has an existing seven-file documentation baseline. #412-owned files must not appear in that warning list. Final exact-head unit, Engineering Gate and Chromium evidence will be recorded on #412 before closure.",
+    "headRefOid": "a6bb7a2cbc29798681f2c1d042961e5bd794c812",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "mergeable": "MERGEABLE",
+    "number": 499,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:10:18Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599294/job/103845226805",
+        "name": "lint-and-typecheck",
+        "startedAt": "2026-09-14T03:09:28Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:10:05Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599304/job/103845223783",
+        "name": "build",
+        "startedAt": "2026-09-14T03:09:27Z",
+        "status": "COMPLETED",
+        "workflowName": "Build"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:14:15Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599326/job/103846043043",
+        "name": "classify",
+        "startedAt": "2026-09-14T03:14:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:13:40Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599380/job/103845940080",
+        "name": "secret-scan",
+        "startedAt": "2026-09-14T03:13:29Z",
+        "status": "COMPLETED",
+        "workflowName": "Security"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:09:59Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599427/job/103845224823",
+        "name": "graph-regression",
+        "startedAt": "2026-09-14T03:09:28Z",
+        "status": "COMPLETED",
+        "workflowName": "ZEUS repository intelligence"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:10:57Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599294/job/103845226880",
+        "name": "test",
+        "startedAt": "2026-09-14T03:09:28Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:14:43Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599326/job/103846081162",
+        "name": "preflight",
+        "startedAt": "2026-09-14T03:14:17Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:14:15Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599326/job/103846082022",
+        "name": "critical-approval",
+        "startedAt": "2026-09-14T03:14:16Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:14:37Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599294/job/103845226809",
+        "name": "browser-capability-checks",
+        "startedAt": "2026-09-14T03:09:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:09:53Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599294/job/103845226703",
+        "name": "language-system",
+        "startedAt": "2026-09-14T03:09:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:17:49Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599326/job/103846163835",
+        "name": "selected-evidence",
+        "startedAt": "2026-09-14T03:14:45Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:09:53Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599294/job/103845226895",
+        "name": "dependency-licence-scan",
+        "startedAt": "2026-09-14T03:09:28Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:18:03Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599326/job/103846716066",
+        "name": "engineering-gate",
+        "startedAt": "2026-09-14T03:17:51Z",
+        "status": "COMPLETED",
+        "workflowName": "Engineering Gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-14T03:09:42Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/ruddvz/Arq/actions/runs/34801599294/job/103845226872",
+        "name": "rust-test",
+        "startedAt": "2026-09-14T03:09:32Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      }
+    ]
+  }
+}
