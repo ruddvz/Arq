@@ -4,8 +4,8 @@
  *
  * Doc 33 > "What never happens implicitly": "Hiding a panel does not hide model
  * geometry." Nothing in this module knows what geometry is, which is how that
- * holds: a panel's state is `open`/`mode`/`widthPx` and nothing else, and no
- * reducer here can reach the model.
+ * holds: a panel's state is presentation-only and no reducer here can reach the
+ * model or commit project data.
  */
 
 import { panelContract } from './registry';
@@ -29,25 +29,41 @@ export const PANEL_IDS: readonly PanelId[] = [
   'tasks',
 ];
 
+/** Panels that have persistent desktop edges and therefore a collapsed rail. */
+export type CollapsiblePanelId = 'project-browser' | 'inspector';
+
+export const COLLAPSIBLE_PANEL_IDS: readonly CollapsiblePanelId[] = [
+  'project-browser',
+  'inspector',
+];
+
+export type PanelDockSide = 'left' | 'right';
+
 /** `workspace-state-machines.json` > `machines.panel`. */
 export type PanelPresentation = 'docked' | 'collapsed' | 'overlay';
 
 export interface PanelState {
   readonly open: boolean;
   readonly mode: PanelPresentation;
+  /** Last expanded width. Collapse never overwrites it, so reopen is lossless. */
   readonly widthPx: number;
   /**
    * What the user last chose on a *docking* band.
    *
-   * The touch bands close both panels - doc 46 calls them "transient drawers",
-   * and a drawer open before the user asked for it is a column with a shadow.
-   * But closing them is a presentation decision made by the band, not by the
-   * user, so it must not be mistaken for one. Without this field, dragging a
-   * desktop window narrow enough to cross the tablet band and back left the
-   * browser and inspector shut, silently discarding a preference the user had
-   * expressed by leaving them open.
+   * Touch bands close both primary panels because they are transient drawers or
+   * sheets. That closure is a presentation decision made by the band, not by
+   * the user, so it must not become the user's preference.
    */
   readonly dockedPreferenceOpen: boolean;
+  /**
+   * The user's explicit collapsed/expanded preference on docking bands.
+   *
+   * `mode` cannot carry this preference by itself because responsive
+   * reconciliation legitimately changes `mode` to `overlay`. Keeping the user
+   * preference separate lets a desktop -> tablet -> desktop round trip restore
+   * the collapsed rail instead of silently expanding the panel.
+   */
+  readonly collapsedPreference: boolean;
 }
 
 export type PanelLayoutState = Readonly<Record<PanelId, PanelState>>;
@@ -64,6 +80,14 @@ const REGISTRY_PANEL_IDS: Readonly<Record<PanelId, string>> = {
 
 export function registryPanelId(panel: PanelId): string {
   return REGISTRY_PANEL_IDS[panel];
+}
+
+export function isCollapsiblePanel(panel: PanelId): panel is CollapsiblePanelId {
+  return panel === 'project-browser' || panel === 'inspector';
+}
+
+export function panelDockSide(panel: CollapsiblePanelId): PanelDockSide {
+  return panel === 'project-browser' ? 'left' : 'right';
 }
 
 export interface PanelWidthBounds {
@@ -107,36 +131,42 @@ export const INITIAL_PANEL_LAYOUT_STATE: PanelLayoutState = Object.freeze({
     mode: 'docked',
     widthPx: panelWidthBounds('project-browser').defaultWidth,
     dockedPreferenceOpen: true,
+    collapsedPreference: false,
   },
   inspector: {
     open: true,
     mode: 'docked',
     widthPx: panelWidthBounds('inspector').defaultWidth,
     dockedPreferenceOpen: true,
+    collapsedPreference: false,
   },
   review: {
     open: false,
     mode: 'overlay',
     widthPx: panelWidthBounds('review').defaultWidth,
     dockedPreferenceOpen: false,
+    collapsedPreference: false,
   },
   ai: {
     open: false,
     mode: 'overlay',
     widthPx: panelWidthBounds('ai').defaultWidth,
     dockedPreferenceOpen: false,
+    collapsedPreference: false,
   },
   diagnostics: {
     open: false,
     mode: 'overlay',
     widthPx: panelWidthBounds('diagnostics').defaultWidth,
     dockedPreferenceOpen: false,
+    collapsedPreference: false,
   },
   tasks: {
     open: false,
     mode: 'overlay',
     widthPx: panelWidthBounds('tasks').defaultWidth,
     dockedPreferenceOpen: false,
+    collapsedPreference: false,
   },
 });
 
@@ -163,8 +193,68 @@ export function setPanelOpen(
 }
 
 /**
- * Closes a panel *because the band demands it*, leaving the user's docking
- * preference untouched so returning to a docking band can restore it.
+ * Explicit user collapse. The expanded width is intentionally untouched and
+ * the panel remains logically open, so its mounted content can keep local form,
+ * selection and tab state while the shell presents only the reopen rail.
+ */
+export function collapsePanel(
+  state: PanelLayoutState,
+  panel: CollapsiblePanelId,
+): PanelLayoutState {
+  const current = state[panel];
+  if (
+    current.open &&
+    current.mode === 'collapsed' &&
+    current.dockedPreferenceOpen &&
+    current.collapsedPreference
+  ) {
+    return state;
+  }
+  return {
+    ...state,
+    [panel]: {
+      ...current,
+      open: true,
+      mode: 'collapsed',
+      dockedPreferenceOpen: true,
+      collapsedPreference: true,
+    },
+  };
+}
+
+/**
+ * Explicit user reopen. Responsive reconciliation may subsequently choose an
+ * overlay when the canvas floor requires it, but the user's collapsed
+ * preference is cleared and the previous expanded width is retained.
+ */
+export function reopenPanel(
+  state: PanelLayoutState,
+  panel: CollapsiblePanelId,
+): PanelLayoutState {
+  const current = state[panel];
+  if (
+    current.open &&
+    current.mode === 'docked' &&
+    current.dockedPreferenceOpen &&
+    !current.collapsedPreference
+  ) {
+    return state;
+  }
+  return {
+    ...state,
+    [panel]: {
+      ...current,
+      open: true,
+      mode: 'docked',
+      dockedPreferenceOpen: true,
+      collapsedPreference: false,
+    },
+  };
+}
+
+/**
+ * Closes a panel *because the band demands it*, leaving user preferences
+ * untouched so returning to a docking band can restore them.
  */
 function setPanelOpenForBand(
   state: PanelLayoutState,
@@ -194,6 +284,60 @@ export function resizePanel(
   return current.widthPx === clamped
     ? state
     : { ...state, [panel]: { ...current, widthPx: clamped } };
+}
+
+function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isPanelPresentation(value: unknown): value is PanelPresentation {
+  return value === 'docked' || value === 'collapsed' || value === 'overlay';
+}
+
+/**
+ * Defensive boundary for any existing or future presentation-preference
+ * provider. This function does not read or write storage. It only prevents
+ * malformed/stale values from escaping into shell layout state.
+ */
+export function normalizePanelLayoutState(value: unknown): PanelLayoutState {
+  const source = isRecord(value) ? value : {};
+  const entries = PANEL_IDS.map((panel) => {
+    const fallback = INITIAL_PANEL_LAYOUT_STATE[panel];
+    const candidate = isRecord(source[panel]) ? source[panel] : {};
+    const open = typeof candidate.open === 'boolean' ? candidate.open : fallback.open;
+    const dockedPreferenceOpen =
+      typeof candidate.dockedPreferenceOpen === 'boolean'
+        ? candidate.dockedPreferenceOpen
+        : open;
+    const rawWidth = candidate.widthPx;
+    const widthPx =
+      typeof rawWidth === 'number' && Number.isFinite(rawWidth)
+        ? clampPanelWidth(panel, rawWidth)
+        : fallback.widthPx;
+
+    let mode = isPanelPresentation(candidate.mode) ? candidate.mode : fallback.mode;
+    let collapsedPreference = false;
+    if (isCollapsiblePanel(panel)) {
+      collapsedPreference =
+        typeof candidate.collapsedPreference === 'boolean'
+          ? candidate.collapsedPreference
+          : mode === 'collapsed';
+      if (mode === 'collapsed') {
+        collapsedPreference = true;
+      }
+    } else if (mode === 'collapsed') {
+      // Secondary panels have no collapsed rail. Old or corrupt preference data
+      // must not manufacture an unreachable state.
+      mode = 'overlay';
+    }
+
+    return [
+      panel,
+      { open, mode, widthPx, dockedPreferenceOpen, collapsedPreference } satisfies PanelState,
+    ] as const;
+  });
+
+  return Object.fromEntries(entries) as PanelLayoutState;
 }
 
 export interface DockedLayoutInput {
@@ -230,24 +374,34 @@ export interface DockedLayoutInput {
 }
 
 /**
+ * Responsive presentation may float a panel, but it must never overwrite an
+ * explicit collapsed preference. This helper is deliberately private so only
+ * the user reducers above can change that preference.
+ */
+function setResponsivePresentation(
+  state: PanelLayoutState,
+  panel: CollapsiblePanelId,
+  mode: Exclude<PanelPresentation, 'collapsed'>,
+): PanelLayoutState {
+  const current = state[panel];
+  return current.open && current.collapsedPreference
+    ? setPanelPresentation(state, panel, 'collapsed')
+    : setPanelPresentation(state, panel, mode);
+}
+
+/**
  * Applies doc 46's per-band docking policy, then doc 36's canvas floor:
  * "Canvas should not fall below 620 px on a 1536 layout. Before that happens,
  * turn the Inspector into an overlay."
  *
- * On the docking bands the panels are *floated*, never closed. That distinction
- * is the whole point: the user asked for the inspector to be there, so on a
- * wider viewport - or after they drag the browser narrower - this docks it again
- * with the width they chose. Closing it would quietly discard an explicit
- * preference and make the window resize destructive.
+ * On the docking bands expanded panels are *floated*, never closed. A collapsed
+ * panel remains collapsed because that state is an explicit user choice and
+ * consumes no expanded panel width.
  *
- * On the touch bands the panels are closed as well as floated, because doc 46
- * calls them "transient drawers" and "sheets": a drawer that is open before the
- * user asks for it is just a column with a shadow, and on an 834px iPad two of
- * them leave no canvas at all. This does mean a desktop user who drags their
- * window down through the tablet band and back finds the panels closed - a real
- * limitation, recorded in docs/design/WORKSPACE-3.0-INTEGRATION.md, and much
- * cheaper than the alternative of a squeezed three-column touch layout that doc
- * 46 forbids outright.
+ * On touch bands the primary panels are closed and presented by drawers/sheets.
+ * Their open and collapsed preferences are retained. Returning to a docking
+ * band therefore restores exactly what the user chose instead of treating a
+ * responsive transition as an edit to panel preferences.
  */
 export function reconcileDockedPanels(
   state: PanelLayoutState,
@@ -256,7 +410,7 @@ export function reconcileDockedPanels(
   const policy = panelDockingPolicy(input.platform);
 
   if (policy === 'drawers-only') {
-    return (['project-browser', 'inspector'] as const).reduce(
+    return COLLAPSIBLE_PANEL_IDS.reduce(
       (next, panel) =>
         setPanelOpenForBand(setPanelPresentation(next, panel, 'overlay'), panel, false),
       state,
@@ -265,19 +419,18 @@ export function reconcileDockedPanels(
 
   // Back on a docking band: restore what the user last chose, not what the
   // touch band imposed on the way through.
-  state = (['project-browser', 'inspector'] as const).reduce(
+  state = COLLAPSIBLE_PANEL_IDS.reduce(
     (next, panel) => setPanelOpenForBand(next, panel, next[panel].dockedPreferenceOpen),
     state,
   );
 
   /*
-   * A canvas-first band floats both panels regardless of how much room is
-   * left. The overflow relief below answers "do these still fit", which is a
-   * different question and would dock them again the moment they did.
+   * A canvas-first band floats expanded panels regardless of room. A collapsed
+   * rail is a user preference, not an overflow response, so it stays collapsed.
    */
   if (input.composition === 'floating') {
-    return setPanelPresentation(
-      setPanelPresentation(state, 'inspector', 'overlay'),
+    return setResponsivePresentation(
+      setResponsivePresentation(state, 'inspector', 'overlay'),
       'project-browser',
       'overlay',
     );
@@ -286,8 +439,10 @@ export function reconcileDockedPanels(
   const probe: CanvasWidthInput = {
     viewportWidthPx: input.viewportWidthPx,
     slots: input.slots,
-    leftPanelOpen: state['project-browser'].open,
-    rightPanelOpen: state.inspector.open,
+    // Collapsed rails are presentation chrome, not expanded panel widths. They
+    // must not trick the canvas-floor calculation into floating another panel.
+    leftPanelOpen: state['project-browser'].open && !state['project-browser'].collapsedPreference,
+    rightPanelOpen: state.inspector.open && !state.inspector.collapsedPreference,
     leftPanelWidthPx: state['project-browser'].widthPx,
     rightPanelWidthPx: state.inspector.widthPx,
     ...(input.railsWidthPx === undefined ? {} : { railsWidthPx: input.railsWidthPx }),
@@ -297,8 +452,8 @@ export function reconcileDockedPanels(
   // first." The browser keeps the dock because losing it costs the user their
   // place in the project, while the inspector can be summoned back from it.
   if (policy === 'dock-left-only' || input.slots.rightPanel === 'overlay') {
-    return setPanelPresentation(
-      setPanelPresentation(state, 'inspector', 'overlay'),
+    return setResponsivePresentation(
+      setResponsivePresentation(state, 'inspector', 'overlay'),
       'project-browser',
       'docked',
     );
@@ -306,27 +461,27 @@ export function reconcileDockedPanels(
 
   switch (resolvePanelOverflowRelief(probe)) {
     case 'none':
-      return setPanelPresentation(
-        setPanelPresentation(state, 'inspector', 'docked'),
+      return setResponsivePresentation(
+        setResponsivePresentation(state, 'inspector', 'docked'),
         'project-browser',
         'docked',
       );
     case 'float-right-panel':
-      return setPanelPresentation(
-        setPanelPresentation(state, 'inspector', 'overlay'),
+      return setResponsivePresentation(
+        setResponsivePresentation(state, 'inspector', 'overlay'),
         'project-browser',
         'docked',
       );
     case 'float-both-panels':
-      return setPanelPresentation(
-        setPanelPresentation(state, 'inspector', 'overlay'),
+      return setResponsivePresentation(
+        setResponsivePresentation(state, 'inspector', 'overlay'),
         'project-browser',
         'overlay',
       );
   }
 }
 
-/** True when the panel takes width from the canvas rather than floating over it. */
+/** True when the panel takes expanded width from the canvas rather than floating or collapsing. */
 export function occupiesLayoutWidth(state: PanelLayoutState, panel: PanelId): boolean {
   const panelState = state[panel];
   return panelState.open && panelState.mode === 'docked';

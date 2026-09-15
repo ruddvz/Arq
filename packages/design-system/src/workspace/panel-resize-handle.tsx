@@ -8,10 +8,22 @@ export interface PanelResizeHandleProps {
   readonly side: 'left' | 'right';
   readonly widthPx: number;
   readonly onResize: (widthPx: number) => void;
+  /**
+   * Optional because secondary/non-collapsible panels use the same resize
+   * primitive. When present, dragging deliberately past the minimum or pressing
+   * the shrink key once more at the minimum collapses the panel.
+   */
+  readonly onCollapse?: () => void;
 }
 
 /** Doc 36 keyboard resizing: one arrow press is a visible but unsurprising step. */
 const KEYBOARD_STEP_PX = 16;
+/**
+ * A full compact rail width of travel below the registry minimum is required
+ * before a pointer drag collapses. This prevents a slightly imprecise resize at
+ * the minimum from unexpectedly hiding a panel.
+ */
+export const PANEL_COLLAPSE_DRAG_DEADBAND_PX = 48;
 
 /**
  * The drag handle for a docked panel. `workspace-panel-registry.json` has
@@ -21,21 +33,23 @@ const KEYBOARD_STEP_PX = 16;
  *
  * `role="separator"` with `aria-valuenow` is the ARIA window-splitter pattern,
  * so this is not a mouse-only affordance: Arrow keys resize by a step, Home and
- * End jump to the registry's own minimum and maximum. Doc 36 puts the panels in
- * a resizable range; a range only reachable by dragging excludes every user who
- * does not drag.
+ * End jump to the registry's own minimum and maximum. When collapse is enabled,
+ * one further shrink keypress at the minimum collapses instead of silently
+ * reporting another already-clamped width.
  *
  * Pointer capture rather than document-level listeners: the drag keeps working
  * when the pointer outruns the 6px handle, and it ends cleanly if the pointer is
- * cancelled - a lost pointerup used to be how a resize got stuck to the cursor.
+ * cancelled. Collapse requires a deliberate 48px drag past the minimum so a
+ * normal resize cannot accidentally dismiss the panel.
  *
- * The width is *reported*, never stored here. `resizePanel` in @arq/workspace
- * clamps it against the registry, so this component cannot produce a width the
- * contract forbids even if the pointer maths is wrong.
+ * Width is *reported*, never stored here. `resizePanel` in @arq/workspace owns
+ * clamping and the host owns collapse state, so this component cannot become a
+ * second panel-state authority.
  */
 export function PanelResizeHandle(props: PanelResizeHandleProps): JSX.Element {
-  const { panel, label, side, widthPx, onResize } = props;
+  const { panel, label, side, widthPx, onResize, onCollapse } = props;
   const bounds = panelWidthBounds(panel);
+  const collapseThresholdPx = Math.max(0, bounds.min - PANEL_COLLAPSE_DRAG_DEADBAND_PX);
   const dragOriginRef = useRef<{ readonly x: number; readonly width: number } | null>(null);
 
   const onPointerDown = useCallback(
@@ -61,9 +75,18 @@ export function PanelResizeHandle(props: PanelResizeHandleProps): JSX.Element {
       const delta = event.clientX - origin.x;
       // A left panel grows as the pointer moves right; a right panel grows as
       // it moves left.
-      onResize(origin.width + (side === 'left' ? delta : -delta));
+      const nextWidth = origin.width + (side === 'left' ? delta : -delta);
+      if (onCollapse !== undefined && nextWidth <= collapseThresholdPx) {
+        dragOriginRef.current = null;
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+          event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+        onCollapse();
+        return;
+      }
+      onResize(nextWidth);
     },
-    [onResize, side],
+    [collapseThresholdPx, onCollapse, onResize, side],
   );
 
   const endDrag = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
@@ -83,7 +106,11 @@ export function PanelResizeHandle(props: PanelResizeHandleProps): JSX.Element {
         onResize(widthPx + KEYBOARD_STEP_PX);
       } else if (event.key === shrink) {
         event.preventDefault();
-        onResize(widthPx - KEYBOARD_STEP_PX);
+        if (onCollapse !== undefined && widthPx <= bounds.min) {
+          onCollapse();
+        } else {
+          onResize(widthPx - KEYBOARD_STEP_PX);
+        }
       } else if (event.key === 'Home') {
         event.preventDefault();
         onResize(bounds.min);
@@ -92,7 +119,7 @@ export function PanelResizeHandle(props: PanelResizeHandleProps): JSX.Element {
         onResize(bounds.max);
       }
     },
-    [bounds.max, bounds.min, onResize, side, widthPx],
+    [bounds.max, bounds.min, onCollapse, onResize, side, widthPx],
   );
 
   // A panel the registry gives no range cannot be resized, so it gets no
@@ -118,7 +145,11 @@ export function PanelResizeHandle(props: PanelResizeHandleProps): JSX.Element {
       onPointerCancel={endDrag}
       onKeyDown={onKeyDown}
       onDoubleClick={() => onResize(bounds.defaultWidth)}
-      title={`Resize ${label}. Double-click to reset.`}
+      title={
+        onCollapse === undefined
+          ? `Resize ${label}. Double-click to reset.`
+          : `Resize ${label}. Double-click to reset; shrink past minimum to collapse.`
+      }
       style={{
         flex: '0 0 auto',
         width: 6,

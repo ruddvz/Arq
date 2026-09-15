@@ -3,9 +3,13 @@ import { LAYOUT_SLOTS } from './registry';
 import {
   INITIAL_PANEL_LAYOUT_STATE,
   clampPanelWidth,
+  collapsePanel,
+  normalizePanelLayoutState,
   occupiesLayoutWidth,
+  panelDockSide,
   panelWidthBounds,
   reconcileDockedPanels,
+  reopenPanel,
   resizePanel,
   setPanelOpen,
   togglePanel,
@@ -52,6 +56,124 @@ describe('panel open/resize reducers', () => {
   it('starts secondary panels closed', () => {
     expect(INITIAL_PANEL_LAYOUT_STATE.review.open).toBe(false);
     expect(INITIAL_PANEL_LAYOUT_STATE.diagnostics.open).toBe(false);
+  });
+});
+
+describe('panel collapse/reopen contract', () => {
+  it('defines the stable dock side for each collapsible panel', () => {
+    expect(panelDockSide('project-browser')).toBe('left');
+    expect(panelDockSide('inspector')).toBe('right');
+  });
+
+  it('collapses without losing the last expanded width or logical open state', () => {
+    const resized = resizePanel(INITIAL_PANEL_LAYOUT_STATE, 'inspector', 400);
+    const collapsed = collapsePanel(resized, 'inspector');
+
+    expect(collapsed.inspector).toMatchObject({
+      open: true,
+      mode: 'collapsed',
+      widthPx: 400,
+      dockedPreferenceOpen: true,
+      collapsedPreference: true,
+    });
+    expect(occupiesLayoutWidth(collapsed, 'inspector')).toBe(false);
+  });
+
+  it('reopens at the previous expanded width and clears the collapse preference', () => {
+    const collapsed = collapsePanel(
+      resizePanel(INITIAL_PANEL_LAYOUT_STATE, 'project-browser', 340),
+      'project-browser',
+    );
+    const reopened = reopenPanel(collapsed, 'project-browser');
+
+    expect(reopened['project-browser']).toMatchObject({
+      open: true,
+      mode: 'docked',
+      widthPx: 340,
+      dockedPreferenceOpen: true,
+      collapsedPreference: false,
+    });
+  });
+
+  it('preserves a collapsed preference through touch and back to desktop', () => {
+    const desktop = { viewportWidthPx: 1536, slots: DESKTOP_1536, platform: 'desktop' } as const;
+    const tablet = {
+      viewportWidthPx: 834,
+      slots: LAYOUT_SLOTS.ipadPortrait834x1194!,
+      platform: 'tablet-portrait',
+    } as const;
+
+    const collapsed = collapsePanel(INITIAL_PANEL_LAYOUT_STATE, 'inspector');
+    const onTouch = reconcileDockedPanels(collapsed, tablet);
+    expect(onTouch.inspector).toMatchObject({
+      open: false,
+      mode: 'overlay',
+      collapsedPreference: true,
+    });
+
+    const backOnDesktop = reconcileDockedPanels(onTouch, desktop);
+    expect(backOnDesktop.inspector).toMatchObject({
+      open: true,
+      mode: 'collapsed',
+      collapsedPreference: true,
+    });
+  });
+
+  it('does not count a collapsed panel against the canvas floor', () => {
+    const collapsed = collapsePanel(INITIAL_PANEL_LAYOUT_STATE, 'inspector');
+    const next = reconcileDockedPanels(collapsed, {
+      viewportWidthPx: 1100,
+      slots: DESKTOP_1536,
+      platform: 'desktop',
+    });
+
+    expect(next.inspector.mode).toBe('collapsed');
+    expect(next['project-browser'].mode).toBe('docked');
+  });
+});
+
+describe('normalizePanelLayoutState', () => {
+  it('clamps stale widths and safely restores partial preference data', () => {
+    const restored = normalizePanelLayoutState({
+      inspector: {
+        open: true,
+        mode: 'collapsed',
+        widthPx: 9999,
+        dockedPreferenceOpen: true,
+      },
+      'project-browser': {
+        open: false,
+        mode: 'docked',
+        widthPx: 10,
+      },
+    });
+
+    expect(restored.inspector.widthPx).toBe(420);
+    expect(restored.inspector.collapsedPreference).toBe(true);
+    expect(restored['project-browser'].widthPx).toBe(232);
+    expect(restored['project-browser'].dockedPreferenceOpen).toBe(false);
+    expect(restored.review).toEqual(INITIAL_PANEL_LAYOUT_STATE.review);
+  });
+
+  it('recovers invalid values to registry/default-safe state', () => {
+    const restored = normalizePanelLayoutState({
+      inspector: {
+        open: 'yes',
+        mode: 'teleported',
+        widthPx: Number.POSITIVE_INFINITY,
+        dockedPreferenceOpen: 'yes',
+        collapsedPreference: 'yes',
+      },
+      review: {
+        open: true,
+        mode: 'collapsed',
+        widthPx: 300,
+      },
+    });
+
+    expect(restored.inspector).toEqual(INITIAL_PANEL_LAYOUT_STATE.inspector);
+    expect(restored.review.mode).toBe('overlay');
+    expect(restored.review.collapsedPreference).toBe(false);
   });
 });
 
@@ -226,5 +348,8 @@ describe('occupiesLayoutWidth', () => {
     expect(
       occupiesLayoutWidth(togglePanel(INITIAL_PANEL_LAYOUT_STATE, 'inspector'), 'inspector'),
     ).toBe(false);
+    expect(occupiesLayoutWidth(collapsePanel(INITIAL_PANEL_LAYOUT_STATE, 'inspector'), 'inspector')).toBe(
+      false,
+    );
   });
 });

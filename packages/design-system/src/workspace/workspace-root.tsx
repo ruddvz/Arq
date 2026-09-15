@@ -7,6 +7,7 @@ import {
   resolveLayoutSlots,
   resolveWorkspacePlatform,
   viewSwitcherHeightPx,
+  type CollapsiblePanelId,
   type PanelLayoutState,
   type SheetDetent,
   type SheetId,
@@ -22,6 +23,7 @@ import { WorkspaceSheet } from './workspace-sheet';
 import { PhoneDock } from './phone-dock';
 import { TabletDrawerBar } from './tablet-drawer-bar';
 import { PanelResizeHandle } from './panel-resize-handle';
+import { PanelCollapseControl } from './panel-collapse-control';
 
 /**
  * The width the two vertical rails actually occupy in this shell, for the
@@ -130,6 +132,12 @@ export interface WorkspaceRootProps {
    * stores is worse than none.
    */
   readonly onResizePanel?: (panel: 'project-browser' | 'inspector', widthPx: number) => void;
+  /**
+   * Desktop collapse/reopen intent. Omitted keeps the historic shell with no
+   * collapse control, which lets hosts adopt the state contract without a
+   * second local panel store.
+   */
+  readonly onSetPanelCollapsed?: (panel: CollapsiblePanelId, collapsed: boolean) => void;
   /**
    * True when the host supplied a glyph for every tool category, so the rail
    * rendered as a 48px dock. Only affects where floating panels start.
@@ -269,6 +277,7 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
     reviewSheet,
     reviewDisabledReason,
     onResizePanel,
+    onSetPanelCollapsed,
     toolRailIsDock = false,
   } = props;
 
@@ -282,12 +291,18 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
   const usesBottomSheets = phone || platform === 'tablet-portrait';
   const touchControlsAvailable = canvasFirst && onToggleSheet !== undefined;
 
+  const browserState = panels['project-browser'];
+  const inspectorState = panels.inspector;
   const browserDocked = !canvasFirst && occupiesLayoutWidth(panels, 'project-browser');
   const inspectorDocked = !canvasFirst && occupiesLayoutWidth(panels, 'inspector');
-  // On the docking bands a panel the floor pushed out still renders - it simply
-  // floats over the canvas rather than taking width from it.
-  const browserFloating = !canvasFirst && panels['project-browser'].open && !browserDocked;
-  const inspectorFloating = !canvasFirst && panels.inspector.open && !inspectorDocked;
+  const browserCollapsed = !canvasFirst && browserState.open && browserState.mode === 'collapsed';
+  const inspectorCollapsed = !canvasFirst && inspectorState.open && inspectorState.mode === 'collapsed';
+  const browserDockHost = browserDocked || browserCollapsed;
+  const inspectorDockHost = inspectorDocked || inspectorCollapsed;
+  // Only an explicit overlay presentation floats. A collapsed panel stays on
+  // its edge rail and must never fall through to a full-size overlay.
+  const browserFloating = !canvasFirst && browserState.open && browserState.mode === 'overlay';
+  const inspectorFloating = !canvasFirst && inspectorState.open && inspectorState.mode === 'overlay';
 
   function sheetBody(id: SheetId): ReactNode {
     switch (id) {
@@ -359,10 +374,8 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
          * runs behind, which is the point of a panel that floats.
          */
         ...({
-          '--arq-overlay-left-width': browserFloating
-            ? `${panels['project-browser'].widthPx}px`
-            : '0px',
-          '--arq-overlay-right-width': inspectorFloating ? `${panels.inspector.widthPx}px` : '0px',
+          '--arq-overlay-left-width': browserFloating ? `${browserState.widthPx}px` : '0px',
+          '--arq-overlay-right-width': inspectorFloating ? `${inspectorState.widthPx}px` : '0px',
         } as CSSProperties),
       }}
     >
@@ -459,21 +472,37 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
             </div>
           )}
 
-          {browserDocked && (
+          {browserDockHost && (
             <>
               <div
+                id="arq-workspace-panel-project-browser"
                 className="arq-workspace__docked arq-workspace__docked--left"
-                style={{ width: panels['project-browser'].widthPx, flex: '0 0 auto', minWidth: 0 }}
+                aria-hidden={browserCollapsed ? true : undefined}
+                {...(browserCollapsed ? { inert: '' } : {})}
+                style={{
+                  width: browserCollapsed ? 0 : browserState.widthPx,
+                  flex: `0 0 ${browserCollapsed ? 0 : browserState.widthPx}px`,
+                  minWidth: 0,
+                  overflow: 'hidden',
+                }}
               >
                 {projectBrowser}
               </div>
-              {onResizePanel !== undefined && (
+              {browserDocked && onResizePanel !== undefined && (
                 <PanelResizeHandle
                   panel="project-browser"
                   label="project browser"
                   side="left"
-                  widthPx={panels['project-browser'].widthPx}
+                  widthPx={browserState.widthPx}
                   onResize={(width) => onResizePanel('project-browser', width)}
+                />
+              )}
+              {onSetPanelCollapsed !== undefined && (
+                <PanelCollapseControl
+                  panel="project-browser"
+                  side="left"
+                  collapsed={browserCollapsed}
+                  onCollapsedChange={(collapsed) => onSetPanelCollapsed('project-browser', collapsed)}
                 />
               )}
             </>
@@ -489,20 +518,36 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
             {viewport}
           </main>
 
-          {inspectorDocked && (
+          {inspectorDockHost && (
             <>
-              {onResizePanel !== undefined && (
+              {onSetPanelCollapsed !== undefined && (
+                <PanelCollapseControl
+                  panel="inspector"
+                  side="right"
+                  collapsed={inspectorCollapsed}
+                  onCollapsedChange={(collapsed) => onSetPanelCollapsed('inspector', collapsed)}
+                />
+              )}
+              {inspectorDocked && onResizePanel !== undefined && (
                 <PanelResizeHandle
                   panel="inspector"
                   label="inspector"
                   side="right"
-                  widthPx={panels.inspector.widthPx}
+                  widthPx={inspectorState.widthPx}
                   onResize={(width) => onResizePanel('inspector', width)}
                 />
               )}
               <div
+                id="arq-workspace-panel-inspector"
                 className="arq-workspace__docked arq-workspace__docked--right"
-                style={{ width: panels.inspector.widthPx, flex: '0 0 auto', minWidth: 0 }}
+                aria-hidden={inspectorCollapsed ? true : undefined}
+                {...(inspectorCollapsed ? { inert: '' } : {})}
+                style={{
+                  width: inspectorCollapsed ? 0 : inspectorState.widthPx,
+                  flex: `0 0 ${inspectorCollapsed ? 0 : inspectorState.widthPx}px`,
+                  minWidth: 0,
+                  overflow: 'hidden',
+                }}
               >
                 {inspector}
               </div>
@@ -510,12 +555,12 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
           )}
 
           {browserFloating && (
-            <OverlayPanel side="left" widthPx={panels['project-browser'].widthPx}>
+            <OverlayPanel side="left" widthPx={browserState.widthPx}>
               {projectBrowser}
             </OverlayPanel>
           )}
           {inspectorFloating && (
-            <OverlayPanel side="right" widthPx={panels.inspector.widthPx}>
+            <OverlayPanel side="right" widthPx={inspectorState.widthPx}>
               {inspector}
             </OverlayPanel>
           )}
@@ -526,8 +571,8 @@ export function WorkspaceRoot(props: WorkspaceRootProps): JSX.Element {
               side={openSheetId === 'inspector' ? 'right' : 'left'}
               widthPx={
                 openSheetId === 'inspector'
-                  ? panels.inspector.widthPx
-                  : panels['project-browser'].widthPx
+                  ? inspectorState.widthPx
+                  : browserState.widthPx
               }
               label={SHEET_TITLE[openSheetId]}
               onDismiss={onCloseSheet ?? (() => undefined)}
