@@ -141,7 +141,7 @@ async function run() {
     const dialog = page.getByRole('dialog', { name: 'Command palette' });
     await dialog.waitFor({ state: 'visible', timeout: 5000 });
     const modalAnimation = await page.evaluate(() => {
-      const backdrop = document.querySelector('.arq-modal-backdrop');
+      const backdrop = document.querySelector('.arq-modal-overlay');
       if (backdrop === null) return null;
       const style = getComputedStyle(backdrop);
       return { name: style.animationName, duration: style.animationDuration };
