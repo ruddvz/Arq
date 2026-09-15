@@ -136,6 +136,11 @@ describe('NativeProjectSession.prepareForReplacement', () => {
 
   it('observes a failure that happens while replacement is waiting on the write queue', async () => {
     const write = deferred<unknown>();
+    // The raw deferred is deliberately rejected by this test. Observe that
+    // source promise immediately so Node/Vitest does not classify the fixture
+    // itself as orphaned while the session's async worker adapter propagates
+    // the same failure through save(). The save result is still asserted below.
+    void write.promise.catch(() => undefined);
     const { session } = sessionWith(async (request) => {
       if (request.type === 'putArchiveEntries') return write.promise;
       throw new Error(`unexpected ${request.type}`);
@@ -143,10 +148,6 @@ describe('NativeProjectSession.prepareForReplacement', () => {
 
     const save = session.save({ walls: [wall('late-failure', 1000)] });
     const replacement = session.prepareForReplacement();
-    // Attach a concrete rejection handler before the deferred write is rejected.
-    // A matcher promise can itself settle one microtask later, which is enough
-    // for Node/Vitest to report a transient unhandled rejection even though the
-    // assertion eventually observes it.
     const observedSave = save.catch((error: unknown) => error);
 
     write.reject(new Error('late durable failure'));
