@@ -24,6 +24,14 @@ export type ProductReachabilityState =
   | 'dead-stale'
   | 'duplicate';
 
+export type CommandRuntimeState =
+  | 'available'
+  | 'disabled'
+  | 'hidden'
+  | 'read-only'
+  | 'in-progress'
+  | 'unreachable';
+
 export type CommandSurface =
   | 'command-palette'
   | 'tool-rail'
@@ -56,6 +64,7 @@ export interface CommandRuntimeContext<Mode extends string = string> {
   readonly mode: Mode;
   readonly readOnly: boolean;
   readonly activeCommandIds?: ReadonlySet<string>;
+  readonly inProgressCommandIds?: ReadonlySet<string>;
   readonly capabilities?: ReadonlySet<string>;
   /** Host-owned facts such as canUndo or canCloseActiveTab. */
   readonly facts?: Readonly<Record<string, boolean>>;
@@ -65,9 +74,13 @@ export interface CanonicalCommandDescriptor<Mode extends string = string> {
   readonly id: string;
   readonly label: string;
   readonly category: string;
+  /** Cheap icon identity only. Never import a React/icon implementation here. */
+  readonly iconId: string | null;
   readonly modes: readonly Mode[];
   readonly shortcuts: CanonicalShortcut | null;
   readonly surfaces: readonly CommandSurface[];
+  /** Names runtime facts this descriptor expects the host to supply. */
+  readonly requiredContext: readonly string[];
   readonly reachability: ProductReachabilityState;
   /** Static reason for a non-reachable product state. */
   readonly disabledReason: string | null;
@@ -84,14 +97,20 @@ export interface CanonicalCommandDescriptor<Mode extends string = string> {
   /** Independent evidence. It is never an availability predicate. */
   readonly libraryBacking: boolean;
   readonly capabilityRequirement: string | null;
+  /** Optional stable analytics identity. This contract does not emit analytics itself. */
+  readonly analyticsEventId: string | null;
+  /** Test/audit owner for this product-reachability claim. */
   readonly evidenceOwner: string;
 }
 
 export interface ResolvedCommand<Mode extends string = string> {
   readonly descriptor: CanonicalCommandDescriptor<Mode>;
+  readonly state: CommandRuntimeState;
+  readonly visible: boolean;
   readonly available: boolean;
   readonly disabledReason: string | null;
   readonly active: boolean;
+  readonly inProgress: boolean;
 }
 
 const NON_REACHABLE_FALLBACK: Readonly<
@@ -122,36 +141,49 @@ export function canonicalShortcutLabel(
 }
 
 /**
- * Resolve product availability from one descriptor and the real runtime
- * context. UI visibility is not permission enforcement. The caller must pass
- * the actual read-only/capability/context facts owned elsewhere.
+ * Resolve product presentation/dispatch state from one descriptor and the real
+ * runtime context. UI visibility is not permission enforcement. The caller must
+ * pass the actual read-only/capability/context facts owned elsewhere, and the
+ * downstream semantic/session authority must still validate every mutation.
  */
 export function resolveCommand<Mode extends string>(
   descriptor: CanonicalCommandDescriptor<Mode>,
   context: CommandRuntimeContext<Mode>,
 ): ResolvedCommand<Mode> {
+  let state: CommandRuntimeState = 'available';
   let disabledReason: string | null = null;
 
   if (descriptor.reachability !== 'user-reachable') {
+    state = 'unreachable';
     disabledReason = descriptor.disabledReason ?? NON_REACHABLE_FALLBACK[descriptor.reachability];
   } else if (!descriptor.modes.includes(context.mode)) {
+    state = 'hidden';
     disabledReason = `${descriptor.label} is not available in ${context.mode} mode`;
   } else if (
     descriptor.capabilityRequirement !== null &&
     !(context.capabilities?.has(descriptor.capabilityRequirement) ?? false)
   ) {
+    state = 'disabled';
     disabledReason = `${descriptor.label} requires ${descriptor.capabilityRequirement}`;
   } else if (context.readOnly && descriptor.readOnlyBehaviour === 'disabled') {
+    state = 'read-only';
     disabledReason = `${descriptor.label} is unavailable in read-only mode`;
+  } else if (context.inProgressCommandIds?.has(descriptor.id) ?? false) {
+    state = 'in-progress';
+    disabledReason = `${descriptor.label} is already in progress`;
   } else if (descriptor.availability !== undefined) {
     disabledReason = descriptor.availability(context);
+    if (disabledReason !== null) state = 'disabled';
   }
 
   return {
     descriptor,
-    available: disabledReason === null,
+    state,
+    visible: state !== 'hidden',
+    available: state === 'available',
     disabledReason,
     active: context.activeCommandIds?.has(descriptor.id) ?? false,
+    inProgress: state === 'in-progress',
   };
 }
 
@@ -224,6 +256,9 @@ export function validateCommandDescriptors<Mode extends string>(
     if (descriptor.reachability !== 'user-reachable' && descriptor.disabledReason === null) {
       issues.push({ id: descriptor.id, message: 'non-reachable command needs an explicit reason' });
     }
+    if (descriptor.reachability === 'library-only' && descriptor.surfaces.length > 0) {
+      issues.push({ id: descriptor.id, message: 'library-only command cannot claim a product surface' });
+    }
     if (descriptor.reachability === 'user-reachable' && descriptor.executionTarget === null) {
       issues.push({ id: descriptor.id, message: 'reachable command needs an execution target' });
     }
@@ -290,6 +325,10 @@ function requiresFact(fact: string, reason: string) {
     context.facts?.[fact] === true ? null : reason;
 }
 
+function analyticsEventId(commandId: string, reachable: boolean): string | null {
+  return reachable ? `workspace.command.${commandId}` : null;
+}
+
 const TOOL_REACHABILITY: Readonly<
   Record<
     string,
@@ -317,17 +356,17 @@ const TOOL_REACHABILITY: Readonly<
     surfaces: ['tool-rail', 'command-palette', 'keyboard'],
   },
   door: {
-    state: 'library-only',
+    state: 'registered-but-not-wired',
     reason: 'Door placement has repository backing but no live PlanCanvas execution path',
     surfaces: ['tool-rail', 'command-palette'],
   },
   window: {
-    state: 'library-only',
+    state: 'registered-but-not-wired',
     reason: 'Window placement has repository backing but no live PlanCanvas execution path',
     surfaces: ['tool-rail'],
   },
   'room-boundary': {
-    state: 'library-only',
+    state: 'registered-but-not-wired',
     reason: 'Room boundary placement has repository backing but no live PlanCanvas execution path',
     surfaces: ['tool-rail', 'command-palette'],
   },
@@ -364,9 +403,11 @@ function toolDescriptor(tool: ToolContract): CanonicalCommandDescriptor<Workspac
     id: tool.id,
     label: tool.name,
     category: tool.group,
+    iconId: tool.icon,
     modes: modesForTool(tool),
     shortcuts: shortcutFor(tool.id),
     surfaces: override?.surfaces ?? ['tool-rail'],
+    requiredContext: ['workspace.mode', 'workspace.readOnly'],
     reachability,
     disabledReason:
       override?.reason ??
@@ -379,6 +420,7 @@ function toolDescriptor(tool: ToolContract): CanonicalCommandDescriptor<Workspac
     readOnlyBehaviour: mutating ? 'disabled' : 'allowed',
     libraryBacking: hasRepositoryBacking(tool.id),
     capabilityRequirement: null,
+    analyticsEventId: analyticsEventId(tool.id, userReachable),
     evidenceOwner: '#398 reachability audit; #420 canonical authority',
   };
 }
@@ -390,9 +432,11 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     id: 'command-palette',
     label: 'Open command palette',
     category: 'Global',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: shortcutFor('command-palette'),
     surfaces: ['keyboard', 'top-bar'],
+    requiredContext: ['workspace.mode'],
     reachability: 'user-reachable',
     disabledReason: null,
     activeStateSource: null,
@@ -403,15 +447,18 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'allowed',
     libraryBacking: true,
     capabilityRequirement: null,
+    analyticsEventId: 'workspace.command.command-palette',
     evidenceOwner: 'apps/web/src/App.tsx command palette wiring',
   },
   {
     id: 'escape',
     label: 'Cancel current tool/draft',
     category: 'Tool',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: shortcutFor('escape'),
     surfaces: ['keyboard', 'contextual'],
+    requiredContext: ['workspace.mode'],
     reachability: 'user-reachable',
     disabledReason: null,
     activeStateSource: null,
@@ -422,15 +469,18 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'allowed',
     libraryBacking: true,
     capabilityRequirement: null,
+    analyticsEventId: 'workspace.command.escape',
     evidenceOwner: 'workspace tool lifecycle and apps/web/src/App.tsx Escape handler',
   },
   {
     id: 'undo',
     label: 'Undo',
     category: 'Edit',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: shortcutFor('undo'),
     surfaces: ['keyboard', 'top-bar', 'command-palette'],
+    requiredContext: ['workspace.mode', 'workspace.readOnly', 'fact.canUndo'],
     reachability: 'user-reachable',
     disabledReason: null,
     availability: requiresFact('canUndo', 'Nothing to undo'),
@@ -442,15 +492,18 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'disabled',
     libraryBacking: true,
     capabilityRequirement: null,
+    analyticsEventId: 'workspace.command.undo',
     evidenceOwner: 'apps/web/src/App.tsx undo stack and keyboard handler',
   },
   {
     id: 'redo',
     label: 'Redo',
     category: 'Edit',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: shortcutFor('redo'),
     surfaces: ['keyboard', 'top-bar', 'command-palette'],
+    requiredContext: ['workspace.mode', 'workspace.readOnly', 'fact.canRedo'],
     reachability: 'user-reachable',
     disabledReason: null,
     availability: requiresFact('canRedo', 'Nothing to redo'),
@@ -462,15 +515,18 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'disabled',
     libraryBacking: true,
     capabilityRequirement: null,
+    analyticsEventId: 'workspace.command.redo',
     evidenceOwner: 'apps/web/src/App.tsx undo stack and keyboard handler',
   },
   {
     id: 'close-tab',
     label: 'Close active view',
     category: 'View',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: shortcutFor('close-tab'),
     surfaces: ['keyboard', 'command-palette', 'contextual'],
+    requiredContext: ['workspace.mode', 'fact.canCloseActiveTab'],
     reachability: 'user-reachable',
     disabledReason: null,
     availability: requiresFact('canCloseActiveTab', 'The active view cannot be closed'),
@@ -482,15 +538,18 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'allowed',
     libraryBacking: true,
     capabilityRequirement: null,
+    analyticsEventId: 'workspace.command.close-tab',
     evidenceOwner: 'workspace view-tabs-state and apps/web/src/App.tsx host wiring',
   },
   {
     id: 'open',
     label: 'Open project…',
     category: 'File',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: null,
     surfaces: ['command-palette', 'top-bar'],
+    requiredContext: ['workspace.mode'],
     reachability: 'user-reachable',
     disabledReason: null,
     activeStateSource: null,
@@ -501,15 +560,18 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'allowed',
     libraryBacking: true,
     capabilityRequirement: null,
+    analyticsEventId: 'workspace.command.open',
     evidenceOwner: 'apps/web/src/App.tsx file-open panel wiring',
   },
   {
     id: 'save-a-copy',
     label: 'Save a copy',
     category: 'File',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: null,
     surfaces: ['command-palette'],
+    requiredContext: ['workspace.mode', 'workspace.readOnly', 'fact.canSaveCopy'],
     reachability: 'user-reachable',
     disabledReason: null,
     availability: requiresFact('canSaveCopy', 'No publishable project copy is available'),
@@ -517,19 +579,22 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     executionTarget: { kind: 'host-action', id: 'save-a-copy' },
     semanticOperationId: null,
     effect: 'view-only',
-    persistence: 'none',
+    persistence: 'project-persistence',
     readOnlyBehaviour: 'disabled',
     libraryBacking: true,
     capabilityRequirement: null,
+    analyticsEventId: 'workspace.command.save-a-copy',
     evidenceOwner: 'apps/web/src/App.tsx handleSaveCopy',
   },
   {
     id: 'export-sheet-pdf',
     label: 'Export sheet as PDF',
     category: 'File',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: null,
     surfaces: ['command-palette'],
+    requiredContext: ['workspace.mode', 'fact.canExportSheetPdf'],
     reachability: 'user-reachable',
     disabledReason: null,
     availability: requiresFact('canExportSheetPdf', 'No exportable plan sheet is available'),
@@ -541,15 +606,18 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'allowed',
     libraryBacking: true,
     capabilityRequirement: null,
+    analyticsEventId: 'workspace.command.export-sheet-pdf',
     evidenceOwner: 'apps/web/src/App.tsx handleExportSheet',
   },
   {
     id: 'publish',
     label: 'Publish project…',
     category: 'File',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: null,
     surfaces: ['command-palette', 'top-bar'],
+    requiredContext: ['workspace.mode', 'workspace.readOnly', 'fact.canPublish'],
     reachability: 'user-reachable',
     disabledReason: null,
     availability: requiresFact('canPublish', 'No writable project is available to publish'),
@@ -561,17 +629,21 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'disabled',
     libraryBacking: true,
     capabilityRequirement: null,
+    analyticsEventId: 'workspace.command.publish',
     evidenceOwner: 'apps/web/src/App.tsx handlePublishProject',
   },
   {
     id: 'save',
     label: 'Save local project',
     category: 'File',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: shortcutFor('save'),
     surfaces: ['keyboard'],
+    requiredContext: ['workspace.mode', 'workspace.readOnly'],
     reachability: 'registered-but-not-wired',
-    disabledReason: 'Save is registered in the keyboard design map but has no equivalent live App shortcut handler',
+    disabledReason:
+      'Save is registered in the keyboard design map but has no equivalent live App shortcut handler',
     activeStateSource: null,
     executionTarget: null,
     semanticOperationId: null,
@@ -580,15 +652,18 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'disabled',
     libraryBacking: true,
     capabilityRequirement: null,
+    analyticsEventId: null,
     evidenceOwner: '#398 and apps/web/src/App.tsx keyboard handler',
   },
   {
     id: 'focus-selection',
     label: 'Focus selection',
     category: 'View',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: shortcutFor('focus-selection'),
     surfaces: ['keyboard', 'command-palette'],
+    requiredContext: ['workspace.mode', 'selection'],
     reachability: 'registered-but-not-wired',
     disabledReason: 'Focus Selection is registered but no dedicated product execution path is proven',
     activeStateSource: null,
@@ -599,15 +674,18 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'allowed',
     libraryBacking: false,
     capabilityRequirement: null,
+    analyticsEventId: null,
     evidenceOwner: '#398 reachability audit',
   },
   {
     id: 'export-dxf',
     label: 'Export DXF',
     category: 'File',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: null,
     surfaces: ['command-palette'],
+    requiredContext: ['workspace.mode'],
     reachability: 'disabled-intentionally',
     disabledReason: 'DXF export is not implemented in the current product',
     activeStateSource: null,
@@ -618,15 +696,18 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'allowed',
     libraryBacking: false,
     capabilityRequirement: null,
+    analyticsEventId: null,
     evidenceOwner: '#398 placeholder export finding',
   },
   {
     id: 'share',
     label: 'Share',
     category: 'Project',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: null,
     surfaces: ['top-bar'],
+    requiredContext: ['workspace.mode'],
     reachability: 'registered-but-not-wired',
     disabledReason: 'Share currently records a demo action and is not a real product capability',
     activeStateSource: null,
@@ -637,15 +718,18 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'allowed',
     libraryBacking: false,
     capabilityRequirement: null,
+    analyticsEventId: null,
     evidenceOwner: 'apps/web/src/App.tsx onShare demo callback',
   },
   {
     id: 'account',
     label: 'Account',
     category: 'Account',
+    iconId: null,
     modes: ALL_MODES,
     shortcuts: null,
     surfaces: ['top-bar'],
+    requiredContext: ['workspace.mode'],
     reachability: 'registered-but-not-wired',
     disabledReason: 'Account currently records a demo action and is not a real product capability',
     activeStateSource: null,
@@ -656,6 +740,7 @@ const NON_TOOL_COMMANDS: readonly CanonicalCommandDescriptor<WorkspaceMode>[] = 
     readOnlyBehaviour: 'allowed',
     libraryBacking: false,
     capabilityRequirement: null,
+    analyticsEventId: null,
     evidenceOwner: 'apps/web/src/App.tsx onOpenAccountMenu demo callback',
   },
 ];
@@ -686,9 +771,13 @@ export interface ProductSurfaceEntry {
   readonly id: string;
   readonly label: string;
   readonly category: string;
+  readonly iconId: string | null;
+  readonly state: CommandRuntimeState;
+  readonly visible: boolean;
   readonly available: boolean;
   readonly disabledReason: string | null;
   readonly active: boolean;
+  readonly inProgress: boolean;
   readonly shortcutLabel: string | null;
   readonly reachability: ProductReachabilityState;
 }
@@ -699,19 +788,29 @@ export function productEntriesForSurface(
   context: ProductCommandContext,
   dialect: ShortcutDialect,
 ): readonly ProductSurfaceEntry[] {
-  return PRODUCT_COMMANDS.filter((command) => command.surfaces.includes(surface)).map((command) => {
+  const entries: ProductSurfaceEntry[] = [];
+
+  for (const command of PRODUCT_COMMANDS) {
+    if (!command.surfaces.includes(surface)) continue;
     const resolved = resolveCommand(command, context);
-    return {
+    if (!resolved.visible) continue;
+    entries.push({
       id: command.id,
       label: command.label,
       category: command.category,
+      iconId: command.iconId,
+      state: resolved.state,
+      visible: resolved.visible,
       available: resolved.available,
       disabledReason: resolved.disabledReason,
       active: resolved.active,
+      inProgress: resolved.inProgress,
       shortcutLabel: canonicalShortcutLabel(command.shortcuts, dialect),
       reachability: command.reachability,
-    };
-  });
+    });
+  }
+
+  return entries;
 }
 
 /** Lookup uses canonical product descriptors, never the design registry alone. */
