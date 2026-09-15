@@ -143,9 +143,13 @@ describe('NativeProjectSession.prepareForReplacement', () => {
 
     const save = session.save({ walls: [wall('late-failure', 1000)] });
     const replacement = session.prepareForReplacement();
+    // Attach the rejection assertion before rejecting the deferred write. If the
+    // handler is attached afterwards, Node reports a transient unhandled
+    // rejection even though the assertion ultimately observes the same error.
+    const saveFailure = expect(save).rejects.toThrow('late durable failure');
 
     write.reject(new Error('late durable failure'));
-    await expect(save).rejects.toThrow('late durable failure');
+    await saveFailure;
     await expect(replacement).resolves.toMatchObject({
       status: 'blocked',
       code: 'ARQ_REPLACE_UNSAVED_FAILURE',
