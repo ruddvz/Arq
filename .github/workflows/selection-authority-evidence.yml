@@ -53,41 +53,40 @@ jobs:
           probe = Path('scripts/run-selection-authority-capability-check.mjs')
           text = probe.read_text()
           start_marker = '  /* 5. Multi-select: marquee first result is primary, remainder secondary. */\n'
-          end_marker = '  await tab3d.click();\n  await model.waitFor({ state: \'visible\', timeout: 5000 });\n  observed.afterDelete3d = await waitForGreenSelection(page, model, false);\n'
+          end_marker = "  await tab3d.click();\n  await model.waitFor({ state: 'visible', timeout: 5000 });\n  observed.afterDelete3d = await waitForGreenSelection(page, model, false);\n"
           start = text.find(start_marker)
           end = text.find(end_marker, start)
           if start < 0 or end < 0:
               raise SystemExit('expected multi-select/delete browser block was not found')
-          replacement = """  /* 5. Multi-select is proven by deterministic state-flow evidence. */
-  observed.multiSelection = {
-    evidence: 'state-flow',
-    selectorTest: 'apps/web/src/canvas/canvas-interaction.test.ts',
-    authorityTest: 'scripts/selection-authority-state-flow.test.mjs',
-  };
-
-  /* 4. Delete one selected target -> stale selection is cleared. */
-  const drawnBeforeDelete = await drawnRows.count();
-  await drawnRows.nth(0).click();
-  const deleteSelectedId = await inspectorId(page);
-  const context = page.getByRole('toolbar', { name: 'Context actions' });
-  await context.waitFor({ state: 'visible', timeout: 5000 });
-  await context.getByRole('button', { name: /Delete/ }).click();
-  await page.waitForFunction(
-    (expectedDrawnCount) =>
-      document.querySelectorAll('[role="treeitem"][aria-selected="true"]').length === 0 &&
-      [...document.querySelectorAll('[role="treeitem"]')].filter((row) =>
-        /\(drawn\)/.test(row.textContent ?? ''),
-      ).length === expectedDrawnCount,
-    drawnBeforeDelete - 1,
-    { timeout: 5000 },
-  );
-  await assertNoSelection(page, 'delete-selected');
-  observed.deleteClearsSelection = {
-    deletedId: deleteSelectedId,
-    remainingDrawnWalls: drawnBeforeDelete - 1,
-  };
-
-"""
+          replacement = (
+              "  /* 5. Multi-select is proven by deterministic state-flow evidence. */\n"
+              "  observed.multiSelection = {\n"
+              "    evidence: 'state-flow',\n"
+              "    selectorTest: 'apps/web/src/canvas/canvas-interaction.test.ts',\n"
+              "    authorityTest: 'scripts/selection-authority-state-flow.test.mjs',\n"
+              "  };\n\n"
+              "  /* 4. Delete one selected target -> stale selection is cleared. */\n"
+              "  const drawnBeforeDelete = await drawnRows.count();\n"
+              "  await drawnRows.nth(0).click();\n"
+              "  const deleteSelectedId = await inspectorId(page);\n"
+              "  const context = page.getByRole('toolbar', { name: 'Context actions' });\n"
+              "  await context.waitFor({ state: 'visible', timeout: 5000 });\n"
+              "  await context.getByRole('button', { name: /Delete/ }).click();\n"
+              "  await page.waitForFunction(\n"
+              "    (expectedDrawnCount) =>\n"
+              "      document.querySelectorAll('[role=\\\"treeitem\\\"][aria-selected=\\\"true\\\"]').length === 0 &&\n"
+              "      [...document.querySelectorAll('[role=\\\"treeitem\\\"]')].filter((row) =>\n"
+              "        /\\(drawn\\)/.test(row.textContent ?? ''),\n"
+              "      ).length === expectedDrawnCount,\n"
+              "    drawnBeforeDelete - 1,\n"
+              "    { timeout: 5000 },\n"
+              "  );\n"
+              "  await assertNoSelection(page, 'delete-selected');\n"
+              "  observed.deleteClearsSelection = {\n"
+              "    deletedId: deleteSelectedId,\n"
+              "    remainingDrawnWalls: drawnBeforeDelete - 1,\n"
+              "  };\n\n"
+          )
           text = text[:start] + replacement + text[end:]
           probe.write_text(text)
           PY
