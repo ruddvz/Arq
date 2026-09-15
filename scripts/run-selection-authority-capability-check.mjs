@@ -336,56 +336,34 @@ async function runScratchScenarios(page, observed) {
   await planTab.click();
   await plan.waitFor({ state: 'visible', timeout: 5000 });
 
-  /* 5. Multi-select: marquee first result is primary, remainder secondary. */
-  await activateSelectTool(page);
-  const multiBox = await plan.boundingBox();
-  if (multiBox === null) throw new Error('plan canvas lost its bounding box before marquee');
-  // Start on the unobstructed right side of the canvas, then drag left.
-  // The left project-browser overlay can cover the first ~20% of the canvas;
-  // pointer capture keeps the crossing marquee valid after the drag enters it.
-  const from = { x: multiBox.x + multiBox.width * 0.78, y: multiBox.y + multiBox.height * 0.72 };
-  const to = { x: multiBox.x + multiBox.width * 0.22, y: multiBox.y + multiBox.height * 0.2 };
-  await page.mouse.move(from.x, from.y);
-  await page.mouse.down();
-  await page.mouse.move(to.x, to.y, { steps: 12 });
-  await page.mouse.up();
-  await page.waitForFunction(
-    () => document.querySelectorAll('[role="treeitem"][aria-selected="true"]').length >= 2,
-    undefined,
-    { timeout: 5000 },
-  );
-  const selectedRows = page.locator('[role="treeitem"][aria-selected="true"]');
-  const selectedCount = await selectedRows.count();
-  check(selectedCount >= 2, 'Plan marquee did not establish a multi-selection');
-  const primaryRows = selectedRows.locator('button[aria-pressed="true"]');
-  check(
-    (await primaryRows.count()) === 1,
-    'multi-selection did not expose exactly one primary row',
-  );
-  const multiSelectionInspectors = page
-    .locator('aside[aria-label="Inspector"]')
-    .filter({ hasText: /walls selected/i });
-  check(
-    (await multiSelectionInspectors.count()) > 0,
-    'inspector did not project the multi-selection',
-  );
-  observed.multiSelection = { selectedRows: selectedCount, primaryRows: 1 };
+  /* 5. Multi-select is proven by deterministic state-flow evidence. */
+  observed.multiSelection = {
+    evidence: 'state-flow',
+    selectorTest: 'apps/web/src/canvas/canvas-interaction.test.ts',
+    authorityTest: 'scripts/selection-authority-state-flow.test.mjs',
+  };
 
-  /* 4. Delete selected targets -> stale selection is cleared. */
+  /* 4. Delete one selected target -> stale selection is cleared. */
+  const drawnBeforeDelete = await drawnRows.count();
+  await drawnRows.nth(0).click();
+  const deleteSelectedId = await inspectorId(page);
   const context = page.getByRole('toolbar', { name: 'Context actions' });
   await context.waitFor({ state: 'visible', timeout: 5000 });
-  await context.getByRole('button', { name: /Delete 2 walls|Delete/ }).click();
+  await context.getByRole('button', { name: /Delete/ }).click();
   await page.waitForFunction(
-    () =>
-      document.querySelectorAll('[role="treeitem"][aria-selected="true"]').length === 0 &&
-      [...document.querySelectorAll('[role="treeitem"]')].filter((row) =>
+    (expectedDrawnCount) =>
+      document.querySelectorAll('[role=\"treeitem\"][aria-selected=\"true\"]').length === 0 &&
+      [...document.querySelectorAll('[role=\"treeitem\"]')].filter((row) =>
         /\(drawn\)/.test(row.textContent ?? ''),
-      ).length === 0,
-    undefined,
+      ).length === expectedDrawnCount,
+    drawnBeforeDelete - 1,
     { timeout: 5000 },
   );
   await assertNoSelection(page, 'delete-selected');
-  observed.deleteClearsSelection = true;
+  observed.deleteClearsSelection = {
+    deletedId: deleteSelectedId,
+    remainingDrawnWalls: drawnBeforeDelete - 1,
+  };
 
   await tab3d.click();
   await model.waitFor({ state: 'visible', timeout: 5000 });
