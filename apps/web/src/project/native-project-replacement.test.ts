@@ -143,13 +143,14 @@ describe('NativeProjectSession.prepareForReplacement', () => {
 
     const save = session.save({ walls: [wall('late-failure', 1000)] });
     const replacement = session.prepareForReplacement();
-    // Attach the rejection assertion before rejecting the deferred write. If the
-    // handler is attached afterwards, Node reports a transient unhandled
-    // rejection even though the assertion ultimately observes the same error.
-    const saveFailure = expect(save).rejects.toThrow('late durable failure');
+    // Attach a concrete rejection handler before the deferred write is rejected.
+    // A matcher promise can itself settle one microtask later, which is enough
+    // for Node/Vitest to report a transient unhandled rejection even though the
+    // assertion eventually observes it.
+    const observedSave = save.catch((error: unknown) => error);
 
     write.reject(new Error('late durable failure'));
-    await saveFailure;
+    await expect(observedSave).resolves.toMatchObject({ message: 'late durable failure' });
     await expect(replacement).resolves.toMatchObject({
       status: 'blocked',
       code: 'ARQ_REPLACE_UNSAVED_FAILURE',
