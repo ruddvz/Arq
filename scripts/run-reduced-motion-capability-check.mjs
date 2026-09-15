@@ -20,7 +20,8 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 function resolveChromiumExecutablePath() {
-  if (process.env.PLAYWRIGHT_CHROMIUM_PATH) return process.env.PLAYWRIGHT_CHROMIUM_PATH;
+  if (process.env.PLAYWRIGHT_CHROMIUM_PATH)
+    return process.env.PLAYWRIGHT_CHROMIUM_PATH;
   if (existsSync('/opt/pw-browsers/chromium')) return '/opt/pw-browsers/chromium';
   return undefined;
 }
@@ -52,7 +53,9 @@ function startServer() {
     try {
       const contents = readFileSync(filePath);
       const ext = path.extname(filePath);
-      res.writeHead(200, { 'content-type': MIME_TYPES[ext] || 'application/octet-stream' });
+      res.writeHead(200, {
+        'content-type': MIME_TYPES[ext] || 'application/octet-stream',
+      });
       res.end(contents);
     } catch {
       res.writeHead(404);
@@ -136,7 +139,9 @@ async function run() {
     const refractionMotionRemoved =
       refractionTransition.property === 'none' || refractionTransition.duration === '0s';
 
-    const commandButton = page.getByRole('button', { name: /command|search/i }).first();
+    const commandButton = page
+      .getByRole('button', { name: /command|search/i })
+      .first();
     await commandButton.click();
     const dialog = page.getByRole('dialog', { name: 'Command palette' });
     await dialog.waitFor({ state: 'visible', timeout: 5000 });
@@ -197,7 +202,9 @@ async function run() {
       consoleErrors.length === 0;
 
     if (!ok) {
-      throw new Error(`reduced-motion capability check failed: ${JSON.stringify(result)}`);
+      throw new Error(
+        `reduced-motion capability check failed: ${JSON.stringify(result)}`,
+      );
     }
 
     process.stdout.write(
