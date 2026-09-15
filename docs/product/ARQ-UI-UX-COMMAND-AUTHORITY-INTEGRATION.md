@@ -3,6 +3,12 @@
 Issue: #420  
 Base revalidated: `main @ c57f8353a0adf9130a33c1c23b8fffdefa5c5bf0`
 
+## Status
+
+This branch is the ownership-safe package/workspace tranche of #420. It is not the final shipping integration while `apps/web/src/App.tsx` remains owned by PR #361 and `packages/workspace/src/index.ts` remains owned by PR #504.
+
+Do not close #420, call browser-visible convergence complete, or merge a competing App-local authority from this tranche alone.
+
 ## Canonical authority
 
 `packages/workspace/src/product-command-authority.ts` is the product command/tool truth.
@@ -15,6 +21,87 @@ It is deliberately distinct from:
 - model/persistence authorities, which remain responsible for semantic mutation and durability.
 
 A module existing in the monorepo never makes a command product-reachable.
+
+## Canonical descriptor contract
+
+Each descriptor can represent:
+
+- stable ID;
+- visible label;
+- category;
+- cheap/static `iconId` only, never an icon component import;
+- applicable workspace modes;
+- canonical platform shortcut labels;
+- product UI surfaces;
+- explicit required runtime context keys;
+- product reachability state;
+- explicit non-reachable reason;
+- context-sensitive availability predicate;
+- active-state source;
+- execution target;
+- semantic operation ID where applicable;
+- view-only versus project-mutating effect;
+- persistence implication;
+- read-only behaviour;
+- independent library-backing evidence;
+- optional capability requirement;
+- optional stable analytics event identity;
+- evidence/test ownership.
+
+The static descriptor does not import React, renderer objects, persistence sessions, PDF writers or CAD implementation modules.
+
+## Reachability taxonomy
+
+The supported product-reachability states are:
+
+- `user-reachable`;
+- `disabled-intentionally`;
+- `registered-but-not-wired`;
+- `library-only`;
+- `dead-stale`;
+- `duplicate`.
+
+`library-only` is reserved for implementation that has no registered product-facing surface. A descriptor marked `library-only` is invalid if it claims a palette, rail, keyboard, top-bar or contextual surface.
+
+That distinction matters for the current false positives:
+
+- Door: `registered-but-not-wired`, `libraryBacking: true`;
+- Window: `registered-but-not-wired`, `libraryBacking: true`;
+- Room Boundary: `registered-but-not-wired`, `libraryBacking: true`;
+- Window Select: `registered-but-not-wired`, with marquee behaviour currently under Select;
+- Crossing Select: `registered-but-not-wired`, with marquee behaviour currently under Select;
+- Selection Filter: `registered-but-not-wired`;
+- Zoom: `registered-but-not-wired` as an armed tool, while direct wheel/pinch viewport zoom remains a real separate interaction.
+
+Repository backing is never an availability predicate.
+
+## Runtime resolution states
+
+The canonical resolver owns presentation/dispatch state so surfaces do not recreate it independently. It resolves a descriptor plus caller-supplied current product context to one of:
+
+- `available`;
+- `disabled`;
+- `hidden` by mode/context;
+- `read-only`;
+- `in-progress`;
+- `unreachable` for non-user-reachable product states.
+
+`active` remains orthogonal to availability and is sourced from the runtime owner named by `activeStateSource`.
+
+The resolver is UI/dispatch gating only. It is not permission enforcement. Semantic operations, project/session owners and persistence code must still reject invalid or unauthorised mutations.
+
+## Dispatch contract
+
+The canonical dispatcher resolves availability before invoking exactly one thin adapter target:
+
+- `tool`;
+- `view-action`;
+- `host-action`;
+- `semantic-operation`.
+
+Unavailable, hidden, read-only, in-progress and non-reachable commands never invoke an adapter. A reachable command with a missing adapter reports `missing-adapter` instead of pretending execution succeeded.
+
+Mutating commands record their semantic operation identity where one is proven. The dispatcher does not mutate project data itself.
 
 ## Ownership blockers at implementation time
 
@@ -45,11 +132,11 @@ Delete App's local `COMMAND_ENTRIES` constant. Do not replace it with another Ap
 
 Import the canonical helpers from `@arq/workspace`:
 
-- `productEntriesForSurface`
-- `dispatchProductCommand`
-- `commandForShortcut`
-- `resolveProductCommand`
-- `type ProductCommandContext`
+- `productEntriesForSurface`;
+- `dispatchProductCommand`;
+- `commandForShortcut`;
+- `resolveProductCommand`;
+- `type ProductCommandContext`.
 
 ### 2. Build one runtime context from existing owners
 
@@ -60,6 +147,7 @@ The context must include:
 - `mode`: current workspace mode;
 - `readOnly`: the real project/session read-only state;
 - `activeCommandIds`: the active tool id when one is armed;
+- `inProgressCommandIds`: only for commands whose current host owner can prove work is running;
 - `facts.canUndo`: current undo-stack truth;
 - `facts.canRedo`: current redo-stack truth;
 - `facts.canCloseActiveTab`: current tab contract truth;
@@ -78,7 +166,7 @@ Build palette entries from:
 productEntriesForSurface('command-palette', commandContext, shortcutDialect)
 ```
 
-Map `available === false` to the component's disabled state and pass `disabledReason` verbatim.
+The surface resolver already omits `hidden` commands. Map all returned non-available states to the component's disabled/pending presentation as appropriate and pass `disabledReason` verbatim. Do not recompute availability in the palette.
 
 The following local special cases must disappear because their product truth is now canonical:
 
@@ -142,10 +230,10 @@ Close Tab and Cancel Current Tool may use the same canonical descriptors and rea
 
 Do not create standalone product execution for:
 
-- `window-select`
-- `crossing-select`
-- `selection-filter`
-- `zoom`
+- `window-select`;
+- `crossing-select`;
+- `selection-filter`;
+- `zoom`.
 
 Window/crossing marquee semantics currently execute under Select. Wheel/pinch zoom currently executes as direct viewport input. Those facts do not imply separate armed-tool reachability.
 
@@ -159,28 +247,34 @@ Do not implement Door, Window, Room Boundary or any other missing CAD functional
 
 For each command/tool, record at least:
 
-- `reachability`
-- `libraryBacking`
-- current resolved availability for the queried context
-- `disabledReason`
-- `effect`
-- `persistence`
-- `readOnlyBehaviour`
-- `semanticOperationId`
-- `capabilityRequirement`
-- `evidenceOwner`
+- `reachability`;
+- `libraryBacking`;
+- `surfaces`;
+- `modes`;
+- `requiredContext`;
+- current resolved `state` for the queried context;
+- current resolved `available` and `disabledReason`;
+- `effect`;
+- `persistence`;
+- `readOnlyBehaviour`;
+- `semanticOperationId`;
+- `capabilityRequirement`;
+- `evidenceOwner`.
 
-The ledger must keep `libraryBacking` and `reachability` separate.
+The ledger must keep `libraryBacking` and `reachability` separate and must not promote open-PR product wiring to merged current capability.
 
 ## #369 reconciliation contract
 
-The next #369 reconciliation after #420 lands must verify:
+The next #369 reconciliation after #420 root integration must verify:
 
-1. #504 added the public workspace export without duplicating the authority.
+1. #504 or its successor added the public workspace export without duplicating the authority.
 2. #361/App integration deleted `COMMAND_ENTRIES` rather than maintaining a second metadata table.
-3. App surfaces derive availability from the same canonical resolver.
-4. no repository-backed-only tool became armed/reachable.
-5. Save and Windows Redo keyboard claims match live handlers.
-6. Share/Account demo callbacks are not represented as product capabilities.
-7. browser evidence covers palette, rail, keyboard, top bar and read-only behavior after root integration.
-8. #370 capability state was refreshed from #420 descriptors and exact-head evidence.
+3. App palette, keyboard, tool rail, top bar and contextual surfaces derive product state from the same canonical resolver/dispatcher.
+4. no repository-backed-only or registered-but-unwired tool became armed/reachable.
+5. hidden/read-only/in-progress/disabled reasons are not independently reimplemented by surfaces.
+6. Save and Windows Redo keyboard claims match live handlers.
+7. Share/Account demo callbacks are not represented as product capabilities.
+8. browser evidence covers representative palette, rail, keyboard, top bar, active-state and read-only behaviour after root integration.
+9. #370 capability state was refreshed from #420 descriptors and exact-head evidence.
+
+Until that serialized root integration and browser evidence exist, #420 remains BLOCKED for final completion even if this package tranche is green.
