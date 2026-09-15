@@ -22,12 +22,6 @@ describe('TOOLS_WITH_REPOSITORY_BACKING', () => {
     }
   });
 
-  /**
-   * The distinction doc 38 insists on: registry status is a design-coverage
-   * marker, repository backing is whether code here does the work. If these two
-   * ever became the same set, this package would be making a shipping claim on
-   * the registry's behalf.
-   */
   it('is a strict subset of what the registry calls existing-or-partial', () => {
     const existingOrPartial = TOOL_CONTRACTS.filter((t) => t.status === 'existing-or-partial');
     expect(TOOLS_WITH_REPOSITORY_BACKING.length).toBeLessThan(existingOrPartial.length);
@@ -48,13 +42,30 @@ describe('toolUnavailableReason', () => {
     expect(toolUnavailableReason('wall', 'review')).toBe('Wall is not available in review mode');
   });
 
-  it('says designed-but-not-built for registry tools with no module here', () => {
-    expect(toolUnavailableReason('stair', 'design')).toBe('Stair is designed but not built yet');
+  it('keeps designed-only tools unavailable with a product reason', () => {
+    expect(toolUnavailableReason('stair', 'design')).toContain('no proven live product execution path');
   });
 
-  it('allows a backed tool in a mode that carries its group', () => {
+  it('allows only tools with a live product consumer', () => {
     expect(toolUnavailableReason('wall', 'design')).toBeNull();
     expect(isToolAvailable('pan', 'present')).toBe(true);
+    expect(isToolAvailable('fit', 'design')).toBe(true);
+  });
+
+  it('does not turn repository backing into availability', () => {
+    expect(hasRepositoryBacking('door')).toBe(true);
+    expect(isToolAvailable('door', 'design')).toBe(false);
+    expect(toolUnavailableReason('door', 'design')).toContain('no live PlanCanvas execution path');
+
+    expect(hasRepositoryBacking('zoom')).toBe(true);
+    expect(isToolAvailable('zoom', 'present')).toBe(false);
+    expect(toolUnavailableReason('zoom', 'present')).toContain('no separate armed Zoom tool');
+  });
+
+  it('enforces read-only behaviour independently of visibility', () => {
+    expect(isToolAvailable('wall', 'design', true)).toBe(false);
+    expect(toolUnavailableReason('wall', 'design', true)).toBe('Wall is unavailable in read-only mode');
+    expect(isToolAvailable('pan', 'present', true)).toBe(true);
   });
 });
 
@@ -65,9 +76,11 @@ describe('activateTool', () => {
     expect(state.phase).toBe('armed');
   });
 
-  it('refuses an unavailable tool', () => {
+  it('refuses unavailable, context-blocked and library-only tools', () => {
     expect(activateTool(INITIAL_TOOL_STATE, 'stair', 'design')).toBe(INITIAL_TOOL_STATE);
+    expect(activateTool(INITIAL_TOOL_STATE, 'door', 'design')).toBe(INITIAL_TOOL_STATE);
     expect(activateTool(INITIAL_TOOL_STATE, 'wall', 'review')).toBe(INITIAL_TOOL_STATE);
+    expect(activateTool(INITIAL_TOOL_STATE, 'wall', 'design', true)).toBe(INITIAL_TOOL_STATE);
   });
 });
 
@@ -94,10 +107,6 @@ describe('tool phase machine', () => {
 });
 
 describe('cancelTool', () => {
-  /**
-   * Registry: "Escape returns to Select or previous persistent tool according
-   * to tool contract." First Escape abandons the draft, second leaves the tool.
-   */
   it('cancels the draft first, then falls back to the persistent tool', () => {
     let state = beginPreview(activateTool(INITIAL_TOOL_STATE, 'wall', 'design'));
     state = cancelTool(state);
@@ -118,12 +127,14 @@ describe('cancelTool', () => {
 });
 
 describe('toolRailEntriesForMode', () => {
-  it('keeps unbuilt tools visible with a reason instead of hiding them', () => {
+  it('keeps unavailable tools visible with the canonical reason', () => {
     const entries = toolRailEntriesForMode('design');
     const stair = entries.find((entry) => entry.tool.id === 'stair');
-    expect(stair).toBeDefined();
+    const door = entries.find((entry) => entry.tool.id === 'door');
     expect(stair?.available).toBe(false);
     expect(stair?.disabledReason).toBeTruthy();
+    expect(door?.available).toBe(false);
+    expect(door?.disabledReason).toContain('no live PlanCanvas execution path');
   });
 
   it('lists only the groups the mode carries', () => {
@@ -139,7 +150,7 @@ describe('toolRailEntriesForMode', () => {
 });
 
 describe('toolCoverage', () => {
-  it('reports the registry total and the smaller backed count', () => {
+  it('reports repository backing separately from product reachability', () => {
     const coverage = toolCoverage();
     expect(coverage.registryTotal).toBe(54);
     expect(coverage.repositoryBacked).toBe(TOOLS_WITH_REPOSITORY_BACKING.length);
