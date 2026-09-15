@@ -4,36 +4,36 @@
     {
       "id": "command-palette",
       "label": "Open command palette",
-      "mac": "\u2318K",
+      "mac": "⌘K",
       "windows": "Ctrl+K",
-      "ipadKeyboard": "\u2318K",
+      "ipadKeyboard": "⌘K",
       "phone": "bottom dock > More > Commands",
       "scope": "global"
     },
     {
       "id": "save",
       "label": "Save local project",
-      "mac": "\u2318S",
+      "mac": "⌘S",
       "windows": "Ctrl+S",
-      "ipadKeyboard": "\u2318S",
+      "ipadKeyboard": "⌘S",
       "phone": "automatic + project menu",
       "scope": "project"
     },
     {
       "id": "undo",
       "label": "Undo",
-      "mac": "\u2318Z",
+      "mac": "⌘Z",
       "windows": "Ctrl+Z",
-      "ipadKeyboard": "\u2318Z",
+      "ipadKeyboard": "⌘Z",
       "phone": "top/menu or gesture only if explicit and accessible",
       "scope": "project"
     },
     {
       "id": "redo",
       "label": "Redo",
-      "mac": "\u21e7\u2318Z",
-      "windows": "Ctrl+Y / Ctrl+Shift+Z",
-      "ipadKeyboard": "\u21e7\u2318Z",
+      "mac": "⇧⌘Z",
+      "windows": "Ctrl+Shift+Z",
+      "ipadKeyboard": "⇧⌘Z",
       "phone": "menu",
       "scope": "project"
     },
@@ -85,9 +85,9 @@
     {
       "id": "close-tab",
       "label": "Close active view tab",
-      "mac": "\u2318W",
+      "mac": "⌘W",
       "windows": "Ctrl+W",
-      "ipadKeyboard": "\u2318W",
+      "ipadKeyboard": "⌘W",
       "phone": "tab menu > Close",
       "scope": "view"
     }
