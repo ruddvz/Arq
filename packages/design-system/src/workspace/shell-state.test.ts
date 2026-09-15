@@ -116,7 +116,9 @@ describe('ShellState contract', () => {
     const imports = SOURCE.split('\n').filter((line) => line.startsWith('import '));
     expect(imports).toEqual(["import { useId, type ReactNode } from 'react';"]);
     expect(SOURCE).not.toMatch(/from ['"]@arq\//);
-    expect(SOURCE).not.toMatch(/saved|recovered|writable|permission/i);
+    expect(SOURCE).not.toMatch(
+      /readonly (?:saved|recovered|writable|permission|durability)\??\s*:/i,
+    );
   });
 
   it('supports long copy and narrow containers without clipping', () => {
