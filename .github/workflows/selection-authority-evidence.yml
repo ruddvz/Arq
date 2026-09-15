@@ -18,6 +18,11 @@ jobs:
         with:
           ref: codex/arq-401-selection-authority-evidence
       - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - name: Make browser scenario labels formatter-stable
         run: |
           python - <<'PY'
