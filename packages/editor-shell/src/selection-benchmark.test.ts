@@ -1,36 +1,13 @@
 /**
- * ARQ-149: add selection benchmark.
+ * ARQ-149 selection compute microbenchmark.
  *
- * Blueprint section 120's protected benchmark model (150 walls, 80
- * openings, 60 rooms, 200 annotations, "approximately 1,000 semantic
- * objects") and its "selection median under 50 ms" target, measured
- * against the real `pickAt` (hit-test.ts, ARQ-039) - the actual
- * production hit-testing function, not a reimplementation.
- *
- * Unlike ARQ-115/116/117's renderer benchmarks, this needs no browser:
- * hit-testing is pure computation (no Canvas/WebGL/DOM involved), so it
- * runs as a normal Vitest test in this real environment and measures
- * real wall-clock time via `performance.now()` - the same "real
- * measurement, not an estimate" standard those benchmarks set, just
- * without Playwright's overhead since nothing here needs a browser.
- *
- * 150 candidates are real segment-based HitTestables (walls, using
- * @arq/geometry-2d's closestPointOnSegment - the same distance
- * calculation nearest-snap.ts already uses in production); the
- * remaining 850 are point-based (createPointHitTestable, ARQ-040) to
- * reach section 120's "approximately 1,000 semantic objects" total.
- * pickAt's own performance characteristic (a linear scan calling each
- * candidate's O(1) hitTest) does not meaningfully differ by candidate
- * shape, so this mix is a faithful, honest stand-in for "clicking
- * among ~1,000 objects" without needing full wall/room geometry this
- * package has no BIM-domain access to (its own long-standing non-goal).
- *
- * Median (not average) is the recorded statistic, matching section
- * 120's own wording "selection median under 50 ms" exactly - a
- * benchmark reporting an average would silently change what is being
- * measured.
+ * This remains a compute-only measurement of real `pickAt` hit-testing across
+ * approximately 1,000 synthetic candidates. #402 now owns the target. This
+ * test must not create a second threshold or claim end-to-end interaction
+ * latency from a pure-function benchmark.
  */
 
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { closestPointOnSegment } from '@arq/geometry-2d';
 import { worldPoint, type Viewport, type WorldPoint } from '@arq/geometry-2d';
@@ -38,9 +15,25 @@ import { pickAt, type HitCandidate } from './hit-test';
 import { createPointHitTestable } from './point-selection';
 
 const WALL_COUNT = 150;
-const OTHER_CANDIDATE_COUNT = 850; // openings + rooms + annotations + padding, to reach "approximately 1,000" total.
+const OTHER_CANDIDATE_COUNT = 850;
 const TRIAL_COUNT = 500;
-const SELECTION_MEDIAN_TARGET_MS = 50; // benchmarks/PERFORMANCE-BUDGETS.json's selectionMedianMs.
+
+function canonicalSelectionTargetMs(): number {
+  const authority = JSON.parse(
+    readFileSync(new URL('../../../benchmarks/PERFORMANCE-BUDGETS.json', import.meta.url), 'utf8'),
+  ) as {
+    workflows: Array<{
+      id: string;
+      budget?: { metric?: string; value?: number } | null;
+    }>;
+  };
+  const workflow = authority.workflows.find((entry) => entry.id === 'plan.hover-selection');
+  const budget = workflow?.budget;
+  if (budget?.metric !== 'selectionComputeMedianMs' || typeof budget.value !== 'number') {
+    throw new Error('canonical #402 selection compute target is absent');
+  }
+  return budget.value;
+}
 
 function median(values: readonly number[]): number {
   const sorted = [...values].sort((a, b) => a - b);
@@ -86,17 +79,15 @@ const viewport: Viewport = {
 };
 
 describe('selection benchmark (ARQ-149)', () => {
-  it('produces the expected total candidate count matching "approximately 1,000 semantic objects"', () => {
+  it('produces the expected total candidate count matching the protected approximate 1,000-object scale', () => {
     expect(buildBenchmarkCandidates()).toHaveLength(WALL_COUNT + OTHER_CANDIDATE_COUNT);
   });
 
-  it('meets the selection median under 50ms target (section 120) against ~1,000 candidates, including a worst-case miss', () => {
+  it('meets the canonical #402 selection compute target against ~1,000 candidates, including a worst-case miss', () => {
     const candidates = buildBenchmarkCandidates();
     const durationsMs: number[] = [];
 
     for (let trial = 0; trial < TRIAL_COUNT; trial += 1) {
-      // A point guaranteed to hit nothing - pickAt must scan every
-      // candidate before giving up, the worst case for a linear scan.
       const missPoint = worldPoint(-999999, -999999);
       const start = performance.now();
       pickAt(candidates, missPoint, viewport);
@@ -104,20 +95,20 @@ describe('selection benchmark (ARQ-149)', () => {
     }
 
     const medianMs = median(durationsMs);
+    const targetMs = canonicalSelectionTargetMs();
 
     console.log(
-      `selection benchmark: median ${medianMs.toFixed(4)}ms over ${TRIAL_COUNT} trials (~1,000 candidates, worst-case miss)`,
+      `selection compute benchmark: median ${medianMs.toFixed(4)}ms over ${TRIAL_COUNT} trials (~1,000 candidates, worst-case miss); #402 target ${targetMs}ms`,
     );
-    expect(medianMs).toBeLessThan(SELECTION_MEDIAN_TARGET_MS);
+    expect(medianMs).toBeLessThan(targetMs);
   });
 
-  it('still finds the correct candidate among ~1,000 others (correctness, not just speed)', () => {
+  it('still finds the correct candidate among ~1,000 others', () => {
     const candidates = buildBenchmarkCandidates();
     const target = candidates[candidates.length - 1];
     if (target === undefined || target.hitTest === undefined) {
       throw new Error('test setup error: no target candidate');
     }
-    // The last "other" candidate's own target point, from buildBenchmarkCandidates.
     const lastIndex = OTHER_CANDIDATE_COUNT - 1;
     const point = worldPoint((lastIndex % 50) * 1000, Math.floor(lastIndex / 50) * 1000 + 4000);
     const found = pickAt(candidates, point, viewport);
