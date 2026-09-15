@@ -1,64 +1,66 @@
-name: Repair #401 evidence map numbering
+name: Selection authority evidence
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/design-system/**'
+      - 'packages/workspace/**'
+      - 'packages/model-renderer/**'
+      - 'packages/plan-renderer/**'
+      - 'scripts/run-selection-authority-capability-check.mjs'
+      - 'scripts/selection-authority-state-flow.test.mjs'
+      - '.github/workflows/selection-authority-evidence.yml'
+      - 'docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md'
   push:
-    branches:
-      - codex/arq-401-selection-authority-evidence
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/design-system/**'
+      - 'packages/workspace/**'
+      - 'packages/model-renderer/**'
+      - 'packages/plan-renderer/**'
+      - 'scripts/run-selection-authority-capability-check.mjs'
+      - 'scripts/selection-authority-state-flow.test.mjs'
+      - '.github/workflows/selection-authority-evidence.yml'
+      - 'docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md'
   workflow_dispatch:
 
-permissions:
-  contents: write
+concurrency:
+  group: selection-authority-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  repair:
-    if: github.actor != 'github-actions[bot]'
+  browser-selection-authority:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: codex/arq-401-selection-authority-evidence
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Make browser scenario labels formatter-stable
+      - name: Verify #401 evidence files are formatted
+        run: >-
+          pnpm exec prettier --check
+          scripts/run-selection-authority-capability-check.mjs
+          scripts/selection-authority-state-flow.test.mjs
+          docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
+          .github/workflows/selection-authority-evidence.yml
+      - name: Verify multi-selection state flow
         run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          path = Path('docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md')
-          text = path.read_text()
-          old = '''1. Plan wall selection -> tree, inspector and 3D projection.
-          2. Tree wall selection -> Plan, inspector and 3D projection.
-          3. Plan -> 3D -> Plan semantic selection continuity.
-          4. Delete one selected target -> no stale semantic selection and one fewer
-             drawn-wall row.
-          5. Active-level switch -> deterministic selection clear.
-          6. DOM focus movement -> semantic selection unchanged.
-          7. Escape -> semantic selection preserved; empty 3D click -> deterministic
-             semantic clear.
-          '''
-          new = '''- Scenario 1: Plan wall selection -> tree, inspector and 3D projection.
-          - Scenario 2: Tree wall selection -> Plan, inspector and 3D projection.
-          - Scenario 3: Plan -> 3D -> Plan semantic selection continuity.
-          - Scenario 4: Delete one selected target -> no stale semantic selection and one fewer
-            drawn-wall row.
-          - Scenario 6: Active-level switch -> deterministic selection clear.
-          - Scenario 7: DOM focus movement -> semantic selection unchanged.
-          - Scenario 8: Escape -> semantic selection preserved; empty 3D click -> deterministic
-            semantic clear.
-          '''
-          if old not in text:
-              raise SystemExit('browser scenario list not found')
-          path.write_text(text.replace(old, new, 1))
-          PY
-      - run: pnpm exec prettier --write docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
-      - name: Persist numbering repair
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
-          git commit -m 'docs(UX): make #401 scenario numbering explicit'
-          git push origin HEAD:codex/arq-401-selection-authority-evidence
+          node scripts/selection-authority-state-flow.test.mjs
+          pnpm --filter @arq/web exec vitest run src/canvas/canvas-interaction.test.ts
+      - name: Compile Zeus task context for #401
+        run: >-
+          node scripts/zeus.mjs compile --task
+          "Finish ARQ issue #401 by validating selection, focus and interaction-state authority across Plan, 3D, tree and inspector at current exact head. Add deterministic evidence only. Do not redesign selection."
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/run-selection-authority-capability-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: selection-authority-evidence
+          path: benchmarks/results/selection-authority.*
