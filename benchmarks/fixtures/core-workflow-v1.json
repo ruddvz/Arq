@@ -5,7 +5,8 @@
   "privacy": {
     "containsUserContent": false,
     "containsPrivateProjectContent": false,
-    "containsDocumentText": false
+    "containsDocumentText": true,
+    "documentTextClassification": "synthetic-generated-only"
   },
   "protectedScale": {
     "levels": 2,
@@ -43,32 +44,52 @@
   },
   "backingFixtures": [
     {
+      "path": "benchmarks/fixtures/core-workflow-product-fixture.ts",
+      "verification": "benchmarks/fixtures/core-workflow-product-fixture.test.ts",
+      "role": "product-executable-core-scale",
+      "mustMatchProtectedCounts": true,
+      "productExecutableCoreFixture": true,
+      "coveredDimensions": [
+        "levels",
+        "walls",
+        "doorsAndWindows",
+        "rooms",
+        "annotations",
+        "underlays",
+        "semanticObjectsApprox"
+      ],
+      "note": "Generates a real SQLite .arq through the canonical ARQFS/project-format writers. The proof test reopens it through ARQFS, imports the archive, and decodes it through apps/web's native-project-model boundary before asserting every protected scale dimension."
+    },
+    {
       "path": "packages/plan-renderer/benchmarks/canvas-2d/scene.js",
       "role": "protected-renderer-scale",
       "mustMatchProtectedCounts": true,
       "productExecutableCoreFixture": false,
       "coveredDimensions": ["walls", "doorsAndWindows", "rooms", "annotations"],
-      "note": "This renderer scene mechanically protects only the listed dimensions. It is not the product-executable Core-scale project required for #402 closure."
+      "note": "This renderer scene remains the renderer-specific scale proof. It must not be substituted for product-executable workflow evidence."
     },
     {
       "path": "fixtures/ARQ_Courtyard_House_Golden_Fixture_v2.arq",
-      "role": "product-open-compatibility-only",
+      "role": "product-open-compatibility-control",
       "mustMatchProtectedCounts": false,
       "sha256": "0afd9a9785b99ba4338e73067a1af383079363893c30fdc6d538c7e44ed87bd6",
-      "note": "This existing golden fixture proves product-open semantics but is not a substitute for the protected Core-scale fixture. It must not be reported as Core-scale workflow evidence."
+      "note": "The independently authored golden fixture remains the compatibility control. It is smaller than Core scale and must not be reported as Core-scale workflow evidence."
     }
   ],
   "mutationRule": "Any reduction below an exact/minimum guard is a failing fixture change. Complexity may increase only with an explicit #402 budget review.",
-  "status": "protected-scale-contract",
-  "productExecutable": false,
+  "status": "product-executable-protected-scale",
+  "productExecutable": true,
   "guardCoverage": {
     "mechanicallyVerifiedAgainstBackingFixture": [
+      "levels",
       "walls",
       "doorsAndWindows",
       "rooms",
-      "annotations"
+      "annotations",
+      "underlays",
+      "semanticObjectsApprox"
     ],
-    "contractOnlyPendingProductFixture": ["levels", "underlays", "semanticObjectsApprox"],
-    "rule": "Only mechanicallyVerifiedAgainstBackingFixture dimensions are currently proven against an executable backing fixture. Contract-only dimensions remain protected requirements but are not product-fixture evidence until #402 adds a product-executable Core-scale fixture."
+    "contractOnlyPendingProductFixture": [],
+    "rule": "Every protected dimension is mechanically verified against the generated product-executable .arq fixture. Workflow evidence must still name the actual evidenceFixture used; product-executable scale does not make renderer-only or compute-only measurements Core E2E evidence."
   }
 }
