@@ -27,40 +27,28 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
           path = Path('scripts/run-selection-authority-capability-check.mjs')
           text = path.read_text()
-          old = '''  const drawnRows = page.getByRole('treeitem').filter({ hasText: '(drawn)' });
-          check((await drawnRows.count()) >= 2, 'scratch setup did not expose two drawn walls in the tree');
-          '''
-          new = '''  const modelPanel = page.locator('nav[aria-label="Model"]:visible').first();
-          const drawnRows = modelPanel.getByRole('treeitem').filter({ hasText: '(drawn)' });
-          check((await drawnRows.count()) >= 2, 'scratch setup did not expose two drawn walls in the visible tree');
-          '''
-          if old not in text:
-              raise SystemExit('drawnRows source block not found')
-          text = text.replace(old, new, 1)
 
-          old = '''  await drawnRows.nth(0).locator('button').click();
-          const treeFirstId = await inspectorId(page);
-          const firstPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-          const otherDrawnRow = page
-            .locator('[role="treeitem"][aria-selected="false"]')
-            .filter({ hasText: '(drawn)' })
-            .first();
-          await otherDrawnRow.locator('button').click();
-          await page.waitForFunction(
-            (previousId) => {
-              const input = document.querySelector('aside[aria-label="Inspector"] input[aria-label="ID"]');
-              return input instanceof HTMLInputElement && input.value !== previousId;
-            },
-            treeFirstId,
-            { timeout: 5000 },
-          );
-          const treeSecondId = await inspectorId(page);
-          const secondPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-          '''
-          new = '''  const firstTreeRow = drawnRows.nth(0);
+          pattern = re.compile(
+              r"  const drawnRows = page\.getByRole\('treeitem'\)\.filter\(\{ hasText: '\(drawn\)' \}\);\n  check\(\(await drawnRows\.count\(\)\) >= 2, 'scratch setup did not expose two drawn walls in the tree'\);"
+          )
+          replacement = '''  const modelPanel = page.locator('nav[aria-label="Model"]:visible').first();
+          const drawnRows = modelPanel.getByRole('treeitem').filter({ hasText: '(drawn)' });
+          check(
+            (await drawnRows.count()) >= 2,
+            'scratch setup did not expose two drawn walls in the visible tree',
+          );'''
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'drawnRows replacement count={count}')
+
+          pattern = re.compile(
+              r"  await drawnRows\.nth\(0\)\.locator\('button'\)\.click\(\);\n  const treeFirstId = await inspectorId\(page\);\n  const firstPlanPixels = await analyzeScreenshot\(page, await plan\.screenshot\(\)\);\n  const otherDrawnRow = page\n    \.locator\('\[role=\"treeitem\"\]\[aria-selected=\"false\"\]'\)\n    \.filter\(\{ hasText: '\(drawn\)' \}\)\n    \.first\(\);\n  await otherDrawnRow\.locator\('button'\)\.click\(\);\n  await page\.waitForFunction\(\n    \(previousId\) => \{\n      const input = document\.querySelector\('aside\[aria-label=\"Inspector\"\] input\[aria-label=\"ID\"\]'\);\n      return input instanceof HTMLInputElement && input\.value !== previousId;\n    \},\n    treeFirstId,\n    \{ timeout: 5000 \},\n  \);\n  const treeSecondId = await inspectorId\(page\);\n  const secondPlanPixels = await analyzeScreenshot\(page, await plan\.screenshot\(\)\);"
+          )
+          replacement = '''  const firstTreeRow = drawnRows.nth(0);
           const firstTreePosition = await firstTreeRow.getAttribute('aria-posinset');
           check(firstTreePosition !== null, 'first drawn tree row has no stable aria-posinset');
           await firstTreeRow.locator('button').click();
@@ -98,7 +86,9 @@ jobs:
             .waitFor({ state: 'visible', timeout: 5000 });
           await page.waitForFunction(
             (previousId) => {
-              const input = document.querySelector('aside[aria-label="Inspector"] input[aria-label="ID"]');
+              const input = document.querySelector(
+                'aside[aria-label="Inspector"] input[aria-label="ID"]',
+              );
               return input instanceof HTMLInputElement && input.value !== previousId;
             },
             treeFirstId,
@@ -106,11 +96,12 @@ jobs:
           );
           const treeSecondId = await inspectorId(page);
           const secondPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-          observed.treePositions = [firstTreePosition, secondTreePosition];
-          '''
-          if old not in text:
-              raise SystemExit('tree replacement source block not found')
-          path.write_text(text.replace(old, new, 1))
+          observed.treePositions = [firstTreePosition, secondTreePosition];'''
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'tree replacement count={count}')
+
+          path.write_text(text)
           PY
       - run: pnpm exec prettier --write scripts/run-selection-authority-capability-check.mjs
       - name: Persist harness repair
