@@ -1,8 +1,5 @@
 name: Selection authority evidence
 
-permissions:
-  contents: write
-
 on:
   pull_request:
     branches: [main]
@@ -45,66 +42,6 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Prepare #401 browser probe with multi-select delegated to state-flow evidence
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          probe = Path('scripts/run-selection-authority-capability-check.mjs')
-          text = probe.read_text()
-          start_marker = '  /* 5. Multi-select: marquee first result is primary, remainder secondary. */\n'
-          end_marker = "  await tab3d.click();\n  await model.waitFor({ state: 'visible', timeout: 5000 });\n  observed.afterDelete3d = await waitForGreenSelection(page, model, false);\n"
-          start = text.find(start_marker)
-          end = text.find(end_marker, start)
-          if start < 0 or end < 0:
-              raise SystemExit('expected multi-select/delete browser block was not found')
-          replacement = (
-              "  /* 5. Multi-select is proven by deterministic state-flow evidence. */\n"
-              "  observed.multiSelection = {\n"
-              "    evidence: 'state-flow',\n"
-              "    selectorTest: 'apps/web/src/canvas/canvas-interaction.test.ts',\n"
-              "    authorityTest: 'scripts/selection-authority-state-flow.test.mjs',\n"
-              "  };\n\n"
-              "  /* 4. Delete one selected target -> stale selection is cleared. */\n"
-              "  const drawnBeforeDelete = await drawnRows.count();\n"
-              "  await drawnRows.nth(0).click();\n"
-              "  const deleteSelectedId = await inspectorId(page);\n"
-              "  const context = page.getByRole('toolbar', { name: 'Context actions' });\n"
-              "  await context.waitFor({ state: 'visible', timeout: 5000 });\n"
-              "  await context.getByRole('button', { name: /Delete/ }).click();\n"
-              "  await page.waitForFunction(\n"
-              "    (expectedDrawnCount) =>\n"
-              "      document.querySelectorAll('[role=\\\"treeitem\\\"][aria-selected=\\\"true\\\"]').length === 0 &&\n"
-              "      [...document.querySelectorAll('[role=\\\"treeitem\\\"]')].filter((row) =>\n"
-              "        /\\(drawn\\)/.test(row.textContent ?? ''),\n"
-              "      ).length === expectedDrawnCount,\n"
-              "    drawnBeforeDelete - 1,\n"
-              "    { timeout: 5000 },\n"
-              "  );\n"
-              "  await assertNoSelection(page, 'delete-selected');\n"
-              "  observed.deleteClearsSelection = {\n"
-              "    deletedId: deleteSelectedId,\n"
-              "    remainingDrawnWalls: drawnBeforeDelete - 1,\n"
-              "  };\n\n"
-          )
-          text = text[:start] + replacement + text[end:]
-          probe.write_text(text)
-          PY
-          pnpm exec prettier --write scripts/run-selection-authority-capability-check.mjs
-      - name: Persist browser/state-flow split on the PR branch
-        if: github.event_name == 'pull_request'
-        run: |
-          if ! git diff --quiet -- scripts/run-selection-authority-capability-check.mjs; then
-            git stash push -- scripts/run-selection-authority-capability-check.mjs
-            git fetch origin "${{ github.head_ref }}"
-            git checkout -B "${{ github.head_ref }}" "origin/${{ github.head_ref }}"
-            git stash pop
-            git config user.name github-actions[bot]
-            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-            git add scripts/run-selection-authority-capability-check.mjs
-            git commit -m "test(ux): move #401 multi-selection to deterministic state-flow evidence"
-            git push origin "${{ github.head_ref }}"
-          fi
       - name: Verify #401 evidence files are formatted
         run: >-
           pnpm exec prettier --check
