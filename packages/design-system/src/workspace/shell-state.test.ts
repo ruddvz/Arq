@@ -6,7 +6,10 @@ import { SHELL_STATE_KINDS, resolveShellStateSemantics } from './shell-state';
 const WORKSPACE_ROOT = fileURLToPath(new URL('./', import.meta.url));
 const SOURCE = readFileSync(`${WORKSPACE_ROOT}shell-state.tsx`, 'utf8');
 const CSS = readFileSync(`${WORKSPACE_ROOT}shell-state.css`, 'utf8');
-const SHELL_CONTROLS = readFileSync(new URL('../shell/shell-controls.css', import.meta.url), 'utf8');
+const SHELL_CONTROLS = readFileSync(
+  new URL('../shell/shell-controls.css', import.meta.url),
+  'utf8',
+);
 
 describe('ShellState contract', () => {
   it('covers the complete package-level shell state matrix', () => {
@@ -62,22 +65,39 @@ describe('ShellState contract', () => {
 
   it('keeps public copy string-only and exposes no raw exception or diagnostics prop', () => {
     expect(SOURCE).toMatch(/readonly title: string;/);
-    expect(SOURCE).toMatch(/readonly description\?: string;/);
-    expect(SOURCE).not.toMatch(/readonly (?:error|exception|stack|diagnostics?|filePath)\??\s*:/i);
+    expect(SOURCE).toMatch(/readonly description\??: string;/);
+    expect(SOURCE).not.toMatch(
+      /readonly (?:error|exception|stack|diagnostics?|filePath)\??\s*:/i,
+    );
     expect(SOURCE).not.toMatch(/\.stack\b/);
   });
 
-  it('renders supplied reasons visibly instead of hiding them behind hover', () => {
+  it('requires visible explanatory copy for unavailable and read-only states', () => {
+    expect(SOURCE).toMatch(
+      /readonly kind: 'unavailable' \| 'read-only';[\s\S]*readonly description: string;/,
+    );
+    expect(SOURCE).toMatch(
+      /readonly kind: Exclude<ShellStateKind, 'unavailable' \| 'read-only'>;[\s\S]*readonly description\?: string;/,
+    );
     expect(SOURCE).toMatch(
       /description === undefined \? null : \([\s\S]*<p id=\{descriptionId\}[\s\S]*\{description\}[\s\S]*<\/p>/,
     );
     expect(SOURCE).not.toMatch(/title=\{description\}/);
   });
 
+  it('supports empty states without forcing an action and recoverable states with supplied actions', () => {
+    expect(SOURCE).toContain('readonly primaryAction?: ShellStateAction;');
+    expect(SOURCE).toContain('readonly secondaryAction?: ShellStateAction;');
+    expect(SOURCE).toContain(
+      'primaryAction === undefined && secondaryAction === undefined ? null',
+    );
+    expect(resolveShellStateSemantics('recoverable-error').role).toBe('status');
+  });
+
   it('uses native button and link controls so supplied actions keep keyboard semantics', () => {
-    expect(SOURCE).toMatch(/<a className=\{className\} href=\{action\.href\}>/);
+    expect(SOURCE).toMatch(/<a[\s\S]*className=\{className\}[\s\S]*href=\{action\.href\}/);
     expect(SOURCE).toMatch(
-      /<button className=\{className\} type="button" onClick=\{action\.onAction\}>/,
+      /<button[\s\S]*className=\{className\}[\s\S]*type="button"[\s\S]*onClick=\{action\.onAction\}/,
     );
     expect(CSS).toContain("@import '../shell/shell-controls.css';");
     expect(SHELL_CONTROLS).toMatch(/\.arq-shell-button:focus-visible\s*\{/);
@@ -95,7 +115,8 @@ describe('ShellState contract', () => {
   it('keeps state truth caller-supplied with no workspace, persistence or permission authority import', () => {
     const imports = SOURCE.split('\n').filter((line) => line.startsWith('import '));
     expect(imports).toEqual(["import { useId, type ReactNode } from 'react';"]);
-    expect(SOURCE).toContain('readonly kind: ShellStateKind;');
+    expect(SOURCE).not.toMatch(/from ['"]@arq\//);
+    expect(SOURCE).not.toMatch(/saved|recovered|writable|permission/i);
   });
 
   it('supports long copy and narrow containers without clipping', () => {
@@ -112,7 +133,7 @@ describe('ShellState contract', () => {
 
   it('gives empty panels a compact presentation without creating another panel authority', () => {
     expect(SOURCE).toContain(
-      "kind === 'empty-panel' ? 'arq-shell-state--panel' : undefined",
+      "kind === 'empty-panel' ? 'arq-shell-state arq-shell-state--panel' : 'arq-shell-state'",
     );
     expect(CSS).toMatch(
       /\.arq-shell-state--panel\s*\{[\s\S]*padding:\s*var\(--arq-space-panel\);/,
