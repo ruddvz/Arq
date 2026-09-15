@@ -32,25 +32,32 @@ describe('resolveShortcutDialect', () => {
 });
 
 describe('shortcutLabel', () => {
-  /** Registry rule 4: "Shortcut labels are platform-adapted, not hard-coded Cmd everywhere." */
   it('never shows a Command glyph to a Windows user', () => {
     for (const command of KEYBOARD_COMMANDS) {
-      expect(shortcutLabel(command.id, 'windows')).not.toContain('⌘');
+      const label = shortcutLabel(command.id, 'windows');
+      if (label !== null) expect(label).not.toContain('⌘');
     }
     expect(shortcutLabel('command-palette', 'mac')).toBe('⌘K');
     expect(shortcutLabel('command-palette', 'windows')).toBe('Ctrl+K');
   });
 
-  /**
-   * Registry rule 3: "Every keyboard-only action needs pointer/touch access."
-   * A touch-only dialect returns the reachable path, not null - null would let
-   * a caller conclude the command is unavailable on a phone.
-   */
-  it('gives touch users a real path for every command', () => {
-    for (const command of KEYBOARD_COMMANDS) {
-      const label = shortcutLabel(command.id, 'touch-only');
-      expect(label).toBeTruthy();
-      expect(label?.length ?? 0).toBeGreaterThan(0);
+  it('advertises only shortcuts with a live product path', () => {
+    expect(shortcutLabel('wall', 'windows')).toBe('W');
+    expect(shortcutLabel('escape', 'windows')).toBe('Esc');
+    expect(shortcutLabel('save', 'windows')).toBeNull();
+    expect(shortcutLabel('focus-selection', 'windows')).toBeNull();
+  });
+
+  it('matches Windows redo to the live Ctrl+Shift+Z handler only', () => {
+    expect(shortcutLabel('redo', 'windows')).toBe('Ctrl+Shift+Z');
+    expect(shortcutLabel('redo', 'windows')).not.toContain('Ctrl+Y');
+  });
+
+  it('keeps touch paths for commands that are actually reachable', () => {
+    for (const id of ['command-palette', 'undo', 'redo', 'escape', 'select', 'wall', 'fit', 'close-tab']) {
+      const label = shortcutLabel(id, 'touch-only');
+      expect(label, id).toBeTruthy();
+      expect(label?.length ?? 0, id).toBeGreaterThan(0);
     }
   });
 
@@ -60,7 +67,7 @@ describe('shortcutLabel', () => {
 });
 
 describe('commandsInScope', () => {
-  it('partitions the registry by workspace layer', () => {
+  it('partitions the design registry by workspace layer', () => {
     expect(commandsInScope('global').map((c) => c.id)).toEqual(['command-palette']);
     expect(commandsInScope('tool').map((c) => c.id)).toEqual(['escape']);
     expect(commandsInScope('view').map((c) => c.id)).toContain('close-tab');
@@ -68,7 +75,6 @@ describe('commandsInScope', () => {
 });
 
 describe('shouldHandleShortcut', () => {
-  /** Registry rule 2, first half: never fire during IME composition. */
   it('never fires mid-composition, even outside a text field', () => {
     expect(shouldHandleShortcut(key({ isComposing: true }), { textFieldFocused: false })).toBe(
       false,
@@ -82,7 +88,6 @@ describe('shouldHandleShortcut', () => {
     expect(shouldHandleShortcut(key(), { textFieldFocused: true })).toBe(false);
   });
 
-  /** Escape is how a user leaves a field they did not mean to enter. */
   it('always lets Escape through', () => {
     expect(shouldHandleShortcut(key({ key: 'Escape' }), { textFieldFocused: true })).toBe(true);
   });

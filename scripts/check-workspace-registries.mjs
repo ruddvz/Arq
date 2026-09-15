@@ -42,7 +42,10 @@ const registryDir = path.join(repoRoot, 'packages/workspace/src/registry');
  * with it.
  */
 const iconAdapterFile = path.join(repoRoot, 'packages/icons/src/arq-icons.tsx');
-const toolStateFile = path.join(repoRoot, 'packages/workspace/src/tool-state.ts');
+const productCommandAuthorityFile = path.join(
+  repoRoot,
+  'packages/workspace/src/product-command-authority.ts',
+);
 const designSystemWorkspaceDir = path.join(repoRoot, 'packages/design-system/src/workspace');
 
 const errors = [];
@@ -151,8 +154,6 @@ if (icons) {
   requireUniqueIds('icon registry', icons.icons, 'id');
   requireFields('icon registry', icons.icons, 'id', ['name', 'source', 'artboard', 'purpose']);
   for (const icon of icons.icons) {
-    // Doc 48's geometry rules are the whole reason a new glyph goes through the
-    // ARQ icon workflow rather than being drawn ad hoc.
     if (icon.artboard !== '24x24') {
       fail(`icon registry: "${icon.id}" has artboard "${icon.artboard}", expected 24x24`);
     }
@@ -189,8 +190,6 @@ if (gates && surfaces) {
   const surfaceIds = new Set(surfaces.surfaces.map((surface) => surface.id));
   for (const gate of gates.gates) {
     for (const surfaceId of gate.surfaces) {
-      // Gates may legitimately name a non-surface scope ("future native
-      // shells"); anything that *looks* like a surface id must resolve.
       if (/^WS-\d+$/.test(surfaceId) && !surfaceIds.has(surfaceId)) {
         fail(`capability gates: "${gate.id}" references unknown surface "${surfaceId}"`);
       }
@@ -241,21 +240,20 @@ if (layouts) {
 // --- 3. Coverage. ---------------------------------------------------------
 
 /**
- * Reads TOOLS_WITH_REPOSITORY_BACKING out of tool-state.ts rather than
- * importing it, so this script stays a plain Node script with no build step -
- * the same reason the other scripts/ checks parse rather than import.
+ * Reads TOOLS_WITH_REPOSITORY_BACKING out of the canonical product command
+ * authority rather than importing it, so this script stays a plain Node script
+ * with no build step. Repository backing remains evidence only; it never makes
+ * a tool product-reachable.
  */
 function readBackedToolIds() {
-  const source = readFileSync(toolStateFile, 'utf8');
+  const source = readFileSync(productCommandAuthorityFile, 'utf8');
   const block = source.match(
     /export const TOOLS_WITH_REPOSITORY_BACKING: readonly string\[\] = \[([\s\S]*?)\];/,
   );
   if (block === null) {
-    fail('tool-state.ts: could not find TOOLS_WITH_REPOSITORY_BACKING');
+    fail('product-command-authority.ts: could not find TOOLS_WITH_REPOSITORY_BACKING');
     return new Set();
   }
-  // Anchored per line so the trailing `// ... ('crossing' mode)` evidence
-  // comments beside each entry are not mistaken for entries themselves.
   return new Set([...block[1].matchAll(/^\s*'([^']+)',/gm)].map((match) => match[1]));
 }
 
@@ -264,12 +262,11 @@ if (tools) {
   const toolIds = new Set(tools.tools.map((tool) => tool.id));
   for (const id of backedTools) {
     if (!toolIds.has(id)) {
-      fail(`tool-state.ts: TOOLS_WITH_REPOSITORY_BACKING lists unknown tool "${id}"`);
+      fail(`product-command-authority.ts: TOOLS_WITH_REPOSITORY_BACKING lists unknown tool "${id}"`);
     }
   }
 }
 
-// Every glyph the product can actually import, counted where it is declared.
 const shippedIcons = (
   readFileSync(iconAdapterFile, 'utf8').match(
     /^export (?:const|function) [A-Z][A-Za-z0-9]*Icon\b/gm,

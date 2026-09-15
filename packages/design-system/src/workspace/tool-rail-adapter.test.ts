@@ -37,17 +37,23 @@ describe('buildToolRailModel', () => {
   });
 
   /**
-   * Doc 38's distinction, made visible: a designed-but-unbuilt tool is in the
-   * rail, disabled, with the sentence that explains it - not silently missing
-   * and not silently clickable.
+   * Product reachability is stricter than registry presence or repository
+   * backing. Designed tools stay discoverable, but an unwired tool must carry
+   * the canonical reason rather than becoming clickable merely because a
+   * library implementation exists somewhere in the monorepo.
    */
-  it('keeps unbuilt tools present and explained', () => {
+  it('keeps unavailable tools present and honestly explained', () => {
     const { toolsByCategory } = buildToolRailModel('design', noIcon);
     const build = toolsByCategory.build ?? [];
     const stair = build.find((tool) => tool.id === 'stair');
     const door = build.find((tool) => tool.id === 'door');
-    expect(stair?.disabledReason).toBe('Stair is designed but not built yet');
-    expect(door?.disabledReason).toBeUndefined();
+
+    expect(stair?.disabledReason).toBe(
+      'Stair is designed in the workspace registry but has no proven live product execution path',
+    );
+    expect(door?.disabledReason).toBe(
+      'Door placement has repository backing but no live PlanCanvas execution path',
+    );
   });
 
   it('passes resolved icons through and omits the key when there is none', () => {
