@@ -100,6 +100,19 @@ export class NativeProjectReadOnlyError extends Error {
 }
 
 /**
+ * The flat wall encoder cannot preserve a reference-format project's levels,
+ * wall types, rooms, openings, hosted elements or views.
+ */
+export class NativeProjectUnsupportedEditError extends Error {
+  constructor() {
+    super(
+      'This reference-format project cannot persist wall edits until ARQ can preserve its full semantic model.',
+    );
+    this.name = 'NativeProjectUnsupportedEditError';
+  }
+}
+
+/**
  * What `prepareForPublication` hands to `publishNativeProject` once the working
  * copy is genuinely ready to be exported: everything drained, checkpointed and
  * read back, with nothing left for the caller to coordinate against this
@@ -117,6 +130,24 @@ export type NativeProjectPublicationPreparation =
     }
   | { readonly status: 'rejected'; readonly code: string; readonly reason: string };
 
+/**
+ * Non-destructive handoff verdict used before replacing or explicitly closing
+ * the project in the workspace.
+ *
+ * This is deliberately separate from `close()`: `close()` must always release
+ * the Worker and its OPFS lock, even after a failed write. A project switch has
+ * a different obligation. It must first prove there is no failed edit whose
+ * only recovery path is still held by this live session. Only a `ready` result
+ * gives the host permission to destroy this session.
+ */
+export type NativeProjectReplacementPreparation =
+  | { readonly status: 'ready' }
+  | {
+      readonly status: 'blocked';
+      readonly code: 'ARQ_REPLACE_CLOSED' | 'ARQ_REPLACE_UNSAVED_FAILURE';
+      readonly reason: string;
+    };
+
 export class NativeProjectSession {
   /**
    * The committed state: what the working copy is known to contain. Replaced
@@ -132,6 +163,8 @@ export class NativeProjectSession {
    * `save` carries the failure; this tail only orders the next write.
    */
   #queue: Promise<void> = Promise.resolve();
+  /** Changes that became visible in the editor but whose Worker write failed. */
+  #pendingChanges: readonly NativeProjectChange[] = [];
   #lastWriteError: unknown = null;
   #closed = false;
 
@@ -177,6 +210,13 @@ export class NativeProjectSession {
       // cannot be bypassed; this one keeps a read-only project from queueing
       // work that was never going to land.
       return Promise.reject(new NativeProjectReadOnlyError());
+    }
+
+    if (this.#snapshot.document !== null) {
+      // The current wall operation carries centreline geometry only. Passing a
+      // reference project through the flat encoder would silently discard its
+      // richer canonical model, so this is a hard session-level boundary.
+      return Promise.reject(new NativeProjectUnsupportedEditError());
     }
 
     const run = (): Promise<void> => this.#commit(change);
@@ -254,39 +294,48 @@ export class NativeProjectSession {
   }
 
   async #commit(change: NativeProjectChange): Promise<void> {
-    // Built from the *committed* snapshot, read now rather than when `save` was
-    // called, so a queued write always extends what actually landed.
-    const committed = this.#snapshot;
-    const next: NativeProjectSnapshot = {
-      ...committed,
-      displayName: change.displayName ?? committed.displayName,
-      walls: change.walls ?? committed.walls,
-      journalSequence: change.journalSequence ?? committed.journalSequence,
-    };
-    const nextOperations =
-      change.operation === undefined ? this.#operations : [...this.#operations, change.operation];
+    // Reapply failed changes in order, then the newest state. A later full wall
+    // state therefore remains authoritative (including undo), while operation
+    // history from a transient failure is not silently dropped.
+    const pending = [...this.#pendingChanges, change];
+    let next = this.#snapshot;
+    let nextOperations = this.#operations;
 
-    const entries = await exportArchive({
-      manifest: this.#manifest,
-      model: encodeNativeProjectModel({ projectName: next.displayName, walls: next.walls }),
-      operations: nextOperations,
-    });
+    for (const candidate of pending) {
+      next = {
+        ...next,
+        displayName: candidate.displayName ?? next.displayName,
+        walls: candidate.walls ?? next.walls,
+        journalSequence:
+          candidate.journalSequence ??
+          (candidate.operation === undefined ? next.journalSequence : next.journalSequence + 1),
+      };
+      if (candidate.operation !== undefined) {
+        nextOperations = [...nextOperations, candidate.operation];
+      }
+    }
 
     try {
+      const entries = await exportArchive({
+        manifest: this.#manifest,
+        model: encodeNativeProjectModel({ projectName: next.displayName, walls: next.walls }),
+        operations: nextOperations,
+      });
       await this.#handle.client.request({
         type: 'putArchiveEntries',
         entries: [...entries],
       });
     } catch (error) {
-      // Rule 1: nothing above this line has touched #snapshot, and nothing
-      // below it runs. The project in memory is still exactly what the working
-      // copy holds.
+      // Canonical state remains the last Worker-acknowledged snapshot. Keep the
+      // intended changes only for the next save attempt.
+      this.#pendingChanges = pending;
       this.#lastWriteError = error;
       throw error;
     }
 
     this.#snapshot = next;
     this.#operations = nextOperations;
+    this.#pendingChanges = [];
     this.#lastWriteError = null;
   }
 
@@ -308,6 +357,45 @@ export class NativeProjectSession {
       throw new Error(`unexpected computeSemanticHash response: ${payload.kind}`);
     }
     return payload.hash;
+  }
+
+  /**
+   * Drains every in-flight write and decides whether destroying this session
+   * would strand user-visible work.
+   *
+   * This is queued as a barrier rather than reading `hasUnsavedFailure`
+   * synchronously. If a save is in flight when the user asks to open another
+   * project, the verdict must describe the result of that save, not the state a
+   * few milliseconds before it settled. The method never closes the Worker,
+   * mutates the snapshot or clears pending changes. A blocked session therefore
+   * remains exactly the session that can replay those changes on the next save.
+   */
+  prepareForReplacement(): Promise<NativeProjectReplacementPreparation> {
+    if (this.#closed) {
+      return Promise.resolve({
+        status: 'blocked',
+        code: 'ARQ_REPLACE_CLOSED',
+        reason: 'This project has already been closed.',
+      });
+    }
+
+    const run = (): NativeProjectReplacementPreparation => {
+      if (this.#lastWriteError !== null) {
+        return {
+          status: 'blocked',
+          code: 'ARQ_REPLACE_UNSAVED_FAILURE',
+          reason:
+            'The last change did not reach the working copy. Save again before opening or closing this project.',
+        };
+      }
+      return { status: 'ready' };
+    };
+    const result = this.#queue.then(run, run);
+    this.#queue = result.then(
+      () => undefined,
+      () => undefined,
+    );
+    return result;
   }
 
   /**

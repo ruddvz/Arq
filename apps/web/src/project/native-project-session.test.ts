@@ -4,6 +4,7 @@ import { worldPoint } from '@arq/geometry-2d';
 import {
   NativeProjectSession,
   NativeProjectReadOnlyError,
+  NativeProjectUnsupportedEditError,
   type NativeProjectSnapshot,
   type NativeProjectWorkerHandle,
 } from './native-project-session';
@@ -178,6 +179,88 @@ describe('NativeProjectSession write semantics', () => {
       NativeProjectReadOnlyError,
     );
     expect(requestTypes).toEqual([]);
+  });
+  it('refuses the flat save path for a reference-format project before touching the Worker', async () => {
+    const { session, requestTypes } = sessionWith(async () => ({ kind: 'putArchiveEntries' }), {
+      document: {} as NativeProjectSnapshot['document'],
+    });
+
+    await expect(
+      session.save({
+        walls: [wall('w1', 1000)],
+        operation: { kind: 'add-walls', walls: [wall('w1', 1000)] },
+      }),
+    ).rejects.toBeInstanceOf(NativeProjectUnsupportedEditError);
+    expect(requestTypes).toEqual([]);
+  });
+
+  it('replays failed operation history into the next successful full-state save', async () => {
+    const written: ReadonlyArray<readonly [string, Uint8Array]>[] = [];
+    let attempt = 0;
+    const { session } = sessionWith(async (request) => {
+      if (request.type !== 'putArchiveEntries') throw new Error(`unexpected ${request.type}`);
+      attempt += 1;
+      if (attempt === 1) throw new Error('simulated durable write failure');
+      written.push(request.entries ?? []);
+      return { kind: 'putArchiveEntries' };
+    });
+    const first = wall('first', 1000);
+    const second = wall('second', 2000);
+    const firstOperation = { kind: 'add-walls', walls: [first] } as const;
+    const secondOperation = { kind: 'add-walls', walls: [second] } as const;
+
+    await expect(session.save({ walls: [first], operation: firstOperation })).rejects.toThrow(
+      'simulated durable write failure',
+    );
+    await expect(
+      session.save({ walls: [first, second], operation: secondOperation }),
+    ).resolves.toBeUndefined();
+
+    expect(session.snapshot()).toMatchObject({
+      walls: [first, second],
+      journalSequence: 2,
+    });
+    expect(session.hasUnsavedFailure).toBe(false);
+
+    const archive = await importArchive(new Map(written[0]));
+    expect(archive.status).toBe('opened');
+    if (archive.status === 'opened') {
+      expect(archive.model).toMatchObject({
+        walls: [{ id: 'first' }, { id: 'second' }],
+      });
+      expect(archive.operations).toEqual([firstOperation, secondOperation]);
+    }
+  });
+
+  it('lets a later full wall state supersede geometry from a failed change', async () => {
+    const written: ReadonlyArray<readonly [string, Uint8Array]>[] = [];
+    let attempt = 0;
+    const { session } = sessionWith(async (request) => {
+      if (request.type !== 'putArchiveEntries') throw new Error(`unexpected ${request.type}`);
+      attempt += 1;
+      if (attempt === 1) throw new Error('simulated durable write failure');
+      written.push(request.entries ?? []);
+      return { kind: 'putArchiveEntries' };
+    });
+    const failedWall = wall('failed', 1000);
+    const replacement = wall('replacement', 2500);
+
+    await expect(
+      session.save({
+        walls: [failedWall],
+        operation: { kind: 'add-walls', walls: [failedWall] },
+      }),
+    ).rejects.toThrow('simulated durable write failure');
+    await session.save({
+      walls: [replacement],
+      operation: { kind: 'remove-walls', wallIds: ['failed'] },
+    });
+
+    const archive = await importArchive(new Map(written[0]));
+    expect(archive.status).toBe('opened');
+    if (archive.status === 'opened') {
+      expect(archive.model).toMatchObject({ walls: [{ id: 'replacement' }] });
+    }
   });
 });
 
