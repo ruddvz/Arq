@@ -66,9 +66,7 @@ describe('ShellState contract', () => {
   it('keeps public copy string-only and exposes no raw exception or diagnostics prop', () => {
     expect(SOURCE).toMatch(/readonly title: string;/);
     expect(SOURCE).toMatch(/readonly description\??: string;/);
-    expect(SOURCE).not.toMatch(
-      /readonly (?:error|exception|stack|diagnostics?|filePath)\??\s*:/i,
-    );
+    expect(SOURCE).not.toMatch(/readonly (?:error|exception|stack|diagnostics?|filePath)\??\s*:/i);
     expect(SOURCE).not.toMatch(/\.stack\b/);
   });
 
@@ -88,9 +86,7 @@ describe('ShellState contract', () => {
   it('supports empty states without forcing an action and recoverable states with supplied actions', () => {
     expect(SOURCE).toContain('readonly primaryAction?: ShellStateAction;');
     expect(SOURCE).toContain('readonly secondaryAction?: ShellStateAction;');
-    expect(SOURCE).toContain(
-      'primaryAction === undefined && secondaryAction === undefined ? null',
-    );
+    expect(SOURCE).toContain('primaryAction === undefined && secondaryAction === undefined ? null');
     expect(resolveShellStateSemantics('recoverable-error').role).toBe('status');
   });
 
@@ -139,24 +135,18 @@ describe('ShellState contract', () => {
     expect(CSS).toMatch(/\.arq-shell-state\s*\{[\s\S]*min-inline-size:\s*0;/);
     expect(CSS).toMatch(/\.arq-shell-state__content\s*\{[\s\S]*min-inline-size:\s*0;/);
     expect(CSS).toMatch(/\.arq-shell-state__title\s*\{[\s\S]*overflow-wrap:\s*anywhere;/);
-    expect(CSS).toMatch(
-      /\.arq-shell-state__description\s*\{[\s\S]*overflow-wrap:\s*anywhere;/,
-    );
+    expect(CSS).toMatch(/\.arq-shell-state__description\s*\{[\s\S]*overflow-wrap:\s*anywhere;/);
     expect(CSS).toMatch(
       /\.arq-shell-state__actions \.arq-shell-button\s*\{[\s\S]*white-space:\s*normal;/,
     );
-    expect(CSS).toMatch(
-      /\.arq-shell-state__action-reason\s*\{[\s\S]*overflow-wrap:\s*anywhere;/,
-    );
+    expect(CSS).toMatch(/\.arq-shell-state__action-reason\s*\{[\s\S]*overflow-wrap:\s*anywhere;/);
   });
 
   it('gives empty panels a compact presentation without creating another panel authority', () => {
     expect(SOURCE).toContain(
       "kind === 'empty-panel' ? 'arq-shell-state arq-shell-state--panel' : 'arq-shell-state'",
     );
-    expect(CSS).toMatch(
-      /\.arq-shell-state--panel\s*\{[\s\S]*padding:\s*var\(--arq-space-panel\);/,
-    );
+    expect(CSS).toMatch(/\.arq-shell-state--panel\s*\{[\s\S]*padding:\s*var\(--arq-space-panel\);/);
     expect(CSS).not.toMatch(/z-index\s*:/);
   });
 
