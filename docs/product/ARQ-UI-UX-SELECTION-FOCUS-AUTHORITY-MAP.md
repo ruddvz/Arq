@@ -302,9 +302,9 @@ screenshot. The browser portion covers:
 3. Plan -> 3D -> Plan semantic selection continuity.
 4. Delete one selected target -> no stale semantic selection and one fewer
    drawn-wall row.
-6. Active-level switch -> deterministic selection clear.
-7. DOM focus movement -> semantic selection unchanged.
-8. Escape -> semantic selection preserved; empty 3D click -> deterministic
+5. Active-level switch -> deterministic selection clear.
+6. DOM focus movement -> semantic selection unchanged.
+7. Escape -> semantic selection preserved; empty 3D click -> deterministic
    semantic clear.
 
 Scenario 5 is deliberately recorded in the browser result as state-flow evidence
