@@ -37,3 +37,7 @@ Record:
 - recovery behaviour.
 
 Do not copy competitor interface or icons.
+
+## External workflow research references
+
+- [Archaiflow research reference](ARCHAIFLOW-REFERENCE-2026-09.md) — dated 2026-09-12. Advisory patterns for source-grounded project search, reviewable proposals, deterministic validation/explanation, documentation preflight, solver contracts, rule graphs, geometry-constrained derived visualisation, and separate firm-memory evidence. Revalidate the external source and current ARQ state before implementation.
