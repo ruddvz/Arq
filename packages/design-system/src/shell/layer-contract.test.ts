@@ -46,6 +46,8 @@ function rawLayerValues(): readonly number[] {
 const CANONICAL_LAYERS = [
   ['--arq-z-shell-raised', 10],
   ['--arq-z-context-hud', 90],
+  ['--arq-z-workspace-overlay', 95],
+  ['--arq-z-accessibility', 98],
   ['--arq-z-overlay-backdrop', 100],
   ['--arq-z-overlay-surface', 110],
   ['--arq-z-popover', 120],
@@ -53,9 +55,12 @@ const CANONICAL_LAYERS = [
 ] as const;
 
 describe('shell layer contract', () => {
-  it('keeps the named global layer tiers pinned', () => {
+  it('keeps the named global layer tiers pinned and ordered', () => {
+    let previous = Number.NEGATIVE_INFINITY;
     for (const [token, value] of CANONICAL_LAYERS) {
       expect(SHELL_TOKENS).toMatch(new RegExp(`${token}\\s*:\\s*${value}\\s*;`));
+      expect(value).toBeGreaterThan(previous);
+      previous = value;
     }
   });
 

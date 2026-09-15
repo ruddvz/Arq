@@ -29,7 +29,7 @@ const DETENT_LABEL: Readonly<Record<Exclude<SheetDetent, 'closed'>, string>> = {
  * Doc 47's bottom sheet: the touch replacement for a docked panel.
  *
  * Modal only at `full`. That is the significant decision here. A sheet at
- * `peek` or `half` deliberately leaves the canvas visible *and usable* — doc
+ * `peek` or `half` deliberately leaves the canvas visible *and usable* - doc
  * 47's peek detent exists so a user can see the selection identity while still
  * looking at the drawing, and trapping focus over a canvas the user can still
  * see and touch would make the sheet feel broken. At `full` the canvas is
@@ -38,7 +38,7 @@ const DETENT_LABEL: Readonly<Record<Exclude<SheetDetent, 'closed'>, string>> = {
  *
  * Detent changes are a real control, not only a drag. Doc 47 lists a drag
  * gesture, but a sheet whose only path between detents is a drag is unusable
- * with a keyboard or a switch device — so the grabber is a `<button>` that
+ * with a keyboard or a switch device - so the grabber is a `<button>` that
  * cycles, and Escape closes.
  *
  * The height comes from `sheetHeightPx`, which reads the layout registry's own
@@ -133,6 +133,7 @@ export function WorkspaceSheet(props: WorkspaceSheetProps): JSX.Element {
   return (
     <div
       className={`arq-sheet arq-sheet--${detent}`}
+      data-arq-overlay-role="workspace-sheet"
       role="dialog"
       aria-modal={modal}
       aria-label={`${title}, ${DETENT_LABEL[detent]}`}
@@ -150,7 +151,9 @@ export function WorkspaceSheet(props: WorkspaceSheetProps): JSX.Element {
         right: 0,
         bottom: 0,
         height: heightPx,
-        zIndex: 5,
+        // Above canvas/HUD chrome where the sheet physically covers it, but
+        // below modal backdrop/surface and transient popovers.
+        zIndex: 'var(--arq-z-workspace-overlay)',
         display: 'flex',
         flexDirection: 'column',
         background: 'var(--arq-ui-paper)',

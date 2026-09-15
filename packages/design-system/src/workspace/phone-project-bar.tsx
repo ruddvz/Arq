@@ -32,15 +32,15 @@ export interface PhoneProjectBarProps {
  * from a canvas doc 47 wants dominant. Wrapping was the right emergency fix for
  * a horizontal overflow; it is not a phone design.
  *
- * Doc 36's collapse priority — "presence labels, low-priority status text and
+ * Doc 36's collapse priority - "presence labels, low-priority status text and
  * secondary collaboration actions collapse first", while "project identity and
- * active view never disappear" — is implemented here literally: identity and
+ * active view never disappear" - is implemented here literally: identity and
  * status stay on the bar, and undo, redo, share, open and account move into
  * More. That is the overflow menu the earlier pass said was missing.
  *
  * Save and sync stay two separate words in one chip. Blueprint section 12's
  * rule is that they are "separate concepts", which is about not collapsing them
- * into a single status *enum* — "Saved · Offline" keeps both facts legible,
+ * into a single status *enum* - "Saved · Offline" keeps both facts legible,
  * where a merged "Synced" would hide a local-save failure behind a network
  * state.
  */
@@ -183,8 +183,9 @@ export function PhoneProjectBar(props: PhoneProjectBarProps): JSX.Element {
         <div
           ref={menuRef}
           role="menu"
+          data-arq-overlay-role="popover"
           aria-label="Project actions"
-          className="arq-shell-panel"
+          className="arq-phone-project-menu arq-shell-panel"
           onKeyDown={(event) => {
             if (event.key === 'Escape') {
               event.stopPropagation();
@@ -195,7 +196,7 @@ export function PhoneProjectBar(props: PhoneProjectBarProps): JSX.Element {
             position: 'absolute',
             top: '100%',
             right: 'var(--arq-space-compact)',
-            zIndex: 6,
+            zIndex: 'var(--arq-z-popover)',
             minWidth: 200,
             padding: 'var(--arq-space-micro)',
             border: '1px solid var(--arq-ui-line-default)',
