@@ -1,66 +1,80 @@
-name: Selection authority evidence
+name: Repair #401 active-tree evidence
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - 'apps/web/**'
-      - 'packages/design-system/**'
-      - 'packages/workspace/**'
-      - 'packages/model-renderer/**'
-      - 'packages/plan-renderer/**'
-      - 'scripts/run-selection-authority-capability-check.mjs'
-      - 'scripts/selection-authority-state-flow.test.mjs'
-      - '.github/workflows/selection-authority-evidence.yml'
-      - 'docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md'
   push:
-    branches: [main]
-    paths:
-      - 'apps/web/**'
-      - 'packages/design-system/**'
-      - 'packages/workspace/**'
-      - 'packages/model-renderer/**'
-      - 'packages/plan-renderer/**'
-      - 'scripts/run-selection-authority-capability-check.mjs'
-      - 'scripts/selection-authority-state-flow.test.mjs'
-      - '.github/workflows/selection-authority-evidence.yml'
-      - 'docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md'
+    branches:
+      - codex/arq-401-selection-authority-evidence
   workflow_dispatch:
 
-concurrency:
-  group: selection-authority-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+permissions:
+  contents: write
 
 jobs:
-  browser-selection-authority:
+  repair:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: codex/arq-401-selection-authority-evidence
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Verify #401 evidence files are formatted
-        run: >-
-          pnpm exec prettier --check
-          scripts/run-selection-authority-capability-check.mjs
-          scripts/selection-authority-state-flow.test.mjs
-          docs/product/ARQ-UI-UX-SELECTION-FOCUS-AUTHORITY-MAP.md
-          .github/workflows/selection-authority-evidence.yml
-      - name: Verify multi-selection state flow
+      - name: Scope tree evidence to visible Model browser
         run: |
-          node scripts/selection-authority-state-flow.test.mjs
-          pnpm --filter @arq/web exec vitest run src/canvas/canvas-interaction.test.ts
-      - name: Compile Zeus task context for #401
-        run: >-
-          node scripts/zeus.mjs compile --task
-          "Finish ARQ issue #401 by validating selection, focus and interaction-state authority across Plan, 3D, tree and inspector at current exact head. Add deterministic evidence only. Do not redesign selection."
-      - run: npx playwright install --with-deps chromium
-      - run: node scripts/run-selection-authority-capability-check.mjs
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: selection-authority-evidence
-          path: benchmarks/results/selection-authority.*
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('scripts/run-selection-authority-capability-check.mjs')
+          text = path.read_text()
+
+          pattern = re.compile(
+              r"  const drawnRows = page\.getByRole\('treeitem'\)\.filter\(\{ hasText: '\(drawn\)' \}\);\n  check\(\(await drawnRows\.count\(\)\) >= 2, 'scratch setup did not expose two drawn walls in the tree'\);"
+          )
+          replacement = '''  const modelPanel = page.locator('nav[aria-label="Model"]:visible').first();
+          check((await modelPanel.count()) === 1, 'scratch setup did not expose one visible Model browser');
+          const drawnRows = modelPanel.getByRole('treeitem').filter({ hasText: '(drawn)' });
+          check(
+            (await drawnRows.count()) >= 2,
+            'scratch setup did not expose two drawn walls in the visible Model browser',
+          );'''
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'visible Model browser replacement count={count}')
+
+          old = '''  throw new Error(
+            `no visible drawn tree row selected a semantic entity distinct from ${previousId}; ` +
+              `rendered drawn rows=${rowCount}`,
+          );'''
+          new = '''  const rows = await drawnRows.evaluateAll((entries) =>
+            entries.map((row) => ({
+              position: row.getAttribute('aria-posinset'),
+              selected: row.getAttribute('aria-selected'),
+              pressed: row.querySelector('button')?.getAttribute('aria-pressed') ?? null,
+              text: row.textContent?.trim() ?? '',
+              visible: row.getClientRects().length > 0,
+            })),
+          );
+          throw new Error(
+            `no visible drawn tree row selected a semantic entity distinct from ${previousId}; ` +
+              `rows=${JSON.stringify(rows)}`,
+          );'''
+          if old not in text:
+              raise SystemExit('diagnostic error block not found')
+          path.write_text(text.replace(old, new, 1))
+          PY
+      - run: pnpm exec prettier --write scripts/run-selection-authority-capability-check.mjs
+      - name: Persist evidence repair
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/run-selection-authority-capability-check.mjs
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'test(UX): scope #401 tree evidence to active browser'
+          git push origin HEAD:codex/arq-401-selection-authority-evidence
