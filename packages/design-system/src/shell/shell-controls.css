@@ -10,6 +10,34 @@
 @import '../tokens.css';
 @import './shell-tokens.css';
 
+/*
+ * UX-8.3 motion boundary.
+ *
+ * The shell tokens above are the canonical vocabulary. A small amount of older
+ * workspace CSS still asks for the pre-token names below. Keep that source on
+ * the same duration/easing authority while it is migrated rather than allowing
+ * its literal fallbacks to become a second motion system.
+ */
+:root {
+  --arq-motion-duration-fast: var(--arq-motion-fast);
+  --arq-motion-ease-standard: var(--arq-ease-standard);
+}
+
+/*
+ * Reduced motion changes time, not function. Controls still reach their final
+ * state and modal/workspace layout semantics stay identical, but shared motion
+ * durations become effectively immediate. `instant` remains the canonical 0ms
+ * token and is already non-animated.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --arq-motion-micro: 1ms;
+    --arq-motion-fast: 1ms;
+    --arq-motion-normal: 1ms;
+    --arq-motion-deliberate: 1ms;
+  }
+}
+
 .arq-shell-button {
   display: inline-flex;
   align-items: center;

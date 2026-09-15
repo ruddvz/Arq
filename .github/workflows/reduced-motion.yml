@@ -1,0 +1,34 @@
+name: Reduced motion
+
+on:
+  pull_request:
+    paths:
+      - 'packages/design-system/src/**'
+      - 'packages/workspace/**'
+      - 'apps/web/src/**'
+      - 'scripts/run-reduced-motion-capability-check.mjs'
+      - '.github/workflows/reduced-motion.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reduced-motion-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: npx playwright install --with-deps chromium
+      - name: Verify reduced-motion editor behaviour
+        run: node scripts/run-reduced-motion-capability-check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reduced-motion-browser-results
+          path: benchmarks/results/reduced-motion.json
