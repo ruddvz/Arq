@@ -4,7 +4,7 @@
 - Programme: #377
 - Phase: UX-0
 - Integration authority: `main`
-- Revalidated integration head: `4184551be3e75636d7feea93fda13699b00b4b43`
+- Revalidated integration head: `c57f8353a0adf9130a33c1c23b8fffdefa5c5bf0`
 - Evidence branch: `codex/arq-401-selection-authority-evidence`
 - Runtime mutation scope: none
 
@@ -24,13 +24,16 @@ At the revalidated head:
 
 - PR #361 remains open and owns `apps/web/src/App.tsx` plus native
   session/persistence paths.
-- no other active PR inspected owns the live Plan, 3D, tree, inspector,
-  workspace-mode selection or active level/view paths relevant to #401;
-- #401 therefore keeps `App.tsx` read-only and adds only deterministic evidence
-  plus this audit artefact.
+- #401 therefore keeps `App.tsx` read-only and changes no selection runtime.
+- the `4184551 -> a02ccc` drift added #398 evidence only.
+- the `a02ccc -> c57f835` drift closed #412 by adding shell/design-system overlay
+  zones and layer ownership. It did not change App selection wiring,
+  `PlanCanvas`, `ModelCanvas`, model-tree selection, inspector targeting,
+  `WorkspaceModeState.selection`, active-level selection clearing or view-tab
+  selection continuity.
 
-Required issue #319 could not be resolved from the live repository. GitHub
-reports no such issue, so this audit does not invent a contract for it.
+Required issue #319 could not be resolved from the live repository. This audit
+does not invent a contract for it.
 
 ## State domains
 
@@ -90,8 +93,8 @@ The traced live path is:
 - 3D reads the same object and writes through `onSelectElement` after mapping a
   renderer hit back to semantic `elementId`.
 - The model tree reads the same object and writes through `onSelectNode`.
-- The inspector owns no selected ID. App derives its current target/properties
-  from `modelSelection` plus current project/wall projection data.
+- The inspector owns no selected ID. App derives its target/properties from
+  `modelSelection` plus current project/wall projection data.
 - Selection-aware context actions read the same selection.
 
 No renderer, tree component or inspector component was found owning another
@@ -118,12 +121,12 @@ Current deterministic rules are:
 `PlanCanvas` receives semantic selection as a prop. It does not own a semantic
 selection store.
 
-Local Plan state is deliberately different:
+Its local state remains deliberately separate:
 
 - `hoveredId` is pointer hover only;
 - marquee state exists only during drag until it emits `onSelectMany`;
 - wall-draft state belongs to the Wall tool;
-- marquee Escape is handled by the marquee interaction;
+- marquee Escape is handled by marquee interaction;
 - wall-draft Escape is handled by the Wall tool.
 
 The plan renderer consumes semantic selection only for visual treatment and
@@ -158,8 +161,8 @@ semantic selection can remain unchanged while keyboard focus moves elsewhere.
 The inspector does not own an independent selected-element ID.
 
 App derives selected current-level wall records from `modelSelection` and
-current wall/project state, then builds inspector groups and the selected
-object description.
+current wall/project state, then builds inspector groups and the selected object
+description.
 
 Current limitation: a semantic selection that is not represented in the
 current wall projection can remain selected in the tree while the rich wall
@@ -199,8 +202,7 @@ hidden/off-level selection policy rather than #401 redesigning it.
 ## Plan and 3D view switching
 
 Active view is tab state, not selection state. Switching Plan -> 3D -> Plan does
-not rewrite `modelSelection`, so allowed semantic selection continuity is
-preserved.
+not rewrite `modelSelection`, so semantic selection continuity is preserved.
 
 Workspace mode changes update `modeState.mode` and `previousMode`; they do not
 replace App-level semantic selection.
@@ -213,14 +215,14 @@ Shell Escape handling closes an overlay or cancels the active tool. Plan has
 more specific Escape handling for marquee and wall draft. Semantic selection
 is not cleared merely because Escape was pressed.
 
-The focused browser probe verifies the current ordering:
+The browser probe verifies the current ordering:
 
 1. select a semantic target;
 2. move DOM focus to a shell control and press Escape;
 3. semantic selection remains unchanged;
 4. switch to 3D and click a measured empty point clear of the floating browser
    panel;
-5. the null 3D point-selection result clears the shared semantic selection.
+5. the null 3D point-selection result clears shared semantic selection.
 
 If #425 later introduces a central Escape-to-clear command, it must define its
 ordering after overlays/tools instead of treating it as an existing contract.
@@ -230,7 +232,7 @@ ordering after overlays/tools instead of treating it as an existing contract.
 `packages/workspace/src/mode-state.ts` also defines
 `WorkspaceModeState.selection` with `primaryId` and `secondaryIds`.
 
-Static tracing found:
+Static tracing and executable source-contract evidence show:
 
 - `initialModeState()` initialises it independently to empty selection;
 - `switchMode()` preserves it with the rest of mode state;
@@ -264,7 +266,7 @@ optimisation in #401.
 - App `modelTree` is memoised from model/drawn-wall/active-level inputs and does
   not depend on `modelSelection`.
 - ModelPanel memoises tree filtering/expansion/flattening from tree/query inputs.
-- Selection still rerenders the visible tree window and selection-dependent
+- Selection rerenders the visible tree window and selection-dependent
   Plan/3D/inspector projections, which is expected.
 - Current selected-wall derivation scans/maps current `drawnWalls`, but no
   measured performance problem was established.
@@ -273,37 +275,46 @@ No performance change is authorised by this audit.
 
 ## Deterministic evidence
 
-Existing repository probes already provide partial coverage:
+The evidence intentionally separates geometry selection from browser layout so
+a fragile drag coordinate cannot masquerade as the selection contract.
 
-- `scripts/run-model-canvas-capability-check.mjs` drives Plan selection into 3D
-  and clears selection through an empty 3D click.
-- `scripts/run-native-open-capability-check.mjs` opens the golden `.arq`
-  fixture, changes active level, selects a canonical wall from the tree and
-  observes its 3D highlight.
+### Multi-selection state flow
 
-#401 adds `scripts/run-selection-authority-capability-check.mjs`, which drives
-the production Vite bundle through the requested representative paths and
-records `benchmarks/results/selection-authority.json` plus a screenshot.
+Two deterministic layers prove scenario 5:
 
-The focused probe covers:
+- `apps/web/src/canvas/canvas-interaction.test.ts` exercises the real
+  `selectWallsInRegion` window/crossing selector, including multi-wall crossing
+  results.
+- `scripts/selection-authority-state-flow.test.mjs` verifies current source
+  wiring: Plan emits `selectWallsInRegion(...)` through `onSelectMany`, App maps
+  the first returned ID to `primary` and all remaining IDs to `secondary`, and
+  `WorkspaceModeState.selection` remains the independently initialised duplicate
+  representation recorded above.
+
+### Browser projection/state transitions
+
+`scripts/run-selection-authority-capability-check.mjs` drives the production
+Vite bundle and records `benchmarks/results/selection-authority.json` plus a
+screenshot. The browser portion covers:
 
 1. Plan wall selection -> tree, inspector and 3D projection.
 2. Tree wall selection -> Plan, inspector and 3D projection.
 3. Plan -> 3D -> Plan semantic selection continuity.
-4. Delete selected targets -> no stale selection.
-5. Marquee multi-select -> two selected rows with exactly one primary.
+4. Delete one selected target -> no stale semantic selection and one fewer
+   drawn-wall row.
 6. Active-level switch -> deterministic selection clear.
 7. DOM focus movement -> semantic selection unchanged.
 8. Escape -> semantic selection preserved; empty 3D click -> deterministic
    semantic clear.
 
-`.github/workflows/selection-authority-evidence.yml` runs the focused browser
-probe independently, checks the #401 evidence files with Prettier, runs the
+Scenario 5 is deliberately recorded in the browser result as state-flow evidence
+rather than re-tested through viewport-dependent marquee drag geometry.
+
+`.github/workflows/selection-authority-evidence.yml` is a static evidence lane.
+It does not mutate the branch. It checks evidence-file formatting, runs the
+source-contract test plus the focused canvas-interaction Vitest suite, runs the
 requested ZEUS compile command, installs Chromium, executes the browser probe
 and uploads JSON/screenshot evidence.
-
-Execution remains a closure gate until the focused workflow passes on the final
-exact evidence head. #401 must not close before that pass exists.
 
 ## Exact work handed to #425
 
@@ -332,12 +343,15 @@ exact evidence head. #401 must not close before that pass exists.
 - #391 owns production project-browser/inspector behaviour.
 - #425 owns the unified UI/session selection contract.
 - #451/#455 own later level/context interaction work.
+- PR #361 retains `App.tsx` and native persistence/session ownership until it is
+  resolved.
 - Agent proposal/highlight state must remain distinct from ordinary selection
   and canonical data.
 
 ## Closure gate
 
-Statically proven at the revalidated integration head:
+Statically and deterministically established at the revalidated integration
+head:
 
 - effective selection writers/readers are mapped;
 - Plan/3D/tree/inspector authority direction is explicit;
@@ -346,14 +360,20 @@ Statically proven at the revalidated integration head:
 - level/project/delete/self-healing paths are traced;
 - the duplicate workspace-mode selection is proven divergent but dormant;
 - selection-related recomputation has been inspected without speculative
-  optimisation.
+  optimisation;
+- latest main drift through `c57f8353a0adf9130a33c1c23b8fffdefa5c5bf0`
+  does not alter the audited selection runtime.
 
 Still required before closing #401:
 
-- the focused browser workflow must PASS at the final exact evidence head;
+- the focused evidence workflow must PASS at the final exact evidence head;
 - its JSON/browser evidence must agree with this map;
-- any contradiction must be recorded rather than repaired by implementing #425
-  inside #401.
+- the PR must merge without selection-runtime conflict;
+- the same focused lane must pass on the resulting `main` head before #401 is
+  closed.
+
+Any contradiction must be recorded rather than repaired by implementing #425
+inside #401.
 
 ## ZEUS regression handoff
 
