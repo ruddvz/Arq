@@ -33,6 +33,8 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Prove product-executable Core fixture candidate
+        run: pnpm vitest run benchmarks/fixtures/core-workflow-product-fixture.test.ts
       - run: node scripts/check-performance-authority-test.mjs
       - run: node scripts/check-performance-authority.mjs
       - run: pnpm check:web-bundle-budget:test
