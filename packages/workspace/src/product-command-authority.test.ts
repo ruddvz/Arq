@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest';
-import { validateCommandDescriptors } from '@arq/command-system';
 import { toolContract } from './registry';
 import { toolRailEntriesForMode } from './tool-state';
 import {
@@ -11,13 +10,21 @@ import {
   productEntriesForSurface,
   resolveProductCommand,
   unwiredKeyboardCommandIds,
+  validateCommandDescriptors,
   type ProductCommandContext,
 } from './product-command-authority';
 
 const DESIGN_CONTEXT: ProductCommandContext = {
   mode: 'design',
   readOnly: false,
-  facts: { canUndo: true, canRedo: true, canCloseActiveTab: true },
+  facts: {
+    canUndo: true,
+    canRedo: true,
+    canCloseActiveTab: true,
+    canSaveCopy: true,
+    canExportSheetPdf: true,
+    canPublish: true,
+  },
 };
 
 describe('canonical product command catalog', () => {
@@ -76,12 +83,13 @@ describe('canonical product command catalog', () => {
     expect(zoom?.disabledReason).toContain('Wheel and pinch zoom are live view gestures');
   });
 
-  it('blocks mutating commands in read-only context while retaining view controls', () => {
+  it('blocks read-only-incompatible commands while retaining view controls', () => {
     const readOnlyContext: ProductCommandContext = { ...DESIGN_CONTEXT, readOnly: true };
     expect(resolveProductCommand('wall', readOnlyContext)?.available).toBe(false);
     expect(resolveProductCommand('wall', readOnlyContext)?.disabledReason).toBe(
       'Wall is unavailable in read-only mode',
     );
+    expect(resolveProductCommand('save-a-copy', readOnlyContext)?.available).toBe(false);
     expect(resolveProductCommand('fit', readOnlyContext)?.available).toBe(true);
   });
 
@@ -93,6 +101,16 @@ describe('canonical product command catalog', () => {
     expect(resolveProductCommand('wall', context)?.active).toBe(true);
     expect(resolveProductCommand('select', context)?.active).toBe(false);
     expect(productCommand('wall')?.activeStateSource).toBe('workspace.tool-state.activeToolId');
+  });
+
+  it('keeps the live Escape lifecycle command inside the same authority', () => {
+    const escape = resolveProductCommand('escape', DESIGN_CONTEXT);
+    expect(escape?.available).toBe(true);
+    expect(escape?.descriptor.shortcuts?.windows).toBe('Esc');
+    expect(escape?.descriptor.executionTarget).toEqual({
+      kind: 'view-action',
+      id: 'cancel-current-tool',
+    });
   });
 });
 
@@ -122,7 +140,7 @@ describe('surface resolution', () => {
     }
   });
 
-  it('takes labels from the existing tool registry rather than a second local table', () => {
+  it('takes tool labels from the existing tool registry rather than a second local table', () => {
     for (const id of ['select', 'wall', 'door', 'room-boundary', 'fit']) {
       expect(productCommand(id)?.label).toBe(toolContract(id)?.name);
     }
@@ -131,11 +149,25 @@ describe('surface resolution', () => {
   it('provides a context-derived close-tab disabled reason', () => {
     const context: ProductCommandContext = {
       ...DESIGN_CONTEXT,
-      facts: { ...DESIGN_CONTEXT.facts, canCloseActiveTab: false },
+      facts: {
+        canUndo: true,
+        canRedo: true,
+        canCloseActiveTab: false,
+        canSaveCopy: true,
+        canExportSheetPdf: true,
+        canPublish: true,
+      },
     };
     expect(resolveProductCommand('close-tab', context)?.disabledReason).toBe(
       'The active view cannot be closed',
     );
+  });
+
+  it('models existing file actions from their live host handlers', () => {
+    for (const id of ['open', 'save-a-copy', 'export-sheet-pdf', 'publish']) {
+      expect(resolveProductCommand(id, DESIGN_CONTEXT)?.available, id).toBe(true);
+      expect(productCommand(id)?.executionTarget?.kind, id).toBe('host-action');
+    }
   });
 
   it('does not expose demo-only Share or Account as real top-bar capabilities', () => {
@@ -159,7 +191,8 @@ describe('keyboard lookup and dispatch', () => {
     expect(dispatchProductCommand('wall', DESIGN_CONTEXT, { activateTool })).toEqual({
       status: 'executed',
     });
-    expect(activateTool).toHaveBeenCalledExactlyOnceWith('wall');
+    expect(activateTool).toHaveBeenCalledTimes(1);
+    expect(activateTool).toHaveBeenCalledWith('wall');
   });
 
   it('blocks a shortcut lookup target when context forbids execution', () => {
@@ -177,5 +210,15 @@ describe('keyboard lookup and dispatch', () => {
   it('matches redo to the live Windows shortcut only', () => {
     expect(commandForShortcut('Ctrl+Shift+Z', 'windows', DESIGN_CONTEXT)?.descriptor.id).toBe('redo');
     expect(commandForShortcut('Ctrl+Y', 'windows', DESIGN_CONTEXT)).toBeNull();
+  });
+
+  it('keeps labels and shortcut identity stable across keyboard and palette', () => {
+    const wallKeyboard = commandForShortcut('W', 'windows', DESIGN_CONTEXT);
+    const wallPalette = productEntriesForSurface('command-palette', DESIGN_CONTEXT, 'windows').find(
+      (entry) => entry.id === 'wall',
+    );
+    expect(wallKeyboard?.descriptor.id).toBe(wallPalette?.id);
+    expect(wallKeyboard?.descriptor.label).toBe(wallPalette?.label);
+    expect(wallKeyboard?.descriptor.shortcuts?.windows).toBe(wallPalette?.shortcutLabel);
   });
 });
