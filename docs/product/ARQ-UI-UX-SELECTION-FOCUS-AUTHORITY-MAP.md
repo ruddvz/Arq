@@ -1,21 +1,49 @@
 # ARQ UI/UX selection and focus authority map
 
-**Issue:** #401  
-**Programme:** #377  
-**Phase:** UX-0  
-**Audited branch/head:** `main` @ `48c5a7399166a6288a77b76a374b5b660ae471a6`  
-**Evidence type:** static repository/state-flow inspection  
-**Status:** current authority map, not a browser interaction claim
+- Issue: #401
+- Programme: #377
+- Phase: UX-0
+- Integration authority: `main`
+- Revalidated integration head: `c57f8353a0adf9130a33c1c23b8fffdefa5c5bf0`
+- Evidence branch: `codex/arq-401-selection-authority-evidence`
+- Runtime mutation scope: none
 
-## 1. Purpose
+This audit maps the current authority for semantic selection, DOM focus, hover,
+active tools, active level/view and inspector targeting across Plan, 3D, the
+model tree and the inspector. It does not redesign selection and does not solve
+#425.
 
-This map identifies who currently reads and writes selection, hover, focus and inspector target state across Plan, 3D, model tree and inspector.
+## Integration and ownership authority
 
-The goal is to let #425 unify behaviour without creating a second selection store or accidentally persisting UI selection into canonical `.arq` project data.
+`main` is the live integration branch for the active ARQ programme. The
+repository default-branch pointer still names the older
+`claude/arq-cad-platform-research-ba8rav` branch; #332 tracks that
+administrative mismatch.
 
-## 2. Effective current selection authority
+At the revalidated head:
 
-The live product's effective cross-surface selection authority is the App-level state in `apps/web/src/App.tsx`:
+- PR #361 remains open and owns `apps/web/src/App.tsx` plus native
+  session/persistence paths.
+- #401 therefore keeps `App.tsx` read-only and changes no selection runtime.
+- the `4184551 -> a02ccc` drift added #398 evidence only.
+- the `a02ccc -> c57f835` drift closed #412 by adding shell/design-system overlay
+  zones and layer ownership. It did not change App selection wiring,
+  `PlanCanvas`, `ModelCanvas`, model-tree selection, inspector targeting,
+  `WorkspaceModeState.selection`, active-level selection clearing or view-tab
+  selection continuity.
+
+Issue #319 is live and governs deterministic multi-agent work ownership only. Its
+own boundary says repository claims must not change ARQ design/evidence truth, so
+it does not create another selection authority for #401.
+
+## State domains
+
+The current implementation has five distinct state domains. They must not be
+collapsed accidentally.
+
+### A. Semantic selection/session state
+
+The effective live authority is App-level `modelSelection`:
 
 ```ts
 const [modelSelection, setModelSelection] = useState<ModelPanelSelectionState>({
@@ -24,254 +52,339 @@ const [modelSelection, setModelSelection] = useState<ModelPanelSelectionState>({
 });
 ```
 
-Its value shape is:
+It is session/presentation state containing semantic element IDs. It is not
+canonical building data.
 
-- `primary: string | null`
-- `secondary: ReadonlySet<string>`
+### B. DOM keyboard focus
 
-The IDs are semantic/project element IDs where real project elements are involved. The state itself is session/presentation state and is not canonical building data.
+Focus belongs to normal browser/component focus handling for tree rows, search,
+inspector inputs, shell controls and overlays. Moving DOM focus does not write
+semantic selection.
 
-## 3. Cross-surface readers and writers
+### C. Hover and transient pointer state
 
-| Surface | Reads | Writes | Current semantics |
-| --- | --- | --- | --- |
-| Plan canvas | `modelSelection` | `onSelectElement`, `onSelectMany` | single click can replace selection; marquee can replace with primary + secondary set |
-| 3D canvas | `modelSelection` | `onSelectElement` | click writes one primary and clears secondary selection |
-| Model tree | `modelSelection` | `onSelectNode` | tree click writes one primary and clears secondary selection |
-| Inspector | derived from `modelSelection` | no independent selection writer in audited path | selected drawn walls drive current property groups and accessible description |
-| Status/context UI | selection count derived from `modelSelection` | none | reports one primary plus secondary count |
-| Delete/context action | reads `modelSelection` | clears after operation | current drawn-wall delete path clears selection after removing selected walls |
+`PlanCanvas` owns local hover and marquee state. Hover is transient. Marquee is
+transient until pointer-up emits a semantic selection result.
 
-This means Plan, 3D, tree and inspector are already coordinated through one effective App state rather than four independent stores.
+### D. Active tool state
 
-## 4. Plan selection contract
+Select, Wall, Pan, Fit and tool cancellation use workspace/App tool state. Tool
+state is separate from semantic selection.
 
-`PlanCanvas` receives the shared selection object and callbacks from App.
+### E. Canonical project data
 
-Current App wiring:
+Project/model data remains owned by the semantic/project operation domain.
+Selection only references canonical data through semantic IDs.
 
-- `onSelectElement(elementId)` replaces selection with `primary = elementId`, `secondary = empty`;
-- `onSelectMany(elementIds)` makes the first ID primary and the remainder secondary;
-- clicking empty can send `null`, clearing single selection;
-- Plan hover remains local to `PlanCanvas` and is not promoted into shared selection state.
+Allowed direction:
 
-The plan renderer consumes selection for visual treatment and handles. Preview/hover state must remain distinct from committed semantic selection.
+`session selection -> semantic IDs -> read canonical project state`
 
-## 5. 3D selection contract
+Selection must never become persisted `.arq` project truth.
 
-`ModelCanvas` receives the same `modelSelection` object that Plan receives.
+## Authoritative selection owner
 
-Its selection prop uses the same primary/secondary shape used by the renderer. Clicking a 3D element calls the App writer with one semantic element ID, which becomes the same selection later read by Plan, tree and inspector.
+The effective cross-surface authority is App-level `modelSelection` in
+`apps/web/src/App.tsx`.
 
-Renderer mesh identity is not selection authority. `ModelCanvas` maps renderer hits back to semantic element IDs and the host stores those IDs.
+The traced live path is:
 
-Current limitation: the audited App callback from 3D writes a single primary and clears secondaries. Multi-selection parity with Plan is not yet present.
+- Plan reads `modelSelection` and writes through `onSelectElement` and
+  `onSelectMany`.
+- 3D reads the same object and writes through `onSelectElement` after mapping a
+  renderer hit back to semantic `elementId`.
+- The model tree reads the same object and writes through `onSelectNode`.
+- The inspector owns no selected ID. App derives its target/properties from
+  `modelSelection` plus current project/wall projection data.
+- Selection-aware context actions read the same selection.
 
-## 6. Model tree selection contract
+No renderer, tree component or inspector component was found owning another
+live semantic-selection source on the traced path.
 
-`ModelPanel` receives `modelSelection` and calls `onSelectNode(node.id)`.
+## Current write semantics
 
-The host replaces selection with the clicked node as the only primary target.
+Current deterministic rules are:
 
-`ModelPanelSelectionState` intentionally mirrors the Plan selection value shape instead of importing semantic model types. Tree rows query:
+- no selection: `primary = null`, secondary set empty;
+- single Plan/tree/3D selection: one primary, secondaries cleared;
+- Plan marquee: first returned ID becomes primary, remaining IDs become
+  secondary;
+- tree click: clicked semantic node becomes the sole primary;
+- 3D click: hit semantic element becomes the sole primary;
+- an empty 3D point-selection result clears semantic selection;
+- selected drawn-wall deletion clears selection after the operation;
+- active native-level switch clears selection;
+- project close/reset clears selection;
+- Plan/3D view switching does not rewrite selection.
 
-- whether the row is selected;
-- whether it is the primary selection.
+## Plan state
 
-Current limitation: no modifier-based extend/toggle path is wired by App. Tree interaction therefore collapses any Plan multi-selection to one selected node.
+`PlanCanvas` receives semantic selection as a prop. It does not own a semantic
+selection store.
 
-## 7. Inspector target derivation
+Its local state remains deliberately separate:
 
-The current inspector does not own an independent selected-element ID.
+- `hoveredId` is pointer hover only;
+- marquee state exists only during drag until it emits `onSelectMany`;
+- wall-draft state belongs to the Wall tool;
+- marquee Escape is handled by marquee interaction;
+- wall-draft Escape is handled by the Wall tool.
 
-App derives `selectedDrawnWalls` from the IDs in `modelSelection` and passes the resulting groups/description into `InspectorShell`.
+The plan renderer consumes semantic selection only for visual treatment and
+handles.
 
-This is the correct authority direction: selection identifies targets, then the inspector projects properties from canonical/current project data.
+## 3D state
 
-Current limitation: the audited inspector derivation is strongest for wall selection. Selection may contain other semantic IDs from the project/tree/3D, but current property-group construction does not prove equivalent rich inspection for every element category. #391 remains the broader production browser/inspector owner.
+`ModelCanvas` receives the same semantic selection object as Plan.
 
-## 8. Selection lifecycle and self-healing
+Raycast hits use rendered mesh metadata to recover semantic `elementId`.
+Renderer mesh identity is projection detail, not canonical selection identity.
+Multiple rendered solids may represent one selected semantic object.
 
-### Active level change
+3D currently replaces selection with a single primary. It does not provide the
+same multi-selection input behaviour as Plan. An empty 3D hit emits the current
+null-selection clear path.
 
-When the active native level changes, App clears `modelSelection`.
+## Tree state and focus
 
-Reason recorded in code: a wall ID from another level should not leave the inspector describing an object that is not visible on the current level.
+The model tree receives `modelSelection` plus a selection callback. Tree rows
+use selection for `aria-selected` and primary presentation.
 
-This is a safe current policy, although #425/#451/#455 may later define a more explicit off-level selection model.
+The tree virtualiser can keep the primary selected row mounted outside the
+normal viewport. That is a presentation optimisation, not another selection
+writer.
 
-### Project close/reset
+DOM focus remains normal browser focus on row buttons and search controls. A
+semantic selection can remain unchanged while keyboard focus moves elsewhere.
 
-Project reset clears selection.
+## Inspector targeting
 
-### Undo/delete of drawn walls
+The inspector does not own an independent selected-element ID.
 
-App contains a reconciliation effect for `drawn-wall-*` IDs. If undo/redo removes the primary selected drawn wall, it removes dangling IDs and can promote a surviving secondary to primary.
+App derives selected current-level wall records from `modelSelection` and
+current wall/project state, then builds inspector groups and the selected object
+description.
 
-The current reconciliation deliberately focuses on drawn-wall IDs. Rich native element invalidation should continue to be governed by the semantic operation/invalidation owners rather than expanded with local ID heuristics.
+Current limitation: a semantic selection that is not represented in the
+current wall projection can remain selected in the tree while the rich wall
+inspector has no equivalent target. #391 remains the broader project-browser
+and inspector owner.
 
-## 9. Multi-selection and primary-selection semantics today
+## Invalid and deleted targets
 
-Current effective rules inferred from the real App wiring:
+For drawn walls, explicit delete removes selected walls in one operation and
+then clears semantic selection.
 
-- no selection: `primary = null`, `secondary = empty`;
-- single selection: one `primary`, empty secondary set;
-- Plan marquee: first returned ID becomes primary, remaining IDs become secondary;
-- 3D click: selected hit becomes sole primary;
-- tree click: selected node becomes sole primary;
-- inspector target derives from shared IDs;
-- deleting current selected drawn walls clears the selection;
-- active native level change clears selection.
+App also reconciles disappearing `drawn-wall-*` IDs after undo/redo or similar
+changes. Dangling IDs are removed; if a primary disappears while a secondary
+survives, a surviving secondary can be promoted.
 
-These rules are consistent enough to use as the starting point for #425, but they are not yet a complete product contract for modifier extend/toggle, cross-level selection, mixed-type multi-selection or keyboard tree selection.
+That reconciliation is not a general canonical-project invalidation contract.
+#389 owns broader semantic model/invalidation coordination and #425 must define
+how unified session selection handles invalid canonical IDs.
 
-## 10. Duplicate dormant selection representation found
+## Active level, hidden and off-level targets
 
-`packages/workspace/src/mode-state.ts` defines `WorkspaceModeState` with its own field:
+`handleShowLevel(levelId)` replaces the active level projection and clears
+`modelSelection`. Current level switching therefore has a deterministic
+clear-selection policy.
 
-```ts
-selection: WorkspaceSelection
-```
+A hidden tree node can remain semantically selected. Hidden state is
+presentation metadata, not another selection source.
 
-`WorkspaceSelection` uses another equivalent shape:
+The project tree can contain objects from the whole project while Plan, 3D and
+current wall inspector projection are level-scoped. Selecting an off-level tree
+object can therefore create a valid semantic tree selection that has no current
+Plan/3D/rich-inspector projection. A later level switch clears it.
 
-- `primaryId`
-- `secondaryIds`
+That behaviour is deterministic but incomplete. #425 must define the desired
+hidden/off-level selection policy rather than #401 redesigning it.
 
-The mode-state documentation says selection is preserved when switching modes.
+## Plan and 3D view switching
 
-However, in the audited App:
+Active view is tab state, not selection state. Switching Plan -> 3D -> Plan does
+not rewrite `modelSelection`, so semantic selection continuity is preserved.
 
-- `modeState` is created through `initialModeState()`;
-- the effective product selection is the separate `modelSelection` state;
-- no read of `modeState.selection` was found;
-- `setModeState` is used for mode switching, not for syncing the effective selection.
+Workspace mode changes update `modeState.mode` and `previousMode`; they do not
+replace App-level semantic selection.
 
-Therefore `modeState.selection` is currently a **dormant duplicate representation**, not the effective selection authority.
+## Escape and clear-selection ordering
 
-This is not evidence of two currently competing rendered selections because the dormant value is not consumed by the product path inspected. It is still an architecture drift risk: a future component could read the stale mode-state selection and diverge from Plan/3D/tree.
+There is no current global rule that Escape clears semantic selection.
 
-#425 should choose one session selection authority and remove, derive or explicitly synchronise the duplicate representation. Do not allow both to become writable authorities.
+Shell Escape handling closes an overlay or cancels the active tool. Plan has
+more specific Escape handling for marquee and wall draft. Semantic selection
+is not cleared merely because Escape was pressed.
 
-## 11. Hover authority
+The browser probe verifies the current ordering:
 
-Plan hover is local interaction state in `PlanCanvas`.
+1. select a semantic target;
+2. move DOM focus to a shell control and press Escape;
+3. semantic selection remains unchanged;
+4. switch to 3D and click a measured empty point clear of the floating browser
+   panel;
+5. the null 3D point-selection result clears shared semantic selection.
 
-3D hover/render treatment, where present, belongs to the 3D view/renderer session layer.
+If #425 later introduces a central Escape-to-clear command, it must define its
+ordering after overlays/tools instead of treating it as an existing contract.
 
-Hover should not be stored as canonical project data and should not silently replace selection. #425 may standardise cross-surface hover/reveal behaviour later, but a global hover store is not required merely for visual consistency.
+## Dormant duplicate representation
 
-## 12. Focus is not selection
+`packages/workspace/src/mode-state.ts` also defines
+`WorkspaceModeState.selection` with `primaryId` and `secondaryIds`.
 
-Keyboard/DOM focus and semantic selection are separate concepts.
+Static tracing and executable source-contract evidence show:
 
-Current evidence:
+- `initialModeState()` initialises it independently to empty selection;
+- `switchMode()` preserves it with the rest of mode state;
+- live Plan/3D/tree/inspector selection writes go to App `modelSelection`;
+- no deliberate synchronisation from `modelSelection` to
+  `WorkspaceModeState.selection` was found;
+- no important live reader of `WorkspaceModeState.selection` was found on the
+  traced product path.
 
-- `ModelPanel` uses native buttons for rows and keeps a selected/focused row mounted through tree virtualisation logic;
-- `WorkspaceSheet` independently stores/restores DOM focus across open/close;
-- command palette/modal focus handling belongs to modal components;
-- Plan canvas focus owns canvas keyboard interaction;
-- selecting an element does not mean the DOM focus should always move to its inspector/tree row.
+The duplicate is therefore already divergent in memory after the first real
+selection, even though its stale value is currently dormant and does not create
+a second rendered selection.
 
-#425 and #429 must keep this separation explicit. A single object should not attempt to represent both selected semantic IDs and the currently focused DOM control.
+Do not delete or rewrite it in #401. #425 must choose one session-selection
+authority and remove, derive or deliberately synchronise the duplicate.
 
-## 13. Current cross-surface gaps
+## Focus versus semantic selection conclusion
 
-### Gap A: dormant duplicate mode selection
+DOM keyboard focus and semantic selection are separate authorities today.
+Tree/search/inspector/shell controls can receive focus without changing
+`modelSelection`.
 
-`WorkspaceModeState.selection` can drift permanently from effective `modelSelection` because App does not synchronise or consume it.
+#425 must preserve this separation. A unified semantic-selection contract must
+not become a DOM-focus store.
 
-### Gap B: multi-selection parity
+## Performance observation
 
-Plan can produce multi-selection, but audited tree and 3D callbacks replace it with one primary.
+No selection-specific full-project recomputation was found that justifies an
+optimisation in #401.
 
-### Gap C: modifier semantics are not one documented contract
+- App `modelTree` is memoised from model/drawn-wall/active-level inputs and does
+  not depend on `modelSelection`.
+- ModelPanel memoises tree filtering/expansion/flattening from tree/query inputs.
+- Selection rerenders the visible tree window and selection-dependent
+  Plan/3D/inspector projections, which is expected.
+- Current selected-wall derivation scans/maps current `drawnWalls`, but no
+  measured performance problem was established.
 
-The effective App writers replace selection. A complete shared contract for extend/toggle/window/crossing/clear across pointer and keyboard surfaces is not yet centralised.
+No performance change is authorised by this audit.
 
-### Gap D: inspector coverage is narrower than selection coverage
+## Deterministic evidence
 
-The shared selection can refer to more project node types than the current wall-focused inspector projection proves.
+The evidence intentionally separates geometry selection from browser layout so
+a fragile drag coordinate cannot masquerade as the selection contract.
 
-### Gap E: cross-level policy is currently clear-selection
+### Multi-selection state flow
 
-That is safe, but later level isolation/reveal work needs an explicit policy for selected-but-hidden/off-level targets rather than each surface inventing one.
+Two deterministic layers prove scenario 5:
 
-### Gap F: focus restoration is distributed
+- `apps/web/src/canvas/canvas-interaction.test.ts` exercises the real
+  `selectWallsInRegion` window/crossing selector, including multi-wall crossing
+  results.
+- `scripts/selection-authority-state-flow.test.mjs` verifies current source
+  wiring: Plan emits `selectWallsInRegion(...)` through `onSelectMany`, App maps
+  the first returned ID to `primary` and all remaining IDs to `secondary`, and
+  `WorkspaceModeState.selection` remains the independently initialised duplicate
+  representation recorded above.
 
-Modal/sheet components have their own focus contracts. Cross-surface reveal/select flows need to preserve those contracts rather than treating selection change as focus movement.
+### Browser projection/state transitions
 
-## 14. Canonical data and persistence boundary
+`scripts/run-selection-authority-capability-check.mjs` drives the production
+Vite bundle and records `benchmarks/results/selection-authority.json` plus a
+screenshot. The browser portion covers:
 
-Selection must remain outside semantic project persistence.
+- Scenario 1: Plan wall selection -> tree, inspector and 3D projection.
+- Scenario 2: Tree wall selection -> Plan, inspector and 3D projection.
+- Scenario 3: Plan -> 3D -> Plan semantic selection continuity.
+- Scenario 4: Delete one selected target -> no stale semantic selection and one fewer
+  drawn-wall row.
+- Scenario 6: Active-level switch -> deterministic selection clear.
+- Scenario 7: DOM focus movement -> semantic selection unchanged.
+- Scenario 8: Escape -> semantic selection preserved; empty 3D click -> deterministic
+  semantic clear.
 
-Allowed relationship:
+Scenario 5 is deliberately recorded in the browser result as state-flow evidence
+rather than re-tested through viewport-dependent marquee drag geometry.
 
-`session selection -> stable semantic IDs -> read canonical project state`
+`.github/workflows/selection-authority-evidence.yml` is a static evidence lane.
+It does not mutate the branch. It checks evidence-file formatting, runs the
+source-contract test plus the focused canvas-interaction Vitest suite, runs the
+requested ZEUS compile command, installs Chromium, executes the browser probe
+and uploads JSON/screenshot evidence.
 
-Not allowed:
+## Exact work handed to #425
 
-- renderer object becomes selected project authority;
-- selected IDs are written into building geometry merely because the UI selected them;
-- tree/inspector owns an independent semantic object copy;
-- a restored stale selection reveals unavailable project data;
-- mode switching rewrites project data to preserve selection.
+#425 should establish one canonical session-selection contract that defines:
 
-If session restoration of selection is later desired, it must be an explicit presentation/session preference contract and must self-heal against missing IDs.
+1. one selected-ID set plus one explicit primary ID;
+2. replace, extend and toggle semantics shared by Plan, 3D and tree;
+3. window/crossing multi-selection without local surface stores;
+4. invalid/deleted target reconciliation for canonical project IDs, not only
+   `drawn-wall-*` IDs;
+5. hidden/off-level policy, including whether selecting an off-level target
+   changes context or remains selected but not projected;
+6. one documented clear-selection command and explicit Escape ordering after
+   overlays and active tools;
+7. inspector target derivation from unified session selection plus canonical
+   project data;
+8. DOM focus and hover remaining separate from semantic selection;
+9. resolution of the already-divergent dormant
+   `WorkspaceModeState.selection` representation;
+10. no persistence of selection into canonical `.arq` semantic data.
 
-## 15. Required consequences for #425
+## Owner boundaries
 
-#425 should establish one canonical session-selection contract with at least:
+- #389 owns canonical model -> Plan/3D/browser/inspector coordination and
+  invalidation.
+- #391 owns production project-browser/inspector behaviour.
+- #425 owns the unified UI/session selection contract.
+- #451/#455 own later level/context interaction work.
+- PR #361 retains `App.tsx` and native persistence/session ownership until it is
+  resolved.
+- Agent proposal/highlight state must remain distinct from ordinary selection
+  and canonical data.
 
-- selected semantic IDs;
-- one explicit primary ID;
-- extend/toggle/replace semantics;
-- window/crossing selection semantics;
-- clear semantics;
-- invalid/deleted target self-healing;
-- hidden/off-level target policy;
-- derivation of inspector target;
-- deliberate distinction from hover and DOM focus;
-- no `.arq` semantic persistence.
+## Closure gate
 
-It must also resolve the dormant `WorkspaceModeState.selection` representation rather than leaving it available as a future second authority.
+Statically and deterministically established at the revalidated integration
+head:
 
-## 16. Relationship to domain owners
-
-- #389 owns canonical model to Plan/3D/browser/inspector invalidation and stable semantic coordination.
-- #391 owns the production browser/inspector surface.
-- #425 owns the UI/session selection contract.
-- #451/#455 own later level selection/context interactions.
-- #479 will later add Agent proposal highlight state, which must remain distinct from ordinary selection and canonical data.
-
-## 17. Acceptance status for #401
-
-### Satisfied by this static audit
-
-- effective selection writer/readers are mapped;
+- effective selection writers/readers are mapped;
 - Plan/3D/tree/inspector authority direction is explicit;
-- current primary and multi-selection behaviour is documented;
-- selection versus hover/focus is separated;
-- project/level/delete self-healing paths are identified;
-- dormant duplicate `WorkspaceModeState.selection` is identified;
-- cross-surface gaps are bounded for #425/#391/#451/#455.
+- primary and multi-selection semantics are mapped;
+- hover, DOM focus, active tool and canonical data are separated;
+- level/project/delete/self-healing paths are traced;
+- the duplicate workspace-mode selection is proven divergent but dormant;
+- selection-related recomputation has been inspected without speculative
+  optimisation;
+- latest main drift through `c57f8353a0adf9130a33c1c23b8fffdefa5c5bf0`
+  does not alter the audited selection runtime.
 
-### Still required before closing #401
+Still required before closing #401:
 
-- run focused browser evidence proving Plan -> 3D -> tree -> inspector selection round-trip at exact closing head;
-- run multi-selection, empty-click clear and active-level switch cases;
-- refresh ownership if active App/root-state PRs change the state model;
-- verify focus behaviour in the browser rather than inferring DOM focus solely from component code;
-- feed any final contradiction into #425 before UX-2 starts.
+- the focused evidence workflow must PASS at the final exact evidence head;
+- its JSON/browser evidence must agree with this map;
+- the PR must merge without selection-runtime conflict;
+- the same focused lane must pass on the resulting `main` head before #401 is
+  closed.
 
-## 18. ZEUS handoff
+Any contradiction must be recorded rather than repaired by implementing #425
+inside #401.
 
-#369 should treat any of the following as selection-authority regression:
+## ZEUS regression handoff
 
-- a second writable selection store becomes user-visible;
+#369 should treat the following as selection-authority regressions:
+
+- a second writable semantic selection store becomes user-visible;
 - renderer mesh IDs become canonical selected identities;
-- Plan and 3D show different selected semantic IDs after settling;
+- Plan and 3D settle on different semantic selected IDs;
 - inspector targets a stale/deleted object;
-- tree/3D multi-select unexpectedly destroys selection without a documented replace action;
-- Agent proposal highlight is conflated with ordinary selection;
-- focus is forcibly moved merely because semantic selection changed.
+- tree/3D silently destroy multi-selection without an explicit replace action;
+- semantic selection is conflated with hover or Agent proposal highlight;
+- DOM focus moves merely because semantic selection changed;
+- selection is written into canonical project data.
