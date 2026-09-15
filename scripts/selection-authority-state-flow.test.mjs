@@ -34,7 +34,7 @@ requireMatch(
 
 requireMatch(
   modeState,
-  /selection:\s*\{\s*primaryId:\s*null,\s*secondaryIds:\s*new Set<string>\(\),?\s*\}/s,
+  /selection:\s*\{\s*primaryId:\s*null,\s*secondaryIds:\s*new Set(?:<string>)?\(\),?\s*\}/s,
   'WorkspaceModeState.selection initial representation changed; re-audit the duplicate-state finding',
 );
 
