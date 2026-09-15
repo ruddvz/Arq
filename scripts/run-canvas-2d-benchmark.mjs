@@ -17,23 +17,32 @@ function resolveChromiumExecutablePath() {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
-const htmlPath = path.join(repoRoot, 'packages/plan-renderer/benchmarks/canvas-2d/canvas-2d-benchmark.html');
+const htmlPath = path.join(
+  repoRoot,
+  'packages/plan-renderer/benchmarks/canvas-2d/canvas-2d-benchmark.html',
+);
 
 async function main() {
   const authority = readPerformanceAuthority();
   const workflow = getWorkflow(authority, 'plan.pan-zoom');
   const targetFps = workflow.budget.value;
-  const browser = await chromium.launch({ executablePath: resolveChromiumExecutablePath(), headless: true });
+  const browser = await chromium.launch({
+    executablePath: resolveChromiumExecutablePath(),
+    headless: true,
+  });
   try {
     const page = await browser.newPage();
     await page.goto(`file://${htmlPath}`);
-    await page.waitForFunction(() => window.__ARQ_BENCHMARK_RESULT__ !== undefined, { timeout: 30_000 });
+    await page.waitForFunction(() => window.__ARQ_BENCHMARK_RESULT__ !== undefined, {
+      timeout: 30_000,
+    });
     const result = await page.evaluate(() => window.__ARQ_BENCHMARK_RESULT__);
     const report = {
       timestamp: new Date().toISOString(),
       workflowId: workflow.id,
       environment: 'headless Chromium shared/reference runner; not a certified reference device',
-      fixture: authority.fixture,
+      fixtureContract: authority.fixtureContract,
+      evidenceFixture: workflow.evidenceFixture,
       measuredObjectCounts: result.counts,
       frameCount: result.frameCount,
       avgFrameMs: result.avgFrameMs,

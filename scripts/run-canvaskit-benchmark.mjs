@@ -28,21 +28,31 @@ if (!existsSync(FONT_PATH)) {
   process.exit();
 }
 
-const MIME_TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.wasm': 'application/wasm', '.ttf': 'font/ttf' };
+const MIME_TYPES = {
+  '.html': 'text/html',
+  '.js': 'text/javascript',
+  '.wasm': 'application/wasm',
+  '.ttf': 'font/ttf',
+};
 function serveDir(rootDir, urlPrefix) {
   return (req, res) => {
     if (!req.url.startsWith(urlPrefix)) return false;
     const relative = req.url.slice(urlPrefix.length).split('?')[0];
     const filePath = path.join(rootDir, relative);
     if (!filePath.startsWith(rootDir)) {
-      res.writeHead(403); res.end(); return true;
+      res.writeHead(403);
+      res.end();
+      return true;
     }
     try {
       const contents = readFileSync(filePath);
-      res.writeHead(200, { 'content-type': MIME_TYPES[path.extname(filePath)] || 'application/octet-stream' });
+      res.writeHead(200, {
+        'content-type': MIME_TYPES[path.extname(filePath)] || 'application/octet-stream',
+      });
       res.end(contents);
     } catch {
-      res.writeHead(404); res.end();
+      res.writeHead(404);
+      res.end();
     }
     return true;
   };
@@ -60,11 +70,15 @@ async function main() {
   ];
   const server = createServer((req, res) => {
     for (const handler of handlers) if (handler(req, res)) return;
-    res.writeHead(404); res.end();
+    res.writeHead(404);
+    res.end();
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   const port = server.address().port;
-  const browser = await chromium.launch({ executablePath: resolveChromiumExecutablePath(), headless: true });
+  const browser = await chromium.launch({
+    executablePath: resolveChromiumExecutablePath(),
+    headless: true,
+  });
   try {
     const page = await browser.newPage();
     await page.goto(`http://127.0.0.1:${port}/bench/canvaskit-benchmark.html`);
@@ -77,7 +91,8 @@ async function main() {
       workflowId: workflow.id,
       renderer: 'canvaskit-software',
       environment: 'headless Chromium CanvasKit software rasteriser; reference evidence only',
-      fixture: authority.fixture,
+      fixtureContract: authority.fixtureContract,
+      evidenceFixture: workflow.evidenceFixture,
       measuredObjectCounts: result.counts,
       frameCount: result.frameCount,
       avgFrameMs: result.avgFrameMs,

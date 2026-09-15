@@ -38,21 +38,32 @@ const safe = buildDiagnosticRecord({
 });
 check('privacy-safe diagnostic is constructible', safe.workflowId === 'plan.first-frame');
 
-let rejected = false;
-try {
-  assertPrivacySafeDiagnostic({ projectName: 'private name' });
-} catch {
-  rejected = true;
+for (const [description, mutate] of [
+  [
+    'unknown top-level fields are rejected',
+    (record) => ({ ...record, label: '/Users/alice/private-project.arq' }),
+  ],
+  [
+    'unknown environment fields are rejected',
+    (record) => ({ ...record, environment: { ...record.environment, metadata: 'Client Tower' } }),
+  ],
+  [
+    'string sample payloads are rejected',
+    (record) => ({ ...record, samples: [{ settledMs: 10, note: 'private document text' }] }),
+  ],
+  [
+    'string aggregate payloads are rejected',
+    (record) => ({ ...record, aggregates: { settledMs: { median: 10, label: 'private' } } }),
+  ],
+]) {
+  let rejected = false;
+  try {
+    assertPrivacySafeDiagnostic(mutate(safe));
+  } catch {
+    rejected = true;
+  }
+  check(description, rejected);
 }
-check('private project-name fields are rejected', rejected);
-
-rejected = false;
-try {
-  assertPrivacySafeDiagnostic({ nested: { geometryPayload: { wall: 'private geometry' } } });
-} catch {
-  rejected = true;
-}
-check('nested geometry payload fields are rejected', rejected);
 
 if (failures) process.exit(1);
 process.stdout.write('\nPerformance authority self-test passed.\n');

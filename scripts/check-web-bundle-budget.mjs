@@ -10,10 +10,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { gzipSync } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import {
-  getStartupBundleBudget,
-  readPerformanceAuthority,
-} from './lib/performance-authority.mjs';
+import { getStartupBundleBudget, readPerformanceAuthority } from './lib/performance-authority.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
@@ -121,7 +118,11 @@ function main() {
   const deferred = measureDeferredChunks({ assetsDir, entryName });
 
   for (const item of deferred) {
-    if (item.sizeBudget !== null && item.measurementStatus === 'measured-by-marker' && item.measuredGzipBytes > item.sizeBudget) {
+    if (
+      item.sizeBudget !== null &&
+      item.measurementStatus === 'measured-by-marker' &&
+      item.measuredGzipBytes > item.sizeBudget
+    ) {
       findings.push(
         `${item.library} deferred payload is ${(item.measuredGzipBytes / 1024).toFixed(1)}KB gzipped, ` +
           `over its canonical ${(item.sizeBudget / 1024).toFixed(1)}KB budget.`,
@@ -145,7 +146,10 @@ function main() {
   };
   const outDir = path.join(repoRoot, 'benchmarks/results');
   mkdirSync(outDir, { recursive: true });
-  writeFileSync(path.join(outDir, 'web-bundle-current.json'), `${JSON.stringify(report, null, 2)}\n`);
+  writeFileSync(
+    path.join(outDir, 'web-bundle-current.json'),
+    `${JSON.stringify(report, null, 2)}\n`,
+  );
 
   if (findings.length > 0) {
     for (const finding of findings) process.stderr.write(`FAIL ${finding}\n`);
@@ -158,9 +162,10 @@ function main() {
       `${BUDGET.startupGzip / 1024}KB #402 budget.\n`,
   );
   for (const item of deferred) {
-    const measured = item.measurementStatus === 'measured-by-marker'
-      ? `${(item.measuredGzipBytes / 1024).toFixed(1)}KB gzipped deferred`
-      : 'deferred marker not uniquely resolved in built chunks';
+    const measured =
+      item.measurementStatus === 'measured-by-marker'
+        ? `${(item.measuredGzipBytes / 1024).toFixed(1)}KB gzipped deferred`
+        : 'deferred marker not uniquely resolved in built chunks';
     process.stdout.write(
       `${item.library}: ${measured} ` +
         `(${item.sizeBudget === null ? 'absolute size baseline pending, entry-boundary enforcement active' : `budget ${item.sizeBudget / 1024}KB`}).\n`,

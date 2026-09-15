@@ -16,11 +16,17 @@ function resolveChromiumExecutablePath() {
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
-const htmlPath = path.join(repoRoot, 'packages/plan-renderer/benchmarks/pixijs-webgl/pixijs-webgl-benchmark.html');
+const htmlPath = path.join(
+  repoRoot,
+  'packages/plan-renderer/benchmarks/pixijs-webgl/pixijs-webgl-benchmark.html',
+);
 let pixiPackageRoot = path.dirname(require.resolve('pixi.js'));
 function isPixiPackageRoot(dir) {
   const packageJsonPath = path.join(dir, 'package.json');
-  return existsSync(packageJsonPath) && JSON.parse(readFileSync(packageJsonPath, 'utf8')).name === 'pixi.js';
+  return (
+    existsSync(packageJsonPath) &&
+    JSON.parse(readFileSync(packageJsonPath, 'utf8')).name === 'pixi.js'
+  );
 }
 while (pixiPackageRoot !== path.dirname(pixiPackageRoot) && !isPixiPackageRoot(pixiPackageRoot)) {
   pixiPackageRoot = path.dirname(pixiPackageRoot);
@@ -46,7 +52,8 @@ async function main() {
       workflowId: workflow.id,
       renderer: 'pixijs-webgl',
       environment: 'headless Chromium software WebGL (SwiftShader); reference evidence only',
-      fixture: authority.fixture,
+      fixtureContract: authority.fixtureContract,
+      evidenceFixture: workflow.evidenceFixture,
       measuredObjectCounts: result.counts,
       frameCount: result.frameCount,
       avgFrameMs: result.avgFrameMs,
@@ -60,7 +67,10 @@ async function main() {
     console.log(JSON.stringify(report, null, 2));
     const outDir = path.join(repoRoot, 'benchmarks/results');
     mkdirSync(outDir, { recursive: true });
-    const outPath = path.join(outDir, `pixijs-webgl-${report.timestamp.replace(/[:.]/g, '-')}.json`);
+    const outPath = path.join(
+      outDir,
+      `pixijs-webgl-${report.timestamp.replace(/[:.]/g, '-')}.json`,
+    );
     writeFileSync(outPath, JSON.stringify(report, null, 2));
     console.log(`\nSaved to ${path.relative(repoRoot, outPath)}`);
   } finally {

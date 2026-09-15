@@ -67,27 +67,119 @@ export function aggregateSamples(values) {
   };
 }
 
-const FORBIDDEN_DIAGNOSTIC_KEYS = new Set([
-  'projectName',
-  'projectPath',
-  'documentText',
-  'geometryPayload',
-  'userContent',
-  'fileContents',
-  'selectionText',
+const DIAGNOSTIC_TOP_LEVEL_KEYS = new Set([
+  'schemaVersion',
+  'workflowId',
+  'subsystem',
+  'fixtureId',
+  'repositorySha',
+  'coldOrWarm',
+  'environment',
+  'samples',
+  'aggregates',
+  'counters',
+  'bottleneckClasses',
 ]);
+const ENVIRONMENT_KEYS = new Set([
+  'browser',
+  'engine',
+  'os',
+  'cpuModel',
+  'logicalCpuCount',
+  'runner',
+  'deviceClass',
+  'gpuClass',
+  'memoryGiB',
+  'nodeVersion',
+]);
+const BOTTLENECK_CLASSES = new Set([
+  'main-thread',
+  'worker',
+  'io',
+  'network',
+  'rendering',
+  'bundle',
+  'deferred-chunk',
+  'startup-main-thread',
+  'startup-rendering',
+  'compositing',
+  'backdrop-filter',
+  'frame-time',
+]);
+const IDENTIFIER = /^[A-Za-z0-9][A-Za-z0-9._:/+() @-]{0,159}$/;
+const METRIC_KEY = /^[A-Za-z][A-Za-z0-9._-]{0,79}$/;
 
-export function assertPrivacySafeDiagnostic(value, location = 'diagnostic') {
-  if (Array.isArray(value)) {
-    value.forEach((entry, index) => assertPrivacySafeDiagnostic(entry, `${location}[${index}]`));
-    return;
+function assertIdentifier(value, location, { nullable = false } = {}) {
+  if (nullable && value === null) return;
+  if (typeof value !== 'string' || !IDENTIFIER.test(value) || /[\\\n\r]|\.arq\b/i.test(value)) {
+    throw new Error(`${location} must be a bounded non-project identifier.`);
   }
-  if (value === null || typeof value !== 'object') return;
+}
+
+function assertMetricObject(value, location, { nested = true } = {}) {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error(`${location} must be an object.`);
+  }
   for (const [key, child] of Object.entries(value)) {
-    if (FORBIDDEN_DIAGNOSTIC_KEYS.has(key)) {
-      throw new Error(`${location} contains forbidden private-content key "${key}".`);
+    if (!METRIC_KEY.test(key)) throw new Error(`${location} contains invalid metric key "${key}".`);
+    if (child === null || typeof child === 'boolean') continue;
+    if (typeof child === 'number' && Number.isFinite(child)) continue;
+    if (nested && typeof child === 'object' && !Array.isArray(child)) {
+      assertMetricObject(child, `${location}.${key}`, { nested });
+      continue;
     }
-    assertPrivacySafeDiagnostic(child, `${location}.${key}`);
+    throw new Error(`${location}.${key} must contain numeric/boolean/null diagnostic data only.`);
+  }
+}
+
+export function assertPrivacySafeDiagnostic(record) {
+  if (record === null || typeof record !== 'object' || Array.isArray(record)) {
+    throw new Error('diagnostic must be an object.');
+  }
+  for (const key of Object.keys(record)) {
+    if (!DIAGNOSTIC_TOP_LEVEL_KEYS.has(key))
+      throw new Error(`diagnostic contains unsupported field "${key}".`);
+  }
+  for (const key of DIAGNOSTIC_TOP_LEVEL_KEYS) {
+    if (!Object.hasOwn(record, key))
+      throw new Error(`diagnostic is missing required field "${key}".`);
+  }
+  if (record.schemaVersion !== 1) throw new Error('diagnostic schemaVersion must be 1.');
+  assertIdentifier(record.workflowId, 'diagnostic.workflowId');
+  assertIdentifier(record.subsystem, 'diagnostic.subsystem');
+  assertIdentifier(record.fixtureId, 'diagnostic.fixtureId', { nullable: true });
+  assertIdentifier(record.repositorySha, 'diagnostic.repositorySha');
+  assertIdentifier(record.coldOrWarm, 'diagnostic.coldOrWarm');
+
+  if (
+    record.environment === null ||
+    typeof record.environment !== 'object' ||
+    Array.isArray(record.environment)
+  ) {
+    throw new Error('diagnostic.environment must be an object.');
+  }
+  for (const [key, value] of Object.entries(record.environment)) {
+    if (!ENVIRONMENT_KEYS.has(key))
+      throw new Error(`diagnostic.environment contains unsupported field "${key}".`);
+    if (typeof value === 'number') {
+      if (!Number.isFinite(value)) throw new Error(`diagnostic.environment.${key} must be finite.`);
+    } else {
+      assertIdentifier(value, `diagnostic.environment.${key}`);
+    }
+  }
+
+  if (!Array.isArray(record.samples)) throw new Error('diagnostic.samples must be an array.');
+  record.samples.forEach((sample, index) =>
+    assertMetricObject(sample, `diagnostic.samples[${index}]`, { nested: false }),
+  );
+  assertMetricObject(record.aggregates, 'diagnostic.aggregates');
+  assertMetricObject(record.counters, 'diagnostic.counters', { nested: false });
+
+  if (!Array.isArray(record.bottleneckClasses))
+    throw new Error('diagnostic.bottleneckClasses must be an array.');
+  for (const bottleneck of record.bottleneckClasses) {
+    if (!BOTTLENECK_CLASSES.has(bottleneck))
+      throw new Error(`unsupported bottleneck class "${bottleneck}".`);
   }
 }
 

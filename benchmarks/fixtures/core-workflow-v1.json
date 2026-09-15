@@ -45,7 +45,10 @@
     {
       "path": "packages/plan-renderer/benchmarks/canvas-2d/scene.js",
       "role": "protected-renderer-scale",
-      "mustMatchProtectedCounts": true
+      "mustMatchProtectedCounts": true,
+      "productExecutableCoreFixture": false,
+      "coveredDimensions": ["walls", "doorsAndWindows", "rooms", "annotations"],
+      "note": "This renderer scene mechanically protects only the listed dimensions. It is not the product-executable Core-scale project required for #402 closure."
     },
     {
       "path": "fixtures/ARQ_Courtyard_House_Golden_Fixture_v2.arq",
@@ -55,5 +58,17 @@
       "note": "This existing golden fixture proves product-open semantics but is not a substitute for the protected Core-scale fixture. It must not be reported as Core-scale workflow evidence."
     }
   ],
-  "mutationRule": "Any reduction below an exact/minimum guard is a failing fixture change. Complexity may increase only with an explicit #402 budget review."
+  "mutationRule": "Any reduction below an exact/minimum guard is a failing fixture change. Complexity may increase only with an explicit #402 budget review.",
+  "status": "protected-scale-contract",
+  "productExecutable": false,
+  "guardCoverage": {
+    "mechanicallyVerifiedAgainstBackingFixture": [
+      "walls",
+      "doorsAndWindows",
+      "rooms",
+      "annotations"
+    ],
+    "contractOnlyPendingProductFixture": ["levels", "underlays", "semanticObjectsApprox"],
+    "rule": "Only mechanicallyVerifiedAgainstBackingFixture dimensions are currently proven against an executable backing fixture. Contract-only dimensions remain protected requirements but are not product-fixture evidence until #402 adds a product-executable Core-scale fixture."
+  }
 }

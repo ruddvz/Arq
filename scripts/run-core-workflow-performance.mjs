@@ -55,8 +55,12 @@ function startServer() {
       response.writeHead(403).end();
       return;
     }
-    if (!existsSync(filePath) || !path.extname(filePath)) filePath = path.join(distDir, 'index.html');
-    response.setHeader('Content-Type', MIME_TYPES[path.extname(filePath)] ?? 'application/octet-stream');
+    if (!existsSync(filePath) || !path.extname(filePath))
+      filePath = path.join(distDir, 'index.html');
+    response.setHeader(
+      'Content-Type',
+      MIME_TYPES[path.extname(filePath)] ?? 'application/octet-stream',
+    );
     response.end(readFileSync(filePath));
   });
   return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve(server)));
@@ -71,7 +75,10 @@ async function measureBoot(browser, origin) {
       try {
         const observer = new PerformanceObserver((list) => {
           for (const entry of list.getEntries()) {
-            window.__ARQ_PERF_LONG_TASKS__.push({ startTime: entry.startTime, duration: entry.duration });
+            window.__ARQ_PERF_LONG_TASKS__.push({
+              startTime: entry.startTime,
+              duration: entry.duration,
+            });
           }
         });
         observer.observe({ type: 'longtask', buffered: true });
@@ -87,10 +94,14 @@ async function measureBoot(browser, origin) {
     undefined,
     { timeout: 30_000 },
   );
-  await page.waitForFunction(() => {
-    const canvas = document.querySelector('canvas');
-    return canvas !== null && canvas.clientWidth > 0 && canvas.clientHeight > 0;
-  }, undefined, { timeout: 30_000 });
+  await page.waitForFunction(
+    () => {
+      const canvas = document.querySelector('canvas');
+      return canvas !== null && canvas.clientWidth > 0 && canvas.clientHeight > 0;
+    },
+    undefined,
+    { timeout: 30_000 },
+  );
   const sample = await page.evaluate(async () => {
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     const navigation = performance.getEntriesByType('navigation')[0];
@@ -118,13 +129,19 @@ async function main() {
   const server = await startServer();
   const port = server.address().port;
   const origin = `http://127.0.0.1:${port}/`;
-  const browser = await chromium.launch({ executablePath: resolveChromiumExecutablePath(), headless: true });
+  const browser = await chromium.launch({
+    executablePath: resolveChromiumExecutablePath(),
+    headless: true,
+  });
   try {
     const sampleCount = Math.max(authority.regressionPolicy.minimumSamplesForAcceptedTiming, 7);
     const samples = [];
-    for (let index = 0; index < sampleCount; index += 1) samples.push(await measureBoot(browser, origin));
+    for (let index = 0; index < sampleCount; index += 1)
+      samples.push(await measureBoot(browser, origin));
     const settled = samples.map((sample) => sample.settledMs);
-    const firstVisible = samples.flatMap((sample) => sample.firstVisibleMs === null ? [] : [sample.firstVisibleMs]);
+    const firstVisible = samples.flatMap((sample) =>
+      sample.firstVisibleMs === null ? [] : [sample.firstVisibleMs],
+    );
     const longTaskTotals = samples.map((sample) => sample.mainThreadLongTaskTotalMs);
     const environment = {
       browser: `Chromium ${browser.version()}`,
@@ -137,7 +154,7 @@ async function main() {
     const report = buildDiagnosticRecord({
       workflowId: workflow.id,
       subsystem: workflow.owner,
-      fixtureId: null,
+      fixtureId: workflow.evidenceFixture?.id ?? null,
       repositorySha: repositorySha(),
       coldOrWarm: 'cold-new-browser-context-per-sample',
       environment,
@@ -156,8 +173,17 @@ async function main() {
     mkdirSync(outDir, { recursive: true });
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const file = path.join(outDir, `core-workflow-boot-${timestamp}.json`);
-    writeFileSync(file, `${JSON.stringify({ ...report, budget: workflow.budget, enforcement: workflow.enforcement }, null, 2)}\n`);
-    console.log(JSON.stringify({ file: path.relative(repoRoot, file), aggregates: report.aggregates, environment }, null, 2));
+    writeFileSync(
+      file,
+      `${JSON.stringify({ ...report, budget: workflow.budget, enforcement: workflow.enforcement }, null, 2)}\n`,
+    );
+    console.log(
+      JSON.stringify(
+        { file: path.relative(repoRoot, file), aggregates: report.aggregates, environment },
+        null,
+        2,
+      ),
+    );
   } finally {
     await browser.close();
     server.close();
