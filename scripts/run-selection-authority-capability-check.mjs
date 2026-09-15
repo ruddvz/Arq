@@ -159,14 +159,26 @@ async function inspectorId(page) {
   return input.inputValue();
 }
 
+async function inspectorPresentsSelection(page) {
+  const input = page.locator('aside[aria-label="Inspector"] input[aria-label="ID"]').first();
+  return (await input.count()) > 0 && (await input.isVisible());
+}
+
 async function assertNoSelection(page, label) {
   check((await selectedTreeCount(page)) === 0, `${label}: tree still reports a selected row`);
-  const noSelectionInspectors = page
-    .locator('aside[aria-label="Inspector"]')
-    .filter({ hasText: 'No selection' });
+  await page
+    .waitForFunction(
+      () =>
+        [
+          ...document.querySelectorAll('aside[aria-label="Inspector"] input[aria-label="ID"]'),
+        ].every((input) => input.getClientRects().length === 0),
+      undefined,
+      { timeout: 5000 },
+    )
+    .catch(() => undefined);
   check(
-    (await noSelectionInspectors.count()) > 0,
-    `${label}: inspector did not return to No selection`,
+    !(await inspectorPresentsSelection(page)),
+    `${label}: inspector still exposes a selected semantic ID`,
   );
 }
 
@@ -261,8 +273,7 @@ async function runScratchScenarios(page, observed) {
   const openButton = page.getByRole('button', { name: 'Open', exact: true });
   await openButton.focus();
   check(
-    (await page.evaluate(() => document.activeElement?.textContent?.trim()))?.includes('Open') ===
-      true,
+    (await openButton.evaluate((element) => document.activeElement === element)) === true,
     'Open control did not receive DOM focus',
   );
   check((await inspectorId(page)) === planSelectedId, 'focusing Open mutated semantic selection');
@@ -309,10 +320,22 @@ async function runScratchScenarios(page, observed) {
   await plan.waitFor({ state: 'visible', timeout: 5000 });
 
   /* 2. Tree selection -> Plan/inspector/3D, without another selection source. */
-  await drawnRows.nth(0).click();
+  await drawnRows.nth(0).locator('button').click();
   const treeFirstId = await inspectorId(page);
   const firstPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-  await drawnRows.nth(1).click();
+  const otherDrawnRow = page
+    .locator('[role="treeitem"][aria-selected="false"]')
+    .filter({ hasText: '(drawn)' })
+    .first();
+  await otherDrawnRow.locator('button').click();
+  await page.waitForFunction(
+    (previousId) => {
+      const input = document.querySelector('aside[aria-label="Inspector"] input[aria-label="ID"]');
+      return input instanceof HTMLInputElement && input.value !== previousId;
+    },
+    treeFirstId,
+    { timeout: 5000 },
+  );
   const treeSecondId = await inspectorId(page);
   const secondPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
   check(
