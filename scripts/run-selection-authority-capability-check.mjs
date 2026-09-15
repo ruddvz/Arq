@@ -164,6 +164,37 @@ async function inspectorPresentsSelection(page) {
   return (await input.count()) > 0 && (await input.isVisible());
 }
 
+async function selectDistinctDrawnTreeRow(page, drawnRows, previousId) {
+  const rowCount = await drawnRows.count();
+  for (let index = 0; index < rowCount; index += 1) {
+    const row = drawnRows.nth(index);
+    if (!(await row.isVisible())) continue;
+    const button = row.locator('button').first();
+    if ((await button.count()) === 0 || !(await button.isVisible())) continue;
+
+    await button.click();
+    const changed = await page
+      .waitForFunction(
+        (currentId) => {
+          const input = document.querySelector(
+            'aside[aria-label="Inspector"] input[aria-label="ID"]',
+          );
+          return input instanceof HTMLInputElement && input.value !== currentId;
+        },
+        previousId,
+        { timeout: 750 },
+      )
+      .then(() => true)
+      .catch(() => false);
+    if (changed) return inspectorId(page);
+  }
+
+  throw new Error(
+    `no visible drawn tree row selected a semantic entity distinct from ${previousId}; ` +
+      `rendered drawn rows=${rowCount}`,
+  );
+}
+
 async function assertNoSelection(page, label) {
   check((await selectedTreeCount(page)) === 0, `${label}: tree still reports a selected row`);
   await page
@@ -323,20 +354,7 @@ async function runScratchScenarios(page, observed) {
   await drawnRows.nth(0).locator('button').click();
   const treeFirstId = await inspectorId(page);
   const firstPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
-  const otherDrawnRow = page
-    .locator('[role="treeitem"][aria-selected="false"]')
-    .filter({ hasText: '(drawn)' })
-    .first();
-  await otherDrawnRow.locator('button').click();
-  await page.waitForFunction(
-    (previousId) => {
-      const input = document.querySelector('aside[aria-label="Inspector"] input[aria-label="ID"]');
-      return input instanceof HTMLInputElement && input.value !== previousId;
-    },
-    treeFirstId,
-    { timeout: 5000 },
-  );
-  const treeSecondId = await inspectorId(page);
+  const treeSecondId = await selectDistinctDrawnTreeRow(page, drawnRows, treeFirstId);
   const secondPlanPixels = await analyzeScreenshot(page, await plan.screenshot());
   check(
     treeFirstId !== treeSecondId,
@@ -375,8 +393,8 @@ async function runScratchScenarios(page, observed) {
   await context.getByRole('button', { name: /Delete/ }).click();
   await page.waitForFunction(
     (expectedDrawnCount) =>
-      document.querySelectorAll('[role=\"treeitem\"][aria-selected=\"true\"]').length === 0 &&
-      [...document.querySelectorAll('[role=\"treeitem\"]')].filter((row) =>
+      document.querySelectorAll('[role="treeitem"][aria-selected="true"]').length === 0 &&
+      [...document.querySelectorAll('[role="treeitem"]')].filter((row) =>
         /\(drawn\)/.test(row.textContent ?? ''),
       ).length === expectedDrawnCount,
     drawnBeforeDelete - 1,
