@@ -46,7 +46,7 @@
     {
       "path": "benchmarks/fixtures/core-workflow-product-fixture.ts",
       "verification": "benchmarks/fixtures/core-workflow-product-fixture.test.ts",
-      "role": "product-executable-core-scale",
+      "role": "product-executable-core-scale-candidate",
       "mustMatchProtectedCounts": true,
       "productExecutableCoreFixture": true,
       "coveredDimensions": [
@@ -58,7 +58,7 @@
         "underlays",
         "semanticObjectsApprox"
       ],
-      "note": "Generates a real SQLite .arq through the canonical ARQFS/project-format writers. The proof test reopens it through ARQFS, imports the archive, and decodes it through apps/web's native-project-model boundary before asserting every protected scale dimension."
+      "note": "Generates a real SQLite .arq through the canonical ARQFS/project-format writers. Promotion is deliberately withheld until the CI proof test reopens it through ARQFS, imports the archive, and decodes it through apps/web's native-project-model boundary at every protected dimension."
     },
     {
       "path": "packages/plan-renderer/benchmarks/canvas-2d/scene.js",
@@ -66,7 +66,7 @@
       "mustMatchProtectedCounts": true,
       "productExecutableCoreFixture": false,
       "coveredDimensions": ["walls", "doorsAndWindows", "rooms", "annotations"],
-      "note": "This renderer scene remains the renderer-specific scale proof. It must not be substituted for product-executable workflow evidence."
+      "note": "This renderer scene mechanically protects only the listed dimensions. It is not product-executable Core workflow evidence."
     },
     {
       "path": "fixtures/ARQ_Courtyard_House_Golden_Fixture_v2.arq",
@@ -77,19 +77,16 @@
     }
   ],
   "mutationRule": "Any reduction below an exact/minimum guard is a failing fixture change. Complexity may increase only with an explicit #402 budget review.",
-  "status": "product-executable-protected-scale",
-  "productExecutable": true,
+  "status": "protected-scale-contract-with-product-candidate",
+  "productExecutable": false,
   "guardCoverage": {
     "mechanicallyVerifiedAgainstBackingFixture": [
-      "levels",
       "walls",
       "doorsAndWindows",
       "rooms",
-      "annotations",
-      "underlays",
-      "semanticObjectsApprox"
+      "annotations"
     ],
-    "contractOnlyPendingProductFixture": [],
-    "rule": "Every protected dimension is mechanically verified against the generated product-executable .arq fixture. Workflow evidence must still name the actual evidenceFixture used; product-executable scale does not make renderer-only or compute-only measurements Core E2E evidence."
+    "contractOnlyPendingProductFixture": ["levels", "underlays", "semanticObjectsApprox"],
+    "rule": "Renderer dimensions remain mechanically guarded. The product-executable candidate must pass its exact-head CI proof before levels, underlay and semantic-object coverage are promoted into canonical Core-scale evidence."
   }
 }
