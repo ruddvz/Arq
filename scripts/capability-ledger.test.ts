@@ -44,6 +44,7 @@ describe('ARQ capability ledger', () => {
     for (const capability of definitions.capabilities) {
       expect(capability).not.toHaveProperty('maturity');
       expect(capability).not.toHaveProperty('availability');
+      expect(capability).not.toHaveProperty('productReachabilityState');
       expect(capability).not.toHaveProperty('productExecutionPath');
       expect(capability).not.toHaveProperty('libraryBacking');
     }
@@ -67,6 +68,7 @@ describe('ARQ capability ledger', () => {
     expect(record('core.wall')).toMatchObject({
       availability: 'blocked',
       maturity: 'partial',
+      productReachabilityState: 'user-reachable',
       productExecutionPath: 'unproven',
       semanticOperationRef: 'add-walls',
       providerMerged: false,
@@ -74,7 +76,7 @@ describe('ARQ capability ledger', () => {
     });
   });
 
-  it('keeps repository-backed but unwired tools unavailable', () => {
+  it('keeps repository-backed but unwired tools unavailable without erasing reachability state', () => {
     for (const id of [
       'audit.tool.door',
       'audit.tool.window',
@@ -86,6 +88,7 @@ describe('ARQ capability ledger', () => {
     ]) {
       const tool = record(id);
       expect(tool.libraryBacking).toBe('present');
+      expect(tool.productReachabilityState).toBe('registered-but-not-wired');
       expect(tool.productExecutionPath).toBe('absent');
       expect(tool.availability).toBe('unavailable');
       expect(tool.maturity).toBe('library_only');
