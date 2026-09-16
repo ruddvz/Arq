@@ -106,6 +106,41 @@ function mergeBlockers(definition, providers) {
     );
 }
 
+function addEvidenceBlockers({
+  definition,
+  commandFact,
+  sourceEvidence,
+  testEvidence,
+  executionEvidence,
+  humanEvidence,
+  accessibilityEvidence,
+  performanceEvidence,
+  blockers,
+}) {
+  const productPathNeedsEvidence =
+    commandFact?.reachability === 'user-reachable' ||
+    (commandFact === null && definition.productSurface !== null);
+
+  if (productPathNeedsEvidence && commandFact === null && !allExist(sourceEvidence)) {
+    blockers.push('Required product source evidence is missing');
+  }
+  if (productPathNeedsEvidence && !allExist(testEvidence)) {
+    blockers.push('Required product test evidence is missing');
+  }
+  if (productPathNeedsEvidence && !allExist(executionEvidence)) {
+    blockers.push('Required product execution evidence is missing');
+  }
+  if (definition.humanEvidenceRequired && !allExist(humanEvidence)) {
+    blockers.push('Required approved human evidence is missing');
+  }
+  if (definition.accessibilityEvidenceRequired && !allExist(accessibilityEvidence)) {
+    blockers.push('Required accessibility evidence is missing');
+  }
+  if (definition.performanceEvidenceRequired && !allExist(performanceEvidence)) {
+    blockers.push('Required performance evidence is missing');
+  }
+}
+
 function deriveMaturity({
   definition,
   commandFact,
@@ -207,15 +242,17 @@ export function buildCapabilityLedger({
       : null;
     const blockers = mergeBlockers(definition, definitions.providers);
     if (commandFact?.unavailableReason) blockers.push(commandFact.unavailableReason);
-    if (definition.humanEvidenceRequired && !allExist(humanEvidence)) {
-      blockers.push('Required approved human evidence is missing');
-    }
-    if (definition.accessibilityEvidenceRequired && !allExist(accessibilityEvidence)) {
-      blockers.push('Required accessibility evidence is missing');
-    }
-    if (definition.performanceEvidenceRequired && !allExist(performanceEvidence)) {
-      blockers.push('Required performance evidence is missing');
-    }
+    addEvidenceBlockers({
+      definition,
+      commandFact,
+      sourceEvidence,
+      testEvidence,
+      executionEvidence,
+      humanEvidence,
+      accessibilityEvidence,
+      performanceEvidence,
+      blockers,
+    });
     const maturity = deriveMaturity({
       definition,
       commandFact,
