@@ -71,7 +71,8 @@ for (const workflow of authority.workflows ?? []) {
     } else {
       if (
         !Number.isInteger(referenceEvidence.sampleCountPerRun) ||
-        referenceEvidence.sampleCountPerRun < authority.regressionPolicy.minimumSamplesForAcceptedTiming
+        referenceEvidence.sampleCountPerRun <
+          authority.regressionPolicy.minimumSamplesForAcceptedTiming
       ) {
         fail(
           `${workflow.id}: reference evidence must meet minimumSamplesForAcceptedTiming per run`,
