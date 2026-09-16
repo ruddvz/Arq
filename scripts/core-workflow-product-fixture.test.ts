@@ -6,8 +6,8 @@ import {
   createNodeArqfsDriver,
   openArqfs,
   readAllArchiveEntries,
-} from '@arq/arqfs';
-import { importArchive } from '@arq/project-format';
+} from '../packages/arqfs/src/index';
+import { importArchive } from '../packages/project-format/src/index';
 import { decodeNativeProjectModel } from '../apps/web/src/project/native-project-model';
 import {
   buildCoreWorkflowModel,
