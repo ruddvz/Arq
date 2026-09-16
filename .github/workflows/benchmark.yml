@@ -12,6 +12,7 @@ on:
       - 'benchmarks/PERFORMANCE-BUDGETS.json'
       - 'benchmarks/fixtures/**'
       - 'packages/plan-renderer/benchmarks/canvas-2d/scene.js'
+      - 'scripts/core-workflow-product-fixture.test.ts'
       - 'scripts/check-performance-authority*.mjs'
       - 'scripts/lib/performance-authority.mjs'
       - 'scripts/run-core-workflow-performance.mjs'
@@ -34,7 +35,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Prove product-executable Core fixture candidate
-        run: pnpm vitest run benchmarks/fixtures/core-workflow-product-fixture.test.ts
+        run: pnpm vitest run scripts/core-workflow-product-fixture.test.ts
       - run: node scripts/check-performance-authority-test.mjs
       - run: node scripts/check-performance-authority.mjs
       - run: pnpm check:web-bundle-budget:test
