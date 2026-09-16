@@ -50,19 +50,41 @@ async function twoFrames(page) {
 }
 
 async function clear3dSelection(page, modelCanvas) {
-  const emptyPoint = await page.evaluate(() => {
+  const candidates = await page.evaluate(() => {
     const canvas = document.querySelector('canvas[aria-label="3D model view"]');
-    const panel = document.querySelector('.arq-workspace__overlay--left');
     if (!(canvas instanceof HTMLCanvasElement)) throw new Error('3D canvas is unavailable.');
-    const canvasBox = canvas.getBoundingClientRect();
-    const panelBox = panel?.getBoundingClientRect() ?? null;
-    const x = panelBox === null ? 24 : Math.max(24, panelBox.right - canvasBox.left + 24);
-    return { x: Math.min(x, canvasBox.width - 24), y: 24 };
+    const rect = canvas.getBoundingClientRect();
+    const fractions = [0.03, 0.08, 0.2, 0.35, 0.5, 0.65, 0.8, 0.92, 0.97];
+    const edgeFractions = [0.03, 0.08, 0.92, 0.97];
+    const points = [];
+    const seen = new Set();
+    const addPoint = (xFraction, yFraction) => {
+      const clientX = rect.left + rect.width * xFraction;
+      const clientY = rect.top + rect.height * yFraction;
+      if (document.elementFromPoint(clientX, clientY) !== canvas) return;
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      const key = `${Math.round(x)}:${Math.round(y)}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      points.push({ x, y });
+    };
+    for (const edge of edgeFractions) {
+      for (const fraction of fractions) {
+        addPoint(fraction, edge);
+        addPoint(edge, fraction);
+      }
+    }
+    return points;
   });
-  await modelCanvas.click({ position: emptyPoint });
-  await twoFrames(page);
-  const pixels = await analyzeCanvasPixels(page, await modelCanvas.screenshot());
-  return pixels.greenDominantPixels === 0;
+
+  for (const position of candidates) {
+    await modelCanvas.click({ position });
+    await twoFrames(page);
+    const pixels = await analyzeCanvasPixels(page, await modelCanvas.screenshot());
+    if (pixels.greenDominantPixels === 0) return true;
+  }
+  return false;
 }
 
 async function findSelectableWallPoint(page, modelCanvas) {
@@ -213,11 +235,9 @@ async function measureSelection(page, modelCanvas, position) {
   });
 
   await modelCanvas.click({ position });
-  await page.waitForFunction(
-    () => window.__ARQ_PERF_3D_SELECTION__?.settled !== null,
-    undefined,
-    { timeout: 10_000 },
-  );
+  await page.waitForFunction(() => window.__ARQ_PERF_3D_SELECTION__?.settled !== null, undefined, {
+    timeout: 10_000,
+  });
   const measured = await page.evaluate(() => {
     const state = window.__ARQ_PERF_3D_SELECTION__;
     const longTasks = state.longTasks.filter(
@@ -264,11 +284,15 @@ async function measureOrbitSelection(browser, origin, fixturePath) {
     const orbit = await measureOrbit(page, modelCanvas);
     const selectablePoint = await findSelectableWallPoint(page, modelCanvas);
     if (!(await clear3dSelection(page, modelCanvas))) {
-      throw new Error('Could not clear discovered 3D selection before timed selection measurement.');
+      throw new Error(
+        'Could not clear discovered 3D selection before timed selection measurement.',
+      );
     }
     const selection = await measureSelection(page, modelCanvas, selectablePoint);
     if (browserErrors.length > 0) {
-      throw new Error(`3D orbit-selection sample emitted browser errors (${browserErrors.length}).`);
+      throw new Error(
+        `3D orbit-selection sample emitted browser errors (${browserErrors.length}).`,
+      );
     }
 
     return {
@@ -283,8 +307,7 @@ async function measureOrbitSelection(browser, origin, fixturePath) {
       selectionInteractionLatencyMs: selection.selectionInteractionLatencyMs,
       selectionSettledMs: selection.selectionSettledMs,
       orbitFrameCount: orbit.orbitFrameCount,
-      mainThreadLongTaskCount:
-        orbit.mainThreadLongTaskCount + selection.mainThreadLongTaskCount,
+      mainThreadLongTaskCount: orbit.mainThreadLongTaskCount + selection.mainThreadLongTaskCount,
       mainThreadLongTaskTotalMs:
         orbit.mainThreadLongTaskTotalMs + selection.mainThreadLongTaskTotalMs,
       orbitChanged: orbit.orbitChanged,
