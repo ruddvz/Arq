@@ -15,8 +15,10 @@ on:
       - 'scripts/core-workflow-product-fixture.test.ts'
       - 'scripts/check-performance-authority*.mjs'
       - 'scripts/lib/performance-authority.mjs'
+      - 'scripts/lib/core-product-performance.mjs'
       - 'scripts/run-core-workflow-performance.mjs'
       - 'scripts/run-core-3d-first-open-performance.mjs'
+      - 'scripts/run-core-3d-orbit-selection-performance.mjs'
       - 'scripts/run-material-compositing-performance.mjs'
       - 'scripts/run-render-frame-benchmark.mjs'
       - 'scripts/run-canvas-2d-benchmark.mjs'
@@ -63,6 +65,8 @@ jobs:
       - run: node scripts/run-core-workflow-performance.mjs
         continue-on-error: true
       - run: node scripts/run-core-3d-first-open-performance.mjs
+        continue-on-error: true
+      - run: node scripts/run-core-3d-orbit-selection-performance.mjs
         continue-on-error: true
       - run: node scripts/run-material-compositing-performance.mjs
         continue-on-error: true
