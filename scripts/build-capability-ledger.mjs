@@ -37,12 +37,16 @@ const ledger = buildCapabilityLedger({
 const jsonPath = path.join(repoRoot, 'docs/product/capabilities/ARQ-CAPABILITY-LEDGER.json');
 const dashboardPath = path.join(repoRoot, 'docs/product/ARQ-CAPABILITY-DASHBOARD.md');
 const prettier = await import('prettier');
+const json = await prettier.format(JSON.stringify(ledger), {
+  ...(await prettier.resolveConfig(jsonPath)),
+  filepath: jsonPath,
+});
 const dashboard = await prettier.format(renderCapabilityDashboard(ledger), {
   ...(await prettier.resolveConfig(dashboardPath)),
   filepath: dashboardPath,
 });
 
-writeFileSync(jsonPath, `${JSON.stringify(ledger, null, 2)}\n`);
+writeFileSync(jsonPath, json);
 writeFileSync(dashboardPath, dashboard);
 console.log(`Wrote ${path.relative(repoRoot, jsonPath)} (${ledger.summary.total} capabilities).`);
 console.log(`Wrote ${path.relative(repoRoot, dashboardPath)}.`);
