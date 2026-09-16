@@ -61,6 +61,42 @@ for (const workflow of authority.workflows ?? []) {
       );
     }
   }
+  if (workflow.evidenceStatus === 'measured-core-e2e-reference') {
+    if (workflow.evidenceFixture?.coreScale !== true) {
+      fail(`${workflow.id}: measured Core E2E evidence must name a coreScale evidenceFixture`);
+    }
+    const referenceEvidence = workflow.referenceEvidence;
+    if (referenceEvidence === undefined || referenceEvidence === null) {
+      fail(`${workflow.id}: measured Core E2E evidence requires referenceEvidence`);
+    } else {
+      if (
+        !Number.isInteger(referenceEvidence.sampleCountPerRun) ||
+        referenceEvidence.sampleCountPerRun < authority.regressionPolicy.minimumSamplesForAcceptedTiming
+      ) {
+        fail(
+          `${workflow.id}: reference evidence must meet minimumSamplesForAcceptedTiming per run`,
+        );
+      }
+      if (!Array.isArray(referenceEvidence.runs) || referenceEvidence.runs.length === 0) {
+        fail(`${workflow.id}: measured Core E2E reference evidence requires at least one run`);
+      } else {
+        for (const run of referenceEvidence.runs) {
+          for (const field of [
+            'workflowRunId',
+            'mergeCheckout',
+            'artifactId',
+            'artifactSha256',
+            'environment',
+          ]) {
+            if (!run[field]) fail(`${workflow.id}: reference run missing ${field}`);
+          }
+        }
+      }
+    }
+  }
+  if (workflow.evidenceStatus.startsWith('blocked-') && !workflow.blockedReason) {
+    fail(`${workflow.id}: blocked workflow must state blockedReason`);
+  }
   if (!authority.environments?.[workflow.environmentClass])
     fail(`${workflow.id}: unknown environmentClass ${workflow.environmentClass}`);
   if (
