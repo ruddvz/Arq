@@ -152,9 +152,7 @@
         "packages/bim-core/src/room.test.ts",
         "packages/geometry-2d/src/room-boundary-graph.test.ts"
       ],
-      "executionEvidencePaths": [
-        "packages/geometry-2d/src/room-boundary-graph.test.ts"
-      ],
+      "executionEvidencePaths": [],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -254,9 +252,7 @@
         "packages/design-system/src/shell/model-tree-navigation.test.ts",
         "packages/design-system/src/shell/inspector-groups.test.ts"
       ],
-      "executionEvidencePaths": [
-        "packages/design-system/src/shell/model-tree-navigation.test.ts"
-      ],
+      "executionEvidencePaths": [],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -337,7 +333,7 @@
       "productSurface": "File open",
       "sourcePaths": ["packages/arqfs/src/arqfs-open.ts"],
       "testPaths": ["packages/arqfs/src/arqfs-open.test.ts"],
-      "executionEvidencePaths": ["packages/arqfs/src/arqfs-open.test.ts"],
+      "executionEvidencePaths": [],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -355,9 +351,7 @@
       "productSurface": "Recovery",
       "sourcePaths": ["packages/local-storage/src/journal-recovery.ts"],
       "testPaths": ["packages/local-storage/src/journal-recovery.test.ts"],
-      "executionEvidencePaths": [
-        "packages/local-storage/src/journal-recovery.test.ts"
-      ],
+      "executionEvidencePaths": [],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -415,9 +409,14 @@
       "feature": "Supported browser/device matrix",
       "category": "Platform",
       "productSurface": "Product",
-      "sourcePaths": [],
-      "testPaths": [],
-      "executionEvidencePaths": [],
+      "sourcePaths": ["validation/BROWSER-AND-DEVICE-MATRIX.csv"],
+      "testPaths": ["validation/evidence/BROWSER-DEVICE-ACCEPTANCE.json"],
+      "executionEvidencePaths": [
+        "validation/evidence/BROWSER-DEVICE-ACCEPTANCE.json"
+      ],
+      "humanEvidencePaths": [
+        "validation/evidence/BROWSER-DEVICE-ACCEPTANCE.json"
+      ],
       "platforms": ["web", "desktop", "tablet"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
