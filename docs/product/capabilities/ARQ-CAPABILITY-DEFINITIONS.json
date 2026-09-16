@@ -111,7 +111,9 @@
       "productSurface": "Plan canvas",
       "sourcePaths": ["apps/web/src/PlanCanvas.tsx"],
       "testPaths": ["apps/web/src/canvas/wall-command-contract.test.ts"],
-      "executionEvidencePaths": ["apps/web/src/canvas/wall-command-contract.test.ts"],
+      "executionEvidencePaths": [
+        "apps/web/src/canvas/wall-command-contract.test.ts"
+      ],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -146,8 +148,13 @@
       "category": "Plan",
       "productSurface": "Plan canvas",
       "sourcePaths": ["packages/bim-core/src/room.ts"],
-      "testPaths": ["packages/bim-core/src/room.test.ts", "packages/geometry-2d/src/room-boundary-graph.test.ts"],
-      "executionEvidencePaths": ["packages/geometry-2d/src/room-boundary-graph.test.ts"],
+      "testPaths": [
+        "packages/bim-core/src/room.test.ts",
+        "packages/geometry-2d/src/room-boundary-graph.test.ts"
+      ],
+      "executionEvidencePaths": [
+        "packages/geometry-2d/src/room-boundary-graph.test.ts"
+      ],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -200,8 +207,13 @@
       "category": "Plan",
       "productSurface": "Plan canvas",
       "sourcePaths": ["apps/web/src/PlanCanvas.tsx"],
-      "testPaths": ["apps/web/src/canvas/canvas-interaction.test.ts", "packages/plan-renderer/src/plan-scene.test.ts"],
-      "executionEvidencePaths": ["apps/web/src/canvas/canvas-interaction.test.ts"],
+      "testPaths": [
+        "apps/web/src/canvas/canvas-interaction.test.ts",
+        "packages/plan-renderer/src/plan-scene.test.ts"
+      ],
+      "executionEvidencePaths": [
+        "apps/web/src/canvas/canvas-interaction.test.ts"
+      ],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -235,9 +247,16 @@
       "feature": "Model browser and inspector navigation",
       "category": "Workspace",
       "productSurface": "Browser / Inspector",
-      "sourcePaths": ["packages/design-system/src/shell/model-tree-navigation.ts"],
-      "testPaths": ["packages/design-system/src/shell/model-tree-navigation.test.ts", "packages/design-system/src/shell/inspector-groups.test.ts"],
-      "executionEvidencePaths": ["packages/design-system/src/shell/model-tree-navigation.test.ts"],
+      "sourcePaths": [
+        "packages/design-system/src/shell/model-tree-navigation.ts"
+      ],
+      "testPaths": [
+        "packages/design-system/src/shell/model-tree-navigation.test.ts",
+        "packages/design-system/src/shell/inspector-groups.test.ts"
+      ],
+      "executionEvidencePaths": [
+        "packages/design-system/src/shell/model-tree-navigation.test.ts"
+      ],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -255,7 +274,9 @@
       "productSurface": "File open",
       "sourcePaths": ["apps/web/src/project/open-native-project.ts"],
       "testPaths": ["apps/web/src/project/open-native-project.test.ts"],
-      "executionEvidencePaths": ["apps/web/src/project/open-native-project.test.ts"],
+      "executionEvidencePaths": [
+        "apps/web/src/project/open-native-project.test.ts"
+      ],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -272,8 +293,13 @@
       "category": "Project lifecycle",
       "productSurface": "Workspace",
       "sourcePaths": ["apps/web/src/project/native-project-session.ts"],
-      "testPaths": ["apps/web/src/project/native-project-session.test.ts", "apps/web/src/project/workspace-persistence.test.ts"],
-      "executionEvidencePaths": ["apps/web/src/project/native-project-session.test.ts"],
+      "testPaths": [
+        "apps/web/src/project/native-project-session.test.ts",
+        "apps/web/src/project/workspace-persistence.test.ts"
+      ],
+      "executionEvidencePaths": [
+        "apps/web/src/project/native-project-session.test.ts"
+      ],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -291,7 +317,9 @@
       "productSurface": "Publish",
       "sourcePaths": ["apps/web/src/project/publish-native-project.ts"],
       "testPaths": ["apps/web/src/project/publish-native-project.test.ts"],
-      "executionEvidencePaths": ["apps/web/src/project/publish-native-project.test.ts"],
+      "executionEvidencePaths": [
+        "apps/web/src/project/publish-native-project.test.ts"
+      ],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -327,7 +355,9 @@
       "productSurface": "Recovery",
       "sourcePaths": ["packages/local-storage/src/journal-recovery.ts"],
       "testPaths": ["packages/local-storage/src/journal-recovery.test.ts"],
-      "executionEvidencePaths": ["packages/local-storage/src/journal-recovery.test.ts"],
+      "executionEvidencePaths": [
+        "packages/local-storage/src/journal-recovery.test.ts"
+      ],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -344,7 +374,10 @@
       "category": "Documentation",
       "productSurface": "Sheet",
       "sourcePaths": ["packages/bim-core/src/sheet.ts"],
-      "testPaths": ["packages/bim-core/src/sheet.test.ts", "apps/web/src/sheets/sheet-export.test.ts"],
+      "testPaths": [
+        "packages/bim-core/src/sheet.test.ts",
+        "apps/web/src/sheets/sheet-export.test.ts"
+      ],
       "executionEvidencePaths": ["apps/web/src/sheets/sheet-export.test.ts"],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
@@ -362,7 +395,10 @@
       "category": "Export",
       "productSurface": "Sheet export",
       "sourcePaths": ["packages/pdf-export/src/pdf-sheet-export.ts"],
-      "testPaths": ["packages/pdf-export/src/pdf-sheet-export.test.ts", "apps/web/src/sheets/sheet-export.test.ts"],
+      "testPaths": [
+        "packages/pdf-export/src/pdf-sheet-export.test.ts",
+        "apps/web/src/sheets/sheet-export.test.ts"
+      ],
       "executionEvidencePaths": ["apps/web/src/sheets/sheet-export.test.ts"],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
@@ -397,100 +433,180 @@
       "feature": "Select tool",
       "category": "Command / tool",
       "productSurface": "Tool rail",
-      "sourcePaths": [], "testPaths": [], "executionEvidencePaths": [],
-      "platforms": ["web", "desktop"], "userJourneys": [], "programmePhase": "Reachability integrity",
-      "provider": "command-authority", "commandId": "select", "mergeRequirements": ["command-authority"],
-      "humanEvidenceRequired": false, "publicClaimEligible": false, "releaseGates": ["Reachability integrity"]
+      "sourcePaths": [],
+      "testPaths": [],
+      "executionEvidencePaths": [],
+      "platforms": ["web", "desktop"],
+      "userJourneys": [],
+      "programmePhase": "Reachability integrity",
+      "provider": "command-authority",
+      "commandId": "select",
+      "mergeRequirements": ["command-authority"],
+      "humanEvidenceRequired": false,
+      "publicClaimEligible": false,
+      "releaseGates": ["Reachability integrity"]
     },
     {
       "capabilityId": "audit.tool.pan",
       "feature": "Pan tool",
       "category": "Command / tool",
       "productSurface": "Tool rail",
-      "sourcePaths": [], "testPaths": [], "executionEvidencePaths": [],
-      "platforms": ["web", "desktop"], "userJourneys": [], "programmePhase": "Reachability integrity",
-      "provider": "command-authority", "commandId": "pan", "mergeRequirements": ["command-authority"],
-      "humanEvidenceRequired": false, "publicClaimEligible": false, "releaseGates": ["Reachability integrity"]
+      "sourcePaths": [],
+      "testPaths": [],
+      "executionEvidencePaths": [],
+      "platforms": ["web", "desktop"],
+      "userJourneys": [],
+      "programmePhase": "Reachability integrity",
+      "provider": "command-authority",
+      "commandId": "pan",
+      "mergeRequirements": ["command-authority"],
+      "humanEvidenceRequired": false,
+      "publicClaimEligible": false,
+      "releaseGates": ["Reachability integrity"]
     },
     {
       "capabilityId": "audit.tool.fit",
       "feature": "Fit view",
       "category": "Command / tool",
       "productSurface": "Tool rail",
-      "sourcePaths": [], "testPaths": [], "executionEvidencePaths": [],
-      "platforms": ["web", "desktop"], "userJourneys": [], "programmePhase": "Reachability integrity",
-      "provider": "command-authority", "commandId": "fit", "mergeRequirements": ["command-authority"],
-      "humanEvidenceRequired": false, "publicClaimEligible": false, "releaseGates": ["Reachability integrity"]
+      "sourcePaths": [],
+      "testPaths": [],
+      "executionEvidencePaths": [],
+      "platforms": ["web", "desktop"],
+      "userJourneys": [],
+      "programmePhase": "Reachability integrity",
+      "provider": "command-authority",
+      "commandId": "fit",
+      "mergeRequirements": ["command-authority"],
+      "humanEvidenceRequired": false,
+      "publicClaimEligible": false,
+      "releaseGates": ["Reachability integrity"]
     },
     {
       "capabilityId": "audit.tool.door",
       "feature": "Door tool",
       "category": "Command / tool",
       "productSurface": "Tool rail",
-      "sourcePaths": [], "testPaths": [], "executionEvidencePaths": [],
-      "platforms": ["web", "desktop"], "userJourneys": [], "programmePhase": "Reachability integrity",
-      "provider": "command-authority", "commandId": "door", "mergeRequirements": ["command-authority"],
-      "humanEvidenceRequired": false, "publicClaimEligible": false, "releaseGates": ["Reachability integrity"]
+      "sourcePaths": [],
+      "testPaths": [],
+      "executionEvidencePaths": [],
+      "platforms": ["web", "desktop"],
+      "userJourneys": [],
+      "programmePhase": "Reachability integrity",
+      "provider": "command-authority",
+      "commandId": "door",
+      "mergeRequirements": ["command-authority"],
+      "humanEvidenceRequired": false,
+      "publicClaimEligible": false,
+      "releaseGates": ["Reachability integrity"]
     },
     {
       "capabilityId": "audit.tool.window",
       "feature": "Window tool",
       "category": "Command / tool",
       "productSurface": "Tool rail",
-      "sourcePaths": [], "testPaths": [], "executionEvidencePaths": [],
-      "platforms": ["web", "desktop"], "userJourneys": [], "programmePhase": "Reachability integrity",
-      "provider": "command-authority", "commandId": "window", "mergeRequirements": ["command-authority"],
-      "humanEvidenceRequired": false, "publicClaimEligible": false, "releaseGates": ["Reachability integrity"]
+      "sourcePaths": [],
+      "testPaths": [],
+      "executionEvidencePaths": [],
+      "platforms": ["web", "desktop"],
+      "userJourneys": [],
+      "programmePhase": "Reachability integrity",
+      "provider": "command-authority",
+      "commandId": "window",
+      "mergeRequirements": ["command-authority"],
+      "humanEvidenceRequired": false,
+      "publicClaimEligible": false,
+      "releaseGates": ["Reachability integrity"]
     },
     {
       "capabilityId": "audit.tool.room-boundary",
       "feature": "Room Boundary tool",
       "category": "Command / tool",
       "productSurface": "Tool rail",
-      "sourcePaths": [], "testPaths": [], "executionEvidencePaths": [],
-      "platforms": ["web", "desktop"], "userJourneys": [], "programmePhase": "Reachability integrity",
-      "provider": "command-authority", "commandId": "room-boundary", "mergeRequirements": ["command-authority"],
-      "humanEvidenceRequired": false, "publicClaimEligible": false, "releaseGates": ["Reachability integrity"]
+      "sourcePaths": [],
+      "testPaths": [],
+      "executionEvidencePaths": [],
+      "platforms": ["web", "desktop"],
+      "userJourneys": [],
+      "programmePhase": "Reachability integrity",
+      "provider": "command-authority",
+      "commandId": "room-boundary",
+      "mergeRequirements": ["command-authority"],
+      "humanEvidenceRequired": false,
+      "publicClaimEligible": false,
+      "releaseGates": ["Reachability integrity"]
     },
     {
       "capabilityId": "audit.tool.window-select",
       "feature": "Window Select tool",
       "category": "Command / tool",
       "productSurface": "Tool rail",
-      "sourcePaths": [], "testPaths": [], "executionEvidencePaths": [],
-      "platforms": ["web", "desktop"], "userJourneys": [], "programmePhase": "Reachability integrity",
-      "provider": "command-authority", "commandId": "window-select", "mergeRequirements": ["command-authority"],
-      "humanEvidenceRequired": false, "publicClaimEligible": false, "releaseGates": ["Reachability integrity"]
+      "sourcePaths": [],
+      "testPaths": [],
+      "executionEvidencePaths": [],
+      "platforms": ["web", "desktop"],
+      "userJourneys": [],
+      "programmePhase": "Reachability integrity",
+      "provider": "command-authority",
+      "commandId": "window-select",
+      "mergeRequirements": ["command-authority"],
+      "humanEvidenceRequired": false,
+      "publicClaimEligible": false,
+      "releaseGates": ["Reachability integrity"]
     },
     {
       "capabilityId": "audit.tool.crossing-select",
       "feature": "Crossing Select tool",
       "category": "Command / tool",
       "productSurface": "Tool rail",
-      "sourcePaths": [], "testPaths": [], "executionEvidencePaths": [],
-      "platforms": ["web", "desktop"], "userJourneys": [], "programmePhase": "Reachability integrity",
-      "provider": "command-authority", "commandId": "crossing-select", "mergeRequirements": ["command-authority"],
-      "humanEvidenceRequired": false, "publicClaimEligible": false, "releaseGates": ["Reachability integrity"]
+      "sourcePaths": [],
+      "testPaths": [],
+      "executionEvidencePaths": [],
+      "platforms": ["web", "desktop"],
+      "userJourneys": [],
+      "programmePhase": "Reachability integrity",
+      "provider": "command-authority",
+      "commandId": "crossing-select",
+      "mergeRequirements": ["command-authority"],
+      "humanEvidenceRequired": false,
+      "publicClaimEligible": false,
+      "releaseGates": ["Reachability integrity"]
     },
     {
       "capabilityId": "audit.tool.selection-filter",
       "feature": "Selection Filter tool",
       "category": "Command / tool",
       "productSurface": "Tool rail",
-      "sourcePaths": [], "testPaths": [], "executionEvidencePaths": [],
-      "platforms": ["web", "desktop"], "userJourneys": [], "programmePhase": "Reachability integrity",
-      "provider": "command-authority", "commandId": "selection-filter", "mergeRequirements": ["command-authority"],
-      "humanEvidenceRequired": false, "publicClaimEligible": false, "releaseGates": ["Reachability integrity"]
+      "sourcePaths": [],
+      "testPaths": [],
+      "executionEvidencePaths": [],
+      "platforms": ["web", "desktop"],
+      "userJourneys": [],
+      "programmePhase": "Reachability integrity",
+      "provider": "command-authority",
+      "commandId": "selection-filter",
+      "mergeRequirements": ["command-authority"],
+      "humanEvidenceRequired": false,
+      "publicClaimEligible": false,
+      "releaseGates": ["Reachability integrity"]
     },
     {
       "capabilityId": "audit.tool.zoom",
       "feature": "Zoom tool",
       "category": "Command / tool",
       "productSurface": "Tool rail",
-      "sourcePaths": [], "testPaths": [], "executionEvidencePaths": [],
-      "platforms": ["web", "desktop"], "userJourneys": [], "programmePhase": "Reachability integrity",
-      "provider": "command-authority", "commandId": "zoom", "mergeRequirements": ["command-authority"],
-      "humanEvidenceRequired": false, "publicClaimEligible": false, "releaseGates": ["Reachability integrity"]
+      "sourcePaths": [],
+      "testPaths": [],
+      "executionEvidencePaths": [],
+      "platforms": ["web", "desktop"],
+      "userJourneys": [],
+      "programmePhase": "Reachability integrity",
+      "provider": "command-authority",
+      "commandId": "zoom",
+      "mergeRequirements": ["command-authority"],
+      "humanEvidenceRequired": false,
+      "publicClaimEligible": false,
+      "releaseGates": ["Reachability integrity"]
     }
   ]
 }
