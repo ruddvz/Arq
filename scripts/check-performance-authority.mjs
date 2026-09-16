@@ -14,8 +14,7 @@ const fail = (message) => failures.push(message);
 const authority = readPerformanceAuthority();
 const fixture = readFixtureManifest();
 
-if (authority.schemaVersion !== '2.1.0')
-  fail(`unexpected schemaVersion ${authority.schemaVersion}`);
+if (authority.schemaVersion !== '2.1.0') fail(`unexpected schemaVersion ${authority.schemaVersion}`);
 if (authority.authority?.issue !== 402) fail('authority.issue must be 402');
 if (!Array.isArray(authority.workflows) || authority.workflows.length === 0)
   fail('workflows are absent');
@@ -56,9 +55,7 @@ for (const workflow of authority.workflows ?? []) {
     if (typeof evidenceFixture.coreScale !== 'boolean')
       fail(`${workflow.id}: evidenceFixture.coreScale must be boolean`);
     if (evidenceFixture.coreScale && authority.fixtureContract?.productExecutable !== true) {
-      fail(
-        `${workflow.id}: cannot claim Core-scale evidence before a product-executable Core fixture exists`,
-      );
+      fail(`${workflow.id}: cannot claim Core-scale evidence without a product-executable Core fixture`);
     }
   }
   if (!authority.environments?.[workflow.environmentClass])
@@ -74,17 +71,13 @@ for (const workflow of authority.workflows ?? []) {
     workflow.budget?.environmentClass &&
     !authority.environments?.[workflow.budget.environmentClass]
   ) {
-    fail(
-      `${workflow.id}: budget references unknown environment ${workflow.budget.environmentClass}`,
-    );
+    fail(`${workflow.id}: budget references unknown environment ${workflow.budget.environmentClass}`);
   }
   if (
     workflow.regression?.environmentClass &&
     !authority.environments?.[workflow.regression.environmentClass]
   ) {
-    fail(
-      `${workflow.id}: regression policy references unknown environment ${workflow.regression.environmentClass}`,
-    );
+    fail(`${workflow.id}: regression policy references unknown environment ${workflow.regression.environmentClass}`);
   }
 }
 
@@ -121,11 +114,11 @@ try {
 if (authority.fixture !== undefined) fail('ambiguous top-level fixture authority must not return');
 if (authority.fixtureContract?.id !== fixture.id)
   fail('authority fixtureContract must reference the protected fixture manifest');
-if (authority.fixtureContract?.productExecutable !== false || fixture.productExecutable !== false) {
-  fail(
-    'current Core fixture must remain explicit contract-only until a product-executable Core fixture exists',
-  );
+if (authority.fixtureContract?.productExecutable !== true || fixture.productExecutable !== true) {
+  fail('Core fixture authority must remain product-executable after exact-head proof');
 }
+if (fixture.status !== 'product-executable-protected-scale')
+  fail(`unexpected fixture status ${fixture.status}`);
 const expected = fixture.protectedScale;
 if (fixture.kind !== 'synthetic-repository-owned')
   fail('fixture must remain synthetic and repository owned');
@@ -143,15 +136,28 @@ for (const [key, minimum] of Object.entries(fixture.complexityGuards?.minimum ??
 }
 const mechanicalCoverage = fixture.guardCoverage?.mechanicallyVerifiedAgainstBackingFixture ?? [];
 const contractOnlyCoverage = fixture.guardCoverage?.contractOnlyPendingProductFixture ?? [];
-for (const key of ['walls', 'doorsAndWindows', 'rooms', 'annotations']) {
+for (const key of [
+  'levels',
+  'walls',
+  'doorsAndWindows',
+  'rooms',
+  'annotations',
+  'underlays',
+  'semanticObjectsApprox',
+]) {
   if (!mechanicalCoverage.includes(key)) fail(`fixture ${key} must remain mechanically guarded`);
+  if (contractOnlyCoverage.includes(key))
+    fail(`fixture ${key} must not regress to contract-only coverage`);
 }
-for (const key of ['levels', 'underlays', 'semanticObjectsApprox']) {
-  if (!contractOnlyCoverage.includes(key))
-    fail(`fixture ${key} must remain explicit contract-only pending product fixture`);
-  if (mechanicalCoverage.includes(key))
-    fail(`fixture ${key} is falsely claimed as mechanically verified`);
-}
+if (contractOnlyCoverage.length !== 0)
+  fail('product-executable Core fixture must not retain contract-only protected dimensions');
+
+const productBacking = fixture.backingFixtures?.find(
+  (entry) => entry.productExecutableCoreFixture === true,
+);
+if (!productBacking) fail('product-executable Core backing fixture is absent');
+if (productBacking?.verification !== 'scripts/core-workflow-product-fixture.test.ts')
+  fail('product-executable Core backing fixture verification path drifted');
 
 const scenePath = path.join(repoRoot, 'packages/plan-renderer/benchmarks/canvas-2d/scene.js');
 const context = { window: {} };
@@ -198,5 +204,5 @@ if (failures.length) {
   process.exit(1);
 }
 process.stdout.write(
-  `PASS performance authority: ${ids.size} workflows, protected fixture ${counts.walls} walls / ${counts.openings} openings / ${counts.rooms} rooms / ${counts.annotations} annotations, startup budget ${authority.bundle.startup.threshold} bytes gzip.\n`,
+  `PASS performance authority: ${ids.size} workflows, product-executable protected fixture ${expected.levels} levels / ${counts.walls} walls / ${counts.openings} openings / ${counts.rooms} rooms / ${counts.annotations} annotations / ${expected.underlays} underlay / ~${expected.semanticObjectsApprox} semantic objects, startup budget ${authority.bundle.startup.threshold} bytes gzip.\n`,
 );
