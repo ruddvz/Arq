@@ -8,13 +8,13 @@ This contract turns release readiness into a deterministic decision over current
 
 The machine-readable source is `ARQ-RELEASE-POLICY.v1.json`.
 
-| Stage | Audience | Purpose |
-| --- | --- | --- |
-| `engineering` | engineering only | Prove the candidate can be reasoned about and built. Not a user release. |
-| `internal` | internal users/testers | Exercise current product paths without making an external support claim. |
+| Stage             | Audience                       | Purpose                                                                                                       |
+| ----------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `engineering`     | engineering only               | Prove the candidate can be reasoned about and built. Not a user release.                                      |
+| `internal`        | internal users/testers         | Exercise current product paths without making an external support claim.                                      |
 | `architect_alpha` | controlled external architects | Permit bounded real-workflow validation only after project-format, rollback and human/device evidence exists. |
-| `beta` | broader external testers | Add deployment-identity evidence to the alpha floor. |
-| `stable` | supported external release | Add production-smoke evidence and require the full supported evidence envelope. |
+| `beta`            | broader external testers       | Add deployment-identity evidence to the alpha floor.                                                          |
+| `stable`          | supported external release     | Add production-smoke evidence and require the full supported evidence envelope.                               |
 
 A later stage is not inferred from an issue count, branch name, tag, successful build, or provider-ready status. The release manifest names the stage explicitly and must satisfy that stage's evidence classes at the exact release revision.
 
