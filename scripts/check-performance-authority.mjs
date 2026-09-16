@@ -115,16 +115,24 @@ for (const deferred of authority.bundle?.deferred ?? []) {
   for (const field of ['id', 'library', 'marker', 'boundary', 'owner']) {
     if (!deferred[field]) fail(`deferred bundle entry missing ${field}`);
   }
-  if (deferred.status !== 'accepted')
+  if (deferred.status !== 'accepted') {
     fail(`${deferred.id}: deferred bundle budget must be accepted after exact-head baseline`);
-  if (!Number.isInteger(deferred.sizeBudget) || deferred.sizeBudget <= 0)
+  }
+  if (!Number.isInteger(deferred.sizeBudget) || deferred.sizeBudget <= 0) {
     fail(`${deferred.id}: accepted deferred bundle requires a positive integer sizeBudget`);
-  if (typeof deferred.referenceGzipKiB !== 'number' || deferred.referenceGzipKiB <= 0)
+  }
+  if (
+    typeof deferred.referenceGzipKiB !== 'number' ||
+    deferred.referenceGzipKiB <= 0
+  ) {
     fail(`${deferred.id}: accepted deferred bundle requires referenceGzipKiB evidence`);
-  if (deferred.sizeBudget < Math.ceil(deferred.referenceGzipKiB * 1024))
+  }
+  if (deferred.sizeBudget < Math.ceil(deferred.referenceGzipKiB * 1024)) {
     fail(`${deferred.id}: deferred budget is below its exact-head reference measurement`);
-  if (!deferred.budgetPolicy || !deferred.evidence)
+  }
+  if (!deferred.budgetPolicy || !deferred.evidence) {
     fail(`${deferred.id}: deferred budget requires policy and exact-head evidence`);
+  }
 }
 
 if (authority.fixture !== undefined) fail('ambiguous top-level fixture authority must not return');
@@ -219,6 +227,9 @@ if (failures.length) {
   failures.forEach((failure) => process.stderr.write(`FAIL ${failure}\n`));
   process.exit(1);
 }
+const deferredBudgets = authority.bundle.deferred
+  .map((entry) => `${entry.library}=${entry.sizeBudget}`)
+  .join(', ');
 process.stdout.write(
-  `PASS performance authority: ${ids.size} workflows, product-executable protected fixture ${expected.levels} levels / ${counts.walls} walls / ${counts.openings} openings / ${counts.rooms} rooms / ${counts.annotations} annotations / ${expected.underlays} underlay / ~${expected.semanticObjectsApprox} semantic objects, startup budget ${authority.bundle.startup.threshold} bytes gzip, deferred budgets ${authority.bundle.deferred.map((entry) => `${entry.library}=${entry.sizeBudget}`).join(', ')}.\n`,
+  `PASS performance authority: ${ids.size} workflows, product-executable protected fixture ${expected.levels} levels / ${counts.walls} walls / ${counts.openings} openings / ${counts.rooms} rooms / ${counts.annotations} annotations / ${expected.underlays} underlay / ~${expected.semanticObjectsApprox} semantic objects, startup budget ${authority.bundle.startup.threshold} bytes gzip, deferred budgets ${deferredBudgets}.\n`,
 );
