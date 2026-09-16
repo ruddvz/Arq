@@ -326,15 +326,40 @@
         "firstVisible": "3D surface first visible",
         "settled": "model frame rendered with coordinated state"
       },
-      "metrics": ["interactionLatencyMs", "chunkLoadMs", "settledMs", "longTasks"],
+      "metrics": [
+        "interactionLatencyMs",
+        "chunkLoadMs",
+        "settledMs",
+        "mainThreadLongTaskCount",
+        "mainThreadLongTaskTotalMs"
+      ],
       "budget": null,
       "regression": null,
       "environmentClass": "reference-browser",
       "owner": "3d",
-      "evidenceStatus": "capability-proven-performance-pending",
-      "enforcement": "scheduled-reference-after-core-fixture",
+      "evidenceStatus": "measured-core-e2e-reference",
+      "enforcement": "scheduled-reference",
       "fixtureContract": "core-workflow-v1",
-      "evidenceFixture": null
+      "evidenceFixture": {
+        "id": "core-workflow-v1",
+        "kind": "product-executable-synthetic-project",
+        "source": "benchmarks/fixtures/core-workflow-product-fixture.ts",
+        "coreScale": true
+      },
+      "referenceEvidence": {
+        "workflowRunId": 35040077132,
+        "mergeCheckout": "4638a2b29b10d2308a22ac6ce4eebb46e9b57245",
+        "artifactId": 10425051656,
+        "artifactSha256": "be628837a4047518996e90a8c52ae06c5af0873f11d121b03746d167271dc9d2",
+        "sampleCount": 7,
+        "coldOrWarm": "cold-new-browser-context-per-sample",
+        "environment": "GitHub Actions Ubuntu 24.04.5; Chromium 149.0.7827.55; AMD EPYC 7763; 4 logical CPUs; Node 20.20.2",
+        "interactionLatencyMs": { "median": 150.7, "p95": 171 },
+        "settledMs": { "median": 341.6, "p95": 371.5 },
+        "chunkLoadMs": { "median": 9.4, "p95": 16.3 },
+        "mainThreadLongTaskTotalMs": { "median": 275, "p95": 297 },
+        "classification": "shared-runner-reference-not-absolute-gate"
+      }
     },
     {
       "id": "3d.orbit-selection",
