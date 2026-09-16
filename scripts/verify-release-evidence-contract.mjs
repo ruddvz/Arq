@@ -11,7 +11,7 @@ import {
 
 function argument(name) {
   const index = process.argv.indexOf(name);
-  return index === -1 ? null : process.argv[index + 1] ?? null;
+  return index === -1 ? null : (process.argv[index + 1] ?? null);
 }
 
 function main() {
