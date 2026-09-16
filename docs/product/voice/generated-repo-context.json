@@ -2,7 +2,7 @@
   "schemaVersion": 4,
   "contractVersion": "4.1.0",
   "sourceContractDigest": "8d1105866c26074ec6dce1b1eab1a237548945edf8225c7ea8f2d6ccb119c995",
-  "sourceSetDigest": "f87139089e621b8273e5188b038916c9a2f4885295356cd8374cad2f6ff5ba4f",
+  "sourceSetDigest": "1800fed99168c55fd07dc94b2443df4594fa8cf1046c4102aca07425eb8e60b5",
   "sourceContextGeneratedBy": "refresh-repo-context.mjs@4.1",
   "sources": {
     "repository-readme": {
@@ -360,12 +360,12 @@
       "id": "file-open-ui",
       "kind": "directory",
       "path": "apps/web/src/file-handling",
-      "sha256": "ab06995af9e3b66837b9082ef973fc544285fa108337968c14f03d6720331e94",
+      "sha256": "95b0e4b1f1332703058bfcc8470fcc9fe36144500e1e4fc5997c9bed5a7755e7",
       "files": [
         {
           "rel": "apps/web/src/file-handling/FileOpenPanel.tsx",
-          "sha256": "88b11ca7afc3e99d15e979f8a8b97726c6a5500ef86c580c858a5ab1f2fef277",
-          "bytes": 15051
+          "sha256": "3d617cb3342141a0b21b6395fbd6ac007485171f4bdf44b745a4aaebd543499b",
+          "bytes": 18362
         },
         {
           "rel": "apps/web/src/file-handling/create-arqfs-worker.ts",
@@ -430,8 +430,8 @@
       "id": "web-app",
       "kind": "file",
       "path": "apps/web/src/App.tsx",
-      "sha256": "e430b27a51ad73abfe9d382be9605d176dcf40f8ac0c1961d31b284a5d77f0ac",
-      "bytes": 106154
+      "sha256": "1f44aefaae13b1234a9060cac8fc7e4edf31fa09f504882c16d335728ba7813f",
+      "bytes": 109553
     },
     "plan-canvas": {
       "id": "plan-canvas",

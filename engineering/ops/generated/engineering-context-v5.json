@@ -4,7 +4,7 @@
   "version": "5.0.0",
   "hash_algorithm": "sha256",
   "repository_bound": true,
-  "source_hash": "df7f9b53a4f7674a653971ec89a491debba43421195ebf0cb1cede5adbeb7252",
+  "source_hash": "60df264b14ab65c9fe3c595edd7a0da65c4d3231b612638f2edf2fc27b296d9e",
   "source_records": [
     {
       "scope": "package",
@@ -204,7 +204,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/App.tsx",
-      "sha256": "e430b27a51ad73abfe9d382be9605d176dcf40f8ac0c1961d31b284a5d77f0ac"
+      "sha256": "1f44aefaae13b1234a9060cac8fc7e4edf31fa09f504882c16d335728ba7813f"
     },
     {
       "scope": "repository",
@@ -214,7 +214,7 @@
     {
       "scope": "repository",
       "path": "apps/web/src/file-handling/FileOpenPanel.tsx",
-      "sha256": "88b11ca7afc3e99d15e979f8a8b97726c6a5500ef86c580c858a5ab1f2fef277"
+      "sha256": "3d617cb3342141a0b21b6395fbd6ac007485171f4bdf44b745a4aaebd543499b"
     },
     {
       "scope": "repository",

@@ -8,6 +8,7 @@ import {
   type NativeOpenResult,
   type NativeWorkerFactory,
 } from '../project/open-native-project';
+import type { NativeProjectReplacementPreparation } from '../project/native-project-session';
 import { createBrowserArqfsWorker } from '../project/browser-worker-factory';
 import { createOpenAttemptGuard } from '../project/open-attempt-guard';
 
@@ -20,6 +21,17 @@ export interface FileOpenPanelProps {
    * rejected or cancelled candidate leaves whatever was already open untouched.
    */
   readonly onProjectOpened?: (opened: NativeOpenSuccess) => void;
+  /**
+   * Optional handoff gate owned by the workspace's current project session.
+   *
+   * It is called only after the candidate bytes have passed every non-mutating
+   * file/completeness check, but before a Worker or working copy is created for
+   * the candidate. The modal is already open at this point, so the active
+   * canvas cannot enqueue another edit while the session drains its write
+   * queue. A blocked verdict therefore leaves both projects exactly where they
+   * were: the current session stays live and no candidate session exists yet.
+   */
+  readonly prepareForProjectReplacement?: () => Promise<NativeProjectReplacementPreparation>;
   /** Injected so tests and the capability check can drive the flow without a real browser Worker. */
   readonly createWorker?: NativeWorkerFactory;
   /**
@@ -64,6 +76,7 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
     isOpen,
     onOpenChange,
     onProjectOpened,
+    prepareForProjectReplacement,
     createWorker = createBrowserArqfsWorker,
     activeWorkingCopyId = null,
   } = props;
@@ -152,8 +165,38 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
     const { sidecarDependency } = completeness.preflight;
     emit({ type: 'route-native', sidecarDependency });
 
+    // The current project has now been asked every non-mutating question we can
+    // ask about the candidate. Before allocating another Worker, give the live
+    // session a chance to drain its own write queue. A failed write is a hard
+    // refusal: the old session is the only object that can replay it, so
+    // replacing that session would make the edit irrecoverable. The same gate
+    // is checked again immediately before adoption because global shortcuts can
+    // still change the workspace while this modal is waiting on candidate I/O.
+    if (prepareForProjectReplacement !== undefined) {
+      let preparation: NativeProjectReplacementPreparation;
+      try {
+        preparation = await prepareForProjectReplacement();
+      } catch (error) {
+        emit({
+          type: 'fail',
+          code: 'ARQ_REPLACE_PREPARE_FAILED',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'The current project could not be prepared for replacement.',
+        });
+        return;
+      }
+      if (!isCurrent()) return;
+      if (preparation.status === 'blocked') {
+        emit({ type: 'fail', code: preparation.code, message: preparation.reason });
+        return;
+      }
+    }
+
     // Only now is a Worker constructed and a working copy created. Everything
-    // above this line is byte-level and leaves no trace if it refuses.
+    // above this line is byte-level or a non-destructive active-session barrier
+    // and leaves no candidate trace if it refuses.
     //
     // The lifecycle states are driven from the pipeline's own boundaries rather
     // than announced in a burst at the end, so `workspace-active` - the only
@@ -208,6 +251,39 @@ export function FileOpenPanel(props: FileOpenPanelProps): JSX.Element {
       void opened.session.close();
       return;
     }
+
+    // Candidate I/O can take long enough for a global undo/redo shortcut to
+    // enqueue another native write behind the modal. Re-run the same
+    // non-destructive barrier at the last possible moment. If the current
+    // project became unsafe, release the candidate and keep the old session
+    // authoritative and recoverable.
+    if (prepareForProjectReplacement !== undefined) {
+      let preparation: NativeProjectReplacementPreparation;
+      try {
+        preparation = await prepareForProjectReplacement();
+      } catch (error) {
+        void opened.session.close().catch(() => undefined);
+        emit({
+          type: 'fail',
+          code: 'ARQ_REPLACE_PREPARE_FAILED',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'The current project could not be prepared for replacement.',
+        });
+        return;
+      }
+      if (!isCurrent()) {
+        void opened.session.close().catch(() => undefined);
+        return;
+      }
+      if (preparation.status === 'blocked') {
+        void opened.session.close().catch(() => undefined);
+        emit({ type: 'fail', code: preparation.code, message: preparation.reason });
+        return;
+      }
+    }
+
     // Adoption is the last step, and it is the caller's: the panel never
     // replaces the active project itself. `hydrated` follows it, so nothing
     // reports the project as open before the workspace actually holds it.

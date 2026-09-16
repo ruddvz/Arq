@@ -105,6 +105,12 @@ export function NativeProjectPanel(props: NativeProjectPanelProps): JSX.Element 
   const shownCount =
     section === 'views' ? shownLevels.length + shownViews.length : shownCounts.length;
 
+  const sourceFileDisclosure =
+    staged.writeVerdict === 'working-copy' &&
+    !/Nothing is written back to the \.arq file you chose/i.test(staged.writeReason)
+      ? ' Nothing is written back to the .arq file you chose.'
+      : '';
+
   return (
     <div className="arq-project-directory">
       <div className="arq-project-directory__search">
@@ -234,14 +240,15 @@ export function NativeProjectPanel(props: NativeProjectPanelProps): JSX.Element 
        * working-copy design exists to keep, and a directory is no reason to
        * stop making it.
        *
-       * Kept to one line beside the action that ends the session, and worded by
-       * the project itself - a file open for reading only says something
-       * different from one open as a working copy, and the difference is the
-       * point.
+       * Kept to one line beside the action that ends the session. The durable
+       * source-file guarantee is appended here if a caller supplied a narrower
+       * working-copy reason, so UI copy can never accidentally hide the actual
+       * persistence boundary.
        */}
       <p className="arq-project-directory__write-state">
         <strong>{staged.writeVerdict === 'read-only' ? 'Read-only.' : 'Working copy.'}</strong>{' '}
         {staged.writeReason}
+        {sourceFileDisclosure}
       </p>
 
       {/* Closing releases the Worker and the project's resident pages, and
