@@ -45,7 +45,7 @@
   "backingFixtures": [
     {
       "path": "benchmarks/fixtures/core-workflow-product-fixture.ts",
-      "verification": "benchmarks/fixtures/core-workflow-product-fixture.test.ts",
+      "verification": "scripts/core-workflow-product-fixture.test.ts",
       "role": "product-executable-core-scale-candidate",
       "mustMatchProtectedCounts": true,
       "productExecutableCoreFixture": true,
