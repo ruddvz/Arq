@@ -14,7 +14,8 @@ const fail = (message) => failures.push(message);
 const authority = readPerformanceAuthority();
 const fixture = readFixtureManifest();
 
-if (authority.schemaVersion !== '2.1.0') fail(`unexpected schemaVersion ${authority.schemaVersion}`);
+if (authority.schemaVersion !== '2.1.0')
+  fail(`unexpected schemaVersion ${authority.schemaVersion}`);
 if (authority.authority?.issue !== 402) fail('authority.issue must be 402');
 if (!Array.isArray(authority.workflows) || authority.workflows.length === 0)
   fail('workflows are absent');
@@ -55,7 +56,9 @@ for (const workflow of authority.workflows ?? []) {
     if (typeof evidenceFixture.coreScale !== 'boolean')
       fail(`${workflow.id}: evidenceFixture.coreScale must be boolean`);
     if (evidenceFixture.coreScale && authority.fixtureContract?.productExecutable !== true) {
-      fail(`${workflow.id}: cannot claim Core-scale evidence without a product-executable Core fixture`);
+      fail(
+        `${workflow.id}: cannot claim Core-scale evidence without a product-executable Core fixture`,
+      );
     }
   }
   if (!authority.environments?.[workflow.environmentClass])
@@ -71,13 +74,17 @@ for (const workflow of authority.workflows ?? []) {
     workflow.budget?.environmentClass &&
     !authority.environments?.[workflow.budget.environmentClass]
   ) {
-    fail(`${workflow.id}: budget references unknown environment ${workflow.budget.environmentClass}`);
+    fail(
+      `${workflow.id}: budget references unknown environment ${workflow.budget.environmentClass}`,
+    );
   }
   if (
     workflow.regression?.environmentClass &&
     !authority.environments?.[workflow.regression.environmentClass]
   ) {
-    fail(`${workflow.id}: regression policy references unknown environment ${workflow.regression.environmentClass}`);
+    fail(
+      `${workflow.id}: regression policy references unknown environment ${workflow.regression.environmentClass}`,
+    );
   }
 }
 
@@ -121,10 +128,7 @@ for (const deferred of authority.bundle?.deferred ?? []) {
   if (!Number.isInteger(deferred.sizeBudget) || deferred.sizeBudget <= 0) {
     fail(`${deferred.id}: accepted deferred bundle requires a positive integer sizeBudget`);
   }
-  if (
-    typeof deferred.referenceGzipKiB !== 'number' ||
-    deferred.referenceGzipKiB <= 0
-  ) {
+  if (typeof deferred.referenceGzipKiB !== 'number' || deferred.referenceGzipKiB <= 0) {
     fail(`${deferred.id}: accepted deferred bundle requires referenceGzipKiB evidence`);
   }
   if (deferred.sizeBudget < Math.ceil(deferred.referenceGzipKiB * 1024)) {
