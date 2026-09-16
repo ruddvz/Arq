@@ -568,8 +568,8 @@
       "annotations": 200,
       "underlays": 1
     },
-    "status": "protected-scale-contract",
-    "productExecutable": false,
-    "rule": "This contract defines the protected Core scale. It is not evidence that one product-executable Core-scale project flowed through a workflow. Each workflow must name its actual evidenceFixture separately."
+    "status": "product-executable-protected-scale",
+    "productExecutable": true,
+    "rule": "This contract defines the protected Core scale and now has a repository-owned product-executable .arq proof. Each workflow must still name its actual evidenceFixture separately; existing renderer-only and compute-only evidence remains non-Core unless that exact workload used this fixture."
   }
 }
