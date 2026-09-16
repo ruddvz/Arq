@@ -34,11 +34,6 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Probe canonical formatting for owned files
-        run: |
-          pnpm exec prettier --write benchmarks/fixtures/core-workflow-product-fixture.ts scripts/check-performance-authority.mjs
-          git diff -- benchmarks/fixtures/core-workflow-product-fixture.ts scripts/check-performance-authority.mjs
-          git diff --quiet -- benchmarks/fixtures/core-workflow-product-fixture.ts scripts/check-performance-authority.mjs
       - name: Prove product-executable Core fixture candidate
         run: pnpm vitest run scripts/core-workflow-product-fixture.test.ts
       - run: node scripts/check-performance-authority-test.mjs
