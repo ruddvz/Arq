@@ -347,18 +347,34 @@
         "coreScale": true
       },
       "referenceEvidence": {
-        "workflowRunId": 35040077132,
-        "mergeCheckout": "4638a2b29b10d2308a22ac6ce4eebb46e9b57245",
-        "artifactId": 10425051656,
-        "artifactSha256": "be628837a4047518996e90a8c52ae06c5af0873f11d121b03746d167271dc9d2",
-        "sampleCount": 7,
+        "sampleCountPerRun": 7,
         "coldOrWarm": "cold-new-browser-context-per-sample",
-        "environment": "GitHub Actions Ubuntu 24.04.5; Chromium 149.0.7827.55; AMD EPYC 7763; 4 logical CPUs; Node 20.20.2",
-        "interactionLatencyMs": { "median": 150.7, "p95": 171 },
-        "settledMs": { "median": 341.6, "p95": 371.5 },
-        "chunkLoadMs": { "median": 9.4, "p95": 16.3 },
-        "mainThreadLongTaskTotalMs": { "median": 275, "p95": 297 },
-        "classification": "shared-runner-reference-not-absolute-gate"
+        "classification": "shared-runner-reference-not-absolute-gate",
+        "runs": [
+          {
+            "workflowRunId": 35040077132,
+            "mergeCheckout": "4638a2b29b10d2308a22ac6ce4eebb46e9b57245",
+            "artifactId": 10425051656,
+            "artifactSha256": "be628837a4047518996e90a8c52ae06c5af0873f11d121b03746d167271dc9d2",
+            "environment": "GitHub Actions Ubuntu 24.04.5; Chromium 149.0.7827.55; AMD EPYC 7763; 4 logical CPUs; Node 20.20.2",
+            "interactionLatencyMs": { "median": 150.7, "p95": 171 },
+            "settledMs": { "median": 341.6, "p95": 371.5 },
+            "chunkLoadMs": { "median": 9.4, "p95": 16.3 },
+            "mainThreadLongTaskTotalMs": { "median": 275, "p95": 297 }
+          },
+          {
+            "workflowRunId": 35040550252,
+            "mergeCheckout": "d8f97b1b2e6d404f2203fe74bfb11df7a8ab10d3",
+            "artifactId": 10424617948,
+            "artifactSha256": "16d0c198844b57833bcb311e4384bb4697525a61fc8c1b0fa627e0ebd4db81d7",
+            "environment": "GitHub Actions Ubuntu 24.04.5; Chromium 149.0.7827.55; Intel Xeon Platinum 8573C; 4 logical CPUs; Node 20.20.2",
+            "interactionLatencyMs": { "median": 94, "p95": 115.3 },
+            "settledMs": { "median": 245.6, "p95": 289.2 },
+            "chunkLoadMs": { "median": 3.8, "p95": 7.4 },
+            "mainThreadLongTaskTotalMs": { "median": 196, "p95": 239 }
+          }
+        ],
+        "sharedRunnerObservation": "Both runs are internally stable but differ materially across hosted CPU allocations, so these timings remain scheduled reference evidence and must not become an absolute millisecond PR gate."
       }
     },
     {
@@ -399,10 +415,11 @@
       "regression": null,
       "environmentClass": "reference-browser",
       "owner": "sheets",
-      "evidenceStatus": "capability-proven-performance-pending",
+      "evidenceStatus": "blocked-current-product-no-sheet-view",
       "enforcement": "contract-only",
       "fixtureContract": "core-workflow-v1",
-      "evidenceFixture": null
+      "evidenceFixture": null,
+      "blockedReason": "The current product explicitly disables the Sheets view because it can export a PDF sheet but has no interactive sheet surface to open. Export capability must not be misreported as sheet-open performance evidence."
     },
     {
       "id": "native.save-ack",
