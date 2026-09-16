@@ -76,7 +76,8 @@ async function measureWallPreview(browser, origin, fixturePath) {
     await hud.waitFor({ state: 'visible', timeout: 5_000 });
     const input = page.locator(HUD_INPUT);
     const placeholderBefore = await input.getAttribute('placeholder');
-    if (placeholderBefore === null) throw new Error('Wall preview HUD has no live length placeholder.');
+    if (placeholderBefore === null)
+      throw new Error('Wall preview HUD has no live length placeholder.');
     const canvasBeforeHash = sha256(await planCanvas.screenshot());
 
     await planCanvas.evaluate((canvas) => {
@@ -126,9 +127,13 @@ async function measureWallPreview(browser, origin, fixturePath) {
     });
 
     await page.mouse.move(box.x + box.width * 0.62, y - box.height * 0.08);
-    await page.waitForFunction(() => window.__ARQ_PERF_WALL_PREVIEW__?.settled !== null, undefined, {
-      timeout: 10_000,
-    });
+    await page.waitForFunction(
+      () => window.__ARQ_PERF_WALL_PREVIEW__?.settled !== null,
+      undefined,
+      {
+        timeout: 10_000,
+      },
+    );
 
     const measured = await page.evaluate(() => {
       const state = window.__ARQ_PERF_WALL_PREVIEW__;
@@ -143,9 +148,14 @@ async function measureWallPreview(browser, origin, fixturePath) {
       };
     });
     if (!Number.isFinite(measured.interactionLatencyMs) || measured.interactionLatencyMs < 0) {
-      throw new Error(`Wall preview interaction latency is invalid: ${measured.interactionLatencyMs}.`);
+      throw new Error(
+        `Wall preview interaction latency is invalid: ${measured.interactionLatencyMs}.`,
+      );
     }
-    if (!Number.isFinite(measured.settledMs) || measured.settledMs < measured.interactionLatencyMs) {
+    if (
+      !Number.isFinite(measured.settledMs) ||
+      measured.settledMs < measured.interactionLatencyMs
+    ) {
       throw new Error(`Wall preview settled timing is invalid: ${measured.settledMs}.`);
     }
 
