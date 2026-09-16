@@ -35,11 +35,6 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Probe canonical formatting for Core 3D benchmark
-        run: |
-          pnpm exec prettier --write scripts/run-core-3d-first-open-performance.mjs
-          git diff -- scripts/run-core-3d-first-open-performance.mjs
-          git diff --quiet -- scripts/run-core-3d-first-open-performance.mjs
       - name: Prove product-executable Core fixture candidate
         run: pnpm vitest run scripts/core-workflow-product-fixture.test.ts
       - run: node scripts/check-performance-authority-test.mjs
