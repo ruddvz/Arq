@@ -202,6 +202,7 @@ export function buildCapabilityLedger({
       userJourneys: definition.userJourneys,
       designed: true,
       libraryBacking: libraryBackingState(sourceEvidence, commandFact),
+      productReachabilityState: commandFact?.reachability ?? null,
       productExecutionPath: deriveExecutionPath(maturity, commandFact),
       availability: deriveAvailability(maturity, commandFact, blockers),
       unavailableReason:
@@ -255,7 +256,7 @@ export function renderCapabilityDashboard(ledger) {
   const rows = ledger.capabilities
     .map(
       (record) =>
-        `| \`${record.capabilityId}\` | ${record.feature} | ${record.productSurface ?? 'library'} | ${record.libraryBacking} | ${record.productExecutionPath} | ${record.availability} | ${record.maturity} | ${record.blockers[0] ?? '—'} |`,
+        `| \`${record.capabilityId}\` | ${record.feature} | ${record.productSurface ?? 'library'} | ${record.libraryBacking} | ${record.productReachabilityState ?? 'n/a'} | ${record.productExecutionPath} | ${record.availability} | ${record.maturity} | ${record.blockers[0] ?? '—'} |`,
     )
     .join('\n');
   const providerRows = Object.entries(ledger.providers)
@@ -289,14 +290,20 @@ ${providerRows}
 
 ## Capability ledger
 
-| Capability | Feature | Surface | Library backing | Product execution | Availability | Maturity | Primary blocker |
-|---|---|---|---|---|---|---|---|
+| Capability | Feature | Surface | Library backing | Reachability | Product execution | Availability | Maturity | Primary blocker |
+|---|---|---|---|---|---|---|---|---|
 ${rows}
 `;
 }
 
 export function assertDefinitionsAreProjectionOnly(definitions) {
-  const forbidden = ['maturity', 'availability', 'productExecutionPath', 'libraryBacking'];
+  const forbidden = [
+    'maturity',
+    'availability',
+    'productReachabilityState',
+    'productExecutionPath',
+    'libraryBacking',
+  ];
   for (const capability of definitions.capabilities) {
     for (const field of forbidden) {
       if (Object.prototype.hasOwnProperty.call(capability, field)) {
