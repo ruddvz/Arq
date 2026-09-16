@@ -75,29 +75,39 @@
   },
   "severityPolicy": {
     "P0": {
+      "kind": "bug-severity",
       "meaning": "Data loss or semantic corruption, wrong-project/document mutation, security or privacy boundary breach, false durability/publication success, or unrecoverable migration.",
       "releaseStop": true,
-      "agentWaivable": false
+      "agentWaivable": false,
+      "blockedStages": ["architect_alpha", "beta", "stable"]
     },
     "P1": {
+      "kind": "bug-severity",
       "meaning": "Critical protected workflow or recovery failure that prevents trustworthy architectural work without a safe supported workaround.",
       "releaseStop": true,
-      "agentWaivable": false
+      "agentWaivable": false,
+      "blockedStages": ["architect_alpha", "beta", "stable"]
     },
     "P2": {
+      "kind": "bug-severity",
       "meaning": "Major capability degradation with a bounded supported workaround and no silent corruption or false durability.",
       "releaseStop": false,
-      "agentWaivable": false
+      "agentWaivable": false,
+      "blockedStages": ["stable"]
     },
     "P3": {
+      "kind": "bug-severity",
       "meaning": "Minor correctness or usability defect outside release-stop workflows.",
       "releaseStop": false,
-      "agentWaivable": false
+      "agentWaivable": false,
+      "blockedStages": []
     },
     "P4": {
+      "kind": "bug-severity",
       "meaning": "Cosmetic, polish, or future backlog defect with no material workflow correctness impact.",
       "releaseStop": false,
-      "agentWaivable": false
+      "agentWaivable": false,
+      "blockedStages": []
     }
   },
   "rules": {
