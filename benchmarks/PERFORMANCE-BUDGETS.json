@@ -381,26 +381,56 @@
       "id": "3d.orbit-selection",
       "description": "3D orbit or selection input through visible response and coordinated settled state.",
       "measurementWindow": {
-        "start": "pointer input timestamp",
-        "firstVisible": "camera or selection treatment first changes",
-        "settled": "rendered frame and canonical selection settle"
+        "start": "real 3D pointer input timestamp on the product canvas",
+        "firstVisible": "next rendered orbit frame or selection-treatment frame",
+        "settled": "orbit gesture completes and two frames settle, or selection treatment settles after a real wall-to-wall selection transition"
       },
-      "metrics": ["interactionLatencyMs", "p95FrameMs", "settledMs", "longTasks"],
-      "budget": {
-        "metric": "orbitFps",
-        "operator": ">=",
-        "value": 60,
-        "unit": "fps",
-        "environmentClass": "reference-device",
-        "status": "planning-target-not-yet-workflow-accepted"
-      },
+      "metrics": [
+        "interactionLatencyMs",
+        "p95FrameMs",
+        "settledMs",
+        "orbitInteractionLatencyMs",
+        "orbitSettledMs",
+        "selectionInteractionLatencyMs",
+        "selectionSettledMs",
+        "mainThreadLongTaskTotalMs"
+      ],
+      "budget": null,
       "regression": null,
       "environmentClass": "reference-browser",
       "owner": "3d",
-      "evidenceStatus": "pending-workflow-baseline",
-      "enforcement": "contract-only",
+      "evidenceStatus": "measured-core-e2e-reference",
+      "enforcement": "scheduled-reference",
       "fixtureContract": "core-workflow-v1",
-      "evidenceFixture": null
+      "evidenceFixture": {
+        "id": "core-workflow-v1",
+        "kind": "product-executable-synthetic-project",
+        "source": "benchmarks/fixtures/core-workflow-product-fixture.ts",
+        "coreScale": true
+      },
+      "referenceEvidence": {
+        "sampleCountPerRun": 7,
+        "coldOrWarm": "warm-3d-view-core-project-per-sample",
+        "classification": "shared-runner-reference-not-absolute-gate",
+        "runs": [
+          {
+            "workflowRunId": 35046194952,
+            "mergeCheckout": "8200fce2e039a3280e08b57530b29eab03c691cd",
+            "artifactId": 10427312082,
+            "artifactSha256": "e59245ad4f37144f95b902b81e07d99c0c96c79269defb2caa76e49b9028451a",
+            "environment": "GitHub Actions Ubuntu 24.04.5; Chromium 149.0.7827.55; AMD EPYC 7763; 4 logical CPUs; Node 20.20.2",
+            "interactionLatencyMs": { "median": 28.7, "p95": 38.9 },
+            "p95FrameMs": { "median": 33.4, "p95": 33.4 },
+            "settledMs": { "median": 1291.1, "p95": 1326.4 },
+            "orbitInteractionLatencyMs": { "median": 0.3, "p95": 0.4 },
+            "orbitSettledMs": { "median": 1291.1, "p95": 1326.4 },
+            "selectionInteractionLatencyMs": { "median": 28.7, "p95": 38.9 },
+            "selectionSettledMs": { "median": 106.3, "p95": 115.4 },
+            "mainThreadLongTaskTotalMs": { "median": 72, "p95": 78 }
+          }
+        ],
+        "sharedRunnerObservation": "The orbit gesture deliberately contains 24 real pointer moves, so orbit settled time includes gesture duration as well as rendering. Interaction and frame timings remain scheduled shared-runner evidence; no absolute millisecond or FPS PR gate is inferred from this run."
+      }
     },
     {
       "id": "sheet.open",
@@ -513,28 +543,54 @@
     },
     {
       "id": "pdf.vector-generation",
-      "description": "Vector PDF export command until generated PDF bytes are complete and the product reports completion.",
+      "description": "Real product vector-PDF export command until the generated PDF Blob is complete and handed to the browser download path.",
       "measurementWindow": {
-        "start": "export command dispatch",
-        "firstVisible": "export progress state when applicable",
-        "settled": "valid vector PDF bytes complete and completion state visible"
+        "start": "real command-palette export option activation timestamp",
+        "firstVisible": "not separately defined; this workflow measures generated-byte completion",
+        "settled": "valid PDF Blob passed to URL.createObjectURL; downloaded bytes then validate the same Blob outside the timed window"
       },
-      "metrics": ["interactionLatencyMs", "workerMs", "settledMs"],
-      "budget": {
-        "metric": "legacyGenerationSeconds",
-        "operator": "<",
-        "value": 5,
-        "unit": "s",
-        "environmentClass": "reference-device",
-        "status": "planning-target-not-yet-workflow-accepted"
-      },
+      "metrics": [
+        "generationMs",
+        "chunkLoadMs",
+        "settledMs",
+        "pdfBytes",
+        "mainThreadLongTaskCount",
+        "mainThreadLongTaskTotalMs"
+      ],
+      "budget": null,
       "regression": null,
       "environmentClass": "reference-browser",
       "owner": "sheets/export",
-      "evidenceStatus": "capability-proven-performance-pending",
-      "enforcement": "contract-only",
+      "evidenceStatus": "measured-core-e2e-reference",
+      "enforcement": "scheduled-reference",
       "fixtureContract": "core-workflow-v1",
-      "evidenceFixture": null
+      "evidenceFixture": {
+        "id": "core-workflow-v1",
+        "kind": "product-executable-synthetic-project",
+        "source": "benchmarks/fixtures/core-workflow-product-fixture.ts",
+        "coreScale": true
+      },
+      "referenceEvidence": {
+        "sampleCountPerRun": 7,
+        "coldOrWarm": "cold-export-chunk-core-project-per-sample",
+        "classification": "shared-runner-reference-not-absolute-gate",
+        "runs": [
+          {
+            "workflowRunId": 35046194952,
+            "mergeCheckout": "8200fce2e039a3280e08b57530b29eab03c691cd",
+            "artifactId": 10427312082,
+            "artifactSha256": "e59245ad4f37144f95b902b81e07d99c0c96c79269defb2caa76e49b9028451a",
+            "environment": "GitHub Actions Ubuntu 24.04.5; Chromium 149.0.7827.55; AMD EPYC 7763; 4 logical CPUs; Node 20.20.2",
+            "generationMs": { "median": 249, "p95": 275.1 },
+            "settledMs": { "median": 249, "p95": 275.1 },
+            "chunkLoadMs": { "median": 11.5, "p95": 17.1 },
+            "pdfBytes": { "median": 25144, "p95": 25145 },
+            "mainThreadLongTaskTotalMs": { "median": 151, "p95": 174 }
+          }
+        ],
+        "validation": "All seven samples completed the real export path; downloaded bytes matched the measured Blob size, carried a PDF signature and EOF trailer, and contained painted vector path operators.",
+        "sharedRunnerObservation": "Generation and lazy-chunk timings are scheduled shared-runner evidence only. The accepted pdf-lib payload ceiling is enforced separately as a bundle budget."
+      }
     },
     {
       "id": "material.compositing",
