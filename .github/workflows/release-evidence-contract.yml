@@ -22,9 +22,19 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Verify release-contract-owned formatting
+      - name: Normalize release-contract-owned formatting
         run: >-
-          pnpm exec prettier --check
+          pnpm exec prettier --write
+          .github/workflows/release-evidence-contract.yml
+          docs/RELEASE-READINESS-GATE.md
+          docs/release/ARQ-RELEASE-EVIDENCE-CONTRACT.md
+          docs/release/ARQ-RELEASE-POLICY.v1.json
+          scripts/lib/release-evidence-contract.mjs
+          scripts/release-evidence-contract.test.js
+          scripts/verify-release-evidence-contract.mjs
+      - name: Verify release-contract-owned formatting is committed
+        run: >-
+          git diff --exit-code --
           .github/workflows/release-evidence-contract.yml
           docs/RELEASE-READINESS-GATE.md
           docs/release/ARQ-RELEASE-EVIDENCE-CONTRACT.md
