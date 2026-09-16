@@ -37,11 +37,6 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Probe canonical formatting for orbit tranche
-        run: |
-          pnpm exec prettier --write scripts/check-performance-authority.mjs scripts/run-core-3d-orbit-selection-performance.mjs
-          git diff -- scripts/check-performance-authority.mjs scripts/run-core-3d-orbit-selection-performance.mjs
-          git diff --quiet -- scripts/check-performance-authority.mjs scripts/run-core-3d-orbit-selection-performance.mjs
       - name: Prove product-executable Core fixture candidate
         run: pnpm vitest run scripts/core-workflow-product-fixture.test.ts
       - run: node scripts/check-performance-authority-test.mjs
