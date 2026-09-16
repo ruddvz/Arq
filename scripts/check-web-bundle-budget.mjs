@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 /**
- * Enforces the startup bundle boundary from the canonical #402 performance
- * authority and records deferred-chunk sizes without inventing unreviewed size
- * thresholds. Structural markers ensure deferred libraries cannot drift back
- * into the startup entry while their absolute lazy-chunk budgets are pending a
- * measured reference baseline.
+ * Enforces startup and deferred bundle boundaries from the canonical #402
+ * performance authority. Structural markers keep deferred libraries out of the
+ * startup entry; accepted lazy-chunk budgets fail closed if their marker cannot
+ * be resolved, because an unmeasurable accepted budget is not evidence.
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
@@ -89,6 +88,31 @@ export function measureDeferredChunks({ assetsDir, entryName }) {
   });
 }
 
+/**
+ * Accepted deferred budgets fail closed. A missing marker is not equivalent to a
+ * zero-byte chunk: it means the verifier can no longer prove where the library went.
+ */
+export function evaluateDeferredBudgets(deferred) {
+  const findings = [];
+  for (const item of deferred) {
+    if (item.sizeBudget === null) continue;
+    if (item.measurementStatus !== 'measured-by-marker') {
+      findings.push(
+        `${item.library} has a canonical deferred size budget but its marker was not resolved ` +
+          'in the built deferred chunks. Refusing to report the budget as met.',
+      );
+      continue;
+    }
+    if (item.measuredGzipBytes > item.sizeBudget) {
+      findings.push(
+        `${item.library} deferred payload is ${(item.measuredGzipBytes / 1024).toFixed(1)}KB gzipped, ` +
+          `over its canonical ${(item.sizeBudget / 1024).toFixed(1)}KB budget.`,
+      );
+    }
+  }
+  return findings;
+}
+
 function main() {
   const indexPath = path.join(distDir, 'index.html');
   if (!existsSync(indexPath)) {
@@ -116,19 +140,7 @@ function main() {
     entrySource: entryJs.toString('utf8'),
   });
   const deferred = measureDeferredChunks({ assetsDir, entryName });
-
-  for (const item of deferred) {
-    if (
-      item.sizeBudget !== null &&
-      item.measurementStatus === 'measured-by-marker' &&
-      item.measuredGzipBytes > item.sizeBudget
-    ) {
-      findings.push(
-        `${item.library} deferred payload is ${(item.measuredGzipBytes / 1024).toFixed(1)}KB gzipped, ` +
-          `over its canonical ${(item.sizeBudget / 1024).toFixed(1)}KB budget.`,
-      );
-    }
-  }
+  findings.push(...evaluateDeferredBudgets(deferred));
 
   const report = {
     schemaVersion: 1,
@@ -168,7 +180,7 @@ function main() {
         : 'deferred marker not uniquely resolved in built chunks';
     process.stdout.write(
       `${item.library}: ${measured} ` +
-        `(${item.sizeBudget === null ? 'absolute size baseline pending, entry-boundary enforcement active' : `budget ${item.sizeBudget / 1024}KB`}).\n`,
+        `(${item.sizeBudget === null ? 'absolute size baseline pending, entry-boundary enforcement active' : `budget ${(item.sizeBudget / 1024).toFixed(1)}KB`}).\n`,
     );
   }
 }
