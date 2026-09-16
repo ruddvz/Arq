@@ -196,7 +196,7 @@ describe('ARQ capability ledger', () => {
         humanEvidenceStatus: 'present',
         maturity: 'planned',
         productExecutionPath: 'absent',
-        availability: 'unavailable',
+        availability: 'blocked',
         publicClaimEligible: false,
       });
     } finally {
