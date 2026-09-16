@@ -4,12 +4,13 @@ import path from 'node:path';
 
 const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 
-function evidenceForPath(repoRoot, relativePath) {
+function evidenceForPath(repoRoot, relativePath, kind) {
   const absolutePath = path.join(repoRoot, relativePath);
   if (!existsSync(absolutePath)) {
-    return { path: relativePath, exists: false, sha256: null };
+    return { kind, path: relativePath, exists: false, sha256: null };
   }
   return {
+    kind,
     path: relativePath,
     exists: true,
     sha256: sha256(readFileSync(absolutePath)),
@@ -79,6 +80,13 @@ function allExist(items) {
   return items.length > 0 && items.every((item) => item.exists);
 }
 
+function evidenceStatus(items, required = false) {
+  if (items.length === 0) return required ? 'required-missing' : 'not-declared';
+  if (items.every((item) => item.exists)) return 'present';
+  if (items.some((item) => item.exists)) return 'partial';
+  return 'missing';
+}
+
 function libraryBackingState(sourceEvidence, commandFact) {
   if (commandFact?.libraryBacking === true) return 'present';
   if (sourceEvidence.length === 0) return 'absent';
@@ -104,15 +112,20 @@ function deriveMaturity({
   sourceEvidence,
   testEvidence,
   executionEvidence,
+  humanEvidence,
   blockers,
 }) {
-  if (definition.humanEvidenceRequired) return 'human_evidence_required';
+  if (definition.humanEvidenceRequired && !allExist(humanEvidence)) {
+    return 'human_evidence_required';
+  }
   if (commandFact !== null) {
     if (commandFact.reachability !== 'user-reachable') {
       return commandFact.libraryBacking ? 'library_only' : 'planned';
     }
     if (blockers.length > 0) return 'partial';
-    return allExist(testEvidence) ? 'verified_current' : 'partial';
+    return allExist(testEvidence) && allExist(executionEvidence)
+      ? 'verified_current'
+      : 'partial';
   }
   if (!allExist(sourceEvidence)) return 'planned';
   if (definition.productSurface === null) return 'library_only';
@@ -173,10 +186,21 @@ export function buildCapabilityLedger({
 }) {
   const commandFacts = parseCommandToolFacts(commandAuthoritySource, toolRegistry);
   const records = definitions.capabilities.map((definition) => {
-    const sourceEvidence = definition.sourcePaths.map((p) => evidenceForPath(repoRoot, p));
-    const testEvidence = definition.testPaths.map((p) => evidenceForPath(repoRoot, p));
+    const sourceEvidence = definition.sourcePaths.map((p) =>
+      evidenceForPath(repoRoot, p, 'source'),
+    );
+    const testEvidence = definition.testPaths.map((p) => evidenceForPath(repoRoot, p, 'test'));
     const executionEvidence = definition.executionEvidencePaths.map((p) =>
-      evidenceForPath(repoRoot, p),
+      evidenceForPath(repoRoot, p, 'execution'),
+    );
+    const humanEvidence = (definition.humanEvidencePaths ?? []).map((p) =>
+      evidenceForPath(repoRoot, p, 'human'),
+    );
+    const accessibilityEvidence = (definition.accessibilityEvidencePaths ?? []).map((p) =>
+      evidenceForPath(repoRoot, p, 'accessibility'),
+    );
+    const performanceEvidence = (definition.performanceEvidencePaths ?? []).map((p) =>
+      evidenceForPath(repoRoot, p, 'performance'),
     );
     const commandFact = definition.commandId
       ? (commandFacts.get(definition.commandId) ?? null)
@@ -189,10 +213,18 @@ export function buildCapabilityLedger({
       sourceEvidence,
       testEvidence,
       executionEvidence,
+      humanEvidence,
       blockers,
     });
     const provider = definition.provider ? definitions.providers[definition.provider] : null;
-    const evidence = [...sourceEvidence, ...testEvidence, ...executionEvidence];
+    const evidence = [
+      ...sourceEvidence,
+      ...testEvidence,
+      ...executionEvidence,
+      ...humanEvidence,
+      ...accessibilityEvidence,
+      ...performanceEvidence,
+    ];
 
     return {
       capabilityId: definition.capabilityId,
@@ -213,6 +245,9 @@ export function buildCapabilityLedger({
       mutationType: commandFact?.mutationType ?? 'unknown',
       semanticOperationRef: commandFact?.semanticOperationRef ?? null,
       persistenceSupport: derivePersistenceSupport(definition, commandFact, blockers),
+      humanEvidenceStatus: evidenceStatus(humanEvidence, definition.humanEvidenceRequired),
+      accessibilityEvidenceStatus: evidenceStatus(accessibilityEvidence),
+      performanceEvidenceStatus: evidenceStatus(performanceEvidence),
       maturity,
       maturityWeight: definitions.maturityWeights[maturity],
       blockers,
@@ -256,7 +291,7 @@ export function renderCapabilityDashboard(ledger) {
   const rows = ledger.capabilities
     .map(
       (record) =>
-        `| \`${record.capabilityId}\` | ${record.feature} | ${record.productSurface ?? 'library'} | ${record.libraryBacking} | ${record.productReachabilityState ?? 'n/a'} | ${record.productExecutionPath} | ${record.availability} | ${record.maturity} | ${record.blockers[0] ?? '—'} |`,
+        `| \`${record.capabilityId}\` | ${record.feature} | ${record.productSurface ?? 'library'} | ${record.libraryBacking} | ${record.productReachabilityState ?? 'n/a'} | ${record.productExecutionPath} | ${record.availability} | ${record.humanEvidenceStatus} | ${record.accessibilityEvidenceStatus} | ${record.performanceEvidenceStatus} | ${record.maturity} | ${record.blockers[0] ?? '—'} |`,
     )
     .join('\n');
   const providerRows = Object.entries(ledger.providers)
@@ -272,7 +307,7 @@ _Generated from \`${ledger.generatedFrom}\`. Do not edit this file by hand._
 
 Integration authority: \`${ledger.integrationAuthority.branch} @ ${ledger.integrationAuthority.revision}\`
 
-The ledger is intentionally conservative. Repository backing, tests, or an open PR do not make a feature product-reachable. Unmerged providers cap dependent capabilities below \`verified_current\`.
+The ledger is intentionally conservative. Repository backing, tests, or an open PR do not make a feature product-reachable. Unmerged providers cap dependent capabilities below \`verified_current\`. Human evidence can promote a capability only when an explicitly declared approved evidence receipt is present alongside the required source, test and execution evidence.
 
 ## Summary
 
@@ -290,8 +325,8 @@ ${providerRows}
 
 ## Capability ledger
 
-| Capability | Feature | Surface | Library backing | Reachability | Product execution | Availability | Maturity | Primary blocker |
-|---|---|---|---|---|---|---|---|---|
+| Capability | Feature | Surface | Library backing | Reachability | Product execution | Availability | Human evidence | Accessibility | Performance | Maturity | Primary blocker |
+|---|---|---|---|---|---|---|---|---|---|---|---|
 ${rows}
 `;
 }
@@ -303,6 +338,9 @@ export function assertDefinitionsAreProjectionOnly(definitions) {
     'productReachabilityState',
     'productExecutionPath',
     'libraryBacking',
+    'humanEvidenceStatus',
+    'accessibilityEvidenceStatus',
+    'performanceEvidenceStatus',
   ];
   for (const capability of definitions.capabilities) {
     for (const field of forbidden) {
