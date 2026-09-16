@@ -1,0 +1,95 @@
+{
+  "id": "core-workflow-v1",
+  "version": 1,
+  "kind": "synthetic-repository-owned",
+  "privacy": {
+    "containsUserContent": false,
+    "containsPrivateProjectContent": false,
+    "containsDocumentText": true,
+    "documentTextClassification": "synthetic-generated-only"
+  },
+  "protectedScale": {
+    "levels": 2,
+    "walls": 150,
+    "doorsAndWindows": 80,
+    "rooms": 60,
+    "annotations": 200,
+    "underlays": 1,
+    "semanticObjectsApprox": 1000
+  },
+  "complexityGuards": {
+    "exact": {
+      "walls": 150,
+      "doorsAndWindows": 80,
+      "rooms": 60,
+      "annotations": 200
+    },
+    "minimum": {
+      "levels": 2,
+      "underlays": 1,
+      "semanticObjectsApprox": 1000
+    },
+    "requiredCases": [
+      "full-scene pan redraw",
+      "worst-case selection miss across approximately 1000 candidates",
+      "60-room derived-geometry workload",
+      "deferred 3D load",
+      "deferred vector PDF load",
+      "regular 28px material blur",
+      "strong 34px material blur",
+      "optical 16px blur plus layered shadow",
+      "overlapping floating surfaces",
+      "opaque accessibility fallback"
+    ]
+  },
+  "backingFixtures": [
+    {
+      "path": "benchmarks/fixtures/core-workflow-product-fixture.ts",
+      "verification": "scripts/core-workflow-product-fixture.test.ts",
+      "role": "product-executable-core-scale",
+      "mustMatchProtectedCounts": true,
+      "productExecutableCoreFixture": true,
+      "coveredDimensions": [
+        "levels",
+        "walls",
+        "doorsAndWindows",
+        "rooms",
+        "annotations",
+        "underlays",
+        "semanticObjectsApprox"
+      ],
+      "note": "Generates a real SQLite .arq through the canonical ARQFS/project-format writers. Exact-head CI reopens it through ARQFS, imports the archive, and decodes it through apps/web's native-project-model boundary before asserting every protected scale dimension."
+    },
+    {
+      "path": "packages/plan-renderer/benchmarks/canvas-2d/scene.js",
+      "role": "protected-renderer-scale",
+      "mustMatchProtectedCounts": true,
+      "productExecutableCoreFixture": false,
+      "coveredDimensions": ["walls", "doorsAndWindows", "rooms", "annotations"],
+      "note": "This renderer scene mechanically protects only the listed dimensions. It remains separate renderer evidence and is not upgraded to Core E2E evidence by the existence of the product fixture."
+    },
+    {
+      "path": "fixtures/ARQ_Courtyard_House_Golden_Fixture_v2.arq",
+      "role": "product-open-compatibility-control",
+      "mustMatchProtectedCounts": false,
+      "sha256": "0afd9a9785b99ba4338e73067a1af383079363893c30fdc6d538c7e44ed87bd6",
+      "note": "The independently authored golden fixture remains the compatibility control. It is smaller than Core scale and must not be reported as Core-scale workflow evidence."
+    }
+  ],
+  "mutationRule": "Any reduction below an exact/minimum guard is a failing fixture change. Complexity may increase only with an explicit #402 budget review.",
+  "status": "product-executable-protected-scale",
+  "productExecutable": true,
+  "guardCoverage": {
+    "mechanicallyVerifiedAgainstBackingFixture": [
+      "levels",
+      "walls",
+      "doorsAndWindows",
+      "rooms",
+      "annotations",
+      "underlays",
+      "semanticObjectsApprox"
+    ],
+    "contractOnlyPendingProductFixture": [],
+    "rule": "Every protected dimension is mechanically verified against the generated product-executable .arq fixture. Workflow evidence must still name the actual evidenceFixture used; product-executable scale does not make renderer-only or compute-only measurements Core E2E evidence."
+  }
+}

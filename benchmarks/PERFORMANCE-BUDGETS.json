@@ -1,70 +1,623 @@
 {
-  "benchmarkModel": {
-    "levels": 2,
-    "walls": 150,
-    "doorsAndWindows": 80,
-    "rooms": 60,
-    "annotations": 200,
-    "underlays": 1,
-    "semanticObjectsApprox": 1000
+  "schemaVersion": "2.1.0",
+  "authority": {
+    "issue": 402,
+    "name": "Core workflow performance authority",
+    "rule": "Workflow budgets in this file are canonical. Consumers must not define competing thresholds in scripts, UI code, or downstream UX issues.",
+    "budgetIncreasePolicy": "Any accepted threshold increase requires a reviewed change to this file that explains user impact and includes exact-head evidence."
   },
-  "targets": {
-    "localInteractiveSeconds": 2,
-    "selectionMedianMs": 50,
-    "hoverMedianMs": 32,
-    "wallCommitMedianMs": 100,
-    "roomRecalculateMedianMs": 150,
-    "undoMedianMs": 150,
-    "journalWriteMs": 100,
-    "commandPaletteOpenMs": 100,
-    "pdfExportSeconds": 5,
-    "panZoomFpsTarget": 60,
-    "orbitFpsTarget": 60
-  },
-  "note": "Planning targets. Do not publish as achieved until measured.",
-  "benchmarkDevice": {
-    "name": "CI reference environment (ARQ-148)",
-    "description": "Headless Chromium (Playwright) in this repository's sandboxed CI/dev container - software rendered, no GPU.",
-    "cpu": "Intel Xeon @ 2.80GHz, 4 vCPU",
-    "memoryGiB": 16,
-    "os": "Linux x86_64",
-    "certified": false,
-    "note": "Not one of section 121's supported-device-matrix tiers - a real-hardware validation run is still required before any target below is called Achieved (see docs/adr/0008-rendering-strategy.md and every RENDERER-BENCHMARK-*.md's own 'Important caveat')."
-  },
-  "ciBaselines": [
-    {
-      "metric": "panZoomAvgFps",
-      "renderer": "canvas-2d",
-      "value": 59.35,
-      "regressionThresholdPercent": 10,
-      "regressionDirection": "belowIsWorse",
-      "source": "docs/research/RENDERER-BENCHMARK-CANVAS-2D.md (ARQ-115), the lowest of three measured runs on 2026-07-22 - not the average, so ordinary run-to-run variance does not itself register as a regression.",
-      "checkedBy": "@arq/plan-renderer's isFpsRegression (benchmark-regression.ts, ARQ-148)"
+  "environments": {
+    "ci-regression": {
+      "purpose": "Deterministic regression checks on GitHub-hosted Linux runners. Percentage/delta checks are allowed only where existing evidence is stable enough.",
+      "absoluteReference": false
     },
-    {
-      "metric": "selectionMedianMs",
-      "value": 0.035,
-      "regressionThresholdPercent": 200,
-      "regressionDirection": "aboveIsWorse",
-      "source": "packages/editor-shell/src/selection-benchmark.test.ts (ARQ-149), real pickAt hit-testing against ~1,000 synthetic candidates, 500 trials, median of real performance.now() measurements on 2026-07-22.",
-      "note": "A generous 200% threshold: at 0.035ms against a 50ms absolute target, this benchmark has enormous headroom in this environment, so a tight percentage threshold would be noise, not signal - the real gate is the 50ms absolute target asserted directly in the test."
+    "reference-browser": {
+      "purpose": "Scheduled Chromium workflow measurements. Shared-runner timing is evidence, not a universal hardware claim.",
+      "absoluteReference": false
     },
-    {
-      "metric": "roomRecalculateMedianMs",
-      "value": 0.63,
-      "regressionThresholdPercent": 200,
-      "regressionDirection": "aboveIsWorse",
-      "source": "packages/geometry-2d/src/room-rebuild-benchmark.test.ts (ARQ-150), real traceRoomBoundary + polygonArea against a 136-wall/60-room grid, 200 trials, median of real performance.now() measurements on 2026-07-22.",
-      "note": "Same generous-threshold reasoning as selectionMedianMs: enormous headroom below the 150ms absolute target makes a tight percentage threshold noise, not signal."
-    },
-    {
-      "metric": "timeToFirstFrameMs",
-      "renderer": "canvas-2d",
-      "value": 70.4,
-      "regressionThresholdPercent": 200,
-      "regressionDirection": "aboveIsWorse",
-      "source": "scripts/run-render-frame-benchmark.mjs (ARQ-151), real headless-Chromium measurement via Playwright, the highest (most conservative) of three runs on 2026-07-23 - not the average, so ordinary run-to-run variance does not itself register as a regression.",
-      "note": "Measures section 120's localInteractiveSeconds (2000ms) target, not panZoomFpsTarget - time from scene data available to the first completed render() call, which the panZoomAvgFps benchmark deliberately excludes from its own stats as one-time warm-up cost."
+    "reference-device": {
+      "purpose": "Controlled supported-device measurements used for user-facing absolute targets.",
+      "absoluteReference": true
     }
-  ]
+  },
+  "regressionPolicy": {
+    "defaultStatistic": "median",
+    "tailStatistic": "p95",
+    "minimumSamplesForAcceptedTiming": 7,
+    "sharedRunnerRule": "Do not convert noisy shared-runner wall-clock values into universal millisecond gates. Use scheduled/reference evidence or a stable relative baseline.",
+    "visibleCompletionRule": "Completion is the user-visible settled state. Moving visible work beyond the measurement window is a benchmark failure, not an optimisation.",
+    "fixtureRule": "The protected fixture may not be simplified to satisfy a budget."
+  },
+  "bundle": {
+    "startup": {
+      "id": "bundle.startup",
+      "metric": "gzipBytes",
+      "threshold": 307200,
+      "operator": "<=",
+      "environmentClass": "ci-regression",
+      "status": "accepted",
+      "includes": ["entry JavaScript", "render-blocking CSS"],
+      "owner": "web-shell"
+    },
+    "deferred": [
+      {
+        "id": "bundle.deferred.3d",
+        "library": "three.js",
+        "marker": "WebGLRenderer",
+        "boundary": "apps/web/src/App.tsx lazy-loads ModelCanvas on first 3D tab open",
+        "referenceGzipKiB": 129.4,
+        "sizeBudget": 163840,
+        "status": "accepted",
+        "budgetPolicy": "160 KiB is the rounded ceiling above the exact-head 129.4 KiB gzip reference, retaining approximately 20 percent engineering headroom while making further growth reviewable.",
+        "evidence": "Build run 35038566801, merge checkout 13ff2b28fe3a635dc09f0dd44143148b8eb47994",
+        "owner": "3d"
+      },
+      {
+        "id": "bundle.deferred.sheet-export",
+        "library": "pdf-lib",
+        "marker": "BeginCompatibilitySection",
+        "boundary": "apps/web/src/App.tsx dynamically imports sheet-export from the export handler",
+        "referenceGzipKiB": 494.8,
+        "sizeBudget": 614400,
+        "status": "accepted",
+        "budgetPolicy": "600 KiB is the rounded ceiling above the exact-head 494.8 KiB gzip reference, retaining approximately 20 percent engineering headroom while making further growth reviewable.",
+        "evidence": "Build run 35038566801, merge checkout 13ff2b28fe3a635dc09f0dd44143148b8eb47994",
+        "owner": "sheets"
+      }
+    ]
+  },
+  "workflows": [
+    {
+      "id": "app.boot.usable-workspace",
+      "description": "Cold application navigation until shell controls, status state, and the workspace surface are rendered and stable for two animation frames.",
+      "measurementWindow": {
+        "start": "navigationStart",
+        "firstVisible": "first-contentful-paint when exposed by the browser",
+        "settled": "shell readiness markers present and two requestAnimationFrame callbacks completed"
+      },
+      "metrics": [
+        "firstVisibleMs",
+        "settledMs",
+        "mainThreadLongTaskCount",
+        "mainThreadLongTaskTotalMs"
+      ],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "web-shell",
+      "evidenceStatus": "measurement-ready",
+      "enforcement": "scheduled-reference",
+      "fixtureContract": null,
+      "evidenceFixture": {
+        "id": "web-shell-no-project-v1",
+        "kind": "product-state",
+        "source": "scripts/run-core-workflow-performance.mjs",
+        "coreScale": false
+      }
+    },
+    {
+      "id": "project.open-adopt",
+      "description": "User selects a deterministic project file until the adopted project is visible in the workspace and the open dialog is gone.",
+      "measurementWindow": {
+        "start": "file selection input event",
+        "firstVisible": "open/progress state changes in the product UI",
+        "settled": "project identity/revision and Plan workspace are durable after adoption"
+      },
+      "metrics": ["interactionLatencyMs", "settledMs", "workerMs", "ioMs", "longTasks"],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "project-open/native-session",
+      "evidenceStatus": "pending-integration",
+      "pendingOn": [361],
+      "enforcement": "contract-only",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null
+    },
+    {
+      "id": "plan.first-frame",
+      "description": "Protected scene data is available until the first completed Plan render.",
+      "measurementWindow": {
+        "start": "scene data available",
+        "firstVisible": "first completed Plan render",
+        "settled": "same as firstVisible for this one-frame metric"
+      },
+      "metrics": ["timeToFirstFrameMs"],
+      "budget": {
+        "metric": "timeToFirstFrameMs",
+        "operator": "<",
+        "value": 2000,
+        "unit": "ms",
+        "environmentClass": "reference-device",
+        "status": "accepted-product-target"
+      },
+      "regression": {
+        "baseline": 70.4,
+        "maxIncreasePercent": 200,
+        "environmentClass": "ci-regression",
+        "status": "legacy-reference-only"
+      },
+      "environmentClass": "reference-browser",
+      "owner": "plan-renderer",
+      "evidenceStatus": "measured",
+      "enforcement": "scheduled-reference",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": {
+        "id": "plan-renderer-scene-v1",
+        "kind": "synthetic-renderer-scene",
+        "source": "packages/plan-renderer/benchmarks/canvas-2d/scene.js",
+        "coreScale": false,
+        "matchesContractDimensions": ["walls", "doorsAndWindows", "rooms", "annotations"]
+      }
+    },
+    {
+      "id": "plan.pan-zoom",
+      "description": "Continuous full-scene Plan redraw while the viewport pans/zooms after warm-up.",
+      "measurementWindow": {
+        "start": "after 30 warm-up frames",
+        "firstVisible": "first measured animation frame",
+        "settled": "after 180 measured animation frames"
+      },
+      "metrics": ["avgFps", "p95FrameMs", "maxFrameMs"],
+      "budget": {
+        "metric": "avgFps",
+        "operator": ">=",
+        "value": 60,
+        "unit": "fps",
+        "environmentClass": "reference-device",
+        "status": "accepted-product-target"
+      },
+      "regression": {
+        "baseline": 59.35,
+        "maxDecreasePercent": 10,
+        "environmentClass": "ci-regression",
+        "status": "accepted-regression-baseline"
+      },
+      "environmentClass": "reference-browser",
+      "owner": "plan-renderer",
+      "evidenceStatus": "measured",
+      "enforcement": "scheduled-reference",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": {
+        "id": "plan-renderer-scene-v1",
+        "kind": "synthetic-renderer-scene",
+        "source": "packages/plan-renderer/benchmarks/canvas-2d/scene.js",
+        "coreScale": false,
+        "matchesContractDimensions": ["walls", "doorsAndWindows", "rooms", "annotations"]
+      }
+    },
+    {
+      "id": "plan.hover-selection",
+      "description": "Pointer input until hover/selection feedback is visible and selection propagation is settled.",
+      "measurementWindow": {
+        "start": "pointer input timestamp",
+        "firstVisible": "hover or selection treatment first visible",
+        "settled": "canonical selection and dependent visible surfaces agree"
+      },
+      "metrics": ["interactionLatencyMs", "settledMs"],
+      "budget": {
+        "metric": "selectionComputeMedianMs",
+        "operator": "<",
+        "value": 50,
+        "unit": "ms",
+        "environmentClass": "reference-device",
+        "status": "accepted-compute-target-only"
+      },
+      "regression": {
+        "baseline": 0.035,
+        "maxIncreasePercent": 200,
+        "environmentClass": "ci-regression",
+        "status": "compute-microbenchmark-only"
+      },
+      "environmentClass": "reference-browser",
+      "owner": "editor-shell/selection",
+      "evidenceStatus": "partial-compute-evidence",
+      "enforcement": "unit-compute-plus-pending-workflow",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": {
+        "id": "selection-compute-v1",
+        "kind": "synthetic-compute-harness",
+        "source": "packages/editor-shell/src/selection-benchmark.test.ts",
+        "coreScale": false
+      }
+    },
+    {
+      "id": "plan.snap-resolution",
+      "description": "Pointer move with snapping enabled until the authoritative snap result and visible cue are resolved.",
+      "measurementWindow": {
+        "start": "pointer input timestamp",
+        "firstVisible": "snap cue first visible",
+        "settled": "authoritative snap result consumed by active tool"
+      },
+      "metrics": ["interactionLatencyMs", "workerMs", "settledMs"],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "snap/editor-tooling",
+      "evidenceStatus": "pending-product-workflow-baseline",
+      "enforcement": "contract-only",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null
+    },
+    {
+      "id": "wall.preview",
+      "description": "Wall tool pointer input until the placement preview and HUD reflect the candidate geometry.",
+      "measurementWindow": {
+        "start": "pointer input timestamp while wall tool is armed",
+        "firstVisible": "preview geometry first visible",
+        "settled": "preview and HUD values correspond to the same candidate"
+      },
+      "metrics": ["interactionLatencyMs", "settledMs", "longTasks"],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "wall-tool",
+      "evidenceStatus": "measurement-contract-ready",
+      "enforcement": "scheduled-reference-after-stable-hook",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null
+    },
+    {
+      "id": "wall.commit.plan-settled",
+      "description": "Wall commit input until the operation is applied and the Plan view shows the settled canonical result.",
+      "measurementWindow": {
+        "start": "commit input timestamp",
+        "firstVisible": "committed wall first visible",
+        "settled": "operation applied, derived Plan state settled, no pending visible invalidation"
+      },
+      "metrics": ["interactionLatencyMs", "settledMs", "workerMs", "longTasks"],
+      "budget": {
+        "metric": "legacyCommitMedianMs",
+        "operator": "<",
+        "value": 100,
+        "unit": "ms",
+        "environmentClass": "reference-device",
+        "status": "planning-target-not-yet-workflow-accepted"
+      },
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "semantic-operations/plan",
+      "evidenceStatus": "pending-workflow-baseline",
+      "enforcement": "contract-only",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null
+    },
+    {
+      "id": "operation.commit.3d-settled",
+      "description": "Canonical operation commit until the already-open coordinated 3D surface renders the same operation result.",
+      "measurementWindow": {
+        "start": "canonical operation commit timestamp",
+        "firstVisible": "3D begins reflecting the committed operation",
+        "settled": "3D render and shared selection/model state agree with canonical operation result"
+      },
+      "metrics": ["settledMs", "workerMs", "mainThreadMs", "longTasks"],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "3d/semantic-operations",
+      "evidenceStatus": "pending-authoritative-integration",
+      "enforcement": "contract-only",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null
+    },
+    {
+      "id": "model-browser.search-selection",
+      "description": "Model-browser query or selection input until visible results and canonical selection settle.",
+      "measurementWindow": {
+        "start": "search/selection input timestamp",
+        "firstVisible": "result list or selection treatment changes",
+        "settled": "tree and canonical selection agree"
+      },
+      "metrics": ["interactionLatencyMs", "settledMs", "longTasks"],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "project-tree/selection",
+      "evidenceStatus": "pending-workflow-baseline",
+      "enforcement": "contract-only",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null
+    },
+    {
+      "id": "3d.first-open",
+      "description": "First user request for 3D until the deferred code is loaded and the first meaningful model frame is rendered.",
+      "measurementWindow": {
+        "start": "3D view activation input timestamp",
+        "firstVisible": "3D surface first visible",
+        "settled": "model frame rendered with coordinated state"
+      },
+      "metrics": [
+        "interactionLatencyMs",
+        "chunkLoadMs",
+        "settledMs",
+        "mainThreadLongTaskCount",
+        "mainThreadLongTaskTotalMs"
+      ],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "3d",
+      "evidenceStatus": "measured-core-e2e-reference",
+      "enforcement": "scheduled-reference",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": {
+        "id": "core-workflow-v1",
+        "kind": "product-executable-synthetic-project",
+        "source": "benchmarks/fixtures/core-workflow-product-fixture.ts",
+        "coreScale": true
+      },
+      "referenceEvidence": {
+        "sampleCountPerRun": 7,
+        "coldOrWarm": "cold-new-browser-context-per-sample",
+        "classification": "shared-runner-reference-not-absolute-gate",
+        "runs": [
+          {
+            "workflowRunId": 35040077132,
+            "mergeCheckout": "4638a2b29b10d2308a22ac6ce4eebb46e9b57245",
+            "artifactId": 10425051656,
+            "artifactSha256": "be628837a4047518996e90a8c52ae06c5af0873f11d121b03746d167271dc9d2",
+            "environment": "GitHub Actions Ubuntu 24.04.5; Chromium 149.0.7827.55; AMD EPYC 7763; 4 logical CPUs; Node 20.20.2",
+            "interactionLatencyMs": { "median": 150.7, "p95": 171 },
+            "settledMs": { "median": 341.6, "p95": 371.5 },
+            "chunkLoadMs": { "median": 9.4, "p95": 16.3 },
+            "mainThreadLongTaskTotalMs": { "median": 275, "p95": 297 }
+          },
+          {
+            "workflowRunId": 35040550252,
+            "mergeCheckout": "d8f97b1b2e6d404f2203fe74bfb11df7a8ab10d3",
+            "artifactId": 10424617948,
+            "artifactSha256": "16d0c198844b57833bcb311e4384bb4697525a61fc8c1b0fa627e0ebd4db81d7",
+            "environment": "GitHub Actions Ubuntu 24.04.5; Chromium 149.0.7827.55; Intel Xeon Platinum 8573C; 4 logical CPUs; Node 20.20.2",
+            "interactionLatencyMs": { "median": 94, "p95": 115.3 },
+            "settledMs": { "median": 245.6, "p95": 289.2 },
+            "chunkLoadMs": { "median": 3.8, "p95": 7.4 },
+            "mainThreadLongTaskTotalMs": { "median": 196, "p95": 239 }
+          }
+        ],
+        "sharedRunnerObservation": "Both runs are internally stable but differ materially across hosted CPU allocations, so these timings remain scheduled reference evidence and must not become an absolute millisecond PR gate."
+      }
+    },
+    {
+      "id": "3d.orbit-selection",
+      "description": "3D orbit or selection input through visible response and coordinated settled state.",
+      "measurementWindow": {
+        "start": "pointer input timestamp",
+        "firstVisible": "camera or selection treatment first changes",
+        "settled": "rendered frame and canonical selection settle"
+      },
+      "metrics": ["interactionLatencyMs", "p95FrameMs", "settledMs", "longTasks"],
+      "budget": {
+        "metric": "orbitFps",
+        "operator": ">=",
+        "value": 60,
+        "unit": "fps",
+        "environmentClass": "reference-device",
+        "status": "planning-target-not-yet-workflow-accepted"
+      },
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "3d",
+      "evidenceStatus": "pending-workflow-baseline",
+      "enforcement": "contract-only",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null
+    },
+    {
+      "id": "sheet.open",
+      "description": "Sheet-open input until sheet chrome and drawing are both rendered and stable.",
+      "measurementWindow": {
+        "start": "sheet-open input timestamp",
+        "firstVisible": "sheet surface first visible",
+        "settled": "page chrome and drawing are rendered with no pending visible invalidation"
+      },
+      "metrics": ["interactionLatencyMs", "settledMs", "longTasks"],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "sheets",
+      "evidenceStatus": "blocked-current-product-no-sheet-view",
+      "enforcement": "contract-only",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null,
+      "blockedReason": "The current product explicitly disables the Sheets view because it can export a PDF sheet but has no interactive sheet surface to open. Export capability must not be misreported as sheet-open performance evidence."
+    },
+    {
+      "id": "native.save-ack",
+      "description": "Save input until the authoritative durability acknowledgement is visible.",
+      "measurementWindow": {
+        "start": "save input timestamp",
+        "firstVisible": "save progress state visible when applicable",
+        "settled": "authoritative durability acknowledgement visible"
+      },
+      "metrics": ["interactionLatencyMs", "ioMs", "settledMs"],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "native-persistence/session",
+      "evidenceStatus": "pending-integration",
+      "pendingOn": [361],
+      "enforcement": "contract-only",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null
+    },
+    {
+      "id": "room.recompute",
+      "description": "Geometry-changing commit until authoritative room derivation and dependent visible state settle.",
+      "measurementWindow": {
+        "start": "geometry-changing canonical commit",
+        "firstVisible": "first dependent room update visible",
+        "settled": "room derivation and dependent Plan state settled"
+      },
+      "metrics": ["workerMs", "settledMs"],
+      "budget": {
+        "metric": "legacyComputeMedianMs",
+        "operator": "<",
+        "value": 150,
+        "unit": "ms",
+        "environmentClass": "reference-device",
+        "status": "compute-target-only-not-workflow-accepted"
+      },
+      "regression": {
+        "baseline": 0.63,
+        "maxIncreasePercent": 200,
+        "environmentClass": "ci-regression",
+        "status": "compute-microbenchmark-only"
+      },
+      "environmentClass": "reference-browser",
+      "owner": "geometry-2d/derived-rooms",
+      "evidenceStatus": "partial-compute-evidence",
+      "enforcement": "compute-only-workflow-pending",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": {
+        "id": "room-compute-grid-v1",
+        "kind": "synthetic-compute-harness",
+        "source": "packages/geometry-2d/src/room-rebuild-benchmark.test.ts",
+        "coreScale": false
+      }
+    },
+    {
+      "id": "dimension.recompute",
+      "description": "Geometry-changing commit until affected dimensions and their visible representation settle.",
+      "measurementWindow": {
+        "start": "geometry-changing canonical commit",
+        "firstVisible": "first affected dimension update visible",
+        "settled": "dimension derivation and visible representation settled"
+      },
+      "metrics": ["workerMs", "settledMs"],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "dimensions",
+      "evidenceStatus": "pending-integration",
+      "enforcement": "contract-only",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null
+    },
+    {
+      "id": "publish.project",
+      "description": "Publish input until the authoritative publish result is visible for the protected project.",
+      "measurementWindow": {
+        "start": "publish input timestamp",
+        "firstVisible": "publish progress state when applicable",
+        "settled": "authoritative publish result visible"
+      },
+      "metrics": ["interactionLatencyMs", "ioMs", "settledMs"],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "publish",
+      "evidenceStatus": "pending-integration",
+      "enforcement": "contract-only",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null
+    },
+    {
+      "id": "pdf.vector-generation",
+      "description": "Vector PDF export command until generated PDF bytes are complete and the product reports completion.",
+      "measurementWindow": {
+        "start": "export command dispatch",
+        "firstVisible": "export progress state when applicable",
+        "settled": "valid vector PDF bytes complete and completion state visible"
+      },
+      "metrics": ["interactionLatencyMs", "workerMs", "settledMs"],
+      "budget": {
+        "metric": "legacyGenerationSeconds",
+        "operator": "<",
+        "value": 5,
+        "unit": "s",
+        "environmentClass": "reference-device",
+        "status": "planning-target-not-yet-workflow-accepted"
+      },
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "sheets/export",
+      "evidenceStatus": "capability-proven-performance-pending",
+      "enforcement": "contract-only",
+      "fixtureContract": "core-workflow-v1",
+      "evidenceFixture": null
+    },
+    {
+      "id": "material.compositing",
+      "description": "Representative overlapping regular, strong, and optical material surfaces while content changes behind them, including opaque accessibility fallbacks.",
+      "measurementWindow": {
+        "start": "first probe animation frame",
+        "firstVisible": "first composited frame",
+        "settled": "180 measured animation frames complete"
+      },
+      "metrics": ["medianFrameMs", "p95FrameMs", "maxFrameMs", "longTasks"],
+      "budget": null,
+      "regression": null,
+      "environmentClass": "reference-browser",
+      "owner": "design-system/shell",
+      "evidenceStatus": "measurement-ready-reference-only",
+      "enforcement": "scheduled-reference",
+      "fixtureContract": null,
+      "evidenceFixture": {
+        "id": "shell-material-probe-v1",
+        "kind": "synthetic-shell-probe",
+        "source": "scripts/run-material-compositing-performance.mjs",
+        "coreScale": false
+      }
+    }
+  ],
+  "existingEvidence": [
+    {
+      "workflowId": "plan.pan-zoom",
+      "value": 59.35,
+      "metric": "avgFps",
+      "source": "docs/research/RENDERER-BENCHMARK-CANVAS-2D.md (ARQ-115)",
+      "date": "2026-07-22",
+      "classification": "historical-reference",
+      "coreScale": false,
+      "evidenceFixtureId": "plan-renderer-scene-v1"
+    },
+    {
+      "workflowId": "plan.hover-selection",
+      "value": 0.035,
+      "metric": "selectionComputeMedianMs",
+      "source": "packages/editor-shell/src/selection-benchmark.test.ts (ARQ-149)",
+      "date": "2026-07-22",
+      "classification": "compute-microbenchmark",
+      "coreScale": false,
+      "evidenceFixtureId": "selection-compute-v1"
+    },
+    {
+      "workflowId": "room.recompute",
+      "value": 0.63,
+      "metric": "legacyComputeMedianMs",
+      "source": "packages/geometry-2d/src/room-rebuild-benchmark.test.ts (ARQ-150)",
+      "date": "2026-07-22",
+      "classification": "compute-microbenchmark",
+      "coreScale": false,
+      "evidenceFixtureId": "room-compute-grid-v1"
+    },
+    {
+      "workflowId": "plan.first-frame",
+      "value": 70.4,
+      "metric": "timeToFirstFrameMs",
+      "source": "scripts/run-render-frame-benchmark.mjs (ARQ-151)",
+      "date": "2026-07-23",
+      "classification": "historical-reference",
+      "coreScale": false,
+      "evidenceFixtureId": "plan-renderer-scene-v1"
+    }
+  ],
+  "fixtureContract": {
+    "id": "core-workflow-v1",
+    "manifest": "benchmarks/fixtures/core-workflow-v1.json",
+    "version": 1,
+    "source": "synthetic-repository-owned",
+    "semanticObjectsApprox": 1000,
+    "counts": {
+      "levels": 2,
+      "walls": 150,
+      "doorsAndWindows": 80,
+      "rooms": 60,
+      "annotations": 200,
+      "underlays": 1
+    },
+    "status": "product-executable-protected-scale",
+    "productExecutable": true,
+    "rule": "This contract defines the protected Core scale and now has a repository-owned product-executable .arq proof. Each workflow must still name its actual evidenceFixture separately; existing renderer-only and compute-only evidence remains non-Core unless that exact workload used this fixture."
+  }
 }
