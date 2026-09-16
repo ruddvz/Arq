@@ -1,9 +1,9 @@
-import { createManifest, exportArchive } from '@arq/project-format';
+import { createManifest, exportArchive } from '../../packages/project-format/src/index';
 import {
   createArqfsSchemaV1,
   createNodeArqfsDriver,
   putArchiveEntries,
-} from '@arq/arqfs';
+} from '../../packages/arqfs/src/index';
 
 export const CORE_WORKFLOW_FIXTURE_ID = 'core-workflow-v1';
 export const CORE_WORKFLOW_PROJECT_ID = 'perf-core-workflow-v1';
