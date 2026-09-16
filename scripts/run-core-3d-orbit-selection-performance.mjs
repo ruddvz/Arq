@@ -5,10 +5,11 @@
  *
  * Setup opens the Core project and 3D surface through real product controls.
  * The measured work then covers both halves of the workflow: a primary-button
- * orbit drag and a known-good 3D wall selection. Selection discovery happens
- * before its timed click; the measured click is validated afterwards through
- * the product's green shared-selection treatment, so probe screenshot/decode
- * cost cannot inflate the product timing window.
+ * orbit drag and a known-good 3D wall-selection transition. Selection discovery
+ * happens before timing: the probe finds two visually distinct selectable wall
+ * states, prepares state B, then times the real click that changes selection to
+ * state A. Validation after the timed window proves the green shared-selection
+ * treatment changed, so screenshot/decode work cannot inflate product latency.
  */
 import { chromium } from 'playwright';
 import { createHash } from 'node:crypto';
@@ -49,62 +50,32 @@ async function twoFrames(page) {
   );
 }
 
-async function clear3dSelection(page, modelCanvas) {
-  const candidates = await page.evaluate(() => {
-    const canvas = document.querySelector('canvas[aria-label="3D model view"]');
-    if (!(canvas instanceof HTMLCanvasElement)) throw new Error('3D canvas is unavailable.');
-    const rect = canvas.getBoundingClientRect();
-    const fractions = [0.03, 0.08, 0.2, 0.35, 0.5, 0.65, 0.8, 0.92, 0.97];
-    const edgeFractions = [0.03, 0.08, 0.92, 0.97];
-    const points = [];
-    const seen = new Set();
-    const addPoint = (xFraction, yFraction) => {
-      const clientX = rect.left + rect.width * xFraction;
-      const clientY = rect.top + rect.height * yFraction;
-      if (document.elementFromPoint(clientX, clientY) !== canvas) return;
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
-      const key = `${Math.round(x)}:${Math.round(y)}`;
-      if (seen.has(key)) return;
-      seen.add(key);
-      points.push({ x, y });
-    };
-    for (const edge of edgeFractions) {
-      for (const fraction of fractions) {
-        addPoint(fraction, edge);
-        addPoint(edge, fraction);
-      }
-    }
-    return points;
-  });
-
-  for (const position of candidates) {
-    await modelCanvas.click({ position });
-    await twoFrames(page);
-    const pixels = await analyzeCanvasPixels(page, await modelCanvas.screenshot());
-    if (pixels.greenDominantPixels === 0) return true;
-  }
-  return false;
-}
-
-async function findSelectableWallPoint(page, modelCanvas) {
+async function findDistinctSelectableWallStates(page, modelCanvas) {
   const box = await modelCanvas.boundingBox();
   if (box === null || box.width <= 0 || box.height <= 0) {
     throw new Error('3D canvas has no measurable bounds.');
   }
 
-  const xFractions = [0.35, 0.45, 0.55, 0.65];
-  const yFractions = [0.3, 0.4, 0.5, 0.6, 0.7];
+  const xFractions = [0.25, 0.35, 0.45, 0.55, 0.65, 0.75];
+  const yFractions = [0.25, 0.35, 0.45, 0.55, 0.65, 0.75];
+  const states = [];
+  const seenHashes = new Set();
   for (const yFraction of yFractions) {
     for (const xFraction of xFractions) {
       const position = { x: box.width * xFraction, y: box.height * yFraction };
       await modelCanvas.click({ position });
       await twoFrames(page);
-      const pixels = await analyzeCanvasPixels(page, await modelCanvas.screenshot());
-      if (pixels.greenDominantPixels > 20) return position;
+      const screenshot = await modelCanvas.screenshot();
+      const pixels = await analyzeCanvasPixels(page, screenshot);
+      if (pixels.greenDominantPixels <= 20) continue;
+      const visualHash = sha256(screenshot);
+      if (seenHashes.has(visualHash)) continue;
+      seenHashes.add(visualHash);
+      states.push({ position, visualHash, greenDominantPixels: pixels.greenDominantPixels });
+      if (states.length === 2) return states;
     }
   }
-  throw new Error('Could not discover a selectable wall point on the Core 3D surface.');
+  throw new Error('Could not discover two visually distinct selectable wall states on Core 3D.');
 }
 
 async function measureOrbit(page, modelCanvas) {
@@ -203,7 +174,7 @@ async function measureOrbit(page, modelCanvas) {
   };
 }
 
-async function measureSelection(page, modelCanvas, position) {
+async function measureSelection(page, modelCanvas, targetState, preparedState) {
   await modelCanvas.evaluate((canvas) => {
     const state = { start: null, firstFrame: null, settled: null, longTasks: [] };
     window.__ARQ_PERF_3D_SELECTION__ = state;
@@ -234,7 +205,7 @@ async function measureSelection(page, modelCanvas, position) {
     );
   });
 
-  await modelCanvas.click({ position });
+  await modelCanvas.click({ position: targetState.position });
   await page.waitForFunction(() => window.__ARQ_PERF_3D_SELECTION__?.settled !== null, undefined, {
     timeout: 10_000,
   });
@@ -250,9 +221,14 @@ async function measureSelection(page, modelCanvas, position) {
       mainThreadLongTaskTotalMs: longTasks.reduce((sum, entry) => sum + entry.duration, 0),
     };
   });
-  const pixels = await analyzeCanvasPixels(page, await modelCanvas.screenshot());
+  const screenshot = await modelCanvas.screenshot();
+  const visualHash = sha256(screenshot);
+  const pixels = await analyzeCanvasPixels(page, screenshot);
   if (pixels.greenDominantPixels <= 20) {
     throw new Error('Timed 3D selection did not produce the shared green selection treatment.');
+  }
+  if (visualHash === preparedState.visualHash) {
+    throw new Error('Timed 3D selection did not visibly change the prepared selection state.');
   }
   return {
     selectionInteractionLatencyMs: measured.interactionLatencyMs,
@@ -282,13 +258,14 @@ async function measureOrbitSelection(browser, origin, fixturePath) {
     await validateRenderedWebglCanvas(page, modelCanvas, '3D orbit-selection setup');
 
     const orbit = await measureOrbit(page, modelCanvas);
-    const selectablePoint = await findSelectableWallPoint(page, modelCanvas);
-    if (!(await clear3dSelection(page, modelCanvas))) {
-      throw new Error(
-        'Could not clear discovered 3D selection before timed selection measurement.',
-      );
+    const [targetState, preparedState] = await findDistinctSelectableWallStates(page, modelCanvas);
+    await modelCanvas.click({ position: preparedState.position });
+    await twoFrames(page);
+    const preparedScreenshot = await modelCanvas.screenshot();
+    if (sha256(preparedScreenshot) !== preparedState.visualHash) {
+      throw new Error('Could not reproduce prepared 3D selection state before timing.');
     }
-    const selection = await measureSelection(page, modelCanvas, selectablePoint);
+    const selection = await measureSelection(page, modelCanvas, targetState, preparedState);
     if (browserErrors.length > 0) {
       throw new Error(
         `3D orbit-selection sample emitted browser errors (${browserErrors.length}).`,
