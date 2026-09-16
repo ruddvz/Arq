@@ -38,6 +38,18 @@ function record(capabilityId: string) {
   return found;
 }
 
+function buildMini(repoRoot: string, capability: Record<string, unknown>) {
+  return buildCapabilityLedger({
+    repoRoot,
+    definitions: {
+      ...definitions,
+      capabilities: [capability],
+    },
+    commandAuthoritySource,
+    toolRegistry,
+  }).capabilities[0];
+}
+
 describe('ARQ capability ledger', () => {
   it('keeps the seed projection-only rather than authoring derived product truth', () => {
     expect(() => assertDefinitionsAreProjectionOnly(definitions)).not.toThrow();
@@ -47,6 +59,9 @@ describe('ARQ capability ledger', () => {
       expect(capability).not.toHaveProperty('productReachabilityState');
       expect(capability).not.toHaveProperty('productExecutionPath');
       expect(capability).not.toHaveProperty('libraryBacking');
+      expect(capability).not.toHaveProperty('humanEvidenceStatus');
+      expect(capability).not.toHaveProperty('accessibilityEvidenceStatus');
+      expect(capability).not.toHaveProperty('performanceEvidenceStatus');
     }
   });
 
@@ -99,7 +114,149 @@ describe('ARQ capability ledger', () => {
   it('distinguishes planned, library-only and human-evidence states', () => {
     expect(record('core.underlay').maturity).toBe('planned');
     expect(record('core.units').maturity).toBe('library_only');
-    expect(record('core.browser-device').maturity).toBe('human_evidence_required');
+    expect(record('core.browser-device')).toMatchObject({
+      maturity: 'human_evidence_required',
+      humanEvidenceStatus: 'required-missing',
+      availability: 'blocked',
+      publicClaimEligible: false,
+    });
+  });
+
+  it('promotes approved human evidence only when product evidence is complete', () => {
+    const root = mkdtempSync(path.join(tmpdir(), 'arq-capability-human-evidence-'));
+    try {
+      writeFileSync(path.join(root, 'source.txt'), 'source');
+      writeFileSync(path.join(root, 'test.txt'), 'test');
+      writeFileSync(path.join(root, 'browser.json'), '{"passed":true}');
+      const capability = {
+        capabilityId: 'test.browser-evidence',
+        feature: 'Browser evidence proof',
+        category: 'Test',
+        productSurface: 'Test surface',
+        sourcePaths: ['source.txt'],
+        testPaths: ['test.txt'],
+        executionEvidencePaths: ['browser.json'],
+        humanEvidencePaths: ['human-review.txt'],
+        platforms: ['test'],
+        userJourneys: [],
+        programmePhase: 'Test',
+        provider: null,
+        commandId: null,
+        mergeRequirements: [],
+        humanEvidenceRequired: true,
+        publicClaimEligible: true,
+        releaseGates: [],
+      };
+
+      expect(buildMini(root, capability)).toMatchObject({
+        maturity: 'human_evidence_required',
+        humanEvidenceStatus: 'required-missing',
+        availability: 'blocked',
+        publicClaimEligible: false,
+      });
+
+      writeFileSync(path.join(root, 'human-review.txt'), 'approved');
+      expect(buildMini(root, capability)).toMatchObject({
+        maturity: 'verified_current',
+        humanEvidenceStatus: 'present',
+        productExecutionPath: 'proven',
+        availability: 'available',
+        publicClaimEligible: true,
+      });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('does not let a human receipt replace missing product evidence', () => {
+    const root = mkdtempSync(path.join(tmpdir(), 'arq-capability-human-only-'));
+    try {
+      writeFileSync(path.join(root, 'human-review.txt'), 'approved');
+      const capability = {
+        capabilityId: 'test.human-only',
+        feature: 'Human-only proof',
+        category: 'Test',
+        productSurface: 'Test surface',
+        sourcePaths: ['missing-source.txt'],
+        testPaths: ['missing-test.txt'],
+        executionEvidencePaths: ['missing-browser.json'],
+        humanEvidencePaths: ['human-review.txt'],
+        platforms: ['test'],
+        userJourneys: [],
+        programmePhase: 'Test',
+        provider: null,
+        commandId: null,
+        mergeRequirements: [],
+        humanEvidenceRequired: true,
+        publicClaimEligible: true,
+        releaseGates: [],
+      };
+
+      expect(buildMini(root, capability)).toMatchObject({
+        humanEvidenceStatus: 'present',
+        maturity: 'planned',
+        productExecutionPath: 'absent',
+        availability: 'unavailable',
+        publicClaimEligible: false,
+      });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('blocks missing mandatory accessibility or performance evidence independently', () => {
+    const root = mkdtempSync(path.join(tmpdir(), 'arq-capability-required-evidence-'));
+    try {
+      for (const [file, value] of [
+        ['source.txt', 'source'],
+        ['test.txt', 'test'],
+        ['execution.json', '{"passed":true}'],
+        ['accessibility.json', '{"passed":true}'],
+      ]) {
+        writeFileSync(path.join(root, file), value);
+      }
+      const capability = {
+        capabilityId: 'test.required-evidence',
+        feature: 'Required evidence proof',
+        category: 'Test',
+        productSurface: 'Test surface',
+        sourcePaths: ['source.txt'],
+        testPaths: ['test.txt'],
+        executionEvidencePaths: ['execution.json'],
+        accessibilityEvidencePaths: ['accessibility.json'],
+        accessibilityEvidenceRequired: true,
+        performanceEvidencePaths: ['performance.json'],
+        performanceEvidenceRequired: true,
+        platforms: ['test'],
+        userJourneys: [],
+        programmePhase: 'Test',
+        provider: null,
+        commandId: null,
+        mergeRequirements: [],
+        humanEvidenceRequired: false,
+        publicClaimEligible: false,
+        releaseGates: [],
+      };
+
+      const blocked = buildMini(root, capability);
+      expect(blocked).toMatchObject({
+        accessibilityEvidenceStatus: 'present',
+        performanceEvidenceStatus: 'required-missing',
+        maturity: 'partial',
+        availability: 'blocked',
+      });
+      expect(blocked.blockers).toContain('Required performance evidence is missing');
+
+      writeFileSync(path.join(root, 'performance.json'), '{"passed":true}');
+      expect(buildMini(root, capability)).toMatchObject({
+        accessibilityEvidenceStatus: 'present',
+        performanceEvidenceStatus: 'present',
+        maturity: 'verified_current',
+        availability: 'available',
+      });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 
   it('seeds every required Core 1.0 capability family', () => {
