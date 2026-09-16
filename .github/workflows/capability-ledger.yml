@@ -19,6 +19,17 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Prepare #370 formatter repair snapshot
+        run: pnpm exec prettier --write docs/product/capabilities/ARQ-CAPABILITY-DEFINITIONS.json scripts/lib/capability-ledger.mjs
+      - name: Upload #370 formatter repair snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: arq-capability-ledger-source-format
+          path: |
+            docs/product/capabilities/ARQ-CAPABILITY-DEFINITIONS.json
+            scripts/lib/capability-ledger.mjs
+          if-no-files-found: error
+          retention-days: 7
       - name: Generate capability ledger and dashboard
         run: node scripts/build-capability-ledger.mjs
       - name: Upload exact-head generated capability evidence
