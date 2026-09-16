@@ -111,9 +111,7 @@
       "productSurface": "Plan canvas",
       "sourcePaths": ["apps/web/src/PlanCanvas.tsx"],
       "testPaths": ["apps/web/src/canvas/wall-command-contract.test.ts"],
-      "executionEvidencePaths": [
-        "apps/web/src/canvas/wall-command-contract.test.ts"
-      ],
+      "executionEvidencePaths": ["apps/web/src/canvas/wall-command-contract.test.ts"],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -209,9 +207,7 @@
         "apps/web/src/canvas/canvas-interaction.test.ts",
         "packages/plan-renderer/src/plan-scene.test.ts"
       ],
-      "executionEvidencePaths": [
-        "apps/web/src/canvas/canvas-interaction.test.ts"
-      ],
+      "executionEvidencePaths": ["apps/web/src/canvas/canvas-interaction.test.ts"],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -245,9 +241,7 @@
       "feature": "Model browser and inspector navigation",
       "category": "Workspace",
       "productSurface": "Browser / Inspector",
-      "sourcePaths": [
-        "packages/design-system/src/shell/model-tree-navigation.ts"
-      ],
+      "sourcePaths": ["packages/design-system/src/shell/model-tree-navigation.ts"],
       "testPaths": [
         "packages/design-system/src/shell/model-tree-navigation.test.ts",
         "packages/design-system/src/shell/inspector-groups.test.ts"
@@ -270,9 +264,7 @@
       "productSurface": "File open",
       "sourcePaths": ["apps/web/src/project/open-native-project.ts"],
       "testPaths": ["apps/web/src/project/open-native-project.test.ts"],
-      "executionEvidencePaths": [
-        "apps/web/src/project/open-native-project.test.ts"
-      ],
+      "executionEvidencePaths": ["apps/web/src/project/open-native-project.test.ts"],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -293,9 +285,7 @@
         "apps/web/src/project/native-project-session.test.ts",
         "apps/web/src/project/workspace-persistence.test.ts"
       ],
-      "executionEvidencePaths": [
-        "apps/web/src/project/native-project-session.test.ts"
-      ],
+      "executionEvidencePaths": ["apps/web/src/project/native-project-session.test.ts"],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -313,9 +303,7 @@
       "productSurface": "Publish",
       "sourcePaths": ["apps/web/src/project/publish-native-project.ts"],
       "testPaths": ["apps/web/src/project/publish-native-project.test.ts"],
-      "executionEvidencePaths": [
-        "apps/web/src/project/publish-native-project.test.ts"
-      ],
+      "executionEvidencePaths": ["apps/web/src/project/publish-native-project.test.ts"],
       "platforms": ["web", "desktop"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",
@@ -411,12 +399,8 @@
       "productSurface": "Product",
       "sourcePaths": ["validation/BROWSER-AND-DEVICE-MATRIX.csv"],
       "testPaths": ["validation/evidence/BROWSER-DEVICE-ACCEPTANCE.json"],
-      "executionEvidencePaths": [
-        "validation/evidence/BROWSER-DEVICE-ACCEPTANCE.json"
-      ],
-      "humanEvidencePaths": [
-        "validation/evidence/BROWSER-DEVICE-ACCEPTANCE.json"
-      ],
+      "executionEvidencePaths": ["validation/evidence/BROWSER-DEVICE-ACCEPTANCE.json"],
+      "humanEvidencePaths": ["validation/evidence/BROWSER-DEVICE-ACCEPTANCE.json"],
       "platforms": ["web", "desktop", "tablet"],
       "userJourneys": [],
       "programmePhase": "Core 1.0",

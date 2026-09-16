@@ -158,9 +158,7 @@ function deriveMaturity({
       return commandFact.libraryBacking ? 'library_only' : 'planned';
     }
     if (blockers.length > 0) return 'partial';
-    return allExist(testEvidence) && allExist(executionEvidence)
-      ? 'verified_current'
-      : 'partial';
+    return allExist(testEvidence) && allExist(executionEvidence) ? 'verified_current' : 'partial';
   }
   if (!allExist(sourceEvidence)) return 'planned';
   if (definition.productSurface === null) return 'library_only';
