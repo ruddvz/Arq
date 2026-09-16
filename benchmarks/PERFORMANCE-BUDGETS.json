@@ -45,8 +45,11 @@
         "library": "three.js",
         "marker": "WebGLRenderer",
         "boundary": "apps/web/src/App.tsx lazy-loads ModelCanvas on first 3D tab open",
-        "sizeBudget": null,
-        "status": "pending-baseline",
+        "referenceGzipKiB": 129.4,
+        "sizeBudget": 163840,
+        "status": "accepted",
+        "budgetPolicy": "160 KiB is the rounded ceiling above the exact-head 129.4 KiB gzip reference, retaining approximately 20 percent engineering headroom while making further growth reviewable.",
+        "evidence": "Build run 35038566801, merge checkout 13ff2b28fe3a635dc09f0dd44143148b8eb47994",
         "owner": "3d"
       },
       {
@@ -54,8 +57,11 @@
         "library": "pdf-lib",
         "marker": "BeginCompatibilitySection",
         "boundary": "apps/web/src/App.tsx dynamically imports sheet-export from the export handler",
-        "sizeBudget": null,
-        "status": "pending-baseline",
+        "referenceGzipKiB": 494.8,
+        "sizeBudget": 614400,
+        "status": "accepted",
+        "budgetPolicy": "600 KiB is the rounded ceiling above the exact-head 494.8 KiB gzip reference, retaining approximately 20 percent engineering headroom while making further growth reviewable.",
+        "evidence": "Build run 35038566801, merge checkout 13ff2b28fe3a635dc09f0dd44143148b8eb47994",
         "owner": "sheets"
       }
     ]
