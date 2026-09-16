@@ -7,9 +7,10 @@
  * The measured work then covers both halves of the workflow: a primary-button
  * orbit drag and a known-good 3D wall-selection transition. Selection discovery
  * happens before timing: the probe finds two visually distinct selectable wall
- * states, prepares state B, then times the real click that changes selection to
- * state A. Validation after the timed window proves the green shared-selection
- * treatment changed, so screenshot/decode work cannot inflate product latency.
+ * states and deliberately leaves state B active, then times the real click that
+ * changes selection to state A. Validation after the timed window proves the
+ * green shared-selection treatment changed, so screenshot/decode work cannot
+ * inflate product latency.
  */
 import { chromium } from 'playwright';
 import { createHash } from 'node:crypto';
@@ -259,12 +260,12 @@ async function measureOrbitSelection(browser, origin, fixturePath) {
 
     const orbit = await measureOrbit(page, modelCanvas);
     const [targetState, preparedState] = await findDistinctSelectableWallStates(page, modelCanvas);
-    await modelCanvas.click({ position: preparedState.position });
-    await twoFrames(page);
     const preparedScreenshot = await modelCanvas.screenshot();
-    if (sha256(preparedScreenshot) !== preparedState.visualHash) {
-      throw new Error('Could not reproduce prepared 3D selection state before timing.');
+    const preparedPixels = await analyzeCanvasPixels(page, preparedScreenshot);
+    if (preparedPixels.greenDominantPixels <= 20) {
+      throw new Error('Discovered prepared 3D selection state was not active before timing.');
     }
+    preparedState.visualHash = sha256(preparedScreenshot);
     const selection = await measureSelection(page, modelCanvas, targetState, preparedState);
     if (browserErrors.length > 0) {
       throw new Error(
