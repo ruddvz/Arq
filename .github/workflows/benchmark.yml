@@ -39,6 +39,11 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Probe canonical wall-preview formatting
+        run: |
+          pnpm exec prettier --write scripts/run-core-wall-preview-performance.mjs
+          git diff -- scripts/run-core-wall-preview-performance.mjs
+          git diff --quiet -- scripts/run-core-wall-preview-performance.mjs
       - name: Prove product-executable Core fixture candidate
         run: pnpm vitest run scripts/core-workflow-product-fixture.test.ts
       - run: node scripts/check-performance-authority-test.mjs
