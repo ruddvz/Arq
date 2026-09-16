@@ -20,6 +20,7 @@ on:
       - 'scripts/run-core-3d-first-open-performance.mjs'
       - 'scripts/run-core-3d-orbit-selection-performance.mjs'
       - 'scripts/run-core-pdf-vector-generation-performance.mjs'
+      - 'scripts/run-core-wall-preview-performance.mjs'
       - 'scripts/run-material-compositing-performance.mjs'
       - 'scripts/run-render-frame-benchmark.mjs'
       - 'scripts/run-canvas-2d-benchmark.mjs'
@@ -70,6 +71,8 @@ jobs:
       - run: node scripts/run-core-3d-orbit-selection-performance.mjs
         continue-on-error: true
       - run: node scripts/run-core-pdf-vector-generation-performance.mjs
+        continue-on-error: true
+      - run: node scripts/run-core-wall-preview-performance.mjs
         continue-on-error: true
       - run: node scripts/run-material-compositing-performance.mjs
         continue-on-error: true
