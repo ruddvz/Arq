@@ -15,14 +15,7 @@ import { chromium } from 'playwright';
 import { createServer } from 'node:http';
 import { cpus, platform, arch, release, tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
-import {
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import {
   aggregateSamples,
@@ -101,7 +94,8 @@ function writeCoreFixture(directory) {
   } finally {
     rmSync(generatedTest, { force: true });
   }
-  if (!existsSync(fixturePath)) throw new Error('Core fixture generator did not produce its .arq file.');
+  if (!existsSync(fixturePath))
+    throw new Error('Core fixture generator did not produce its .arq file.');
   return fixturePath;
 }
 
@@ -219,7 +213,7 @@ async function measure3dFirstOpen(browser, origin, fixturePath) {
         .getEntriesByType('resource')
         .find((entry) => /\/ModelCanvas-[^/]+\.js(?:$|\?)/.test(entry.name));
       return {
-        firstVisibleMs: state.firstVisible - state.start,
+        interactionLatencyMs: state.firstVisible - state.start,
         settledMs: state.settled - state.start,
         chunkLoadMs: chunk?.duration ?? null,
         mainThreadLongTaskCount: longTasks.length,
@@ -244,7 +238,9 @@ async function measure3dFirstOpen(browser, origin, fixturePath) {
       !surface.isWebgl2Context ||
       pixels.uniqueColors <= 1
     ) {
-      throw new Error('3D first-open sample reached timing completion without a valid rendered WebGL2 frame.');
+      throw new Error(
+        '3D first-open sample reached timing completion without a valid rendered WebGL2 frame.',
+      );
     }
     if (browserErrors.length > 0) {
       throw new Error(`3D first-open sample emitted browser errors (${browserErrors.length}).`);
@@ -291,9 +287,8 @@ async function main() {
       samples.push(await measure3dFirstOpen(browser, origin, fixturePath));
     }
 
-    const numeric = (key) => samples.flatMap((sample) =>
-      typeof sample[key] === 'number' ? [sample[key]] : [],
-    );
+    const numeric = (key) =>
+      samples.flatMap((sample) => (typeof sample[key] === 'number' ? [sample[key]] : []));
     const environment = {
       browser: `Chromium ${browser.version()}`,
       engine: 'Chromium',
@@ -312,7 +307,7 @@ async function main() {
       environment,
       samples,
       aggregates: {
-        firstVisibleMs: aggregateSamples(numeric('firstVisibleMs')),
+        interactionLatencyMs: aggregateSamples(numeric('interactionLatencyMs')),
         settledMs: aggregateSamples(numeric('settledMs')),
         chunkLoadMs: aggregateSamples(numeric('chunkLoadMs')),
         mainThreadLongTaskTotalMs: aggregateSamples(numeric('mainThreadLongTaskTotalMs')),
