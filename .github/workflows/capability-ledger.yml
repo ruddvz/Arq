@@ -1,0 +1,37 @@
+name: Capability ledger
+
+on:
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: capability-ledger-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generated-capability-truth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Generate capability ledger and dashboard
+        run: node scripts/build-capability-ledger.mjs
+      - name: Upload exact-head generated capability evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arq-capability-ledger
+          path: |
+            docs/product/capabilities/ARQ-CAPABILITY-LEDGER.json
+            docs/product/ARQ-CAPABILITY-DASHBOARD.md
+          if-no-files-found: error
+          retention-days: 30
+      - name: Verify generated capability outputs are current
+        run: |
+          git add -N docs/product/capabilities/ARQ-CAPABILITY-LEDGER.json docs/product/ARQ-CAPABILITY-DASHBOARD.md
+          git diff --exit-code -- docs/product/capabilities/ARQ-CAPABILITY-LEDGER.json docs/product/ARQ-CAPABILITY-DASHBOARD.md
