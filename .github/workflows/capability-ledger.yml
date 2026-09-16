@@ -5,7 +5,7 @@ on:
   merge_group:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: capability-ledger-${{ github.event.pull_request.number || github.ref }}
@@ -16,17 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
-          fetch-depth: 0
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Format capability-owned sources
-        run: pnpm exec prettier --write docs/product/capabilities/ARQ-CAPABILITY-DEFINITIONS.json scripts/lib/capability-ledger.mjs
+      - name: Verify capability-owned source formatting
+        run: pnpm exec prettier --check docs/product/capabilities/ARQ-CAPABILITY-DEFINITIONS.json scripts/lib/capability-ledger.mjs
       - name: Generate capability ledger and dashboard
         run: node scripts/build-capability-ledger.mjs
       - name: Upload exact-head generated capability evidence
@@ -39,20 +36,6 @@ jobs:
             docs/product/ARQ-CAPABILITY-DASHBOARD.md
           if-no-files-found: error
           retention-days: 30
-      - name: Bootstrap formatted and generated #370 truth
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-        run: |
-          git add docs/product/capabilities/ARQ-CAPABILITY-DEFINITIONS.json \
-            scripts/lib/capability-ledger.mjs \
-            docs/product/capabilities/ARQ-CAPABILITY-LEDGER.json \
-            docs/product/ARQ-CAPABILITY-DASHBOARD.md
-          if git diff --cached --quiet; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore(#370): refresh generated capability truth"
-          git push origin "HEAD:${GITHUB_HEAD_REF}"
       - name: Verify generated capability outputs are current
         run: |
           git add -N docs/product/capabilities/ARQ-CAPABILITY-LEDGER.json docs/product/ARQ-CAPABILITY-DASHBOARD.md
