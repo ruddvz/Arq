@@ -12,7 +12,9 @@ function nonEmptyString(value) {
 }
 
 function uniqueStrings(values) {
-  return Array.isArray(values) && values.every(nonEmptyString) && new Set(values).size === values.length;
+  return (
+    Array.isArray(values) && values.every(nonEmptyString) && new Set(values).size === values.length
+  );
 }
 
 export function loadReleasePolicy(repoRoot = process.cwd()) {
@@ -36,13 +38,17 @@ export function validateReleasePolicy(policy) {
   const stages = isObject(policy.releaseStages) ? policy.releaseStages : {};
   const stageNames = Object.keys(stages);
   for (const requiredStage of ['engineering', 'internal', 'architect_alpha', 'beta', 'stable']) {
-    if (!isObject(stages[requiredStage])) errors.push(`release policy is missing stage ${requiredStage}`);
+    if (!isObject(stages[requiredStage]))
+      errors.push(`release policy is missing stage ${requiredStage}`);
   }
   for (const [stageName, stage] of Object.entries(stages)) {
     if (typeof stage.externalAudience !== 'boolean') {
       errors.push(`release stage ${stageName} requires externalAudience boolean`);
     }
-    if (!uniqueStrings(stage.requiredEvidenceClasses) || stage.requiredEvidenceClasses.length === 0) {
+    if (
+      !uniqueStrings(stage.requiredEvidenceClasses) ||
+      stage.requiredEvidenceClasses.length === 0
+    ) {
       errors.push(`release stage ${stageName} requires unique requiredEvidenceClasses`);
     }
   }
@@ -58,8 +64,10 @@ export function validateReleasePolicy(policy) {
       errors.push(`${severityName} must be explicitly typed as bug-severity`);
     }
     if (!nonEmptyString(severity.meaning)) errors.push(`${severityName} requires a meaning`);
-    if (typeof severity.releaseStop !== 'boolean') errors.push(`${severityName} requires releaseStop boolean`);
-    if (typeof severity.agentWaivable !== 'boolean') errors.push(`${severityName} requires agentWaivable boolean`);
+    if (typeof severity.releaseStop !== 'boolean')
+      errors.push(`${severityName} requires releaseStop boolean`);
+    if (typeof severity.agentWaivable !== 'boolean')
+      errors.push(`${severityName} requires agentWaivable boolean`);
     if (!uniqueStrings(severity.blockedStages ?? [])) {
       errors.push(`${severityName} blockedStages must be unique stage names`);
     } else {
@@ -85,7 +93,8 @@ export function validateReleasePolicy(policy) {
     'rollbackRequiresProjectFormatCompatibilityEvidence',
     'capabilityPublicClaimsMustConsumeCapabilityLedger',
   ]) {
-    if (rules[requiredTrueRule] !== true) errors.push(`release policy rule ${requiredTrueRule} must be true`);
+    if (rules[requiredTrueRule] !== true)
+      errors.push(`release policy rule ${requiredTrueRule} must be true`);
   }
   if (rules.criticalEvidenceMayUseCache !== false) {
     errors.push('critical evidence must not be cache-eligible');
@@ -186,19 +195,26 @@ export function validateReleaseManifest({ policy, manifest, expectedRevision = n
   if (stage) {
     for (const requiredClass of stage.requiredEvidenceClasses) {
       const candidates = evidence.filter((item) => isObject(item) && item.class === requiredClass);
-      const current = candidates.find((item) => currentVerifiedEvidence(item, manifest.releaseRevision));
+      const current = candidates.find((item) =>
+        currentVerifiedEvidence(item, manifest.releaseRevision),
+      );
       if (!current) {
-        blockers.push(`required evidence class ${requiredClass} has no exact-head verified receipt`);
+        blockers.push(
+          `required evidence class ${requiredClass} has no exact-head verified receipt`,
+        );
         continue;
       }
       if (requiredClass === 'human_device' && !nonEmptyString(current.humanApprovalRef)) {
-        blockers.push('human_device evidence requires a humanApprovalRef bound to the release revision');
+        blockers.push(
+          'human_device evidence requires a humanApprovalRef bound to the release revision',
+        );
       }
     }
   }
 
   const knownIssues = Array.isArray(manifest.knownIssues) ? manifest.knownIssues : [];
-  if (!Array.isArray(manifest.knownIssues)) errors.push('knownIssues must be an array when present');
+  if (!Array.isArray(manifest.knownIssues))
+    errors.push('knownIssues must be an array when present');
   for (const issue of knownIssues) {
     if (!isObject(issue)) {
       errors.push('every known issue must be an object');
@@ -206,16 +222,23 @@ export function validateReleaseManifest({ policy, manifest, expectedRevision = n
     }
     const severity = policy.severityPolicy[issue.severity];
     if (!severity) {
-      errors.push(`known issue ${String(issue.issue)} has unknown bug severity ${String(issue.severity)}`);
+      errors.push(
+        `known issue ${String(issue.issue)} has unknown bug severity ${String(issue.severity)}`,
+      );
       continue;
     }
     if (!nonEmptyString(issue.issue)) errors.push('known issue requires issue reference');
-    if (!nonEmptyString(issue.userImpact)) errors.push(`known issue ${String(issue.issue)} requires userImpact`);
+    if (!nonEmptyString(issue.userImpact))
+      errors.push(`known issue ${String(issue.issue)} requires userImpact`);
     if (issue.status !== 'open' && issue.status !== 'closed') {
       errors.push(`known issue ${String(issue.issue)} status must be open or closed`);
       continue;
     }
-    if (issue.status === 'closed' || !stage || !severity.blockedStages.includes(manifest.releaseStage)) {
+    if (
+      issue.status === 'closed' ||
+      !stage ||
+      !severity.blockedStages.includes(manifest.releaseStage)
+    ) {
       continue;
     }
     if (severity.releaseStop) {
@@ -262,13 +285,19 @@ export function validateReleaseManifest({ policy, manifest, expectedRevision = n
 
   if (Array.isArray(manifest.publicClaims) && manifest.publicClaims.length > 0) {
     const ledgerEvidence = evidence.find(
-      (item) => item.class === 'capability_ledger' && currentVerifiedEvidence(item, manifest.releaseRevision),
+      (item) =>
+        item.class === 'capability_ledger' &&
+        currentVerifiedEvidence(item, manifest.releaseRevision),
     );
     if (!ledgerEvidence) {
       blockers.push('public claims require exact-head verified capability_ledger evidence');
     }
     for (const claim of manifest.publicClaims) {
-      if (!isObject(claim) || !nonEmptyString(claim.capabilityId) || !nonEmptyString(claim.claimRef)) {
+      if (
+        !isObject(claim) ||
+        !nonEmptyString(claim.capabilityId) ||
+        !nonEmptyString(claim.claimRef)
+      ) {
         errors.push('every public claim requires capabilityId and claimRef');
       }
     }
