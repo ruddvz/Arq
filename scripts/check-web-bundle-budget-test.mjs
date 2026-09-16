@@ -5,15 +5,15 @@
  *
  * The failure this guard exists to prevent is a split coming undone unnoticed.
  * A guard for that which stopped detecting would reproduce exactly that failure
- * while reporting success, so both halves have to prove they fire: the byte
- * budget and the marker check, independently, because a change can break either
- * one on its own.
+ * while reporting success, so startup bytes, entry markers and accepted deferred
+ * budgets each prove independently that they fail when their evidence disappears.
  */
 import { createHash } from 'node:crypto';
 import {
   BUDGET,
   DEFERRED_LIBRARIES,
   evaluateBundle,
+  evaluateDeferredBudgets,
   findEntryScript,
 } from './check-web-bundle-budget.mjs';
 
@@ -104,6 +104,52 @@ check(
     cssBytes: EMPTY_CSS,
     entrySource: `tiny but ${DEFERRED_LIBRARIES[0].marker}`,
   }).findings.length === 1,
+);
+
+const deferredBudget = 160 * 1024;
+check(
+  'an accepted deferred payload below its budget passes',
+  evaluateDeferredBudgets([
+    {
+      library: 'three.js',
+      sizeBudget: deferredBudget,
+      measurementStatus: 'measured-by-marker',
+      measuredGzipBytes: deferredBudget - 1,
+    },
+  ]).length === 0,
+);
+check(
+  'an accepted deferred payload over its budget fails',
+  evaluateDeferredBudgets([
+    {
+      library: 'three.js',
+      sizeBudget: deferredBudget,
+      measurementStatus: 'measured-by-marker',
+      measuredGzipBytes: deferredBudget + 1,
+    },
+  ]).some((f) => f.includes('over its canonical')),
+);
+check(
+  'an accepted deferred budget fails closed when its marker cannot be resolved',
+  evaluateDeferredBudgets([
+    {
+      library: 'three.js',
+      sizeBudget: deferredBudget,
+      measurementStatus: 'marker-not-resolved',
+      measuredGzipBytes: 0,
+    },
+  ]).some((f) => f.includes('Refusing to report the budget as met')),
+);
+check(
+  'a pending deferred baseline may remain unmeasured without pretending it passed a budget',
+  evaluateDeferredBudgets([
+    {
+      library: 'future-library',
+      sizeBudget: null,
+      measurementStatus: 'marker-not-resolved',
+      measuredGzipBytes: 0,
+    },
+  ]).length === 0,
 );
 
 check(
