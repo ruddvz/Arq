@@ -1,7 +1,4 @@
-import {
-  createManifest,
-  exportArchive,
-} from '../../packages/project-format/src/index';
+import { createManifest, exportArchive } from '../../packages/project-format/src/index';
 import {
   createArqfsSchemaV1,
   createNodeArqfsDriver,
@@ -41,9 +38,7 @@ const FILLER_DIMENSIONS =
     CORE_WORKFLOW_SCALE.underlays);
 
 if (FILLER_DIMENSIONS < 0) {
-  throw new Error(
-    'Core workflow semantic object target is below the protected fixture counts.',
-  );
+  throw new Error('Core workflow semantic object target is below the protected fixture counts.');
 }
 
 function levelId(index: number): string {
@@ -68,15 +63,12 @@ function levelIndexForWall(index: number): number {
  * valid multi-level reference model through its real project-loading boundary.
  */
 export function buildCoreWorkflowModel(): Record<string, unknown> {
-  const levels = Array.from(
-    { length: CORE_WORKFLOW_SCALE.levels },
-    (_, index) => ({
-      id: levelId(index),
-      name: `Synthetic level ${index + 1}`,
-      elevation: index * 3200,
-      storeyHeight: 3200,
-    }),
-  );
+  const levels = Array.from({ length: CORE_WORKFLOW_SCALE.levels }, (_, index) => ({
+    id: levelId(index),
+    name: `Synthetic level ${index + 1}`,
+    elevation: index * 3200,
+    storeyHeight: 3200,
+  }));
 
   const wallTypes = [
     {
@@ -95,45 +87,36 @@ export function buildCoreWorkflowModel(): Record<string, unknown> {
     },
   ];
 
-  const openings = Array.from(
-    { length: CORE_WORKFLOW_SCALE.doorsAndWindows },
-    (_, index) => {
-      const isDoor = index < DOORS;
-      return {
-        id: openingId(index),
-        hostWallId: wallId(index),
-        kind: isDoor ? 'door' : 'window',
-        offsetFromWallStart: { value: 1000, unit: 'mm' },
-        width: { value: isDoor ? 900 : 1200, unit: 'mm' },
-        sillHeight: { value: isDoor ? 0 : 900, unit: 'mm' },
-        height: { value: isDoor ? 2100 : 1200, unit: 'mm' },
-      };
-    },
-  );
+  const openings = Array.from({ length: CORE_WORKFLOW_SCALE.doorsAndWindows }, (_, index) => {
+    const isDoor = index < DOORS;
+    return {
+      id: openingId(index),
+      hostWallId: wallId(index),
+      kind: isDoor ? 'door' : 'window',
+      offsetFromWallStart: { value: 1000, unit: 'mm' },
+      width: { value: isDoor ? 900 : 1200, unit: 'mm' },
+      sillHeight: { value: isDoor ? 0 : 900, unit: 'mm' },
+      height: { value: isDoor ? 2100 : 1200, unit: 'mm' },
+    };
+  });
 
-  const walls = Array.from(
-    { length: CORE_WORKFLOW_SCALE.walls },
-    (_, index) => {
-      const levelIndex = levelIndexForWall(index);
-      const localIndex = index % WALLS_PER_LEVEL;
-      const column = localIndex % 15;
-      const row = Math.floor(localIndex / 15);
-      return {
-        id: wallId(index),
-        typeId: index % 3 === 0 ? 'wall-type-exterior' : 'wall-type-interior',
-        levelId: levelId(levelIndex),
-        start: { x: column * 6000, y: row * 6000 },
-        end: { x: column * 6000 + 5000, y: row * 6000 },
-        alignment: 'centre',
-        joinStart: 'auto',
-        joinEnd: 'auto',
-        hostedOpeningIds:
-          index < CORE_WORKFLOW_SCALE.doorsAndWindows
-            ? [openingId(index)]
-            : [],
-      };
-    },
-  );
+  const walls = Array.from({ length: CORE_WORKFLOW_SCALE.walls }, (_, index) => {
+    const levelIndex = levelIndexForWall(index);
+    const localIndex = index % WALLS_PER_LEVEL;
+    const column = localIndex % 15;
+    const row = Math.floor(localIndex / 15);
+    return {
+      id: wallId(index),
+      typeId: index % 3 === 0 ? 'wall-type-exterior' : 'wall-type-interior',
+      levelId: levelId(levelIndex),
+      start: { x: column * 6000, y: row * 6000 },
+      end: { x: column * 6000 + 5000, y: row * 6000 },
+      alignment: 'centre',
+      joinStart: 'auto',
+      joinEnd: 'auto',
+      hostedOpeningIds: index < CORE_WORKFLOW_SCALE.doorsAndWindows ? [openingId(index)] : [],
+    };
+  });
 
   const doors = Array.from({ length: DOORS }, (_, index) => ({
     id: `door-${String(index + 1).padStart(3, '0')}`,
@@ -156,42 +139,36 @@ export function buildCoreWorkflowModel(): Record<string, unknown> {
     };
   });
 
-  const rooms = Array.from(
-    { length: CORE_WORKFLOW_SCALE.rooms },
-    (_, index) => {
-      const levelIndex = index < CORE_WORKFLOW_SCALE.rooms / 2 ? 0 : 1;
-      const localIndex = index % (CORE_WORKFLOW_SCALE.rooms / 2);
-      const hostWallIndex = levelIndex * WALLS_PER_LEVEL + localIndex * 2;
-      const x = (localIndex % 10) * 6000 + 500;
-      const y = Math.floor(localIndex / 10) * 6000 + 500;
-      return {
-        id: `room-${String(index + 1).padStart(3, '0')}`,
-        levelId: levelId(levelIndex),
-        seedPoint: { x: x + 1000, y: y + 1000 },
-        name: `Synthetic room ${index + 1}`,
-        number: String(index + 1).padStart(3, '0'),
-        boundaryElementIds: [wallId(hostWallIndex)],
-        calculatedBoundary: [
-          { x, y },
-          { x: x + 2000, y },
-          { x: x + 2000, y: y + 2000 },
-          { x, y: y + 2000 },
-        ],
-        calculatedArea: 4,
-        status: 'valid',
-      };
-    },
-  );
+  const rooms = Array.from({ length: CORE_WORKFLOW_SCALE.rooms }, (_, index) => {
+    const levelIndex = index < CORE_WORKFLOW_SCALE.rooms / 2 ? 0 : 1;
+    const localIndex = index % (CORE_WORKFLOW_SCALE.rooms / 2);
+    const hostWallIndex = levelIndex * WALLS_PER_LEVEL + localIndex * 2;
+    const x = (localIndex % 10) * 6000 + 500;
+    const y = Math.floor(localIndex / 10) * 6000 + 500;
+    return {
+      id: `room-${String(index + 1).padStart(3, '0')}`,
+      levelId: levelId(levelIndex),
+      seedPoint: { x: x + 1000, y: y + 1000 },
+      name: `Synthetic room ${index + 1}`,
+      number: String(index + 1).padStart(3, '0'),
+      boundaryElementIds: [wallId(hostWallIndex)],
+      calculatedBoundary: [
+        { x, y },
+        { x: x + 2000, y },
+        { x: x + 2000, y: y + 2000 },
+        { x, y: y + 2000 },
+      ],
+      calculatedArea: 4,
+      status: 'valid',
+    };
+  });
 
-  const annotations = Array.from(
-    { length: CORE_WORKFLOW_SCALE.annotations },
-    (_, index) => ({
-      id: `annotation-${String(index + 1).padStart(3, '0')}`,
-      levelId: levelId(index % CORE_WORKFLOW_SCALE.levels),
-      kind: 'synthetic-note',
-      position: { x: (index % 20) * 1000, y: Math.floor(index / 20) * 1000 },
-    }),
-  );
+  const annotations = Array.from({ length: CORE_WORKFLOW_SCALE.annotations }, (_, index) => ({
+    id: `annotation-${String(index + 1).padStart(3, '0')}`,
+    levelId: levelId(index % CORE_WORKFLOW_SCALE.levels),
+    kind: 'synthetic-note',
+    position: { x: (index % 20) * 1000, y: Math.floor(index / 20) * 1000 },
+  }));
 
   const underlays = [
     {
@@ -206,12 +183,9 @@ export function buildCoreWorkflowModel(): Record<string, unknown> {
   // silently discarding them. They deliberately carry the remaining semantic-load
   // volume so the fixture reaches ~1,000 objects without inventing hundreds of wall
   // types or weakening the exact protected wall/room/opening/annotation counts.
-  const linearDimensions = Array.from(
-    { length: FILLER_DIMENSIONS },
-    (_, index) => ({
-      id: `dimension-${String(index + 1).padStart(3, '0')}`,
-    }),
-  );
+  const linearDimensions = Array.from({ length: FILLER_DIMENSIONS }, (_, index) => ({
+    id: `dimension-${String(index + 1).padStart(3, '0')}`,
+  }));
 
   return {
     modelSchema: 'arq-bim-core-reference-v0+core-workflow-v1',
@@ -238,9 +212,7 @@ export function buildCoreWorkflowModel(): Record<string, unknown> {
   };
 }
 
-export function countCoreWorkflowSemanticObjects(
-  model: Record<string, unknown>,
-): number {
+export function countCoreWorkflowSemanticObjects(model: Record<string, unknown>): number {
   const arrays = [
     'levels',
     'wallTypes',
