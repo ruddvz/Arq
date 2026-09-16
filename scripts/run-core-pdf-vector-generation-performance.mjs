@@ -54,9 +54,9 @@ function validateVectorPdf(bytes) {
   const signature = bytes.subarray(0, 5).toString('latin1');
   const trailer = bytes.subarray(-2048).toString('latin1').includes('%%EOF');
   const content = inflateStreams(bytes);
-  const hasPath =
-    /(?:^|\s)(?:re|[ml])(?:\s|$)/m.test(content) && /\s[SsfFB]\s/.test(content);
-  if (signature !== '%PDF-') throw new Error(`vector PDF signature is ${signature}, expected %PDF-.`);
+  const hasPath = /(?:^|\s)(?:re|[ml])(?:\s|$)/m.test(content) && /\s[SsfFB]\s/.test(content);
+  if (signature !== '%PDF-')
+    throw new Error(`vector PDF signature is ${signature}, expected %PDF-.`);
   if (!trailer) throw new Error('vector PDF is missing its %%EOF trailer.');
   if (!hasPath) throw new Error('vector PDF contains no painted path operators.');
 }
@@ -123,9 +123,13 @@ async function measurePdfGeneration(browser, origin, fixturePath) {
     const downloadPromise = page.waitForEvent('download', { timeout: 30_000 });
     await option.click();
     const download = await downloadPromise;
-    await page.waitForFunction(() => window.__ARQ_PERF_PDF_VECTOR__?.blobReady !== null, undefined, {
-      timeout: 30_000,
-    });
+    await page.waitForFunction(
+      () => window.__ARQ_PERF_PDF_VECTOR__?.blobReady !== null,
+      undefined,
+      {
+        timeout: 30_000,
+      },
+    );
 
     const measured = await page.evaluate(() => {
       const state = window.__ARQ_PERF_PDF_VECTOR__;
