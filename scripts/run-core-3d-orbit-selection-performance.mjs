@@ -109,7 +109,7 @@ async function measureOrbit(page, modelCanvas) {
         if (state.start !== null) return;
         state.start = performance.now();
         requestAnimationFrame(function observeFrame(timestamp) {
-          if (state.firstFrame === null) state.firstFrame = timestamp;
+          if (state.firstFrame === null) state.firstFrame = performance.now();
           if (state.lastFrame !== null) state.frameIntervals.push(timestamp - state.lastFrame);
           state.lastFrame = timestamp;
           if (state.settled === null) requestAnimationFrame(observeFrame);
@@ -159,6 +159,9 @@ async function measureOrbit(page, modelCanvas) {
       mainThreadLongTaskTotalMs: longTasks.reduce((sum, entry) => sum + entry.duration, 0),
     };
   });
+  if (!Number.isFinite(measured.interactionLatencyMs) || measured.interactionLatencyMs < 0) {
+    throw new Error(`Orbit interaction latency is invalid: ${measured.interactionLatencyMs}.`);
+  }
   const afterHash = sha256(await modelCanvas.screenshot());
   if (beforeHash === afterHash) {
     throw new Error('Orbit gesture completed without a visible 3D frame change.');
@@ -195,8 +198,8 @@ async function measureSelection(page, modelCanvas, targetState, preparedState) {
       'pointerup',
       () => {
         state.start = performance.now();
-        requestAnimationFrame((timestamp) => {
-          state.firstFrame = timestamp;
+        requestAnimationFrame(() => {
+          state.firstFrame = performance.now();
           requestAnimationFrame(() => {
             state.settled = performance.now();
           });
@@ -222,6 +225,9 @@ async function measureSelection(page, modelCanvas, targetState, preparedState) {
       mainThreadLongTaskTotalMs: longTasks.reduce((sum, entry) => sum + entry.duration, 0),
     };
   });
+  if (!Number.isFinite(measured.interactionLatencyMs) || measured.interactionLatencyMs < 0) {
+    throw new Error(`Selection interaction latency is invalid: ${measured.interactionLatencyMs}.`);
+  }
   const screenshot = await modelCanvas.screenshot();
   const visualHash = sha256(screenshot);
   const pixels = await analyzeCanvasPixels(page, screenshot);
