@@ -30,7 +30,7 @@ jobs:
           docs/release/ARQ-RELEASE-EVIDENCE-CONTRACT.md
           docs/release/ARQ-RELEASE-POLICY.v1.json
           scripts/lib/release-evidence-contract.mjs
-          scripts/release-evidence-contract.test.js
+          scripts/release-evidence-contract.test.ts
           scripts/verify-release-evidence-contract.mjs
       - name: Verify release-contract-owned formatting is committed
         run: >-
@@ -40,9 +40,9 @@ jobs:
           docs/release/ARQ-RELEASE-EVIDENCE-CONTRACT.md
           docs/release/ARQ-RELEASE-POLICY.v1.json
           scripts/lib/release-evidence-contract.mjs
-          scripts/release-evidence-contract.test.js
+          scripts/release-evidence-contract.test.ts
           scripts/verify-release-evidence-contract.mjs
       - name: Validate canonical release policy
         run: node scripts/verify-release-evidence-contract.mjs
       - name: Run release evidence contract regressions
-        run: pnpm exec vitest run scripts/release-evidence-contract.test.js
+        run: pnpm exec vitest run scripts/release-evidence-contract.test.ts
