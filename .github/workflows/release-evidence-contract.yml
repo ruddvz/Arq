@@ -1,0 +1,48 @@
+name: Release evidence contract
+
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-evidence-contract-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-release-evidence-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Normalize release-contract-owned formatting
+        run: >-
+          pnpm exec prettier --write
+          .github/workflows/release-evidence-contract.yml
+          docs/RELEASE-READINESS-GATE.md
+          docs/release/ARQ-RELEASE-EVIDENCE-CONTRACT.md
+          docs/release/ARQ-RELEASE-POLICY.v1.json
+          scripts/lib/release-evidence-contract.mjs
+          scripts/release-evidence-contract.test.ts
+          scripts/verify-release-evidence-contract.mjs
+      - name: Verify release-contract-owned formatting is committed
+        run: >-
+          git diff --exit-code --
+          .github/workflows/release-evidence-contract.yml
+          docs/RELEASE-READINESS-GATE.md
+          docs/release/ARQ-RELEASE-EVIDENCE-CONTRACT.md
+          docs/release/ARQ-RELEASE-POLICY.v1.json
+          scripts/lib/release-evidence-contract.mjs
+          scripts/release-evidence-contract.test.ts
+          scripts/verify-release-evidence-contract.mjs
+      - name: Validate canonical release policy
+        run: node scripts/verify-release-evidence-contract.mjs
+      - name: Run release evidence contract regressions
+        run: pnpm exec vitest run scripts/release-evidence-contract.test.ts

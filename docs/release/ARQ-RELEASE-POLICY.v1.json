@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "policyId": "arq-release-evidence-v1",
+  "evidenceStates": [
+    "verified",
+    "partially-verified",
+    "inferred",
+    "assumed",
+    "blocked",
+    "not-inspected",
+    "failed"
+  ],
+  "greenEvidenceState": "verified",
+  "releaseStages": {
+    "engineering": {
+      "externalAudience": false,
+      "requiredEvidenceClasses": ["static_quality", "unit", "build", "security"]
+    },
+    "internal": {
+      "externalAudience": false,
+      "requiredEvidenceClasses": [
+        "static_quality",
+        "unit",
+        "build",
+        "security",
+        "browser_capability",
+        "capability_ledger"
+      ]
+    },
+    "architect_alpha": {
+      "externalAudience": true,
+      "requiredEvidenceClasses": [
+        "static_quality",
+        "unit",
+        "build",
+        "security",
+        "browser_capability",
+        "capability_ledger",
+        "project_format",
+        "rollback_compatibility",
+        "human_device"
+      ]
+    },
+    "beta": {
+      "externalAudience": true,
+      "requiredEvidenceClasses": [
+        "static_quality",
+        "unit",
+        "build",
+        "security",
+        "browser_capability",
+        "capability_ledger",
+        "project_format",
+        "rollback_compatibility",
+        "human_device",
+        "deployment_identity"
+      ]
+    },
+    "stable": {
+      "externalAudience": true,
+      "requiredEvidenceClasses": [
+        "static_quality",
+        "unit",
+        "build",
+        "security",
+        "browser_capability",
+        "capability_ledger",
+        "project_format",
+        "rollback_compatibility",
+        "human_device",
+        "deployment_identity",
+        "production_smoke"
+      ]
+    }
+  },
+  "severityPolicy": {
+    "P0": {
+      "kind": "bug-severity",
+      "meaning": "Data loss or semantic corruption, wrong-project/document mutation, security or privacy boundary breach, false durability/publication success, or unrecoverable migration.",
+      "releaseStop": true,
+      "agentWaivable": false,
+      "blockedStages": ["architect_alpha", "beta", "stable"]
+    },
+    "P1": {
+      "kind": "bug-severity",
+      "meaning": "Critical protected workflow or recovery failure that prevents trustworthy architectural work without a safe supported workaround.",
+      "releaseStop": true,
+      "agentWaivable": false,
+      "blockedStages": ["architect_alpha", "beta", "stable"]
+    },
+    "P2": {
+      "kind": "bug-severity",
+      "meaning": "Major capability degradation with a bounded supported workaround and no silent corruption or false durability.",
+      "releaseStop": false,
+      "agentWaivable": false,
+      "blockedStages": ["stable"]
+    },
+    "P3": {
+      "kind": "bug-severity",
+      "meaning": "Minor correctness or usability defect outside release-stop workflows.",
+      "releaseStop": false,
+      "agentWaivable": false,
+      "blockedStages": []
+    },
+    "P4": {
+      "kind": "bug-severity",
+      "meaning": "Cosmetic, polish, or future backlog defect with no material workflow correctness impact.",
+      "releaseStop": false,
+      "agentWaivable": false,
+      "blockedStages": []
+    }
+  },
+  "rules": {
+    "exactHeadRequired": true,
+    "criticalEvidenceMayUseCache": false,
+    "openPullRequestMayCountAsMergedProductTruth": false,
+    "requiredHumanEvidenceMustBindReleaseRevision": true,
+    "releaseStopIssueMayBeAgentWaived": false,
+    "knownIssueWaiverRequiresOwnerApproval": true,
+    "rollbackRequiresProjectFormatCompatibilityEvidence": true,
+    "capabilityPublicClaimsMustConsumeCapabilityLedger": true
+  }
+}
